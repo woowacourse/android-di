@@ -11,11 +11,14 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
     private fun fullName() {}
     private fun Int.isAdult() {}
+
+    fun getAge(): Int = age
 
     companion object {
         fun noname(age: Int): Person = Person("", "", age)
@@ -27,8 +30,9 @@ class ReflectionTest {
     @Test
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
         val person = Person("Jason", "Park", 20)
-        Person::firstName.set(person, "Jaesung")
-        assertThat(person.firstName).isEqualTo("Jaesung")
+        val publicMutableProperty = Person::firstName
+
+        publicMutableProperty.set(person, "JinUk")
     }
 
     @Test
@@ -58,11 +62,30 @@ class ReflectionTest {
     @Test
     fun `변경 가능한 비공개 프로퍼티 변경`() {
         val person = Person("Jason", "Park", 20)
-        val firstNameProperty =
-            Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
-                .first { it.name == "firstName" }
-        firstNameProperty.setter.call(person, "Jaesung")
-        assertThat(person.firstName).isEqualTo("Jaesung")
+        /**
+         * java class로 reflection을 이용한 코드
+         */
+//        val mutablePrivateProperty =
+//            Person::class.java
+//                .getDeclaredField("age")
+//                .apply {
+//                    isAccessible = true
+//                    set(person, 50)
+//                }
+
+        /**
+         * kotlin class로 reflection을 이용한 코드
+         */
+        Person::class
+            .declaredMemberProperties
+            .filterIsInstance<KMutableProperty<*>>()
+            .first { it.name == "age" }
+            .apply {
+                isAccessible = true
+                setter.call(person, 50)
+            }
+
+        assertThat(person.getAge()).isEqualTo(50)
     }
 
     @Test

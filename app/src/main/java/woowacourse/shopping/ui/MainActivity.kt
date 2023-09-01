@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         setupView()
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
         menu?.findItem(R.id.cart)?.actionView?.let { view ->
