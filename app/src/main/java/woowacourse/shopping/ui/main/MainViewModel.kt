@@ -26,7 +26,7 @@ class MainViewModel(
         _onProductAdded.value = true
     }
 
-    fun getAllProducts() {
+    fun fetchAllProducts() {
         _products.value = productRepository.getAllProducts()
     }
 
