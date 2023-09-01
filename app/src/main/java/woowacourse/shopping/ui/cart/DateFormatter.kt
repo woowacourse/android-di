@@ -9,7 +9,8 @@ import java.util.Locale
 class DateFormatter(context: Context) {
 
     private val formatter = SimpleDateFormat(
-        context.getString(R.string.date_format), Locale.KOREA
+        context.getString(R.string.date_format),
+        Locale.KOREA,
     )
 
     fun formatDate(timestamp: Long): String {
