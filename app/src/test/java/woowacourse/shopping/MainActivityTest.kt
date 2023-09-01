@@ -8,6 +8,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.Singleton
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
@@ -36,9 +40,26 @@ class MainActivityTest {
             .buildActivity(MainActivity::class.java)
             .create()
             .get()
+
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Singleton에 CartRepository만 존재하면 ViewModel 생성에 실패한다`() {
+        // given
+        DependencyInjector.singleton = object : Singleton {
+            val cartRepository: CartRepository by lazy { DefaultCartRepository() }
+        }
+
+        val activity = Robolectric
+            .buildActivity(MainActivity::class.java)
+            .create()
+            .get()
+
+        // then
+        ViewModelProvider(activity)[MainViewModel::class.java]
     }
 }
