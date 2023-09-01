@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.data.CartSampleRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             factory = object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return MainViewModel(
-                        productRepository = ProductRepository(),
+                        productRepository = ProductSampleRepository(),
                         cartRepository = CartSampleRepository()
                     ) as T
                 }
