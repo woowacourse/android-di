@@ -68,4 +68,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+
+    // Fragment
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
 }
