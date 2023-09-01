@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.SingletonObject
+import woowacourse.shopping.di.SingletonObject
 import woowacourse.shopping.model.Product
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경

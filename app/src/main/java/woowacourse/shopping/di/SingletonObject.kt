@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.di
 
 interface SingletonObject<T : Any> {
 
