@@ -83,10 +83,10 @@ class ReflectionTest {
     @Test
     fun `클래스 및 부모 클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, equals, hashCode, toString
-        assertThat(personReflection.memberFunctions.size).isEqualTo(5)
+        // fullName, greeting, getAge, isAdult, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, getAge, equals, hashCode, toString
+        assertThat(personReflection.memberFunctions.size).isEqualTo(6)
         // isAdult
         assertThat(personReflection.memberExtensionFunctions.size).isEqualTo(1)
     }
@@ -94,10 +94,10 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
-        // greeting, isAdult
-        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(2)
+        // fullName, greeting, getAge, isAdult
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
+        // greeting, getAge, isAdult
+        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(3)
         // isAdult
         assertThat(personReflection.declaredMemberExtensionFunctions.size).isEqualTo(1)
     }
@@ -105,10 +105,10 @@ class ReflectionTest {
     @Test
     fun `멤버 함수 확장 함수 클래스 내에서 선언된 정적 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+        // fullName, greeting, getAge, isAdult, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, getAge, isAdult
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
     }
 
     @Test
