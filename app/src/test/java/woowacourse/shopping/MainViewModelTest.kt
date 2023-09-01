@@ -16,7 +16,8 @@ class MainViewModelTest {
         assertThat(repositories.size).isEqualTo(2)
 
         repositories.forEach { property ->
-            assertThat(property.javaClass.isInterface).isTrue()
+            val type = Class.forName(property.returnType.toString())
+            assertThat(type.isInterface).isTrue()
         }
     }
 }
