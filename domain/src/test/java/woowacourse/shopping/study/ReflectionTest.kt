@@ -1,6 +1,7 @@
 package woowacourse.shopping.study
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredFunctions
@@ -11,6 +12,7 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
@@ -23,6 +25,20 @@ class Person(var firstName: String, val lastName: String, private var age: Int) 
 }
 
 class ReflectionTest {
+
+    // todo 숙 제
+    @Test
+    fun `변경 가능한 비공개 프로퍼티 값 변경 age`() {
+        val person = Person("pingu", "An", 20)
+        val ageProperty = Person::class
+            .declaredMemberProperties
+            .filterIsInstance<KMutableProperty<*>>()
+            .first { it.name == "age" }
+
+        ageProperty.isAccessible = true
+        ageProperty.setter.call(person, 30)
+        assertEquals(30, ageProperty.getter.call(person) as Int)
+    }
 
     @Test
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
