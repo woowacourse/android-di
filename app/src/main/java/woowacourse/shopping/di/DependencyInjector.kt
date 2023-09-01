@@ -13,17 +13,14 @@ object DependencyInjector {
     var singleton: Singleton = DefaultSingleton
 
     inline fun <reified T> inject(): T {
-        return (findSingleton(typeOf<T>()) ?: instantiate(typeOf<T>())) as T
+        return inject(typeOf<T>()) as T
     }
 
-    fun instantiate(type: KType): Any {
-        val constructor = type.jvmErasure.primaryConstructor ?: throw IllegalStateException()
-        val parameters = constructor.parameters
-        val arguments = gatherArguments(parameters)
-        return constructor.call(*arguments)
+    fun inject(type: KType): Any {
+        return findSingleton(type) ?: instantiate(type)
     }
 
-    fun findSingleton(type: KType): Any? {
+    private fun findSingleton(type: KType): Any? {
         singleton::class.declaredMemberProperties.forEach {
             if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) {
                 return it.getter.call(singleton)
@@ -32,13 +29,16 @@ object DependencyInjector {
         return null
     }
 
+    private fun instantiate(type: KType): Any {
+        val constructor = type.jvmErasure.primaryConstructor ?: throw IllegalStateException()
+        val parameters = constructor.parameters
+        val arguments = gatherArguments(parameters)
+        return constructor.call(*arguments)
+    }
+
     private fun gatherArguments(parameters: List<KParameter>): Array<Any> {
         return parameters.map { parameter ->
             inject(parameter.type)
         }.toTypedArray()
-    }
-
-    private fun inject(type: KType): Any {
-        return findSingleton(type) ?: instantiate(type)
     }
 }
