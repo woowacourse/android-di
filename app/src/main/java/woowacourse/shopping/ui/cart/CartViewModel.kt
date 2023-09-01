@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.SampleCartRepository
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel(
     private val cartRepository: CartRepository,
@@ -32,7 +33,7 @@ class CartViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 CartViewModel(
-                    cartRepository = CartRepository(),
+                    cartRepository = SampleCartRepository(),
                 )
             }
         }
