@@ -1,9 +1,9 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
-class ProductRepository {
-
+class DefaultProductRepository(
     private val products: List<Product> = listOf(
         Product(
             name = "우테코 과자",
@@ -21,8 +21,9 @@ class ProductRepository {
             imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700"
         ),
     )
+) : ProductRepository {
 
-    fun getAllProducts(): List<Product> {
+    override fun getAllProducts(): List<Product> {
         return products
     }
 }
