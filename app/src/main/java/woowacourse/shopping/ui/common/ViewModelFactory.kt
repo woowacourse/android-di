@@ -1,4 +1,4 @@
-package woowacourse.shopping.common
+package woowacourse.shopping.ui.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
