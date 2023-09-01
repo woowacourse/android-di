@@ -11,9 +11,11 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
+    fun getAge() = age
     private fun fullName() {}
     private fun Int.isAdult() {}
 
@@ -56,13 +58,26 @@ class ReflectionTest {
     }
 
     @Test
-    fun `변경 가능한 비공개 프로퍼티 변경`() {
+    fun `변경 가능한 공개 프로퍼티 변경`() {
         val person = Person("Jason", "Park", 20)
         val firstNameProperty =
             Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
                 .first { it.name == "firstName" }
         firstNameProperty.setter.call(person, "Jaesung")
         assertThat(person.firstName).isEqualTo("Jaesung")
+    }
+
+    @Test
+    fun `변경 가능한 비공개 프로퍼티 변경`() {
+        val person = Person("Jason", "Park", 20)
+        val ageProperty =
+            Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+                .first { it.name == "age" }
+        ageProperty.apply {
+            isAccessible = true
+            setter.call(person, 3)
+        }
+        assertThat(person.getAge()).isEqualTo(3)
     }
 
     @Test
