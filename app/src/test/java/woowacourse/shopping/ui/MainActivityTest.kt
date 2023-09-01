@@ -1,8 +1,9 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -10,10 +11,9 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.di.DefaultSingleton
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.Singleton
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -21,9 +21,15 @@ class MainActivityTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @After
+    fun tearDown() {
+        DependencyInjector.singleton = DefaultSingleton
+    }
+
     @Test
     fun `Activity 실행 테스트`() {
         // given
+        println(DependencyInjector.singleton)
         val activity = Robolectric
             .buildActivity(MainActivity::class.java)
             .create()
