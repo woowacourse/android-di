@@ -5,12 +5,13 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
     inline fun <reified T> inject(): T {
-        val constructor = T::class.constructors
-        return findSingleton(typeOf<T>()) as T ?: instantiate(constructor.first()) as T
+        val constructors = T::class.constructors
+        return (findSingleton(typeOf<T>()) ?: instantiate(constructors.first())) as T
     }
 
     fun instantiate(constructor: KFunction<*>): Any {
@@ -22,7 +23,9 @@ object DependencyInjector {
 
     fun findSingleton(type: KType): Any? {
         Singleton::class.declaredMemberProperties.forEach {
-            if (type.isSubtypeOf(it.returnType)) return it.get(Singleton) ?: return@forEach
+            if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) return it.get(
+                Singleton
+            ) ?: return@forEach
         }
         return null
     }
@@ -34,7 +37,7 @@ object DependencyInjector {
     }
 
     private fun inject(type: KType): Any {
-        val constructor = type::class.constructors
-        return findSingleton(type) ?: instantiate(constructor.first())
+        val constructors = type::class.constructors
+        return findSingleton(type) ?: instantiate(constructors.first())
     }
 }
