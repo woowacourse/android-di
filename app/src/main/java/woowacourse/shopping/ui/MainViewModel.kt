@@ -3,15 +3,13 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel(
-    private val productRepositoryImpl: ProductRepositoryImpl,
-    private val cartRepositoryImpl: CartRepositoryImpl,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -21,13 +19,11 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        viewModelScope.launch {
-            cartRepositoryImpl.addCartProduct(product)
-            _onProductAdded.value = true
-        }
+        cartRepository.addCartProduct(product)
+        _onProductAdded.value = true
     }
 
     fun getAllProducts() {
-        _products.value = productRepositoryImpl.getAllProducts()
+        _products.value = productRepository.getAllProducts()
     }
 }
