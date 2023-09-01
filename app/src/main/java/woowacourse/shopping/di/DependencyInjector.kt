@@ -1,31 +1,31 @@
 package woowacourse.shopping.di
 
-import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.isSupertypeOf
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
     inline fun <reified T> inject(): T {
-        val constructors = T::class.constructors
-        return (findSingleton(typeOf<T>()) ?: instantiate(constructors.first())) as T
+        return (findSingleton(typeOf<T>()) ?: instantiate(typeOf<T>())) as T
     }
 
-    fun instantiate(constructor: KFunction<*>): Any {
+    fun instantiate(type: KType): Any {
+        val constructor = type.jvmErasure.primaryConstructor ?: throw IllegalStateException()
         val parameters = constructor.parameters
-        return constructor.call(
-            *(gatherArguments(parameters))
-        ) ?: throw IllegalStateException()
+        val arguments = gatherArguments(parameters)
+        return constructor.call(*arguments)
     }
 
     fun findSingleton(type: KType): Any? {
         Singleton::class.declaredMemberProperties.forEach {
-            if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) return it.get(
-                Singleton
-            ) ?: return@forEach
+            if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) {
+                return it.get(Singleton) ?: return@forEach
+            }
         }
         return null
     }
@@ -37,7 +37,6 @@ object DependencyInjector {
     }
 
     private fun inject(type: KType): Any {
-        val constructors = type::class.constructors
-        return findSingleton(type) ?: instantiate(constructors.first())
+        return findSingleton(type) ?: instantiate(type)
     }
 }
