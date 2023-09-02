@@ -4,6 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -27,15 +31,14 @@ class CartViewModel(
         _onCartProductDeleted.value = true
     }
 
-    class CartViewModelFactory(
-        private val cartRepository: CartRepository,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(CartViewModel::class.java)) {
-                return CartViewModel(cartRepository) as T
+    companion object {
+
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val repositoryContainer =
+                    (this[APPLICATION_KEY] as ShoppingApplication).repositoryContainer
+                CartViewModel(repositoryContainer.cartRepository)
             }
-            throw IllegalArgumentException("Unknown ViewModel Class")
         }
     }
 }
