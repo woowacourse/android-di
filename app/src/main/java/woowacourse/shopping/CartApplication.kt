@@ -7,6 +7,6 @@ import woowacourse.shopping.di.DependencyInjector
 class CartApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        DependencyInjector.dependencies = DefaultDependencies
+        DependencyInjector.dependencies = DefaultDependencies()
     }
 }
