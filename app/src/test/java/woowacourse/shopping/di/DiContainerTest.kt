@@ -2,47 +2,53 @@ package woowacourse.shopping.di
 
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
-import woowacourse.shopping.data.ProductSampleRepository
-import woowacourse.shopping.model.Product
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
 
 class DiContainerTest {
-    private class FameProductRepository : ProductRepository {
-        override fun getAllProducts(): List<Product> = emptyList()
+    interface FakeDiRepository {
+        fun get(): String
     }
 
-    private class FakeCartRepository : CartRepository {
-        override fun addCartProduct(product: Product) {}
+    interface FakeDiDataSource {
+        fun get(): String
+    }
 
-        override fun getAllCartProducts(): List<Product> = emptyList()
+    private class FakeDiProtoTypeRepository(
+        private val diDataSource: FakeDiDataSource
+    ) : FakeDiRepository {
+        override fun get(): String {
+            return diDataSource.get()
+        }
+    }
 
-        override fun deleteCartProduct(id: Int) {}
+    private class FakeDiProtoTypeDataSource : FakeDiDataSource {
+        override fun get(): String {
+            return "FakeDiProtoTypeDataSource"
+        }
     }
 
     private class FakeDiContainer : DiContainer() {
-        private val productRepository: ProductRepository = ProductSampleRepository()
-        private val cartRepository: CartRepository = FakeCartRepository()
+        private val fakeDiDataSource: FakeDiDataSource = FakeDiProtoTypeDataSource()
+        private val fakeDiRepository: FakeDiRepository = FakeDiProtoTypeRepository(fakeDiDataSource)
     }
 
     private val fakeDiContainer = FakeDiContainer()
 
     @Test
-    fun `DiContainer에서 상품 리포지터리 객체를 반환한다`() {
+    fun `DiContainer안에 있는 객체를 반환한다 1`() {
         // given & when
-        val productRepository = fakeDiContainer.get(ProductRepository::class.java)
+        val fakeDiRepository = fakeDiContainer.get(FakeDiRepository::class.java)
 
         // then
-        assertTrue(productRepository is ProductRepository)
+        assertTrue(fakeDiRepository is FakeDiProtoTypeRepository)
     }
 
     @Test
-    fun `DiContainer에서 장바구니 리포지터리 객체를 반환한다`() {
+    fun `DiContainer안에 있는 객체를 반환한다 2`() {
         // given & when
-        val cartRepository = fakeDiContainer.get(CartRepository::class.java)
+        val fakeDiDataSource = fakeDiContainer.get(FakeDiDataSource::class.java)
 
         // then
-        assertTrue(cartRepository is CartRepository)
+        assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
     }
 
     @Test
