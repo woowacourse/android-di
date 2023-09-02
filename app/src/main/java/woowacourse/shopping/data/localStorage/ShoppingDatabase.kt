@@ -1,8 +1,7 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.localStorage
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-
 
 @Database(entities = [CartProductEntity::class], version = 1, exportSchema = false)
 abstract class ShoppingDatabase : RoomDatabase() {
