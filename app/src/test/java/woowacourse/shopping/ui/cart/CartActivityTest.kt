@@ -39,4 +39,17 @@ class CartActivityTest {
         // then
         assertThat(viewModel).isNotNull()
     }
+
+    @Test
+    fun `장바구니에 담긴 상품이 없으면 빈 화면을 보여준다`() {
+        // given
+        val activity = Robolectric
+            .buildActivity(CartActivity::class.java)
+            .create()
+            .get()
+        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
+
+        // then
+        assertThat(viewModel.cartProducts.value).isEmpty()
+    }
 }
