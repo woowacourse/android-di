@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
-    id("com.google.dagger.hilt.android") // Hilt
 }
 
 android {
@@ -75,11 +74,6 @@ dependencies {
     androidTestImplementation("io.mockk:mockk-android:1.13.5")
     // Reflection
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    // Fragment ktx
-    implementation("androidx.fragment:fragment-ktx:1.5.7")
 }
 
 kapt {
