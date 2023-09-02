@@ -36,9 +36,9 @@ class DiContainerTest {
 
     private class FakeDiContainer : DiContainer() {
         private val fakeDiDataSource: FakeDiDataSource =
-            this.inject(FakeDiProtoTypeDataSource::class.java)
+            this.createInstance(FakeDiProtoTypeDataSource::class.java)
         private val fakeDiRepository: FakeDiRepository =
-            this.inject(FakeDiProtoTypeRepository::class.java)
+            this.createInstance(FakeDiProtoTypeRepository::class.java)
     }
 
     private val fakeDiContainer = FakeDiContainer()
@@ -64,7 +64,7 @@ class DiContainerTest {
     @Test
     fun `첫번째 생성자 파라미터가 있으면 자동으로 주입하고 객체를 반환한다`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.inject(FakeViewModel::class.java)
+        val fakeDiRepository = fakeDiContainer.createInstance(FakeViewModel::class.java)
 
         // then
         assertTrue(fakeDiRepository is FakeViewModel)
@@ -75,7 +75,7 @@ class DiContainerTest {
         // given
         val fakeDiObject = object : DiContainer() {
             val fakeDiDataSource: FakeDiDataSource
-                get() = this.inject(FakeDiProtoTypeDataSource::class.java)
+                get() = this.createInstance(FakeDiProtoTypeDataSource::class.java)
         }
 
         // when
@@ -90,7 +90,7 @@ class DiContainerTest {
         // given
         val fakeDiObject = object : DiContainer() {
             val fakeDiDataSource: FakeDiDataSource
-                by lazy { this.inject(FakeDiProtoTypeDataSource::class.java) }
+                by lazy { this.createInstance(FakeDiProtoTypeDataSource::class.java) }
         }
 
         // when

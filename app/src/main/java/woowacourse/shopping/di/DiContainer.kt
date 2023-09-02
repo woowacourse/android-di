@@ -29,7 +29,7 @@ open class DiContainer {
             ?: throw IllegalArgumentException()
     }
 
-    fun <T> inject(clazz: Class<T>): T {
+    fun <T> createInstance(clazz: Class<T>): T {
         val constructor = clazz.declaredConstructors.first()
 
         return constructor.newInstance(
