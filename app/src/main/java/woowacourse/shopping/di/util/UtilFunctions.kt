@@ -1,5 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.util
 
+import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
 
@@ -9,9 +10,8 @@ inline fun <reified T : Any> validateHasPrimaryConstructor(): KFunction<T> {
 }
 
 fun <T> KFunction<T>.validateIncludingInjectAnnotation() {
-    annotations.forEach { param ->
-        require(isInjectAnnotation(param)) { "[ERROR] Inject 어노테이션이 존재하지 않습니다." }
-    }
+    val hasInjectAnnotation = annotations.any(::isInjectAnnotation)
+    require(hasInjectAnnotation) { "[ERROR] Inject 어노테이션이 존재하지 않습니다." }
 }
 
 private fun isInjectAnnotation(annotation: Annotation): Boolean = annotation is Inject

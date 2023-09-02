@@ -1,7 +1,6 @@
 package woowacourse.shopping.di.injector
 
-import woowacourse.shopping.di.validateHasPrimaryConstructor
-import woowacourse.shopping.di.validateIncludingInjectAnnotation
+import woowacourse.shopping.di.util.validateHasPrimaryConstructor
 import kotlin.reflect.KParameter
 import kotlin.reflect.javaType
 
@@ -14,7 +13,9 @@ object ClassInjector {
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = validateHasPrimaryConstructor<T>()
-        primaryConstructor.validateIncludingInjectAnnotation()
+
+//         TODO: 추후 요구사항에 따라 @Inject Annotation 포함 여부를 검증한다.
+//         primaryConstructor.validateIncludingInjectAnnotation()
 
         val parameterValues = getParameterValues(primaryConstructor.parameters)
         return primaryConstructor.call(*parameterValues.toTypedArray())
