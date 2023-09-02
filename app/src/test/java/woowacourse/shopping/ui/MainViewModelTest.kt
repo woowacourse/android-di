@@ -7,10 +7,10 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import woowacourse.shopping.util.Dummy
+import woowacourse.shopping.util.getOrAwaitValue
 
 class MainViewModelTest {
 
