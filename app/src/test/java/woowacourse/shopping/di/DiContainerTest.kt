@@ -12,6 +12,14 @@ class DiContainerTest {
         fun get(): String
     }
 
+    private class FakeViewModel(
+        private val diRepository: FakeDiRepository
+    ) {
+        fun get(): String {
+            return diRepository.get()
+        }
+    }
+
     private class FakeDiProtoTypeRepository(
         private val diDataSource: FakeDiDataSource
     ) : FakeDiRepository {
@@ -20,7 +28,7 @@ class DiContainerTest {
         }
     }
 
-    private class FakeDiProtoTypeDataSource : FakeDiDataSource {
+    class FakeDiProtoTypeDataSource : FakeDiDataSource {
         override fun get(): String {
             return "FakeDiProtoTypeDataSource"
         }
@@ -49,6 +57,15 @@ class DiContainerTest {
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
+    }
+
+    @Test
+    fun `첫번째 생성자 파라미터가 있으면 자동으로 주입하고 객체를 반환한다`() {
+        // given & when
+        val fakeDiRepository = fakeDiContainer.inject(FakeViewModel::class.java)
+
+        // then
+        assertTrue(fakeDiRepository is FakeViewModel)
     }
 
     @Test
