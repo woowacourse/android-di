@@ -3,8 +3,6 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -20,15 +18,11 @@ class CartViewModel(
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        viewModelScope.launch {
-            _cartProducts.postValue(cartRepository.getAllCartProducts())
-        }
+        _cartProducts.value = cartRepository.getAllCartProducts()
     }
 
     fun deleteCartProduct(id: Int) {
-        viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
-            _onCartProductDeleted.value = true
-        }
+        cartRepository.deleteCartProduct(id)
+        _onCartProductDeleted.value = true
     }
 }
