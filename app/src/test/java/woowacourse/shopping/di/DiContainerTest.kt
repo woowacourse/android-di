@@ -71,6 +71,36 @@ class DiContainerTest {
     }
 
     @Test
+    fun `Getter를 통해 주입된 객체를 반환한다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            val fakeDiDataSource: FakeDiDataSource
+                get() = this.inject(FakeDiProtoTypeDataSource::class.java)
+        }
+
+        // when
+        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class.java)
+
+        // then
+        assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
+    }
+
+    @Test
+    fun `by lazy로 지연 초기화가 가능하다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            val fakeDiDataSource: FakeDiDataSource
+                by lazy { this.inject(FakeDiProtoTypeDataSource::class.java) }
+        }
+
+        // when
+        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class.java)
+
+        // then
+        assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
+    }
+
+    @Test
     fun `DiContainer에서 없는 리포지터리 객체를 요청하면 예외를 발생시킨다`() {
         // given
         class MockRepository
