@@ -5,10 +5,14 @@ import org.junit.Test
 import woowacourse.shopping.repository.ProductRepository
 
 class DiContainerTest {
+    private class FakeDiContainer : DiContainer()
+
+    private val fakeDiContainer = FakeDiContainer()
+
     @Test
     fun `DiContainer에서 상품 리포지터리 객체를 반환한다`() {
         // given & when
-        val productRepository = DiContainer.get(ProductRepository::class.java)
+        val productRepository = fakeDiContainer.get(ProductRepository::class.java)
 
         // then
         assertTrue(productRepository is ProductRepository)
@@ -20,7 +24,7 @@ class DiContainerTest {
         class MockRepository
 
         // when
-        runCatching { DiContainer.get(MockRepository::class.java) }
+        runCatching { fakeDiContainer.get(MockRepository::class.java) }
             // then
             .onSuccess { throw IllegalArgumentException() }
             .onFailure { assertTrue(it is IllegalArgumentException) }

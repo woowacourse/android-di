@@ -3,7 +3,7 @@ package woowacourse.shopping.di
 import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.repository.ProductRepository
 
-object DiContainer {
+open class DiContainer {
     val productRepository: ProductRepository = ProductSampleRepository()
 
     inline fun <reified T> get(clazz: Class<T>): T {
