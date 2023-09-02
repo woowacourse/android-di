@@ -70,4 +70,6 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.22")
+    // Mockk
+    testImplementation("io.mockk:mockk:1.12.2")
 }
