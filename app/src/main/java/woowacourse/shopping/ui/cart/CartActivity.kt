@@ -12,7 +12,7 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
+        ViewModelProvider(this, CartViewModel.factory)[CartViewModel::class.java]
     }
 
     private lateinit var dateFormatter: DateFormatter
@@ -60,7 +60,7 @@ class CartActivity : AppCompatActivity() {
             val adapter = CartProductAdapter(
                 items = it,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
+                onClickDelete = viewModel::deleteCartProduct,
             )
             binding.rvCartProducts.adapter = adapter
         }
