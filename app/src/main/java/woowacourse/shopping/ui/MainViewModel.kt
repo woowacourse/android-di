@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -31,7 +30,10 @@ class MainViewModel(
     }
 
     companion object {
-        val factory = MainViewModelFactory(DefaultProductRepository(), DefaultCartRepository())
+        val factory = MainViewModelFactory(
+            ShoppingApplication.productRepository,
+            ShoppingApplication.cartRepository,
+        )
 
         class MainViewModelFactory(
             private val productRepository: ProductRepository,
