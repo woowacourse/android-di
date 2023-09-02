@@ -10,7 +10,7 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
-    var singletonDependencies: SingletonDependencies = DefaultSingletonDependencies
+    lateinit var dependencies: Dependencies
 
     inline fun <reified T> inject(): T {
         return inject(typeOf<T>()) as T
@@ -21,9 +21,9 @@ object DependencyInjector {
     }
 
     private fun findSingleton(type: KType): Any? {
-        singletonDependencies::class.declaredMemberProperties.forEach {
+        dependencies::class.declaredMemberProperties.forEach {
             if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) {
-                return it.getter.call(singletonDependencies)
+                return it.getter.call(dependencies)
             }
         }
         return null
