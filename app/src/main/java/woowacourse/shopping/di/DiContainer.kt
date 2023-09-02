@@ -1,16 +1,18 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.ProductSampleRepository
-import woowacourse.shopping.repository.ProductRepository
-
 open class DiContainer {
-    val productRepository: ProductRepository = ProductSampleRepository()
+    private val fields get() = this.javaClass.declaredFields
 
-    inline fun <reified T> get(clazz: Class<T>): T {
-        return if (clazz == ProductRepository::class.java) {
-            productRepository as T
-        } else {
-            throw IllegalArgumentException()
-        }
+    private fun <T> getFromField(clazz: Class<T>): T? {
+        println(fields.joinToString("\n") { it.type.simpleName })
+        return fields.firstOrNull { field ->
+            field.isAccessible = true
+            field.type.simpleName == clazz.simpleName
+        }?.get(this) as T
+    }
+
+    fun <T> get(clazz: Class<T>): T {
+        return getFromField(clazz)
+            ?: throw IllegalArgumentException()
     }
 }
