@@ -1,9 +1,8 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import com.google.common.truth.Truth.assertThat
 import kotlin.reflect.full.declaredMemberProperties
 import org.junit.Test
-import woowacourse.shopping.ui.MainViewModel
 
 class MainViewModelTest {
     @Test
