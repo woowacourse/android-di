@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.CartDefaultRepository
 import woowacourse.shopping.data.ProductDefaultRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             this,
             MainViewModel.MainViewModelFactory(
                 productRepository = ProductDefaultRepository(),
-                cartRepository = CartRepository(),
+                cartRepository = CartDefaultRepository(),
             ),
         )[MainViewModel::class.java]
     }
