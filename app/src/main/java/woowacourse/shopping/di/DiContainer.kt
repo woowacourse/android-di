@@ -9,6 +9,20 @@ open class DiContainer {
 
     private val properties get() = this::class.declaredMemberProperties
 
+    fun <T> createInstance(clazz: Class<T>): T {
+        val constructor = clazz.declaredConstructors.first()
+
+        return constructor.newInstance(
+            *constructor.parameterTypes.map { get(it) }.toTypedArray()
+        ) as T
+    }
+
+    fun <T> get(clazz: Class<T>): T {
+        return getFromField(clazz)
+            ?: getFromGetter(clazz)
+            ?: throw IllegalArgumentException()
+    }
+
     private fun <T> getFromField(clazz: Class<T>): T? {
         return fields.firstOrNull { field ->
             field.isAccessible = true
@@ -21,19 +35,5 @@ open class DiContainer {
             property.isAccessible = true
             property.javaGetter?.returnType?.simpleName == clazz.simpleName
         }?.getter?.call(this) as T
-    }
-
-    fun <T> get(clazz: Class<T>): T {
-        return getFromField(clazz)
-            ?: getFromGetter(clazz)
-            ?: throw IllegalArgumentException()
-    }
-
-    fun <T> createInstance(clazz: Class<T>): T {
-        val constructor = clazz.declaredConstructors.first()
-
-        return constructor.newInstance(
-            *constructor.parameterTypes.map { get(it) }.toTypedArray()
-        ) as T
     }
 }
