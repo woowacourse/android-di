@@ -35,8 +35,10 @@ class DiContainerTest {
     }
 
     private class FakeDiContainer : DiContainer() {
-        private val fakeDiDataSource: FakeDiDataSource = FakeDiProtoTypeDataSource()
-        private val fakeDiRepository: FakeDiRepository = FakeDiProtoTypeRepository(fakeDiDataSource)
+        private val fakeDiDataSource: FakeDiDataSource =
+            this.inject(FakeDiProtoTypeDataSource::class.java)
+        private val fakeDiRepository: FakeDiRepository =
+            this.inject(FakeDiProtoTypeRepository::class.java)
     }
 
     private val fakeDiContainer = FakeDiContainer()
