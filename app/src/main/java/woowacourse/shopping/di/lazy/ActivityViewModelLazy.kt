@@ -5,7 +5,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import woowacourse.shopping.di.injector.ClassInjector
-import woowacourse.shopping.ui.common.viewModelFactory
+import woowacourse.shopping.di.util.viewModelFactory
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
