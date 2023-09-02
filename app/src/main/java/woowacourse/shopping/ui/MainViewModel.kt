@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -32,15 +34,12 @@ class MainViewModel(
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>
-            ): T {
-                return MainViewModel(
-                    DefaultProductRepository(),
-                    DefaultCartRepository()
-                ) as T
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                MainViewModel(
+                    productRepository = DefaultProductRepository(),
+                    cartRepository = DefaultCartRepository()
+                )
             }
         }
     }
