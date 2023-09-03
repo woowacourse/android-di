@@ -1,5 +1,5 @@
 package woowacourse.shopping.di
 
 interface Injector {
-    fun <T : Any> inject(): T
+    fun <T : Any> inject(modelClass: Class<T>): T
 }
