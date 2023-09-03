@@ -1,5 +1,10 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelLazy
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.repository.CartRepository
@@ -17,7 +22,19 @@ class DependencyProvider private constructor() {
         dependencies[CartRepository::class.java] = DefaultCartRepository()
     }
 
-    fun <T : Any>createInstance(clazz: KClass<T>): T {
+    inline fun <reified VM : ViewModel> getOrMakeViewModel(viewModelStore: ViewModelStore): Lazy<VM> {
+        return ViewModelLazy(
+            viewModelClass = VM::class,
+            storeProducer = { viewModelStore },
+            factoryProducer = {
+                viewModelFactory {
+                    initializer { getInstance().createInstance(VM::class) }
+                }
+            },
+        )
+    }
+
+    fun <T : Any> createInstance(clazz: KClass<T>): T {
         val insertParameters: MutableList<Any> = mutableListOf()
         val primaryConstructor = clazz.primaryConstructor ?: throw IllegalArgumentException()
 
