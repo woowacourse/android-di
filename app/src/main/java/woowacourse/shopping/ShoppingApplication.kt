@@ -13,5 +13,6 @@ class ShoppingApplication : Application() {
 
     companion object {
         lateinit var inject: CustomInject
+            private set
     }
 }
