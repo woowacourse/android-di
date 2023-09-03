@@ -36,9 +36,9 @@ class DiContainerTest {
 
     private class FakeDiContainer : DiContainer() {
         private val fakeDiDataSource: FakeDiDataSource =
-            this.createInstance(FakeDiProtoTypeDataSource::class.java)
+            this.createInstance(FakeDiProtoTypeDataSource::class)
         private val fakeDiRepository: FakeDiRepository =
-            this.createInstance(FakeDiProtoTypeRepository::class.java)
+            this.createInstance(FakeDiProtoTypeRepository::class)
     }
 
     private val fakeDiContainer = FakeDiContainer()
@@ -46,7 +46,7 @@ class DiContainerTest {
     @Test
     fun `DiContainer안에 있는 객체를 반환한다 1`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.get(FakeDiRepository::class.java)
+        val fakeDiRepository = fakeDiContainer.get(FakeDiRepository::class)
 
         // then
         assertTrue(fakeDiRepository is FakeDiProtoTypeRepository)
@@ -55,7 +55,7 @@ class DiContainerTest {
     @Test
     fun `DiContainer안에 있는 객체를 반환한다 2`() {
         // given & when
-        val fakeDiDataSource = fakeDiContainer.get(FakeDiDataSource::class.java)
+        val fakeDiDataSource = fakeDiContainer.get(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -64,7 +64,7 @@ class DiContainerTest {
     @Test
     fun `첫번째 생성자 파라미터가 있으면 자동으로 주입하고 객체를 반환한다`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.createInstance(FakeViewModel::class.java)
+        val fakeDiRepository = fakeDiContainer.createInstance(FakeViewModel::class)
 
         // then
         assertTrue(fakeDiRepository is FakeViewModel)
@@ -75,11 +75,11 @@ class DiContainerTest {
         // given
         val fakeDiObject = object : DiContainer() {
             val fakeDiDataSource: FakeDiDataSource
-                get() = this.createInstance(FakeDiProtoTypeDataSource::class.java)
+                get() = this.createInstance(FakeDiProtoTypeDataSource::class)
         }
 
         // when
-        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class.java)
+        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -90,11 +90,11 @@ class DiContainerTest {
         // given
         val fakeDiObject = object : DiContainer() {
             val fakeDiDataSource: FakeDiDataSource
-                by lazy { this.createInstance(FakeDiProtoTypeDataSource::class.java) }
+                by lazy { this.createInstance(FakeDiProtoTypeDataSource::class) }
         }
 
         // when
-        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class.java)
+        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -106,7 +106,7 @@ class DiContainerTest {
         class MockRepository
 
         // when
-        runCatching { fakeDiContainer.get(MockRepository::class.java) }
+        runCatching { fakeDiContainer.get(MockRepository::class) }
             // then
             .onSuccess { throw IllegalArgumentException() }
             .onFailure { assertTrue(it is IllegalArgumentException) }

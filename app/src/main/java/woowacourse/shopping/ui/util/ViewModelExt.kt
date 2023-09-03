@@ -14,7 +14,7 @@ inline fun <reified VM : ViewModel> DiActivity.viewModels(): Lazy<VM> {
         storeProducer = { viewModelStore },
         factoryProducer = {
             viewModelFactory {
-                initializer { this@viewModels.createInstance(VM::class.java) }
+                initializer { this@viewModels.createInstance(VM::class) }
             }
         }
     )

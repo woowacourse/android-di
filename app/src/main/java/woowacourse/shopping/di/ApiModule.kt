@@ -7,8 +7,8 @@ import woowacourse.shopping.repository.ProductRepository
 
 class ApiModule() : DiContainer() {
     val productRepository: ProductRepository =
-        this.createInstance(ProductSampleRepository::class.java)
+        this.createInstance(ProductSampleRepository::class)
 
     val cartRepository: CartRepository =
-        this.createInstance(CartSampleRepository::class.java)
+        this.createInstance(CartSampleRepository::class)
 }
