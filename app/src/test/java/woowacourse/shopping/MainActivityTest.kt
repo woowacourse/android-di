@@ -11,12 +11,11 @@ import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
-
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
     @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+    var instantTaskExecutorRule = InstantTaskExecutorRule() // AAC 컴포넌트들을 한 스레드에서 실행되도록 함
 
     @Test
     fun `Activity 실행 테스트`() {
