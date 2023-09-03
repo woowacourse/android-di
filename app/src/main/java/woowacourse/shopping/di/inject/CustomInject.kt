@@ -15,7 +15,7 @@ class CustomInject(
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val constructors = kClass.primaryConstructor ?: throw IllegalArgumentException()
+        val constructors = kClass.primaryConstructor ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
         val params = constructors.parameters
         val arg = params.map {
@@ -28,6 +28,6 @@ class CustomInject(
     private fun findPropertyAndGetValue(type: KType): Any {
         return container::class.declaredMemberProperties.find { it.returnType == type }?.getter?.call(
             container,
-        ) ?: throw IllegalArgumentException()
+        ) ?: throw IllegalArgumentException("같은 타입의 프로퍼티를 찾을 수 없습니다.")
     }
 }
