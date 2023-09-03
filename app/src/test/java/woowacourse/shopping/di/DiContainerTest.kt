@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
@@ -112,7 +113,7 @@ class DiContainerTest {
         // when
         runCatching { fakeDiContainer.get(MockRepository::class) }
             // then
-            .onSuccess { throw IllegalArgumentException() }
+            .onSuccess { assertEquals(it, null) }
             .onFailure { assertTrue(it is IllegalArgumentException) }
     }
 }

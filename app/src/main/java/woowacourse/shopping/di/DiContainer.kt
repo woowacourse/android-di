@@ -8,7 +8,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.jvm.javaMethod
 
-open class DiContainer {
+open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     private val methods get() = this::class.declaredFunctions
 
     private val properties get() = this::class.declaredMemberProperties
@@ -25,10 +25,8 @@ open class DiContainer {
         )
     }
 
-    fun <T : Any> get(clazz: KClass<T>): T {
-        return getFromMethod(clazz)
-            ?: getFromGetter(clazz)
-            ?: throw IllegalArgumentException()
+    fun <T : Any> get(clazz: KClass<T>): T? {
+        return getFromMethod(clazz) ?: getFromGetter(clazz) ?: parentDiContainer?.get(clazz)
     }
 
     private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
