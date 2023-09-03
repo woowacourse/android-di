@@ -10,8 +10,8 @@ class CustomInject(
     private val container: Container,
 ) {
 
-    fun <T : Any> getInstance(kClass: Class<T>): T {
-        return createInstance(kClass.kotlin)
+    fun <T : Any> getInstance(clazz: Class<T>): T {
+        return createInstance(clazz.kotlin)
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
@@ -19,13 +19,13 @@ class CustomInject(
 
         val params = constructors.parameters
         val arg = params.map {
-            checkInstance(it.type)
+            findPropertyAndGetValue(it.type)
         }.toTypedArray()
 
         return constructors.call(*arg)
     }
 
-    private fun checkInstance(type: KType): Any {
+    private fun findPropertyAndGetValue(type: KType): Any {
         return container::class.declaredMemberProperties.find { it.returnType == type }?.getter?.call(
             container,
         ) ?: throw IllegalArgumentException()
