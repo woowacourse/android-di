@@ -34,9 +34,7 @@ class CartViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ShoppingApplication)
-                CartViewModel(
-                    cartRepository = application.appContainer.cartRepository,
-                )
+                application.injector.create(CartViewModel::class.java)
             }
         }
     }

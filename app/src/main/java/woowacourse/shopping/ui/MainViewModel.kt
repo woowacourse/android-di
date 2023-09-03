@@ -36,10 +36,7 @@ class MainViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ShoppingApplication)
-                MainViewModel(
-                    productRepository = application.appContainer.productRepository,
-                    cartRepository = application.appContainer.cartRepository,
-                )
+                application.injector.create(MainViewModel::class.java)
             }
         }
     }
