@@ -21,6 +21,16 @@ class DefaultProductRepository : ProductRepository {
             price = 20_000,
             imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
         ),
+        Product(
+            "갤럭시 z폴드 5",
+            2_000_000,
+            "https://images.samsung.com/kdp/goods/2023/07/11/f6d71ef1-2f1c-48fa-9d2c-22a544c160c5.png",
+        ),
+        Product(
+            "갤럭시 z플립 5",
+            1_200_000,
+            "https://images.samsung.com/kdp/goods/2023/07/11/2b8aed55-ac36-44b0-83f9-0562d8040686.png",
+        ),
     )
 
     override fun getAllProducts(): List<Product> {
