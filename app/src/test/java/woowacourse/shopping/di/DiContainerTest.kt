@@ -90,6 +90,21 @@ class DiContainerTest {
     }
 
     @Test
+    fun `by lazy로 지연 초기화가 가능하다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            val fakeDiDataSource: FakeDiDataSource
+                by lazy { this.createInstance(FakeDiProtoTypeDataSource::class) }
+        }
+
+        // when
+        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class)
+
+        // then
+        assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
+    }
+
+    @Test
     fun `DiContainer에서 없는 리포지터리 객체를 요청하면 예외를 발생시킨다`() {
         // given
         class MockRepository
