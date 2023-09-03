@@ -9,12 +9,13 @@ import kotlin.reflect.full.declaredMemberExtensionFunctions
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.staticFunctions
-import kotlin.reflect.jvm.javaType
+import kotlin.reflect.full.valueParameters
 
 class Person(
     var firstName: String,
@@ -23,7 +24,10 @@ class Person(
     private val numberOfFamily: Int,
     private val repo: Repo,
 ) {
-    fun greeting() {}
+    fun greeting(a: Int, c: Long = 1L) {
+        val b: Boolean
+    }
+
     private fun fullName() {}
     private fun Int.isAdult() {}
     private fun Person.haha() {}
@@ -137,6 +141,7 @@ class ReflectionTest {
         println(personReflection.primaryConstructor?.call("a", "b", 3, 3, DefaultRepo())?.firstName)
         println(getAnything(Person::class.java).firstName)
         println()
+        getAnything2(DefaultRepo::class.java)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -144,14 +149,28 @@ class ReflectionTest {
         val reflectionPrimaryConstructor =
             modelClass.kotlin.primaryConstructor ?: throw RuntimeException("ㅋㅋㅋㅋㅋ")
         reflectionPrimaryConstructor.parameters.forEach {
-            val parameterType = it.type.javaType
-            if (parameterType is Class<*> && parameterType.isInterface) {
-                println("Parameter Name: ${parameterType.name}")
-                println("Parameter Type: ${parameterType.simpleName} (Interface)")
-            }
+            val parameterType = it.type::class.java
+            println(modelClass.isAssignableFrom(parameterType))
             Person::class.starProjectedType
         }
         val returnTypes = modelClass.kotlin.memberFunctions.map { it.returnType }
         return reflectionPrimaryConstructor.call("a", "b", 3, 3, DefaultRepo()) as T
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> getAnything2(modelClass: Class<T>) {
+        Person::class.primaryConstructor?.parameters?.forEach {
+            val parameterTypeClass = it.type.classifier as KClass<*>
+            println()
+            println(it.type)
+            println(parameterTypeClass)
+            println(modelClass)
+            println(modelClass.kotlin.isSubclassOf(parameterTypeClass))
+            Person::class.starProjectedType
+        }
+        val func = Person::greeting
+        println(func.parameters.map { it.type })
+        println(func.valueParameters.map { it.type })
+        println(func.valueParameters.map { it.isOptional })
     }
 }
