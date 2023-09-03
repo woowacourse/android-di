@@ -13,11 +13,8 @@ object ClassInjector {
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = validateHasPrimaryConstructor<T>()
-
-//         TODO: 추후 요구사항에 따라 @Inject Annotation 포함 여부를 검증한다.
-//         primaryConstructor.validateIncludingInjectAnnotation()
-
         val parameterValues = getParameterValues(primaryConstructor.parameters)
+
         return primaryConstructor.call(*parameterValues.toTypedArray())
     }
 
