@@ -11,7 +11,6 @@ import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
-
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
@@ -42,4 +41,21 @@ class MainActivityTest {
         // then
         assertThat(viewModel).isNotNull()
     }
+
+    @Test
+    fun `ViewModel 타입 테스트`() {
+        // given
+        val activity = Robolectric
+            .buildActivity(MainActivity::class.java)
+            .create()
+            .get()
+        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+
+        // then
+        assertThat(viewModel).isInstanceOf(MainViewModel::class.java)
+    }
 }
+
+
+
+
