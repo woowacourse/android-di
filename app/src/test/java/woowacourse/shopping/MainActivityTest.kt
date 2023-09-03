@@ -1,21 +1,28 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.ViewModelFactory
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Before
+    fun setUp() {
+        DIContainer.init()
+    }
 
     @Test
     fun `Activity 실행 테스트`() {
@@ -32,11 +39,7 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = ViewModelFactory().create(MainViewModel::class.java)
 
         // then
         assertThat(viewModel).isNotNull()
