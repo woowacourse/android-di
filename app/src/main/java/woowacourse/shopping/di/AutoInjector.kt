@@ -25,6 +25,7 @@ class AutoInjector(
     }
 
     override fun <T : Any> inject(modelClass: Class<T>): T {
+        // 모듈이 가진 자동 주입 생성 함수들 중, 일치하는 반환타입을 가진 함수 조사
         val injectableFunctions = mutableListOf<KFunction<*>>()
         for (function in moduleFunctions.keys) {
             val returnKClass = function.returnType.classifier as KClass<*>
@@ -48,7 +49,7 @@ class AutoInjector(
 
     private fun <T : Any> createWithModuleFunc(func: KFunction<*>): T {
         val params = mutableListOf<Any>()
-        val module = moduleFunctions[func] ?: throw RuntimeException()
+        val module = moduleFunctions[func] ?: throw RuntimeException("모듈에 자동 주입 가능한 함수 없음")
         params.add(module)
         func.valueParameters.forEach { param ->
             val paramKClass = param.type.classifier as KClass<*>
@@ -61,8 +62,8 @@ class AutoInjector(
     private fun <T : Any> createWithPrimaryConstructor(primaryConstructor: KFunction<T>): T {
         val params = mutableListOf<Any>()
         primaryConstructor.valueParameters.forEach { param ->
-            val kcalss = param.type.classifier as KClass<*>
-            params.add(inject(kcalss.java))
+            val paramKClass = param.type.classifier as KClass<*>
+            params.add(inject(paramKClass.java))
         }
         return primaryConstructor.call(*params.toTypedArray())
     }
