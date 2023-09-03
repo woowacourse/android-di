@@ -10,11 +10,11 @@ class CustomInject(
     private val container: Container,
 ) {
 
-    inline fun <reified T : Any> getInstance(kClass: KClass<T>): T {
-        return createInstance(kClass)
+    fun <T : Any> getInstance(kClass: Class<T>): T {
+        return createInstance(kClass.kotlin)
     }
 
-    fun <T : Any> createInstance(kClass: KClass<T>): T {
+    private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val constructors = kClass.primaryConstructor ?: throw IllegalArgumentException()
 
         val params = constructors.parameters

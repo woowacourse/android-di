@@ -2,10 +2,9 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.common.CommonViewModelFactory
 
@@ -13,14 +12,7 @@ class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(
-            this,
-            CommonViewModelFactory {
-                ShoppingApplication.inject.getInstance(CartViewModel::class)
-            },
-        )[CartViewModel::class.java]
-    }
+    private val viewModel by viewModels<CartViewModel> { CommonViewModelFactory() }
 
     private lateinit var dateFormatter: DateFormatter
 

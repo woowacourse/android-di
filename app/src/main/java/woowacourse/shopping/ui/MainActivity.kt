@@ -4,10 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.common.CommonViewModelFactory
@@ -16,14 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(
-            this,
-            CommonViewModelFactory {
-                ShoppingApplication.inject.getInstance(MainViewModel::class)
-            },
-        )[MainViewModel::class.java]
-    }
+    private val viewModel by viewModels<MainViewModel> { CommonViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
