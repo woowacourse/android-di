@@ -9,7 +9,7 @@ open class DiContainer {
 
     private val properties get() = this::class.declaredMemberProperties
 
-    inline fun <reified T : Any> createInstance(clazz: Class<T>): T {
+    fun <T> createInstance(clazz: Class<T>): T {
         val constructor = clazz.declaredConstructors.first()
 
         return constructor.newInstance(
