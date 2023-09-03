@@ -75,10 +75,10 @@ class DiStudy {
     @Test
     fun `DependencyProvider를 통해 파라미터가 두개인 TestViewModel2를 생성한다`() {
         // when
-        DependencyProvider.getInstance().createInstance(TestViewModel2::class)
+        val viewModel2 = DependencyProvider.getInstance().createInstance(TestViewModel2::class)
 
         // then
-//        assertNotNull(viewModel)
+        assertNotNull(viewModel2)
     }
 }
 
@@ -98,7 +98,7 @@ class DependencyProvider() {
         }
     }
 
-    fun createInstance(clazz: KClass<*>): Any {
+    fun <T : Any>createInstance(clazz: KClass<T>): T {
         val insertParameters: MutableList<Any> = mutableListOf()
         val parameters = clazz.primaryConstructor?.parameters
         parameters?.forEach {
