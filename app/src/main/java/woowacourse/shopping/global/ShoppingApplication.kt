@@ -7,5 +7,5 @@ import woowacourse.shopping.di.module.NormalModule
 import woowacourse.shopping.di.module.SingletonModule
 
 class ShoppingApplication : Application() {
-    val injector: Injector = AutoInjector(SingletonModule(), NormalModule())
+    val injector: Injector = AutoInjector(listOf(SingletonModule(), NormalModule()))
 }

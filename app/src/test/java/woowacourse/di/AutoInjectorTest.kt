@@ -10,7 +10,7 @@ import woowacourse.shopping.ui.MainViewModel
 internal class AutoInjectorTest {
     @Test
     fun `AutoInjector로 MainViewModel을 만들 수 있다`() {
-        val autoInjector = AutoInjector(SingletonModule(), NormalModule())
+        val autoInjector = AutoInjector(listOf(SingletonModule(), NormalModule()))
         val instance = autoInjector.inject(MainViewModel::class.java)
         assertEquals(true, instance is MainViewModel)
     }

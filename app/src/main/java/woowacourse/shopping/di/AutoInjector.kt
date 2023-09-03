@@ -1,8 +1,6 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.di.module.Module
-import woowacourse.shopping.di.module.NormalModule
-import woowacourse.shopping.di.module.SingletonModule
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -12,11 +10,10 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
 class AutoInjector(
-    private val singletonModule: SingletonModule,
-    private val normalModule: NormalModule,
+    private val modules: List<Module>,
 ) : Injector {
     private val moduleFunctions = mutableMapOf<KFunction<*>, Module>().apply {
-        listOf(singletonModule, normalModule).forEach { module ->
+        modules.forEach { module ->
             module::class.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
                 .forEach { function ->
                     this[function] = module
