@@ -17,9 +17,9 @@ class DependencyProvider private constructor() {
         dependencies[CartRepository::class.java] = DefaultCartRepository()
     }
 
-    fun createInstance(clazz: KClass<*>): Any {
+    fun <T : Any>createInstance(clazz: KClass<T>): T {
         val insertParameters: MutableList<Any> = mutableListOf()
-        val primaryConstructor = clazz.primaryConstructor ?: return IllegalArgumentException()
+        val primaryConstructor = clazz.primaryConstructor ?: throw IllegalArgumentException()
 
         val parameters = primaryConstructor.parameters
         parameters.forEach {
