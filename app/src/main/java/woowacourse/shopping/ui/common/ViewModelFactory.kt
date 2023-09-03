@@ -11,9 +11,9 @@ class ViewModelFactory : ViewModelProvider.Factory {
         val types = constructor.parameterTypes
         val params = mutableListOf<Any?>()
 
-        val applicationProperties = RepositoryModule::class.java.declaredFields
+        val properties = RepositoryModule::class.java.declaredFields
         for (type in types) {
-            val field = applicationProperties.first { it.type == type }
+            val field = properties.first { it.type == type }
                 ?: throw IllegalArgumentException("Can't find Property $type")
             field.isAccessible = true
             params.add(field.get(null))
