@@ -35,9 +35,10 @@ class DiContainerTest {
     }
 
     private class FakeDiContainer : DiContainer() {
-        private val fakeDiDataSource: FakeDiDataSource =
+        private fun provideFakeDiDataSource(): FakeDiDataSource =
             this.createInstance(FakeDiProtoTypeDataSource::class)
-        private val fakeDiRepository: FakeDiRepository =
+
+        private fun provideFakeDiRepository(): FakeDiRepository =
             this.createInstance(FakeDiProtoTypeRepository::class)
     }
 
@@ -71,26 +72,14 @@ class DiContainerTest {
     }
 
     @Test
-    fun `Getter를 통해 주입된 객체를 반환한다`() {
+    fun `의존성 부여 순서는 상관 없다`() {
         // given
         val fakeDiObject = object : DiContainer() {
-            val fakeDiDataSource: FakeDiDataSource
-                get() = this.createInstance(FakeDiProtoTypeDataSource::class)
-        }
+            fun provideFakeDiRepository(): FakeDiRepository =
+                this.createInstance(FakeDiProtoTypeRepository::class)
 
-        // when
-        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class)
-
-        // then
-        assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
-    }
-
-    @Test
-    fun `by lazy로 지연 초기화가 가능하다`() {
-        // given
-        val fakeDiObject = object : DiContainer() {
-            val fakeDiDataSource: FakeDiDataSource
-                by lazy { this.createInstance(FakeDiProtoTypeDataSource::class) }
+            fun provideFakeDiDataSource(): FakeDiDataSource =
+                this.createInstance(FakeDiProtoTypeDataSource::class)
         }
 
         // when
