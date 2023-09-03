@@ -172,5 +172,8 @@ class ReflectionTest {
         println(func.parameters.map { it.type })
         println(func.valueParameters.map { it.type })
         println(func.valueParameters.map { it.isOptional })
+        Person("a", "b", 3, 3, DefaultRepo())::class.memberFunctions.forEach {
+            println("${it.name}, $it")
+        }
     }
 }
