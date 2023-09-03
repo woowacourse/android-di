@@ -13,7 +13,9 @@ import woowacourse.shopping.ui.cart.CartActivity
 class MainActivity : BaseActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel: MainViewModel by lazy { ViewModelProvider(this, Factory)[MainViewModel::class.java] }
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, Factory)[MainViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class MainActivity : BaseActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
+            println("메인: products: $it")
             val adapter = ProductAdapter(
                 items = it,
                 onClickProduct = viewModel::addCartProduct,
