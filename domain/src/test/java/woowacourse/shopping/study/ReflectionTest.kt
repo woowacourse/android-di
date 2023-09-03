@@ -11,7 +11,9 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.javaType
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
@@ -138,5 +140,27 @@ class ReflectionTest {
 
         // property1.setter.call(person, "30") <- 이것이 되게해보아라(숙제)
         Assertions.assertEquals(30, person.getAge())
+    }
+
+    // 혼자 reflection 테스트 해보기
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun `class의 생성자 타입 가져오기`() {
+        val person = Person::class
+        val primaryConstructorParameters = person.primaryConstructor?.parameters
+
+        var stringTypeCount = 0
+        var intTypeCount = 0
+
+        if (primaryConstructorParameters != null) {
+            for (param in primaryConstructorParameters) {
+                when (param.type.javaType) {
+                    String::class.java -> stringTypeCount++
+                    Int::class.java -> intTypeCount++
+                }
+            }
+        }
+        assertThat(stringTypeCount).isEqualTo(2)
+        assertThat(intTypeCount).isEqualTo(1)
     }
 }
