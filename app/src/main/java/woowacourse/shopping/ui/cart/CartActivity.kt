@@ -2,16 +2,15 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.DIActivity
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : DIActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels { CartViewModel.Factory }
+    private lateinit var viewModel: CartViewModel
 
     private lateinit var dateFormatter: DateFormatter
 
