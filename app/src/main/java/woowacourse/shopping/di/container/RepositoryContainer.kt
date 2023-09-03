@@ -5,7 +5,7 @@ import woowacourse.shopping.data.LocalProductRepository
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
-class RepositoryContainer {
+class RepositoryContainer : Container {
     val postRepository: ProductRepository by lazy {
         LocalProductRepository()
     }
