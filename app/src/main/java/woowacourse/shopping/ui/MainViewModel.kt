@@ -13,8 +13,8 @@ import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    private val productRepositoryImpl: ProductRepository,
-    private val cartRepositoryImpl: CartRepository,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -24,20 +24,20 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepositoryImpl.addCartProduct(product)
+        cartRepository.addCartProduct(product)
         _onProductAdded.value = true
     }
 
     fun getAllProducts() {
-        _products.value = productRepositoryImpl.getAllProducts()
+        _products.value = productRepository.getAllProducts()
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 MainViewModel(
-                    productRepositoryImpl = ProductRepositoryImpl(),
-                    cartRepositoryImpl = CartRepositoryImpl(),
+                    productRepository = ProductRepositoryImpl(),
+                    cartRepository = CartRepositoryImpl(),
                 )
             }
         }
