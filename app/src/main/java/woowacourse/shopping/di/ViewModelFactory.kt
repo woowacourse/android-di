@@ -22,7 +22,7 @@ object ViewModelFactory {
                     ProductRepository::class.createType() -> repositoryTypes.add(
                         ProductRepositoryImpl(),
                     )
-                    CartRepository::class.createType() -> repositoryTypes.add(CartRepositoryImpl())
+                    CartRepository::class.createType() -> repositoryTypes.add(CartRepositoryImpl)
                 }
             }
         }
