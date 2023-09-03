@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.inject.CustomInject.getInstance
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.common.CommonViewModelFactory
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(
             this,
             CommonViewModelFactory {
-                getInstance(MainViewModel::class)
+                ShoppingApplication.inject.getInstance(MainViewModel::class)
             },
         )[MainViewModel::class.java]
     }

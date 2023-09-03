@@ -2,15 +2,16 @@ package woowacourse.shopping
 
 import android.app.Application
 import woowacourse.shopping.di.container.RepositoryContainer
+import woowacourse.shopping.di.inject.CustomInject
 
 class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        repositoryContainer = RepositoryContainer()
+        inject = CustomInject(RepositoryContainer())
     }
 
     companion object {
-        lateinit var repositoryContainer: RepositoryContainer
+        lateinit var inject: CustomInject
     }
 }
