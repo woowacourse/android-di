@@ -2,8 +2,6 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 import kotlin.reflect.KClass
@@ -20,9 +18,12 @@ object ViewModelFactory {
             for (param in parameters) {
                 when (param.type) {
                     ProductRepository::class.createType() -> repositoryTypes.add(
-                        ProductRepositoryImpl(),
+                        RepositoryContainer.productRepository,
                     )
-                    CartRepository::class.createType() -> repositoryTypes.add(CartRepositoryImpl)
+                    CartRepository::class.createType() -> repositoryTypes.add(
+                        RepositoryContainer.cartRepository,
+                    )
+                    else -> throw IllegalArgumentException()
                 }
             }
         }
