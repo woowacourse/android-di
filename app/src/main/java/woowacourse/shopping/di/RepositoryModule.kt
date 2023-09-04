@@ -5,7 +5,7 @@ import woowacourse.shopping.data.ProductDefaultRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-object RepositoryModule {
+object RepositoryModule : Module {
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()
     fun provideCartRepository(): CartRepository = CartDefaultRepository()
 }

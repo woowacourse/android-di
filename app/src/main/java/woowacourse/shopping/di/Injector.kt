@@ -4,7 +4,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.primaryConstructor
 
-class Injector(private val repositoryModule: RepositoryModule) {
+class Injector(private val repositoryModule: Module) {
 
     private val repositoryMap: MutableMap<String, Any?> =
         mutableMapOf<String, Any?>().apply {
@@ -15,17 +15,15 @@ class Injector(private val repositoryModule: RepositoryModule) {
             }
         }
 
-    fun <T : Any> inject(modelClass: Class<T>): T {
-        val primaryConstructor = modelClass.kotlin.primaryConstructor
+    inline fun <reified T : Any> inject(): T {
+        val primaryConstructor = T::class.primaryConstructor ?: throw RuntimeException("주생성자 없음")
 
-        return primaryConstructor?.let {
-            val params = getParams(primaryConstructor.parameters)
+        val params = getParams(primaryConstructor.parameters)
 
-            primaryConstructor.call(*params.toTypedArray())
-        } ?: throw RuntimeException("주생성자 없음")
+        return primaryConstructor.call(*params.toTypedArray())
     }
 
-    private fun getParams(parameters: List<KParameter>): List<Any> {
+    fun getParams(parameters: List<KParameter>): List<Any> {
         val params = mutableListOf<Any>()
 
         parameters.forEach {
