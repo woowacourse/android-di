@@ -5,8 +5,6 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaGetter
-import kotlin.reflect.jvm.javaMethod
 
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     private val methods get() = this::class.declaredFunctions
@@ -32,14 +30,14 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
         return methods.firstOrNull { method ->
             method.isAccessible = true
-            method.javaMethod?.returnType?.simpleName == clazz.simpleName
+            method.returnType.javaClass.simpleName == clazz.simpleName
         }?.call(this) as T?
     }
 
     private fun <T : Any> getFromGetter(clazz: KClass<T>): T? {
         return properties.firstOrNull { property ->
             property.isAccessible = true
-            property.javaGetter?.returnType?.simpleName == clazz.simpleName
+            property.returnType.javaClass.simpleName == clazz.simpleName
         }?.getter?.call(this) as T?
     }
 }
