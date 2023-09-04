@@ -27,13 +27,7 @@ class AutoInjector(
 
         // 해당 객체를 만들기 위한 필요 구성 요소들을 얻는 과정.
         return when (injectableFunctions.size) {
-            0 -> {
-                // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
-                val primaryConstructor =
-                    modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
-                createWithPrimaryConstructor(primaryConstructor)
-            }
-
+            0 -> createWithPrimaryConstructor(modelClass) // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
             1 -> createWithModuleFunc(injectableFunctions.first())
             else -> createWithModuleFunc(injectableFunctions.first()) // 추후 추가 예정, 이 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
         }
@@ -62,7 +56,9 @@ class AutoInjector(
         return func.call(*params.toTypedArray()) as T
     }
 
-    private fun <T : Any> createWithPrimaryConstructor(primaryConstructor: KFunction<T>): T {
+    private fun <T : Any> createWithPrimaryConstructor(modelClass: Class<T>): T {
+        val primaryConstructor =
+            modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
         val params = mutableListOf<Any>()
         primaryConstructor.valueParameters.forEach { param ->
             val paramKClass = param.type.classifier as KClass<*>
