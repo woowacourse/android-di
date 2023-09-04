@@ -21,8 +21,18 @@ sealed class LifeCycleType<T : Any> {
         }
     }
 
-//    class Disposable<T : Any> : LifeCycleType<T>
-//
+    class Disposable<T : Any>(
+        override val qualifier: String? = null,
+        private val initializeMethod: () -> T,
+    ) : LifeCycleType<T>() {
+        override val type: KType =
+            getLambdaReturnType(initializeMethod) ?: throw IllegalStateException(KTYPE_NULL_ERROR)
+
+        override fun getInstance(): T {
+            return initializeMethod()
+        }
+    }
+
 //    class Activity<T : Any> : LifeCycleType<T>
 //
 //    class Fragment<T : Any> : LifeCycleType<T>
