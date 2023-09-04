@@ -9,7 +9,10 @@ object AutoDI {
         DependencyContainer.singletonRegister.register(qualifier, registerBlock)
     }
 
-    fun <T : Any> disposable(qualifier: String? = null, registerBlock: () -> T){
-        DependencyContainer.disposableRegister.register(qualifier,registerBlock)
+    fun <T : Any> disposable(qualifier: String? = null, registerBlock: () -> T) {
+        DependencyContainer.disposableRegister.register(qualifier, registerBlock)
     }
+
+    inline fun <reified T : Any> inject(qualifier: String? = null): T =
+        DependencyContainer.search(qualifier)
 }
