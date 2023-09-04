@@ -1,19 +1,17 @@
 package woowacourse.shopping.global
 
 import android.app.Application
-import woowacourse.shopping.di.AutoInjector
-import woowacourse.shopping.di.Injector
-import woowacourse.shopping.di.module.NormalModule
-import woowacourse.shopping.di.module.SingletonModule
+import woowacourse.shopping.di.module.ApplicationModule
+import woowacourse.shopping.di.module.DefaultApplicationModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        injector = AutoInjector(listOf(SingletonModule(), NormalModule()))
+        applicationModule = DefaultApplicationModule()
     }
 
     companion object {
-        lateinit var injector: Injector
+        lateinit var applicationModule: ApplicationModule
             private set
     }
 }

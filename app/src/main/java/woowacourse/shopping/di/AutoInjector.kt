@@ -3,50 +3,62 @@ package woowacourse.shopping.di
 import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
 class AutoInjector(
-    private val modules: List<Module>,
+    private val module: Module,
 ) : Injector {
-    private val moduleFunctions = mutableMapOf<KFunction<*>, Module>().apply {
-        modules.forEach { module ->
-            module::class.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
-                .forEach { function ->
-                    this[function] = module
-                }
-        }
-    }
-
     override fun <T : Any> inject(modelClass: Class<T>): T {
         // 모듈이 가진 자동 주입 생성 함수들 중, 일치하는 반환타입을 가진 함수 조사
-        val injectableFunctions = searchInjectableFunctions(modelClass)
+        val injectableFunctionWithModuleMap = searchInjectableFunctions(listOf(module), modelClass)
 
         // 해당 객체를 만들기 위한 필요 구성 요소들을 얻는 과정.
-        return when (injectableFunctions.size) {
+        return when (injectableFunctionWithModuleMap.size) {
             0 -> createWithPrimaryConstructor(modelClass) // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
-            1 -> createWithModuleFunc(injectableFunctions.first())
-            else -> createWithModuleFunc(injectableFunctions.first()) // 추후 추가 예정, 이 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
-        }
-    }
-
-    private fun <T : Any> searchInjectableFunctions(modelClass: Class<T>): List<KFunction<*>> {
-        return mutableListOf<KFunction<*>>().apply {
-            moduleFunctions.keys.forEach { function ->
-                val returnKClass = function.returnType.classifier as KClass<*>
-                if (modelClass.kotlin.isSubclassOf(returnKClass)) {
-                    add(function)
-                }
+            else -> { // 추후 1과 else로 분리 예정, 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
+                val injectFunction = injectableFunctionWithModuleMap.keys.first()
+                val injectModule = injectableFunctionWithModuleMap[injectFunction]
+                    ?: throw NullPointerException("${injectFunction.name} 함수가 없습니다.")
+                createWithModuleFunc(injectModule, injectFunction)
             }
         }
     }
 
-    private fun <T : Any> createWithModuleFunc(func: KFunction<*>): T {
+    private fun <T : Any> searchInjectableFunctions(
+        modules: List<Module>,
+        modelClass: Class<T>,
+    ): Map<KFunction<*>, Module> {
+        return mutableMapOf<KFunction<*>, Module>().apply {
+            modules.forEach { module ->
+                val matchFunctionModuleMaps = module.getPublicMethodMap().filter { entry ->
+                    val returnKClass = entry.key.returnType.classifier as KClass<*>
+                    modelClass.kotlin.isSubclassOf(returnKClass)
+                }
+                putAll(matchFunctionModuleMaps)
+            }
+
+            // 만약 현재 트리 레벨의 모듈들에서 해당 메소드가 없다면, 부모 모듈 검사
+            if (isEmpty()) putAll(searchInjectableFunctionsFromParents(modules, modelClass))
+        }
+    }
+
+    private fun <T : Any> searchInjectableFunctionsFromParents(
+        childModules: List<Module>,
+        modelClass: Class<T>,
+    ): Map<KFunction<*>, Module> {
+        return mutableMapOf<KFunction<*>, Module>().apply {
+            val parentModules: List<Module> =
+                childModules.filter { it.parentModule != null }.map { it.parentModule!! }
+            if (parentModules.isEmpty().not()) {
+                putAll(searchInjectableFunctions(parentModules, modelClass))
+            }
+        }
+    }
+
+    private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
         val params = mutableListOf<Any>()
-        val module = moduleFunctions[func] ?: throw NullPointerException("모듈에 자동 주입 가능한 함수 없음")
         params.add(module)
         func.valueParameters.forEach { param ->
             val paramKClass = param.type.classifier as KClass<*>
