@@ -7,12 +7,21 @@ import com.ki960213.sheath.util.ClassesTopologicalSorter
 import com.ki960213.sheath.util.InstanceGenerator
 
 abstract class SheathApplication : Application() {
-    private val container: List<Any> by lazy {
+    private val _container: MutableList<Any> = mutableListOf()
+    val container get() = _container.toList()
+
+    override fun onCreate() {
+        super.onCreate()
+
+        setupContainer()
+    }
+
+    private fun setupContainer() {
         val scanner = ClassScanner(applicationContext)
         val classes = scanner.findAll(Component::class.java)
 
         val sortedClasses = ClassesTopologicalSorter.sort(classes)
 
-        sortedClasses.map { InstanceGenerator.generate(it, container.toList()) }
+        _container.addAll(sortedClasses.map { InstanceGenerator.generate(it, _container.toList()) })
     }
 }
