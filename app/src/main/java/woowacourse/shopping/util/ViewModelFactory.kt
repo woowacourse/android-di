@@ -7,7 +7,6 @@ import woowacourse.shopping.global.ShoppingApplication
 
 fun ComponentActivity.viewModelFactory() = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val application = application as ShoppingApplication
-        return application.injector.inject(modelClass)
+        return ShoppingApplication.injector.inject(modelClass)
     }
 }

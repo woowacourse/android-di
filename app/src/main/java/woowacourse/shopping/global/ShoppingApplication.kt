@@ -7,5 +7,13 @@ import woowacourse.shopping.di.module.NormalModule
 import woowacourse.shopping.di.module.SingletonModule
 
 class ShoppingApplication : Application() {
-    val injector: Injector = AutoInjector(listOf(SingletonModule(), NormalModule()))
+    override fun onCreate() {
+        super.onCreate()
+        injector = AutoInjector(listOf(SingletonModule(), NormalModule()))
+    }
+
+    companion object {
+        lateinit var injector: Injector
+            private set
+    }
 }
