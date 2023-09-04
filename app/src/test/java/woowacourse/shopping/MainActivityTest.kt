@@ -11,12 +11,14 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.di.AutoInjector
-import woowacourse.shopping.di.Injector
-import woowacourse.shopping.global.ShoppingApplication
+import woowacourse.shopping.di.activity.DiEntryPointActivity
+import woowacourse.shopping.di.application.DiApplication
+import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.util.getFakeNormalModule
-import woowacourse.util.getFakeSingletonModule
+import woowacourse.util.FakeApplicationModule
+import woowacourse.util.getFakeActivityModule
+import woowacourse.util.getFakeApplicationModule
 import woowacourse.util.getProducts
 
 @RunWith(RobolectricTestRunner::class)
@@ -25,28 +27,36 @@ class MainActivityTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var fakeInjector: Injector
-
     @Before
     fun setup() {
-        fakeInjector = AutoInjector(listOf(getFakeSingletonModule(), getFakeNormalModule()))
-
         // 애플리케이션의 인젝터 객체 페이크객체로 교체. 이제 자동주입 로직이 해당 인젝터가 가진 모듈객체를 따를 것임.
-        val application = ApplicationProvider.getApplicationContext<ShoppingApplication>()
-        val injector = ShoppingApplication::class.java.getDeclaredField("injector")
-        injector.apply {
+        val application =
+            ApplicationProvider.getApplicationContext<DiApplication<ApplicationModule>>()
+
+        val applicationModule =
+            DiApplication::class.java.getDeclaredField("applicationModule")
+        applicationModule.apply {
             isAccessible = true
-            set(application, fakeInjector)
+            set(application, getFakeApplicationModule())
         }
+    }
+
+    @Test
+    fun `FakeApplicationModule 초기화 실행 테스트`() {
+        // given
+        val application =
+            ApplicationProvider.getApplicationContext<DiApplication<FakeApplicationModule>>()
+
+        // then
+        assertThat(application is DiApplication<FakeApplicationModule>).isEqualTo(true)
     }
 
     @Test
     fun `Activity 실행 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activityController = Robolectric.buildActivity(MainActivity::class.java)
+        val activity = activityController.get()
+        changeFakeActivityModule(activity)
 
         // then
         assertThat(activity).isNotNull()
@@ -55,10 +65,10 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activityController = Robolectric.buildActivity(MainActivity::class.java)
+        val activity = activityController.get()
+        changeFakeActivityModule(activity)
+        activityController.create()
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
@@ -68,16 +78,27 @@ class MainActivityTest {
     @Test
     fun `MainViewModel 상품 목록 조회 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activityController = Robolectric.buildActivity(MainActivity::class.java)
+        val activity = activityController.get()
+        changeFakeActivityModule(activity)
+        activityController.create()
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
+        // when
         viewModel.getAllProducts()
 
         // then
         val actual = getProducts()
         assertThat(viewModel.products.value).isEqualTo(actual)
+    }
+
+    private fun changeFakeActivityModule(
+        activity: DiEntryPointActivity<*>,
+    ) {
+        DiApplication.removeInjectorForInstance(activity.hashCode())
+        DiApplication.addInjectorForInstance(
+            activity.hashCode(),
+            AutoInjector(getFakeActivityModule(DiApplication.applicationModule)),
+        )
     }
 }

@@ -3,19 +3,22 @@ package woowacourse.util
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.module.ActivityModule
-import woowacourse.shopping.di.module.Module
+import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.model.Product
 
-fun getFakeSingletonModule(): Module = object : Module() {
+class FakeApplicationModule : ApplicationModule() {
     private val cartRepository = getFakeCartRepository()
     fun getCartRepository(): CartRepository = cartRepository
 }
 
-fun getFakeNormalModule(): Module = object : ActivityModule() {
-    fun getProductRepository(): ProductRepository {
-        return getFakeProductRepository()
+fun getFakeApplicationModule(): ApplicationModule = FakeApplicationModule()
+
+fun getFakeActivityModule(fakeApplicationModule: ApplicationModule = getFakeApplicationModule()): ActivityModule =
+    object : ActivityModule(fakeApplicationModule) {
+        fun getProductRepository(): ProductRepository {
+            return getFakeProductRepository()
+        }
     }
-}
 
 fun getFakeCartRepository(): CartRepository = object : CartRepository {
     private val carts = mutableListOf<Product>()
