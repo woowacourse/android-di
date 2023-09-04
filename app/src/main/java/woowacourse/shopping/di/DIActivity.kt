@@ -9,20 +9,26 @@ import java.lang.reflect.Field
 abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModelField =
-            this::class.java.declaredFields.first { ViewModel::class.java.isAssignableFrom(it.type) }
-        viewModelField.isAccessible = true
-        viewModelField.set(this, getNewViewModelByType(viewModelField))
+            this::class.java.declaredFields.firstOrNull { ViewModel::class.java.isAssignableFrom(it.type) }
+
+        viewModelField?.let { setViewModelInstance(it) }
 
         super.onCreate(savedInstanceState)
     }
 
-    private fun getNewViewModelByType(field: Field) = when (field.type) {
-        MainViewModel::class.java -> getViewModel<MainViewModel>()
-        CartViewModel::class.java -> getViewModel<CartViewModel>()
-        else -> throw IllegalArgumentException("ViewModel 타입 오류 : ${field.type.name}")
+    private fun setViewModelInstance(viewModelField: Field) {
+        viewModelField.isAccessible = true
+        viewModelField.set(this, getNewViewModelByType(viewModelField))
     }
 
-    private inline fun <reified T : ViewModel> getViewModel(): T {
-        return ViewModelProvider(this@DIActivity, viewModelFactory)[T::class.java]
+    @Suppress("UNCHECKED_CAST")
+    private fun getNewViewModelByType(field: Field): ViewModel {
+        val vm = field.type as? Class<ViewModel>
+        requireNotNull(vm) { "No matching ViewModel type | type : ${field.type}" }
+        return getViewModel(vm)
+    }
+
+    private inline fun <reified VM : ViewModel> getViewModel(type: Class<VM>): VM {
+        return ViewModelProvider(this@DIActivity, ViewModelFactory())[type]
     }
 }

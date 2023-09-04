@@ -73,4 +73,5 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.1")
     // assertj
     testImplementation("org.assertj:assertj-core:3.22.0")
+    implementation(kotlin("reflect"))
 }
