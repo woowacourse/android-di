@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
@@ -8,7 +8,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.MainActivity
+import woowacourse.shopping.ui.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
