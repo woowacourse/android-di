@@ -1,5 +1,7 @@
 package woowacourse.shopping.util.autoDI
 
+import woowacourse.shopping.util.autoDI.dependencyContainer.DependencyContainer
+
 object AutoDI {
     operator fun invoke(init: AutoDI.() -> Unit) {
         this.init()

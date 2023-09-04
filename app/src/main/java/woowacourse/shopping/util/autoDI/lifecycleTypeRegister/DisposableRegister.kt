@@ -1,9 +1,9 @@
 package woowacourse.shopping.util.autoDI.lifecycleTypeRegister
 
-import woowacourse.shopping.util.autoDI.LifeCycleType
+import woowacourse.shopping.util.autoDI.dependencyContainer.LifeCycleTypes
 
-class DisposableRegister(private val disposables: MutableList<LifeCycleType.Disposable<*>>) {
+class DisposableRegister(private val disposables: LifeCycleTypes.Disposables) {
     fun <T : Any> register(qualifier: String? = null, initializeMethod: () -> T) {
-        disposables.add(LifeCycleType.Disposable(qualifier, initializeMethod))
+        disposables.add(qualifier, initializeMethod)
     }
 }
