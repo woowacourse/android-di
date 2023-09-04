@@ -4,14 +4,16 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.primaryConstructor
 
-class Injector(private val repositoryModule: Module) {
+class Injector(private val modules: List<Module>) {
 
-    private val repositoryMap: MutableMap<String, Any?> =
+    private val providers: MutableMap<String, Any?> =
         mutableMapOf<String, Any?>().apply {
-            repositoryModule::class.declaredMemberFunctions.forEach {
-                val returnType = it.returnType.toString()
-                val instance = it.call(repositoryModule)
-                this[returnType] = instance
+            modules.forEach { module ->
+                module::class.declaredMemberFunctions.forEach {
+                    val returnType = it.returnType.toString()
+                    val instance = it.call(module)
+                    this[returnType] = instance
+                }
             }
         }
 
@@ -28,7 +30,7 @@ class Injector(private val repositoryModule: Module) {
 
         parameters.forEach {
             val paramType = it.type.toString()
-            val instance = repositoryMap[paramType]
+            val instance = providers[paramType]
             instance?.let { params.add(instance) }
         }
 

@@ -7,7 +7,7 @@ import woowacourse.shopping.di.Injector
 class FakeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        injector = Injector(FakeRepositoryModule)
+        injector = Injector(listOf(FakeRepositoryModule))
     }
 
     companion object {
