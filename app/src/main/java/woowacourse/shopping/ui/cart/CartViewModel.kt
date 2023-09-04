@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-class CartViewModel constructor(
+class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
