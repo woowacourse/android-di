@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.ShoppingApplication
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.viewModels(): Lazy<VM> {
@@ -15,7 +16,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModels(): Lazy<VM> {
         {
             viewModelFactory {
                 initializer {
-                    Injector.getInstance<VM>()
+                    ShoppingApplication.injector.getInstance<VM>()
                 }
             }
         },

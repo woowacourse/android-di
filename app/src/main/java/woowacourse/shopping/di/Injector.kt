@@ -1,12 +1,10 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.data.repository.ProductRepository
 import kotlin.reflect.KParameter
-import kotlin.reflect.full.createType
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object Injector {
+class Injector(private val container: Container) {
 
     inline fun <reified T : Any> getInstance(): T {
         val constructor = T::class.primaryConstructor ?: throw IllegalStateException()
@@ -18,18 +16,20 @@ object Injector {
         val arguments = mutableListOf<Any>()
 
         for (param in parameters) {
-            arguments.add(createArgument(param))
+            arguments.add(getArgument(param))
         }
         return arguments
     }
 
-    private fun createArgument(
-        param: KParameter,
-    ): Any = when (param.type) {
-        ProductRepository::class.createType() ->
-            RepositoryContainer.productRepository
-        CartRepository::class.createType() ->
-            RepositoryContainer.cartRepository
-        else -> throw IllegalArgumentException()
+    private fun getArgument(param: KParameter): Any {
+        container::class.declaredMemberProperties.forEach {
+            if (param.type == it.returnType) {
+                val result = it.getter.call(container)
+                if (result != null) {
+                    return result
+                }
+            }
+        }
+        throw IllegalArgumentException()
     }
 }
