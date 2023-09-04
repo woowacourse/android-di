@@ -3,7 +3,6 @@ package woowacourse.shopping.di
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -21,6 +20,8 @@ object DependencyInjector {
     }
 
     private fun findSingleton(type: KType): Any? {
+        if (!::dependencies.isInitialized)
+            throw IllegalStateException("의존이 초기화되지 않았습니다.")
         dependencies::class.declaredMemberProperties.forEach {
             if (type.isSupertypeOf(it.returnType)) {
                 return it.getter.call(dependencies)
@@ -30,7 +31,8 @@ object DependencyInjector {
     }
 
     private fun instantiate(type: KType): Any {
-        val constructor = type.jvmErasure.primaryConstructor ?: throw IllegalStateException()
+        val constructor = type.jvmErasure.primaryConstructor
+            ?: throw IllegalArgumentException("$type 클래스의 주 생성자가 존재하지 않습니다.")
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters)
         return constructor.call(*arguments)
