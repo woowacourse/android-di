@@ -25,7 +25,7 @@ class DependencyInjectorTest {
     )
 
     @Test(expected = IllegalArgumentException::class)
-    fun `Singleton에 TestRepository만 존재하면 TestViewModel 생성에 실패한다`() {
+    fun `설정한 의존에 의존이 모두 존재하지 않으면 TestViewModel 생성에 실패한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
@@ -38,7 +38,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `Singleton에 의존이 모두 존재하면 TestViewModel 생성에 성공한다`() {
+    fun `설정한 의존에 의존이 모두 존재하면 TestViewModel 생성에 성공한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
@@ -59,7 +59,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `Singleton에 의존이 존재하지 않더라도 의존 관계의 모든 클래스에 생성자가 존재하면 TestViewModel 생성에 성공한다`() {
+    fun `설정한 의존에 의존이 존재하지 않더라도 의존 관계의 모든 클래스에 생성자가 존재하면 TestViewModel 생성에 성공한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
