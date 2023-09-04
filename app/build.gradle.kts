@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -77,7 +76,6 @@ dependencies {
     testImplementation("io.mockk:mockk-android:1.13.7")
     testImplementation("io.mockk:mockk-agent:$1.13.7")
 
-    // hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    // reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
