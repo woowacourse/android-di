@@ -37,6 +37,9 @@ class Person(
     }
 }
 
+open class TestPeople
+class TestChild : TestPeople()
+
 interface Repo {
     fun getFriends(): List<Person>
 }
@@ -175,5 +178,9 @@ class ReflectionTest {
         Person("a", "b", 3, 3, DefaultRepo())::class.memberFunctions.forEach {
             println("${it.name}, $it")
         }
+
+        println("영차")
+        println(TestChild::class.isSubclassOf(TestChild::class))
+        println(TestChild::class.isSubclassOf(TestPeople::class))
     }
 }
