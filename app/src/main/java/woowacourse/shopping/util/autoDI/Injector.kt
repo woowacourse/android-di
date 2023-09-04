@@ -2,10 +2,9 @@ package woowacourse.shopping.util.autoDI
 
 import kotlin.reflect.KProperty
 
-class Injector<T>(qualifier: String? = null) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        // todo 로직 추가 및 return값 변경
+class Injector(val qualifier: String? = null) {
+    inline operator fun <reified T : Any> getValue(thisRef: Any?, property: KProperty<*>): T {
         @Suppress("UNCHECKED_CAST")
-        return thisRef as T
+        return AutoDI.inject(qualifier)
     }
 }
