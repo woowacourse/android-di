@@ -22,8 +22,8 @@ fun List<KParameter>.instantiate(): Array<Any?> =
     map { (it.type.classifier as KClass<*>).instantiate() }.toTypedArray()
 
 fun KClass<*>.instantiate(): Any? =
-    if (companionObject?.isSubclassOf(SingletonObject::class) == true) {
-        (companionObjectInstance as SingletonObject<*>).get()
+    if (companionObject?.isSubclassOf(SingletonFactory::class) == true) {
+        (companionObjectInstance as SingletonFactory<*>).getInstance()
     } else {
         primaryConstructor?.call()
     }
