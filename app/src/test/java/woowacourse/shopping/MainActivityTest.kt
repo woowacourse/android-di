@@ -9,8 +9,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.common.CommonViewModelFactory
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.main.MainActivity
+import woowacourse.shopping.ui.main.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
