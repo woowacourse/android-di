@@ -15,5 +15,10 @@ class LifeCycleTypeTest {
             CartRepositoryImpl()
         }
         assertThat(singleton.type).isEqualTo(CartRepository::class.starProjectedType)
+        // Disposable
+        val disposable = LifeCycleType.Disposable<CartRepository> {
+            CartRepositoryImpl()
+        }
+        assertThat(singleton.type).isEqualTo(CartRepository::class.starProjectedType)
     }
 }

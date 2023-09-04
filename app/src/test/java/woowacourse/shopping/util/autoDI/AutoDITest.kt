@@ -22,4 +22,20 @@ class AutoDITest {
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }
+
+    @Test
+    fun `disposable 객체를 Container에 등록한다`() {
+        // when
+        val testQualifier = "test"
+        AutoDI {
+            disposable<CartRepository>("test") { CartRepositoryImpl() }
+        }
+
+        // then
+        val containerQualifier = DependencyContainer.disposables.first().qualifier
+        val containerInstanceType =
+            DependencyContainer.disposables.first().getInstance().javaClass.typeName
+        assertThat(containerQualifier).isEqualTo(containerQualifier)
+        assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
+    }
 }
