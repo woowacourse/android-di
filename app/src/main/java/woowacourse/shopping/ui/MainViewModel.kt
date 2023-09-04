@@ -35,8 +35,8 @@ class MainViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 MainViewModel(
-                    productRepository = MyApplication.repositoryContainer.productRepository,
-                    cartRepository = MyApplication.repositoryContainer.cartRepository,
+                    productRepository = MyApplication.repositoryModule.productRepository,
+                    cartRepository = MyApplication.repositoryModule.cartRepository,
                 )
             }
         }

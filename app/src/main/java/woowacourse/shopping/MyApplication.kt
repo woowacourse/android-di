@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.container.RepositoryContainer
+import woowacourse.shopping.di.module.RepositoryModule
 
 class MyApplication : Application() {
     override fun onCreate() {
@@ -10,10 +10,10 @@ class MyApplication : Application() {
     }
 
     private fun initContainer() {
-        repositoryContainer = RepositoryContainer()
+        repositoryModule = RepositoryModule
     }
 
     companion object {
-        lateinit var repositoryContainer: RepositoryContainer
+        lateinit var repositoryModule: RepositoryModule
     }
 }
