@@ -9,9 +9,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel(
     private val productRepository: ProductRepository,
@@ -26,20 +27,31 @@ class MainViewModel(
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
-            cartRepository.addCartProduct(product)
+            runCatching {
+                cartRepository.addCartProduct(product)
+            }.onSuccess {
+                _onProductAdded.value = true
+            }.onFailure {
+                _onProductAdded.value = false
+            }
         }
-        _onProductAdded.value = true
     }
 
     fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
+        viewModelScope.launch {
+            kotlin.runCatching {
+                productRepository.getAllProducts()
+            }.onSuccess { products ->
+                _products.value = products
+            }
+        }
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 MainViewModel(
-                    ProductRepository(),
+                    ProductRepositoryImpl(),
                     CartRepositoryImpl(),
                 )
             }
