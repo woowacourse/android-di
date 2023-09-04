@@ -68,4 +68,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Reflection
+    implementation("javax.inject", "javax.inject", "1")
+    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
 }

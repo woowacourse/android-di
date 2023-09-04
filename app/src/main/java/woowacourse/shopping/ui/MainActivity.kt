@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.data.di.ViewModelFactory
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
-            this, (application as MyApplication).appContainer.mainViewModelFactory
+            this, ViewModelFactory.provide<MainViewModel>()
         )[MainViewModel::class.java]
     }
 

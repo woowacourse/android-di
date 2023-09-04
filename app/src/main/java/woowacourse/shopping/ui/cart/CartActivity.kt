@@ -5,17 +5,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.data.di.ViewModelFactory
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.MyApplication
 
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
-
         ViewModelProvider(
-            this, (application as MyApplication).appContainer.cartViewModelFactory
+            this, ViewModelFactory.provide<CartViewModel>()
         )[CartViewModel::class.java]
     }
 
