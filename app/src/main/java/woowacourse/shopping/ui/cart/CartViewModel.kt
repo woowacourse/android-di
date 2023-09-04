@@ -4,12 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
-import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -39,16 +35,6 @@ class CartViewModel(
             }.onFailure {
                 _onCartProductDeleted.value = false
                 Log.d("ERROR", it.message.toString())
-            }
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                CartViewModel(
-                    cartRepository = CartRepositoryImpl(),
-                )
             }
         }
     }
