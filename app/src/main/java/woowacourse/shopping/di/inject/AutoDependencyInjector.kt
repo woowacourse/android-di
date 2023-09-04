@@ -4,7 +4,6 @@ import woowacourse.shopping.di.DataModule
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
 
 class AutoDependencyInjector {
     fun <T : Any> inject(clazz: Class<T>): T {
@@ -21,7 +20,6 @@ class AutoDependencyInjector {
 
         constructor?.parameters?.forEach { parameter ->
             val argument = modules.first { it.returnType == parameter.type }
-            argument.isAccessible = true
             arguments.add(argument.getter.call(DataModule))
         }
         return constructor?.call(*arguments.toTypedArray())
