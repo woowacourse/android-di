@@ -18,7 +18,6 @@ class MainViewModel(
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
-
     fun addCartProduct(product: Product) {
         cartRepository.addCartProduct(product)
         _onProductAdded.value = true

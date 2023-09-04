@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
@@ -8,9 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
-
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -37,6 +34,7 @@ class MainActivityTest {
             .buildActivity(MainActivity::class.java)
             .create()
             .get()
+
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then

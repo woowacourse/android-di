@@ -11,9 +11,11 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
+    fun getAge() = age
     private fun fullName() {}
     private fun Int.isAdult() {}
 
@@ -56,7 +58,7 @@ class ReflectionTest {
     }
 
     @Test
-    fun `변경 가능한 비공개 프로퍼티 변경`() {
+    fun `변경 가능한 공개 프로퍼티 변경`() {
         val person = Person("Jason", "Park", 20)
         val firstNameProperty =
             Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
@@ -66,12 +68,25 @@ class ReflectionTest {
     }
 
     @Test
+    fun `변경 가능한 비공개 프로퍼티 변경`() {
+        val person = Person("Jason", "Park", 20)
+        val ageProperty =
+            Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+                .first { it.name == "age" }
+        ageProperty.apply {
+            isAccessible = true
+            setter.call(person, 3)
+        }
+        assertThat(person.getAge()).isEqualTo(3)
+    }
+
+    @Test
     fun `클래스 및 부모 클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, equals, hashCode, toString
-        assertThat(personReflection.memberFunctions.size).isEqualTo(5)
+        // fullName, greeting, getAge, isAdult, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, getAge, equals, hashCode, toString
+        assertThat(personReflection.memberFunctions.size).isEqualTo(6)
         // isAdult
         assertThat(personReflection.memberExtensionFunctions.size).isEqualTo(1)
     }
@@ -79,10 +94,10 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
-        // greeting, isAdult
-        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(2)
+        // fullName, greeting, getAge, isAdult
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
+        // greeting, getAge, isAdult
+        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(3)
         // isAdult
         assertThat(personReflection.declaredMemberExtensionFunctions.size).isEqualTo(1)
     }
@@ -90,10 +105,10 @@ class ReflectionTest {
     @Test
     fun `멤버 함수 확장 함수 클래스 내에서 선언된 정적 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+        // fullName, greeting, getAge, isAdult, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, getAge, isAdult
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
     }
 
     @Test
