@@ -39,4 +39,21 @@ class AutoDITest {
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }
+
+    @Test
+    fun `String값 "멧돼지"를 주입받는 Pig 객체를 inject함수를 통해 주입받는다`() {
+        // given
+        class Pig(val name: String)
+        AutoDI {
+            disposable { Pig(inject("pigName")) }
+            disposable("pigName") { "멧돼지" }
+        }
+
+        // when
+        val injectedInstance = AutoDI.inject<Pig>()
+
+        // then
+        val pigName = "멧돼지"
+        assertThat(injectedInstance.name).isEqualTo(pigName)
+    }
 }
