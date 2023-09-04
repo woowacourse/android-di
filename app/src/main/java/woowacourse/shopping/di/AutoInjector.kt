@@ -58,24 +58,23 @@ class AutoInjector(
     }
 
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
-        val params = mutableListOf<Any>()
-        params.add(module)
-        func.valueParameters.forEach { param ->
-            val paramKClass = param.type.classifier as KClass<*>
-            params.add(inject(paramKClass.java))
-        }
+        val args = getArguments(func).toMutableList()
+        args.add(0, module) // 수신 객체 지정.
         @Suppress("UNCHECKED_CAST")
-        return func.call(*params.toTypedArray()) as T
+        return func.call(*args.toTypedArray()) as T
     }
 
     private fun <T : Any> createWithPrimaryConstructor(modelClass: Class<T>): T {
         val primaryConstructor =
             modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
-        val params = mutableListOf<Any>()
-        primaryConstructor.valueParameters.forEach { param ->
+        val args = getArguments(primaryConstructor)
+        return primaryConstructor.call(*args.toTypedArray())
+    }
+
+    private fun getArguments(func: KFunction<*>): List<Any> {
+        return func.valueParameters.map { param ->
             val paramKClass = param.type.classifier as KClass<*>
-            params.add(inject(paramKClass.java))
+            inject(paramKClass.java)
         }
-        return primaryConstructor.call(*params.toTypedArray())
     }
 }
