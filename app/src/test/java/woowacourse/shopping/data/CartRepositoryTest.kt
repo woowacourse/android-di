@@ -37,7 +37,7 @@ class CartRepositoryTest {
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
-    fun 장바구니에_존재하지_않는_상품을_존재하면_IndexOutOfBoundsException_예외가_발생한다() {
+    fun 장바구니에_존재하지_않는_상품을_삭제하면_IndexOutOfBoundsException_예외가_발생한다() {
         // given
         val products = emptyList<Product>()
         val cartRepository = FakeCartRepository(products)
