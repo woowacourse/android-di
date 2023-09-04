@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
     private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
+    private val cartRepository: CartRepositoryImpl,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -33,7 +33,7 @@ class MainViewModel(
         val factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                    return MainViewModel(ProductRepository(), CartRepository()) as T
+                    return MainViewModel(ProductRepository(), CartRepositoryImpl()) as T
                 }
                 throw IllegalStateException("unknown viewModel class")
             }
