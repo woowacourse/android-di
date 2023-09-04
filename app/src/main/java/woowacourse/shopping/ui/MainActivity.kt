@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupProductData() {
-        viewModel.getAllProducts()
+        viewModel.fetchAllProducts()
     }
 
     private fun setupProductList() {
