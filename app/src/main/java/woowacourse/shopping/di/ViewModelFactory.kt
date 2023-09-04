@@ -20,10 +20,12 @@ class ViewModelFactory : ViewModelProvider.Factory {
     private fun mapModulesInConstructor(
         constructor: Constructor<*>,
         modules: Array<Field>,
-    ): List<Any?> = constructor.parameterTypes.map { parameterType ->
-        val module = getFieldWithType(fields = modules, type = parameterType)
-        module.isAccessible = true
-        module.get(modules)
+    ): List<Any?> {
+        return constructor.parameterTypes.map { parameterType ->
+            val module = getFieldWithType(fields = modules, type = parameterType)
+            module.isAccessible = true
+            module.get(modules)
+        }
     }
 
     private fun getFieldWithType(fields: Array<Field>, type: Class<*>): Field {
