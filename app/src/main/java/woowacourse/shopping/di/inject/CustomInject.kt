@@ -1,15 +1,13 @@
 package woowacourse.shopping.di.inject
 
-import woowacourse.shopping.di.container.Container
+import woowacourse.shopping.di.container.RepositoryContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class CustomInject(
-    private val container: Container,
-) {
+class CustomInject {
 
     fun <T : Any> getInstance(clazz: Class<T>): T {
         return createInstance(clazz.kotlin)
@@ -28,9 +26,9 @@ class CustomInject(
     }
 
     private fun findPropertyAndGetValue(type: KType): Any {
-        return container::class.declaredMemberProperties.find { it.returnType == type }?.let {
+        return RepositoryContainer::class.declaredMemberProperties.find { it.returnType == type }?.let {
             it.isAccessible = true
-            it.getter.call(container)
+            it.getter.call(RepositoryContainer)
         } ?: throw IllegalArgumentException("같은 타입의 프로퍼티를 찾을 수 없습니다.")
     }
 }
