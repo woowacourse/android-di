@@ -3,6 +3,7 @@ package woowacourse.shopping.study
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.lang.reflect.Field
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
@@ -25,20 +26,6 @@ class Person(var firstName: String, val lastName: String, private var age: Int) 
 }
 
 class ReflectionTest {
-
-    // todo 숙 제
-    @Test
-    fun `변경 가능한 비공개 프로퍼티 값 변경 age`() {
-        val person = Person("pingu", "An", 20)
-        val ageProperty = Person::class
-            .declaredMemberProperties
-            .filterIsInstance<KMutableProperty<*>>()
-            .first { it.name == "age" }
-
-        ageProperty.isAccessible = true
-        ageProperty.setter.call(person, 30)
-        assertEquals(30, ageProperty.getter.call(person) as Int)
-    }
 
     @Test
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
@@ -72,13 +59,28 @@ class ReflectionTest {
     }
 
     @Test
-    fun `변경 가능한 비공개 프로퍼티 변경`() {
-        val person = Person("Jason", "Park", 20)
-        val firstNameProperty =
-            Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
-                .first { it.name == "firstName" }
-        firstNameProperty.setter.call(person, "Jaesung")
-        assertThat(person.firstName).isEqualTo("Jaesung")
+    fun `변경 가능한 비공개 프로퍼티 변경 - Java Reflection`() {
+        val person = Person("タモン", "メ", 20)
+        val ageField: Field = Person::class.java.getDeclaredField("age")
+
+        ageField.isAccessible = true
+        ageField.set(person, 25)
+
+        assertEquals(25, ageField.get(person))
+    }
+
+    @Test
+    fun `변경 가능한 비공개 프로퍼티 변경 - Kotlin Reflection`() {
+        val person = Person("タモン", "メ", 20)
+        val ageProperty: KMutableProperty<*> = Person::class
+            .declaredMemberProperties
+            .filterIsInstance<KMutableProperty<*>>()
+            .find { it.name == "age" } ?: return
+
+        ageProperty.isAccessible = true
+        ageProperty.setter.call(person, 25)
+
+        assertEquals(25, ageProperty.getter.call(person))
     }
 
     @Test
