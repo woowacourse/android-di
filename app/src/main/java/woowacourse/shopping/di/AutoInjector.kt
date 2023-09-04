@@ -40,13 +40,13 @@ class AutoInjector(
 
         // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
         val primaryConstructor =
-            modelClass.kotlin.primaryConstructor ?: throw RuntimeException("주생성자 없음")
+            modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
         return createWithPrimaryConstructor(primaryConstructor)
     }
 
     private fun <T : Any> createWithModuleFunc(func: KFunction<*>): T {
         val params = mutableListOf<Any>()
-        val module = moduleFunctions[func] ?: throw RuntimeException("모듈에 자동 주입 가능한 함수 없음")
+        val module = moduleFunctions[func] ?: throw NullPointerException("모듈에 자동 주입 가능한 함수 없음")
         params.add(module)
         func.valueParameters.forEach { param ->
             val paramKClass = param.type.classifier as KClass<*>
