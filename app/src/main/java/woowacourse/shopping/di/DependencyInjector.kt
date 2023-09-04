@@ -22,7 +22,7 @@ object DependencyInjector {
 
     private fun findSingleton(type: KType): Any? {
         dependencies::class.declaredMemberProperties.forEach {
-            if (type.isSubtypeOf(it.returnType) || type.isSupertypeOf(it.returnType)) {
+            if (type.isSupertypeOf(it.returnType)) {
                 return it.getter.call(dependencies)
             }
         }
