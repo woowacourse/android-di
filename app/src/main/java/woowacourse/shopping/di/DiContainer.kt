@@ -7,9 +7,6 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
-    private val methods get() = this::class.declaredFunctions
-
-    private val properties get() = this::class.declaredMemberProperties
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException()
@@ -28,14 +25,14 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
-        return methods.firstOrNull { method ->
+        return this::class.declaredFunctions.firstOrNull { method ->
             method.isAccessible = true
             method.returnType.javaClass.simpleName == clazz.simpleName
         }?.call(this) as T?
     }
 
     private fun <T : Any> getFromGetter(clazz: KClass<T>): T? {
-        return properties.firstOrNull { property ->
+        return this::class.declaredMemberProperties.firstOrNull { property ->
             property.isAccessible = true
             property.returnType.javaClass.simpleName == clazz.simpleName
         }?.getter?.call(this) as T?
