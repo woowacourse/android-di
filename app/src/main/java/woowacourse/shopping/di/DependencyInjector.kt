@@ -4,33 +4,52 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.model.CartRepository
+import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
-inline fun <reified T : Any> inject(): T {
-    val primaryConstructor = T::class.primaryConstructor
-        ?: throw Throwable("주 생성자를 찾을 수 없습니다.")
+object DependencyInjector {
 
-    return primaryConstructor.call(*primaryConstructor.parameters.instantiate())
-}
+    private val singleInstances: SingleInstances = SingleInstances(
+        listOf(
+            SingleInstance<CartRepository>(DefaultCartRepository()),
+            SingleInstance<ProductRepository>(DefaultProductRepository()),
+        )
+    )
 
-fun List<KParameter>.instantiate(): Array<Any?> =
-    map { (it.type.classifier as KClass<*>).instantiate() }.toTypedArray()
+    inline fun <reified T : Any> inject(): T {
+        val primaryConstructor = requireNotNull(T::class.primaryConstructor)
+        val arguments = primaryConstructor.parameters.instantiate()
 
-fun KClass<*>.instantiate(): Any? =
-    if (companionObject?.isSubclassOf(SingletonFactory::class) == true) {
-        (companionObjectInstance as SingletonFactory<*>).getInstance()
-    } else {
-        primaryConstructor?.call()
+        return primaryConstructor.call(*arguments)
     }
 
-inline fun <reified T : ViewModel> getInjectedViewModelFactory(): ViewModelProvider.Factory =
-    viewModelFactory {
-        initializer {
-            inject<T>()
+    fun List<KParameter>.instantiate(): Array<Any?> =
+        map { (it.type.classifier as KClass<*>).instantiateRecursively() }.toTypedArray()
+
+    private fun KClass<*>.instantiateRecursively(): Any {
+        val constructor = primaryConstructor ?: run {
+            return requireNotNull(singleInstances.find(this))
         }
+
+        if (constructor.parameters.isEmpty()) {
+            return singleInstances.find(this) ?: constructor.call()
+        }
+        val arguments = constructor.parameters.map {
+            (it.type.classifier as KClass<*>).instantiateRecursively()
+        }
+
+        return constructor.call(*arguments.toTypedArray())
     }
+
+    inline fun <reified T : ViewModel> getInjectedViewModelFactory(): ViewModelProvider.Factory =
+        viewModelFactory {
+            initializer {
+                inject<T>()
+            }
+        }
+}
