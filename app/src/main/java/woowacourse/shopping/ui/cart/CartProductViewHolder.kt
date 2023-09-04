@@ -13,10 +13,7 @@ class CartProductViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     init {
-        binding.ivCartProductDelete.setOnClickListener {
-            val position = adapterPosition
-            onClickDelete(position)
-        }
+        binding.ivCartProductDelete.setOnClickListener { onClickDelete(adapterPosition) }
     }
 
     fun bind(product: Product) {
