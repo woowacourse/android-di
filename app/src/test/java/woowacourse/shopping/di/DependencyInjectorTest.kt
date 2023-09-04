@@ -5,26 +5,26 @@ import org.junit.Test
 import woowacourse.shopping.di.DependencyInjector.inject
 
 class DependencyInjectorTest {
-    internal interface TestRepository
-    internal interface TestRepository2
+    interface TestRepository
+    interface TestRepository2
 
-    internal class TestName
-    internal class TestID
-    internal class TestProduct(
+    class TestName
+    class TestID
+    class TestProduct(
         private val testName: TestName,
         private val testID: TestID
     )
 
-    internal class DefaultTestRepository : TestRepository
-    internal class DefaultTestRepository2 : TestRepository2
+    class DefaultTestRepository : TestRepository
+    class DefaultTestRepository2 : TestRepository2
 
-    internal class TestViewModel(
+    class TestViewModel(
         private val testRepository: TestRepository,
         private val testRepository2: TestRepository2,
         private val testProduct: TestProduct
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `Singleton에 TestRepository만 존재하면 TestViewModel 생성에 실패한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {
