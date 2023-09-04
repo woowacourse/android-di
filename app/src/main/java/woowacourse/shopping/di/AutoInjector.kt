@@ -23,13 +23,7 @@ class AutoInjector(
 
     override fun <T : Any> inject(modelClass: Class<T>): T {
         // 모듈이 가진 자동 주입 생성 함수들 중, 일치하는 반환타입을 가진 함수 조사
-        val injectableFunctions = mutableListOf<KFunction<*>>()
-        for (function in moduleFunctions.keys) {
-            val returnKClass = function.returnType.classifier as KClass<*>
-            if (modelClass.kotlin.isSubclassOf(returnKClass)) {
-                injectableFunctions.add(function)
-            }
-        }
+        val injectableFunctions = searchInjectableFunctions(modelClass)
 
         // 해당 객체를 만들기 위한 필요 구성 요소들을 얻는 과정.
         if (injectableFunctions.size == 1) {
@@ -42,6 +36,17 @@ class AutoInjector(
         val primaryConstructor =
             modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
         return createWithPrimaryConstructor(primaryConstructor)
+    }
+
+    private fun <T : Any> searchInjectableFunctions(modelClass: Class<T>): List<KFunction<*>> {
+        return mutableListOf<KFunction<*>>().apply {
+            moduleFunctions.keys.forEach { function ->
+                val returnKClass = function.returnType.classifier as KClass<*>
+                if (modelClass.kotlin.isSubclassOf(returnKClass)) {
+                    add(function)
+                }
+            }
+        }
     }
 
     private fun <T : Any> createWithModuleFunc(func: KFunction<*>): T {
