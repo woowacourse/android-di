@@ -2,20 +2,14 @@ package woowacourse.shopping.application
 
 import android.app.Application
 import android.content.Context
-import woowacourse.shopping.data.ShoppingContainer
+import woowacourse.shopping.data.Injector
 
 class ShoppingApplication : Application() {
 
-    lateinit var container: ShoppingContainer
+    val injector: Injector = Injector
 
     init {
         instance = this
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        container = ShoppingContainer()
     }
 
     companion object {
