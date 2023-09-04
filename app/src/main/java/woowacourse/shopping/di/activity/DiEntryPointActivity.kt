@@ -9,23 +9,23 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.di.AutoInjector
 import woowacourse.shopping.di.Injector
+import woowacourse.shopping.di.application.DiApplication
 import woowacourse.shopping.di.module.ActivityModule
-import woowacourse.shopping.global.ShoppingApplication
 import kotlin.reflect.full.primaryConstructor
 
 abstract class DiEntryPointActivity<T : ActivityModule>(activityModuleClassType: Class<T>) :
     AppCompatActivity() {
 
     val autoInjector: Injector
-        get() = ShoppingApplication.getInjectorForInstance(this.hashCode())
+        get() = DiApplication.getInjectorForInstance(this.hashCode())
 
     init {
         // 애플리케이션 모듈에 대한 참조를 갖고 있는 액티비티 모듈을 생성해서, 이걸 인젝터 객체 생성자에 넘겨서 객체 생성하고 애플리케이션이 가진 맵에 저장시킴. 이 액티비티가 살아있는 한 같은 인젝터를 얻게 된다.
-        if (!ShoppingApplication.hasInjectorForInstance(this.hashCode())) {
+        if (!DiApplication.hasInjectorForInstance(this.hashCode())) {
             val activityModule =
-                activityModuleClassType.kotlin.primaryConstructor?.call(ShoppingApplication.applicationModule)
+                activityModuleClassType.kotlin.primaryConstructor?.call(DiApplication.applicationModule)
                     ?: throw NullPointerException("주생성자 없음")
-            ShoppingApplication.addInjectorForInstance(
+            DiApplication.addInjectorForInstance(
                 this.hashCode(),
                 AutoInjector(activityModule),
             )
@@ -34,7 +34,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(activityModuleClassType:
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing) ShoppingApplication.removeInjectorForInstance(this.hashCode())
+        if (isFinishing) DiApplication.removeInjectorForInstance(this.hashCode())
     }
 
     @MainThread
