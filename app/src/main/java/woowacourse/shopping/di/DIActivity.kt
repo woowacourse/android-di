@@ -11,14 +11,12 @@ abstract class DIActivity : AppCompatActivity() {
         val viewModelField =
             this::class.java.declaredFields.firstOrNull { ViewModel::class.java.isAssignableFrom(it.type) }
 
-        viewModelField?.let { setViewModelInstance(it) }
+        viewModelField?.let {
+            val viewModel = getNewViewModelByType(viewModelField)
+            setViewModelInstance(it, viewModel)
+        }
 
         super.onCreate(savedInstanceState)
-    }
-
-    private fun setViewModelInstance(viewModelField: Field) {
-        viewModelField.isAccessible = true
-        viewModelField.set(this, getNewViewModelByType(viewModelField))
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -30,5 +28,10 @@ abstract class DIActivity : AppCompatActivity() {
 
     private inline fun <reified VM : ViewModel> getViewModel(type: Class<VM>): VM {
         return ViewModelProvider(this@DIActivity, ViewModelFactory())[type]
+    }
+
+    private fun setViewModelInstance(viewModelField: Field, viewModel: ViewModel) {
+        viewModelField.isAccessible = true
+        viewModelField.set(this, viewModel)
     }
 }
