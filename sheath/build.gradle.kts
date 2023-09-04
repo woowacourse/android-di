@@ -44,4 +44,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Reflection
+    implementation(kotlin("reflect"))
 }
