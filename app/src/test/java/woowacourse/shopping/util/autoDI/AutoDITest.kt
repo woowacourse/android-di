@@ -13,7 +13,7 @@ class AutoDITest {
         // when
         val testQualifier = "test"
         AutoDI {
-            singleton<CartRepository>("test") { CartRepositoryImpl() }
+            singleton<CartRepository>(testQualifier) { CartRepositoryImpl() }
         }
 
         // then
@@ -29,7 +29,7 @@ class AutoDITest {
         // when
         val testQualifier = "test"
         AutoDI {
-            disposable<CartRepository>("test") { CartRepositoryImpl() }
+            disposable<CartRepository>(testQualifier) { CartRepositoryImpl() }
         }
 
         // then
