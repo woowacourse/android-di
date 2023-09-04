@@ -74,4 +74,6 @@ dependencies {
     // assertj
     testImplementation("org.assertj:assertj-core:3.22.0")
     implementation(kotlin("reflect"))
+    // mockk
+    testImplementation("io.mockk:mockk-android:1.13.5")
 }
