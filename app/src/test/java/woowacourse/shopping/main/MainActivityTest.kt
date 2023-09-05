@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
