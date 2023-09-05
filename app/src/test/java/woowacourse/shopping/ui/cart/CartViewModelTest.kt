@@ -1,13 +1,13 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.ui.cart.CartViewModel
 
 class CartViewModelTest {
     private lateinit var cartRepository: CartRepository

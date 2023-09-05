@@ -1,7 +1,9 @@
-package woowacourse.shopping
+package woowacourse.shopping.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.fake.FakeProductRepository
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 

@@ -1,9 +1,8 @@
-package woowacourse.shopping
+package woowacourse.shopping.data
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
