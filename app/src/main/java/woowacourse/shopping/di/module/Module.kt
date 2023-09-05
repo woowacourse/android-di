@@ -10,10 +10,8 @@ abstract class Module(val parentModule: Module? = null) {
 
     protected inline fun <reified T : Any> getInstance(crossinline create: () -> T): T {
         val name = T::class.qualifiedName ?: throw NullPointerException("클래스 이름 없음")
-        val instance = cache[name] as T?
-        return instance ?: kotlin.run {
-            create().also { cache[name] = it }
-        }
+        if (cache[name] == null) cache[name] = create()
+        return cache[name] as T
     }
 
     fun getPublicMethodMap(): Map<KFunction<*>, Module> {

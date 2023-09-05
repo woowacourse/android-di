@@ -17,8 +17,9 @@ class AutoInjector(
         // 해당 객체를 만들기 위한 필요 구성 요소들을 얻는 과정.
         return when (injectableFunctionWithModuleMap.size) {
             0 -> createWithPrimaryConstructor(modelClass) // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
-            else -> { // 추후 1과 else로 분리 예정, 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
-                val injectFunction = injectableFunctionWithModuleMap.keys.first()
+            else -> { // 추후 1과 else로 분리 예정
+                val injectFunction =
+                    injectableFunctionWithModuleMap.keys.first() // 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
                 val injectModule = injectableFunctionWithModuleMap[injectFunction]
                     ?: throw NullPointerException("${injectFunction.name} 함수가 없습니다.")
                 createWithModuleFunc(injectModule, injectFunction)
@@ -65,7 +66,8 @@ class AutoInjector(
 
     private fun <T : Any> createWithPrimaryConstructor(modelClass: Class<T>): T {
         val primaryConstructor =
-            modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주생성자 없음")
+            modelClass.kotlin.primaryConstructor
+                ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
         val args = getArguments(primaryConstructor)
         return primaryConstructor.call(*args.toTypedArray())
     }
