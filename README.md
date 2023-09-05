@@ -19,10 +19,11 @@
 
    만약 어떤 클래스의 종속 항목에 해당하는 클래스의 싱글톤 컴포넌트가 여러 개라면 어떤 컴포넌트를 주입해야 할 지 모호하기 때문에 에러가 발생합니다. 아직 한정자 기능은 구현되지 않았습니다.
    어떤 클래스의 종속 항목에 해당하는 클래스의 싱글톤 컴포넌트가 정의되지 않았어도 에러가 발생합니다.
+   클래스 간의 종속 사이클이 있어도 에러가 발생합니다.
    이러한 에러는 런타임에 발생합니다.
    
   
-3. `Activity` 클래스가 `AndroidEntryPoint` 추상 클래스를 상속한다면 `AndroidEntryPoint`에서 제공하는 `viewModels()` 메소드를 사용할 수 있습니다.
+4. `Activity` 클래스가 `AndroidEntryPoint` 추상 클래스를 상속한다면 `AndroidEntryPoint`에서 제공하는 `viewModels()` 메소드를 사용할 수 있습니다.
    ```kotlin
     class MainActivity : AndroidEntryPoint() {
 
