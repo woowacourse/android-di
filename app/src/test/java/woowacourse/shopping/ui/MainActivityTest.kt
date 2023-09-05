@@ -1,11 +1,15 @@
 package woowacourse.shopping.ui
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,13 +19,35 @@ import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.di.RepositoryContainer
+import woowacourse.shopping.di.viewModelInject
 import woowacourse.shopping.ui.cart.CartActivity
+import java.lang.IllegalArgumentException
+
+interface FakeRepository
+
+class DefaultFakeRepository : FakeRepository
+
+class FakeViewModel(
+    val fakeRepository: FakeRepository,
+) : ViewModel()
+
+class FakeActivity : AppCompatActivity() {
+    val viewModel by lazy {
+        ViewModelProvider(this, viewModelInject<FakeViewModel>())[FakeViewModel::class.java]
+    }
+}
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @After
+    fun tearDown() {
+        RepositoryContainer.clear()
+    }
 
     @Test
     fun `Activity 실행 테스트`() {
@@ -108,5 +134,32 @@ class MainActivityTest {
 
         // then
         assertTrue(viewModel.onProductAdded.value!!)
+    }
+
+    @Test
+    fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
+        // given
+        val fakeRepository = DefaultFakeRepository()
+        RepositoryContainer.addInstance(FakeRepository::class, fakeRepository)
+
+        val activity = Robolectric
+            .buildActivity(FakeActivity::class.java)
+            .create()
+            .get()
+
+        val viewModel = activity.viewModel
+
+        assertNotNull(viewModel)
+        assertEquals(viewModel.fakeRepository, fakeRepository)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `적절한 객체 인스턴가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
+        val activity = Robolectric
+            .buildActivity(FakeActivity::class.java)
+            .create()
+            .get()
+
+        activity.viewModel
     }
 }

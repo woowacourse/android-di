@@ -13,4 +13,8 @@ object RepositoryContainer {
     fun addInstance(type: KClass<*>, instance: Any) {
         repositories[type] = instance
     }
+
+    fun clear() {
+        repositories.clear()
+    }
 }
