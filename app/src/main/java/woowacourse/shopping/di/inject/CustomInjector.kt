@@ -7,22 +7,22 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class CustomInject {
+class CustomInjector {
 
     fun <T : Any> getInstance(clazz: Class<T>): T {
         return createInstance(clazz.kotlin)
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val constructors =
+        val constructor =
             kClass.primaryConstructor ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
-        val params = constructors.parameters
-        val arg = params.map {
+        val params = constructor.parameters
+        val args = params.map {
             findPropertyAndGetValue(it.type)
         }.toTypedArray()
 
-        return constructors.call(*arg)
+        return constructor.call(*args)
     }
 
     private fun findPropertyAndGetValue(type: KType): Any {
