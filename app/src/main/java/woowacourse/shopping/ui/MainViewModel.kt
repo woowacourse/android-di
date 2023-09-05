@@ -8,8 +8,8 @@ import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
 class MainViewModel(
-    private val defaultProductRepository: ProductRepository,
-    private val defaultCartRepository: CartRepository,
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -19,11 +19,11 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        defaultCartRepository.addCartProduct(product)
+        cartRepository.addCartProduct(product)
         _onProductAdded.value = true
     }
 
     fun getAllProducts() {
-        _products.value = defaultProductRepository.getAllProducts()
+        _products.value = productRepository.getAllProducts()
     }
 }
