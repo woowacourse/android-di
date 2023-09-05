@@ -2,6 +2,8 @@ package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,11 +38,11 @@ internal class MainViewModelTest {
     @Test
     fun `모든 상품 받기를 호출하면 products에 모든 상품이 담긴다`() {
         // given
-        val expected = products.size
+        val expected = products
 
         // when
         mainViewModel.getAllProducts()
-        val actual = mainViewModel.products.value?.size
+        val actual = mainViewModel.products.value
 
         // then
         assertEquals(expected, actual)
@@ -49,10 +51,11 @@ internal class MainViewModelTest {
     @Test
     fun `상품을 장바구니에 추가하면 상품이 장바구니 레포지토리에 추가된다`() {
         // given
+        val addingProduct = Product("갤럭시 탭 S9", 1200000, "")
         val expected = fakeCartRepository.getAllCartProducts().size + 1
 
         // when
-        mainViewModel.addCartProduct(Product("갤럭시 탭 S9", 1200000, ""))
+        mainViewModel.addCartProduct(addingProduct)
         val actual = fakeCartRepository.getAllCartProducts().size
 
         // then
@@ -62,14 +65,15 @@ internal class MainViewModelTest {
     @Test
     fun `상품을 바구니에 추가하면 onProductAdded가 false에서 true가 된다`() {
         // given
+        val addingProduct = Product("갤럭시 탭 S9", 1200000, "")
         val initialOnProductAdded = mainViewModel.onProductAdded.value
 
         // when
-        mainViewModel.addCartProduct(Product("갤럭시 탭 S9", 1200000, ""))
+        mainViewModel.addCartProduct(addingProduct)
         val actual = mainViewModel.onProductAdded.value
 
         // then
-        assertEquals(initialOnProductAdded, false)
-        assertEquals(actual, true)
+        assertFalse(initialOnProductAdded ?: true)
+        assertTrue(actual ?: false)
     }
 }
