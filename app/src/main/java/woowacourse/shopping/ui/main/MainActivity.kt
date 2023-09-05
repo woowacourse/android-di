@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.main.adapter.ProductAdapter
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
