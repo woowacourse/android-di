@@ -5,8 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.createProduct
 import woowacourse.shopping.fake.FakeCartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.getProducts
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModelTest {
@@ -18,11 +19,7 @@ class CartViewModelTest {
 
     @Before
     fun setup() {
-        val cartProducts = listOf(
-            Product("멘델", 0, ""),
-            Product("글로", 1000000000, ""),
-        )
-        cartRepository = FakeCartRepository(cartProducts.toMutableList())
+        cartRepository = FakeCartRepository(getProducts().toMutableList())
         viewModel = CartViewModel(cartRepository)
     }
 
@@ -34,22 +31,19 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        val expected = listOf(
-            Product("멘델", 0, ""),
-            Product("글로", 1000000000, ""),
-        )
+        val expected = getProducts()
         assertThat(viewModel.cartProducts.value).isEqualTo(expected)
     }
 
     @Test
     fun `카트 상품을 삭제하면 카트에서 상품이 삭제된다`() {
         // given
-        val product = Product("글로", 1000000000, "")
+        val product = createProduct()
         viewModel.getAllCartProducts()
         assertThat(viewModel.cartProducts.value).contains(product)
 
         // when
-        viewModel.deleteCartProduct(1)
+        viewModel.deleteCartProduct(0)
 
         // then
         viewModel.getAllCartProducts()
@@ -62,7 +56,7 @@ class CartViewModelTest {
         assertThat(viewModel.onCartProductDeleted.value).isFalse
 
         // when
-        viewModel.deleteCartProduct(1)
+        viewModel.deleteCartProduct(0)
 
         // then
         assertThat(viewModel.onCartProductDeleted.value).isTrue

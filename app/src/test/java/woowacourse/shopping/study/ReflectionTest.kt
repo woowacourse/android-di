@@ -4,17 +4,19 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
+import woowacourse.shopping.getProducts
+import woowacourse.shopping.model.Product
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 
 class FakeCartViewModel(private val repository: FakeCartRepository) {
-    fun getProducts(): List<String> = repository.getAllCartProducts().map { it.name }
+    fun getProducts(): List<Product> = repository.getAllCartProducts()
 }
 
 class ReflectionTest {
     private val repositories = mapOf(
         FakeProductRepository::class.starProjectedType to FakeProductRepository(),
-        FakeCartRepository::class.starProjectedType to FakeCartRepository(),
+        FakeCartRepository::class.starProjectedType to FakeCartRepository(getProducts().toMutableList()),
     )
 
     @Test
@@ -29,7 +31,7 @@ class ReflectionTest {
 
         // then
         val actual = viewModel?.getProducts()
-        val expected = listOf("milk")
+        val expected = getProducts()
         assertThat(actual).isEqualTo(expected)
     }
 }

@@ -3,7 +3,7 @@ package woowacourse.shopping.data
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.createProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartRepositoryTest {
@@ -30,7 +30,7 @@ class CartRepositoryTest {
         // given
 
         // when
-        val product = Product("글로", 1000000000, "")
+        val product = createProduct()
         repository.addCartProduct(product)
 
         // then
@@ -40,7 +40,7 @@ class CartRepositoryTest {
     @Test
     fun `카트에 상품이 추가된 상태에서 동일한 상품을 삭제하면 카트에서 상품이 삭제된다`() {
         // given
-        val product = Product("글로", 1000000000, "")
+        val product = createProduct()
         repository.addCartProduct(product)
         assertThat(repository.getAllCartProducts()).contains(product)
 

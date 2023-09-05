@@ -5,9 +5,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.createProduct
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.getProducts
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
@@ -27,11 +28,11 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `카트 상품을 추가하면 카트에 추가한 상품이 담긴다`() {
+    fun `상품을 추가하면 카트에 추가한 상품이 담긴다`() {
         // given
-        val product = Product("글로", 1000000000, "")
 
         // when
+        val product = createProduct("글로", 1_000_000_000, "")
         viewModel.addCartProduct(product)
 
         // then
@@ -41,10 +42,10 @@ class MainViewModelTest {
     @Test
     fun `카트 상품을 추가하면 카트에 상품을 담았는지 여부가 참이 된다`() {
         // given
-        val product = Product("글로", 1000000000, "")
         assertThat(viewModel.onProductAdded.value).isFalse
 
         // when
+        val product = createProduct("글로", 1_000_000_000, "")
         viewModel.addCartProduct(product)
 
         // then
@@ -59,7 +60,7 @@ class MainViewModelTest {
         viewModel.getAllProducts()
 
         // then
-        val expected = productRepository.getAllProducts()
+        val expected = getProducts()
         assertThat(viewModel.products.value).isEqualTo(expected)
     }
 }
