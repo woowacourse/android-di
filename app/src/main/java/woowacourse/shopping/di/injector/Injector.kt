@@ -21,8 +21,8 @@ class Injector(private val modules: List<Module>) {
         }
 
     inline fun <reified T : Any> inject(): T {
-        val primaryConstructor =
-            T::class.primaryConstructor ?: throw RuntimeException("주생성자가 존재하지 않습니다.")
+        val primaryConstructor = T::class.primaryConstructor
+            ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다.")
         val params = getParams(primaryConstructor.parameters)
         return primaryConstructor.call(*params.toTypedArray())
     }
