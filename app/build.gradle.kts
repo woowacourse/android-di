@@ -71,4 +71,7 @@ dependencies {
     // Reflection
     implementation("javax.inject", "javax.inject", "1")
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+
+    // mockk
+    testImplementation("io.mockk:mockk-android:1.13.5")
 }
