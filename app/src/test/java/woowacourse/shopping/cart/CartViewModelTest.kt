@@ -1,10 +1,11 @@
-package woowacourse.shopping
+package woowacourse.shopping.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.cart.CartViewModel
 
