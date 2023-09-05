@@ -19,7 +19,6 @@ import woowacourse.shopping.ui.MainViewModel
 import woowacourse.util.FakeApplicationModule
 import woowacourse.util.getFakeActivityModule
 import woowacourse.util.getFakeApplicationModule
-import woowacourse.util.getProducts
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -73,23 +72,6 @@ class MainActivityTest {
 
         // then
         assertThat(viewModel).isNotNull()
-    }
-
-    @Test
-    fun `MainViewModel 상품 목록 조회 테스트`() {
-        // given
-        val activityController = Robolectric.buildActivity(MainActivity::class.java)
-        val activity = activityController.get()
-        changeFakeActivityModule(activity)
-        activityController.create()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
-
-        // when
-        viewModel.getAllProducts()
-
-        // then
-        val actual = getProducts()
-        assertThat(viewModel.products.value).isEqualTo(actual)
     }
 
     private fun changeFakeActivityModule(

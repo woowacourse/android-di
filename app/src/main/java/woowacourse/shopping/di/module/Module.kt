@@ -19,6 +19,6 @@ abstract class Module(val parentModule: Module? = null) {
     fun getPublicMethodMap(): Map<KFunction<*>, Module> {
         return this@Module::class.declaredMemberFunctions.filter {
             it.visibility == KVisibility.PUBLIC
-        }.associateWith { function -> this@Module }
+        }.associateWith { this@Module }
     }
 }

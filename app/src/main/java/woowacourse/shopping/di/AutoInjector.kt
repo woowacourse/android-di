@@ -38,7 +38,6 @@ class AutoInjector(
                 }
                 putAll(matchFunctionModuleMaps)
             }
-
             // 만약 현재 트리 레벨의 모듈들에서 해당 메소드가 없다면, 부모 모듈 검사
             if (isEmpty()) putAll(searchInjectableFunctionsFromParents(modules, modelClass))
         }
