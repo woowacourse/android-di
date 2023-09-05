@@ -2,6 +2,8 @@ package woowacourse.shopping.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,11 +33,11 @@ class CartViewModelTest {
     @Test
     fun `장바구니의 모든 상품을 불러오면 cartProducts에 저장된다`() {
         // given
-        val expected = products.size
+        val expected = products
 
         // when
         cartViewModel.getAllCartProducts()
-        val actual = cartViewModel.cartProducts.value?.size
+        val actual = cartViewModel.cartProducts.value
 
         // then
         assertEquals(expected, actual)
@@ -51,7 +53,7 @@ class CartViewModelTest {
         val actual = cartViewModel.onCartProductDeleted.value
 
         // then
-        assertEquals(initialOnCartProductDeleted, false)
-        assertEquals(actual, true)
+        assertFalse(initialOnCartProductDeleted ?: true)
+        assertTrue(actual ?: false)
     }
 }
