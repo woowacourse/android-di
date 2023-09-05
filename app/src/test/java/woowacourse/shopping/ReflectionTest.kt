@@ -5,14 +5,8 @@ import org.junit.Test
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 
-class FakeProductRepository
-
-class FakeCartRepository {
-    fun getProducts(): List<String> = listOf("milk")
-}
-
 class FakeCartViewModel(private val repository: FakeCartRepository) {
-    fun getProducts(): List<String> = repository.getProducts()
+    fun getProducts(): List<String> = repository.getAllCartProducts().map { it.name }
 }
 
 class ReflectionTest {
