@@ -9,11 +9,11 @@ import kotlin.reflect.jvm.isAccessible
 
 class CustomInjector {
 
-    fun <T : Any> getInstance(clazz: Class<T>): T {
-        return createInstance(clazz.kotlin)
+    fun <T : Any> getInstanceFromClass(clazz: Class<T>): T {
+        return createInstanceFromKClass(clazz.kotlin)
     }
 
-    private fun <T : Any> createInstance(kClass: KClass<T>): T {
+    private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {
         val constructor =
             kClass.primaryConstructor ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
