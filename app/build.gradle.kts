@@ -70,5 +70,5 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     implementation(kotlin("reflect"))
 
-    implementation("androidx.fragment:fragment-ktx:1.5.7")
+    implementation("androidx.activity:activity-ktx:{activity version}")
 }
