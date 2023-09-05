@@ -6,13 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.DependencyInjector
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
     private val viewModel by lazy {
         ViewModelProvider(
             this,
-            CartViewModel.Factory,
+            DependencyInjector.inject<CartViewModel>(),
         )[CartViewModel::class.java]
     }
     private val dateFormatter by lazy { DateFormatter(this) }
