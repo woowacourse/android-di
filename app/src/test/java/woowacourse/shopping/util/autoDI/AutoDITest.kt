@@ -17,9 +17,9 @@ class AutoDITest {
         }
 
         // then
-        val containerQualifier = DependencyContainer.singletons.values.first().qualifier
+        val containerQualifier = DependencyContainer.singletons.value.first().qualifier
         val containerInstanceType =
-            DependencyContainer.singletons.values.first().getInstance().javaClass.typeName
+            DependencyContainer.singletons.value.first().getInstance().javaClass.typeName
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }
@@ -33,9 +33,9 @@ class AutoDITest {
         }
 
         // then
-        val containerQualifier = DependencyContainer.disposables.values.first().qualifier
+        val containerQualifier = DependencyContainer.disposables.value.first().qualifier
         val containerInstanceType =
-            DependencyContainer.disposables.values.first().getInstance().javaClass.typeName
+            DependencyContainer.disposables.value.first().getInstance().javaClass.typeName
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }

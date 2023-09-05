@@ -1,8 +1,11 @@
 package woowacourse.shopping.util.autoDI.dependencyContainer
 
+import woowacourse.shopping.util.autoDI.ViewModelBundle
 import woowacourse.shopping.util.autoDI.dependencyContainer.LifeCycleTypes.*
 import woowacourse.shopping.util.autoDI.lifecycleTypeRegister.DisposableRegister
 import woowacourse.shopping.util.autoDI.lifecycleTypeRegister.SingletonRegister
+import woowacourse.shopping.util.autoDI.lifecycleTypeRegister.ViewModelRegister
+import kotlin.reflect.KType
 
 object DependencyContainer {
     const val NOT_EXIST_DEPENDENCY_ERROR =
@@ -15,8 +18,11 @@ object DependencyContainer {
 
     val totalLifeCycleTypes: List<LifeCycleTypes> = listOf(singletons, disposables)
 
+    internal val viewModelBundles: ViewModelBundles = ViewModelBundles(mutableListOf())
+
     internal val singletonRegister: SingletonRegister = SingletonRegister(singletons)
     internal val disposableRegister: DisposableRegister = DisposableRegister(disposables)
+    internal val viewModelRegister: ViewModelRegister = ViewModelRegister(viewModelBundles)
 
     inline fun <reified T : Any> search(qualifier: String?): T {
         when (qualifier.isNullOrEmpty()) {
@@ -33,6 +39,13 @@ object DependencyContainer {
                 }
             }
         }
+        throw IllegalStateException(NOT_EXIST_DEPENDENCY_ERROR)
+    }
+
+    fun searchViewModel(kType: KType): ViewModelBundle<*> {
+        val viewModelBundlesSearchResult: ViewModelBundle<*>? =
+            viewModelBundles.search(kType)
+        if (viewModelBundlesSearchResult != null) return viewModelBundlesSearchResult
         throw IllegalStateException(NOT_EXIST_DEPENDENCY_ERROR)
     }
 }
