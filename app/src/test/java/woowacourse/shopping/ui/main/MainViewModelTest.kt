@@ -14,7 +14,6 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainViewModel
 
 class MainViewModelTest {
     private lateinit var productRepository: ProductRepository
