@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructor = modelClass.declaredConstructors.first()
-        require(constructor != null) { IllegalArgumentException("Unknown ViewModel Class $modelClass") }
+        requireNotNull(constructor) { "Unknown ViewModel Class $modelClass" }
 
         val types = constructor.parameterTypes
         val params = mutableListOf<Any?>()
 
-        val properties = RepositoryModule::class.java.declaredFields
+        val properties = Container::class.java.declaredFields
         for (type in types) {
             val field = properties.first { it.type == type }
                 ?: throw IllegalArgumentException("Can't find Property $type")
