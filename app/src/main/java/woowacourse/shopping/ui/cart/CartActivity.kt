@@ -50,7 +50,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductData() {
-        viewModel.getAllCartProducts()
+        viewModel.fetchAllCartProducts()
     }
 
     private fun setupCartProductList() {
