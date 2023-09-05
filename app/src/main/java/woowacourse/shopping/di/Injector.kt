@@ -18,7 +18,8 @@ class Injector(private val modules: List<Module>) {
         }
 
     inline fun <reified T : Any> inject(): T {
-        val primaryConstructor = T::class.primaryConstructor ?: throw RuntimeException("주생성자 없음")
+        val primaryConstructor =
+            T::class.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
 
         val params = getParams(primaryConstructor.parameters)
 
@@ -30,8 +31,8 @@ class Injector(private val modules: List<Module>) {
 
         parameters.forEach {
             val paramType = it.type.toString()
-            val instance = providers[paramType]
-            instance?.let { params.add(instance) }
+            val instance = providers[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음")
+            params.add(instance)
         }
 
         return params
