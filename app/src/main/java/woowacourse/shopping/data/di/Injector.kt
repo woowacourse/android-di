@@ -28,6 +28,6 @@ class Injector(val modules: List<Module>) {
     ): List<Any?> {
         return constructorParametersType.map { type ->
             module::class.declaredMemberFunctions.first { it.returnType == type }
-        }.map { it.call(module) }
+        }.map { it.call(module) ?: throw NoSuchElementException() }
     }
 }
