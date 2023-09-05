@@ -6,13 +6,13 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.jvm.javaMethod
+import kotlin.reflect.jvm.jvmErasure
 
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException()
-        val args = constructor.parameters.map { param -> get(param.type.classifier as KClass<*>) }
-
+        val args = constructor.parameters.map { get(it.type.jvmErasure) }
         return constructor.call(*args.toTypedArray())
     }
 
