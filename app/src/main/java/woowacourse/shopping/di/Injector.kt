@@ -21,20 +21,20 @@ class Injector(private val modules: List<Module>) {
         val primaryConstructor =
             T::class.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
 
-        val params = getParams(primaryConstructor.parameters)
+        val params = getArguments(primaryConstructor.parameters)
 
         return primaryConstructor.call(*params.toTypedArray())
     }
 
-    fun getParams(parameters: List<KParameter>): List<Any> {
-        val params = mutableListOf<Any>()
+    fun getArguments(parameters: List<KParameter>): List<Any> {
+        val args = mutableListOf<Any>()
 
         parameters.forEach {
             val paramType = it.type.toString()
-            val instance = providers[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음")
-            params.add(instance)
+            val instance = providers[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $paramType")
+            args.add(instance)
         }
 
-        return params
+        return args
     }
 }
