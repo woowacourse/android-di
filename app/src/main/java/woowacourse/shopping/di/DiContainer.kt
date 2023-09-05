@@ -17,15 +17,19 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     fun <T : Any> get(clazz: KClass<T>): T? {
-        return getFromMethod(clazz) ?: getFromGetter(clazz) ?: parentDiContainer?.get(clazz)
+        return getFromMethod(clazz)
+            ?: getFromGetter(clazz)
+            ?: parentDiContainer?.get(clazz)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
-        return this::class.declaredFunctions.firstOrNull { method ->
-            method.javaMethod?.returnType?.simpleName == clazz.simpleName
+        return this::class.declaredFunctions.firstOrNull { function ->
+            function.javaMethod?.returnType?.simpleName == clazz.simpleName
         }?.call(this) as T?
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : Any> getFromGetter(clazz: KClass<T>): T? {
         return this::class.declaredMemberProperties.firstOrNull { property ->
             property.javaGetter?.returnType?.simpleName == clazz.simpleName
