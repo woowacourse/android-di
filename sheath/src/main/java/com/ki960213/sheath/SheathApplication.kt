@@ -9,7 +9,9 @@ import com.ki960213.sheath.util.ClassesTopologicalSorter
 import com.ki960213.sheath.util.InstanceGenerator
 import kotlin.reflect.KClass
 
-abstract class SheathApplication(scanner: ClassScanner? = null) : Application(), SingletonContainer {
+abstract class SheathApplication(
+    scanner: ClassScanner? = null,
+) : Application(), SingletonContainer {
     private val container: MutableList<Any> = mutableListOf()
 
     private val mScanner: ClassScanner by lazy {
