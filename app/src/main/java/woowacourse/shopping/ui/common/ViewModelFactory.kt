@@ -2,23 +2,19 @@ package woowacourse.shopping.ui.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor = modelClass.declaredConstructors.first()
+        val constructor = modelClass::class.primaryConstructor
         requireNotNull(constructor) { "Unknown ViewModel Class $modelClass" }
+        val params = constructor.parameters
 
-        val types = constructor.parameterTypes
-        val params = mutableListOf<Any?>()
-
-        val properties = Container::class.java.declaredFields
-        for (type in types) {
-            val field = properties.first { it.type == type }
-                ?: throw IllegalArgumentException("Can't find Property $type")
-            field.isAccessible = true
-            params.add(field.get(null))
+        val instances = params.map {
+            Container.getInstance(it.type.jvmErasure)
         }
 
-        return constructor.newInstance(*params.toTypedArray()) as T
+        return constructor.call(*instances.toTypedArray()) as T
     }
 }
