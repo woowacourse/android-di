@@ -27,7 +27,11 @@ abstract class DIActivity : AppCompatActivity() {
     }
 
     private inline fun <reified VM : ViewModel> getViewModel(type: Class<VM>): VM {
-        return ViewModelProvider(this@DIActivity, ViewModelFactory())[type]
+        val application = application as DIApplication
+        return ViewModelProvider(
+            owner = this@DIActivity,
+            factory = ViewModelFactory(application.repositoryContainer),
+        )[type]
     }
 
     private fun setViewModelInstance(viewModelField: Field, viewModel: ViewModel) {
