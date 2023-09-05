@@ -10,16 +10,16 @@ class FakeCartRepository(products: List<Product> = emptyList()) : CartRepository
     val products: List<Product>
         get() = _products.toList()
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         _products.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> =
+    override suspend fun getAllCartProducts(): List<Product> =
         products.also {
             println(it)
         }
 
-    override fun deleteCartProduct(id: Int) {
+    override suspend fun deleteCartProduct(id: Int) {
         _products.removeAt(id)
     }
 }

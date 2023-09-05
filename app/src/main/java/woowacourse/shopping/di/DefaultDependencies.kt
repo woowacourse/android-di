@@ -4,6 +4,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 
 class DefaultDependencies : Dependencies {
     val productRepository: ProductRepository by lazy { DefaultProductRepository() }
