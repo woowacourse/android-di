@@ -29,7 +29,7 @@ abstract class SheathApplication(
 
         val sortedClasses = ClassesTopologicalSorter.sort(classes)
 
-        container.addAll(sortedClasses.map { InstanceGenerator.generate(it, container.toList()) })
+        sortedClasses.forEach { container.add(InstanceGenerator.generate(it, container.toList())) }
     }
 
     override fun getInstance(clazz: KClass<*>): Any {
