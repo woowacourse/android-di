@@ -72,10 +72,6 @@ dependencies {
     // Fragment
     implementation("androidx.fragment:fragment-ktx:1.6.1")
 
-    // mockk
-    testImplementation("io.mockk:mockk-android:1.13.7")
-    testImplementation("io.mockk:mockk-agent:$1.13.7")
-
     // reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
