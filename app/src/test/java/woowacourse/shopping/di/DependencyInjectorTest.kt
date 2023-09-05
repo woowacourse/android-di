@@ -1,8 +1,10 @@
 package woowacourse.shopping.di
 
+import junit.framework.Assert.assertNull
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import woowacourse.shopping.di.DependencyInjector.inject
+import woowacourse.shopping.di.annotation.Injectable
 
 class DependencyInjectorTest {
     interface TestRepository
@@ -22,12 +24,15 @@ class DependencyInjectorTest {
     class DefaultTestRepository : TestRepository
     class DefaultTestRepository2 : TestRepository2
 
-    inner class TestViewModel(
+    class TestViewModel(
         private val testRepository: TestRepository,
         private val testRepository2: TestRepository2,
         private val testProduct: TestProduct
     ) {
+        @Injectable
         var testPerson: TestPerson? = null
+
+        var testProduct2: TestProduct? = null
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -92,6 +97,21 @@ class DependencyInjectorTest {
 
         // then
         assertNotNull(testViewModel.testPerson)
+    }
+
+    @Test
+    fun `TestViewModel 생성에 성공하면 @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
+        // given
+        DependencyInjector.dependencies = object : Dependencies {
+            val testRepository: TestRepository by lazy { DefaultTestRepository() }
+            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
+        }
+
+        // when
+        val testViewModel = inject<TestViewModel>()
+
+        // then
+        assertNull(testViewModel.testProduct2)
     }
 
 }
