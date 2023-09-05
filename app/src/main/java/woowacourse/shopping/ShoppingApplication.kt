@@ -4,5 +4,12 @@ import android.app.Application
 import woowacourse.shopping.di.inject.AutoDependencyInjector
 
 class ShoppingApplication : Application() {
-    val autoDependencyInjector = AutoDependencyInjector()
+    override fun onCreate() {
+        super.onCreate()
+        autoDependencyInjector = AutoDependencyInjector()
+    }
+
+    companion object {
+        lateinit var autoDependencyInjector: AutoDependencyInjector
+    }
 }

@@ -6,6 +6,6 @@ import woowacourse.shopping.ShoppingApplication
 
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ShoppingApplication().autoDependencyInjector.inject(modelClass)
+        return ShoppingApplication.autoDependencyInjector.inject(modelClass)
     }
 }
