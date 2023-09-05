@@ -13,7 +13,7 @@ class DiContainerTest {
         fun get(): String
     }
 
-    private class FakeViewModel(
+    class FakeViewModel(
         private val diRepository: FakeDiRepository
     ) {
         fun get(): String {
@@ -21,7 +21,7 @@ class DiContainerTest {
         }
     }
 
-    private class FakeDiProtoTypeRepository(
+    class FakeDiProtoTypeRepository(
         private val diDataSource: FakeDiDataSource
     ) : FakeDiRepository {
         override fun get(): String {
