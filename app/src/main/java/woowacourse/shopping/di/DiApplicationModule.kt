@@ -5,7 +5,7 @@ import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class ApiModule : DiContainer() {
+class DiApplicationModule : DiContainer() {
 
     val provideProductRepository: ProductRepository by lazy {
         this.createInstance(ProductSampleRepository::class)
