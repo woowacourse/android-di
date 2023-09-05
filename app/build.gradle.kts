@@ -71,4 +71,6 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // Reflect
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
+    //
+    implementation("androidx.activity:activity-ktx:1.7.2")
 }
