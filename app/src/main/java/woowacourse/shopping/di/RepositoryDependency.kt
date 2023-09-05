@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.data.repository.ProductRepository
+import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 interface RepositoryDependency {
     val cartRepository: CartRepository
