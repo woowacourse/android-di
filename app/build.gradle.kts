@@ -73,4 +73,6 @@ dependencies {
     implementation(kotlin("reflect"))
     // Mockk
     testImplementation("io.mockk:mockk:1.12.2")
+    // AssertJ
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
