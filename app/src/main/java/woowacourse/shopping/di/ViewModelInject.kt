@@ -21,7 +21,7 @@ inline fun <reified T : ViewModel> viewModelInject(): ViewModelProvider.Factory 
 
     return viewModelFactory {
         initializer {
-            T::class.primaryConstructor!!.call(instances)
+            T::class.primaryConstructor!!.call(*instances.toTypedArray())
         }
     }
 }
