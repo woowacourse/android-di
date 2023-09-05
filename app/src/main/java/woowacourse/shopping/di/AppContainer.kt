@@ -1,14 +1,14 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class AppContainer {
-    private val productRepository = ProductRepository()
-    private val cartRepository = CartRepository()
+    private val productRepository = DefaultProductRepository()
+    private val cartRepository = DefaultCartRepository()
 
     fun <T : Any> inject(clazz: Class<T>): T {
         val constructor = clazz.kotlin.primaryConstructor
