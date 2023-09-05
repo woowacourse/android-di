@@ -15,14 +15,20 @@ class DependencyInjectorTest {
         private val testID: TestID
     )
 
+    class TestPerson(
+        private val testName: TestName,
+    )
+
     class DefaultTestRepository : TestRepository
     class DefaultTestRepository2 : TestRepository2
 
-    class TestViewModel(
+    inner class TestViewModel(
         private val testRepository: TestRepository,
         private val testRepository2: TestRepository2,
         private val testProduct: TestProduct
-    )
+    ) {
+        var testPerson: TestPerson? = null
+    }
 
     @Test(expected = IllegalArgumentException::class)
     fun `설정한 의존에 의존이 모두 존재하지 않으면 TestViewModel 생성에 실패한다`() {
@@ -72,4 +78,20 @@ class DependencyInjectorTest {
         // then
         assertNotNull(testViewModel)
     }
+
+    @Test
+    fun `TestViewModel 생성에 성공하면, 필드 의존도 주입된다`() {
+        // given
+        DependencyInjector.dependencies = object : Dependencies {
+            val testRepository: TestRepository by lazy { DefaultTestRepository() }
+            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
+        }
+
+        // when
+        val testViewModel = inject<TestViewModel>()
+
+        // then
+        assertNotNull(testViewModel.testPerson)
+    }
+
 }
