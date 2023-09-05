@@ -1,4 +1,4 @@
-package woowacourse.shopping.model.repository
+package woowacourse.shopping.repository
 
 import woowacourse.shopping.model.Product
 
