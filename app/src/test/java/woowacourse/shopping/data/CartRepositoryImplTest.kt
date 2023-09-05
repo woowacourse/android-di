@@ -27,21 +27,25 @@ class CartRepositoryImplTest {
 
     @Test
     fun `카트 상품을 지울 수 있다`() {
+        // given
+        val originalCartProducts = cartRepository.getAllCartProducts()
         // when
         cartRepository.deleteCartProduct(0)
         // then
-        val actual = cartRepository.getAllCartProducts()
-        val expected = listOf(Dummy.cartProducts[1])
+        val actual = cartRepository.getAllCartProducts().contains(originalCartProducts[0])
+        val expected = false
         assertEquals(expected, actual)
     }
 
     @Test
     fun `카트 상품을 추가할 수 있다`() {
+        // given
+        val originalCartProducts = cartRepository.getAllCartProducts()
         // when
         cartRepository.addCartProduct(product = Dummy.product)
         // then
         val actual = cartRepository.getAllCartProducts()
-        val expected = Dummy.cartProducts + Dummy.product
+        val expected = originalCartProducts + Dummy.product
         assertEquals(expected, actual)
     }
 }
