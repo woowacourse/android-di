@@ -15,7 +15,7 @@ private class FakeRepository
 private class FakeViewModel(fakeRepository: FakeRepository) : ViewModel()
 
 private class FakeActivity : AppCompatActivity() {
-    val viewModel: FakeViewModel by viewModels { AutoDiViewModelFactory.value }
+    val viewModel: FakeViewModel by viewModels { AutoDiViewModelFactory }
 }
 
 @RunWith(RobolectricTestRunner::class)
