@@ -19,9 +19,10 @@ object DependencyInjector {
     }
 
     fun inject(type: KType, qualifier: Annotation? = null): Any {
-        return findSingleton(type, qualifier) ?: instantiate(type).apply {
-            injectFields(this)
-        }
+        return findSingleton(type, qualifier) ?: instantiate(type)
+            .apply {
+                injectFields(this)
+            }
     }
 
     private fun findSingleton(type: KType, qualifier: Annotation?): Any? {
@@ -49,10 +50,9 @@ object DependencyInjector {
 
     private fun injectFields(instance: Any): Any {
         val fields = instance::class.declaredMemberProperties
-        fields.forEach {
-            if (it.annotations.filterIsInstance<Injectable>().isEmpty()) return@forEach
-            if (it is KMutableProperty<*>) it.setter.call(instance, inject(it.returnType))
-        }
+        fields.filter { it.annotations.filterIsInstance<Injectable>().isNotEmpty() }
+            .filterIsInstance<KMutableProperty<*>>()
+            .forEach { it.setter.call(instance, inject(it.returnType)) }
         return instance
     }
 
