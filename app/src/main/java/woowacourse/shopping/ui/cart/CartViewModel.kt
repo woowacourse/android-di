@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.Room
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel(
+    @Room
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

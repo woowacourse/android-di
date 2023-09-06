@@ -14,6 +14,7 @@ import org.junit.Test
 import woowacourse.shopping.CartProduct
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.Room
 import woowacourse.shopping.di.Dependencies
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.DependencyInjector.inject
@@ -42,6 +43,7 @@ class CartViewModelTest {
         val cartRepository = FakeCartRepository(expect)
 
         DependencyInjector.dependencies = object : Dependencies {
+            @Room
             val cartRepository: CartRepository by lazy { cartRepository }
         }
 
@@ -65,6 +67,7 @@ class CartViewModelTest {
         val cartRepository = FakeCartRepository(products)
 
         DependencyInjector.dependencies = object : Dependencies {
+            @Room
             val cartRepository: CartRepository by lazy { cartRepository }
         }
 

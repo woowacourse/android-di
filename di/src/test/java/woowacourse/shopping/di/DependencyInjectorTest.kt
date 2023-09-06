@@ -17,7 +17,8 @@ class DependencyInjectorTest {
     class TestName
     class TestID
     class TestProduct(
-        private val testName: TestName, private val testID: TestID
+        private val testName: TestName,
+        private val testID: TestID
     )
 
     class TestPerson(

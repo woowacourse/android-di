@@ -1,10 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.Provides
 import woowacourse.shopping.model.Product
 
-@Provides
-@Room
 class DefaultProductRepository(
     private val products: List<Product> = listOf(
         Product(
