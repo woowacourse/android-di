@@ -2,8 +2,6 @@ package woowacourse.shopping.di
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.reflect.KParameter
-import kotlin.reflect.full.primaryConstructor
 
 class InjectorTest {
 
@@ -15,7 +13,11 @@ class InjectorTest {
         val fakeRepository: FakeRepository = DefaultFakeRepository()
     }
 
+    class FakeRepositoryContainer2 : Container
+
     class FakeViewModel(val fakeRepository: FakeRepository)
+
+    class FakeViewModel2 private constructor()
 
     private val injector = Injector(FakeRepositoryContainer())
 
@@ -28,16 +30,17 @@ class InjectorTest {
         assertEquals(FakeViewModel::class, actual::class)
     }
 
-    @Test
-    fun `주어진 파라미터들에 따라 인자들을 만들어서 반환한다`() {
+    @Test(expected = IllegalStateException::class)
+    fun `주어진 클래스 타입의 주생성자를 가져올 수 없다면 오류가 발생한다`() {
+        injector.getInstance<FakeViewModel2>()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `container에 없는 타입을 요구할 경우 오류가 발생한다`() {
         // given
-        val parameters: List<KParameter> = FakeViewModel::class.primaryConstructor?.parameters
-            ?: throw java.lang.IllegalArgumentException()
+        val injector = Injector(FakeRepositoryContainer2())
 
         // when
-        val actual = injector.getArguments(parameters)
-
-        // then
-        assertEquals(FakeRepositoryContainer().fakeRepository::class, actual.first()::class)
+        injector.getInstance<FakeViewModel>()
     }
 }
