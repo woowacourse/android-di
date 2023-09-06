@@ -7,15 +7,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.data.di.ViewModelFactory
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    private val viewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(
+            this, ViewModelFactory.provide<MainViewModel>()
+        )[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,8 +59,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupProductList() {
         viewModel.products.observe(this) {
             val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
+                items = it, onClickProduct = viewModel::addCartProduct
             )
             binding.rvProducts.adapter = adapter
         }
