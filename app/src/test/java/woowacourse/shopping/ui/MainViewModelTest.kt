@@ -1,11 +1,16 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.FakeProductRepository
 import woowacourse.shopping.data.CartRepository
@@ -16,11 +21,21 @@ import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.DependencyInjector.inject
 import woowacourse.shopping.model.Product
 
-@RunWith(RobolectricTestRunner::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `장바구니에 상품을 등록하면 상품 등록 상태가 true가 되고 CartRepository에 Product가 추가된다`() {
@@ -40,7 +55,7 @@ class MainViewModelTest {
 
         // then
         assertEquals(true, viewModel.onProductAdded.value)
-        assertEquals(expect, cartRepository.products[0])
+        assertEquals(expect, cartRepository.products[0].product)
     }
 
     @Test

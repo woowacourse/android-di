@@ -113,5 +113,4 @@ class DependencyInjectorTest {
         // then
         assertNull(testViewModel.testProduct2)
     }
-
 }
