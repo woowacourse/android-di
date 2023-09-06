@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 
 class CartViewModel(
     private val cartRepository: CartRepository,
@@ -26,9 +25,9 @@ class CartViewModel(
         }
     }
 
-    fun deleteCartProduct(id: Long) {
+    fun deleteCartProduct(cartProduct: CartProduct) {
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
+            cartRepository.deleteCartProduct(cartProduct.identifier)
             _onCartProductDeleted.value = true
         }
     }
