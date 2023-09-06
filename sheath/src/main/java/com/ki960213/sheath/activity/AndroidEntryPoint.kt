@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ki960213.sheath.container.SingletonContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
@@ -27,16 +30,12 @@ abstract class AndroidEntryPoint : AppCompatActivity() {
             { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
         )
 
-        @Suppress("UNCHECKED_CAST")
-        val viewModelFactory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(VM::class.java)) {
-                    val args = primaryConstructor.parameters.map {
-                        (application as SingletonContainer).getInstance(it.type.classifier as KClass<*>)
-                    }
-                    return primaryConstructor.call(*args.toTypedArray()) as T
+        val viewModelFactory = viewModelFactory {
+            initializer {
+                val args = primaryConstructor.parameters.map {
+                    (this[APPLICATION_KEY] as SingletonContainer).getInstance(it.type.classifier as KClass<*>)
                 }
-                throw IllegalArgumentException("unknown viewModel class")
+                primaryConstructor.call(*args.toTypedArray())
             }
         }
 
