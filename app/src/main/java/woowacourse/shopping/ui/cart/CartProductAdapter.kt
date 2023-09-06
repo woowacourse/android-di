@@ -13,7 +13,7 @@ class CartProductAdapter(
     private val items: MutableList<CartProduct> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
-        onClickDelete(items[position])
+        onClickDelete(this.items[position])
         removeItem(position)
     }
 
