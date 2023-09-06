@@ -8,6 +8,8 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.dependencies
+import woowacourse.shopping.di.provider
+import woowacourse.shopping.di.qualifier
 import kotlin.reflect.typeOf
 
 class CartApplication : Application() {

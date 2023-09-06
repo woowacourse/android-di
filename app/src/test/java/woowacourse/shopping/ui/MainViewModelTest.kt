@@ -18,6 +18,8 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.di.DependencyInjector.inject
 import woowacourse.shopping.di.dependencies
+import woowacourse.shopping.di.provider
+import woowacourse.shopping.di.qualifier
 import woowacourse.shopping.model.Product
 
 @OptIn(ExperimentalCoroutinesApi::class)
