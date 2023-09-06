@@ -7,26 +7,34 @@ import java.lang.reflect.Modifier
 
 class DefaultClassScanner(private val context: Context) : ClassScanner {
 
-    override fun findAll(targetClass: Class<*>): List<Class<*>> {
+    override fun findAll(target: Class<*>): List<Class<*>> {
         val classes = mutableListOf<Class<*>>()
         val classLoader = context.classLoader as PathClassLoader
         val dexFile = DexFile(context.packageCodePath)
         val classNames = dexFile.entries()
         while (classNames.hasMoreElements()) {
             val className = classNames.nextElement()
-            if (isTargetClassName(className)) {
-                val clazz = classLoader.loadClass(className)
-                if (isTargetClass(targetClass, clazz)) {
-                    classes.add(clazz)
-                }
-            }
+            classes.addClassIfMatchTarget(className, target, classLoader)
         }
         return classes
     }
 
-    private fun isTargetClassName(className: String): Boolean =
-        className.startsWith(context.packageName) && !className.contains("$")
+    private fun MutableList<Class<*>>.addClassIfMatchTarget(
+        className: String,
+        target: Class<*>,
+        classLoader: PathClassLoader,
+    ) {
+        if (className.isInTargetPackage()) {
+            val clazz = classLoader.loadClass(className)
+            if (clazz.isTarget(target)) {
+                this.add(clazz)
+            }
+        }
+    }
 
-    private fun isTargetClass(targetClass: Class<*>, clazz: Class<*>): Boolean =
-        targetClass.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.modifiers)
+    private fun String.isInTargetPackage(): Boolean =
+        this.startsWith(context.packageName) && !this.contains("$")
+
+    private fun Class<*>.isTarget(target: Class<*>): Boolean =
+        target.isAssignableFrom(this) && !Modifier.isAbstract(this.modifiers)
 }
