@@ -5,9 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import woowacourse.shopping.di.DependencyInjector.inject
-import woowacourse.shopping.di.annotation.Binds
 import woowacourse.shopping.di.annotation.Injectable
-import woowacourse.shopping.di.annotation.Provides
 import woowacourse.shopping.di.annotation.Qualifier
 
 class DependencyInjectorTest {
@@ -28,7 +26,7 @@ class DependencyInjectorTest {
     class DefaultTestRepository : TestRepository
     class DefaultTestRepository2 : TestRepository2
     class TestRepository3(
-        @Binds @TestRemote val testProductDao: TestProductDao
+        @TestRemote val testProductDao: TestProductDao
     )
 
     interface TestProductDao
@@ -140,11 +138,9 @@ class DependencyInjectorTest {
         // given
         DependencyInjector.dependencies = object : Dependencies {
 
-            @Provides
             @TestLocal
             val localTestProductDao: TestProductDao by lazy { LocalTestProductDao() }
 
-            @Provides
             @TestRemote
             val remoteTestProductDao: TestProductDao by lazy { RemoteTestProductDao() }
         }
