@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.primaryConstructor
@@ -17,24 +18,19 @@ class Injector(private val modules: List<Module>) {
             }
         }
 
-    inline fun <reified T : Any> inject(): T {
+    fun <T : Any> inject(clazz: KClass<T>): T {
         val primaryConstructor =
-            T::class.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
+            clazz.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
 
-        val params = getArguments(primaryConstructor.parameters)
+        val args = getArguments(primaryConstructor.parameters)
 
-        return primaryConstructor.call(*params.toTypedArray())
+        return primaryConstructor.call(*args.toTypedArray())
     }
 
-    fun getArguments(parameters: List<KParameter>): List<Any> {
-        val args = mutableListOf<Any>()
-
-        parameters.forEach {
+    private fun getArguments(parameters: List<KParameter>): List<Any> {
+        return parameters.map {
             val paramType = it.type.toString()
-            val instance = providers[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $paramType")
-            args.add(instance)
+            providers[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $paramType")
         }
-
-        return args
     }
 }

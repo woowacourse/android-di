@@ -18,7 +18,7 @@ class DITest {
         FakeApplication.injector = Injector(listOf(FakeRepositoryModule))
 
         // when
-        val vm = FakeApplication.injector.inject<FakeViewModel>()
+        val vm = FakeApplication.injector.inject(FakeViewModel::class)
 
         // then
         assertThat(vm).isNotNull
@@ -32,7 +32,7 @@ class DITest {
         FakeApplication.injector = Injector(listOf())
 
         // when
-        val vm = FakeApplication.injector.inject<FakeViewModel>()
+        val vm = FakeApplication.injector.inject(FakeViewModel::class)
     }
 }
 
