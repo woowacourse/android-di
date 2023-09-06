@@ -4,11 +4,11 @@ import junit.framework.Assert.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import woowacourse.shopping.data.Room
 import woowacourse.shopping.di.DependencyInjector.inject
 import woowacourse.shopping.di.annotation.Binds
 import woowacourse.shopping.di.annotation.Injectable
 import woowacourse.shopping.di.annotation.Provides
+import woowacourse.shopping.di.annotation.Qualifier
 
 class DependencyInjectorTest {
     interface TestRepository
@@ -45,16 +45,20 @@ class DependencyInjectorTest {
         var testProduct2: TestProduct? = null
     }
 
+    @Qualifier
+    annotation class TestRoom
+
     class TestViewModel2(
         @Binds
-        @Room
+        @TestRoom
         val testRepository3: TestRepository3,
     )
 
     @Test(expected = IllegalArgumentException::class)
     fun `설정한 의존에 의존이 모두 존재하지 않으면 TestViewModel 생성에 실패한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
         }
 
@@ -67,7 +71,8 @@ class DependencyInjectorTest {
     @Test
     fun `설정한 의존에 의존이 모두 존재하면 TestViewModel 생성에 성공한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
             val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
             val testProduct: TestProduct by lazy {
@@ -89,7 +94,8 @@ class DependencyInjectorTest {
     fun `설정한 의존에 의존이 존재하지 않더라도 의존 관계의 모든 클래스에 생성자가 존재하면 TestViewModel 생성에 성공한다`() {
         // given
         // testProduct의 생성자는 재귀적으로 모두 존재
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
             val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
         }
@@ -104,7 +110,8 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel 생성에 성공하면, 필드 의존도 주입된다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
             val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
         }
@@ -119,7 +126,8 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel 생성에 성공하면 @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testRepository: TestRepository by lazy { DefaultTestRepository() }
             val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
         }
@@ -134,9 +142,10 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel2를 생성할 때 @Qualifier인 @Room 어노테이션이 선언된 TestProductDao를 TestRepository3에 주입한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             @Provides
-            @Room
+            @TestRoom
             val testProductDao: TestProductDao by lazy { DefaultTestProductDao() }
         }
 
@@ -150,7 +159,8 @@ class DependencyInjectorTest {
     @Test(expected = IllegalStateException::class)
     fun `TestViewModel2를 생성할 때 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
+        DependencyInjector.dependencies = object :
+            Dependencies {
             val testProductDao: TestProductDao by lazy { DefaultTestProductDao() }
         }
 

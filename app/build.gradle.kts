@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -68,5 +69,4 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
-    implementation(kotlin("reflect"))
 }
