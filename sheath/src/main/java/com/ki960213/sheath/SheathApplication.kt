@@ -3,7 +3,7 @@ package com.ki960213.sheath
 import android.app.Application
 import com.ki960213.sheath.component.Component
 import com.ki960213.sheath.container.SingletonContainer
-import com.ki960213.sheath.instantiater.InstanceGenerator
+import com.ki960213.sheath.instantiater.instantiateByPrimaryConstructor
 import com.ki960213.sheath.scanner.ClassScanner
 import com.ki960213.sheath.scanner.DefaultClassScanner
 import com.ki960213.sheath.sorter.ClassesTopologicalSorter
@@ -29,7 +29,7 @@ abstract class SheathApplication(
 
         val sortedClasses = ClassesTopologicalSorter.sort(classes)
 
-        sortedClasses.forEach { container.add(InstanceGenerator.generate(it, container.toList())) }
+        sortedClasses.forEach { container.add(it.instantiateByPrimaryConstructor(container.toList())) }
     }
 
     override fun getInstance(clazz: KClass<*>): Any {
