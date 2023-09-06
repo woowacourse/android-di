@@ -5,7 +5,7 @@ import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
-object DataModule {
+object DataModule : Module {
     val productRepository: ProductRepository = DefaultProductRepository()
     val cartRepository: CartRepository = DefaultCartRepository()
 }

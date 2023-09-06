@@ -1,11 +1,14 @@
 package woowacourse.shopping.di.inject
 
 import woowacourse.shopping.di.DataModule
+import woowacourse.shopping.di.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-class AutoDependencyInjector {
+class AutoDependencyInjector(
+    private val module: Module,
+) {
     fun <T : Any> inject(clazz: Class<T>): T {
         return matchParameterType(clazz.kotlin)
     }
@@ -14,7 +17,7 @@ class AutoDependencyInjector {
         val arguments = mutableListOf<Any>()
         val constructor = clazz.primaryConstructor
             ?: throw IllegalArgumentException(INJECT_ERROR_MESSAGE)
-        val modules = DataModule::class.declaredMemberProperties
+        val modules = module::class.declaredMemberProperties
 
         constructor.parameters.forEach { parameter ->
             val argument = modules.firstOrNull { it.returnType == parameter.type }
