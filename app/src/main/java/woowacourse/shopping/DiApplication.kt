@@ -7,7 +7,7 @@ import woowacourse.shopping.di.RepositoryContainer
 class DiApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        repositoryFactory = DependencyFactory(RepositoryContainer())
+        repositoryFactory = DependencyFactory(RepositoryContainer(applicationContext))
     }
 
     companion object {
