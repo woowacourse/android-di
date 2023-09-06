@@ -1,4 +1,4 @@
-package com.ki960213.sheath.util
+package com.ki960213.sheath.instantiater
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

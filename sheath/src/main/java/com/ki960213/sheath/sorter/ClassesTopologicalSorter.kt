@@ -1,4 +1,4 @@
-package com.ki960213.sheath.util
+package com.ki960213.sheath.sorter
 
 import java.lang.reflect.Constructor
 import java.util.LinkedList

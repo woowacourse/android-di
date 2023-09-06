@@ -1,4 +1,4 @@
-package com.ki960213.sheath.util
+package com.ki960213.sheath.instantiater
 
 import java.lang.reflect.Constructor
 

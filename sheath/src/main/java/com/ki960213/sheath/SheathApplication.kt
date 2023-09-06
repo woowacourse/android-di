@@ -3,10 +3,10 @@ package com.ki960213.sheath
 import android.app.Application
 import com.ki960213.sheath.component.Component
 import com.ki960213.sheath.container.SingletonContainer
+import com.ki960213.sheath.instantiater.InstanceGenerator
 import com.ki960213.sheath.scanner.ClassScanner
 import com.ki960213.sheath.scanner.DefaultClassScanner
-import com.ki960213.sheath.util.ClassesTopologicalSorter
-import com.ki960213.sheath.util.InstanceGenerator
+import com.ki960213.sheath.sorter.ClassesTopologicalSorter
 import kotlin.reflect.KClass
 
 abstract class SheathApplication(
