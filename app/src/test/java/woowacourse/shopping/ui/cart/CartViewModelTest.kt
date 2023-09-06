@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.provider.DefaultViewModelTest
@@ -14,8 +15,8 @@ internal class CartViewModelTest : DefaultViewModelTest() {
     private lateinit var sut: CartViewModel
     private lateinit var cartRepository: CartRepository
 
-    override fun setUp() {
-        super.setUp()
+    @Before
+    fun setUp() {
         cartRepository = Fake.CartRepository()
         sut = CartViewModel(cartRepository)
     }

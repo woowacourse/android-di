@@ -1,8 +1,6 @@
 package woowacourse.shopping.provider
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 
 /**
@@ -17,12 +15,4 @@ abstract class DefaultViewModelTest {
     // Cotoutine에 대한 테스트를 지원합니다.
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
-
-    @Before
-    open fun setUp() {
-    }
-
-    @After
-    open fun tearDown() {
-    }
 }
