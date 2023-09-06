@@ -27,7 +27,7 @@ class DependencyInjectorTest {
     class DefaultTestRepository : TestRepository
     class DefaultTestRepository2 : TestRepository2
     class TestRepository3(
-        val testProductDao: TestProductDao
+        @Binds @TestRemote val testProductDao: TestProductDao
     )
 
     interface TestProductDao
@@ -52,7 +52,7 @@ class DependencyInjectorTest {
     annotation class TestRemote
 
     class TestViewModel2(
-        @Binds @TestRemote val testRepository3: TestRepository3,
+        val testRepository3: TestRepository3,
     )
 
     @Test(expected = IllegalArgumentException::class)
@@ -135,7 +135,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `TestViewModel2를 생성할 때 @Qualifier인 @Room 어노테이션이 선언된 TestProductDao를 TestRepository3에 주입한다`() {
+    fun `TestViewModel2를 생성할 때 @Qualifier인 @TestRemote 어노테이션이 선언된 RemoteTestProductDao를 TestRepository3에 주입한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {
 
@@ -155,7 +155,7 @@ class DependencyInjectorTest {
         assertEquals(true, testViewModel2.testRepository3.testProductDao is RemoteTestProductDao)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `TestViewModel2를 생성할 때 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
         DependencyInjector.dependencies = object : Dependencies {

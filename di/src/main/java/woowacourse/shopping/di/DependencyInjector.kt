@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.di.annotation.Injectable
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -13,24 +14,22 @@ import kotlin.reflect.typeOf
 object DependencyInjector {
     lateinit var dependencies: Dependencies
 
-    inline fun <reified T> inject(): T {
+    inline fun <reified T : Any> inject(): T {
         return inject(typeOf<T>()) as T
     }
 
-    fun inject(type: KType): Any {
-        return findSingleton(type) ?: instantiate(type).apply {
+    fun inject(type: KType, qualifier: Annotation? = null): Any {
+        return findSingleton(type, qualifier) ?: instantiate(type).apply {
             injectFields(this)
         }
     }
 
-    private fun findSingleton(type: KType): Any? {
+    private fun findSingleton(type: KType, qualifier: Annotation?): Any? {
         if (!::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
-        dependencies::class.declaredMemberProperties.forEach {
-            if (type.isSupertypeOf(it.returnType)) {
-                return it.getter.call(dependencies)
-            }
-        }
-        return null
+        return dependencies::class.declaredMemberProperties
+            .filter { type.isSupertypeOf(it.returnType) || type == it.returnType }
+            .firstOrNull { findQualifier(it.annotations) == qualifier }
+            ?.getter?.call(dependencies)
     }
 
     private fun instantiate(type: KType): Any {
@@ -41,9 +40,10 @@ object DependencyInjector {
         return constructor.call(*arguments)
     }
 
-    private fun gatherArguments(parameters: List<KParameter>): Array<Any> {
+    private fun gatherArguments(parameters: List<KParameter>): Array<*> {
         return parameters.map { parameter ->
-            inject(parameter.type)
+            val qualifier = findQualifier(parameter.annotations)
+            inject(parameter.type, qualifier)
         }.toTypedArray()
     }
 
@@ -54,5 +54,11 @@ object DependencyInjector {
             if (it is KMutableProperty<*>) it.setter.call(instance, inject(it.returnType))
         }
         return instance
+    }
+
+    private fun findQualifier(annotations: List<Annotation>): Annotation? {
+        return annotations.firstOrNull {
+            it.annotationClass.annotations.filterIsInstance<Qualifier>().isNotEmpty()
+        }
     }
 }
