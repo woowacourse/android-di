@@ -6,7 +6,6 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
@@ -19,18 +18,20 @@ object DependencyInjector {
     }
 
     fun inject(type: KType, qualifier: Annotation? = null): Any {
-        return findSingleton(type, qualifier) ?: instantiate(type)
-            .apply {
-                injectFields(this)
-            }
+        return findSingleton(type, qualifier) ?: instantiate(type).apply {
+            injectFields(this)
+        }
     }
 
     private fun findSingleton(type: KType, qualifier: Annotation?): Any? {
         if (!::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
-        return dependencies::class.declaredMemberProperties
-            .filter { type.isSupertypeOf(it.returnType) || type == it.returnType }
-            .firstOrNull { findQualifier(it.annotations) == qualifier }
-            ?.getter?.call(dependencies)
+        return dependencies.qualifiers[qualifier]?.let {
+            it.constructors[type]?.let { constructor ->
+                instantiate(constructor)
+            } ?: it.providers[type]?.let { provider ->
+                provider()
+            }
+        }
     }
 
     private fun instantiate(type: KType): Any {

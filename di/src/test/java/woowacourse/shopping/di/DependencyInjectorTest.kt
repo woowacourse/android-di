@@ -7,6 +7,7 @@ import org.junit.Test
 import woowacourse.shopping.di.DependencyInjector.inject
 import woowacourse.shopping.di.annotation.Injectable
 import woowacourse.shopping.di.annotation.Qualifier
+import kotlin.reflect.typeOf
 
 class DependencyInjectorTest {
     interface TestRepository
@@ -57,8 +58,10 @@ class DependencyInjectorTest {
     @Test(expected = IllegalArgumentException::class)
     fun `설정한 의존에 의존이 모두 존재하지 않으면 TestViewModel 생성에 실패한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-            val testRepository: TestRepository by lazy { DefaultTestRepository() }
+        dependencies {
+            qualifier {
+                provider<TestRepository>(typeOf<DefaultTestRepository>())
+            }
         }
 
         // when
@@ -70,13 +73,15 @@ class DependencyInjectorTest {
     @Test
     fun `설정한 의존에 의존이 모두 존재하면 TestViewModel 생성에 성공한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-            val testRepository: TestRepository by lazy { DefaultTestRepository() }
-            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
-            val testProduct: TestProduct by lazy {
-                TestProduct(
-                    TestName(), TestID()
-                )
+        dependencies {
+            qualifier {
+                provider<TestRepository>(typeOf<DefaultTestRepository>())
+                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
+                provider {
+                    TestProduct(
+                        TestName(), TestID()
+                    )
+                }
             }
         }
 
@@ -91,9 +96,11 @@ class DependencyInjectorTest {
     fun `설정한 의존에 의존이 존재하지 않더라도 의존 관계의 모든 클래스에 생성자가 존재하면 TestViewModel 생성에 성공한다`() {
         // given
         // testProduct의 생성자는 재귀적으로 모두 존재
-        DependencyInjector.dependencies = object : Dependencies {
-            val testRepository: TestRepository by lazy { DefaultTestRepository() }
-            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
+        dependencies {
+            qualifier {
+                provider<TestRepository>(typeOf<DefaultTestRepository>())
+                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
+            }
         }
 
         // when
@@ -106,9 +113,11 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel 생성에 성공하면, 필드 의존도 주입된다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-            val testRepository: TestRepository by lazy { DefaultTestRepository() }
-            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
+        dependencies {
+            qualifier {
+                provider<TestRepository>(typeOf<DefaultTestRepository>())
+                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
+            }
         }
 
         // when
@@ -121,9 +130,11 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel 생성에 성공하면 @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-            val testRepository: TestRepository by lazy { DefaultTestRepository() }
-            val testRepository2: TestRepository2 by lazy { DefaultTestRepository2() }
+        dependencies {
+            qualifier {
+                provider<TestRepository>(typeOf<DefaultTestRepository>())
+                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
+            }
         }
 
         // when
@@ -136,13 +147,13 @@ class DependencyInjectorTest {
     @Test
     fun `TestViewModel2를 생성할 때 @Qualifier인 @TestRemote 어노테이션이 선언된 RemoteTestProductDao를 TestRepository3에 주입한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-
-            @TestLocal
-            val localTestProductDao: TestProductDao by lazy { LocalTestProductDao() }
-
-            @TestRemote
-            val remoteTestProductDao: TestProductDao by lazy { RemoteTestProductDao() }
+        dependencies {
+            qualifier(TestLocal()) {
+                provider<TestProductDao>(typeOf<LocalTestProductDao>())
+            }
+            qualifier(TestRemote()) {
+                provider<TestProductDao>(typeOf<RemoteTestProductDao>())
+            }
         }
 
         // when
@@ -155,8 +166,10 @@ class DependencyInjectorTest {
     @Test(expected = IllegalArgumentException::class)
     fun `TestViewModel2를 생성할 때 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
-        DependencyInjector.dependencies = object : Dependencies {
-            val testProductDao: TestProductDao by lazy { LocalTestProductDao() }
+        dependencies {
+            qualifier {
+                provider<TestProductDao>(typeOf<LocalTestProductDao>())
+            }
         }
 
         // when

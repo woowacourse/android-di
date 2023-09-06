@@ -14,12 +14,10 @@ import org.junit.Test
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.FakeProductRepository
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
-import woowacourse.shopping.di.Dependencies
-import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.DependencyInjector.inject
+import woowacourse.shopping.di.dependencies
 import woowacourse.shopping.model.Product
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,12 +41,11 @@ class MainViewModelTest {
         // given
         val cartRepository = FakeCartRepository()
 
-        DependencyInjector.dependencies = object : Dependencies {
-            @Room
-            val cartRepository: CartRepository by lazy { cartRepository }
-
-            @Room
-            val productRepository: ProductRepository by lazy { DefaultProductRepository() }
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+                provider<ProductRepository> { FakeProductRepository() }
+            }
         }
 
         val viewModel = inject<MainViewModel>()
@@ -69,12 +66,11 @@ class MainViewModelTest {
         val cartRepository = FakeCartRepository()
         val productRepository = FakeProductRepository(expect)
 
-        DependencyInjector.dependencies = object : Dependencies {
-            @Room
-            val cartRepository: CartRepository by lazy { cartRepository }
-
-            @Room
-            val productRepository: ProductRepository by lazy { productRepository }
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+                provider<ProductRepository> { productRepository }
+            }
         }
 
         val viewModel = inject<MainViewModel>()

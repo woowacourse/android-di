@@ -15,9 +15,8 @@ import woowacourse.shopping.CartProduct
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.Room
-import woowacourse.shopping.di.Dependencies
-import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.DependencyInjector.inject
+import woowacourse.shopping.di.dependencies
 import woowacourse.shopping.model.DatabaseIdentifier
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -42,9 +41,10 @@ class CartViewModelTest {
         val expect = listOf(CartProduct())
         val cartRepository = FakeCartRepository(expect)
 
-        DependencyInjector.dependencies = object : Dependencies {
-            @Room
-            val cartRepository: CartRepository by lazy { cartRepository }
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+            }
         }
 
         val viewModel = inject<CartViewModel>()
@@ -66,9 +66,10 @@ class CartViewModelTest {
         )
         val cartRepository = FakeCartRepository(products)
 
-        DependencyInjector.dependencies = object : Dependencies {
-            @Room
-            val cartRepository: CartRepository by lazy { cartRepository }
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+            }
         }
 
         val viewModel = inject<CartViewModel>()
