@@ -14,7 +14,7 @@ class FakeProductRepository : ProductRepository {
 }
 
 class FakeCartRepository : CartRepository {
-    private val products = mutableListOf<Product>()
+    private val products = mutableListOf(product)
 
     override fun addCartProduct(product: Product) {
         products.add(product)
