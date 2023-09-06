@@ -5,11 +5,12 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-class Injector(val modules: List<Module>) {
+object Injector {
+    var modules: List<Module> = listOf()
 
     inline fun <reified T : Any> inject(): T {
         val constructor = T::class.primaryConstructor ?: throw IllegalArgumentException()
-        val dependencies = provideDependencies<T>()
+        val dependencies:List<Any?> = provideDependencies<T>()
         return constructor.call(*dependencies.toTypedArray())
     }
 
@@ -27,7 +28,9 @@ class Injector(val modules: List<Module>) {
         constructorParametersType: List<KType>
     ): List<Any?> {
         return constructorParametersType.map { type ->
-            module::class.declaredMemberProperties.first { it.returnType == type }
-        }.map { it.call(module) ?: throw NoSuchElementException() }
+            module::class.declaredMemberProperties.first {
+                it.returnType == type }
+        }.map {
+            it.call(module) ?: throw NoSuchElementException() }
     }
 }
