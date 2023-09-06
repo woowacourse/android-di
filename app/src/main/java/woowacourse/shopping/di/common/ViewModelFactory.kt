@@ -2,10 +2,10 @@ package woowacourse.shopping.di.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.ShoppingApplication
+import woowacourse.shopping.ShoppingApplication.Companion.autoDependencyInjector
 
-class ViewModelFactory : ViewModelProvider.Factory {
+object ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ShoppingApplication.autoDependencyInjector.inject(modelClass)
+        return autoDependencyInjector.inject(modelClass)
     }
 }
