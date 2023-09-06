@@ -1,3 +1,3 @@
 package woowacourse.shopping.data.di
 
-class FakeViewModel(val string: String)
+class FakeViewModel(val message: String)

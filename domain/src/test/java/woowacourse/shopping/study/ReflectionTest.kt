@@ -2,6 +2,7 @@ package woowacourse.shopping.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
@@ -11,6 +12,7 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.jvm.jvmErasure
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
@@ -36,6 +38,7 @@ class ReflectionTest {
         val person = Person("Jason", "Park", 20)
         val lastNameField = Person::class.java.getDeclaredField("lastName")
         lastNameField.apply {
+            // todo: public 인데 왜 isAccessible 설정..?
             isAccessible = true
             set(person, "Mraz")
         }
@@ -99,5 +102,18 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 정적 함수`() {
         assertThat(Person::class.staticFunctions.size).isEqualTo(0)
+    }
+
+    // 자습
+    interface Repository
+    class FakeModule {
+        val repository: Repository = object : Repository {}
+    }
+
+    @Test
+    fun `타입으로 클래스의 필드값 가져오기`() {
+        val clazz: KClass<Repository> = Repository::class
+        val declaredProperties = FakeModule::class.declaredMemberProperties
+        val instance = declaredProperties.first { it.returnType.jvmErasure == clazz }
     }
 }

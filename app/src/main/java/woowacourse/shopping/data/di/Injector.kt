@@ -2,7 +2,7 @@ package woowacourse.shopping.data.di
 
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KType
-import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
 class Injector(val modules: List<Module>) {
@@ -27,7 +27,7 @@ class Injector(val modules: List<Module>) {
         constructorParametersType: List<KType>
     ): List<Any?> {
         return constructorParametersType.map { type ->
-            module::class.declaredMemberFunctions.first { it.returnType == type }
+            module::class.declaredMemberProperties.first { it.returnType == type }
         }.map { it.call(module) ?: throw NoSuchElementException() }
     }
 }

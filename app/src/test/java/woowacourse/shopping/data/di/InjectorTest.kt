@@ -13,7 +13,7 @@ class InjectorTest {
     fun `의존성 모듈이 모두 제공될 때 자동 DI 가 성공하는지 테스트`() {
         // given
         injector = Injector(listOf(object : Module {
-            fun getString(): String = ""
+            val message: String = ""
         }))
 
         // when
