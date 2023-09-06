@@ -11,8 +11,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestShoppingApplication::class)
@@ -51,6 +51,6 @@ class TestShoppingApplication : SheathApplication(FakeScanner())
 
 class FakeScanner : ClassScanner {
     override fun findAll(targetClass: Class<*>): List<Class<*>> {
-        return listOf(CartRepositoryImpl::class.java, ProductRepositoryImpl::class.java)
+        return listOf(DefaultCartRepository::class.java, DefaultProductRepository::class.java)
     }
 }
