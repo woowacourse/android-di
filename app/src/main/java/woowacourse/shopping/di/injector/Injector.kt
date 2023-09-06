@@ -2,6 +2,7 @@ package woowacourse.shopping.di.injector
 
 import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.primaryConstructor
 
@@ -9,11 +10,11 @@ class Injector(private val modules: List<Module>) {
 
     constructor(vararg modules: Module) : this(modules.toList())
 
-    private val providers: MutableMap<String, Any?> =
-        mutableMapOf<String, Any?>().apply {
+    private val providers: MutableMap<KType, Any?> =
+        mutableMapOf<KType, Any?>().apply {
             modules.forEach { module ->
                 module::class.declaredMemberFunctions.forEach {
-                    val returnType = it.returnType.toString()
+                    val returnType = it.returnType
                     val instance = it.call(module)
                     this[returnType] = instance
                 }
@@ -31,7 +32,7 @@ class Injector(private val modules: List<Module>) {
         val params = mutableListOf<Any>()
 
         parameters.forEach {
-            val paramType = it.type.toString()
+            val paramType = it.type
             val instance = providers[paramType]
             instance?.let { params.add(instance) }
         }
