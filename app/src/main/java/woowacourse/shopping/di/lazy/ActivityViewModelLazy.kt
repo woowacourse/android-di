@@ -3,7 +3,7 @@ package woowacourse.shopping.di.lazy
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import woowacourse.shopping.di.injector.ClassInjector
+import woowacourse.shopping.di.injector.DependencyInjector
 import woowacourse.shopping.di.util.viewModelFactory
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
@@ -15,5 +15,5 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
 }
 
 inline fun <reified VM : ViewModel> createViewModel(): VM {
-    return ClassInjector.inject()
+    return DependencyInjector.inject()
 }
