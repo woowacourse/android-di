@@ -8,6 +8,10 @@ internal class Graph(nodes: Set<Node>) {
     }
 
     init {
+        validateNodes(nodes)
+    }
+
+    private fun validateNodes(nodes: Set<Node>) {
         nodes.forEach { node ->
             val otherNodes = nodes.filterNot { it == node }
             val dependentCountInGraph = node.getDependentCount(otherNodes)
