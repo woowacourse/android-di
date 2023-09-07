@@ -34,7 +34,6 @@ internal class InstantiaterKtTest {
         }
     }
 
-    // 인스턴스 생성 해피 케이스 테스트 용
     class Test1(val test2: Test2)
 
     class Test2
