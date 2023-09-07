@@ -38,6 +38,10 @@ object DependencyInjector {
         val type = param.type.javaType
         dependencies[type] ?: throwNotExistDependency(type.javaClass)
     }
+
+    fun clear() {
+        dependencies.clear()
+    }
 }
 
 class ClassInjectorDsl {
