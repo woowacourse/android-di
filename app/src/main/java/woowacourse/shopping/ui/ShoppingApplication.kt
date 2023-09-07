@@ -1,10 +1,12 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import androidx.room.Room
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.Container
 
 class ShoppingApplication : Application() {
@@ -14,7 +16,13 @@ class ShoppingApplication : Application() {
     }
 
     private fun inject() {
-        Container.addInstance(CartRepository::class, CartRepositoryImpl())
-        Container.addInstance(ProductRepository::class, ProductRepositoryImpl())
+        val db = Room.databaseBuilder(
+            applicationContext,
+            ShoppingDatabase::class.java,
+            ShoppingDatabase.name,
+        ).build()
+
+        Container.addInstance(CartRepository::class, DefaultCartRepository(db.cartProductDao()))
+        Container.addInstance(ProductRepository::class, DefaultProductRepository())
     }
 }
