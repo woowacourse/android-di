@@ -3,7 +3,7 @@ package woowacourse.shopping.di.application
 import android.app.Application
 import woowacourse.shopping.di.container.DiActivityModuleContainer
 import woowacourse.shopping.di.module.ApplicationModule
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.primaryConstructor
 
 open class DiApplication<T : ApplicationModule>(private val applicationModuleClazz: Class<T>) :
     Application() {
@@ -13,7 +13,9 @@ open class DiApplication<T : ApplicationModule>(private val applicationModuleCla
 
     override fun onCreate() {
         super.onCreate()
-        applicationModule = applicationModuleClazz.kotlin.createInstance()
+        val primaryConstructor = applicationModuleClazz.kotlin.primaryConstructor
+            ?: throw NullPointerException("ApplicationModule은 매개변수가 없는 주생성자가 있어야 합니다")
+        applicationModule = primaryConstructor.call()
         diContainer = DiActivityModuleContainer(applicationModule)
     }
 }

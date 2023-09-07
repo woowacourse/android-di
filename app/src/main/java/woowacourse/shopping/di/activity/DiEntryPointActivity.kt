@@ -8,26 +8,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.di.AutoInjector
 import woowacourse.shopping.di.application.DiApplication
 import woowacourse.shopping.di.module.ActivityModule
 
 abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModuleClassType: Class<T>) :
     AppCompatActivity() {
-    private val diApplication = application as DiApplication<*>
 
-    lateinit var injector: AutoInjector
+    lateinit var activityModule: ActivityModule
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val diApplication = application as DiApplication<*>
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
-        val activityModule = diApplication.diContainer.changeHashKeyForActivityModule(
+        this.activityModule = diApplication.diContainer.provideActivityModule(
             this.hashCode(),
             previousHashCode,
             activityModuleClassType,
         )
-        injector = AutoInjector(activityModule)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -41,6 +39,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing) {
+            val diApplication = application as DiApplication<*>
             diApplication.diContainer.removeModule(this.hashCode())
         }
     }
@@ -53,7 +52,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
             {
                 viewModelFactory {
                     initializer {
-                        injector.inject(VM::class.java)
+                        activityModule.provideInstance(VM::class.java)
                     }
                 }
             },

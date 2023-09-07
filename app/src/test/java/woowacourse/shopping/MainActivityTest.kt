@@ -10,14 +10,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.di.AutoInjector
-import woowacourse.shopping.di.activity.DiEntryPointActivity
 import woowacourse.shopping.di.application.DiApplication
 import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.util.FakeApplicationModule
-import woowacourse.util.getFakeActivityModule
 import woowacourse.util.getFakeApplicationModule
 
 @RunWith(RobolectricTestRunner::class)
@@ -55,7 +52,6 @@ class MainActivityTest {
         // given
         val activityController = Robolectric.buildActivity(MainActivity::class.java)
         val activity = activityController.get()
-        changeFakeActivityModule(activity)
 
         // then
         assertThat(activity).isNotNull()
@@ -66,7 +62,6 @@ class MainActivityTest {
         // given
         val activityController = Robolectric.buildActivity(MainActivity::class.java)
         val activity = activityController.get()
-        changeFakeActivityModule(activity)
         activityController.create()
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
@@ -74,13 +69,13 @@ class MainActivityTest {
         assertThat(viewModel).isNotNull()
     }
 
-    private fun changeFakeActivityModule(
-        activity: DiEntryPointActivity<*>,
-    ) {
-        DiApplication.removeInjectorForInstance(activity.hashCode())
-        DiApplication.addInjectorForInstance(
-            activity.hashCode(),
-            AutoInjector(getFakeActivityModule(DiApplication.applicationModule)),
-        )
-    }
+//    private fun changeFakeActivityModule(
+//        activity: DiEntryPointActivity<*>,
+//    ) {
+//        DiApplication.removeInjectorForInstance(activity.hashCode())
+//        DiApplication.addInjectorForInstance(
+//            activity.hashCode(),
+//            AutoInjector(getFakeActivityModule(DiApplication.applicationModule)),
+//        )
+//    }
 }
