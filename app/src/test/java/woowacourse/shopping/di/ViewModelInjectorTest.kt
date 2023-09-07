@@ -18,7 +18,7 @@ class FakeViewModel(
 ) : ViewModel()
 
 class FakeActivity : AppCompatActivity() {
-    val viewModel by viewModels<FakeViewModel> { ViewModelInjector.getInjectedViewModelFactory<FakeViewModel>() }
+    val viewModel by viewModels<FakeViewModel> { getViewModelFactory<FakeViewModel>() }
 }
 
 @RunWith(RobolectricTestRunner::class)
