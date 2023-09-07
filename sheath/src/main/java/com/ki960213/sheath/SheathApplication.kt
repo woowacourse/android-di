@@ -6,13 +6,13 @@ import com.ki960213.sheath.container.SingletonContainer
 import com.ki960213.sheath.instantiater.instantiateByPrimaryConstructor
 import com.ki960213.sheath.scanner.ClassScanner
 import com.ki960213.sheath.scanner.DefaultClassScanner
-import com.ki960213.sheath.sorter.ClassesTopologicalSorter
+import com.ki960213.sheath.sorter.sortedTopologically
 import kotlin.reflect.KClass
 
 abstract class SheathApplication(
     scanner: ClassScanner? = null,
 ) : Application(), SingletonContainer {
-    private val container: MutableList<Any> = mutableListOf()
+    private lateinit var container: List<Any>
 
     private val mScanner: ClassScanner by lazy {
         scanner ?: DefaultClassScanner(applicationContext)
@@ -27,17 +27,16 @@ abstract class SheathApplication(
     private fun setupContainer() {
         val classes = mScanner.findAll(Component::class.java)
 
-        val sortedClasses = ClassesTopologicalSorter.sort(classes)
+        val sortedClasses = classes.sortedTopologically()
 
-        sortedClasses.forEach { container.add(it.instantiateByPrimaryConstructor(container.toList())) }
+        container = sortedClasses.fold(mutableListOf()) { instances, clazz ->
+            instances.add(clazz.instantiateByPrimaryConstructor(instances))
+            instances
+        }
     }
 
     override fun getInstance(clazz: KClass<*>): Any {
-        val instances = container.filter { element -> clazz.isInstance(element) }
-        when {
-            instances.isEmpty() -> throw IllegalStateException("Application container에 ${clazz.qualifiedName} 타입의 인스턴스가 존재하지 않습니다.")
-            instances.size >= 2 -> throw IllegalStateException("Application container에 ${clazz.qualifiedName} 타입의 인스턴스가 두 개 이상 존재합니다.")
-        }
-        return instances[0]
+        return container.find { element -> clazz.isInstance(element) }
+            ?: throw IllegalStateException("의존성 검사 로직이 잘못되었습니다. 확인해주세요.")
     }
 }
