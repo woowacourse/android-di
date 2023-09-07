@@ -13,13 +13,13 @@ object ClassInjector {
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = validateHasPrimaryConstructor<T>()
-        val parameterValues = getParameterValues(primaryConstructor.parameters)
+        val args = getArgs(primaryConstructor.parameters)
 
-        return primaryConstructor.call(*parameterValues.toTypedArray())
+        return primaryConstructor.call(*args.toTypedArray())
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun getParameterValues(parameters: List<KParameter>): MutableList<Any> {
+    fun getArgs(parameters: List<KParameter>): MutableList<Any> {
         val parameterTypes = parameters.map { it.type }
         val parameterValues = mutableListOf<Any>()
 
