@@ -28,9 +28,9 @@ internal class NodeTest {
         val node1 = Node(Test1::class.java)
         val node2 = Node(Test2::class.java)
 
-        expect.that(node1.dependencyCount)
+        expect.that(node1.dependentCount)
             .isEqualTo(Test1::class.primaryConstructor?.parameters?.size ?: 0)
-        expect.that(node2.dependencyCount)
+        expect.that(node2.dependentCount)
             .isEqualTo(Test2::class.primaryConstructor?.parameters?.size ?: 0)
     }
 

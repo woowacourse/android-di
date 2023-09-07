@@ -5,9 +5,9 @@ import kotlin.properties.Delegates.observable
 
 internal class Node(val clazz: Class<*>) {
 
-    val dependencyCount = clazz.primaryConstructor?.parameterCount ?: 0
+    val dependentCount = clazz.primaryConstructor?.parameterCount ?: 0
 
-    var inDegreeCount: Int by observable(dependencyCount) { _, _, newValue ->
+    var inDegreeCount: Int by observable(dependentCount) { _, _, newValue ->
         check(newValue >= 0) { "노드의 진입 차수가 0 미만일 수 없습니다." }
     }
         private set
