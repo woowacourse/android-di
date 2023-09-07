@@ -9,41 +9,25 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.di.AutoInjector
-import woowacourse.shopping.di.Injector
 import woowacourse.shopping.di.application.DiApplication
 import woowacourse.shopping.di.module.ActivityModule
-import kotlin.reflect.full.primaryConstructor
 
 abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModuleClassType: Class<T>) :
     AppCompatActivity() {
+    private val diApplication = application as DiApplication<*>
 
-    val autoInjector: Injector
-        get() = DiApplication.getInjectorForInstance(this.hashCode())
+    lateinit var injector: AutoInjector
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
-        val activityModule =
-            activityModuleClassType.kotlin.primaryConstructor?.call(DiApplication.applicationModule)
-                ?: throw NullPointerException("주생성자 없음")
-
-        // 이전에 만들었던 인젝터 객체가 있는지 검사
-        if (previousHashCode == null) {
-            addInjectorToDiApplication(this.hashCode(), AutoInjector(activityModule))
-        } else {
-            if (!DiApplication.hasInjectorForInstance(previousHashCode)) {
-                addInjectorToDiApplication(this.hashCode(), AutoInjector(activityModule))
-            } else {
-                val previousInjector = DiApplication.getInjectorForInstance(previousHashCode)
-                DiApplication.removeInjectorForInstance(previousHashCode)
-                addInjectorToDiApplication(this.hashCode(), previousInjector) // 새 해시값으로 다시 등록
-            }
-        }
-    }
-
-    // 애플리케이션 모듈에 대한 참조를 갖고 있는 액티비티 모듈을 생성해서, 이걸 인젝터 객체 생성자에 넘겨서 객체 생성하고 애플리케이션이 가진 맵에 저장시킴. 이 액티비티가 살아있는 한 같은 인젝터를 얻게 된다.
-    private fun addInjectorToDiApplication(hashCode: Int, injector: Injector) {
-        DiApplication.addInjectorForInstance(hashCode, injector)
+        val activityModule = diApplication.diContainer.changeHashKeyForActivityModule(
+            this.hashCode(),
+            previousHashCode,
+            activityModuleClassType,
+        )
+        injector = AutoInjector(activityModule)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -57,7 +41,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing) {
-            DiApplication.removeInjectorForInstance(this.hashCode())
+            diApplication.diContainer.removeModule(this.hashCode())
         }
     }
 
@@ -69,7 +53,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
             {
                 viewModelFactory {
                     initializer {
-                        autoInjector.inject(VM::class.java)
+                        injector.inject(VM::class.java)
                     }
                 }
             },

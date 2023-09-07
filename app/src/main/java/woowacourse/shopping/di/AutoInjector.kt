@@ -51,17 +51,15 @@ class AutoInjector(
         return mutableMapOf<KFunction<*>, Module>().apply {
             val parentModules: List<Module> =
                 childModules.filter { it.parentModule != null }.map { it.parentModule!! }
-            if (parentModules.isEmpty().not()) {
+            if (parentModules.isNotEmpty()) {
                 putAll(searchInjectableFunctions(parentModules, modelClass))
             }
         }
     }
 
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
-        val args = getArguments(func).toMutableList()
-        args.add(0, module) // 수신 객체 지정.
         @Suppress("UNCHECKED_CAST")
-        return func.call(*args.toTypedArray()) as T
+        return func.call(module, *getArguments(func).toTypedArray()) as T
     }
 
     private fun <T : Any> createWithPrimaryConstructor(modelClass: Class<T>): T {
