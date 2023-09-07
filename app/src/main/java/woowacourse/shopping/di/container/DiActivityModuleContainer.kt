@@ -13,12 +13,10 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         oldOwnerHashCode: Int?,
         clazz: Class<T>,
     ): T {
-        if (oldOwnerHashCode == null || moduleMap[oldOwnerHashCode] == null) {
-            moduleMap[newOwnerHashCode] = createFromOwnerHashCode(newOwnerHashCode, clazz)
-        } else {
-            changeOwnerHashCode<T>(newOwnerHashCode, oldOwnerHashCode)
-        }
-        return moduleMap[newOwnerHashCode] as T
+        val moduleToProvide =
+            moduleMap[oldOwnerHashCode] ?: createFromOwnerHashCode(newOwnerHashCode, clazz)
+        moduleMap[newOwnerHashCode] = moduleToProvide
+        return moduleToProvide as T
     }
 
     private fun <T : ActivityModule> createFromOwnerHashCode(
@@ -30,17 +28,6 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         val module = primaryConstructor.call(applicationModule)
         moduleMap[ownerHashCode] = module
         return module
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : ActivityModule> changeOwnerHashCode(
-        newOwnerHashCode: Int,
-        oldOwnerHashCode: Int,
-    ): T {
-        val module = moduleMap[oldOwnerHashCode]
-        moduleMap[oldOwnerHashCode] = null
-        moduleMap[newOwnerHashCode] = module
-        return module as T
     }
 
     fun removeModule(ownerHashCode: Int) {

@@ -33,7 +33,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
         outState.putInt(
             ACTIVITY_INJECTOR_KEY,
             this.hashCode(),
-        ) // 객체가 사라지기 전에 해시코드값 저장. 강제 재생성시 인젝터 다시 불러오기 위해.
+        ) // 객체가 사라지기 전에 해시코드값 저장. 강제 재생성시 모듈 다시 불러오기 위해.
     }
 
     override fun onDestroy() {
