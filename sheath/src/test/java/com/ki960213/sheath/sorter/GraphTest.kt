@@ -58,19 +58,6 @@ internal class GraphTest {
     }
 
     @Test
-    fun `그래프를 노드를 이용해 생성하며 각 노드를 의존하는 노드의 개수만큼 노드의 진입 차수가 증가한다`() {
-        val node1 = Node(Test1::class.java)
-        val node2 = Node(Test2::class.java)
-        val node3 = Node(Test3::class.java)
-
-        val graph = Graph(setOf(node1, node2, node3))
-
-        expect.that(node1.inDegreeCount).isEqualTo(1)
-        expect.that(node2.inDegreeCount).isEqualTo(2)
-        expect.that(node3.inDegreeCount).isEqualTo(0)
-    }
-
-    @Test
     fun `그래프에 없는 노드의 의존 노드를 가져오면 에러가 발생한다`() {
         val node1 = Node(Test1::class.java)
         val node2 = Node(Test2::class.java)

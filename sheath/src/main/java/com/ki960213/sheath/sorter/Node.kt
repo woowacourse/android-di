@@ -4,16 +4,13 @@ import java.lang.reflect.Constructor
 import kotlin.properties.Delegates.observable
 
 internal class Node(val clazz: Class<*>) {
-    var inDegreeCount: Int by observable(0) { _, _, newValue ->
-        check(newValue >= 0) { "노드의 진입 차수가 0 미만일 수 없습니다." }
-    }
-        private set
 
     val dependencyCount = clazz.primaryConstructor?.parameterCount ?: 0
 
-    fun plusInDegree() {
-        inDegreeCount++
+    var inDegreeCount: Int by observable(dependencyCount) { _, _, newValue ->
+        check(newValue >= 0) { "노드의 진입 차수가 0 미만일 수 없습니다." }
     }
+        private set
 
     fun minusInDegree() {
         inDegreeCount--

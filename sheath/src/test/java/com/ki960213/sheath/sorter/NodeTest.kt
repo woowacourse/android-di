@@ -15,6 +15,15 @@ internal class NodeTest {
     val expect: Expect = Expect.create()
 
     @Test
+    fun `노드를 생성했을 때 진입 차수는 클래스의 주 생성자의 매개변수 개수와 같다`() {
+        val node1 = Node(Test1::class.java)
+        val node2 = Node(Test2::class.java)
+
+        assertThat(node1.inDegreeCount).isEqualTo(node1.clazz.constructors.first().parameterCount)
+        assertThat(node2.inDegreeCount).isEqualTo(node2.clazz.constructors.first().parameterCount)
+    }
+
+    @Test
     fun `노드의 클래스의 주생성자의 매개변수 개수와 의존 개수는 같다`() {
         val node1 = Node(Test1::class.java)
         val node2 = Node(Test2::class.java)
