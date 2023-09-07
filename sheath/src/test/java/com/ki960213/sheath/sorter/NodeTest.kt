@@ -1,11 +1,29 @@
 package com.ki960213.sheath.sorter
 
+import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
+import kotlin.reflect.full.primaryConstructor
 
 internal class NodeTest {
+
+    @JvmField
+    @Rule
+    val expect: Expect = Expect.create()
+
+    @Test
+    fun `노드의 클래스의 주생성자의 매개변수 개수와 의존 개수는 같다`() {
+        val node1 = Node(Test1::class.java)
+        val node2 = Node(Test2::class.java)
+
+        expect.that(node1.dependencyCount)
+            .isEqualTo(Test1::class.primaryConstructor?.parameters?.size ?: 0)
+        expect.that(node2.dependencyCount)
+            .isEqualTo(Test2::class.primaryConstructor?.parameters?.size ?: 0)
+    }
 
     @Test
     fun `노드의 진입 차수를 마이너스 했을 때 음수가 되면 에러가 발생한다`() {

@@ -9,6 +9,8 @@ internal class Node(val clazz: Class<*>) {
     }
         private set
 
+    val dependencyCount = clazz.primaryConstructor?.parameterCount ?: 0
+
     fun plusInDegree() {
         inDegreeCount++
     }
