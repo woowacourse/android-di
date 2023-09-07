@@ -4,7 +4,9 @@ internal class Graph(nodes: Set<Node>) {
 
     private val dependencyMap: Map<Node, List<Node>> = nodes.associateWith { node ->
         val otherNodes = nodes.filterNot { it == node }
-        otherNodes.filter { it.isDependentOn(node) }
+        val dependNodes = otherNodes.filter { it.isDependentOn(node) }
+        repeat(dependNodes.size) { node.plusInDegree() }
+        dependNodes
     }
 
     fun getNodesThatDependOn(node: Node): List<Node> =
