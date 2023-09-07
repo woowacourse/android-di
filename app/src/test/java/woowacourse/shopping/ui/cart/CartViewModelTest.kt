@@ -5,6 +5,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.util.Dummy
@@ -13,9 +15,22 @@ import woowacourse.shopping.util.getOrAwaitValue
 class CartViewModelTest {
 
     private lateinit var vm: CartViewModel
+    class FakeCartProductDao : CartProductDao {
+        private val cartProducts = Dummy.cartProducts.toMutableList()
+        override suspend fun getAll(): List<CartProductEntity> {
+            return cartProducts.toList()
+        }
 
+        override suspend fun insert(cartProduct: CartProductEntity) {
+            cartProducts.add(cartProduct)
+        }
+
+        override suspend fun delete(id: Long) {
+            cartProducts.removeIf { it.id == id }
+        }
+    }
     private val cartRepository: CartRepository =
-        CartRepositoryImpl(Dummy.cartProducts.toMutableList())
+        CartRepositoryImpl(FakeCartProductDao())
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()

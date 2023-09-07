@@ -58,7 +58,7 @@ class CartActivity : AppCompatActivity() {
             val adapter = CartProductAdapter(
                 items = it,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct,
+                deleteCartProduct = viewModel::deleteCartProduct,
             )
             binding.rvCartProducts.adapter = adapter
         }
