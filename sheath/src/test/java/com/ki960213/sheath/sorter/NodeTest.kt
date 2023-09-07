@@ -41,7 +41,7 @@ internal class NodeTest {
         val node1 = Node(Test1::class.java)
         val node2 = Node(Test2::class.java)
 
-        assertTrue(node1.isDependentOn(node2))
+        assertTrue(node1.isDependingOn(node2))
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class NodeTest {
         val node1 = Node(Test1::class.java)
         val node2 = Node(Test2::class.java)
 
-        assertFalse(node2.isDependentOn(node1))
+        assertFalse(node2.isDependingOn(node1))
     }
 
     @Test

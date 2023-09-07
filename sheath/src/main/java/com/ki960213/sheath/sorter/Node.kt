@@ -19,7 +19,7 @@ internal class Node(val clazz: Class<*>) {
         inDegreeCount--
     }
 
-    fun isDependentOn(other: Node): Boolean {
+    fun isDependingOn(other: Node): Boolean {
         val constructor = this.clazz.primaryConstructor ?: return false
         return constructor.parameters.any { it.type.isAssignableFrom(other.clazz) }
     }
