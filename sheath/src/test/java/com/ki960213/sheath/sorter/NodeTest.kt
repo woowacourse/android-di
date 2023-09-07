@@ -63,8 +63,8 @@ internal class NodeTest {
 
         assert(node.toString() == Test1::class.java.name)
     }
+
+    private class Test1(val test2: Test2)
+
+    private class Test2
 }
-
-internal class Test1(val test2: Test2)
-
-internal class Test2
