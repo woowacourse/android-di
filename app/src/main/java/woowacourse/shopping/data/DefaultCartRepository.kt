@@ -1,7 +1,8 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.data.mapper.toProduct
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
@@ -12,8 +13,8 @@ class DefaultCartRepository(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
-        return dao.getAll().map { it.toProduct() }
+    override suspend fun getAllCartProducts(): List<CartProduct> {
+        return dao.getAll().map { it.toCartProduct() }
     }
 
     override suspend fun deleteCartProduct(id: Long) {
