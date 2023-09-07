@@ -5,7 +5,7 @@ import kotlin.properties.Delegates.observable
 
 internal class Node(val clazz: Class<*>) {
     var inDegreeCount: Int by observable(0) { _, _, newValue ->
-        if (newValue < 0) throw IllegalStateException("노드의 진입 차수가 0 미만일 수 없습니다.")
+        check(newValue >= 0) { "노드의 진입 차수가 0 미만일 수 없습니다." }
     }
         private set
 
