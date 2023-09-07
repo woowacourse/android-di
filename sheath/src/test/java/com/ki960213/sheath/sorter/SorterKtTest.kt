@@ -7,15 +7,15 @@ internal class SorterKtTest {
     @Test
     fun `클래스들을 받으면 위상 정렬된 클래스들을 반환한다`() {
         val classes =
-            listOf(Test1::class.java, Test2::class.java, Test3::class.java, Test4::class.java)
+            listOf(Test1::class, Test2::class, Test3::class, Test4::class)
 
         val result = classes.sortedTopologically()
 
         val expected = listOf(
-            Test4::class.java,
-            Test2::class.java,
-            Test3::class.java,
-            Test1::class.java,
+            Test4::class,
+            Test2::class,
+            Test3::class,
+            Test1::class,
         )
         Truth.assertThat(result).isEqualTo(expected)
     }
@@ -23,9 +23,9 @@ internal class SorterKtTest {
     @Test
     fun `클래스들 간에 의존 사이클이 존재하면 에러가 발생한다`() {
         val classes = listOf(
-            Test5::class.java,
-            Test6::class.java,
-            Test7::class.java,
+            Test5::class,
+            Test6::class,
+            Test7::class,
         )
 
         try {

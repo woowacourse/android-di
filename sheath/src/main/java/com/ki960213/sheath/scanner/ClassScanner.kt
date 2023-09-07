@@ -1,6 +1,8 @@
 package com.ki960213.sheath.scanner
 
+import kotlin.reflect.KClass
+
 interface ClassScanner {
 
-    fun findAll(target: Class<*>): List<Class<*>>
+    fun findAll(targetClass: KClass<*>): List<KClass<*>>
 }

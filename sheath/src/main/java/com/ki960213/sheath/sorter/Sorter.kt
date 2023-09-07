@@ -2,8 +2,9 @@ package com.ki960213.sheath.sorter
 
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.reflect.KClass
 
-fun List<Class<*>>.sortedTopologically(): List<Class<*>> {
+fun List<KClass<*>>.sortedTopologically(): List<KClass<*>> {
     val nodes = this.map(::Node).toSet()
     val graph = Graph(nodes)
 

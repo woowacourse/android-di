@@ -25,7 +25,7 @@ abstract class SheathApplication(
     }
 
     private fun setupContainer() {
-        val classes = mScanner.findAll(Component::class.java)
+        val classes = mScanner.findAll(Component::class)
 
         val sortedClasses = classes.sortedTopologically()
 

@@ -4,31 +4,30 @@ import android.content.Context
 import dalvik.system.DexFile
 import dalvik.system.PathClassLoader
 import java.lang.reflect.Modifier
+import kotlin.reflect.KClass
 
 class DefaultClassScanner(private val context: Context) : ClassScanner {
 
-    override fun findAll(target: Class<*>): List<Class<*>> {
-        val classes = mutableListOf<Class<*>>()
+    override fun findAll(targetClass: KClass<*>): List<KClass<*>> {
+        val classes = mutableListOf<KClass<*>>()
         val classLoader = context.classLoader as PathClassLoader
         val dexFile = DexFile(context.packageCodePath)
         val classNames = dexFile.entries()
         while (classNames.hasMoreElements()) {
             val className = classNames.nextElement()
-            classes.addClassIfMatchTarget(className, target, classLoader)
+            classes.addClassIfMatchTarget(className, targetClass, classLoader)
         }
         return classes
     }
 
-    private fun MutableList<Class<*>>.addClassIfMatchTarget(
+    private fun MutableList<KClass<*>>.addClassIfMatchTarget(
         className: String,
-        target: Class<*>,
+        targetClass: KClass<*>,
         classLoader: PathClassLoader,
     ) {
         if (className.isInTargetPackage()) {
-            val clazz = classLoader.loadClass(className)
-            if (clazz.isTarget(target)) {
-                this.add(clazz)
-            }
+            val clazz = classLoader.loadClass(className).kotlin
+            if (clazz.java.isTarget(targetClass.java)) this.add(clazz)
         }
     }
 

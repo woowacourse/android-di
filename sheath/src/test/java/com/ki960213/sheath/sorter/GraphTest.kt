@@ -14,10 +14,10 @@ internal class GraphTest {
     @Test
     fun `그래프를 만들 때 어떤 노드가 노드 목록에 없는 노드를 의존한다면 에러가 발생한다`() {
         val nodes = setOf(
-            Node(Test1::class.java),
-            Node(Test2::class.java),
-            Node(Test3::class.java),
-            Node(Test4::class.java),
+            Node(Test1::class),
+            Node(Test2::class),
+            Node(Test3::class),
+            Node(Test4::class),
         )
 
         try {
@@ -31,9 +31,9 @@ internal class GraphTest {
     @Test
     fun `그래프를 만들 때 어떤 노드의 중복 종속 항목이 존재한다면 에러가 발생한다`() {
         val nodes = setOf(
-            Node(Test7::class.java),
-            Node(Test8::class.java),
-            Node(Test9::class.java),
+            Node(Test7::class),
+            Node(Test8::class),
+            Node(Test9::class),
         )
 
         try {
@@ -46,9 +46,9 @@ internal class GraphTest {
 
     @Test
     fun `그래프를 노드를 이용해 생성하면 각 노드를 의존하는 노드들을 저장한다`() {
-        val node1 = Node(Test1::class.java)
-        val node2 = Node(Test2::class.java)
-        val node3 = Node(Test3::class.java)
+        val node1 = Node(Test1::class)
+        val node2 = Node(Test2::class)
+        val node3 = Node(Test3::class)
 
         val graph = Graph(setOf(node1, node2, node3))
 
@@ -59,9 +59,9 @@ internal class GraphTest {
 
     @Test
     fun `그래프에 없는 노드의 의존 노드를 가져오면 에러가 발생한다`() {
-        val node1 = Node(Test1::class.java)
-        val node2 = Node(Test2::class.java)
-        val node3 = Node(Test3::class.java)
+        val node1 = Node(Test1::class)
+        val node2 = Node(Test2::class)
+        val node3 = Node(Test3::class)
         val graph = Graph(setOf(node1, node2))
 
         try {
