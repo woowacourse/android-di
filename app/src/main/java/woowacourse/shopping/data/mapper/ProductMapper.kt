@@ -10,3 +10,13 @@ fun Product.toEntity(): CartProductEntity {
         imageUrl = imageUrl,
     )
 }
+
+fun List<CartProductEntity>.toDomain(): List<Product> {
+    return map {
+        Product(
+            name = it.name,
+            price = it.price,
+            imageUrl = it.imageUrl,
+        )
+    }
+}
