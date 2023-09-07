@@ -2,7 +2,7 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.model.Product
 
-class ProductRepositoryImpl : ProductRepository {
+class DefaultProductRepository : ProductRepository {
     private val products: List<Product> = listOf(
         Product(
             name = "우테코 과자",
