@@ -4,13 +4,13 @@ import kotlin.reflect.KClass
 
 class RepositoryContainer private constructor(
     private val store: HashMap<KClass<*>, Any> = hashMapOf(),
-) : Container {
+) {
 
-    override fun getInstance(type: KClass<*>): Any? {
+    fun getInstance(type: KClass<*>): Any? {
         return store[type]
     }
 
-    override fun setInstance(type: KClass<*>, instance: Any) {
+    fun setInstance(type: KClass<*>, instance: Any) {
         store[type] = instance
     }
 
