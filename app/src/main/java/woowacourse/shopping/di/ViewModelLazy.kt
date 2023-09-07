@@ -9,14 +9,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.ShoppingApplication
 
 @MainThread
-inline fun <reified VM : ViewModel> ViewModelStoreOwner.getViewModel(): Lazy<VM> {
+inline fun <reified VM : ViewModel> ViewModelStoreOwner.getViewModel(injector: Injector = ShoppingApplication.injector): Lazy<VM> {
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
         {
             viewModelFactory {
                 initializer {
-                    ShoppingApplication.injector.getInstance<VM>()
+                    injector.getInstance<VM>()
                 }
             }
         },
