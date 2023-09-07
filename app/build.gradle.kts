@@ -23,7 +23,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -68,4 +68,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Reflection
+    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    // ViewModel(by viewModels 사용용도)
+    implementation ("androidx.fragment:fragment-ktx:1.6.1")
 }
