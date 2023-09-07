@@ -48,7 +48,7 @@ internal class NodeTest {
     }
 
     @Test
-    fun `노드의 클래스의 주 생성자의 어떤 파라미터의 타입이 다른 노드의 클래스의 슈퍼 타입이라면 종속적이다`() {
+    fun `노드의 클래스의 주 생성자의 어떤 파라미터의 타입이 다른 노드의 클래스의 슈퍼 타입이라면 그 노드에 의존하는 것이다`() {
         val node1 = Node(Test1::class)
         val node2 = Node(Test3::class)
 
@@ -56,7 +56,7 @@ internal class NodeTest {
     }
 
     @Test
-    fun `노드의 클래스의 주 생성자의 모든 파라미터의 타입이 다른 노드의 클래스의 슈퍼 타입이 아니라면 종속적이지 않다`() {
+    fun `노드의 클래스의 주 생성자의 모든 파라미터의 타입이 다른 노드의 클래스의 슈퍼 타입이 아니라면 그 노드에 의존하지 않는 것이다`() {
         val node1 = Node(Test1::class)
         val node2 = Node(Test3::class)
 
