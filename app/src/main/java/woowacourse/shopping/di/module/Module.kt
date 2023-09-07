@@ -31,14 +31,11 @@ abstract class Module(private val parentModule: Module? = null) {
     private fun <T : Any> searchInjectableFunctions(
         clazz: Class<T>,
     ): Map<KFunction<*>, Module> {
-        val functionToModuleMap = getPublicMethodMap().filter { entry ->
+        return getPublicMethodMap().filter { entry ->
             val returnKClass = entry.key.returnType.classifier as KClass<*>
             clazz.kotlin.isSubclassOf(returnKClass)
-        }
-        if (functionToModuleMap.isEmpty() && parentModule != null) {
-            return parentModule.searchInjectableFunctions(clazz)
-        }
-        return functionToModuleMap
+        }.takeIf { it.isNotEmpty() || parentModule == null }
+            ?: parentModule?.searchInjectableFunctions(clazz) ?: mapOf()
     }
 
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
@@ -61,7 +58,7 @@ abstract class Module(private val parentModule: Module? = null) {
         }
     }
 
-    protected inline fun <reified T : Any> getInstance(crossinline create: () -> T): T {
+    protected inline fun <reified T : Any> getOrCreateInstance(crossinline create: () -> T): T {
         val name = T::class.qualifiedName ?: throw NullPointerException("클래스 이름 없음")
         if (cache[name] == null) cache[name] = create()
         return cache[name] as T
