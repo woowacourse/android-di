@@ -10,6 +10,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.viewModelFactory
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -36,7 +37,7 @@ class CartActivityTest {
             .buildActivity(CartActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
+        val viewModel = ViewModelProvider(activity, viewModelFactory)[CartViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
