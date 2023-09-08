@@ -1,9 +1,11 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.annotation.InMemory
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.Product
 
-class DefaultProductRepository : ProductRepository {
+@InMemory
+class InMemoryProductRepository : ProductRepository {
     @Inject
     private val products: List<Product> = emptyList()
 
