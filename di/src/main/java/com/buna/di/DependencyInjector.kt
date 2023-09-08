@@ -1,23 +1,23 @@
 package com.buna.di
 
 import com.buna.di.annotation.Inject
+import com.buna.di.module.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.jvmErasure
 
 data class Qualify(
-    val module: com.buna.di.module.Module,
+    val module: Module,
     val type: KType,
     val annotation: Annotation? = null,
 )
 
 object DependencyInjector {
-    val dependencies = mutableMapOf<Qualify, KFunction<*>>()
+    private val providers = mutableMapOf<Qualify, KFunction<*>>()
     private val typeMatches = mutableMapOf<KType, KType>()
     private val cache = mutableMapOf<Qualify, Any>()
 
@@ -31,7 +31,7 @@ object DependencyInjector {
             val isSameType = isSameType(parameter.type)
 
             if (hasQualifiedAnnotation && isSameType) {
-                val qualify = dependencies.keys.find { qualify ->
+                val qualify = providers.keys.find { qualify ->
                     qualify.annotation == parameter.annotations.first() &&
                         qualify.type == parameter.type
                 }
@@ -39,18 +39,18 @@ object DependencyInjector {
                 if (cached != null) {
                     return@map cached
                 }
-                val instance = dependencies[qualify]?.call(qualify!!.module)
+                val instance = providers[qualify]?.call(qualify!!.module)
                 cache[qualify!!] = instance!!
                 instance
             } else if (isSameType) {
-                val qualify = dependencies.keys.find { qualify ->
+                val qualify = providers.keys.find { qualify ->
                     qualify.type == parameter.type
                 }
                 val cached = cache[qualify]
                 if (cached != null) {
                     return@map cached
                 }
-                val instance = dependencies[qualify]?.call(qualify!!.module)
+                val instance = providers[qualify]?.call(qualify!!.module)
                     ?: throw IllegalArgumentException("의존성 주입 실패")
                 cache[qualify!!] = instance
                 instance
@@ -76,36 +76,27 @@ object DependencyInjector {
     }
 
     private fun isAnnotationPresent(annotation: Annotation): Boolean {
-        return dependencies.keys.any { qualify -> qualify.annotation == annotation }
+        return providers.keys.any { qualify -> qualify.annotation == annotation }
     }
 
     private fun isSameType(type: KType): Boolean {
-        return dependencies.keys.any { qualify -> qualify.type == type }
+        return providers.keys.any { qualify -> qualify.type == type }
     }
 
     fun addTypeMatch(parentType: KType, childType: KType) {
         typeMatches[parentType] = childType
     }
+
+    fun addProvider(module: Module, function: KFunction<*>) {
+        val qualify = Qualify(module, function.returnType, function.annotations.firstOrNull())
+        providers[qualify] = function
+    }
 }
 
-fun modules(
-    vararg modules: com.buna.di.module.Module,
-) {
+fun modules(vararg modules: Module) {
     modules.forEach { module ->
-        val providerFunctions = module::class.declaredMemberFunctions
-        providerFunctions.forEach { function ->
-            if (function.hasAnnotation<Annotation>()) {
-                val qualify = Qualify(
-                    module,
-                    function.returnType,
-                    function.annotations.first(),
-                )
-                DependencyInjector.dependencies[qualify] = function
-            } else {
-                val qualify = Qualify(module, function.returnType)
-                DependencyInjector.dependencies[qualify] = function
-            }
-        }
+        val providers = module::class.declaredMemberFunctions
+        providers.forEach { provider -> DependencyInjector.addProvider(module, provider) }
     }
 }
 
