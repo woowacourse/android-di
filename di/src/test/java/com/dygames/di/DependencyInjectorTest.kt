@@ -3,6 +3,7 @@ package com.dygames.di
 import com.dygames.di.DependencyInjector.inject
 import com.dygames.di.annotation.Injectable
 import com.dygames.di.annotation.Qualifier
+import com.dygames.di.error.InjectError
 import junit.framework.Assert.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -58,12 +59,13 @@ class DependencyInjectorTest {
     ) {
         @Injectable
         var testFieldPerson: TestPerson? = null
+
         @TestLocal
         @Injectable
         lateinit var testFieldLocalProductDao: TestProductDao
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test(expected = InjectError.ConstructorNoneAvailable::class)
     fun `설정한 의존에 의존이 모두 존재하지 않으면 객체 생성에 실패한다`() {
         // given
         dependencies {
@@ -166,7 +168,7 @@ class DependencyInjectorTest {
         )
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test(expected = InjectError.ConstructorNoneAvailable::class)
     fun `객체를 생성 할 때, 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
         dependencies {

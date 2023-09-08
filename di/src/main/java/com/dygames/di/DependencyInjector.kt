@@ -2,6 +2,7 @@ package com.dygames.di
 
 import com.dygames.di.annotation.Injectable
 import com.dygames.di.annotation.Qualifier
+import com.dygames.di.error.InjectError
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -25,14 +26,14 @@ object DependencyInjector {
 
     fun instantiate(type: KType): Any {
         val constructor = type.jvmErasure.primaryConstructor
-            ?: throw IllegalArgumentException("$type 클래스의 주 생성자가 존재하지 않습니다.")
+            ?: throw InjectError.ConstructorNoneAvailable(type)
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters)
         return constructor.call(*arguments)
     }
 
     private fun findDependency(type: KType, qualifier: Annotation?): Any? {
-        if (!::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
+        if (!::dependencies.isInitialized) throw InjectError.DependenciesNotInitialized()
         return dependencies.findDependency(type, qualifier)
     }
 
