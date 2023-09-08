@@ -2,6 +2,8 @@ package woowacourse.shopping.ui
 
 import android.app.Application
 import androidx.room.Room
+import io.hyemdooly.di.Container
+import io.hyemdooly.di.Injector
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.InDiskCartRepository
@@ -9,8 +11,6 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.Injector
 import woowacourse.shopping.model.Product
 
 class ShoppingApplication : Application() {

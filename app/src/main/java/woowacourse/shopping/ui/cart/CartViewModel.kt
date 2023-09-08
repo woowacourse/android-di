@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.hyemdooly.di.annotation.InDisk
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.annotation.InDisk
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel constructor(

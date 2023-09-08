@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package io.hyemdooly.di
 
-import woowacourse.shopping.di.annotation.Inject
+import io.hyemdooly.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberProperties

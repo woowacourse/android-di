@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package io.hyemdooly.di
 
 import kotlin.reflect.KClass
 

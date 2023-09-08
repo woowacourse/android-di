@@ -1,8 +1,8 @@
 package woowacourse.shopping.data
 
+import io.hyemdooly.di.annotation.InDisk
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.annotation.InDisk
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 

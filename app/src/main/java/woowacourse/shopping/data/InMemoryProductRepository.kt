@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.InMemory
-import woowacourse.shopping.di.annotation.Inject
+import io.hyemdooly.di.annotation.InMemory
+import io.hyemdooly.di.annotation.Inject
 import woowacourse.shopping.model.Product
 
 @InMemory

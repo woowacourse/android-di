@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.InMemory
+import io.hyemdooly.di.annotation.InMemory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
