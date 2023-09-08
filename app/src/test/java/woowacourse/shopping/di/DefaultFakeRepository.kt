@@ -1,3 +1,6 @@
 package woowacourse.shopping.di
 
-class DefaultFakeRepository : FakeRepository
+class DefaultFakeRepository(
+    val firstDataSource: FirstDataSource,
+    val secondDataSource: SecondDataSource,
+) : FakeRepository
