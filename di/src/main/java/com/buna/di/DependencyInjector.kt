@@ -18,7 +18,7 @@ data class Qualify(
 
 object DependencyInjector {
     val dependencies = mutableMapOf<Qualify, KFunction<*>>()
-    val types = mutableMapOf<KType, KType>()
+    private val typeMatches = mutableMapOf<KType, KType>()
     private val cache = mutableMapOf<Qualify, Any>()
 
     fun <T : Any> inject(clazz: KClass<T>): T {
@@ -55,7 +55,8 @@ object DependencyInjector {
                 cache[qualify!!] = instance
                 instance
             } else {
-                val childType = types[parameter.type] ?: throw IllegalArgumentException("의존성 주입 실패")
+                val childType =
+                    typeMatches[parameter.type] ?: throw IllegalArgumentException("의존성 주입 실패")
                 inject(childType.classifier as KClass<*>)
             }
         }
@@ -64,7 +65,10 @@ object DependencyInjector {
         clazz.java.declaredFields.forEach { field ->
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
-                field.set(instance, inject(types[field.type.kotlin.starProjectedType]!!.jvmErasure))
+                field.set(
+                    instance,
+                    inject(typeMatches[field.type.kotlin.starProjectedType]!!.jvmErasure),
+                )
             }
         }
 
@@ -77,6 +81,10 @@ object DependencyInjector {
 
     private fun isSameType(type: KType): Boolean {
         return dependencies.keys.any { qualify -> qualify.type == type }
+    }
+
+    fun addTypeMatch(parentType: KType, childType: KType) {
+        typeMatches[parentType] = childType
     }
 }
 
@@ -101,8 +109,11 @@ fun modules(
     }
 }
 
-fun types(vararg types: Pair<KClass<*>, KClass<*>>) {
-    types.forEach { (parentType, childType) ->
-        DependencyInjector.types[parentType.starProjectedType] = childType.starProjectedType
+fun matchTypes(vararg classes: Pair<KClass<*>, KClass<*>>) {
+    classes.forEach { (parentClass, childClass) ->
+        val parentType = parentClass.starProjectedType
+        val childType = childClass.starProjectedType
+
+        DependencyInjector.addTypeMatch(parentType, childType)
     }
 }

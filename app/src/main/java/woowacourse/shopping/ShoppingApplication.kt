@@ -3,9 +3,9 @@ package woowacourse.shopping
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.buna.di.matchTypes
 import com.buna.di.module.Module
 import com.buna.di.modules
-import com.buna.di.types
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
@@ -23,7 +23,7 @@ class ShoppingApplication : Application() {
             DaoModule(this@ShoppingApplication),
         )
 
-        types(
+        matchTypes(
             ProductRepository::class to DefaultProductRepository::class,
             CartRepository::class to DefaultCartRepository::class,
         )
