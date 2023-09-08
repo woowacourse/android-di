@@ -8,8 +8,7 @@ object Container {
         instances[type] = instance
     }
 
-    fun getInstance(type: KClass<*>): Any =
-        instances[type] ?: throw NoSuchElementException("Unknown Instance")
+    fun getInstance(type: KClass<*>): Any? = instances[type]
 
     fun clear() {
         instances.clear()
