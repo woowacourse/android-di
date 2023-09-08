@@ -47,7 +47,10 @@ object DependencyInjector {
         val fields = instance::class.declaredMemberProperties
         fields.filter { it.annotations.filterIsInstance<Injectable>().isNotEmpty() }
             .filterIsInstance<KMutableProperty<*>>()
-            .forEach { it.setter.call(instance, inject(it.returnType)) }
+            .forEach {
+                val qualifier = findQualifier(it.annotations)
+                it.setter.call(instance, inject(it.returnType, qualifier))
+            }
         return instance
     }
 
