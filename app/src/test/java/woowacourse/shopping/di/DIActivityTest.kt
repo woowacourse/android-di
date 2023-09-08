@@ -18,10 +18,13 @@ class FakeActivity : DIActivity() {
     lateinit var viewModel: FakeViewModel
 }
 
+object TestModule : Module {
+    fun provideFakeRepository(): FakeRepository = DefaultFakeRepository()
+}
+
 class FakeApplication : DIApplication() {
     override fun inject() {
-        repositoryContainer =
-            RepositoryContainer.of(FakeRepository::class to DefaultFakeRepository())
+        Injector(container).inject(TestModule)
     }
 }
 
