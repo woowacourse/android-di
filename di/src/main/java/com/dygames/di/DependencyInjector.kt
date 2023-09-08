@@ -1,7 +1,7 @@
-package woowacourse.shopping.di
+package com.dygames.di
 
-import woowacourse.shopping.di.annotation.Injectable
-import woowacourse.shopping.di.annotation.Qualifier
+import com.dygames.di.annotation.Injectable
+import com.dygames.di.annotation.Qualifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -24,7 +24,7 @@ object DependencyInjector {
     }
 
     private fun findSingleton(type: KType, qualifier: Annotation?): Any? {
-        if (!::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
+        if (!DependencyInjector::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
         return dependencies.qualifiers[qualifier]?.let {
             it.constructors[type]?.let { constructor ->
                 instantiate(constructor)

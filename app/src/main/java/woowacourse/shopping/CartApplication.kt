@@ -1,15 +1,15 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.dygames.di.dependencies
+import com.dygames.di.provider
+import com.dygames.di.qualifier
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.dependencies
-import woowacourse.shopping.di.provider
-import woowacourse.shopping.di.qualifier
 import kotlin.reflect.typeOf
 
 class CartApplication : Application() {

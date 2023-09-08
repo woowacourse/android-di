@@ -1,12 +1,12 @@
-package woowacourse.shopping.di
+package com.dygames.di
 
+import com.dygames.di.DependencyInjector.inject
+import com.dygames.di.annotation.Injectable
+import com.dygames.di.annotation.Qualifier
 import junit.framework.Assert.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import woowacourse.shopping.di.DependencyInjector.inject
-import woowacourse.shopping.di.annotation.Injectable
-import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.typeOf
 
 class DependencyInjectorTest {

@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.Qualifier
+import com.dygames.di.annotation.Qualifier
 
 @Qualifier
 annotation class Room

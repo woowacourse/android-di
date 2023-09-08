@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.dygames.di
 
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
