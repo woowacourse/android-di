@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException
    SPDX-License-Identifier: Apache-2.0 */
 fun <T> LiveData<T>.getOrAwaitValue(
     time: Long = 2,
-    timeUnit: TimeUnit = TimeUnit.SECONDS
+    timeUnit: TimeUnit = TimeUnit.SECONDS,
 ): T {
     var data: T? = null
     val latch = CountDownLatch(1)
