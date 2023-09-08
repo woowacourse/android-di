@@ -6,7 +6,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-class ViewModelFactory(private val container: RepositoryContainer) : ViewModelProvider.Factory {
+class ViewModelFactory(private val container: Container) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructor = requireNotNull(modelClass.kotlin.primaryConstructor)

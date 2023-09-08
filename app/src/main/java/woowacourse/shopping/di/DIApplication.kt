@@ -4,8 +4,7 @@ import android.app.Application
 
 abstract class DIApplication : Application() {
 
-    lateinit var repositoryContainer: RepositoryContainer
-        protected set
+    val container: Container = Container()
 
     override fun onCreate() {
         super.onCreate()

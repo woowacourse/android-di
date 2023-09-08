@@ -30,7 +30,7 @@ abstract class DIActivity : AppCompatActivity() {
         val application = application as DIApplication
         return ViewModelProvider(
             owner = this@DIActivity,
-            factory = ViewModelFactory(application.repositoryContainer),
+            factory = ViewModelFactory(application.container),
         )[type]
     }
 
