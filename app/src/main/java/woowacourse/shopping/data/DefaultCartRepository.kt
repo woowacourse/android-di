@@ -11,7 +11,7 @@ class DefaultCartRepository(
     private val cartProductDao: CartProductDao
 ) : CartRepository {
 
-    private val cartProducts: MutableList<Product> = mutableListOf()
+//    private val cartProducts: MutableList<Product> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {
 //        cartProducts.add(product)
@@ -23,7 +23,7 @@ class DefaultCartRepository(
         return cartProductDao.getAll().map { it.toModel() }
     }
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProductDao.delete(id)
     }
 }
