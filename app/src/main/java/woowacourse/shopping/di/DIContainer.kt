@@ -5,12 +5,10 @@ import kotlin.reflect.KClass
 object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    fun init() {
-        RepositoryModule.init()
-    }
-
-    fun bind(clazz: KClass<*>, instance: Any) {
-        instances[clazz] = instance
+    fun init(moduleList: List<DependencyModule>) {
+        moduleList.map {
+            instances.putAll(it.invoke())
+        }
     }
 
     fun get(clazz: KClass<*>): Any {

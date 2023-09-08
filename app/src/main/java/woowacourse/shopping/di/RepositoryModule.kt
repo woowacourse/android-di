@@ -4,10 +4,13 @@ import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import kotlin.reflect.KClass
 
-object RepositoryModule {
-    fun init() {
-        DIContainer.bind(ProductRepository::class, ProductRepositoryImpl())
-        DIContainer.bind(CartRepository::class, CartRepositoryImpl())
+object RepositoryModule: DependencyModule {
+    override fun invoke(): Map<KClass<*>, Any> {
+        return mapOf(
+            ProductRepository::class to ProductRepositoryImpl(),
+            CartRepository::class to CartRepositoryImpl()
+        )
     }
 }
