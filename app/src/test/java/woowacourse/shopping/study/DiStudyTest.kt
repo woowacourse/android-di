@@ -13,30 +13,31 @@ import woowacourse.shopping.di.injector.Injector
 import woowacourse.shopping.di.module.Module
 import woowacourse.shopping.di.viewModels
 
-interface FakeRepository
+interface FakeRepository1
+class DefaultFakeRepository1 : FakeRepository1
 
-class RoomFakeRepository : FakeRepository
+interface FakeRepository2
+class DefaultFakeRepository2 : FakeRepository2
 
-class InMemoryFakeRepository : FakeRepository
-
-class DefaultFakeRepository : FakeRepository
-
-class FakeViewModel(
-    val fakeRepository: FakeRepository,
-) : ViewModel()
-
-class FakeActivity : AppCompatActivity() {
-    val viewModel: FakeViewModel by viewModels(TestApplication.injector)
+object TestRepositoryModule : Module {
+    fun provideFakeRepository(): FakeRepository1 = DefaultFakeRepository1()
 }
 
-object TestRepositoryContainer : Module {
-    fun provideFakeRepository(): FakeRepository = DefaultFakeRepository()
+class FakeActivity1 : AppCompatActivity() {
+    val viewModel: FakeViewModel1 by viewModels(TestApplication.injector)
 }
+
+class FakeActivity2 : AppCompatActivity() {
+    val viewModel: FakeViewModel2 by viewModels(TestApplication.injector)
+}
+
+class FakeViewModel1(val fakeRepository1: FakeRepository1) : ViewModel()
+class FakeViewModel2(val fakeRepository2: FakeRepository2) : ViewModel()
 
 class TestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        injector = Injector(TestRepositoryContainer)
+        injector = Injector(TestRepositoryModule)
     }
 
     companion object {
@@ -46,28 +47,30 @@ class TestApplication : Application() {
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
-class ViewModelInjectorTest {
+class ViewModel1InjectorTest {
 
     @Test
     fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(FakeActivity1::class.java)
             .create()
             .get()
-
-        assertNotNull(activity)
 
         // then
         val viewModel = activity.viewModel
         assertNotNull(viewModel)
-//        assertEquals(viewModel.fakeRepository, fakeRepository)
     }
+}
+
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
+class ViewModel2InjectorTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `적절한 객체 인스턴스가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(FakeActivity2::class.java)
             .create()
             .get()
         activity.viewModel
