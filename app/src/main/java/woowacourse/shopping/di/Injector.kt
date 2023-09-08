@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberProperties
@@ -29,7 +30,7 @@ object Injector {
     private fun <T> getParamInstances(constructor: KFunction<T>): List<Any> {
         val paramInstances = constructor.parameters.map { param ->
             val type = param.type.jvmErasure
-            Container.getInstance(type) ?: inject(type)
+            Container.getInstance(type, param.annotations) ?: inject(type)
         }
         return paramInstances
     }
