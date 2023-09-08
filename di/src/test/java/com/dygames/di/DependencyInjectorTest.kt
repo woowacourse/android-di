@@ -59,9 +59,7 @@ class DependencyInjectorTest {
     fun `설정한 의존에 의존이 모두 존재하지 않으면 TestViewModel 생성에 실패한다`() {
         // given
         dependencies {
-            qualifier {
-                provider<TestRepository>(typeOf<DefaultTestRepository>())
-            }
+            provider<TestRepository>(typeOf<DefaultTestRepository>())
         }
 
         // when
@@ -74,14 +72,12 @@ class DependencyInjectorTest {
     fun `설정한 의존에 의존이 모두 존재하면 TestViewModel 생성에 성공한다`() {
         // given
         dependencies {
-            qualifier {
-                provider<TestRepository>(typeOf<DefaultTestRepository>())
-                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
-                provider {
-                    TestProduct(
-                        TestName(), TestID()
-                    )
-                }
+            provider<TestRepository>(typeOf<DefaultTestRepository>())
+            provider<TestRepository2>(typeOf<DefaultTestRepository2>())
+            provider {
+                TestProduct(
+                    TestName(), TestID()
+                )
             }
         }
 
@@ -97,10 +93,8 @@ class DependencyInjectorTest {
         // given
         // testProduct의 생성자는 재귀적으로 모두 존재
         dependencies {
-            qualifier {
-                provider<TestRepository>(typeOf<DefaultTestRepository>())
-                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
-            }
+            provider<TestRepository>(typeOf<DefaultTestRepository>())
+            provider<TestRepository2>(typeOf<DefaultTestRepository2>())
         }
 
         // when
@@ -114,10 +108,8 @@ class DependencyInjectorTest {
     fun `TestViewModel 생성에 성공하면, 필드 의존도 주입된다`() {
         // given
         dependencies {
-            qualifier {
-                provider<TestRepository>(typeOf<DefaultTestRepository>())
-                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
-            }
+            provider<TestRepository>(typeOf<DefaultTestRepository>())
+            provider<TestRepository2>(typeOf<DefaultTestRepository2>())
         }
 
         // when
@@ -131,10 +123,8 @@ class DependencyInjectorTest {
     fun `TestViewModel 생성에 성공하면 @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
         // given
         dependencies {
-            qualifier {
-                provider<TestRepository>(typeOf<DefaultTestRepository>())
-                provider<TestRepository2>(typeOf<DefaultTestRepository2>())
-            }
+            provider<TestRepository>(typeOf<DefaultTestRepository>())
+            provider<TestRepository2>(typeOf<DefaultTestRepository2>())
         }
 
         // when
@@ -167,9 +157,7 @@ class DependencyInjectorTest {
     fun `TestViewModel2를 생성할 때 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
         dependencies {
-            qualifier {
-                provider<TestProductDao>(typeOf<LocalTestProductDao>())
-            }
+            provider<TestProductDao>(typeOf<LocalTestProductDao>())
         }
 
         // when

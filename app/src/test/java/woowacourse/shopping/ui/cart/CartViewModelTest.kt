@@ -1,6 +1,10 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.dygames.di.DependencyInjector.inject
+import com.dygames.di.dependencies
+import com.dygames.di.provider
+import com.dygames.di.qualifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -15,10 +19,6 @@ import woowacourse.shopping.CartProduct
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.Room
-import woowacourse.shopping.di.DependencyInjector.inject
-import woowacourse.shopping.di.dependencies
-import woowacourse.shopping.di.provider
-import woowacourse.shopping.di.qualifier
 import woowacourse.shopping.model.DatabaseIdentifier
 
 @OptIn(ExperimentalCoroutinesApi::class)

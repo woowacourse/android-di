@@ -11,10 +11,8 @@ import woowacourse.shopping.data.Room
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    @Room
     private val productRepository: ProductRepository,
-    @Room
-    private val cartRepository: CartRepository,
+    @Room private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

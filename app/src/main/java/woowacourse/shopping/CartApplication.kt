@@ -24,8 +24,8 @@ class CartApplication : Application() {
                 val shoppingDatabase: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(this@CartApplication) }
                 provider { shoppingDatabase.cartProductDao() }
                 provider<CartRepository>(typeOf<DefaultCartRepository>())
-                provider<ProductRepository> { DefaultProductRepository() }
             }
+            provider<ProductRepository> { DefaultProductRepository() }
         }
     }
 }
