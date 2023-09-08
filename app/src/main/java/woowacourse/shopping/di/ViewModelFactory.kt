@@ -2,12 +2,9 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.viewmodel.CreationExtras
 
-inline fun <reified T : ViewModel> getViewModelFactory(): ViewModelProvider.Factory =
-    viewModelFactory {
-        initializer {
-            Injector.inject<T>()
-        }
-    }
+val viewModelFactory = object : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        Injector.inject(modelClass.kotlin)
+}

@@ -8,14 +8,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.getViewModelFactory
+import woowacourse.shopping.di.viewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<MainViewModel> { getViewModelFactory<MainViewModel>() }
+    private val viewModel by viewModels<MainViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
