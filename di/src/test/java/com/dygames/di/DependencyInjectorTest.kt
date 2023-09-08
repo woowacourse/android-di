@@ -105,7 +105,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `TestViewModel 생성에 성공하면, 필드 의존도 주입된다`() {
+    fun `TestViewModel을 생성 할 때, 필드 의존도 주입어야 생성에 성공한다`() {
         // given
         dependencies {
             provider<TestRepository>(typeOf<DefaultTestRepository>())
@@ -120,7 +120,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `TestViewModel 생성에 성공하면 @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
+    fun `필드 의존을 주입 할 때, @Injectable이 선언되지 않은 필드에는 의존이 주입되지 않는다`() {
         // given
         dependencies {
             provider<TestRepository>(typeOf<DefaultTestRepository>())
@@ -135,7 +135,7 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `TestViewModel2를 생성할 때 @Qualifier인 @TestRemote 어노테이션이 선언된 RemoteTestProductDao를 TestRepository3에 주입한다`() {
+    fun `TestViewModel2를 생성 할 때, @Qualifier인 @TestRemote 어노테이션이 선언된 RemoteTestProductDao를 TestRepository3에 주입한다`() {
         // given
         dependencies {
             qualifier(TestLocal()) {
@@ -154,7 +154,7 @@ class DependencyInjectorTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `TestViewModel2를 생성할 때 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
+    fun `TestViewModel2를 생성 할 때, 인터페이스 의존에 @Qualifier가 선언된 객체가 없으면 생성에 실패한다`() {
         // given
         dependencies {
             provider<TestProductDao>(typeOf<LocalTestProductDao>())
