@@ -9,16 +9,20 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.di.annotation.InMemory
+import woowacourse.shopping.di.annotation.Inject
 import java.lang.IllegalArgumentException
 
 class FakeDatabase
+
+@InMemory
 class DefaultFakeRepository(private val database: FakeDatabase) {
     @Inject
     val items: List<String> = emptyList()
 }
 
 class FakeViewModel(
-    val fakeRepository: DefaultFakeRepository,
+    @InMemory val fakeRepository: DefaultFakeRepository,
 ) : ViewModel()
 
 class FakeActivity : AppCompatActivity() {
@@ -38,6 +42,7 @@ class InjectorTest {
         // given
         val repository = DefaultFakeRepository(FakeDatabase())
         Container.addInstance(DefaultFakeRepository::class, repository)
+        Container.addInstance(List::class, listOf("item1", "item2", "item3"))
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)
             .create()
