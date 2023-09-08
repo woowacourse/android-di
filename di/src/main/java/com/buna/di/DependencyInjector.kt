@@ -1,7 +1,6 @@
-package woowacourse.shopping.di.injector
+package com.buna.di
 
-import woowacourse.shopping.Module
-import woowacourse.shopping.di.annotation.Inject
+import com.buna.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
@@ -11,12 +10,10 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.jvmErasure
 
-// 3. Key : (어노테이션, 함수 반환 타입)
-//    Value : 함수
 data class Qualify(
-    val module: Module,
-    val type: KType, // 반환 타입 (인터페이스일 수도 있음)
-    val annotation: Annotation? = null, // 그런 경우를 대비해 어노테이션도 함께 저장
+    val module: com.buna.di.module.Module,
+    val type: KType,
+    val annotation: Annotation? = null,
 )
 
 object DependencyInjector {
@@ -29,7 +26,8 @@ object DependencyInjector {
             clazz.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
         val parameters = primaryConstructor.parameters
         val arguments = parameters.map { parameter ->
-            val hasQualifiedAnnotation = parameter.annotations.any(::isAnnotationPresent)
+            val hasQualifiedAnnotation =
+                parameter.annotations.any(DependencyInjector::isAnnotationPresent)
             val isSameType = isSameType(parameter.type)
 
             if (hasQualifiedAnnotation && isSameType) {
@@ -83,10 +81,11 @@ object DependencyInjector {
 }
 
 fun modules(
-    vararg modules: Module,
+    vararg modules: com.buna.di.module.Module,
 ) {
-    modules.forEach { module: Module ->
-        module::class.declaredMemberFunctions.forEach { function ->
+    modules.forEach { module ->
+        val providerFunctions = module::class.declaredMemberFunctions
+        providerFunctions.forEach { function ->
             if (function.hasAnnotation<Annotation>()) {
                 val qualify = Qualify(
                     module,
@@ -102,9 +101,7 @@ fun modules(
     }
 }
 
-fun type(
-    vararg types: Pair<KClass<*>, KClass<*>>,
-) {
+fun types(vararg types: Pair<KClass<*>, KClass<*>>) {
     types.forEach { (parentType, childType) ->
         DependencyInjector.types[parentType.starProjectedType] = childType.starProjectedType
     }

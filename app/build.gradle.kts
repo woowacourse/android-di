@@ -72,8 +72,8 @@ dependencies {
     // Mockk
     testImplementation("io.mockk:mockk:1.13.5")
     androidTestImplementation("io.mockk:mockk-android:1.13.5")
-    // Reflection
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    // DI Library
+    implementation(project(":di"))
 }
 
 kapt {

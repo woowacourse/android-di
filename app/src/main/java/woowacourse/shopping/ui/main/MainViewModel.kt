@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.buna.di.annotation.Inject
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -14,7 +14,7 @@ class MainViewModel(
     private val productRepository: ProductRepository,
 ) : ViewModel() {
 
-    @Inject
+    @com.buna.di.annotation.Inject
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

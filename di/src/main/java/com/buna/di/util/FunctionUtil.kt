@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.util
+package com.buna.di.util
 
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor

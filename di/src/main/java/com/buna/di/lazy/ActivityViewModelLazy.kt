@@ -1,10 +1,10 @@
-package woowacourse.shopping.di.lazy
+package com.buna.di.lazy
 
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import woowacourse.shopping.di.injector.DependencyInjector
-import woowacourse.shopping.di.util.viewModelFactory
+import com.buna.di.DependencyInjector
+import com.buna.di.util.viewModelFactory
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
     return ViewModelLazy(

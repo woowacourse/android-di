@@ -1,6 +1,6 @@
 package woowacourse.shopping.ui.common.di.qualifier
 
-import woowacourse.shopping.di.annotation.Qualifier
+import com.buna.di.annotation.Qualifier
 
 @Qualifier
 annotation class DatabaseDao

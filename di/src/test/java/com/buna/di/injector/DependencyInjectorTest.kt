@@ -1,18 +1,18 @@
-package woowacourse.shopping.di.injector
+package com.buna.di.injector
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.buna.di.DependencyInjector
+import com.buna.di.annotation.Inject
+import com.buna.di.lazy.viewModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.lazy.viewModel
 
 class ConstructorTestActivity : AppCompatActivity() {
     val viewModel: ConstructorTestViewModel by viewModel()
@@ -27,7 +27,7 @@ class FieldTestActivity : AppCompatActivity() {
 }
 
 class FieldTestViewModel : ViewModel() {
-    @Inject
+    @com.buna.di.annotation.Inject
     lateinit var fieldWithInjectAnnotation: FieldDependency
     lateinit var fieldWithoutInjectAnnotation: FieldDependency
 
