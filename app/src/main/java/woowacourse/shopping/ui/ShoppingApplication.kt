@@ -4,8 +4,9 @@ import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InDiskCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.Container
@@ -19,7 +20,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun inject() {
-        val db = Room.databaseBuilder(
+        val inDiskDb = Room.databaseBuilder(
             applicationContext,
             ShoppingDatabase::class.java,
             ShoppingDatabase.name,
@@ -44,9 +45,10 @@ class ShoppingApplication : Application() {
         )
 
         Container.addInstance(List::class, products)
-        Container.addInstance(CartProductDao::class, db.cartProductDao())
+        Container.addInstance(CartProductDao::class, inDiskDb.cartProductDao())
 
-        Container.addInstance(ProductRepository::class, Injector.inject(DefaultProductRepository::class))
-        Container.addInstance(CartRepository::class, Injector.inject(DefaultCartRepository::class))
+        Container.addInstance(ProductRepository::class, Injector.inject(InMemoryProductRepository::class))
+        Container.addInstance(CartRepository::class, Injector.inject(InDiskCartRepository::class))
+        Container.addInstance(CartRepository::class, Injector.inject(InMemoryCartRepository::class))
     }
 }
