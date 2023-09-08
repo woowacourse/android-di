@@ -6,8 +6,10 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.ui.common.di.qualifier.InMemoryDao
 
 class DefaultCartRepository(
+    @InMemoryDao
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

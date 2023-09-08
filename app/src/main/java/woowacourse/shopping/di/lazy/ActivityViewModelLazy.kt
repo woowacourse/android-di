@@ -15,5 +15,5 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
 }
 
 inline fun <reified VM : ViewModel> createViewModel(): VM {
-    return DependencyInjector.inject()
+    return DependencyInjector.inject(VM::class)
 }
