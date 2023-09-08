@@ -28,8 +28,20 @@ class MainViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val products = listOf(Product("", 0, ""))
+
+    private val cartRepository = FakeCartRepository()
+    private val productRepository = FakeProductRepository(products)
+
     @Before
     fun setUp() {
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+            }
+            provider<ProductRepository> { productRepository }
+        }
+
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -41,15 +53,6 @@ class MainViewModelTest {
     @Test
     fun `장바구니에 상품을 등록하면 상품 등록 상태가 true가 되고 CartRepository에 Product가 추가된다`() {
         // given
-        val cartRepository = FakeCartRepository()
-
-        dependencies {
-            qualifier(Room()) {
-                provider<CartRepository> { cartRepository }
-            }
-            provider<ProductRepository> { FakeProductRepository() }
-        }
-
         val viewModel = inject<MainViewModel>()
 
         // when
@@ -64,23 +67,13 @@ class MainViewModelTest {
     @Test
     fun `장바구니의 상품을 가져오면 CartRepository의 모든 상품을 가져온다`() {
         // given
-        val expect = listOf(Product("", 0, ""))
-        val cartRepository = FakeCartRepository()
-        val productRepository = FakeProductRepository(expect)
-
-        dependencies {
-            qualifier(Room()) {
-                provider<CartRepository> { cartRepository }
-            }
-            provider<ProductRepository> { productRepository }
-        }
-
         val viewModel = inject<MainViewModel>()
 
         // when
         viewModel.getAllProducts()
 
         // then
+        val expect = products
         val actual = viewModel.products.value
         assertEquals(expect, actual)
     }

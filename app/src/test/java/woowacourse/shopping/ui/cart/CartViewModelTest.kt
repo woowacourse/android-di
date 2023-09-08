@@ -27,8 +27,20 @@ class CartViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val products = listOf(
+        CartProduct(identifier = DatabaseIdentifier(0)),
+        CartProduct(identifier = DatabaseIdentifier(1))
+    )
+    private val cartRepository: FakeCartRepository = FakeCartRepository(products)
+
     @Before
     fun setUp() {
+        dependencies {
+            qualifier(Room()) {
+                provider<CartRepository> { cartRepository }
+            }
+        }
+
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -40,21 +52,16 @@ class CartViewModelTest {
     @Test
     fun `장바구니의 상품을 가져오면 Repository의 모든 상품을 반환한다`() {
         // given
-        val expect = listOf(CartProduct())
-        val cartRepository = FakeCartRepository(expect)
-
-        dependencies {
-            qualifier(Room()) {
-                provider<CartRepository> { cartRepository }
-            }
-        }
-
         val viewModel = inject<CartViewModel>()
 
         // when
         viewModel.getAllCartProducts()
 
         // then
+        val expect = listOf(
+            CartProduct(identifier = DatabaseIdentifier(0)),
+            CartProduct(identifier = DatabaseIdentifier(1))
+        )
         val actual = viewModel.cartProducts.value
         assertEquals(expect, actual)
     }
@@ -62,22 +69,10 @@ class CartViewModelTest {
     @Test
     fun `장바구니에 상품을 제거하면 상품 삭제 상태가 true가 되고 CartRepository에 상품을 제거한다`() {
         // given
-        val products = listOf(
-            CartProduct(identifier = DatabaseIdentifier(0)),
-            CartProduct(identifier = DatabaseIdentifier(1))
-        )
-        val cartRepository = FakeCartRepository(products)
-
-        dependencies {
-            qualifier(Room()) {
-                provider<CartRepository> { cartRepository }
-            }
-        }
-
         val viewModel = inject<CartViewModel>()
 
         // when
-        viewModel.deleteCartProduct(products[0])
+        viewModel.deleteCartProduct(CartProduct(identifier = DatabaseIdentifier(0)))
 
         // then
         val expect = listOf(CartProduct(identifier = DatabaseIdentifier(1)))
