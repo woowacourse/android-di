@@ -1,10 +1,10 @@
-package woowacourse.shopping.data
+package woowacourse.shopping
 
 import woowacourse.shopping.model.Product
 
-class ProductRepository {
+object ProductFixture {
 
-    private val products: List<Product> = listOf(
+    val products = listOf(
         Product(
             name = "우테코 과자",
             price = 10_000,
@@ -21,8 +21,4 @@ class ProductRepository {
             imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700"
         ),
     )
-
-    fun getAllProducts(): List<Product> {
-        return products
-    }
 }

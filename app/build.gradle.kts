@@ -68,4 +68,13 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+
+    // ViewModel
+    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+
+    // Mockk
+    testImplementation("io.mockk:mockk:1.13.5")
+    androidTestImplementation("io.mockk:mockk-android:1.13.5")
+    implementation(kotlin("reflect"))
 }

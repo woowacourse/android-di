@@ -11,7 +11,6 @@ import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
-
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
 
