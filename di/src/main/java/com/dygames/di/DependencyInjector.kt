@@ -18,28 +18,22 @@ object DependencyInjector {
     }
 
     fun inject(type: KType, qualifier: Annotation? = null): Any {
-        return findSingleton(type, qualifier) ?: instantiate(type).apply {
+        return findDependency(type, qualifier) ?: instantiate(type).apply {
             injectFields(this)
         }
     }
 
-    private fun findSingleton(type: KType, qualifier: Annotation?): Any? {
-        if (!DependencyInjector::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
-        return dependencies.qualifiers[qualifier]?.let {
-            it.constructors[type]?.let { constructor ->
-                instantiate(constructor)
-            } ?: it.providers[type]?.let { provider ->
-                provider()
-            }
-        }
-    }
-
-    private fun instantiate(type: KType): Any {
+    fun instantiate(type: KType): Any {
         val constructor = type.jvmErasure.primaryConstructor
             ?: throw IllegalArgumentException("$type 클래스의 주 생성자가 존재하지 않습니다.")
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters)
         return constructor.call(*arguments)
+    }
+
+    private fun findDependency(type: KType, qualifier: Annotation?): Any? {
+        if (!::dependencies.isInitialized) throw IllegalStateException("의존이 초기화되지 않았습니다.")
+        return dependencies.findDependency(type, qualifier)
     }
 
     private fun gatherArguments(parameters: List<KParameter>): Array<*> {
