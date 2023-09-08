@@ -2,13 +2,19 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
+data class InstanceInfo(val clazz: KClass<*>, val annotations: List<Annotation>)
+
 object Container {
-    private val instances = mutableMapOf<KClass<*>, Any>()
+    private val instances = mutableMapOf<InstanceInfo, Any>()
     fun addInstance(type: KClass<*>, instance: Any) {
-        instances[type] = instance
+        val key = InstanceInfo(type, instance::class.annotations)
+        instances[key] = instance
     }
 
-    fun getInstance(type: KClass<*>): Any? = instances[type]
+    fun getInstance(type: KClass<*>, annotations: List<Annotation> = emptyList()): Any? {
+        val key = InstanceInfo(type, annotations)
+        return instances[key]
+    }
 
     fun clear() {
         instances.clear()
