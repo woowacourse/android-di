@@ -26,7 +26,7 @@ class MainViewModelTest {
     fun setUp() {
         cartRepository = FakeCartRepository()
         productRepository = FakeProductRepository()
-        viewModel = MainViewModel(productRepository, cartRepository)
+        viewModel = MainViewModel()
     }
 
     @Test
