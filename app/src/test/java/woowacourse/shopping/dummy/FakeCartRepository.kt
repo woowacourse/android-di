@@ -8,14 +8,15 @@ class FakeCartRepository : CartRepository {
     private val cartProducts = createFakeCartProducts().toMutableList()
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(CartProduct(product.name, product.price, product.imageUrl, 1))
+        cartProducts.add(createFakeCartProduct(11))
     }
 
     override suspend fun getAllCartProducts(): List<CartProduct> {
         return cartProducts.toList()
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        val position = cartProducts.indexOfFirst { it.id == id }
+        cartProducts.removeAt(position)
     }
 }

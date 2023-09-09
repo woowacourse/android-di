@@ -14,8 +14,7 @@ class CartProductViewHolder(
 
     init {
         binding.ivCartProductDelete.setOnClickListener {
-            val position = adapterPosition
-            onClickDelete(position)
+            onClickDelete(adapterPosition)
         }
     }
 

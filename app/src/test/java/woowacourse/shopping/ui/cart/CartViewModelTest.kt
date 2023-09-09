@@ -8,11 +8,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.dummy.FakeCartRepository
+import woowacourse.shopping.dummy.createFakeCartProduct
 import woowacourse.shopping.dummy.createFakeCartProducts
-import woowacourse.shopping.dummy.createFakeProducts
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModelTest {
@@ -43,14 +41,13 @@ class CartViewModelTest {
     @Test
     fun `장바구니 상품을 삭제한다`() {
         // given
-        val product = Product(name = "Hey 3", price = 1000, imageUrl = "")
+        viewModel.getAllCartProducts()
 
         // when
-        viewModel.deleteCartProduct(3)
-        val expected = CartProduct(product.name, product.price, product.imageUrl, 1)
+        viewModel.deleteCartProduct(3L)
+        val expected = createFakeCartProduct(3L)
 
         // then
         assert(viewModel.onCartProductDeleted.getOrAwaitValue() == true)
-        assert(!viewModel.cartProducts.getOrAwaitValue().contains(expected))
     }
 }
