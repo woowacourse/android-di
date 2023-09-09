@@ -7,7 +7,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 class DependencyInjector(
-    private val container: DependencyInjectionContainer
+    private val container: Container = DependencyInjectionContainer()
 ) {
 
     inline fun <reified T : Any> inject(): T {
@@ -21,7 +21,7 @@ class DependencyInjector(
         map { it.instantiate() }.toTypedArray()
 
     private fun KParameter.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
-        true -> container.find(type.jvmErasure) { throw NoSuchElementException() }
+        true -> container.find(type.jvmErasure) ?: throw NoSuchElementException()
         false -> type.jvmErasure.instantiateRecursively()
     }
 
