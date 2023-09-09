@@ -32,11 +32,11 @@ object Injector {
 
         // 주생성자의 인자들을 인스턴스화 시킨다
         // Container에 있는 경우 바로 가져오고 없다면 인스턴스를 생성한다
-        val insertedParameters = parameters.map {
+        val insertedParameters = parameters.associateWith {
             val type = it.type.jvmErasure
             Container.getInstance(type) ?: inject(type)
         }
 
-        return primaryConstructor.call(*insertedParameters.toTypedArray()) as T
+        return primaryConstructor.callBy(insertedParameters) as T
     }
 }
