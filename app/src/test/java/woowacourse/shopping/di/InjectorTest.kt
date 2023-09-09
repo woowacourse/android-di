@@ -3,9 +3,15 @@ package woowacourse.shopping.di
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.annotation.ConstructorInject
 import woowacourse.shopping.repository.ProductRepository
 
 interface Fake
+
+class Crew(
+    @ConstructorInject val name: String,
+    val nickName: String = "Krrong",
+)
 
 class InjectorTest {
     @Test(expected = NullPointerException::class)
@@ -21,5 +27,21 @@ class InjectorTest {
 
         // then
         assertEquals(repository::class, DefaultProductRepository::class)
+    }
+
+    @Test
+    fun `Container에 String이 있다면 inject 메서드로 Crew를 인스턴스화 수 있다`() {
+        // given
+        Container.addInstance(
+            String::class,
+            "강석진",
+        )
+
+        // when
+        val crew = Injector.inject<Crew>(Crew::class)
+
+        // then
+        assertEquals(crew.name, "강석진")
+        assertEquals(crew.nickName, "Krrong")
     }
 }
