@@ -10,7 +10,9 @@ class DiActivityModule(parentDiContainer: DiContainer) : DiContainer(parentDiCon
         this.createInstance(CartInDiskRepository::class)
     }
 
-    val provideCartProductDao: CartProductDao by lazy {
-        this.get(ShoppingDatabase::class)!!.cartProductDao()
+    fun provideCartProductDao(
+        shoppingDatabase: ShoppingDatabase,
+    ): CartProductDao {
+        return shoppingDatabase.cartProductDao()
     }
 }

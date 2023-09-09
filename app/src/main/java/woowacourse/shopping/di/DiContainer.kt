@@ -5,6 +5,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaGetter
@@ -35,7 +36,9 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         val primaryConstructor = clazz.primaryConstructor
             ?: throw IllegalArgumentException("Primary constructor not found")
 
-        if (primaryConstructor.parameters.all { it.isOptional }) { return primaryConstructor }
+        if (primaryConstructor.parameters.all { it.isOptional }) {
+            return primaryConstructor
+        }
 
         throw IllegalArgumentException("Primary constructor must be all optional")
     }
@@ -48,10 +51,19 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
-        return this::class.declaredFunctions.firstOrNull { function ->
+        val method = this::class.declaredFunctions.firstOrNull { function ->
             function.isAccessible = true
             function.javaMethod?.returnType?.simpleName == clazz.simpleName
-        }?.call(this) as T?
+        } ?: return null
+
+        val parameters = method.parameters.associateWith { parameter ->
+            when {
+                parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
+                else -> get(parameter.type.jvmErasure)
+            }
+        }
+
+        return method.callBy(parameters) as T?
     }
 
     @Suppress("UNCHECKED_CAST")
