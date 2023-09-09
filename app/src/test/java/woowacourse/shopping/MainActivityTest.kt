@@ -11,10 +11,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.di.application.DiApplication
-import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.util.FakeApplicationModule
 import woowacourse.util.getFakeApplicationModule
 
 @RunWith(RobolectricTestRunner::class)
@@ -27,7 +25,7 @@ class MainActivityTest {
     fun setup() {
         // 애플리케이션의 인젝터 객체 페이크객체로 교체. 이제 자동주입 로직이 해당 인젝터가 가진 모듈객체를 따를 것임.
         val application =
-            ApplicationProvider.getApplicationContext<DiApplication<ApplicationModule>>()
+            ApplicationProvider.getApplicationContext<DiApplication>()
 
         val applicationModule =
             DiApplication::class.java.getDeclaredField("applicationModule")
@@ -41,10 +39,10 @@ class MainActivityTest {
     fun `FakeApplicationModule 초기화 실행 테스트`() {
         // given
         val application =
-            ApplicationProvider.getApplicationContext<DiApplication<FakeApplicationModule>>()
+            ApplicationProvider.getApplicationContext<DiApplication>()
 
         // then
-        assertThat(application is DiApplication<FakeApplicationModule>).isEqualTo(true)
+        assertThat(application is DiApplication).isEqualTo(true)
     }
 
     @Test

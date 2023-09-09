@@ -1,12 +1,17 @@
 package woowacourse.shopping.di.module
 
+import woowacourse.shopping.di.annotation.FieldInject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.isAccessible
 
 abstract class Module(private val parentModule: Module? = null) {
     protected val cache =
@@ -48,7 +53,7 @@ abstract class Module(private val parentModule: Module? = null) {
             clazz.kotlin.primaryConstructor
                 ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
         val args = getArguments(this, primaryConstructor)
-        return primaryConstructor.call(*args.toTypedArray())
+        return setFiledInjectElements(primaryConstructor.call(*args.toTypedArray()))
     }
 
     private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
@@ -56,6 +61,16 @@ abstract class Module(private val parentModule: Module? = null) {
             val paramKClass = param.type.classifier as KClass<*>
             baseModule.provideInstance(paramKClass.java) // 인자들을 얻어오는 과정은, 그 func라는 함수 이상 수준의 모듈에서부터 탐색을 시작해야 한다.\
         }
+    }
+
+    private fun <T : Any> setFiledInjectElements(instance: T): T {
+        instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+            .filter { it.hasAnnotation<FieldInject>() }.forEach { field ->
+                val fieldKClass = field.returnType.classifier as KClass<*>
+                field.isAccessible = true
+                field.setter.call(instance, this.provideInstance(fieldKClass.java))
+            }
+        return instance
     }
 
     protected inline fun <reified T : Any> getOrCreateInstance(crossinline create: () -> T): T {
