@@ -4,23 +4,23 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import woowacourse.shopping.model.Product
 
-class CartSampleRepositoryTest {
+class CartInMemoryRepositoryTest {
 
     @Test
     fun `리포지터리의 생성자에 초기화된 값을 넣고 전체 값을 받아올 수 있다`() {
         // given
-        val cartSampleRepository = CartSampleRepository(
+        val cartInMemoryRepository = CartInMemoryRepository(
             cartProducts = mutableListOf(
                 Product(
                     name = "test",
                     price = 10,
-                    imageUrl = "test2"
-                )
-            )
+                    imageUrl = "test2",
+                ),
+            ),
         )
 
         // when
-        val products = cartSampleRepository.getAllCartProducts()
+        val products = cartInMemoryRepository.getAllCartProducts()
 
         // then
         assert(products.size == 1)
@@ -32,16 +32,16 @@ class CartSampleRepositoryTest {
     @Test
     fun `리포지터리에 값을 넣고 값을 받아올 수 있다`() {
         // given
-        val cartSampleRepository = CartSampleRepository()
+        val cartInMemoryRepository = CartInMemoryRepository()
         val product = Product(
             name = "test",
             price = 10,
-            imageUrl = "test2"
+            imageUrl = "test2",
         )
 
         // when
-        cartSampleRepository.addCartProduct(product)
-        val products = cartSampleRepository.getAllCartProducts()
+        cartInMemoryRepository.addCartProduct(product)
+        val products = cartInMemoryRepository.getAllCartProducts()
 
         // then
         assert(products.size == 1)
@@ -53,17 +53,17 @@ class CartSampleRepositoryTest {
     @Test
     fun `리포지터리의 값을 삭제할 수 있다`() {
         // given
-        val cartSampleRepository = CartSampleRepository()
+        val cartInMemoryRepository = CartInMemoryRepository()
         val product = Product(
             name = "test",
             price = 10,
-            imageUrl = "test2"
+            imageUrl = "test2",
         )
 
         // when
-        cartSampleRepository.addCartProduct(product)
-        cartSampleRepository.deleteCartProduct(0)
-        val products = cartSampleRepository.getAllCartProducts()
+        cartInMemoryRepository.addCartProduct(product)
+        cartInMemoryRepository.deleteCartProduct(0)
+        val products = cartInMemoryRepository.getAllCartProducts()
 
         // then
         assert(products.isEmpty())
