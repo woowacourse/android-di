@@ -6,9 +6,8 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
 
 class DiActivityModule(parentDiContainer: DiContainer) : DiContainer(parentDiContainer) {
-    val provideCartInDiskRepository: CartRepository by lazy {
+    fun provideCartInDiskRepository(): CartRepository =
         this.createInstance(CartInDiskRepository::class)
-    }
 
     fun provideCartProductDao(
         shoppingDatabase: ShoppingDatabase,

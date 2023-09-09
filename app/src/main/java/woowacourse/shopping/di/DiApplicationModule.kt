@@ -8,18 +8,14 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class DiApplicationModule(
-    applicationContext: Context,
+    private val applicationContext: Context,
 ) : DiContainer() {
-
-    val provideProductRepository: ProductRepository by lazy {
+    fun provideProductRepository(): ProductRepository =
         this.createInstance(ProductSampleRepository::class)
-    }
 
-    val provideCartRepositoryInMemory: CartRepository by lazy {
+    fun provideCartRepositoryInMemory(): CartRepository =
         this.createInstance(CartInMemoryRepository::class)
-    }
 
-    val provideShoppingDatabase: ShoppingDatabase by lazy {
+    fun provideShoppingDatabase(): ShoppingDatabase =
         ShoppingDatabase.getInstance(applicationContext)
-    }
 }
