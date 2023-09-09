@@ -1,6 +1,9 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,9 +26,9 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
-
         viewModel = MainViewModel(productRepository, cartRepository)
     }
 

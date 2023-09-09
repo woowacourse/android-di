@@ -1,5 +1,6 @@
 package woowacourse.shopping.dummy
 
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 private val fakeProducts = List(10) {
@@ -8,3 +9,4 @@ private val fakeProducts = List(10) {
 
 fun createFakeProduct(id: Int) = fakeProducts[id]
 fun createFakeProducts() = fakeProducts
+fun createFakeCartProducts() = fakeProducts.map { CartProduct(it.name, it.price, it.imageUrl, 1) }
