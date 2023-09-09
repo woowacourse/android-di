@@ -10,7 +10,7 @@ import woowacourse.shopping.application.ShoppingApplication
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): ViewModelLazy<T> {
     val factory = viewModelFactory {
         initializer {
-            (application as ShoppingApplication).injector.create(T::class.java)
+            (application as ShoppingApplication).injector.create(T::class)
         }
     }
     return ViewModelLazy(

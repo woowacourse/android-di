@@ -1,15 +1,16 @@
 package woowacourse.shopping.di.container
 
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import kotlin.reflect.KClass
 
-class DefaultContainer(db: ShoppingDatabase) : ShoppingContainer {
-    private val dao = db.cartProductDao()
+class DefaultContainer : ShoppingContainer {
+    private val instances = mutableMapOf<KClass<*>, Any?>()
 
-    override val productRepository: ProductRepository = DefaultProductRepository()
-    override val cartRepository: CartRepository = DefaultCartRepository(dao)
+    override fun <T : Any> createInstance(clazz: KClass<T>, instance: T) {
+        instances[clazz] = instance
+    }
+
+    override fun <T : Any> getInstance(clazz: KClass<T>): T? {
+        return instances[clazz] as? T
+    }
 }
 

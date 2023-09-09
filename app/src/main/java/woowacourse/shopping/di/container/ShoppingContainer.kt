@@ -1,9 +1,8 @@
 package woowacourse.shopping.di.container
 
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import kotlin.reflect.KClass
 
 interface ShoppingContainer {
-    val productRepository: ProductRepository
-    val cartRepository: CartRepository
+    fun <T : Any> createInstance(clazz: KClass<T>, instance: T)
+    fun <T : Any> getInstance(clazz: KClass<T>): T?
 }
