@@ -12,9 +12,9 @@ class CartProductAdapter(
 
     private val items: MutableList<CartProduct> = items.toMutableList()
 
-    private val onClickDelete = { position: Int, id: Long ->
+    private val onClickDelete = { id: Long ->
         onClickDelete(id)
-        removeItem(position)
+        removeItem(id)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartProductViewHolder {
@@ -27,8 +27,9 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    private fun removeItem(id: Long) {
+        val itemIndex = items.indexOfFirst { it.id == id }
+        items.removeAt(itemIndex)
+        notifyItemRemoved(itemIndex)
     }
 }
