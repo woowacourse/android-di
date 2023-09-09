@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
@@ -41,24 +42,24 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         throw IllegalArgumentException("Primary constructor must be all optional")
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(clazz: KClass<T>): T? {
-        return getFromMethod(clazz) ?: parentDiContainer?.get(clazz)
+        val method = getMethod(clazz) ?: return parentDiContainer?.get(clazz)
+        val parameters = method.parameters.associateWith { parameter -> getInstance(parameter) }
+        return method.callBy(parameters) as T
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> getFromMethod(clazz: KClass<T>): T? {
-        val method = this::class.declaredFunctions.firstOrNull { function ->
+    private fun <T : Any> getMethod(clazz: KClass<T>): KFunction<*>? {
+        return this::class.declaredFunctions.firstOrNull { function ->
             function.isAccessible = true
             function.javaMethod?.returnType?.simpleName == clazz.simpleName
-        } ?: return null
-
-        val parameters = method.parameters.associateWith { parameter ->
-            when {
-                parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
-                else -> get(parameter.type.jvmErasure)
-            }
         }
+    }
 
-        return method.callBy(parameters) as T?
+    private fun getInstance(parameter: KParameter): Any? {
+        return when {
+            parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
+            else -> get(parameter.type.jvmErasure)
+        }
     }
 }
