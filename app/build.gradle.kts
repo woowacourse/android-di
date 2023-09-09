@@ -71,5 +71,9 @@ dependencies {
     // Reflection
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
     // ViewModel(by viewModels 사용용도)
-    implementation ("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+
+    // koin(학습 비교용)
+    implementation("io.insert-koin:koin-core:3.1.2")
+    implementation("io.insert-koin:koin-android:3.1.2")
 }
