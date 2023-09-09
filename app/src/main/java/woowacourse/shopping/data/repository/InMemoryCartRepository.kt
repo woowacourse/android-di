@@ -11,9 +11,10 @@ import woowacourse.shopping.ui.common.di.qualifier.InMemoryCartRepositoryQualifi
 @InMemoryCartRepositoryQualifier
 class InMemoryCartRepository : CartRepository {
     private val cartProducts = mutableListOf<CartProductEntity>()
+    private var lastId: Long = 0
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(product.toEntity())
+        cartProducts.add(product.toEntity().apply { id = ++lastId })
     }
 
     override suspend fun getAllCartProducts(): List<CartProduct> {

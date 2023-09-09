@@ -1,6 +1,5 @@
 package com.buna.di.util.diAssistant
 
-import android.util.Log
 import com.buna.di.injector.DependencyKey
 import com.buna.di.module.Module
 import kotlin.reflect.KFunction
@@ -17,7 +16,6 @@ data class Cache(
 
     fun caching(dependencyKey: DependencyKey, dependency: Any? = null) {
         cache[dependencyKey] = dependency
-        Log.d("buna", "캐시: $cache")
     }
 
     operator fun get(dependencyKey: DependencyKey): Any? {
