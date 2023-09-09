@@ -10,13 +10,28 @@ import woowacourse.shopping.repository.ProductRepository
 class DiApplicationModule(
     private val applicationContext: Context,
 ) : DiContainer() {
-    fun provideApplicationContext(): Context = applicationContext
+    fun provideApplicationContext(): Context = Cache.applicationContext.get {
+        applicationContext
+    }
 
-    fun provideProductRepository(): ProductRepository = ProductSampleRepository()
+    fun provideProductRepository(): ProductRepository = Cache.productRepository.get {
+        ProductSampleRepository()
+    }
 
-    fun provideCartRepositoryInMemory(): CartRepository = CartInMemoryRepository()
+    fun provideCartRepositoryInMemory(): CartRepository = Cache.cartRepositoryInMemory.get {
+        CartInMemoryRepository()
+    }
 
     fun provideShoppingDatabase(
         context: Context,
-    ): ShoppingDatabase = ShoppingDatabase.getInstance(context)
+    ): ShoppingDatabase = Cache.shoppingDatabase.get {
+        ShoppingDatabase.getInstance(context)
+    }
+
+    private object Cache {
+        val applicationContext = InstanceHolder<Context>()
+        val productRepository = InstanceHolder<ProductRepository>()
+        val cartRepositoryInMemory = InstanceHolder<CartRepository>()
+        val shoppingDatabase = InstanceHolder<ShoppingDatabase>()
+    }
 }
