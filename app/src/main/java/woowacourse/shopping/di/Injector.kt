@@ -1,7 +1,9 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.data.annotation.Inject
+import woowacourse.shopping.data.annotation.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -26,7 +28,7 @@ object Injector {
         val primaryConstructor =
             klass.primaryConstructor ?: throw NullPointerException("주 생성자가 없습니다.")
 
-        // 인자들 중 ConstructorInject 어노테이션 붙은 인자들만 가져온다
+        // 인자들 중 Inject 어노테이션 붙은 인자들만 가져온다
         val parameters =
             primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
 
@@ -34,7 +36,13 @@ object Injector {
         // Container에 있는 경우 바로 가져오고 없다면 인스턴스를 생성한다
         val insertedParameters = parameters.associateWith {
             val type = it.type.jvmErasure
-            Container.getInstance(type) ?: inject(type)
+
+            // Qualifier 어노테이션 분기
+            if (it.hasAnnotation<Qualifier>()) {
+                Container.getInstance(it.findAnnotation<Qualifier>()!!)
+            } else {
+                Container.getInstance(type) ?: inject(type)
+            }
         }
 
         return primaryConstructor.callBy(insertedParameters) as T

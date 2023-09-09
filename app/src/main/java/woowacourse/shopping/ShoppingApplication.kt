@@ -6,6 +6,7 @@ import woowacourse.shopping.data.CartDatabase
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.Injector
 import woowacourse.shopping.repository.CartRepository
@@ -15,10 +16,10 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        injectRepository()
+        injectDependency()
     }
 
-    private fun injectRepository() {
+    private fun injectDependency() {
         val database = Room
             .databaseBuilder(this, CartDatabase::class.java, "kkrong-database")
             .build()
@@ -33,9 +34,15 @@ class ShoppingApplication : Application() {
             ProductRepository::class,
             Injector.inject(DefaultProductRepository::class),
         )
+
         Container.addInstance(
             CartRepository::class,
             Injector.inject(DatabaseCartRepository::class),
+        )
+
+        Container.addInstance(
+            CartRepository::class,
+            Injector.inject(InMemoryCartRepository::class),
         )
     }
 }
