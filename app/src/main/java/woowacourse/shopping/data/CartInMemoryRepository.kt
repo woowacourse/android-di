@@ -7,6 +7,8 @@ import woowacourse.shopping.repository.CartRepository
 class CartInMemoryRepository(
     private val cartProducts: MutableList<CartProduct> = mutableListOf(),
 ) : CartRepository {
+    private var id: Int = 0
+        get() = field++
 
     override suspend fun addCartProduct(product: Product) {
         cartProducts.add(product.toCartProduct())
@@ -26,6 +28,7 @@ class CartInMemoryRepository(
             price = price,
             imageUrl = imageUrl,
             createdAt = System.currentTimeMillis(),
+            id = id,
         )
     }
 }

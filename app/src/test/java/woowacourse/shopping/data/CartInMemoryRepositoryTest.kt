@@ -18,6 +18,7 @@ class CartInMemoryRepositoryTest {
                     price = 10,
                     imageUrl = "test2",
                     createdAt = System.currentTimeMillis(),
+                    id = 0,
                 ),
             ),
         )

@@ -38,7 +38,7 @@ class CartViewModelTest {
         coEvery {
             mockkCartRepository.getAllCartProducts()
         } returns listOf(
-            CartProduct("item", 1000, "image", System.currentTimeMillis()),
+            CartProduct("item", 1000, "image", System.currentTimeMillis(), 0),
         )
 
         // when
