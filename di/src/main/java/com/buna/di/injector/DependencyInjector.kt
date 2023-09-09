@@ -62,6 +62,10 @@ object DependencyInjector {
         cache.caching(dependencyKey)
     }
 
+    fun caching(dependencyKey: DependencyKey, dependency: Any? = null) {
+        cache.caching(dependencyKey, dependency)
+    }
+
     fun clear() {
         subTypeConverter.clear()
         cache.clear()
