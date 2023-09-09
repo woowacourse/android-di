@@ -13,14 +13,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 
 @ExperimentalCoroutinesApi
 class CartViewModelTest {
 
     private lateinit var viewModel: CartViewModel
-    private lateinit var cartRepository: DefaultCartRepository
+    private lateinit var cartRepository: DatabaseCartRepository
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()

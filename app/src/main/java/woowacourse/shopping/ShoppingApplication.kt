@@ -1,8 +1,9 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.Dependency
 import woowacourse.shopping.di.DependencyInjectionContainer
@@ -22,10 +23,11 @@ class ShoppingApplication : Application() {
         val container = DependencyInjectionContainer(
             listOf(
                 Dependency<CartRepository>(
-                    DefaultCartRepository(
+                    DatabaseCartRepository(
                         ShoppingDatabase.getDatabase(this).cartProductDao()
                     )
                 ),
+                Dependency<CartRepository>(InMemoryCartRepository()),
                 Dependency<ProductRepository>(DefaultProductRepository())
             )
         )

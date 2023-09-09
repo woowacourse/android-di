@@ -4,5 +4,7 @@ import kotlin.reflect.KClass
 
 interface Container {
 
-    fun find(kClass: KClass<*>): Any?
+    fun find(clazz: KClass<*>): Any?
+
+    fun find(clazzName: String): Any?
 }

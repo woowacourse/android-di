@@ -26,7 +26,15 @@ class DependencyInjector(
         map { it.instantiate() }.toTypedArray()
 
     fun KParameter.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
-        true -> container.find(type.jvmErasure) ?: throw NoSuchElementException()
+        true -> {
+            if (hasAnnotation<WoogiQualifier>()) {
+                val qualifier = annotations.filterIsInstance<WoogiQualifier>()
+                container.find(qualifier.first().name) ?: throw NoSuchElementException()
+            } else {
+                container.find(this.type.jvmErasure) ?: throw NoSuchElementException()
+            }
+        }
+
         false -> type.jvmErasure.instantiateRecursively()
     }
 

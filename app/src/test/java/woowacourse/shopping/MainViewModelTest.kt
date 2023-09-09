@@ -13,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.ui.MainViewModel
 
@@ -25,7 +25,7 @@ class MainViewModelTest {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var productRepository: DefaultProductRepository
-    private lateinit var cartRepository: DefaultCartRepository
+    private lateinit var cartRepository: DatabaseCartRepository
 
     @Before
     fun setup() {

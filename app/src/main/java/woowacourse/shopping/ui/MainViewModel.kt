@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.WoogiProperty
+import woowacourse.shopping.di.WoogiQualifier
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
@@ -13,6 +14,7 @@ import woowacourse.shopping.model.ProductRepository
 class MainViewModel(
     @WoogiProperty
     private val productRepository: ProductRepository,
+    @WoogiQualifier("DatabaseCartRepository")
     @WoogiProperty
     private val cartRepository: CartRepository,
 ) : ViewModel() {
