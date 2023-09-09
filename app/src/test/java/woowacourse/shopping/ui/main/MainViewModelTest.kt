@@ -2,12 +2,14 @@ package woowacourse.shopping.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.MainCoroutineRule
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
@@ -21,6 +23,9 @@ class MainViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mainDispatcher = MainCoroutineRule()
 
     @Before
     fun setUp() {
@@ -37,7 +42,7 @@ class MainViewModelTest {
     fun 장바구니_목록에_제품을_추가하면_상품_추가_상태가_참이_된다() {
         // given: 장바구니에 추가할 상품이 존재한다.
         val product = mockk<Product>()
-        every { cartRepository.addCartProduct(product) } just Runs
+        coEvery { cartRepository.addCartProduct(product) } just Runs
 
         // when: 장바구니에 상품을 추가한다.
         viewModel.addCartProduct(product)
