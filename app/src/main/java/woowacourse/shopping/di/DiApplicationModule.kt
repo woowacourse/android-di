@@ -12,11 +12,9 @@ class DiApplicationModule(
 ) : DiContainer() {
     fun provideApplicationContext(): Context = applicationContext
 
-    fun provideProductRepository(): ProductRepository =
-        this.createInstance(ProductSampleRepository::class)
+    fun provideProductRepository(): ProductRepository = ProductSampleRepository()
 
-    fun provideCartRepositoryInMemory(): CartRepository =
-        this.createInstance(CartInMemoryRepository::class)
+    fun provideCartRepositoryInMemory(): CartRepository = CartInMemoryRepository()
 
     fun provideShoppingDatabase(
         context: Context,

@@ -6,12 +6,11 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
 
 class DiActivityModule(parentDiContainer: DiContainer) : DiContainer(parentDiContainer) {
-    fun provideCartInDiskRepository(): CartRepository =
-        this.createInstance(CartInDiskRepository::class)
+    fun provideCartInDiskRepository(
+        cartProductDao: CartProductDao,
+    ): CartRepository = CartInDiskRepository(cartProductDao)
 
     fun provideCartProductDao(
         shoppingDatabase: ShoppingDatabase,
-    ): CartProductDao {
-        return shoppingDatabase.cartProductDao()
-    }
+    ): CartProductDao = shoppingDatabase.cartProductDao()
 }
