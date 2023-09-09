@@ -13,17 +13,15 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class ShoppingApplication : Application() {
-    lateinit var injector: Injector
-        private set
 
     override fun onCreate() {
         super.onCreate()
 
         val db: ShoppingDatabase = createRoomDatabase()
+        val dao = db.cartProductDao()
         val appContainer: ShoppingContainer = DefaultContainer()
         injector = Injector(appContainer)
 
-        val dao = db.cartProductDao()
         appContainer.createInstance(CartProductDao::class, dao)
         appContainer.createInstance(CartRepository::class, DefaultCartRepository(dao))
         appContainer.createInstance(ProductRepository::class, DefaultProductRepository())
@@ -35,5 +33,9 @@ class ShoppingApplication : Application() {
             ShoppingDatabase::class.java,
             "cart_products",
         ).build()
+    }
+
+    companion object {
+        lateinit var injector: Injector
     }
 }
