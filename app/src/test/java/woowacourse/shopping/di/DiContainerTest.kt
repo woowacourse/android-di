@@ -119,7 +119,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달린 생성자를 찾아서 객체를 생성한다`() {
+    fun `@DiInject가 있는 생성자를 찾아서 객체를 생성한다`() {
         // given
         class FakeDiInjectRepository @DiInject constructor(
             fakeDiInjectDataSource: FakeDiDataSource,
@@ -140,7 +140,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달린 생성자가 주생성자가 아니여도 된다`() {
+    fun `@DiInject가 있는 생성자는 주 생성자가 아니어도 된다`() {
         // given
         class FakeViewModel constructor(fakeDiInjectRepository: FakeDiRepository) {
             @DiInject
@@ -163,7 +163,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받고 기본 생성자에 파라미터가 있으면 실패한다`() {
+    fun `@DiInject가 있는 생성자가 없으면 기본 생성자 찾고 기본 옵션 파라미터 이외에 것이 있으면 에러가 발생된다`() {
         // given
         class FakeDiInjectRepository(fakeDiInjectDataSource: FakeDiDataSource) :
             FakeDiRepository {
@@ -178,7 +178,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받으면 기본 생성자를 찾는다`() {
+    fun `@DiInject가 있는 생성자가 없으면 기본 생성자를 찾는다`() {
         // given
         class FakeDiInjectRepository : FakeDiRepository {
             override fun get(): String = "FakeDiInjectRepository"
@@ -195,7 +195,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달린 생성자를 두개이상 발견하면 예외를 발생시킨다`() {
+    fun `@DiInject가 있는 생성자가 두개 이상 이면 예외를 발생시킨다`() {
         // given
         class FakeViewModel @DiInject constructor(fakeDiInjectRepository: FakeDiRepository) {
             @DiInject
