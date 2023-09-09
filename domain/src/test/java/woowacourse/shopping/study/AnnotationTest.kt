@@ -85,7 +85,8 @@ class AnnotationReflectionTest {
         val annotation = filterAnnotationField.first().findAnnotation<Runtime>()
             ?: throw NullPointerException("Runtime 어노테이션 붙은 거 없음")
         val nameFromAnnotation = annotation.name
-        println(nameFromAnnotation)
+        println(annotation.name)
+        println(annotation.annotationClass.qualifiedName)
 
         annotation::class.hasAnnotation<ParentMetaAnnotation>()
         println(annotation.annotationClass.hasAnnotation<ParentMetaAnnotation>())
