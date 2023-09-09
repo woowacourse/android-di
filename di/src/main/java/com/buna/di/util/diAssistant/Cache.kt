@@ -18,7 +18,7 @@ data class Cache(
         cache[dependencyKey] = dependency
     }
 
-    fun get(dependencyKey: DependencyKey): Any? {
+    operator fun get(dependencyKey: DependencyKey): Any? {
         return cache[dependencyKey]
     }
 

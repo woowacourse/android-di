@@ -20,7 +20,7 @@ object DependencyInjector {
     private val cache = Cache()
 
     fun <T : Any> inject(clazz: KClass<T>): T {
-        val cached = cache.get(DependencyKey.createDependencyKey(clazz))
+        val cached = cache[DependencyKey.createDependencyKey(clazz)]
         if (cached != null) return cached as T
 
         val primaryConstructor = clazz.validateHasPrimaryConstructor()
