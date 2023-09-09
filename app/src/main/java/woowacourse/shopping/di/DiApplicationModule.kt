@@ -10,12 +10,15 @@ import woowacourse.shopping.repository.ProductRepository
 class DiApplicationModule(
     private val applicationContext: Context,
 ) : DiContainer() {
+    fun provideApplicationContext(): Context = applicationContext
+
     fun provideProductRepository(): ProductRepository =
         this.createInstance(ProductSampleRepository::class)
 
     fun provideCartRepositoryInMemory(): CartRepository =
         this.createInstance(CartInMemoryRepository::class)
 
-    fun provideShoppingDatabase(): ShoppingDatabase =
-        ShoppingDatabase.getInstance(applicationContext)
+    fun provideShoppingDatabase(
+        context: Context,
+    ): ShoppingDatabase = ShoppingDatabase.getInstance(context)
 }
