@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import woowacourse.shopping.data.CartInDiskRepository
 import woowacourse.shopping.data.CartInMemoryRepository
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -18,5 +19,9 @@ class DiApplicationModule : DiContainer() {
 
     val provideCartRepositoryInDisk: CartRepository by lazy {
         this.createInstance(CartInDiskRepository::class)
+    }
+
+    val provideCartProductDao: CartProductDao by lazy {
+        this.createInstance(CartProductDao::class)
     }
 }
