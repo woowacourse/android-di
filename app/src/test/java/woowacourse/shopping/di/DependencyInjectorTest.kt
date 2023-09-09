@@ -19,6 +19,13 @@ class ClassD(val arg1: ClassE)
 class ClassE(val arg1: ClassF)
 class ClassF
 
+class ClassG {
+    @WoogiProperty
+    lateinit var property1: ClassH
+}
+
+data class ClassH(val message: String = "")
+
 class DependencyInjectorTest {
 
     @Test
@@ -88,5 +95,24 @@ class DependencyInjectorTest {
         injector.inject<ClassA>()
 
         // then
+    }
+
+    @Test
+    fun `파라미터가 아닌 클래스 내부에 위치한 WoogiAnnotation이 붙어있는 프로퍼티에 대한 의존성 주입을 수행할 수 있다`() {
+        // given
+        val container: Container = mockk()
+        val injector = DependencyInjector(container)
+
+        every {
+            container.find(ClassH::class)
+        } returns ClassH()
+
+        // when
+        val instance = injector.inject<ClassG>()
+        val actual = instance.property1
+
+        // then
+        val expected = ClassH()
+        assertEquals(expected, actual)
     }
 }
