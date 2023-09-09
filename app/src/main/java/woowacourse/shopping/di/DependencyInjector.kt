@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
@@ -17,22 +18,24 @@ class DependencyInjector(
     }
 
     fun List<KParameter>.instantiateParameters(): Array<Any?> =
-        map { parameter ->
-            parameter
-                .type
-                .jvmErasure
-                .instantiateRecursively()
-        }.toTypedArray()
+        map { it.instantiate() }.toTypedArray()
+
+    private fun KParameter.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
+        true -> container.find(type.jvmErasure) { throw NoSuchElementException() }
+        false -> type.jvmErasure.instantiateRecursively()
+    }
 
     private fun KClass<*>.instantiateRecursively(): Any {
-        val constructor = primaryConstructor
-            ?: return requireNotNull(container.find(this))
+        val constructor = primaryConstructor ?: throw Throwable(NO_SUCH_CONSTRUCTOR)
+        if (constructor.parameters.isEmpty()) return constructor.call()
 
-        if (constructor.parameters.isEmpty()) {
-            return container.find(this) { constructor.call() }
-        }
         val arguments = constructor.parameters.instantiateParameters()
 
         return constructor.call(*arguments)
+    }
+
+    companion object {
+
+        private const val NO_SUCH_CONSTRUCTOR = "주 생성자가 존재하지 않습니다."
     }
 }

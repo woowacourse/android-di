@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.WoogiProperty
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
 class MainViewModel(
+    @WoogiProperty
     private val productRepository: ProductRepository,
+    @WoogiProperty
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
