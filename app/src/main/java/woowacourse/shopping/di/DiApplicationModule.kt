@@ -1,13 +1,15 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartInDiskRepository
+import android.content.Context
 import woowacourse.shopping.data.CartInMemoryRepository
-import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ProductSampleRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class DiApplicationModule : DiContainer() {
+class DiApplicationModule(
+    applicationContext: Context,
+) : DiContainer() {
 
     val provideProductRepository: ProductRepository by lazy {
         this.createInstance(ProductSampleRepository::class)
@@ -17,11 +19,7 @@ class DiApplicationModule : DiContainer() {
         this.createInstance(CartInMemoryRepository::class)
     }
 
-    val provideCartRepositoryInDisk: CartRepository by lazy {
-        this.createInstance(CartInDiskRepository::class)
-    }
-
-    val provideCartProductDao: CartProductDao by lazy {
-        this.createInstance(CartProductDao::class)
+    val provideShoppingDatabase: ShoppingDatabase by lazy {
+        ShoppingDatabase.getInstance(applicationContext)
     }
 }
