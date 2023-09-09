@@ -1,10 +1,9 @@
-package com.buna.di.lazy
+package com.buna.di.viewModel
 
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import com.buna.di.DependencyInjector
-import com.buna.di.util.viewModelFactory
+import com.buna.di.injector.DependencyInjector
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
     return ViewModelLazy(

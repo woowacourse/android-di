@@ -1,46 +1,25 @@
 package woowacourse.shopping
 
 import android.app.Application
-import android.content.Context
-import androidx.room.Room
-import com.buna.di.matchTypes
-import com.buna.di.module.Module
-import com.buna.di.modules
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.data.repository.DefaultCartRepository
+import com.buna.di.dsl.modules
+import com.buna.di.dsl.types
+import woowacourse.shopping.data.repository.DatabaseCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
+import woowacourse.shopping.data.repository.InMemoryCartRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.ui.common.di.qualifier.DatabaseDao
-import woowacourse.shopping.ui.common.di.qualifier.InMemoryDao
+import woowacourse.shopping.ui.common.di.module.RepositoryModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        modules(
-            DaoModule(this@ShoppingApplication),
-        )
-
-        matchTypes(
-            ProductRepository::class to DefaultProductRepository::class,
-            CartRepository::class to DefaultCartRepository::class,
-        )
+        types {
+            type(ProductRepository::class to DefaultProductRepository::class)
+            type(CartRepository::class to InMemoryCartRepository::class)
+            type(CartRepository::class to DatabaseCartRepository::class)
+        }
+        modules {
+            module(RepositoryModule(this@ShoppingApplication))
+        }
     }
-}
-
-class DaoModule(private val context: Context) : Module {
-    @DatabaseDao
-    fun provideDatabaseCartProductDao(): CartProductDao = Room.databaseBuilder(
-        context,
-        ShoppingDatabase::class.java,
-        ShoppingDatabase.DATABASE_NAME,
-    ).build().cartProductDao()
-
-    @InMemoryDao
-    fun provideInMemoryCartProductDao(): CartProductDao = Room.inMemoryDatabaseBuilder(
-        context,
-        ShoppingDatabase::class.java,
-    ).build().cartProductDao()
 }

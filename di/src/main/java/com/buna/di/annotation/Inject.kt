@@ -1,5 +1,5 @@
 package com.buna.di.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_SETTER)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class Inject

@@ -1,9 +1,7 @@
 package woowacourse.shopping.ui.common.di.qualifier
 
-import com.buna.di.annotation.Qualifier
+annotation class InMemoryCartRepositoryQualifier
 
-@Qualifier
-annotation class DatabaseDao
+annotation class DatabaseCartRepositoryQualifier
 
-@Qualifier
-annotation class InMemoryDao
+annotation class InMemoryProductRepositoryQualifier

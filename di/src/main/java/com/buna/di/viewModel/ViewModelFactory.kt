@@ -1,4 +1,4 @@
-package com.buna.di.util
+package com.buna.di.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -2,9 +2,8 @@ package com.buna.di.injector
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import com.buna.di.DependencyInjector
 import com.buna.di.annotation.Inject
-import com.buna.di.lazy.viewModel
+import com.buna.di.viewModel.viewModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
@@ -27,7 +26,7 @@ class FieldTestActivity : AppCompatActivity() {
 }
 
 class FieldTestViewModel : ViewModel() {
-    @com.buna.di.annotation.Inject
+    @Inject
     lateinit var fieldWithInjectAnnotation: FieldDependency
     lateinit var fieldWithoutInjectAnnotation: FieldDependency
 
@@ -49,7 +48,7 @@ class DependencyInjectorTest {
     fun 뷰모델의_생성자_종속_항목을_자동_주입해준다() {
         // given: 뷰모델 생성에 필요한 종속 항목을 주입한다.
         val constructorDependency = ConstructorDependency()
-        DependencyInjector.inject(constructorDependency)
+        DependencyInjector.module(constructorDependency)
 
         // when: 액티비티를 생성한다.
         val activity = Robolectric.buildActivity(ConstructorTestActivity::class.java)
@@ -67,7 +66,7 @@ class DependencyInjectorTest {
     fun 뷰모델에서_Inject_애노테이션이_붙은_필드에_종속_항목을_자동_주입해준다() {
         // given: 뷰모델 생성과 필드에 필요한 종속 항목을 주입한다.
         val fieldDependency = FieldDependency()
-        DependencyInjector.inject(fieldDependency)
+        DependencyInjector.module(fieldDependency)
 
         // when: 액티비티를 생성한다.
         val activity = Robolectric.buildActivity(FieldTestActivity::class.java)
@@ -85,7 +84,7 @@ class DependencyInjectorTest {
     fun 뷰모델에서_Inject_애노테이션이_없는_필드에는_종속_항목을_주입하지_않는다() {
         // given: 뷰모델 생성과 필드에 필요한 종속 항목을 주입한다.
         val fieldDependency = FieldDependency()
-        DependencyInjector.inject(fieldDependency)
+        DependencyInjector.module(fieldDependency)
 
         // when: 액티비티를 생성한다.
         val activity = Robolectric.buildActivity(FieldTestActivity::class.java)

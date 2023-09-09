@@ -3,7 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.buna.di.lazy.viewModel
+import com.buna.di.viewModel.viewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
