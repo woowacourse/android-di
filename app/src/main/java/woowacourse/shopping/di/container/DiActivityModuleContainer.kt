@@ -5,7 +5,7 @@ import woowacourse.shopping.di.module.ApplicationModule
 import kotlin.reflect.full.primaryConstructor
 
 class DiActivityModuleContainer(private val applicationModule: ApplicationModule) {
-    private val moduleMap: MutableMap<Int, ActivityModule?> = mutableMapOf()
+    private val moduleMap: MutableMap<Int, ActivityModule> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
     fun <T : ActivityModule> provideActivityModule(
@@ -13,10 +13,10 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         oldOwnerHashCode: Int?,
         clazz: Class<T>,
     ): T {
-        val moduleToProvide =
+        val module =
             moduleMap[oldOwnerHashCode] ?: createFromOwnerHashCode(newOwnerHashCode, clazz)
-        moduleMap[newOwnerHashCode] = moduleToProvide
-        return moduleToProvide as T
+        moduleMap[newOwnerHashCode] = module
+        return module as T
     }
 
     private fun <T : ActivityModule> createFromOwnerHashCode(
@@ -31,6 +31,6 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
     }
 
     fun removeModule(ownerHashCode: Int) {
-        moduleMap[ownerHashCode] = null
+        moduleMap.remove(ownerHashCode)
     }
 }

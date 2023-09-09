@@ -31,10 +31,10 @@ abstract class Module(private val parentModule: Module? = null) {
     private fun <T : Any> searchInjectableFunctions(
         clazz: Class<T>,
     ): Map<KFunction<*>, Module> {
-        return getPublicMethodMap().filter { entry ->
-            val returnKClass = entry.key.returnType.classifier as KClass<*>
+        return getPublicMethodMap().filter { (func, _) ->
+            val returnKClass = func.returnType.classifier as KClass<*>
             clazz.kotlin.isSubclassOf(returnKClass)
-        }.takeIf { it.isNotEmpty() || parentModule == null }
+        }.takeUnless { it.isEmpty() }
             ?: parentModule?.searchInjectableFunctions(clazz) ?: mapOf()
     }
 
