@@ -3,12 +3,10 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
 
@@ -44,9 +42,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     fun <T : Any> get(clazz: KClass<T>): T? {
-        return getFromMethod(clazz)
-            ?: getFromGetter(clazz)
-            ?: parentDiContainer?.get(clazz)
+        return getFromMethod(clazz) ?: parentDiContainer?.get(clazz)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -64,13 +60,5 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         }
 
         return method.callBy(parameters) as T?
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> getFromGetter(clazz: KClass<T>): T? {
-        return this::class.declaredMemberProperties.firstOrNull { property ->
-            property.isAccessible = true
-            property.javaGetter?.returnType?.simpleName == clazz.simpleName
-        }?.getter?.call(this) as T?
     }
 }
