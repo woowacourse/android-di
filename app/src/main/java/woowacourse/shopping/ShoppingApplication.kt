@@ -8,7 +8,7 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        defaultAppContainer = DefaultAppContainer()
+        defaultAppContainer = DefaultAppContainer.create()
     }
 
     companion object {
