@@ -1,19 +1,35 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.data.annotation.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 
 object Container {
-    private val repositories = mutableMapOf<KClass<*>, Any>()
+    private val nonAnnotationMap = mutableMapOf<KClass<*>, Any>()
+
+    private val annotationMap = mutableMapOf<String, Any>()
 
     fun getInstance(type: KClass<*>): Any? {
-        return repositories[type]
+        return nonAnnotationMap[type]
     }
 
     fun addInstance(type: KClass<*>, instance: Any) {
-        repositories[type] = instance
+        // 어노테이션이 있으면 Annotation맵에 저장
+        if (instance::class.hasAnnotation<Qualifier>()) {
+            val qualifier = instance::class.findAnnotation<Qualifier>()
+            val qualifierName = qualifier?.name ?: throw NullPointerException("Qualifier 이름이 없습니다.")
+            annotationMap[qualifierName] = instance
+        } else {
+            // 어노테이션이 없으면 nonAnnotationMap에 저장
+            nonAnnotationMap[type] = instance
+        }
+
+        nonAnnotationMap[type] = instance
     }
 
     fun clear() {
-        repositories.clear()
+        annotationMap.clear()
+        nonAnnotationMap.clear()
     }
 }
