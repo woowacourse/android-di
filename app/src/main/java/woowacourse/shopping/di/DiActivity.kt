@@ -1,14 +1,22 @@
 package woowacourse.shopping.di
 
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.reflect.KClass
 
 open class DiActivity : AppCompatActivity() {
-    private val diContainer: DiContainer by lazy {
-        DiActivityModule(
+    private lateinit var diContainer: DiContainer
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        diContainer = DiActivityModule(
             (application as? DiApplication)?.diContainer
-                ?: throw IllegalStateException(ERROR_MESSAGE_NO_DI_APPLICATION)
+                ?: throw IllegalStateException(ERROR_MESSAGE_NO_DI_APPLICATION),
+            this,
         )
+
+        diContainer.inject(this)
     }
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
