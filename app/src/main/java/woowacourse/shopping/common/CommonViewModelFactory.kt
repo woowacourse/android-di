@@ -13,13 +13,13 @@ object CommonViewModelFactory : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val needParameters = getValidatedNeedParameters(modelClass)
-        val injectProperties = getPropertiesForInject(needParameters)
+        val primaryConstructorParameters = getPrimaryConstructorParameters(modelClass)
+        val injectProperties = getPropertiesForInject(primaryConstructorParameters)
 
         return modelClass.constructors.first().newInstance(*injectProperties.toTypedArray()) as T
     }
 
-    private fun <T : ViewModel> getValidatedNeedParameters(modelClass: Class<T>): List<KParameter> {
+    private fun <T : ViewModel> getPrimaryConstructorParameters(modelClass: Class<T>): List<KParameter> {
         return modelClass.kotlin.primaryConstructor?.parameters
             ?: throw NullPointerException("주 생성자를 찾을 수 없습니다.")
     }
