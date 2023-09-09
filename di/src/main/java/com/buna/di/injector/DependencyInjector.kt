@@ -1,6 +1,8 @@
 package com.buna.di.injector
 
 import com.buna.di.annotation.Inject
+import com.buna.di.util.diAssistant.Cache
+import com.buna.di.util.diAssistant.SubTypeConverter
 import com.buna.di.module.Module
 import com.buna.di.util.createInstance
 import com.buna.di.util.validateHasPrimaryConstructor

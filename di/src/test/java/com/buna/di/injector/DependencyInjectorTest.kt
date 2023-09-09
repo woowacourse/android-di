@@ -3,7 +3,7 @@ package com.buna.di.injector
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import com.buna.di.annotation.Inject
-import com.buna.di.viewModel.viewModel
+import com.buna.di.util.viewModel.viewModel
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull

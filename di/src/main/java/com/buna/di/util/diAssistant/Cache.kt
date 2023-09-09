@@ -1,5 +1,6 @@
-package com.buna.di.injector
+package com.buna.di.util.diAssistant
 
+import com.buna.di.injector.DependencyKey
 import com.buna.di.module.Module
 import kotlin.reflect.KFunction
 

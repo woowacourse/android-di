@@ -1,5 +1,6 @@
-package com.buna.di.injector
+package com.buna.di.util.diAssistant
 
+import com.buna.di.injector.DependencyKey
 import kotlin.reflect.KType
 
 class SubTypeConverter(
