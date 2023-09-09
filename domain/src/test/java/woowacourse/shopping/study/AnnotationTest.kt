@@ -2,6 +2,8 @@ package woowacourse.shopping.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -91,5 +93,22 @@ class AnnotationReflectionTest {
         assertThat(filterAnnotationField.size).isEqualTo(1)
         assertThat(nameFromAnnotation).isEqualTo("test_hi_name")
         assertThat(annotation.annotationClass.hasAnnotation<ParentMetaAnnotation>()).isTrue
+    }
+
+    @Test
+    fun `필드 주입 테스트2`() {
+        val type = TestClass1::class
+        val primaryConstructor =
+            type.primaryConstructor ?: throw java.lang.NullPointerException("널 ")
+        val instance = primaryConstructor.call("이름", "번호")
+        val injectFields = type.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+            .filter { it.hasAnnotation<Runtime>() }
+        injectFields.forEach { field ->
+            field.setter.call(instance, "주입되었음")
+            val paramKClass = field.returnType.classifier as KClass<*>
+            println("필드 타입: $paramKClass")
+        }
+
+        assertThat(instance.hi).isEqualTo("주입되었음")
     }
 }
