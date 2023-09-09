@@ -1,8 +1,8 @@
-package woowacourse.shopping.di.container
+package com.example.di.container
 
 import android.content.Context
-import woowacourse.shopping.di.module.ActivityModule
-import woowacourse.shopping.di.module.ApplicationModule
+import com.example.di.module.ActivityModule
+import com.example.di.module.ApplicationModule
 import kotlin.reflect.full.primaryConstructor
 
 class DiActivityModuleContainer(private val applicationModule: ApplicationModule) {

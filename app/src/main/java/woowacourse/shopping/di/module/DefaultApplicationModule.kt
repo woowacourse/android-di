@@ -2,6 +2,7 @@ package woowacourse.shopping.di.module
 
 import android.content.Context
 import androidx.room.Room
+import com.example.di.module.ApplicationModule
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository

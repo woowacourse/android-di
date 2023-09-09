@@ -1,12 +1,12 @@
 package woowacourse.util
 
 import android.content.Context
+import com.example.di.module.ActivityModule
+import com.example.di.module.ApplicationModule
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.module.ActivityModule
-import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 

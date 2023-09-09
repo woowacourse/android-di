@@ -1,8 +1,8 @@
-package woowacourse.shopping.di.module
+package com.example.di.module
 
 import android.content.Context
-import woowacourse.shopping.di.annotation.FieldInject
-import woowacourse.shopping.di.annotation.Qualifier
+import com.example.di.annotation.FieldInject
+import com.example.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty

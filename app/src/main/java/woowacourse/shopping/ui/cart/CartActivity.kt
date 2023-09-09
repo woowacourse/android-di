@@ -2,9 +2,9 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
+import com.example.di.activity.DiEntryPointActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.activity.DiEntryPointActivity
 import woowacourse.shopping.di.module.DefaultActivityModule
 
 class CartActivity :

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
+import com.example.di.annotation.FieldInject
+import com.example.di.application.DiApplication
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
@@ -14,8 +16,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.annotation.FieldInject
-import woowacourse.shopping.di.application.DiApplication
 import woowacourse.util.getFakeActivityModule
 import woowacourse.util.getFakeApplicationModule
 import kotlin.reflect.full.isSubclassOf

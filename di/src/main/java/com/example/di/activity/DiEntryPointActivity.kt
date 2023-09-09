@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.activity
+package com.example.di.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.di.application.DiApplication
-import woowacourse.shopping.di.module.ActivityModule
+import com.example.di.application.DiApplication
+import com.example.di.module.ActivityModule
 
 abstract class DiEntryPointActivity(private val activityModuleClassType: Class<out ActivityModule>) :
     AppCompatActivity() {
