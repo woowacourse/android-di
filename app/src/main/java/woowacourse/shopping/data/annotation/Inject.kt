@@ -1,3 +1,3 @@
 package woowacourse.shopping.data.annotation
 
-annotation class FieldInject
+annotation class Inject

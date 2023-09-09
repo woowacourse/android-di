@@ -1,6 +1,6 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.annotation.ConstructorInject
+import woowacourse.shopping.data.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -28,7 +28,7 @@ object Injector {
 
         // 인자들 중 ConstructorInject 어노테이션 붙은 인자들만 가져온다
         val parameters =
-            primaryConstructor.parameters.filter { it.hasAnnotation<ConstructorInject>() }
+            primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
 
         // 주생성자의 인자들을 인스턴스화 시킨다
         // Container에 있는 경우 바로 가져오고 없다면 인스턴스를 생성한다

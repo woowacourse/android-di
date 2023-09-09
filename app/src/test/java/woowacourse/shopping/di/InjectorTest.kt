@@ -3,13 +3,13 @@ package woowacourse.shopping.di
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.annotation.ConstructorInject
+import woowacourse.shopping.data.annotation.Inject
 import woowacourse.shopping.repository.ProductRepository
 
 interface Fake
 
 class Crew(
-    @ConstructorInject val name: String,
+    @Inject val name: String,
     val nickName: String = "Krrong",
 )
 

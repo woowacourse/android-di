@@ -18,7 +18,7 @@ import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.annotation.ConstructorInject
+import woowacourse.shopping.data.annotation.Inject
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
@@ -28,7 +28,7 @@ interface FakeRepository
 class DefaultFakeRepository : FakeRepository
 
 class FakeViewModel(
-    @ConstructorInject val fakeRepository: FakeRepository,
+    @Inject val fakeRepository: FakeRepository,
 ) : ViewModel()
 
 class FakeActivity : AppCompatActivity() {
