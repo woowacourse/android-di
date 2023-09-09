@@ -12,5 +12,9 @@ class DefaultContainer : ShoppingContainer {
     override fun <T : Any> getInstance(clazz: KClass<T>): T? {
         return instances[clazz] as? T
     }
+
+    override fun clearInstance() {
+        instances.clear()
+    }
 }
 
