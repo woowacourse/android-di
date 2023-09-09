@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.common.CommonViewModelFactory
+import woowacourse.shopping.common.DefaultAppContainer
 import woowacourse.shopping.ui.main.MainActivity
 import woowacourse.shopping.ui.main.MainViewModel
 
@@ -37,7 +38,7 @@ class MainActivityTest {
             .buildActivity(MainActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity, CommonViewModelFactory)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity, CommonViewModelFactory(DefaultAppContainer()))[MainViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
