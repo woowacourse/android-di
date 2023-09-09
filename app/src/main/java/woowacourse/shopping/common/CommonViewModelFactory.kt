@@ -3,40 +3,27 @@ package woowacourse.shopping.common
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.ShoppingApplication
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
-object CommonViewModelFactory : ViewModelProvider.Factory {
+class CommonViewModelFactory(private val appContainer: AppContainer) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val primaryConstructor: KFunction<T> = modelClass.kotlin.primaryConstructor
             ?: throw NullPointerException("주 생성자를 찾을 수 없습니다.")
+        val propertiesForInject: List<Any> = getPropertiesForInject(primaryConstructor.parameters)
 
-        val injectProperties = getPropertiesForInject(primaryConstructor.parameters)
-
-        return primaryConstructor.call(*injectProperties.toTypedArray())
+        return primaryConstructor.call(*propertiesForInject.toTypedArray())
     }
 
-    private fun getPropertiesForInject(needParameters: List<KParameter>): List<Any?> {
-        val defaultProperties: Collection<KProperty1<out AppContainer, *>> =
-            ShoppingApplication.defaultAppContainer::class.declaredMemberProperties
-
+    private fun getPropertiesForInject(needParameters: List<KParameter>): List<Any> {
         return needParameters.map { needParameter ->
-            defaultProperties.find { defaultProperty ->
-                defaultProperty.returnType == needParameter.type
-            }?.let { matchedProperty ->
-                getDefaultProperty(matchedProperty)
-            }
+            val needType: KClass<*> = needParameter.type.jvmErasure
+            appContainer.getInstance(needType)
+                ?: throw NullPointerException("의존성 주입에 필요한 인스턴스를 찾을 수 없습니다.")
         }
-    }
-
-    private fun getDefaultProperty(matchedProperty: KProperty1<out AppContainer, *>): Any? {
-        matchedProperty.isAccessible = true
-        return matchedProperty.getter.call(ShoppingApplication.defaultAppContainer)
     }
 }
