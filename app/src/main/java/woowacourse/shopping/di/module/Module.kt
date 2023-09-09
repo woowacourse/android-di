@@ -11,7 +11,6 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
-import kotlin.reflect.jvm.isAccessible
 
 abstract class Module(private val parentModule: Module? = null) {
     protected val cache =
@@ -67,7 +66,9 @@ abstract class Module(private val parentModule: Module? = null) {
         instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
             .filter { it.hasAnnotation<FieldInject>() }.forEach { field ->
                 val fieldKClass = field.returnType.classifier as KClass<*>
-                field.isAccessible = true
+                if (field.visibility != KVisibility.PUBLIC) {
+                    throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
+                }
                 field.setter.call(instance, this.provideInstance(fieldKClass.java))
             }
         return instance
