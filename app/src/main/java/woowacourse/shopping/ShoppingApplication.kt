@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartDatabase
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.Injector
@@ -35,7 +35,7 @@ class ShoppingApplication : Application() {
         )
         Container.addInstance(
             CartRepository::class,
-            Injector.inject(DefaultCartRepository::class),
+            Injector.inject(DatabaseCartRepository::class),
         )
     }
 }

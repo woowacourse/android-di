@@ -1,3 +1,3 @@
 package woowacourse.shopping.data.annotation
 
-annotation class Qualifier
+annotation class Qualifier(val name: String)
