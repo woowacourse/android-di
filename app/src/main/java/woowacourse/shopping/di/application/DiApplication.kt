@@ -5,7 +5,7 @@ import woowacourse.shopping.di.container.DiActivityModuleContainer
 import woowacourse.shopping.di.module.ApplicationModule
 import kotlin.reflect.full.primaryConstructor
 
-open class DiApplication<T : ApplicationModule>(private val applicationModuleClazz: Class<T>) :
+open class DiApplication(private val applicationModuleClazz: Class<out ApplicationModule>) :
     Application() {
     private lateinit var applicationModule: ApplicationModule
     lateinit var diContainer: DiActivityModuleContainer

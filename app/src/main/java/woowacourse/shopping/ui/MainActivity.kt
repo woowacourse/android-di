@@ -11,7 +11,7 @@ import woowacourse.shopping.di.module.DefaultActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity :
-    DiEntryPointActivity<DefaultActivityModule>(DefaultActivityModule::class.java) {
+    DiEntryPointActivity(DefaultActivityModule::class.java) {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
