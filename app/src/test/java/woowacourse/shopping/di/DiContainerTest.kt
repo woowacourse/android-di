@@ -15,7 +15,7 @@ class DiContainerTest {
     }
 
     class FakeViewModel @DiInject constructor(
-        private val diRepository: FakeDiRepository
+        private val diRepository: FakeDiRepository,
     ) {
         fun get(): String {
             return diRepository.get()
@@ -23,7 +23,7 @@ class DiContainerTest {
     }
 
     class FakeDiProtoTypeRepository @DiInject constructor(
-        private val diDataSource: FakeDiDataSource
+        private val diDataSource: FakeDiDataSource,
     ) : FakeDiRepository {
         override fun get(): String {
             return diDataSource.get()
@@ -122,7 +122,7 @@ class DiContainerTest {
     fun `DiContainer는 DiInject 어노테이션이 달린 생성자를 찾아서 객체를 생성한다`() {
         // given
         class FakeDiInjectRepository @DiInject constructor(
-            fakeDiInjectDataSource: FakeDiDataSource
+            fakeDiInjectDataSource: FakeDiDataSource,
         ) : FakeDiRepository {
             override fun get(): String {
                 return "FakeDiInjectRepository"
@@ -163,19 +163,35 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받으면 예외를 발생시킨다`() {
+    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받고 기본 생성자에 파라미터가 있으면 실패한다`() {
         // given
-        class FakeDiInjectRepository constructor(fakeDiInjectDataSource: FakeDiDataSource) :
+        class FakeDiInjectRepository(fakeDiInjectDataSource: FakeDiDataSource) :
             FakeDiRepository {
             override fun get(): String = "FakeDiInjectRepository"
         }
 
         // when
         val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
-            .onSuccess { throw IllegalStateException() }
 
         // then
         assertThat(result.isFailure).isTrue
+    }
+
+    @Test
+    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받으면 기본 생성자를 찾는다`() {
+        // given
+        class FakeDiInjectRepository : FakeDiRepository {
+            override fun get(): String = "FakeDiInjectRepository"
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+
+        // then
+        assertThat(result.isSuccess).isTrue
+
+        // and
+        assertThat(result.getOrThrow()).isInstanceOf(FakeDiInjectRepository::class.java)
     }
 
     @Test

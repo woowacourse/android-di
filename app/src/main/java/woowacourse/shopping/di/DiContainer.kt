@@ -5,6 +5,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.jvm.javaMethod
@@ -21,14 +22,22 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     private fun <T : Any> getInjectConstructor(clazz: KClass<T>): KFunction<T> {
-        if (clazz.constructors.size == 1 && clazz.constructors.first().parameters.isEmpty()) {
-            return clazz.constructors.first()
+        val injectedConstructor = clazz.constructors.filter { it.hasAnnotation<DiInject>() }
+
+        return when (injectedConstructor.size) {
+            0 -> getPrimaryConstructor(clazz)
+            1 -> injectedConstructor.first()
+            else -> throw IllegalArgumentException("DiInject annotation must be on only one constructor")
         }
-        println(clazz.constructors.count { it.hasAnnotation<DiInject>() })
-        if (clazz.constructors.count { it.hasAnnotation<DiInject>() } != 1) {
-            throw IllegalArgumentException("DiInject annotation must be on only one constructor")
-        }
-        return clazz.constructors.first { it.hasAnnotation<DiInject>() }
+    }
+
+    private fun <T : Any> getPrimaryConstructor(clazz: KClass<T>): KFunction<T> {
+        val primaryConstructor = clazz.primaryConstructor
+            ?: throw IllegalArgumentException("Primary constructor not found")
+
+        if (primaryConstructor.parameters.all { it.isOptional }) { return primaryConstructor }
+
+        throw IllegalArgumentException("Primary constructor must be all optional")
     }
 
     fun <T : Any> get(clazz: KClass<T>): T? {

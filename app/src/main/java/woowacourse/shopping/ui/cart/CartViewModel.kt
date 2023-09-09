@@ -3,10 +3,11 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.di.DiInject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-class CartViewModel(
+class CartViewModel @DiInject constructor(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
