@@ -60,6 +60,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
     // Room
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
@@ -68,5 +69,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Reflection
     implementation(kotlin("reflect"))
 }
