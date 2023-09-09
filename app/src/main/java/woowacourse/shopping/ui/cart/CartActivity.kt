@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.ArkInject
 import woowacourse.shopping.di.DiActivity
-import woowacourse.shopping.di.DiInject
 import woowacourse.shopping.ui.util.viewModels
 
 class CartActivity : DiActivity() {
@@ -14,7 +14,7 @@ class CartActivity : DiActivity() {
 
     private val viewModel: CartViewModel by viewModels()
 
-    @DiInject
+    @ArkInject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {

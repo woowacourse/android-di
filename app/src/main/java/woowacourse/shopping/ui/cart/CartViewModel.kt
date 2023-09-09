@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.DiInject
+import woowacourse.shopping.di.ArkInject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
-class CartViewModel @DiInject constructor(
+class CartViewModel @ArkInject constructor(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

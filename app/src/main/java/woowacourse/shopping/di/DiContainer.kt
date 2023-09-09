@@ -16,7 +16,7 @@ import kotlin.reflect.jvm.jvmErasure
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
-        val injectedConstructor = clazz.constructors.filter { it.hasAnnotation<DiInject>() }
+        val injectedConstructor = clazz.constructors.filter { it.hasAnnotation<ArkInject>() }
 
         val constructor = when (injectedConstructor.size) {
             0 -> getPrimaryConstructor(clazz)
@@ -63,7 +63,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     fun inject(diActivity: DiActivity) {
-        diActivity::class.declaredMemberProperties.filter { it.hasAnnotation<DiInject>() }
+        diActivity::class.declaredMemberProperties.filter { it.hasAnnotation<ArkInject>() }
             .forEach { property ->
                 property.isAccessible = true
                 property.javaField?.set(diActivity, get(property.returnType.jvmErasure))

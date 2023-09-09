@@ -14,7 +14,7 @@ class DiContainerTest {
         fun get(): String
     }
 
-    class FakeViewModel @DiInject constructor(
+    class FakeViewModel @ArkInject constructor(
         private val diRepository: FakeDiRepository,
     ) {
         fun get(): String {
@@ -22,7 +22,7 @@ class DiContainerTest {
         }
     }
 
-    class FakeDiProtoTypeRepository @DiInject constructor(
+    class FakeDiProtoTypeRepository @ArkInject constructor(
         private val diDataSource: FakeDiDataSource,
     ) : FakeDiRepository {
         override fun get(): String {
@@ -104,9 +104,9 @@ class DiContainerTest {
     }
 
     @Test
-    fun `@DiInject가 있는 생성자를 찾아서 객체를 생성한다`() {
+    fun `@ArkInject가 있는 생성자를 찾아서 객체를 생성한다`() {
         // given
-        class FakeDiInjectRepository @DiInject constructor(
+        class FakeDiInjectRepository @ArkInject constructor(
             fakeDiInjectDataSource: FakeDiDataSource,
         ) : FakeDiRepository {
             override fun get(): String {
@@ -125,10 +125,10 @@ class DiContainerTest {
     }
 
     @Test
-    fun `@DiInject가 있는 생성자는 주 생성자가 아니어도 된다`() {
+    fun `@ArkInject가 있는 생성자는 주 생성자가 아니어도 된다`() {
         // given
         class FakeViewModel constructor(fakeDiInjectRepository: FakeDiRepository) {
-            @DiInject
+            @ArkInject
             constructor(fakeDiInjectDataSource: FakeDiDataSource) :
                 this(FakeDiProtoTypeRepository(fakeDiInjectDataSource))
 
@@ -148,7 +148,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `@DiInject가 있는 생성자가 없으면 기본 생성자 찾고 기본 옵션 파라미터 이외에 것이 있으면 에러가 발생된다`() {
+    fun `@ArkInject가 있는 생성자가 없으면 기본 생성자 찾고 기본 옵션 파라미터 이외에 것이 있으면 에러가 발생된다`() {
         // given
         class FakeDiInjectRepository(fakeDiInjectDataSource: FakeDiDataSource) :
             FakeDiRepository {
@@ -163,7 +163,7 @@ class DiContainerTest {
     }
 
     @Test
-    fun `@DiInject가 있는 생성자가 없으면 기본 생성자를 찾는다`() {
+    fun `@ArkInject가 있는 생성자가 없으면 기본 생성자를 찾는다`() {
         // given
         class FakeDiInjectRepository : FakeDiRepository {
             override fun get(): String = "FakeDiInjectRepository"
@@ -180,10 +180,10 @@ class DiContainerTest {
     }
 
     @Test
-    fun `@DiInject가 있는 생성자가 두개 이상 이면 예외를 발생시킨다`() {
+    fun `@ArkInject가 있는 생성자가 두개 이상 이면 예외를 발생시킨다`() {
         // given
-        class FakeViewModel @DiInject constructor(fakeDiInjectRepository: FakeDiRepository) {
-            @DiInject
+        class FakeViewModel @ArkInject constructor(fakeDiInjectRepository: FakeDiRepository) {
+            @ArkInject
             constructor(fakeDiInjectDataSource: FakeDiDataSource) :
                 this(FakeDiProtoTypeRepository(fakeDiInjectDataSource))
 
