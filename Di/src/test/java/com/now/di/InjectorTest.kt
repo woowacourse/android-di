@@ -1,12 +1,12 @@
-package woowacourse.shopping.di
+package com.now.di
 
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
-import org.junit.Test
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.annotation.Inject
-import woowacourse.shopping.data.annotation.Qualifier
-import woowacourse.shopping.repository.ProductRepository
+import com.now.annotation.Inject
+import com.now.annotation.Qualifier
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -19,19 +19,10 @@ class Crew(
 )
 
 class InjectorTest {
-    @Test(expected = NullPointerException::class)
+    @Test
     fun `주입하려는 클래스의 주생성자가 없는 경우 NullPointerException을 발생시킨다`() {
         // when & then
-        Injector.inject<Fake>(Fake::class)
-    }
-
-    @Test
-    fun `inject 메서드를 통해 ProductRepository 인스턴스를 생성할 수 있다`() {
-        // when
-        val repository = Injector.inject<ProductRepository>(DefaultProductRepository::class)
-
-        // then
-        assertEquals(repository::class, DefaultProductRepository::class)
+        assertThrows<NullPointerException> { Injector.inject<Fake>(Fake::class) }
     }
 
     @Test
@@ -93,7 +84,41 @@ class InjectorTest {
     }
 
     @Test
-    fun `as`() {
+    fun `Aluminum 하우징, Blue 축, Oem 키캡을 가진 키보드가 생성된다`() {
+        // given
+        Container.addInstance(
+            Housing::class,
+            Injector.inject(Aluminum::class),
+        )
+        Container.addInstance(
+            Housing::class,
+            Injector.inject(Plastic::class),
+        )
+        Container.addInstance(
+            Switch::class,
+            Injector.inject(BlueSwitch::class),
+        )
+        Container.addInstance(
+            Switch::class,
+            Injector.inject(RedSwitch::class),
+        )
+        Container.addInstance(
+            KeyCap::class,
+            Injector.inject(Xda::class),
+        )
+        Container.addInstance(
+            KeyCap::class,
+            Injector.inject(Oem::class),
+        )
+
+        // when
+        val keyboard = Injector.inject<KeyBoard>(KeyBoard::class)
+
+        // then
+        assertNotNull(keyboard)
+        assertThat(keyboard.housing).isInstanceOf(Aluminum::class.java)
+        assertThat(keyboard.switch).isInstanceOf(BlueSwitch::class.java)
+        assertThat(keyboard.keyCap).isInstanceOf(Oem::class.java)
     }
 }
 
@@ -122,7 +147,13 @@ class Oem : KeyCap
 class Xda : KeyCap
 
 class KeyBoard(
-    @Inject private val housing: Housing,
-    @Inject private val switch: Switch,
-    @Inject private val keyCap: KeyCap,
+    @Qualifier("Aluminum")
+    @Inject
+    val housing: Housing,
+    @Qualifier("Blue")
+    @Inject
+    val switch: Switch,
+    @Qualifier("Oem")
+    @Inject
+    val keyCap: KeyCap,
 )

@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package com.now.di
 
-import woowacourse.shopping.data.annotation.Inject
-import woowacourse.shopping.data.annotation.Qualifier
-import woowacourse.shopping.di.Container.defaultQualifier
+import com.now.annotation.Inject
+import com.now.annotation.Qualifier
+import com.now.di.Container.defaultQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation

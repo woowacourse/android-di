@@ -2,13 +2,13 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import com.now.di.Container
+import com.now.di.Injector
 import woowacourse.shopping.data.CartDatabase
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.Injector
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 

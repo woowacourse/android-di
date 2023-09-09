@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.data.annotation.Inject
-import woowacourse.shopping.data.annotation.Qualifier
+import com.now.annotation.Inject
+import com.now.annotation.Qualifier
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
