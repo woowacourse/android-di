@@ -4,7 +4,7 @@ import com.buna.di.injector.DependencyKey
 import com.buna.di.module.Module
 import kotlin.reflect.KFunction
 
-class Cache(
+data class Cache(
     private val cache: MutableMap<DependencyKey, Any?> = mutableMapOf(),
 ) {
     fun caching(module: Module, provider: KFunction<*>) {
@@ -20,5 +20,9 @@ class Cache(
 
     fun get(dependencyKey: DependencyKey): Any? {
         return cache[dependencyKey]
+    }
+
+    fun clear(): Cache {
+        return copy(cache = mutableMapOf())
     }
 }
