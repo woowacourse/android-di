@@ -14,21 +14,18 @@ import kotlin.reflect.jvm.jvmErasure
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
-        val constructor = getInjectConstructor(clazz)
-        val args = constructor.parameters
-            .associateWith { parameter -> get(parameter.type.jvmErasure) }
-            .filterValues { it != null }
-        return constructor.callBy(args)
-    }
-
-    private fun <T : Any> getInjectConstructor(clazz: KClass<T>): KFunction<T> {
         val injectedConstructor = clazz.constructors.filter { it.hasAnnotation<DiInject>() }
 
-        return when (injectedConstructor.size) {
+        val constructor = when (injectedConstructor.size) {
             0 -> getPrimaryConstructor(clazz)
             1 -> injectedConstructor.first()
             else -> throw IllegalArgumentException("DiInject annotation must be on only one constructor")
         }
+
+        val args = constructor.parameters
+            .associateWith { parameter -> get(parameter.type.jvmErasure) }
+            .filterValues { it != null }
+        return constructor.callBy(args)
     }
 
     private fun <T : Any> getPrimaryConstructor(clazz: KClass<T>): KFunction<T> {
