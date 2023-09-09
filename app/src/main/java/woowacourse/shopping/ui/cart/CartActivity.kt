@@ -54,11 +54,11 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
+        viewModel.uiState.observe(this) {
             val adapter = CartProductAdapter(
-                items = it,
+                items = it.cartProducts,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
+                onClickDelete = it.onDelete
             )
             binding.rvCartProducts.adapter = adapter
         }

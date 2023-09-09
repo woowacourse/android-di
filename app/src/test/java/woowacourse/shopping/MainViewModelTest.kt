@@ -16,7 +16,6 @@ import org.junit.Test
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.cart.CartViewModel
 
 @ExperimentalCoroutinesApi
 class MainViewModelTest {

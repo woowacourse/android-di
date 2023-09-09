@@ -47,7 +47,7 @@ class CartViewModelTest {
         // when
         viewModel.getAllCartProducts()
 
-        val actual = viewModel.cartProducts.value
+        val actual = viewModel.uiState.value?.cartProducts
 
         // then
         val expected = CartProductFixture.products

@@ -14,6 +14,7 @@ fun Product.toEntity(): CartProductEntity {
 
 fun CartProductEntity.toModel(): CartProduct {
     return CartProduct(
+        id = id,
         name = name,
         price = price,
         imageUrl = imageUrl,
