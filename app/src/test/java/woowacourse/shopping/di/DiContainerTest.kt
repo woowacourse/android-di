@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DiContainerTest {
@@ -13,7 +14,7 @@ class DiContainerTest {
         fun get(): String
     }
 
-    class FakeViewModel(
+    class FakeViewModel @DiInject constructor(
         private val diRepository: FakeDiRepository
     ) {
         fun get(): String {
@@ -21,7 +22,7 @@ class DiContainerTest {
         }
     }
 
-    class FakeDiProtoTypeRepository(
+    class FakeDiProtoTypeRepository @DiInject constructor(
         private val diDataSource: FakeDiDataSource
     ) : FakeDiRepository {
         override fun get(): String {
@@ -115,5 +116,85 @@ class DiContainerTest {
             // then
             .onSuccess { assertEquals(it, null) }
             .onFailure { assertTrue(it is IllegalArgumentException) }
+    }
+
+    @Test
+    fun `DiContainer는 DiInject 어노테이션이 달린 생성자를 찾아서 객체를 생성한다`() {
+        // given
+        class FakeDiInjectRepository @DiInject constructor(
+            fakeDiInjectDataSource: FakeDiDataSource
+        ) : FakeDiRepository {
+            override fun get(): String {
+                return "FakeDiInjectRepository"
+            }
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+
+        // then
+        assertThat(result.isSuccess).isTrue
+
+        // and
+        assertThat(result.getOrThrow()).isInstanceOf(FakeDiInjectRepository::class.java)
+    }
+
+    @Test
+    fun `DiContainer는 DiInject 어노테이션이 달린 생성자가 주생성자가 아니여도 된다`() {
+        // given
+        class FakeViewModel constructor(fakeDiInjectRepository: FakeDiRepository) {
+            @DiInject
+            constructor(fakeDiInjectDataSource: FakeDiDataSource) :
+                this(FakeDiProtoTypeRepository(fakeDiInjectDataSource))
+
+            fun get(): String {
+                return "FakeDiInjectRepository"
+            }
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+
+        // then
+        assertThat(result.isSuccess).isTrue
+
+        // and
+        assertThat(result.getOrThrow()).isInstanceOf(FakeViewModel::class.java)
+    }
+
+    @Test
+    fun `DiContainer는 DiInject 어노테이션이 달리지 않은 클래스를 받으면 예외를 발생시킨다`() {
+        // given
+        class FakeDiInjectRepository constructor(fakeDiInjectDataSource: FakeDiDataSource) :
+            FakeDiRepository {
+            override fun get(): String = "FakeDiInjectRepository"
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+            .onSuccess { throw IllegalStateException() }
+
+        // then
+        assertThat(result.isFailure).isTrue
+    }
+
+    @Test
+    fun `DiContainer는 DiInject 어노테이션이 달린 생성자를 두개이상 발견하면 예외를 발생시킨다`() {
+        // given
+        class FakeViewModel @DiInject constructor(fakeDiInjectRepository: FakeDiRepository) {
+            @DiInject
+            constructor(fakeDiInjectDataSource: FakeDiDataSource) :
+                this(FakeDiProtoTypeRepository(fakeDiInjectDataSource))
+
+            fun get(): String {
+                return "FakeDiInjectRepository"
+            }
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+
+        // then
+        assertThat(result.isFailure).isTrue
     }
 }
