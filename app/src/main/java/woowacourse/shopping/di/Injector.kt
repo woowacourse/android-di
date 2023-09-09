@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import woowacourse.shopping.data.annotation.Inject
 import woowacourse.shopping.data.annotation.Qualifier
+import woowacourse.shopping.di.Container.defaultQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -14,8 +15,8 @@ object Injector {
         // 1. Container에 인자로 넘겨준 클래스의 인스턴스가 존재하는지 확인한다
         val instance = Container.getInstance(klass)
 
-        // 2. 존재하면 바로 반환한다
-        if (instance != null) {
+        // 2. 존재하는데 qualifier가 아니면 바로 반환한다
+        if (instance != null && instance != defaultQualifier) {
             return instance as T
         }
 
@@ -39,7 +40,7 @@ object Injector {
 
             // Qualifier 어노테이션 분기
             if (it.hasAnnotation<Qualifier>()) {
-                Container.getInstance(it.findAnnotation<Qualifier>()!!)
+                Container.getInstance(it.findAnnotation<Qualifier>()!!) ?: inject(type)
             } else {
                 Container.getInstance(type) ?: inject(type)
             }
