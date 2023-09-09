@@ -31,7 +31,7 @@ class MainActivityTest {
             DiApplication::class.java.getDeclaredField("applicationModule")
         applicationModule.apply {
             isAccessible = true
-            set(application, getFakeApplicationModule())
+            set(application, getFakeApplicationModule(application))
         }
     }
 

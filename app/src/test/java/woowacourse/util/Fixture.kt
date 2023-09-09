@@ -1,20 +1,24 @@
 package woowacourse.util
 
+import android.content.Context
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.module.ActivityModule
 import woowacourse.shopping.di.module.ApplicationModule
 import woowacourse.shopping.model.Product
 
-class FakeApplicationModule : ApplicationModule() {
+class FakeApplicationModule(context: Context) : ApplicationModule(context) {
     private val cartRepository = getFakeCartRepository()
     fun getCartRepository(): CartRepository = cartRepository
 }
 
-fun getFakeApplicationModule(): ApplicationModule = FakeApplicationModule()
+fun getFakeApplicationModule(context: Context): ApplicationModule = FakeApplicationModule(context)
 
-fun getFakeActivityModule(fakeApplicationModule: ApplicationModule = getFakeApplicationModule()): ActivityModule =
-    object : ActivityModule(fakeApplicationModule) {
+fun getFakeActivityModule(
+    context: Context,
+    fakeApplicationModule: ApplicationModule,
+): ActivityModule =
+    object : ActivityModule(context, fakeApplicationModule) {
         fun getProductRepository(): ProductRepository {
             return getFakeProductRepository()
         }

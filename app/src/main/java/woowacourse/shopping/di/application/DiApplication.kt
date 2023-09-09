@@ -15,7 +15,7 @@ open class DiApplication(private val applicationModuleClazz: Class<out Applicati
         super.onCreate()
         val primaryConstructor = applicationModuleClazz.kotlin.primaryConstructor
             ?: throw NullPointerException("ApplicationModule은 매개변수가 없는 주생성자가 있어야 합니다")
-        applicationModule = primaryConstructor.call()
+        applicationModule = primaryConstructor.call(this)
         diContainer = DiActivityModuleContainer(applicationModule)
     }
 }

@@ -1,5 +1,6 @@
 package woowacourse.shopping.di.module
 
+import android.content.Context
 import woowacourse.shopping.di.annotation.FieldInject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -12,7 +13,7 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
-abstract class Module(private val parentModule: Module? = null) {
+abstract class Module(var context: Context?, private val parentModule: Module? = null) {
     protected val cache =
         mutableMapOf<String, Any>() // 모듈은 자신의 생명이 살아있는 한, 한 번 만들었던 동일한 객체를 뱉어내야 한다.
 

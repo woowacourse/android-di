@@ -22,7 +22,7 @@ abstract class DiEntryPointActivity(private val activityModuleClassType: Class<o
         val diApplication = application as DiApplication
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
         this.activityModule = diApplication.diContainer.provideActivityModule(
-            this.hashCode(),
+            this,
             previousHashCode,
             activityModuleClassType,
         )

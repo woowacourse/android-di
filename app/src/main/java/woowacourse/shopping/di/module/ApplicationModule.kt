@@ -1,3 +1,5 @@
 package woowacourse.shopping.di.module
 
-abstract class ApplicationModule : Module()
+import android.content.Context
+
+abstract class ApplicationModule(applicationContext: Context) : Module(applicationContext)
