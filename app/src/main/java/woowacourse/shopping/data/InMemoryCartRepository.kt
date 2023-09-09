@@ -1,22 +1,25 @@
 package woowacourse.shopping.data
 
 import com.now.annotation.Qualifier
+import woowacourse.shopping.data.mapper.toCartProduct
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 @Qualifier("InMemoryCartRepository")
 class InMemoryCartRepository() : CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf()
+    private var id: Long = 0
+    private val cartProducts: MutableList<CartProduct> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+        cartProducts.add(product.toCartProduct(id++))
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return cartProducts.toList()
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProducts.removeAt(id.toInt())
     }
 }

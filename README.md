@@ -42,12 +42,12 @@
 - [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
 
 ## 선택 요구 사항
-- [ ] 현재는 장바구니 아이템 삭제 버튼을 누르면 RecyclerView의 position에 해당하는 상품이 지워진다.
-  - [ ] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
-- [ ] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+- [x] 현재는 장바구니 아이템 삭제 버튼을 누르면 RecyclerView의 position에 해당하는 상품이 지워진다.
+  - [x] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
+- [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구 사항
-- [ ] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
+- [x] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
 
 # Step3
 ## 기능 요구 사항

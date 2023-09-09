@@ -4,6 +4,7 @@ import com.now.annotation.Inject
 import com.now.annotation.Qualifier
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -15,11 +16,11 @@ class DatabaseCartRepository(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return dao.getAll().map { it.toDomain() }
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        dao.delete(id.toLong())
+    override suspend fun deleteCartProduct(id: Long) {
+        dao.delete(id)
     }
 }
