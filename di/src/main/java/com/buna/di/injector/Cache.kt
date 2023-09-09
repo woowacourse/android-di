@@ -1,5 +1,6 @@
 package com.buna.di.injector
 
+import com.buna.di.module.Module
 import kotlin.reflect.KFunction
 
 class Cache(

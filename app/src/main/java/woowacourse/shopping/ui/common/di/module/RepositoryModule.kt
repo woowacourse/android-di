@@ -2,7 +2,7 @@ package woowacourse.shopping.ui.common.di.module
 
 import android.content.Context
 import androidx.room.Room
-import com.buna.di.injector.Module
+import com.buna.di.module.Module
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 
