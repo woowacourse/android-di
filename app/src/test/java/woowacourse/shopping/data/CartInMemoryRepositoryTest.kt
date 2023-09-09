@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import woowacourse.shopping.model.Product
@@ -7,7 +8,7 @@ import woowacourse.shopping.model.Product
 class CartInMemoryRepositoryTest {
 
     @Test
-    fun `리포지터리의 생성자에 초기화된 값을 넣고 전체 값을 받아올 수 있다`() {
+    fun `리포지터리의 생성자에 초기화된 값을 넣고 전체 값을 받아올 수 있다`() = runTest {
         // given
         val cartInMemoryRepository = CartInMemoryRepository(
             cartProducts = mutableListOf(
@@ -30,7 +31,7 @@ class CartInMemoryRepositoryTest {
     }
 
     @Test
-    fun `리포지터리에 값을 넣고 값을 받아올 수 있다`() {
+    fun `리포지터리에 값을 넣고 값을 받아올 수 있다`() = runTest {
         // given
         val cartInMemoryRepository = CartInMemoryRepository()
         val product = Product(
@@ -51,7 +52,7 @@ class CartInMemoryRepositoryTest {
     }
 
     @Test
-    fun `리포지터리의 값을 삭제할 수 있다`() {
+    fun `리포지터리의 값을 삭제할 수 있다`() = runTest {
         // given
         val cartInMemoryRepository = CartInMemoryRepository()
         val product = Product(
