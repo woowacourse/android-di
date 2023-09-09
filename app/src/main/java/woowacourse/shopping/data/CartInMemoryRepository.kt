@@ -8,15 +8,15 @@ class CartInMemoryRepository(
     private val cartProducts: MutableList<Product> = mutableListOf(),
 ) : CartRepository {
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         cartProducts.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<Product> {
         return cartProducts.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
+    override suspend fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)
     }
 }
