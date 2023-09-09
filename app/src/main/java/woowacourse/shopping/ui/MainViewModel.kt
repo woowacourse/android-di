@@ -8,10 +8,11 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.RoomDbCartRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    private val cartRepository: CartRepository,
+    @RoomDbCartRepository private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     @FieldInject

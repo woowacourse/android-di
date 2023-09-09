@@ -2,6 +2,7 @@ package woowacourse.shopping.di.module
 
 import android.content.Context
 import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -17,30 +18,49 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
     protected val cache =
         mutableMapOf<String, Any>() // 모듈은 자신의 생명이 살아있는 한, 한 번 만들었던 동일한 객체를 뱉어내야 한다.
 
-    fun <T : Any> provideInstance(clazz: Class<T>): T {
-        val injectableFunctionWithModuleMap = searchInjectableFunctions(clazz)
-
-        // 해당 객체를 만들기 위한 필요 구성 요소들을 얻는 과정.
+    fun <T : Any> provideInstance(clazz: Class<T>, qualifier: KClass<out Annotation>? = null): T {
+        if (qualifier != null) validateHasQualifierAnnotation(qualifier)
+        val injectableFunctionWithModuleMap = searchInjectableFunctions(clazz, qualifier)
         return when (injectableFunctionWithModuleMap.size) {
             0 -> createWithPrimaryConstructor(clazz) // 모듈에 정의된 메소드들 중 해당되는 것이 없다는 것은, 이 객체를 만드는데 주생성자면 충분하다는 의미.
-            else -> { // 추후 1과 else로 분리 예정
+            1 -> { // 추후 1과 else로 분리 예정
                 val injectFunction =
-                    injectableFunctionWithModuleMap.keys.first() // 메소드들 중 어노테이션으로 판단해서 일치하는 메소드를 실행시켜서 반환시킬 것임.
+                    injectableFunctionWithModuleMap.keys.first()
                 val injectModule = injectableFunctionWithModuleMap[injectFunction]
                     ?: throw NullPointerException("${injectFunction.name} 함수가 없습니다.")
                 createWithModuleFunc(injectModule, injectFunction)
             }
+
+            else -> {
+                throw NullPointerException("실행할 함수를 선택할 수 없습니다.")
+            }
         }
+    }
+
+    private fun validateHasQualifierAnnotation(annotation: KClass<out Annotation>) {
+        if (annotation.hasAnnotation<Qualifier>()) return
+        throw IllegalArgumentException("qualifier 인자는 Qualifier를 메타 애노테이션으로 가져야 합니다.")
     }
 
     private fun <T : Any> searchInjectableFunctions(
         clazz: Class<T>,
+        qualifier: KClass<out Annotation>? = null,
     ): Map<KFunction<*>, Module> {
         return getPublicMethodMap().filter { (func, _) ->
             val returnKClass = func.returnType.classifier as KClass<*>
             clazz.kotlin.isSubclassOf(returnKClass)
+        }.filter { (func, _) ->
+            qualifier?.let { funcHasQualifier(func, it) } ?: true
         }.takeUnless { it.isEmpty() }
-            ?: parentModule?.searchInjectableFunctions(clazz) ?: mapOf()
+            ?: parentModule?.searchInjectableFunctions(clazz, qualifier) ?: mapOf()
+    }
+
+    private fun funcHasQualifier(func: KFunction<*>, qualifier: KClass<out Annotation>): Boolean {
+        val funcQualifiers =
+            func.annotations.filter { it.annotationClass.hasAnnotation<Qualifier>() }
+                .map { it.annotationClass }
+        if (funcQualifiers.contains(qualifier)) return true
+        return false
     }
 
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
@@ -59,7 +79,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
     private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
         return func.valueParameters.map { param ->
             val paramKClass = param.type.classifier as KClass<*>
-            baseModule.provideInstance(paramKClass.java) // 인자들을 얻어오는 과정은, 그 func라는 함수 이상 수준의 모듈에서부터 탐색을 시작해야 한다.\
+            val qualifier =
+                param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+            baseModule.provideInstance(paramKClass.java, qualifier?.annotationClass)
         }
     }
 
@@ -70,7 +92,12 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
                 if (field.visibility != KVisibility.PUBLIC) {
                     throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
                 }
-                field.setter.call(instance, this.provideInstance(fieldKClass.java))
+                val qualifier =
+                    field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+                field.setter.call(
+                    instance,
+                    this.provideInstance(fieldKClass.java, qualifier?.annotationClass),
+                )
             }
         return instance
     }

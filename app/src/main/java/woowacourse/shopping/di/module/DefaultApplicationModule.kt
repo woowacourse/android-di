@@ -5,12 +5,40 @@ import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.MemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.dataSorce.DefaultLocalDataSource
+import woowacourse.shopping.data.dataSorce.InMemoryLocalDataSource
+import woowacourse.shopping.data.dataSorce.LocalDataSource
+import woowacourse.shopping.di.annotation.InMemory
+import woowacourse.shopping.di.annotation.InMemoryCartRepository
+import woowacourse.shopping.di.annotation.RoomDb
+import woowacourse.shopping.di.annotation.RoomDbCartRepository
 
 class DefaultApplicationModule(applicationContext: Context) :
     ApplicationModule(applicationContext) {
-    fun getCartRepository(cartProductDao: CartProductDao): CartRepository {
-        return getOrCreateInstance { DefaultCartRepository(cartProductDao) }
+    @InMemoryCartRepository
+    fun getInMemoryCartRepository(@InMemory localDataSource: LocalDataSource): CartRepository {
+        return getOrCreateInstance {
+            MemoryCartRepository(localDataSource)
+        }
+    }
+
+    @RoomDbCartRepository
+    fun getRoomCartRepository(@RoomDb localDataSource: LocalDataSource): CartRepository {
+        return getOrCreateInstance {
+            DefaultCartRepository(localDataSource)
+        }
+    }
+
+    @RoomDb
+    fun getRoomDataSource(cartProductDao: CartProductDao): LocalDataSource {
+        return getOrCreateInstance { DefaultLocalDataSource(cartProductDao) }
+    }
+
+    @InMemory
+    fun getInMemoryDataSource(): LocalDataSource {
+        return getOrCreateInstance { InMemoryLocalDataSource() }
     }
 
     fun getCartDao(): CartProductDao {

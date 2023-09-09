@@ -4,7 +4,7 @@ import woowacourse.shopping.data.dataSorce.LocalDataSource
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-class DefaultCartRepository(
+class MemoryCartRepository(
     private val localDataSource: LocalDataSource,
 ) : CartRepository {
 
