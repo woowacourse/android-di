@@ -3,6 +3,12 @@ package woowacourse.shopping
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -10,7 +16,9 @@ import org.junit.Test
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.cart.CartViewModel
 
+@ExperimentalCoroutinesApi
 class MainViewModelTest {
 
     @get:Rule
@@ -22,6 +30,7 @@ class MainViewModelTest {
 
     @Before
     fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = mockk(relaxed = true)
         cartRepository = mockk(relaxed = true)
 
@@ -29,6 +38,11 @@ class MainViewModelTest {
             productRepository = productRepository,
             cartRepository = cartRepository
         )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
