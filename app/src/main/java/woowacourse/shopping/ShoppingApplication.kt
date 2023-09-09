@@ -3,9 +3,11 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartDatabase
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.di.RepositoryContainer
+import woowacourse.shopping.di.Container
+import woowacourse.shopping.di.Injector
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
@@ -22,13 +24,18 @@ class ShoppingApplication : Application() {
             .build()
         val cartProductDao = database.cartProductDao()
 
-        RepositoryContainer.addInstance(
-            ProductRepository::class,
-            DefaultProductRepository(),
+        Container.addInstance(
+            CartProductDao::class,
+            cartProductDao,
         )
-        RepositoryContainer.addInstance(
+
+        Container.addInstance(
+            ProductRepository::class,
+            Injector.inject(DefaultProductRepository::class),
+        )
+        Container.addInstance(
             CartRepository::class,
-            DefaultCartRepository(cartProductDao),
+            Injector.inject(DefaultCartRepository::class),
         )
     }
 }
