@@ -3,6 +3,7 @@ package woowacourse.shopping.data
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class CartInMemoryRepositoryTest {
@@ -12,10 +13,11 @@ class CartInMemoryRepositoryTest {
         // given
         val cartInMemoryRepository = CartInMemoryRepository(
             cartProducts = mutableListOf(
-                Product(
+                CartProduct(
                     name = "test",
                     price = 10,
                     imageUrl = "test2",
+                    createdAt = System.currentTimeMillis(),
                 ),
             ),
         )

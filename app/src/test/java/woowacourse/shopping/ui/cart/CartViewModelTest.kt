@@ -13,7 +13,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModelTest {
@@ -38,7 +38,7 @@ class CartViewModelTest {
         coEvery {
             mockkCartRepository.getAllCartProducts()
         } returns listOf(
-            Product("item", 1000, "image")
+            CartProduct("item", 1000, "image", System.currentTimeMillis()),
         )
 
         // when
@@ -59,7 +59,7 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        assertEquals(viewModel.cartProducts.value, emptyList<Product>())
+        assertEquals(viewModel.cartProducts.value, emptyList<CartProduct>())
     }
 
     @Test
