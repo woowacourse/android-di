@@ -45,15 +45,16 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> getInstance(clazz: KClass<T>): T? {
-        val method = getKFunction(clazz.starProjectedType, clazz.qualifier)
-            ?: return parentDiContainer?.getInstance(clazz)
-        val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
-        return method.callBy(parameters) as T
+        return getInstance(clazz.starProjectedType, clazz.qualifier) as T?
     }
 
     private fun getInstance(kParameter: KParameter): Any? {
-        val method = getKFunction(kParameter.type, kParameter.qualifier)
-            ?: return parentDiContainer?.getInstance(kParameter)
+        return getInstance(kParameter.type, kParameter.qualifier)
+    }
+
+    private fun getInstance(kType: KType, qualifier: String?): Any? {
+        val method = getKFunction(kType, qualifier)
+            ?: return parentDiContainer?.getInstance(kType, qualifier)
         val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters)
     }
