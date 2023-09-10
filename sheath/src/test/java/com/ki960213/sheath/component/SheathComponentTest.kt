@@ -4,6 +4,7 @@ import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
+import com.ki960213.sheath.annotation.Prototype
 import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -395,4 +396,29 @@ internal class SheathComponentTest {
     }
 
     class Test33
+
+    @Test
+    fun `@Prototype 애노테이션이 붙어있다면 싱글톤이 아니다`() {
+        val sheathComponent = SheathComponent(Test34::class)
+
+        val actual = sheathComponent.isSingleton
+
+        assertThat(actual).isFalse()
+    }
+
+    @Component
+    @Prototype
+    class Test34
+
+    @Test
+    fun `@Prototype이 붙어있지 않다면 싱글톤이다`() {
+        val sheathComponent = SheathComponent(Test35::class)
+
+        val actual = sheathComponent.isSingleton
+
+        assertThat(actual).isTrue()
+    }
+
+    @Component
+    class Test35
 }

@@ -2,6 +2,7 @@ package com.ki960213.sheath.component
 
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
+import com.ki960213.sheath.annotation.Prototype
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -16,6 +17,8 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
 class SheathComponent(private val clazz: KClass<*>) {
+
+    val isSingleton: Boolean = !clazz.hasAnnotation<Prototype>()
 
     val dependentCount: Int = getDependingClasses().size
 
