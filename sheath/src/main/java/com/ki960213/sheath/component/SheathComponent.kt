@@ -20,12 +20,31 @@ import kotlin.reflect.jvm.isAccessible
 
 class SheathComponent(private val clazz: KClass<*>) {
 
-    val name: String = getQualifiedName() ?: clazz.qualifiedName
+    val name: String = clazz.getQualifiedName() ?: clazz.qualifiedName
         ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
     val isSingleton: Boolean = !clazz.hasAnnotation<Prototype>()
 
-    val dependentCount: Int = getDependingClasses().size
+    private val dependingConditions: Map<KClass<*>, DependingCondition> = (
+        (
+            findAnnotatedConstructor<Inject>()?.valueParameters?.associate {
+                it.type.classifier as KClass<*> to DependingCondition.from(it)
+            } ?: mapOf()
+            ) +
+            findAnnotatedProperties<Inject>().associate {
+                it.returnType.classifier as KClass<*> to DependingCondition.from(it)
+            } +
+            findAnnotatedFunctions<Inject>().flatMap { function ->
+                function.valueParameters.map {
+                    it.type.classifier as KClass<*> to DependingCondition.from(it)
+                }
+            }.toMap()
+        ).takeUnless { it.isEmpty() }
+        ?: clazz.primaryConstructor?.valueParameters?.associate {
+            it.type.classifier as KClass<*> to DependingCondition.from(it)
+        } ?: mapOf()
+
+    val dependentCount: Int = dependingConditions.count()
 
     init {
         validateComponentAnnotation()
@@ -34,8 +53,9 @@ class SheathComponent(private val clazz: KClass<*>) {
     }
 
     fun isDependingOn(component: SheathComponent): Boolean {
-        val dependingClasses = getDependingClasses()
-        return dependingClasses.any { component.clazz.isSuperclassOf(it) }
+        val dependingClass = dependingConditions.keys.find { it.isSuperclassOf(component.clazz) } ?: return false
+        val qualifiedName = dependingConditions[dependingClass]!!.qualifiedName ?: return true
+        return qualifiedName == component.name
     }
 
     fun instantiated(instances: List<Any>): Any {
@@ -45,18 +65,6 @@ class SheathComponent(private val clazz: KClass<*>) {
         instance.injectFunction(instances)
 
         return instance
-    }
-
-    private fun getQualifiedName(): String? {
-        val qualifiedName = clazz.findAnnotation<Qualifier>()?.value
-        if (qualifiedName != null) return qualifiedName
-
-        val annotationAttachedQualifier = clazz.annotations
-            .find { it.annotationClass.hasAnnotation<Qualifier>() } ?: return null
-
-        return annotationAttachedQualifier.annotationClass
-            .findAnnotation<Qualifier>()
-            ?.value
     }
 
     private fun validateComponentAnnotation() {
@@ -93,28 +101,6 @@ class SheathComponent(private val clazz: KClass<*>) {
 
     private inline fun <reified A : Annotation> findAnnotatedFunctions(): List<KFunction<*>> =
         clazz.declaredMemberFunctions.filter { it.hasAnnotation<A>() }
-
-    private fun getDependingClasses(): List<KClass<*>> =
-        getAnnotatedElements<Inject>().flatMap { element ->
-            when (element) {
-                is KFunction<*> -> {
-                    element.valueParameters.map { it.type.classifier as KClass<*> }
-                }
-
-                is KProperty1<*, *> -> {
-                    listOf(element.returnType.classifier as KClass<*>)
-                }
-
-                else -> listOf()
-            }
-        }.takeUnless { it.isEmpty() }
-            ?: clazz.primaryConstructor?.valueParameters?.map { it.type.classifier as KClass<*> }
-            ?: listOf()
-
-    private inline fun <reified A : Annotation> getAnnotatedElements(): List<KAnnotatedElement> =
-        clazz.constructors.filter { it.hasAnnotation<A>() } +
-            clazz.declaredMemberProperties.filter { it.hasAnnotation<A>() } +
-            clazz.declaredMemberFunctions.filter { it.hasAnnotation<A>() }
 
     private fun createInstanceByConstructor(instances: List<Any>): Any {
         val constructor = findAnnotatedConstructor<Inject>() ?: clazz.primaryConstructor
@@ -158,4 +144,26 @@ class SheathComponent(private val clazz: KClass<*>) {
     override fun hashCode(): Int = clazz.hashCode()
 
     override fun toString(): String = "SheathComponent(clazz=$clazz)"
+}
+
+data class DependingCondition(
+    val isSingleton: Boolean = true,
+    val qualifiedName: String? = null,
+) {
+    companion object {
+        fun from(element: KAnnotatedElement): DependingCondition =
+            DependingCondition(element.hasAnnotation<Prototype>(), element.getQualifiedName())
+    }
+}
+
+private fun KAnnotatedElement.getQualifiedName(): String? {
+    val qualifiedName = this.findAnnotation<Qualifier>()?.value
+    if (qualifiedName != null) return qualifiedName
+
+    val annotationAttachedQualifier = this.annotations
+        .find { it.annotationClass.hasAnnotation<Qualifier>() } ?: return null
+
+    return annotationAttachedQualifier.annotationClass
+        .findAnnotation<Qualifier>()
+        ?.value
 }

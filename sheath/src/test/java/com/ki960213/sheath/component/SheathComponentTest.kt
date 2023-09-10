@@ -569,4 +569,43 @@ internal class SheathComponentTest {
     @Test45Qualifier1
     @Component
     class Test45
+
+    @Test
+    fun `주입 대상에 한정자가 설정되어 있을 때 컴포넌트의 이름이 한정자가 아니라면 의존하지 않는 것이다`() {
+        val sheathComponent1 = SheathComponent(Test46::class)
+        val sheathComponent2 = SheathComponent(Test47::class)
+
+        val actual = sheathComponent1.isDependingOn(sheathComponent2)
+
+        assertThat(actual).isFalse()
+    }
+
+    @Component
+    class Test46(
+        @Qualifier("test47")
+        test47: Test47,
+    )
+
+    @Component
+    class Test47
+
+    @Test
+    fun `주입 대상에 한정자가 설정되어 있을 때 컴포넌트의 이름이 한정자와 같다면 의존하는 것이다`() {
+        val sheathComponent1 = SheathComponent(Test48::class)
+        val sheathComponent2 = SheathComponent(Test49::class)
+
+        val actual = sheathComponent1.isDependingOn(sheathComponent2)
+
+        assertThat(actual).isTrue()
+    }
+
+    @Component
+    class Test48(
+        @Qualifier("test49")
+        test49: Test49,
+    )
+
+    @Qualifier("test49")
+    @Component
+    class Test49
 }
