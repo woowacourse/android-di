@@ -11,6 +11,7 @@ class DiActivityModule(
     parentDiContainer: DiContainer,
     private val context: Context,
 ) : DiContainer(parentDiContainer) {
+    @Qualifier("ActivityContext")
     fun provideContext(): Context = Cache.context.get {
         context
     }
@@ -28,7 +29,7 @@ class DiActivityModule(
     }
 
     fun provideDateFormatter(
-        context: Context,
+        @Qualifier("ActivityContext") context: Context,
     ): DateFormatter = Cache.dataFormatter.get {
         DateFormatter(context)
     }

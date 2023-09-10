@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.util.qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -24,9 +25,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
             else -> throw IllegalArgumentException("DiInject annotation must be on only one constructor")
         }
 
-        val args = constructor.parameters
-            .associateWith { parameter -> get(parameter.type.jvmErasure) }
-            .filterValues { it != null }
+        val args = constructor.parameters.associateWith { parameter -> get(parameter) }
         return constructor.callBy(args)
     }
 
@@ -49,16 +48,31 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     private fun <T : Any> getMethod(clazz: KClass<T>): KFunction<*>? {
-        return this::class.declaredFunctions.firstOrNull { function ->
-            function.isAccessible = true
-            function.javaMethod?.returnType?.simpleName == clazz.simpleName
-        }
+        return this::class.declaredFunctions.filter { it.qualifier == clazz.qualifier }
+            .firstOrNull { function ->
+                function.isAccessible = true
+                function.javaMethod?.returnType?.simpleName == clazz.simpleName
+            }
+    }
+
+    fun get(kParameter: KParameter): Any? {
+        val method = getParameter(kParameter) ?: return parentDiContainer?.get(kParameter)
+        val parameters = method.parameters.associateWith { parameter -> getInstance(parameter) }
+        return method.callBy(parameters)
+    }
+
+    private fun getParameter(kParameter: KParameter): KFunction<*>? {
+        return this::class.declaredFunctions.filter { it.qualifier == kParameter.qualifier }
+            .firstOrNull { property ->
+                property.isAccessible = true
+                property.returnType == kParameter.type
+            }
     }
 
     private fun getInstance(parameter: KParameter): Any? {
         return when {
             parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
-            else -> get(parameter.type.jvmErasure)
+            else -> get(parameter)
         }
     }
 

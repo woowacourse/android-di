@@ -30,6 +30,12 @@ class DiContainerTest {
         }
     }
 
+    class FakeDiSingletonRepository : FakeDiRepository {
+        override fun get(): String {
+            return "FakeDiSingletonRepository"
+        }
+    }
+
     class FakeDiProtoTypeDataSource : FakeDiDataSource {
         override fun get(): String {
             return "FakeDiProtoTypeDataSource"
@@ -197,5 +203,90 @@ class DiContainerTest {
 
         // then
         assertThat(result.isFailure).isTrue
+    }
+
+    @Test
+    fun `어노테이션을 통해 의존성을 주입할 수 있다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            @Qualifier("fakeDiProtoTypeRepository")
+            fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
+        }
+
+        class FakeViewModel @ArkInject constructor(
+            @Qualifier("fakeDiProtoTypeRepository") val fakeDiRepository: FakeDiRepository,
+        ) {
+            fun get(): String = fakeDiRepository.get()
+        }
+
+        // when
+        val result = runCatching { fakeDiObject.createInstance(FakeViewModel::class) }
+        val viewModel = result.getOrThrow()
+
+        // then
+        assertThat(result.isSuccess).isTrue
+        assertThat(viewModel.get()).isEqualTo("FakeDiSingletonRepository")
+    }
+
+    @Test
+    fun `어노테이션을 통해 의존성을 주입할 때 어노테이션의 이름이 다르면 예외를 발생시킨다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            @Qualifier("fakeDiSingltonRepository")
+            fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
+        }
+
+        class FakeViewModel @ArkInject constructor(
+            @Qualifier("fakeDiProtoTypeRepository") private val fakeDiRepository: FakeDiRepository,
+        ) {
+            fun get(): String {
+                return fakeDiRepository.get()
+            }
+        }
+
+        // when
+        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+
+        // then
+        assertThat(result.isFailure).isTrue
+    }
+
+    @Test
+    fun `같은 타입이면 어노테이션으로 구분한다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            @Qualifier("fakeDiProtoTypeRepository")
+            fun provideFakeDiRepository(
+                fakeDiDataSource: FakeDiDataSource,
+            ): FakeDiRepository =
+                FakeDiProtoTypeRepository(fakeDiDataSource)
+
+            fun provideFakeDiDataSource(): FakeDiDataSource =
+                FakeDiProtoTypeDataSource()
+
+            @Qualifier("fakeDiSingletonRepository")
+            fun provideFakeDiSingletonRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        class FakeViewModel @ArkInject constructor(
+            @Qualifier("fakeDiProtoTypeRepository") val fakeDiRepository: FakeDiRepository,
+            @Qualifier("fakeDiSingletonRepository") val fakeDiSingletonRepository: FakeDiRepository,
+        ) {
+            fun get(): String {
+                return fakeDiRepository.get()
+            }
+        }
+
+        // when
+        val result = runCatching { fakeDiObject.createInstance(FakeViewModel::class) }
+        val viewModel = result.getOrThrow()
+
+        // then
+        assertThat(result.isSuccess).isTrue
+
+        // and
+        assertThat(viewModel.fakeDiRepository).isInstanceOf(FakeDiProtoTypeRepository::class.java)
+        assertThat(viewModel.fakeDiSingletonRepository).isInstanceOf(FakeDiSingletonRepository::class.java)
     }
 }

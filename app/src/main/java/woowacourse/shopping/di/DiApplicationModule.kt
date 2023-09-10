@@ -10,6 +10,7 @@ import woowacourse.shopping.repository.ProductRepository
 class DiApplicationModule(
     private val applicationContext: Context,
 ) : DiContainer() {
+    @Qualifier("ApplicationContext")
     fun provideApplicationContext(): Context = Cache.applicationContext.get {
         applicationContext
     }
@@ -23,7 +24,7 @@ class DiApplicationModule(
     }
 
     fun provideShoppingDatabase(
-        context: Context,
+        @Qualifier("ApplicationContext") context: Context,
     ): ShoppingDatabase = Cache.shoppingDatabase.get {
         ShoppingDatabase.getInstance(context)
     }
