@@ -17,7 +17,7 @@ class InjectorTest {
 
     class FakeViewModel(val fakeRepository: FakeRepository)
 
-    class FakeViewModel2 private constructor()
+    interface FakeViewModel2
 
     private val injector = Injector(FakeRepositoryContainer())
 

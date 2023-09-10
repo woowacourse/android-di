@@ -39,7 +39,7 @@ class FakeActivity2 : AppCompatActivity() {
 }
 
 object TestRepositoryContainer : Container {
-    val provideFakeRepository: FakeRepository = DefaultFakeRepository()
+    val fakeRepository: FakeRepository = DefaultFakeRepository()
 }
 
 class TestApplication : Application() {
