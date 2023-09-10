@@ -19,12 +19,12 @@ class MainActivity : AppCompatActivity(), HasDiContainer {
 
     private val viewModel: MainViewModel by viewModels()
 
-    override lateinit var diContainer: DiContainer
+    override val diContainer: DiContainer by lazy {
+        DiActivityModule.create(this).also { it.inject(this) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        diContainer = DiActivityModule.create(this)
-        (diContainer as DiActivityModule).inject(this)
 
         setContentView(binding.root)
 

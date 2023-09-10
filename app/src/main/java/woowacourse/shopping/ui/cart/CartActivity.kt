@@ -15,18 +15,17 @@ class CartActivity : AppCompatActivity(), HasDiContainer {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    override lateinit var diContainer: DiContainer
-
     private val viewModel: CartViewModel by viewModels()
+
+    override val diContainer: DiContainer by lazy {
+        DiActivityModule.create(this).also { it.inject(this) }
+    }
 
     @ArkInject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        diContainer = DiActivityModule.create(this)
-        (diContainer as DiActivityModule).inject(this)
 
         setupBinding()
         setupToolbar()
