@@ -3,8 +3,8 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.DatabaseCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.container.DependencyContainer
 import woowacourse.shopping.di.inject.CustomInjector
@@ -27,11 +27,11 @@ class ShoppingApplication : Application() {
         DependencyContainer.setInstance(CartProductDao::class, cartProductDao)
         DependencyContainer.setInstance(
             ProductRepository::class,
-            injector.inject(DefaultProductRepository::class),
+            injector.inject(InMemoryProductRepository::class),
         )
         DependencyContainer.setInstance(
             CartRepository::class,
-            injector.inject(DefaultCartRepository::class),
+            injector.inject(DatabaseCartRepository::class),
         )
     }
 }
