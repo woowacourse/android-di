@@ -4,9 +4,9 @@ import woowacourse.shopping.data.repository.CartRepositoryImpl
 import woowacourse.shopping.data.repository.ProductRepositoryImpl
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.util.autoDI.autoDIModule.autoDIModule
+import com.angrypig.autodi.autoDIModule.autoDIModule
 
-val repositoryModule = autoDIModule("repository") {
+val repositoryModule = com.angrypig.autodi.autoDIModule.autoDIModule("repository") {
     singleton<CartRepository>("singleton") { CartRepositoryImpl() }
     singleton<ProductRepository>("singleton") { ProductRepositoryImpl() }
 }
