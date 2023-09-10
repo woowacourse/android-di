@@ -28,7 +28,9 @@ class SheathComponent(private val clazz: KClass<*>) {
     val dependentCount: Int = getDependingClasses().size
 
     init {
-        validateAnnotation()
+        validateComponentAnnotation()
+        validateQualifier()
+        validateConstructorInjection()
     }
 
     fun isDependingOn(component: SheathComponent): Boolean {
@@ -57,13 +59,19 @@ class SheathComponent(private val clazz: KClass<*>) {
             ?.value
     }
 
-    private fun validateAnnotation() {
+    private fun validateComponentAnnotation() {
         require(clazz.hasAnnotation<Component>() || clazz.annotations.any { annotation -> annotation.annotationClass.hasAnnotation<Component>() }) {
             "@Component가 붙은 클래스 혹은 @Component가 붙은 애노테이션이 붙은 클래스로만 SheathComponent를 생성할 수 있습니다."
         }
+    }
+
+    private fun validateConstructorInjection() {
         require(clazz.constructors.count { it.hasAnnotation<Inject>() } <= 1) {
             "여러 개의 생성자에 @Inject 애노테이션을 붙일 수 없습니다."
         }
+    }
+
+    private fun validateQualifier() {
         require(clazz.annotations.count { it.annotationClass == Qualifier::class || it.annotationClass.hasAnnotation<Qualifier>() } <= 1) {
             "여러 개의 한정자 애노테이션을 붙일 수 없습니다."
         }
