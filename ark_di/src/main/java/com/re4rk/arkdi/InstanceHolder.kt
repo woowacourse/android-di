@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdi
 
 class InstanceHolder<T> {
     private var value: T? = null

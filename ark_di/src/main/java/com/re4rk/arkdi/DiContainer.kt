@@ -1,16 +1,14 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdi
 
-import woowacourse.shopping.di.util.qualifier
+import com.re4rk.arkdi.util.qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
 
@@ -74,13 +72,5 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
             parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
             else -> get(parameter)
         }
-    }
-
-    fun inject(diActivity: DiActivity) {
-        diActivity::class.declaredMemberProperties.filter { it.hasAnnotation<ArkInject>() }
-            .forEach { property ->
-                property.isAccessible = true
-                property.javaField?.set(diActivity, get(property.returnType.jvmErasure))
-            }
     }
 }

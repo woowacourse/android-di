@@ -1,8 +1,8 @@
-package woowacourse.shopping.di.util
+package com.re4rk.arkdi.util
 
-import woowacourse.shopping.di.Qualifier
+import com.re4rk.arkdi.Qualifier
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.findAnnotation
 
-val KAnnotatedElement.qualifier: String?
+internal val KAnnotatedElement.qualifier: String?
     get() = this.findAnnotation<Qualifier>()?.value

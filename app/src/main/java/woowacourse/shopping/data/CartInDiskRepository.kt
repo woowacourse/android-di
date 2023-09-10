@@ -1,8 +1,8 @@
 package woowacourse.shopping.data
 
+import com.re4rk.arkdi.ArkInject
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.ArkInject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository

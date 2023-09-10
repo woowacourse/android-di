@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdi
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)

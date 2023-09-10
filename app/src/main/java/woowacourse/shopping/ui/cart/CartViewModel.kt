@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.re4rk.arkdi.ArkInject
+import com.re4rk.arkdi.Qualifier
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.ArkInject
-import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 

@@ -1,6 +1,9 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import com.re4rk.arkdi.DiContainer
+import com.re4rk.arkdi.InstanceHolder
+import com.re4rk.arkdi.Qualifier
 import woowacourse.shopping.data.CartInMemoryRepository
 import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.data.ShoppingDatabase

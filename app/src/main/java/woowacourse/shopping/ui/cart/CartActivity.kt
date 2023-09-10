@@ -2,15 +2,25 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.re4rk.arkdi.ArkInject
+import com.re4rk.arkdi.DiContainer
+import com.re4rk.arkdi.HasDiContainer
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.ArkInject
-import woowacourse.shopping.di.DiActivity
+import woowacourse.shopping.di.DiActivityModule
+import woowacourse.shopping.ui.util.HasViewModelFactory
 import woowacourse.shopping.ui.util.viewModels
 
-class CartActivity : DiActivity() {
+class CartActivity : AppCompatActivity(), HasDiContainer, HasViewModelFactory {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
+
+    override lateinit var diContainer: DiContainer
+
+    @ArkInject
+    override lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: CartViewModel by viewModels()
 
@@ -19,6 +29,13 @@ class CartActivity : DiActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        diContainer = DiActivityModule(
+            (application as? HasDiContainer)?.diContainer
+                ?: throw IllegalStateException(""),
+            this,
+        )
+        (diContainer as DiActivityModule).inject(this)
 
         setupBinding()
         setupToolbar()

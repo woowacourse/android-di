@@ -1,5 +1,8 @@
 package woowacourse.shopping.di
 
+import com.re4rk.arkdi.ArkInject
+import com.re4rk.arkdi.DiContainer
+import com.re4rk.arkdi.Qualifier
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.assertj.core.api.Assertions.assertThat

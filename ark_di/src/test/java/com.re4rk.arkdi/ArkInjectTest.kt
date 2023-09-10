@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import com.re4rk.arkdi.ArkInject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
