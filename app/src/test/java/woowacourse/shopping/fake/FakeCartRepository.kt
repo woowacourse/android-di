@@ -7,7 +7,7 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 class FakeCartRepository : CartRepository {
-    private val cartProducts = testDatas.map { it.toEntity().toDomain() }
+    private val cartProducts = testData.map { it.toEntity().toDomain() }
         .toMutableList()
 
     override suspend fun addCartProduct(product: Product) {

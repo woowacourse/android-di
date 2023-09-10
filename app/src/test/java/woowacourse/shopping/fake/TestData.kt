@@ -2,7 +2,7 @@ package woowacourse.shopping.fake
 
 import woowacourse.shopping.model.Product
 
-val testDatas: List<Product> = listOf(
+val testData: List<Product> = listOf(
     Product(
         name = "우테코 과자",
         price = 10_000,
