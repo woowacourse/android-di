@@ -13,10 +13,12 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import woowacourse.shopping.di.annotation.Injected
 import woowacourse.shopping.di.container.ShoppingContainer
 import woowacourse.shopping.di.injector.Injector
 import woowacourse.shopping.ui.util.createViewModel
 import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
@@ -87,8 +89,8 @@ interface FakeRepository
 class DefaultFakeRepository : FakeRepository
 
 class FakeViewModel(
-    val repository: FakeRepository,
-): ViewModel() {
+    @Injected val repository: FakeRepository,
+) : ViewModel() {
     companion object {
         val factory = viewModelFactory {
             initializer {
