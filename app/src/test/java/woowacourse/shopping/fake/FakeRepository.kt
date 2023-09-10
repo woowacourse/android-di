@@ -18,6 +18,7 @@ class FakeCartRepository(private val cartProducts: MutableList<CartProduct> = mu
     CartRepository {
     override suspend fun addCartProduct(product: Product) {
         val cartProduct = CartProduct(
+            System.currentTimeMillis(),
             product.name,
             product.price,
             product.imageUrl,
