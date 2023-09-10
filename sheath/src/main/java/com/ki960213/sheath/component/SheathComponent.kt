@@ -15,6 +15,8 @@ import kotlin.reflect.jvm.isAccessible
 
 class SheathComponent(private val clazz: KClass<*>) {
 
+    val dependentCount: Int = getDependingClasses().size
+
     init {
         validateAnnotation()
     }
