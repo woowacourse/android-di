@@ -1,10 +1,13 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmName
 
 class Injector(private val modules: List<Module>) {
 
@@ -20,6 +23,7 @@ class Injector(private val modules: List<Module>) {
 
     private fun initContainer() {
         modules.forEach { module ->
+            container[module::class.jvmName] = module
             module::class.declaredMemberFunctions.forEach { kFunc ->
                 val identifier = kFunc.returnType.toString()
                 container[identifier] = createInstance(kFunc = kFunc, receiver = module)
@@ -28,9 +32,10 @@ class Injector(private val modules: List<Module>) {
     }
 
     private fun createInstance(kFunc: KFunction<*>, receiver: Module): Any? {
-        val requiredParameters = kFunc.parameters.subList(1, kFunc.parameters.size)
-        if (requiredParameters.isNotEmpty()) {
-            val args = requiredParameters.map { param ->
+        val injectParams =
+            kFunc.parameters.subList(1, kFunc.parameters.size).filter { it.hasAnnotation<Inject>() }
+        if (injectParams.isNotEmpty()) {
+            injectParams.forEach { param ->
                 val identifier = param.type.toString()
                 if (container[identifier] == null) {
                     provideFunctions[identifier]?.let {
@@ -39,8 +44,10 @@ class Injector(private val modules: List<Module>) {
                 }
                 container[identifier]
             }
-
-            return kFunc.call(receiver, *args.toTypedArray())
+            val args = injectParams.associateWith { container[it.type.toString()] }.toMutableMap()
+            val subReceiver = kFunc.parameters.first()
+            args[subReceiver] = container[subReceiver.type.toString()]
+            return kFunc.callBy(args)
         }
         return kFunc.call(receiver)
     }
@@ -49,15 +56,15 @@ class Injector(private val modules: List<Module>) {
         val primaryConstructor =
             clazz.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
 
-        val args = getArgumentsFromContainer(primaryConstructor.parameters)
+        val filteredParams = primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
 
-        return primaryConstructor.call(*args.toTypedArray())
+        val args = filteredParams.associateWith { getArgumentFromContainer(it) }
+
+        return primaryConstructor.callBy(args)
     }
 
-    private fun getArgumentsFromContainer(parameters: List<KParameter>): List<Any> {
-        return parameters.map {
-            val paramType = it.type.toString()
-            container[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $paramType")
-        }
+    private fun getArgumentFromContainer(parameter: KParameter): Any {
+        val paramType = parameter.type.toString()
+        return container[paramType] ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $paramType")
     }
 }
