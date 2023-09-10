@@ -4,10 +4,13 @@ import android.app.Application
 import woowacourse.shopping.di.Injector
 import woowacourse.shopping.di.SingletonModule
 
-class MyApplication : Application() {
+class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        injector = Injector(SingletonModule())
+
+        injector = Injector(
+            SingletonModule(context = this),
+        )
     }
 
     companion object {
