@@ -7,6 +7,6 @@ import woowacourse.shopping.di.NormalModule
 class ShoppingApplication : DIApplication() {
 
     override fun inject() {
-        Injector(container).inject(NormalModule)
+        Injector(container, applicationContext).inject(NormalModule)
     }
 }

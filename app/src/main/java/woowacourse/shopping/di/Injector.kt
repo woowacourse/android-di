@@ -1,23 +1,27 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(private val container: Container) {
+class Injector(private val container: Container, private val context: Context) {
 
     fun inject(module: Module) {
         val functions = module::class.declaredFunctions
         functions.forEach { func -> recursive(functions, func, module) }
     }
 
-    private fun recursive(functions: Collection<KFunction<*>>, func: KFunction<*>, module: Module) {
-        // 이미 생성했다면 return
-        if (container.getInstance(func.returnType.jvmErasure) != null) return
-
+    private fun recursive(
+        functions: Collection<KFunction<*>>,
+        func: KFunction<*>,
+        module: Module,
+    ) {
         val funcClazz = func.returnType.jvmErasure
+        // 이미 생성했다면 return
+        if (container.getInstance(funcClazz) != null) return
 
         // 파라미터가 없다면 만든다
         if (func.valueParameters.isEmpty()) {
@@ -27,7 +31,10 @@ class Injector(private val container: Container) {
 
         // 파라미터를 하나씩 채운다
         val params = func.valueParameters.map { param ->
-            getParamInstance(param, functions, module)
+            when (param.type.jvmErasure) {
+                Context::class -> context
+                else -> getParamInstance(param, functions, module)
+            }
         }
 
         // 생성하고 컨테이너 에 삽입
