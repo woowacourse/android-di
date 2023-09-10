@@ -6,6 +6,7 @@ import woowacourse.shopping.di.container.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotations
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -14,8 +15,8 @@ import kotlin.reflect.jvm.jvmErasure
 class CustomInjector {
 
     fun <T : Any> inject(kClass: KClass<T>): Any {
-        val annotationsWithQualifier = kClass.annotations.filterIsInstance<Qualifier>()
-        return DependencyContainer.getInstance(kClass, annotationsWithQualifier) ?: createInstanceFromKClass(kClass)
+        val annotations = kClass.findAnnotations<Qualifier>()
+        return DependencyContainer.getInstance(kClass, annotations) ?: createInstanceFromKClass(kClass)
     }
 
     private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {

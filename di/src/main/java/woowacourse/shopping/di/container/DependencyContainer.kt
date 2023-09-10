@@ -2,7 +2,7 @@ package woowacourse.shopping.di.container
 
 import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.findAnnotations
 
 object DependencyContainer {
     private val instances: HashMap<Pair<KClass<*>, List<Annotation>>, Any> = hashMapOf()
@@ -10,7 +10,7 @@ object DependencyContainer {
     fun setInstance(kClass: KClass<*>, instance: Any) {
         val key = Pair(
             kClass,
-            kClass.annotations.filter { it.annotationClass.findAnnotation<Qualifier>() != null },
+            instance::class.findAnnotations<Qualifier>(),
         )
         instances[key] = instance
     }
