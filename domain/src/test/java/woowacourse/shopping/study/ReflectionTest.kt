@@ -12,13 +12,19 @@ import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
 
-class Person(var firstName: String, val lastName: String, private var age: Int) {
+class Person(
+    var firstName: String,
+    val lastName: String,
+    private var age: Int,
+    private val hobby: String,
+) {
     fun greeting() {}
     private fun fullName() {}
     private fun Int.isAdult() {}
+    fun getHobby() = hobby
 
     companion object {
-        fun noname(age: Int): Person = Person("", "", age)
+        fun noname(age: Int): Person = Person("", "", age, "")
     }
 }
 
@@ -26,14 +32,14 @@ class ReflectionTest {
 
     @Test
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
-        val person = Person("Jason", "Park", 20)
+        val person = Person("Jason", "Park", 20, "골프")
         Person::firstName.set(person, "Jaesung")
         assertThat(person.firstName).isEqualTo("Jaesung")
     }
 
     @Test
     fun `읽기 전용 공개 프로퍼티 값 변경`() {
-        val person = Person("Jason", "Park", 20)
+        val person = Person("Jason", "Park", 20, "골프")
         val lastNameField = Person::class.java.getDeclaredField("lastName")
         lastNameField.apply {
             isAccessible = true
@@ -43,9 +49,20 @@ class ReflectionTest {
     }
 
     @Test
+    fun `읽기 전용 비공개 프로퍼티 값 변경`() {
+        val person = Person("Jason", "Park", 20, "골프")
+        val hobbyField = Person::class.java.getDeclaredField("hobby")
+        hobbyField.apply {
+            isAccessible = true
+            set(person, "축구")
+        }
+        assertThat(person.getHobby()).isEqualTo("축구")
+    }
+
+    @Test
     fun `클래스 내에서 선언된 프로퍼티`() {
         val declaredMemberProperties = Person::class.declaredMemberProperties
-        assertThat(declaredMemberProperties.size).isEqualTo(3)
+        assertThat(declaredMemberProperties.size).isEqualTo(4)
     }
 
     @Test
@@ -57,7 +74,7 @@ class ReflectionTest {
 
     @Test
     fun `변경 가능한 비공개 프로퍼티 변경`() {
-        val person = Person("Jason", "Park", 20)
+        val person = Person("Jason", "Park", 20, "골프")
         val firstNameProperty =
             Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
                 .first { it.name == "firstName" }
@@ -68,10 +85,10 @@ class ReflectionTest {
     @Test
     fun `클래스 및 부모 클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, equals, hashCode, toString
-        assertThat(personReflection.memberFunctions.size).isEqualTo(5)
+        // fullName, greeting, isAdult, getHobby, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, equals, hashCode, toString, getHobby
+        assertThat(personReflection.memberFunctions.size).isEqualTo(6)
         // isAdult
         assertThat(personReflection.memberExtensionFunctions.size).isEqualTo(1)
     }
@@ -79,21 +96,21 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
-        // greeting, isAdult
-        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(2)
-        // isAdult
+        // fullName, greeting, isAdult, getHobby
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
+        // greeting, isAdult, getHobby
+        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(3)
+        // isAdult, getHobby
         assertThat(personReflection.declaredMemberExtensionFunctions.size).isEqualTo(1)
     }
 
     @Test
     fun `멤버 함수 확장 함수 클래스 내에서 선언된 정적 함수`() {
         val personReflection = Person::class
-        // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
-        // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+        // fullName, greeting, isAdult, getHobby, equals, hashCode, toString
+        assertThat(personReflection.functions.size).isEqualTo(7)
+        // fullName, greeting, isAdult, getHobby
+        assertThat(personReflection.declaredFunctions.size).isEqualTo(4)
     }
 
     @Test
