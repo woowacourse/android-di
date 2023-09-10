@@ -19,4 +19,8 @@ object DependencyContainer {
         val key = Pair(kClass, annotations)
         return instances[key]
     }
+
+    fun clear() {
+        instances.clear()
+    }
 }
