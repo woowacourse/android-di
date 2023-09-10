@@ -10,7 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -51,7 +51,7 @@ class CartViewModelTest {
         vm.getAllCartProducts()
 
         // then
-        Assertions.assertThat(vm.cartProducts.value).isEqualTo(fakeProducts)
+        assertThat(vm.cartProducts.value).isEqualTo(fakeProducts)
     }
 
     @Test
@@ -63,6 +63,6 @@ class CartViewModelTest {
         vm.deleteCartProduct(1L)
 
         // then
-        Assertions.assertThat(vm.onCartProductDeleted.value).isTrue
+        assertThat(vm.onCartProductDeleted.value).isTrue
     }
 }

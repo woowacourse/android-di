@@ -1,6 +1,6 @@
 package woowacourse.shopping.di.annotationdi
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -22,6 +22,6 @@ class AnnotationTest {
 
         val viewModel = activity?.viewModel!!
 
-        Assertions.assertThat(viewModel.fakeObj).isSameAs(FakeObj)
+        assertThat(viewModel.fakeObj).isSameAs(FakeObj)
     }
 }
