@@ -12,8 +12,8 @@ import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel : ViewModel() {
 
-    @woowacourse.shopping.di.annotation.DatabaseMode
-    @woowacourse.shopping.di.annotation.CustomInject
+    @DatabaseMode
+    @CustomInject
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

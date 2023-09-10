@@ -7,7 +7,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@woowacourse.shopping.di.annotation.DatabaseMode
+@DatabaseMode
 class DatabaseCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

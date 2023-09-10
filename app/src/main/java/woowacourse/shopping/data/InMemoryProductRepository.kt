@@ -4,7 +4,7 @@ import woowacourse.shopping.di.annotation.InMemoryMode
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-@woowacourse.shopping.di.annotation.InMemoryMode
+@InMemoryMode
 class InMemoryProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(
