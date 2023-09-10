@@ -8,6 +8,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 class CustomInjector {
 
@@ -21,7 +22,7 @@ class CustomInjector {
             kClass.primaryConstructor ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
         val parameterValues =
-            constructor.parameters.associateWith { findPropertyAndGetValue(kClass) }
+            constructor.parameters.associateWith { findPropertyAndGetValue(it.type.jvmErasure) }
 
         return constructor.callBy(parameterValues).apply { injectFields(this) }
     }
@@ -31,7 +32,7 @@ class CustomInjector {
             .filter { it.hasAnnotation<CustomInject>() }
             .forEach { prop ->
                 prop.isAccessible = true
-                val propertyType = prop.returnType.classifier as KClass<*>
+                val propertyType = prop.returnType.jvmErasure
                 val value = findPropertyAndGetValue(propertyType)
                 (prop as KMutableProperty<*>).setter.call(instance, value)
             }
