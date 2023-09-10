@@ -72,10 +72,18 @@ class SheathComponent(private val clazz: KClass<*>) {
     }
 
     private fun validateQualifier() {
-        require(clazz.annotations.count { it.annotationClass == Qualifier::class || it.annotationClass.hasAnnotation<Qualifier>() } <= 1) {
+        require(
+            clazz.isNotDuplicatedQualifier() &&
+                (findAnnotatedConstructor<Inject>()?.isNotDuplicatedQualifier() ?: true) &&
+                findAnnotatedProperties<Inject>().all { it.isNotDuplicatedQualifier() } &&
+                findAnnotatedFunctions<Inject>().all { it.isNotDuplicatedQualifier() },
+        ) {
             "여러 개의 한정자 애노테이션을 붙일 수 없습니다."
         }
     }
+
+    private fun KAnnotatedElement.isNotDuplicatedQualifier(): Boolean =
+        annotations.count { it.annotationClass == Qualifier::class || it.annotationClass.hasAnnotation<Qualifier>() } <= 1
 
     private inline fun <reified A : Annotation> findAnnotatedConstructor(): KFunction<Any>? =
         clazz.constructors.find { it.hasAnnotation<A>() }

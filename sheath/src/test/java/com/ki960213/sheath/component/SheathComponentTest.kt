@@ -492,4 +492,81 @@ internal class SheathComponentTest {
             assertThat(e).hasMessageThat().isEqualTo("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
         }
     }
+
+    @Test
+    fun `주입 대상 생성자의 파라미터의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
+        try {
+            SheathComponent(Test40::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
+        }
+    }
+
+    @Component
+    class Test40 @Inject constructor(
+        @Test41Qualifier
+        @Qualifier("test41")
+        private val test41: Test41,
+    )
+
+    @Qualifier("test41Qualifier")
+    private annotation class Test41Qualifier
+
+    @Qualifier("test41")
+    @Component
+    class Test41
+
+    @Test
+    fun `주입 대상 프로퍼티의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
+        try {
+            SheathComponent(Test43::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
+        }
+    }
+
+    @Component
+    class Test42 {
+        @Inject
+        @Test43Qualifier1
+        @Test43Qualifier2
+        private lateinit var test43: Test43
+    }
+
+    @Qualifier("test43Qualifier1")
+    private annotation class Test43Qualifier1
+
+    @Qualifier("test43Qualifier2")
+    private annotation class Test43Qualifier2
+
+    @Test43Qualifier1
+    @Component
+    class Test43
+
+    @Test
+    fun `주입 대상 메서드의 파라미터의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
+        try {
+            SheathComponent(Test44::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
+        }
+    }
+
+    @Component
+    class Test44 {
+        @Test45Qualifier1
+        @Test45Qualifier2
+        @Inject
+        private fun test(test45: Test45): Unit = Unit
+    }
+
+    @Qualifier("test45Qualifier1")
+    private annotation class Test45Qualifier1
+
+    @Qualifier("test45Qualifier2")
+    private annotation class Test45Qualifier2
+
+    @Test45Qualifier1
+    @Component
+    class Test45
 }
