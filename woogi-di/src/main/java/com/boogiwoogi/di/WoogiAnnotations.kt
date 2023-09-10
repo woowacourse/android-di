@@ -1,4 +1,4 @@
-package com.example.woogi_di
+package com.boogiwoogi.di
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 annotation class WoogiProperty

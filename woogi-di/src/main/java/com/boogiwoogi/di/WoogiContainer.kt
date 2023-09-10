@@ -1,4 +1,4 @@
-package com.example.woogi_di
+package com.boogiwoogi.di
 
 import kotlin.reflect.KClass
 

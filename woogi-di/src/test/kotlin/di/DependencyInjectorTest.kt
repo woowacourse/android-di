@@ -1,6 +1,6 @@
-import com.example.woogi_di.WoogiContainer
-import com.example.woogi_di.WoogiInjector
-import com.example.woogi_di.WoogiProperty
+import com.boogiwoogi.di.WoogiContainer
+import com.boogiwoogi.di.WoogiInjector
+import com.boogiwoogi.di.WoogiProperty
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

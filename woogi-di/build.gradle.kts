@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("maven-publish")
 }
 
 java {
@@ -18,5 +19,16 @@ dependencies {
 tasks {
     test {
         useJUnitPlatform()
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.dygames.di"
+            artifactId = "final"
+            version = "1.0.0"
+            from(components["kotlin"])
+        }
     }
 }
