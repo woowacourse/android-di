@@ -5,6 +5,6 @@ import woowacourse.shopping.di.Injector
 
 class FakeAnnotationDIApplication : DIApplication() {
     override fun inject() {
-        Injector(container).inject(FakeAnnotationDIModule)
+        Injector(container, applicationContext).inject(FakeAnnotationDIModule)
     }
 }
