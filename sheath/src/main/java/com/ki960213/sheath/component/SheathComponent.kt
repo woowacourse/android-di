@@ -111,5 +111,10 @@ class SheathComponent(private val clazz: KClass<*>) {
         }
     }
 
-    override fun toString(): String = clazz.toString()
+    override fun equals(other: Any?): Boolean =
+        if (other is SheathComponent) clazz == other.clazz else false
+
+    override fun hashCode(): Int = clazz.hashCode()
+
+    override fun toString(): String = "SheathComponent(clazz=$clazz)"
 }

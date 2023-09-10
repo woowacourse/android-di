@@ -325,4 +325,29 @@ internal class SheathComponentTest {
     class Test31
 
     class Test32
+
+    @Test
+    fun `SheathComponent는 클래스가 같으면 같다고 판단한다`() {
+        val sheathComponent1 = SheathComponent(Test1::class)
+        val sheathComponent2 = SheathComponent(Test1::class)
+
+        assertThat(sheathComponent1).isEqualTo(sheathComponent2)
+    }
+
+    @Test
+    fun `SheathComponent는 클래스가 다르면 다르다고 판단한다`() {
+        val sheathComponent1 = SheathComponent(Test1::class)
+        val sheathComponent2 = SheathComponent(Test2::class)
+
+        assertThat(sheathComponent1).isNotEqualTo(sheathComponent2)
+    }
+
+    @Test
+    fun `SheathComponent의 해시 코드는 클래스의 해시 코드와 같다`() {
+        val sheathComponent = SheathComponent(Test1::class)
+
+        val actual = sheathComponent.hashCode()
+
+        assertThat(actual).isEqualTo(Test1::class.hashCode())
+    }
 }
