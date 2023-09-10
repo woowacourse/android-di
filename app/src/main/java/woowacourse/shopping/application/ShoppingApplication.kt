@@ -23,7 +23,7 @@ class ShoppingApplication : Application() {
         injector = Injector(appContainer)
 
         appContainer.createInstance(CartProductDao::class, dao)
-        appContainer.createInstance(CartRepository::class, DefaultCartRepository(dao))
+//        appContainer.createInstance(CartRepository::class, DefaultCartRepository(dao))
         appContainer.createInstance(ProductRepository::class, DefaultProductRepository())
     }
 
