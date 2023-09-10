@@ -1,13 +1,13 @@
 package woowacourse.shopping.data.di
 
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
-import kotlin.reflect.KType
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
-    var modules: List<Module> = listOf()
+    lateinit var container: Container
+    const val NO_INSTANCE_ERROR = "해당하는 인스턴스를 찾을 수 없습니다."
 
     inline fun <reified T : Any> inject(): T {
         val constructor = requireNotNull(T::class.primaryConstructor)
@@ -16,24 +16,11 @@ object Injector {
     }
 
     inline fun <reified T : Any> provideDependencies(constructor: KFunction<T>): List<Any> {
-        val constructorParametersType = constructor.parameters.map { it.type }
-        val dependencies: List<Any> = modules.flatMap { module ->
-            findDependencies(module, constructorParametersType)
+        val constructorParametersType: List<KClass<*>> =
+            constructor.parameters.map { it.type.jvmErasure }
+        val dependencies: List<Any> = constructorParametersType.map {
+            container.getInstance(it) ?: throw NoSuchElementException(NO_INSTANCE_ERROR)
         }
         return dependencies
-    }
-
-    fun findDependencies(
-        module: Module, constructorParametersType: List<KType>
-    ): List<Any> {
-        val foundProperties: List<KProperty<*>> = constructorParametersType.map { type ->
-            module::class.declaredMemberProperties.first {
-                it.returnType == type
-            }
-        }
-        return foundProperties.map {
-            // 프로퍼티 값 가져오기
-            it.call(module) ?: throw NoSuchElementException()
-        }
     }
 }

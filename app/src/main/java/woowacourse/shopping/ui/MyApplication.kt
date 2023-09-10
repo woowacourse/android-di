@@ -1,12 +1,18 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.di.DefaultContainer
 import woowacourse.shopping.data.di.Injector
-import woowacourse.shopping.data.di.RepositoryModule
+import woowacourse.shopping.data.repository.CartRepository
+import woowacourse.shopping.data.repository.ProductRepository
 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Injector.modules = listOf(RepositoryModule())
+        Injector.container = DefaultContainer
+        DefaultContainer.addInstance(ProductRepository::class, DefaultProductRepository())
+//        DefaultContainer.addInstance(CartRepository::class, DefaultCartRepository())
     }
 }
