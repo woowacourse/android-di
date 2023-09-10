@@ -1,5 +1,6 @@
 package woowacourse.shopping.data.di
 
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -29,6 +30,11 @@ class InjectorTest {
         Injector.container = FakeContainer
     }
 
+    @After
+    fun tearDown(){
+        FakeContainer.instances.clear()
+    }
+
     @Test
     fun `의존성 모듈이 모두 제공될 때 자동 DI 가 성공하는지 테스트`() {
         // given
@@ -48,6 +54,22 @@ class InjectorTest {
 
         // then
         activity.viewModel
+    }
+
+    @Test
+    fun `재귀 DI 가 잘 작동하는지 테스트`() {
+        //given
+        val fakeDao = DefaultFakeDao()
+        FakeContainer.addInstance(FakeDao::class, fakeDao)
+        FakeContainer.addInstance(FakeRepository::class, Injector.inject<RecursiveFakeRepository>())
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+
+        // then
+        val actual = activity.viewModel
+        assertEquals(
+            FakeContainer.getInstance(FakeRepository::class),
+            actual.fakeRepository
+        )
     }
 }
 
