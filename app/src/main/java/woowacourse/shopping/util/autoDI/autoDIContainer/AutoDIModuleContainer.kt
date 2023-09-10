@@ -1,6 +1,7 @@
 package woowacourse.shopping.util.autoDI.autoDIContainer
 
 import woowacourse.shopping.util.autoDI.ViewModelBundle
+import woowacourse.shopping.util.autoDI.autoDIModule.AutoDIModule
 import kotlin.reflect.KType
 
 object AutoDIModuleContainer {
@@ -9,6 +10,10 @@ object AutoDIModuleContainer {
         "search 함수로 검색한 dependency 가 존재하지 않습니다. qulifier 혹은 선언 모듈을 확인하세요"
 
     private val autoDIModules: AutoDIModules = AutoDIModules(mutableListOf())
+
+    internal fun registerModule(autoDIModule: AutoDIModule) {
+        autoDIModules.addModule(autoDIModule)
+    }
 
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T =
         autoDIModules.searchLifeCycleType(kType, qualifier) ?: throw IllegalStateException(

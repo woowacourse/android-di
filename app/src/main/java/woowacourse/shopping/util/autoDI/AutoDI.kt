@@ -1,12 +1,17 @@
 package woowacourse.shopping.util.autoDI
 
 import woowacourse.shopping.util.autoDI.autoDIContainer.AutoDIModuleContainer
+import woowacourse.shopping.util.autoDI.autoDIModule.AutoDIModule
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 object AutoDI {
     operator fun invoke(init: AutoDI.() -> Unit) {
         this.init()
+    }
+
+    fun registerModule(autoDIModule: AutoDIModule) {
+        AutoDIModuleContainer.registerModule(autoDIModule)
     }
 
     inline fun <reified T : Any> inject(qualifier: String? = null): T {
