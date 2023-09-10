@@ -4,8 +4,6 @@ import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
-import com.ki960213.sheath.annotation.Repository
-import com.ki960213.sheath.annotation.Scope
 import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -387,39 +385,14 @@ internal class SheathComponentTest {
     }
 
     @Test
-    fun `SheathComponent의 scope는 @Scope 애노테이션을 붙일 때 설정한 scope와 같다`() {
-        val sheathComponent = SheathComponent(Test33::class)
-
-        val actual = sheathComponent.scope
-
-        assertThat(actual).isEqualTo(SheathComponentScope.VIEW_MODEL)
-    }
-
-    @Scope(SheathComponentScope.VIEW_MODEL)
-    @Component
-    class Test33
-
-    @Test
-    fun `SheathComponent의 scope는 @Scope 애노테이션이 붙지 않으면 Singleton이다`() {
-        val sheathComponent = SheathComponent(Test34::class)
-
-        val actual = sheathComponent.scope
-
-        assertThat(actual).isEqualTo(SheathComponentScope.SINGLETON)
-    }
-
-    @Repository
-    class Test34
-
-    @Test
     fun `@Component 애노테이션 혹은 @Component 애노테이션이 붙은 애노테이션이 없는 클래스로 SheathComponent를 생성하면 에러가 발생한다`() {
         try {
-            SheathComponent(Test35::class)
+            SheathComponent(Test33::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat()
                 .isEqualTo("@Component가 붙은 클래스 혹은 @Component가 붙은 애노테이션이 붙은 클래스로만 SheathComponent를 생성할 수 있습니다.")
         }
     }
 
-    class Test35
+    class Test33
 }

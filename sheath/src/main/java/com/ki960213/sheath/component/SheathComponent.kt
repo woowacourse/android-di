@@ -2,7 +2,6 @@ package com.ki960213.sheath.component
 
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
-import com.ki960213.sheath.annotation.Scope
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -10,7 +9,6 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -18,9 +16,6 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
 class SheathComponent(private val clazz: KClass<*>) {
-
-    val scope: SheathComponentScope =
-        clazz.findAnnotation<Scope>()?.value ?: SheathComponentScope.SINGLETON
 
     val dependentCount: Int = getDependingClasses().size
 
