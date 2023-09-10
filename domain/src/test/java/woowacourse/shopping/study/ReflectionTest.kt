@@ -10,7 +10,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.full.staticFunctions
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
@@ -94,10 +93,5 @@ class ReflectionTest {
         assertThat(personReflection.functions.size).isEqualTo(6)
         // fullName, greeting, isAdult
         assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
-    }
-
-    @Test
-    fun `클래스 내에서 선언된 정적 함수`() {
-        assertThat(Person::class.staticFunctions.size).isEqualTo(0)
     }
 }

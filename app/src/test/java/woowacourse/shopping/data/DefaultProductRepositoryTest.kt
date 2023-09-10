@@ -4,8 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import woowacourse.shopping.util.Dummy
 
-class ProductRepositoryImplTest {
-    private val productRepository = ProductRepositoryImpl()
+class DefaultProductRepositoryTest {
+    private val productRepository = DefaultProductRepository()
 
     @Test
     fun `모든 상품을 반환한다`() {

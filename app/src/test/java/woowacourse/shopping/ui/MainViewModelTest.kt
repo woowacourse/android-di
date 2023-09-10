@@ -7,8 +7,8 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DataBaseCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import woowacourse.shopping.util.Dummy
@@ -34,8 +34,8 @@ class MainViewModelTest {
     }
 
     private val cartRepository: CartRepository =
-        CartRepositoryImpl(cartProductDao = FakeCartProductDao())
-    private val productRepository: ProductRepository = ProductRepositoryImpl()
+        DataBaseCartRepository(cartProductDao = FakeCartProductDao())
+    private val productRepository: ProductRepository = DefaultProductRepository()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()

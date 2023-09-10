@@ -10,7 +10,7 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
-class CartRepositoryImpl(
+class DataBaseCartRepository(
     private val cartProductDao: CartProductDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : CartRepository {

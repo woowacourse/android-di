@@ -14,7 +14,7 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.util.Dummy
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CartRepositoryImplTest {
+class DataBaseCartRepositoryTest {
     private lateinit var cartRepository: CartRepository
 
     class FakeCartProductDao : CartProductDao {
@@ -35,7 +35,7 @@ class CartRepositoryImplTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        cartRepository = CartRepositoryImpl(
+        cartRepository = DataBaseCartRepository(
             FakeCartProductDao()
         )
     }
