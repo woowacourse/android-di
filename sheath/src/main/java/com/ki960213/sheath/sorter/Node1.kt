@@ -17,4 +17,9 @@ class Node1(private val sheathComponent: SheathComponent) {
     }
 
     fun isDependingOn(other: Node1): Boolean = sheathComponent.isDependingOn(other.sheathComponent)
+
+    override fun equals(other: Any?): Boolean =
+        if (other is Node1) sheathComponent == other.sheathComponent else false
+
+    override fun hashCode(): Int = sheathComponent.hashCode()
 }

@@ -49,4 +49,30 @@ internal class Node1Test {
     private class Test1(test2: Test2)
 
     private class Test2
+
+    @Test
+    fun `노드는 sheathComponent가 같으면 같다고 판단한다`() {
+        val node1 = Node1(SheathComponent(Test1::class))
+        val node2 = Node1(SheathComponent(Test1::class))
+
+        assertThat(node1).isEqualTo(node2)
+    }
+
+    @Test
+    fun `노드는 sheathComponent가 다르면 다르다고 판단한다`() {
+        val node1 = Node1(SheathComponent(Test1::class))
+        val node2 = Node1(SheathComponent(Test2::class))
+
+        assertThat(node1).isNotEqualTo(node2)
+    }
+
+    @Test
+    fun `노드의 해시 코드는 sheathComponent의 해시 코드와 같다`() {
+        val sheathComponent = SheathComponent(Test1::class)
+        val node = Node1(sheathComponent)
+
+        val actual = node.hashCode()
+
+        assertThat(actual).isEqualTo(sheathComponent.hashCode())
+    }
 }
