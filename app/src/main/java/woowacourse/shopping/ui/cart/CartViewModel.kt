@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.ArkInject
+import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel @ArkInject constructor(
+    @Qualifier("CartInDiskRepository")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

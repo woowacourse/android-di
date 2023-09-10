@@ -16,6 +16,7 @@ class DiActivityModule(
         context
     }
 
+    @Qualifier("CartInDiskRepository")
     fun provideCartInDiskRepository(
         cartProductDao: CartProductDao,
     ): CartRepository = Cache.cartInDiskRepository.get {

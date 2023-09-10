@@ -19,6 +19,7 @@ class DiApplicationModule(
         ProductSampleRepository()
     }
 
+    @Qualifier("CartInMemoryRepository")
     fun provideCartRepositoryInMemory(): CartRepository = Cache.cartRepositoryInMemory.get {
         CartInMemoryRepository()
     }
