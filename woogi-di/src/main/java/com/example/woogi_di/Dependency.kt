@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.woogi_di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses

@@ -1,5 +1,6 @@
-package woowacourse.shopping.di
+package com.example.woogi_di
 
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
@@ -10,8 +11,8 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class DependencyInjector(
-    private val container: Container = DependencyInjectionContainer()
+class WoogiInjector(
+    private val woogiContainer: WoogiContainer = DefaultWoogiContainer()
 ) {
 
     inline fun <reified T : Any> inject(): T {
@@ -25,22 +26,27 @@ class DependencyInjector(
     fun List<KParameter>.instantiateParameters(): Array<Any?> =
         map { it.instantiate() }.toTypedArray()
 
-    fun KParameter.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
-        true -> {
-            if (hasAnnotation<WoogiQualifier>()) {
-                val qualifier = annotations.filterIsInstance<WoogiQualifier>()
-                container.find(qualifier.first().name) ?: throw NoSuchElementException()
-            } else {
-                container.find(this.type.jvmErasure) ?: throw NoSuchElementException()
-            }
-        }
+    private fun KParameter.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
+        true -> instantiateOnQualifier()
+            ?: woogiContainer.find(this.type.jvmErasure)
+            ?: throw NoSuchElementException()
 
         false -> type.jvmErasure.instantiateRecursively()
     }
 
     fun <T> KProperty<T>.instantiate(): Any = when (hasAnnotation<WoogiProperty>()) {
-        true -> container.find(returnType.jvmErasure) ?: throw NoSuchElementException()
+        true -> instantiateOnQualifier()
+            ?: woogiContainer.find(this.returnType.jvmErasure)
+            ?: throw NoSuchElementException()
+
         false -> returnType.jvmErasure.instantiateRecursively()
+    }
+
+    private fun KAnnotatedElement.instantiateOnQualifier(): Any? {
+        if (!annotations.any { it == WoogiQualifier::class }) return null
+        val qualifier = annotations.filterIsInstance<WoogiQualifier>().first().name
+
+        return woogiContainer.find(qualifier)
     }
 
     private fun KClass<*>.instantiateRecursively(): Any {
@@ -56,10 +62,7 @@ class DependencyInjector(
         this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
             .forEach {
                 it.isAccessible = true
-                it.setter.call(
-                    this,
-                    it.instantiate()
-                )
+                it.setter.call(this, it.instantiate())
             }
     }
 

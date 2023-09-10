@@ -10,15 +10,15 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.ShoppingApplication
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
+inline fun <reified VM : ViewModel> ComponentActivity.woogiViewModels(): Lazy<VM> {
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
-        { viewModelFactory<VM>() },
+        { woogiViewModelFactory<VM>() },
     )
 }
 
-inline fun <reified VM : ViewModel> viewModelFactory(): ViewModelProvider.Factory =
+inline fun <reified VM : ViewModel> woogiViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
             ShoppingApplication.injector.inject<VM>()

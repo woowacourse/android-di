@@ -1,10 +1,14 @@
-package woowacourse.shopping.di
-
+import com.example.woogi_di.WoogiContainer
+import com.example.woogi_di.WoogiInjector
+import com.example.woogi_di.WoogiProperty
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.jvm.jvmErasure
 
 class ClassA(
@@ -31,7 +35,7 @@ class DependencyInjectorTest {
     @Test
     fun `생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
         // given
-        val injector = DependencyInjector()
+        val injector = WoogiInjector()
 
         // when
         val instanceB = injector.inject<ClassB>()
@@ -40,13 +44,13 @@ class DependencyInjectorTest {
         // then
         val expected = ClassC::class
 
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `생성자의 인자의 생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
         // given
-        val injector = DependencyInjector()
+        val injector = WoogiInjector()
 
         // when
         val instanceD = injector.inject<ClassD>()
@@ -57,15 +61,17 @@ class DependencyInjectorTest {
         val expected1 = ClassE::class
         val expected2 = ClassF::class
 
-        assertEquals(expected1, actual1)
-        assertEquals(expected2, actual2)
+        assertAll(
+            { assertThat(actual1).isEqualTo(expected1) },
+            { assertThat(actual2).isEqualTo(expected2) }
+        )
     }
 
     @Test
     fun `생성자의 인자에 WoogiAnnotation이 붙어있는 프로퍼티의 경우 Container로부터 해당 프로퍼티 타입의 인스턴스를 가져온다`() {
         // given
-        val container: Container = mockk()
-        val injector = DependencyInjector(container)
+        val container: WoogiContainer = mockk()
+        val injector = WoogiInjector(container)
 
         every {
             container.find(ClassB::class)
@@ -81,27 +87,25 @@ class DependencyInjectorTest {
         verify { container.find(ClassB::class) }
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test
     fun `생성자의 인자에 WoogiAnnotation이 붙어있는 프로퍼티의 경우 Container에 존재하지 않으면 예외가 발생한다`() {
         // given
-        val container: Container = mockk()
-        val injector = DependencyInjector(container)
+        val container: WoogiContainer = mockk()
+        val injector = WoogiInjector(container)
 
         every {
             container.find(ClassB::class)
         } returns null
 
-        // when
-        injector.inject<ClassA>()
-
         // then
+        assertThrows<NoSuchElementException> { injector.inject<ClassA>() }
     }
 
     @Test
     fun `파라미터가 아닌 클래스 내부에 위치한 WoogiAnnotation이 붙어있는 프로퍼티에 대한 의존성 주입을 수행할 수 있다`() {
         // given
-        val container: Container = mockk()
-        val injector = DependencyInjector(container)
+        val container: WoogiContainer = mockk()
+        val injector = WoogiInjector(container)
 
         every {
             container.find(ClassH::class)

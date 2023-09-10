@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.woogi_di.WoogiProperty
+import com.example.woogi_di.WoogiQualifier
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.WoogiProperty
-import woowacourse.shopping.di.WoogiQualifier
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository

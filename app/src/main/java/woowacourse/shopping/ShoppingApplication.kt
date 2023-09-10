@@ -1,13 +1,13 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.example.woogi_di.Dependency
+import com.example.woogi_di.WoogiInjector
+import com.example.woogi_di.woogiInitializer
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.Dependency
-import woowacourse.shopping.di.DependencyInjectionContainer
-import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
@@ -20,23 +20,22 @@ class ShoppingApplication : Application() {
     }
 
     private fun setupDependencyInjector() {
-        val container = DependencyInjectionContainer(
-            listOf(
+        val context = this
+        injector = woogiInitializer {
+            declareDependency(
                 Dependency<CartRepository>(
                     DatabaseCartRepository(
-                        ShoppingDatabase.getDatabase(this).cartProductDao()
+                        ShoppingDatabase.getDatabase(context).cartProductDao()
                     )
-                ),
-                Dependency<CartRepository>(InMemoryCartRepository()),
-                Dependency<ProductRepository>(DefaultProductRepository())
+                )
             )
-        )
-
-        injector = DependencyInjector(container)
+            declareDependency(Dependency<CartRepository>(InMemoryCartRepository()))
+            declareDependency(Dependency<ProductRepository>(DefaultProductRepository()))
+        }
     }
 
     companion object {
 
-        lateinit var injector: DependencyInjector
+        lateinit var injector: WoogiInjector
     }
 }
