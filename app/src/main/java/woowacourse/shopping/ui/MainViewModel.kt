@@ -11,7 +11,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel constructor(
+class MainViewModel(
     @InMemory private val productRepository: ProductRepository,
     @InDisk private val cartRepository: CartRepository,
 ) : ViewModel() {

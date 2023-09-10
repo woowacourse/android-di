@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
 
-class CartViewModel constructor(
+class CartViewModel(
     @InDisk private val cartRepository: CartRepository,
 ) : ViewModel() {
 
