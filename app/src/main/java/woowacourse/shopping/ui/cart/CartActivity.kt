@@ -5,13 +5,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.viewModel
+import woowacourse.shopping.di.woogiViewModels
 
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel<CartViewModel>()
+    private val viewModel by woogiViewModels<CartViewModel>()
 
     private lateinit var dateFormatter: DateFormatter
 
