@@ -42,7 +42,7 @@ class CartViewModelTest {
 
     @Test
     fun `장바구니에 담긴 모든 상품을 요청하면 불러와진다`() {
-        val fakeProducts = ProductFixture.getProducts(listOf(1, 2, 3, 4, 5))
+        val fakeProducts = ProductFixture.getCartProducts(listOf(1, 2, 3, 4, 5))
 
         // given
         coEvery { cartRepository.getAllCartProducts() } returns fakeProducts
@@ -60,7 +60,7 @@ class CartViewModelTest {
         coEvery { cartRepository.deleteCartProduct(any()) } just runs
 
         // when
-        vm.deleteCartProduct(1)
+        vm.deleteCartProduct(1L)
 
         // then
         Assertions.assertThat(vm.onCartProductDeleted.value).isTrue
