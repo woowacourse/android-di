@@ -11,6 +11,9 @@ class Graph1(nodes: Set<Node1>) {
         validateNodes(nodes)
     }
 
+    fun getNodesThatDependOn(node: Node1): List<Node1> =
+        dependencyMap[node] ?: throw IllegalArgumentException("$node 노드는 그래프에 없는 노드입니다.")
+
     private fun validateNodes(nodes: Set<Node1>) {
         nodes.forEach { node ->
             val otherNodes = nodes.filterNot { it == node }

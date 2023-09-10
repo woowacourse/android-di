@@ -1,10 +1,16 @@
 package com.ki960213.sheath.sorter
 
+import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.component.SheathComponent
+import org.junit.Rule
 import org.junit.Test
 
 internal class Graph1Test {
+
+    @JvmField
+    @Rule
+    val expect: Expect = Expect.create()
 
     @Test
     fun `그래프를 만들 때 어떤 노드가 노드 목록에 없는 노드를 의존한다면 에러가 발생한다`() {
@@ -47,4 +53,37 @@ internal class Graph1Test {
     private class Test5 : Test4()
 
     private class Test6 : Test4()
+
+    @Test
+    fun `그래프를 노드를 이용해 생성하면 각 노드를 의존하는 노드들을 저장한다`() {
+        val node1 = Node1(SheathComponent(Test7::class))
+        val node2 = Node1(SheathComponent(Test8::class))
+        val node3 = Node1(SheathComponent(Test9::class))
+
+        val graph = Graph1(setOf(node1, node2, node3))
+
+        expect.that(graph.getNodesThatDependOn(node1)).containsExactly(node3)
+        expect.that(graph.getNodesThatDependOn(node2)).containsExactly(node1, node3)
+        expect.that(graph.getNodesThatDependOn(node3)).containsExactly()
+    }
+
+    @Test
+    fun `그래프에 없는 노드의 의존 노드를 가져오면 에러가 발생한다`() {
+        val node1 = Node1(SheathComponent(Test1::class))
+        val node2 = Node1(SheathComponent(Test2::class))
+        val node3 = Node1(SheathComponent(Test3::class))
+        val graph = Graph1(setOf(node1, node2))
+
+        try {
+            graph.getNodesThatDependOn(node3)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("$node3 노드는 그래프에 없는 노드입니다.")
+        }
+    }
+
+    private class Test7(val test8: Test8)
+
+    private class Test8
+
+    private class Test9(val test7: Test7, val test8: Test8)
 }
