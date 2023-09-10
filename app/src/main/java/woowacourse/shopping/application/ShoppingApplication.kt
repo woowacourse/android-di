@@ -23,8 +23,8 @@ class ShoppingApplication : Application() {
         injector = Injector(appContainer)
 
         appContainer.createInstance(CartProductDao::class, dao)
-//        appContainer.createInstance(CartRepository::class, DefaultCartRepository(dao))
-        appContainer.createInstance(ProductRepository::class, DefaultProductRepository())
+        appContainer.createInstance(CartRepository::class, injector.create(DefaultCartRepository::class))
+        appContainer.createInstance(ProductRepository::class, injector.create(DefaultProductRepository::class))
     }
 
     private fun createRoomDatabase(): ShoppingDatabase {

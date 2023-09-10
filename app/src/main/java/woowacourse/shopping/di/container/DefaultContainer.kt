@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 class DefaultContainer : ShoppingContainer {
     private val instances = mutableMapOf<KClass<*>, Any?>()
 
-    override fun <T : Any> createInstance(clazz: KClass<T>, instance: T) {
+    override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {
         instances[clazz] = instance
     }
 
