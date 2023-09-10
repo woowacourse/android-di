@@ -3,7 +3,7 @@ package com.ki960213.sheath.sorter
 import com.ki960213.sheath.component.SheathComponent
 import kotlin.properties.Delegates
 
-class Node1(private val sheathComponent: SheathComponent) {
+class Node1(val sheathComponent: SheathComponent) {
 
     val dependentCount: Int = sheathComponent.dependentCount
 
