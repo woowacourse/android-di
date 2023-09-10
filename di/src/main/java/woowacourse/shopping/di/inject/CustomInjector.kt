@@ -14,7 +14,8 @@ import kotlin.reflect.jvm.jvmErasure
 class CustomInjector {
 
     fun <T : Any> inject(kClass: KClass<T>): Any {
-        return DependencyContainer.getInstance(kClass) ?: createInstanceFromKClass(kClass)
+        val annotationsWithQualifier = kClass.annotations.filterIsInstance<Qualifier>()
+        return DependencyContainer.getInstance(kClass, annotationsWithQualifier) ?: createInstanceFromKClass(kClass)
     }
 
     private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {
@@ -22,7 +23,7 @@ class CustomInjector {
             ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
         val parameterValues =
-            constructor.parameters.associateWith { getOrInjectInstanceWithQualifier(it.type.jvmErasure) }
+            constructor.parameters.associateWith { inject(it.type.jvmErasure) }
 
         return constructor.callBy(parameterValues).apply { injectFields(this) }
     }
@@ -33,13 +34,8 @@ class CustomInjector {
             .forEach { prop ->
                 prop.isAccessible = true
                 val propertyType = prop.returnType.jvmErasure
-                val value = getOrInjectInstanceWithQualifier(propertyType)
+                val value = inject(propertyType)
                 (prop as KMutableProperty<*>).setter.call(instance, value)
             }
-    }
-
-    private fun getOrInjectInstanceWithQualifier(kClass: KClass<*>): Any {
-        val annotationsWithQualifier = kClass.annotations.filterIsInstance<Qualifier>()
-        return DependencyContainer.getInstance(kClass, annotationsWithQualifier) ?: inject(kClass)
     }
 }

@@ -15,7 +15,7 @@ object DependencyContainer {
         instances[key] = instance
     }
 
-    fun getInstance(kClass: KClass<*>, annotations: List<Annotation> = emptyList()): Any? {
+    fun getInstance(kClass: KClass<*>, annotations: List<Annotation>): Any? {
         val key = Pair(kClass, annotations)
         return instances[key]
     }
