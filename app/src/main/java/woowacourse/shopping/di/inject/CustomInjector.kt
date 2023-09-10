@@ -1,6 +1,7 @@
 package woowacourse.shopping.di.inject
 
 import woowacourse.shopping.di.annotation.CustomInject
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.container.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -13,16 +14,15 @@ import kotlin.reflect.jvm.jvmErasure
 class CustomInjector {
 
     fun <T : Any> inject(kClass: KClass<T>): Any {
-        return DependencyContainer.getInstance(kClass)
-            ?: createInstanceFromKClass(kClass)
+        return DependencyContainer.getInstance(kClass) ?: createInstanceFromKClass(kClass)
     }
 
     private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {
-        val constructor =
-            kClass.primaryConstructor ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
+        val constructor = kClass.primaryConstructor
+            ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
 
         val parameterValues =
-            constructor.parameters.associateWith { findPropertyAndGetValue(it.type.jvmErasure) }
+            constructor.parameters.associateWith { getOrInjectInstanceWithQualifier(it.type.jvmErasure) }
 
         return constructor.callBy(parameterValues).apply { injectFields(this) }
     }
@@ -33,12 +33,13 @@ class CustomInjector {
             .forEach { prop ->
                 prop.isAccessible = true
                 val propertyType = prop.returnType.jvmErasure
-                val value = findPropertyAndGetValue(propertyType)
+                val value = getOrInjectInstanceWithQualifier(propertyType)
                 (prop as KMutableProperty<*>).setter.call(instance, value)
             }
     }
 
-    private fun findPropertyAndGetValue(kClass: KClass<*>): Any {
-        return DependencyContainer.getInstance(kClass) ?: inject(kClass)
+    private fun getOrInjectInstanceWithQualifier(kClass: KClass<*>): Any {
+        val annotationsWithQualifier = kClass.annotations.filterIsInstance<Qualifier>()
+        return DependencyContainer.getInstance(kClass, annotationsWithQualifier) ?: inject(kClass)
     }
 }
