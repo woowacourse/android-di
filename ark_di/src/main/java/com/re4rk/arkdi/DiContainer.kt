@@ -26,7 +26,9 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         }
 
         val args = constructor.parameters.associateWith { parameter -> get(parameter) }
-        return constructor.callBy(args)
+        return constructor.callBy(args).apply {
+            this@DiContainer.inject(this)
+        }
     }
 
     private fun <T : Any> getPrimaryConstructor(clazz: KClass<T>): KFunction<T> {
