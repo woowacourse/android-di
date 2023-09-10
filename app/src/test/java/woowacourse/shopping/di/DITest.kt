@@ -16,7 +16,7 @@ class DITest {
     @Test
     fun `의존성 주입해 뷰모델 인스턴스 생성에 성공한다`() {
         // given
-        FakeApplication.injector = Injector(listOf(FakeRepositoryModule))
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
 
         // when
         val vm = FakeApplication.injector.inject(FakeViewModel::class)
@@ -30,7 +30,7 @@ class DITest {
     @Test(expected = IllegalArgumentException::class)
     fun `의존성 주입에 필요한 인스턴스가 없어 뷰모델 생성에 실패한다`() {
         // given
-        FakeApplication.injector = Injector(listOf())
+        FakeApplication.injector = Injector(AppContainer(listOf()))
 
         // when
         val vm = FakeApplication.injector.inject(FakeViewModel::class)
@@ -39,7 +39,7 @@ class DITest {
     @Test(expected = IllegalArgumentException::class)
     fun `Inject 어노테이션을 붙이지 않아 뷰모델 생성에 실패한다`() {
         // given
-        FakeApplication.injector = Injector(listOf(FakeRepositoryModule))
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
 
         // when
         val vm = FakeApplication.injector.inject(FakeViewModelMissingAnnotation::class)
@@ -48,7 +48,7 @@ class DITest {
     @Test
     fun `의존성 주입이 필요없는 필드를 가진 뷰모델을 생성한다`() {
         // given
-        FakeApplication.injector = Injector(listOf(FakeRepositoryModule))
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
 
         // when
         val vm = FakeApplication.injector.inject(FakeViewModelWithDefaultValue::class)
