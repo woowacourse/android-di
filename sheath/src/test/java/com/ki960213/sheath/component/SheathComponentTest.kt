@@ -2,7 +2,10 @@ package com.ki960213.sheath.component
 
 import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
+import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
+import com.ki960213.sheath.annotation.Repository
+import com.ki960213.sheath.annotation.Scope
 import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -28,8 +31,10 @@ internal class SheathComponentTest {
         assertThat(actual).isTrue()
     }
 
+    @Component
     private class Test1(test2: Test2)
 
+    @Component
     private class Test2
 
     @Test
@@ -42,11 +47,13 @@ internal class SheathComponentTest {
         assertThat(actual).isTrue()
     }
 
+    @Component
     private class Test3 {
         @Inject
         private lateinit var test4: Test4
     }
 
+    @Component
     private class Test4
 
     @Test
@@ -59,11 +66,13 @@ internal class SheathComponentTest {
         assertThat(actual).isTrue()
     }
 
+    @Component
     private class Test5 {
         @Inject
         private fun test(test6: Test6): Unit = Unit
     }
 
+    @Component
     private class Test6
 
     @Test
@@ -78,6 +87,7 @@ internal class SheathComponentTest {
         expect.that(sheathComponent1.isDependingOn(sheathComponent4)).isTrue()
     }
 
+    @Component
     private class Test7 @Inject constructor(test8: Test8) {
         @Inject
         private lateinit var test9: Test9
@@ -86,10 +96,13 @@ internal class SheathComponentTest {
         private fun test(test10: Test10): Unit = Unit
     }
 
+    @Component
     private class Test8
 
+    @Component
     private class Test9
 
+    @Component
     private class Test10
 
     @Test
@@ -102,6 +115,7 @@ internal class SheathComponentTest {
         assertThat(actual).isFalse()
     }
 
+    @Component
     private class Test11 @Inject constructor(test12: Test12) {
         @Inject
         private lateinit var test13: Test13
@@ -110,12 +124,16 @@ internal class SheathComponentTest {
         private fun test(test14: Test14): Unit = Unit
     }
 
+    @Component
     private class Test12
 
+    @Component
     private class Test13
 
+    @Component
     private class Test14
 
+    @Component
     private class Test15
 
     @Test
@@ -127,13 +145,16 @@ internal class SheathComponentTest {
         }
     }
 
+    @Component
     private class Test16 @Inject constructor(test17: Test17) {
         @Inject
         constructor(test18: Test18) : this(test18 as Test17)
     }
 
+    @Component
     private open class Test17
 
+    @Component
     private class Test18 : Test17()
 
     @Test
@@ -145,6 +166,7 @@ internal class SheathComponentTest {
         assertThat(actual).isInstanceOf(Test19::class.java)
     }
 
+    @Component
     class Test19 {
         private lateinit var name: String
     }
@@ -161,6 +183,7 @@ internal class SheathComponentTest {
         }
     }
 
+    @Component
     class Test20(test19: Test19)
 
     @Test
@@ -181,6 +204,7 @@ internal class SheathComponentTest {
         assertThat(actual).isInstanceOf(Test21::class.java)
     }
 
+    @Component
     class Test21 @Inject constructor()
 
     @Test
@@ -195,8 +219,10 @@ internal class SheathComponentTest {
         }
     }
 
+    @Component
     class Test22 @Inject constructor(test23: Test23)
 
+    @Component
     class Test23
 
     @Test
@@ -223,11 +249,13 @@ internal class SheathComponentTest {
     private fun KClass<*>.getProperty(name: String): KProperty1<*, *>? =
         this.declaredMemberProperties.find { it.name == name }
 
+    @Component
     class Test24 {
         @Inject
         private lateinit var test25: Test25
     }
 
+    @Component
     class Test25
 
     @Test
@@ -251,6 +279,7 @@ internal class SheathComponentTest {
         assertThat(actual).isInstanceOf(Test26::class.java)
     }
 
+    @Component
     class Test26 {
         @Inject
         private fun test(): Unit = Unit
@@ -271,6 +300,7 @@ internal class SheathComponentTest {
     private fun KClass<*>.getFunction(name: String): KFunction<*>? =
         this.functions.find { it.name == name }
 
+    @Component
     class Test27 {
         var injected: Boolean = false
 
@@ -280,6 +310,7 @@ internal class SheathComponentTest {
         }
     }
 
+    @Component
     class Test28
 
     @Test
@@ -308,6 +339,7 @@ internal class SheathComponentTest {
         expect.that((actual as Test29).injectedByFunction).isTrue()
     }
 
+    @Component
     class Test29 @Inject constructor(test30: Test30) {
         @Inject
         private lateinit var test31: Test31
@@ -320,10 +352,13 @@ internal class SheathComponentTest {
         }
     }
 
+    @Component
     class Test30
 
+    @Component
     class Test31
 
+    @Component
     class Test32
 
     @Test
@@ -350,4 +385,41 @@ internal class SheathComponentTest {
 
         assertThat(actual).isEqualTo(Test1::class.hashCode())
     }
+
+    @Test
+    fun `SheathComponent의 scope는 @Scope 애노테이션을 붙일 때 설정한 scope와 같다`() {
+        val sheathComponent = SheathComponent(Test33::class)
+
+        val actual = sheathComponent.scope
+
+        assertThat(actual).isEqualTo(SheathComponentScope.VIEW_MODEL)
+    }
+
+    @Scope(SheathComponentScope.VIEW_MODEL)
+    @Component
+    class Test33
+
+    @Test
+    fun `SheathComponent의 scope는 @Scope 애노테이션이 붙지 않으면 Singleton이다`() {
+        val sheathComponent = SheathComponent(Test34::class)
+
+        val actual = sheathComponent.scope
+
+        assertThat(actual).isEqualTo(SheathComponentScope.SINGLETON)
+    }
+
+    @Repository
+    class Test34
+
+    @Test
+    fun `@Component 애노테이션 혹은 @Component 애노테이션이 붙은 애노테이션이 없는 클래스로 SheathComponent를 생성하면 에러가 발생한다`() {
+        try {
+            SheathComponent(Test35::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat()
+                .isEqualTo("@Component가 붙은 클래스 혹은 @Component가 붙은 애노테이션이 붙은 클래스로만 SheathComponent를 생성할 수 있습니다.")
+        }
+    }
+
+    class Test35
 }
