@@ -3,8 +3,11 @@ package woowacourse.shopping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
+import kotlin.reflect.full.createInstance
 
 class TargetClass(private val cartRepository: CartRepository)
 
@@ -14,6 +17,7 @@ class AppContainerTest {
     @Before
     fun setup() {
         appContainer = AppContainer()
+        appContainer.addProvider(CartProductDao::class, FakeCartProductDao::class::createInstance)
     }
 
     @Test

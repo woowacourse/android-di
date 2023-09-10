@@ -1,14 +1,19 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.createProduct
 import woowacourse.shopping.fake.FakeCartRepository
-import woowacourse.shopping.getProducts
+import woowacourse.shopping.getCartProducts
 import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.toProduct
 
 class CartViewModelTest {
     private lateinit var cartRepository: CartRepository
@@ -17,9 +22,11 @@ class CartViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
-        cartRepository = FakeCartRepository(getProducts().toMutableList())
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        cartRepository = FakeCartRepository(getCartProducts().toMutableList())
         viewModel = CartViewModel(cartRepository)
     }
 
@@ -31,7 +38,7 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        val expected = getProducts()
+        val expected = getCartProducts()
         assertThat(viewModel.cartProducts.value).isEqualTo(expected)
     }
 
@@ -40,14 +47,14 @@ class CartViewModelTest {
         // given
         val product = createProduct()
         viewModel.getAllCartProducts()
-        assertThat(viewModel.cartProducts.value).contains(product)
+        assertThat(viewModel.cartProducts.value?.map { it.toProduct() }).contains(product)
 
         // when
         viewModel.deleteCartProduct(0)
 
         // then
         viewModel.getAllCartProducts()
-        assertThat(viewModel.cartProducts.value).doesNotContain(product)
+        assertThat(viewModel.cartProducts.value?.map { it.toProduct() }).doesNotContain(product)
     }
 
     @Test

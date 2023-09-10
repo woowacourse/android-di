@@ -1,6 +1,7 @@
 package woowacourse.shopping.fake
 
 import woowacourse.shopping.getProducts
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -13,17 +14,23 @@ class FakeProductRepository : ProductRepository {
     }
 }
 
-class FakeCartRepository(private val cartProducts: MutableList<Product> = mutableListOf()) :
+class FakeCartRepository(private val cartProducts: MutableList<CartProduct> = mutableListOf()) :
     CartRepository {
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+    override suspend fun addCartProduct(product: Product) {
+        val cartProduct = CartProduct(
+            product.name,
+            product.price,
+            product.imageUrl,
+            System.currentTimeMillis(),
+        )
+        cartProducts.add(cartProduct)
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return cartProducts.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProducts.removeAt(id.toInt())
     }
 }
