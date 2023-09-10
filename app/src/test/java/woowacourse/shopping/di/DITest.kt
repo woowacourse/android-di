@@ -57,6 +57,19 @@ class DITest {
         assertThat(vm).isNotNull
         assertEquals(vm.productFakeRepository, ProductFakeRepository)
     }
+
+    @Test
+    fun `필드 주입하여 뷰모델을 생성한다`() {
+        // given
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
+
+        // when
+        val vm = FakeApplication.injector.inject(FakeViewModelWithFieldInjection::class)
+
+        // then
+        assertThat(vm).isNotNull
+        assertEquals(vm.cartFakeRepository, CartFakeRepository)
+    }
 }
 
 class FakeViewModel(
@@ -72,4 +85,9 @@ class FakeViewModelMissingAnnotation(
 class FakeViewModelWithDefaultValue(
     @Inject val productFakeRepository: ProductFakeRepository,
     val someString: String = "",
-)
+) : ViewModel()
+
+class FakeViewModelWithFieldInjection() : ViewModel() {
+    @Inject
+    lateinit var cartFakeRepository: CartFakeRepository
+}
