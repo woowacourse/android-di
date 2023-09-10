@@ -58,7 +58,7 @@ class DiContainerTest {
     @Test
     fun `DiContainer안에 있는 객체를 반환한다 1`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.get(FakeDiRepository::class)
+        val fakeDiRepository = fakeDiContainer.getInstance(FakeDiRepository::class)
 
         // then
         assertTrue(fakeDiRepository is FakeDiProtoTypeRepository)
@@ -67,7 +67,7 @@ class DiContainerTest {
     @Test
     fun `DiContainer안에 있는 객체를 반환한다 2`() {
         // given & when
-        val fakeDiDataSource = fakeDiContainer.get(FakeDiDataSource::class)
+        val fakeDiDataSource = fakeDiContainer.getInstance(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -94,7 +94,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiDataSource = fakeDiObject.get(FakeDiDataSource::class)
+        val fakeDiDataSource = fakeDiObject.getInstance(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -106,7 +106,7 @@ class DiContainerTest {
         class MockRepository
 
         // when
-        runCatching { fakeDiContainer.get(MockRepository::class) }
+        runCatching { fakeDiContainer.getInstance(MockRepository::class) }
             // then
             .onSuccess { assertEquals(it, null) }
             .onFailure { assertTrue(it is IllegalArgumentException) }

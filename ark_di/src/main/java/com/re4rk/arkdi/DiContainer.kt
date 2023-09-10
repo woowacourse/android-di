@@ -25,7 +25,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
             else -> throw IllegalArgumentException("DiInject annotation must be on only one constructor")
         }
 
-        val args = constructor.parameters.associateWith { parameter -> get(parameter) }
+        val args = constructor.parameters.associateWith { parameter -> getInstance(parameter) }
         return constructor.callBy(args).apply {
             this@DiContainer.inject(this)
         }
@@ -43,13 +43,13 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(clazz: KClass<T>): T? {
-        val method = getMethod(clazz) ?: return parentDiContainer?.get(clazz)
-        val parameters = method.parameters.associateWith { parameter -> getInstance(parameter) }
+    fun <T : Any> getInstance(clazz: KClass<T>): T? {
+        val method = getKFunction(clazz) ?: return parentDiContainer?.getInstance(clazz)
+        val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters) as T
     }
 
-    private fun <T : Any> getMethod(clazz: KClass<T>): KFunction<*>? {
+    private fun <T : Any> getKFunction(clazz: KClass<T>): KFunction<*>? {
         return this::class.declaredFunctions.filter { it.qualifier == clazz.qualifier }
             .firstOrNull { function ->
                 function.isAccessible = true
@@ -57,13 +57,13 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
             }
     }
 
-    fun get(kParameter: KParameter): Any? {
-        val method = getParameter(kParameter) ?: return parentDiContainer?.get(kParameter)
-        val parameters = method.parameters.associateWith { parameter -> getInstance(parameter) }
+    private fun getInstance(kParameter: KParameter): Any? {
+        val method = getKFunction(kParameter) ?: return parentDiContainer?.getInstance(kParameter)
+        val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters)
     }
 
-    private fun getParameter(kParameter: KParameter): KFunction<*>? {
+    private fun getKFunction(kParameter: KParameter): KFunction<*>? {
         return this::class.declaredFunctions.filter { it.qualifier == kParameter.qualifier }
             .firstOrNull { property ->
                 property.isAccessible = true
@@ -71,10 +71,10 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
             }
     }
 
-    private fun getInstance(parameter: KParameter): Any? {
+    private fun getArgument(parameter: KParameter): Any? {
         return when {
             parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
-            else -> get(parameter)
+            else -> getInstance(parameter)
         }
     }
 
@@ -82,7 +82,10 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         instance::class.declaredMemberProperties.filter { it.hasAnnotation<ArkInject>() }
             .forEach { property ->
                 property.isAccessible = true
-                property.javaField?.set(instance, get(property.returnType.jvmErasure))
+                property.javaField?.set(
+                    instance,
+                    getInstance(property.returnType.jvmErasure),
+                )
             }
     }
 }
