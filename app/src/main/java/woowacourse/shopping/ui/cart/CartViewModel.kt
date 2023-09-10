@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.annotation.CustomInject
+import woowacourse.shopping.di.annotation.DatabaseMode
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel : ViewModel() {
 
+    @DatabaseMode
     @CustomInject
     private lateinit var cartRepository: CartRepository
 
