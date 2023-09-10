@@ -1,9 +1,9 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.woogi_di.Dependency
-import com.example.woogi_di.WoogiInjector
-import com.example.woogi_di.woogiInitializer
+import com.boogiwoogi.di.Dependency
+import com.boogiwoogi.di.WoogiInjector
+import com.boogiwoogi.di.woogiInitializer
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
