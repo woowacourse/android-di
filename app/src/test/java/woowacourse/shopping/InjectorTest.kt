@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -22,17 +21,11 @@ import kotlin.reflect.KClass
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 class InjectorTest {
-
-    @After
-    fun tearDown() {
-        TestContainer.clearInstance()
-    }
-
     @Test
     fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val fakeRepository: FakeRepository = DefaultFakeRepository()
-        TestContainer.createInstance(FakeRepository::class, fakeRepository)
+        TestApplication.container.createInstance(FakeRepository::class, fakeRepository)
 
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)
@@ -57,13 +50,9 @@ class InjectorTest {
             .get()
 
         // then
-        val fakeRepository: FakeRepository =
-            Injector(TestContainer).create(FakeDaoRepository::class)
-        TestContainer.createInstance(FakeRepository::class, fakeRepository)
-        assertNotNull(fakeRepository)
-
         val viewModel = activity.viewModel
         assertNotNull(viewModel)
+        assertNotNull(viewModel.repository)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -79,7 +68,11 @@ class InjectorTest {
     fun `적절한 객체 인스턴스를 찾아 ViewModel 프로퍼티와 필드에 의존성을 주입한다`() {
         // given
         val fakeDao: FakeDao = DefaultFakeDao()
-        TestContainer.createInstance(FakeDao::class, fakeDao)
+        TestApplication.container.createInstance(FakeDao::class, fakeDao)
+        TestApplication.container.createInstance(
+            FakeRepository::class,
+            TestApplication.injector.create(FakeFieldRepository::class)
+        )
 
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)
@@ -87,14 +80,10 @@ class InjectorTest {
             .get()
 
         // then
-        val fakeRepository: FakeRepository =
-            Injector(TestContainer).create(FakeFieldRepository::class)
-        TestContainer.createInstance(FakeRepository::class, fakeRepository)
-        assertNotNull(fakeRepository)
-        assertNotNull(fakeRepository::class.java.getDeclaredField("fieldDao"))
-
         val viewModel = activity.viewModel
         assertNotNull(viewModel)
+        assertNotNull(viewModel.repository)
+        assertNotNull(viewModel.repository::class.java.getDeclaredField("fieldDao"))
     }
 }
 
@@ -102,17 +91,18 @@ class TestApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val container = TestContainer
 
+        container = TestContainer()
         injector = Injector(container)
     }
 
     companion object {
+        lateinit var container: ShoppingContainer
         lateinit var injector: Injector
     }
 }
 
-object TestContainer : ShoppingContainer {
+class TestContainer : ShoppingContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {
@@ -121,10 +111,6 @@ object TestContainer : ShoppingContainer {
 
     override fun <T : Any> getInstance(clazz: KClass<T>): T? {
         return instances[clazz] as? T
-    }
-
-    override fun clearInstance() {
-        instances.clear()
     }
 }
 
