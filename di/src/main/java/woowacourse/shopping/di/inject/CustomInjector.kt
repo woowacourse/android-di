@@ -14,9 +14,13 @@ import kotlin.reflect.jvm.jvmErasure
 
 class CustomInjector {
 
-    fun <T : Any> inject(kClass: KClass<T>): Any {
+    fun <T : Any> inject(kClass: KClass<T>): T {
         val annotations = kClass.findAnnotations<Qualifier>()
-        return DependencyContainer.getInstance(kClass, annotations) ?: createInstanceFromKClass(kClass)
+        return (
+            DependencyContainer.getInstance(kClass, annotations) ?: createInstanceFromKClass(
+                kClass,
+            )
+            ) as T
     }
 
     private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {
