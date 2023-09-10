@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.util.autoDI.dependencyContainer.AutoDiViewModelFactory
 
 const val UNSUPPORTED_COMPONENT_ERROR = "지원하지않는 컴포넌트에 ViewModel을 주입하셨습니다."
 

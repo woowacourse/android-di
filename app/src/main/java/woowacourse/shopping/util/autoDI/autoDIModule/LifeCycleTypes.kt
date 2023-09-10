@@ -1,30 +1,29 @@
-package woowacourse.shopping.util.autoDI.dependencyContainer
+package woowacourse.shopping.util.autoDI.autoDIModule
 
 import woowacourse.shopping.util.autoDI.LifeCycleType
-import kotlin.reflect.typeOf
+import kotlin.reflect.KType
 
+@Suppress("UNCHECKED_CAST")
 sealed class LifeCycleTypes {
     abstract val value: MutableList<out LifeCycleType<*>>
-    inline fun <reified T> searchWithOutQualifier(): T? {
-        val type = typeOf<T>()
-        return value.find { it.type == type }?.getInstance() as T?
+    internal fun <T> searchWithOutQualifier(kType: KType): T? {
+        return value.find { it.type == kType }?.getInstance() as T?
     }
 
-    inline fun <reified T> searchWithQualifier(qualifier: String): T? {
-        val type = typeOf<T>()
-        return value.find { it.type == type && it.qualifier == qualifier }?.getInstance() as T?
+    internal fun <T> searchWithQualifier(kType: KType, qualifier: String): T? {
+        return value.find { it.type == kType && it.qualifier == qualifier }?.getInstance() as T?
     }
 
     class Singletons(override val value: MutableList<LifeCycleType.Singleton<*>>) :
         LifeCycleTypes() {
-        fun <T : Any> add(qualifier: String? = null, initializeMethod: () -> T) {
+        internal fun <T : Any> add(qualifier: String? = null, initializeMethod: () -> T) {
             value.add(LifeCycleType.Singleton(qualifier, initializeMethod))
         }
     }
 
     class Disposables(override val value: MutableList<LifeCycleType.Disposable<*>>) :
         LifeCycleTypes() {
-        fun <T : Any> add(qualifier: String? = null, initializeMethod: () -> T) {
+        internal fun <T : Any> add(qualifier: String? = null, initializeMethod: () -> T) {
             value.add(LifeCycleType.Disposable(qualifier, initializeMethod))
         }
     }

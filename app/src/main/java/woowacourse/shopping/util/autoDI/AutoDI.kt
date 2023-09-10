@@ -1,25 +1,20 @@
 package woowacourse.shopping.util.autoDI
 
-import androidx.lifecycle.ViewModel
-import woowacourse.shopping.util.autoDI.dependencyContainer.DependencyContainer
+import woowacourse.shopping.util.autoDI.autoDIContainer.AutoDIModuleContainer
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 object AutoDI {
     operator fun invoke(init: AutoDI.() -> Unit) {
         this.init()
     }
 
-    fun <T : Any> singleton(qualifier: String? = null, registerBlock: () -> T) {
-        DependencyContainer.singletonRegister.register(qualifier, registerBlock)
+    inline fun <reified T : Any> inject(qualifier: String? = null): T {
+        val kType = typeOf<T>()
+        return publishedSearchLifeCycleType(kType, qualifier)
     }
 
-    fun <T : Any> disposable(qualifier: String? = null, registerBlock: () -> T) {
-        DependencyContainer.disposableRegister.register(qualifier, registerBlock)
-    }
-
-    fun <VM : ViewModel> viewModel(registerBlock: () -> VM) {
-        DependencyContainer.viewModelRegister.register(registerBlock)
-    }
-
-    inline fun <reified T : Any> inject(qualifier: String? = null): T =
-        DependencyContainer.search(qualifier)
+    @PublishedApi
+    internal fun <T> publishedSearchLifeCycleType(kType: KType, qualifier: String?): T =
+        AutoDIModuleContainer.searchLifeCycleType(kType, qualifier)
 }

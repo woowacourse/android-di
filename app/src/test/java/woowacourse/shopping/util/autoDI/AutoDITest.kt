@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import woowacourse.shopping.data.repository.CartRepositoryImpl
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.util.autoDI.dependencyContainer.DependencyContainer
+import woowacourse.shopping.util.autoDI.autoDIModule.AutoDIModule
 
 class AutoDITest {
 
@@ -17,9 +17,9 @@ class AutoDITest {
         }
 
         // then
-        val containerQualifier = DependencyContainer.singletons.value.first().qualifier
+        val containerQualifier = AutoDIModule.singletons.value.first().qualifier
         val containerInstanceType =
-            DependencyContainer.singletons.value.first().getInstance().javaClass.typeName
+            AutoDIModule.singletons.value.first().getInstance().javaClass.typeName
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }
@@ -33,9 +33,9 @@ class AutoDITest {
         }
 
         // then
-        val containerQualifier = DependencyContainer.disposables.value.first().qualifier
+        val containerQualifier = AutoDIModule.disposables.value.first().qualifier
         val containerInstanceType =
-            DependencyContainer.disposables.value.first().getInstance().javaClass.typeName
+            AutoDIModule.disposables.value.first().getInstance().javaClass.typeName
         assertThat(containerQualifier).isEqualTo(containerQualifier)
         assertThat(containerInstanceType).isEqualTo(CartRepositoryImpl().javaClass.typeName)
     }

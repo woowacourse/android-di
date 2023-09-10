@@ -1,4 +1,4 @@
-package woowacourse.shopping.util.autoDI.dependencyContainer
+package woowacourse.shopping.util.autoDI.autoDIModule
 
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.util.autoDI.ViewModelBundle
@@ -8,11 +8,11 @@ class ViewModelBundles(value: MutableList<ViewModelBundle<*>>) {
     private val _value: MutableList<ViewModelBundle<*>> = value
     val value: List<ViewModelBundle<*>> get() = _value.toList()
 
-    fun <VM : ViewModel> add(initializeMethod: () -> VM) {
+    internal fun <VM : ViewModel> add(initializeMethod: () -> VM) {
         _value.add(ViewModelBundle(initializeMethod))
     }
 
-    fun search(kType: KType): ViewModelBundle<*>? {
+    internal fun search(kType: KType): ViewModelBundle<*>? {
         return value.find { it.type == kType }
     }
 }

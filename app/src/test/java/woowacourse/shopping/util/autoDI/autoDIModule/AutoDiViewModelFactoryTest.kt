@@ -1,4 +1,4 @@
-package woowacourse.shopping.util.autoDI.dependencyContainer
+package woowacourse.shopping.util.autoDI.autoDIModule
 
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.util.autoDI.AutoDI
+import woowacourse.shopping.util.autoDI.AutoDiViewModelFactory
 
 private class FakeRepository
 
