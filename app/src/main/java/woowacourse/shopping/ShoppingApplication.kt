@@ -14,7 +14,7 @@ import woowacourse.shopping.repository.ProductRepository
 
 class ShoppingApplication : Application() {
 
-    lateinit var injector: CustomInjector
+    lateinit var injector: woowacourse.shopping.di.inject.CustomInjector
         private set
 
     override fun onCreate() {

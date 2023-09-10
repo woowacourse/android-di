@@ -5,7 +5,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@InMemoryMode
+@woowacourse.shopping.di.annotation.InMemoryMode
 class InMemoryCartRepository : CartRepository {
 
     private val cartProducts: MutableList<CartProduct> = mutableListOf()

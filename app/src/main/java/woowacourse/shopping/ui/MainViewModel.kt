@@ -14,12 +14,12 @@ import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
 
-    @InMemoryMode
-    @CustomInject
+    @woowacourse.shopping.di.annotation.InMemoryMode
+    @woowacourse.shopping.di.annotation.CustomInject
     private lateinit var productRepository: ProductRepository
 
-    @DatabaseMode
-    @CustomInject
+    @woowacourse.shopping.di.annotation.DatabaseMode
+    @woowacourse.shopping.di.annotation.CustomInject
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
