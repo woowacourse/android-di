@@ -4,14 +4,15 @@ import com.re4rk.arkdi.util.qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
 
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
@@ -44,30 +45,24 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> getInstance(clazz: KClass<T>): T? {
-        val method = getKFunction(clazz) ?: return parentDiContainer?.getInstance(clazz)
+        val method = getKFunction(clazz.starProjectedType, clazz.qualifier)
+            ?: return parentDiContainer?.getInstance(clazz)
         val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters) as T
     }
 
-    private fun <T : Any> getKFunction(clazz: KClass<T>): KFunction<*>? {
-        return this::class.declaredFunctions.filter { it.qualifier == clazz.qualifier }
-            .firstOrNull { function ->
-                function.isAccessible = true
-                function.javaMethod?.returnType?.simpleName == clazz.simpleName
-            }
-    }
-
     private fun getInstance(kParameter: KParameter): Any? {
-        val method = getKFunction(kParameter) ?: return parentDiContainer?.getInstance(kParameter)
+        val method = getKFunction(kParameter.type, kParameter.qualifier)
+            ?: return parentDiContainer?.getInstance(kParameter)
         val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters)
     }
 
-    private fun getKFunction(kParameter: KParameter): KFunction<*>? {
-        return this::class.declaredFunctions.filter { it.qualifier == kParameter.qualifier }
-            .firstOrNull { property ->
-                property.isAccessible = true
-                property.returnType == kParameter.type
+    private fun getKFunction(kType: KType, qualifier: String?): KFunction<*>? {
+        return this::class.declaredFunctions.filter { it.qualifier == qualifier }
+            .firstOrNull { kFunction ->
+                kFunction.isAccessible = true
+                kFunction.returnType == kType
             }
     }
 

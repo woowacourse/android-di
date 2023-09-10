@@ -46,17 +46,17 @@ class DiContainerTest {
     }
 
     private class FakeDiContainer : DiContainer() {
-        private fun provideFakeDiDataSource(): FakeDiDataSource =
+        fun provideFakeDiDataSource(): FakeDiDataSource =
             this.createInstance(FakeDiProtoTypeDataSource::class)
 
-        private fun provideFakeDiRepository(): FakeDiRepository =
+        fun provideFakeDiRepository(): FakeDiRepository =
             this.createInstance(FakeDiProtoTypeRepository::class)
     }
 
     private val fakeDiContainer = FakeDiContainer()
 
     @Test
-    fun `DiContainer안에 있는 객체를 반환한다 1`() {
+    fun `DiContainer안에 있는 객체를 반환한다`() {
         // given & when
         val fakeDiRepository = fakeDiContainer.getInstance(FakeDiRepository::class)
 
