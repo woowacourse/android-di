@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Prototype
+import com.ki960213.sheath.annotation.Qualifier
 import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -421,4 +422,74 @@ internal class SheathComponentTest {
 
     @Component
     class Test35
+
+    @Test
+    fun `여러 개의 한정자 애노테이션이 붙어있는 클래스로 생성하면 에러가 발생한다`() {
+        try {
+            SheathComponent(Test36::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
+        }
+    }
+
+    @Qualifier("Test36")
+    private annotation class Test36Qualifier
+
+    @Test36Qualifier
+    @Qualifier("test36")
+    @Component
+    class Test36
+
+    @Test
+    fun `한정자 애노테이션이 붙지 않았다면 이름은 클래스의 qualifiedName과 같다`() {
+        val sheathComponent = SheathComponent(Test37::class)
+
+        val actual = sheathComponent.name
+
+        assertThat(actual).isEqualTo(Test37::class.qualifiedName)
+    }
+
+    @Component
+    class Test37
+
+    @Test
+    fun `한정자 애노테이션이 붙어있다면 이름은 한정자 애노테이션으로 설정된 이름이다`() {
+        val sheathComponent = SheathComponent(Test38::class)
+
+        val actual = sheathComponent.name
+
+        assertThat(actual).isEqualTo("test38")
+    }
+
+    @Qualifier("test38")
+    @Component
+    class Test38
+
+    @Test
+    fun `커스텀 한정자 애노테이션이 붙어있다면 이름은 커스텀 한정자 애노테이션으로 설정된 이름이다`() {
+        val sheathComponent = SheathComponent(Test39::class)
+
+        val actual = sheathComponent.name
+
+        assertThat(actual).isEqualTo("test39")
+    }
+
+    @Qualifier("test39")
+    annotation class Test39Qualifier
+
+    @Test39Qualifier
+    @Component
+    class Test39
+
+    @Test
+    fun `로컬 클래스로 생성하면 에러가 발생한다`() {
+        @Component
+        class Test1
+
+        try {
+            SheathComponent(Test1::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e).hasMessageThat().isEqualTo("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
+        }
+    }
 }

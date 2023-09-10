@@ -3,6 +3,7 @@ package com.ki960213.sheath.component
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Prototype
+import com.ki960213.sheath.annotation.Qualifier
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -10,6 +11,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -17,6 +19,9 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
 class SheathComponent(private val clazz: KClass<*>) {
+
+    val name: String = getQualifiedName() ?: clazz.qualifiedName
+        ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
     val isSingleton: Boolean = !clazz.hasAnnotation<Prototype>()
 
@@ -40,12 +45,27 @@ class SheathComponent(private val clazz: KClass<*>) {
         return instance
     }
 
+    private fun getQualifiedName(): String? {
+        val qualifiedName = clazz.findAnnotation<Qualifier>()?.value
+        if (qualifiedName != null) return qualifiedName
+
+        val annotationAttachedQualifier = clazz.annotations
+            .find { it.annotationClass.hasAnnotation<Qualifier>() } ?: return null
+
+        return annotationAttachedQualifier.annotationClass
+            .findAnnotation<Qualifier>()
+            ?.value
+    }
+
     private fun validateAnnotation() {
         require(clazz.hasAnnotation<Component>() || clazz.annotations.any { annotation -> annotation.annotationClass.hasAnnotation<Component>() }) {
             "@Component가 붙은 클래스 혹은 @Component가 붙은 애노테이션이 붙은 클래스로만 SheathComponent를 생성할 수 있습니다."
         }
         require(clazz.constructors.count { it.hasAnnotation<Inject>() } <= 1) {
             "여러 개의 생성자에 @Inject 애노테이션을 붙일 수 없습니다."
+        }
+        require(clazz.annotations.count { it.annotationClass == Qualifier::class || it.annotationClass.hasAnnotation<Qualifier>() } <= 1) {
+            "여러 개의 한정자 애노테이션을 붙일 수 없습니다."
         }
     }
 
