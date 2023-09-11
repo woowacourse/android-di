@@ -29,6 +29,7 @@ class CartViewModel(
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
             _onCartProductDeleted.value = true
+            _cartProducts.value = _cartProducts.value?.filter { it.id != id }
         }
     }
 }
