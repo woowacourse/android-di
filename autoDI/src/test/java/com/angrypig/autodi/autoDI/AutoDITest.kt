@@ -1,6 +1,10 @@
 package com.angrypig.autodi.autoDI
 
 import com.angrypig.autodi.AutoDI
+import com.angrypig.autodi.autoDI.dummys.Test1
+import com.angrypig.autodi.autoDI.dummys.Test2
+import com.angrypig.autodi.autoDI.dummys.Test3
+import com.angrypig.autodi.autoDI.dummys.TestThing
 import com.angrypig.autodi.autoDIModule.autoDIModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
@@ -113,5 +117,55 @@ class AutoDITest {
         // then
         val pigName = "멧돼지"
         assertThat(injectedInstance.name).isEqualTo(pigName)
+    }
+
+    @Test
+    fun `개별적인 LifeCycleType 을 override한다(singleton 생명주기로 테스트)`() {
+        // given
+        val firstString = "First"
+        val firstModule = autoDIModule {
+            singleton<TestThing>(firstString) { Test1(firstString) }
+        }
+        val extraString = "Extra"
+        val extraModule = autoDIModule {
+            singleton<TestThing> { Test2(extraString) }
+        }
+        AutoDI {
+            registerModule(firstModule)
+            registerModule(extraModule)
+        }
+
+        // when
+        val overrideString = "override"
+        val overrideInitializeMethod = { Test3(overrideString) }
+        AutoDI.overrideSingleLifeCycleType<TestThing>(firstString, overrideInitializeMethod)
+
+        // then
+        assertThat(AutoDI.inject<TestThing>(firstString).testValue).isEqualTo(overrideString)
+    }
+
+    @Test
+    fun `개별적인 LifeCycleType 을 override한다(disposable 생명주기로 테스트)`() {
+        // given
+        val firstString = "First"
+        val firstModule = autoDIModule {
+            disposable<TestThing>(firstString) { Test1(firstString) }
+        }
+        val extraString = "Extra"
+        val extraModule = autoDIModule {
+            disposable<TestThing> { Test2(extraString) }
+        }
+        AutoDI {
+            registerModule(firstModule)
+            registerModule(extraModule)
+        }
+
+        // when
+        val overrideString = "override"
+        val overrideInitializeMethod = { Test3(overrideString) }
+        AutoDI.overrideSingleLifeCycleType<TestThing>(firstString, overrideInitializeMethod)
+
+        // then
+        assertThat(AutoDI.inject<TestThing>(firstString).testValue).isEqualTo(overrideString)
     }
 }
