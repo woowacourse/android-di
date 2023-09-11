@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation("com.github.hyemdooly:android-di:v1.0.0")
+    implementation("com.github.hyemdooly:android-di:v2.0.0")
 //    implementation(project(":di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
