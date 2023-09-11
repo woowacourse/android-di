@@ -22,16 +22,16 @@ private class FakeProductRepository : ProductRepository {
 private class FakeCartRepository : CartRepository {
     private val products: MutableList<CartProduct> = mutableListOf()
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         val cartProduct = CartProduct(0, product, 0L)
         products.add(cartProduct)
     }
 
-    override fun getAllCartProducts(): List<CartProduct> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return products.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
-        products.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        products.removeAt(id.toInt())
     }
 }
