@@ -25,13 +25,17 @@ class InjectorTest {
 
     }
 
+    class DefaultFakeRepository : FakeRepository
+    class RecursiveFakeRepository(fakeDao: FakeDao) : FakeRepository
+    class DefaultFakeDao : FakeDao
+
     @Before
     fun setUp() {
         Injector.container = FakeContainer
     }
 
     @After
-    fun tearDown(){
+    fun tearDown() {
         FakeContainer.instances.clear()
     }
 

@@ -1,3 +1,0 @@
-package woowacourse.shopping.data.di
-
-class DefaultFakeRepository:FakeRepository
