@@ -3,13 +3,13 @@ package com.angrypig.autodi.autoDI.autoDIModule
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.angrypig.autodi.AutoDI
+import com.angrypig.autodi.autoDIModule.autoDIModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import com.angrypig.autodi.AutoDI
-import com.angrypig.autodi.AutoDiViewModelFactory
 
 private class FakeRepository
 
@@ -26,9 +26,13 @@ class AutoDiViewModelFactoryTest {
     @Test
     fun `AutoDI 내에 주입 받으려는 뷰모델이 선언되어있다면 ViewModel 의존성 주입이 성공한다`() {
         // given
-        com.angrypig.autodi.AutoDI {
-            singleton { FakeRepository() }
-            viewModel { FakeViewModel(inject()) }
+        AutoDI {
+            registerModule(
+                autoDIModule {
+                    singleton { FakeRepository() }
+                    viewModel { FakeViewModel(inject()) }
+                },
+            )
         }
 
         // when
