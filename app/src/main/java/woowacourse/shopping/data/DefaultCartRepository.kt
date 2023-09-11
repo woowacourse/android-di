@@ -2,10 +2,12 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.di.SingleInstance
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
+@SingleInstance
 class DefaultCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

@@ -3,10 +3,13 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 class AppContainer {
+    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+
     private val providers: MutableMap<KClass<*>, KFunction<*>> = mutableMapOf()
 
     private val implementationClasses: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
@@ -24,10 +27,11 @@ class AppContainer {
         val implementationClass =
             implementationClasses[clazz.kotlin] ?: clazz.kotlin as KClass<out T>
 
-        val instance = getInstanceOf(implementationClass)
-        if (instance != null) return instance as T
+        instances[implementationClass]?.let { return it as T }
 
-        return createInstanceOf(implementationClass) as T
+        val instance = getInstanceOf(implementationClass) ?: createInstanceOf(implementationClass)
+        saveInstance(implementationClass, instance)
+        return instance as T
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -48,5 +52,11 @@ class AppContainer {
             inject(it.type.jvmErasure.java)
         }.toTypedArray()
         return constructor.call(*args)
+    }
+
+    private fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
+        if (implementationClass.hasAnnotation<SingleInstance>()) {
+            instances[implementationClass] = instance
+        }
     }
 }

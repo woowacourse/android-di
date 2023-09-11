@@ -10,7 +10,7 @@ import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
 import kotlin.reflect.full.createInstance
 
-class TargetClass(private val cartRepository: CartRepository)
+class TargetClass(val cartRepository: CartRepository)
 
 class AppContainerTest {
     private lateinit var appContainer: AppContainer
@@ -31,5 +31,18 @@ class AppContainerTest {
 
         // then
         assertThat(actual).isInstanceOf(TargetClass::class.java)
+    }
+
+    @Test
+    fun `서로 다른 TargetClass가 주입받은 cartRepository는 같은 객체이다`() {
+        // given
+        val targetClass1 = appContainer.inject(TargetClass::class.java)
+        val targetClass2 = appContainer.inject(TargetClass::class.java)
+
+        // when
+        assertThat(targetClass1).isNotEqualTo(targetClass2)
+
+        // then
+        assertThat(targetClass1.cartRepository).isEqualTo(targetClass2.cartRepository)
     }
 }
