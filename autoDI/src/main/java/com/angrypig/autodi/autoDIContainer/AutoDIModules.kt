@@ -18,28 +18,37 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
 
     private fun replaceOrAddByQualifier(autoDIModule: AutoDIModule) {
         var existingState = false
-        _value.map { existingModule ->
-            if (existingModule.qualifier == autoDIModule.qualifier) {
-                existingState = true
-                autoDIModule
-            } else {
-                existingModule
-            }
-        }
+        applyChangesToValue(
+            value.map { existingModule ->
+                if (existingModule.qualifier == autoDIModule.qualifier) {
+                    existingState = true
+                    autoDIModule
+                } else {
+                    existingModule
+                }
+            },
+        )
         if (!existingState) _value.add(autoDIModule)
     }
 
     internal fun overrideModule(qualifier: String, autoDIModule: AutoDIModule) {
         var existingState = false
-        value.map { existingModule ->
-            if (existingModule.qualifier == qualifier) {
-                existingState = true
-                autoDIModule
-            } else {
-                existingModule
-            }
-        }
+        applyChangesToValue(
+            value.map { existingModule ->
+                if (existingModule.qualifier == qualifier) {
+                    existingState = true
+                    autoDIModule
+                } else {
+                    existingModule
+                }
+            },
+        )
         if (!existingState) throw IllegalStateException(NOT_EXISTING_MODULE_OVERRIDE_ERROR)
+    }
+
+    private fun applyChangesToValue(newValue: List<AutoDIModule>) {
+        _value.clear()
+        _value.addAll(newValue)
     }
 
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T? {
