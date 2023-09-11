@@ -67,6 +67,10 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
         return null
     }
 
+    internal fun clear() {
+        _value.clear()
+    }
+
     companion object {
         private const val NOT_EXISTING_MODULE_OVERRIDE_ERROR =
             "존재하지 않는 모듈에 대한 override 가 일어났습니다. qualifier를 확인하세요"

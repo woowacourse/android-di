@@ -26,4 +26,8 @@ object AutoDI {
     @PublishedApi
     internal fun <T> publishedSearchLifeCycleType(kType: KType, qualifier: String?): T =
         AutoDIModuleContainer.searchLifeCycleType(kType, qualifier)
+
+    fun clearModuleContainer() {
+        AutoDIModuleContainer.clear()
+    }
 }

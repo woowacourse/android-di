@@ -28,4 +28,8 @@ object AutoDIModuleContainer {
         autoDIModules.searchViewModelBundle(kType) ?: throw IllegalStateException(
             NOT_EXIST_DEPENDENCY_ERROR,
         )
+
+    internal fun clear(){
+        autoDIModules.clear()
+    }
 }
