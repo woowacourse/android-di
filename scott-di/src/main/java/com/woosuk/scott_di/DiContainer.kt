@@ -59,4 +59,11 @@ object DiContainer {
                 qualifiedDeclarations[qualifierName]?.invoke() as Any
         }
     }
+
+    fun clear(){
+        singletons.clear()
+        declarations.clear()
+        qualifiedDeclarations.clear()
+        qualifiedSingletons.clear()
+    }
 }
