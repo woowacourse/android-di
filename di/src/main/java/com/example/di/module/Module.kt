@@ -15,7 +15,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
 abstract class Module(var context: Context?, private val parentModule: Module? = null) {
-    protected val cache = mutableMapOf<String, Any>()
+    private val cache = mutableMapOf<String, Any>()
 
     fun <T : Any> provideInstance(clazz: Class<T>, qualifier: KClass<out Annotation>? = null): T {
         if (qualifier != null && qualifier.hasAnnotation<Qualifier>().not()) {
@@ -26,7 +26,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
             0 -> createWithPrimaryConstructor(clazz)
             1 -> {
                 val entry = injectableFunctionWithModuleMap.entries.first()
-                createWithModuleFunc(entry.value, entry.key)
+                entry.value.getOrCreateInstance(entry.key.name) {
+                    createWithModuleFunc(entry.value, entry.key)
+                }
             }
 
             else -> throw IllegalStateException("실행할 함수를 선택할 수 없습니다.")
@@ -95,10 +97,13 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
         return instance
     }
 
-    protected inline fun <reified T : Any> getOrCreateInstance(crossinline create: () -> T): T {
-        val name = T::class.qualifiedName ?: throw NullPointerException("클래스 이름 없음")
-        if (cache[name] == null) cache[name] = create()
-        return cache[name] as T
+    private fun <T : Any> getOrCreateInstance(
+        key: String,
+        create: () -> T,
+    ): T {
+        if (cache[key] == null) cache[key] = create()
+        @Suppress("UNCHECKED_CAST")
+        return cache[key] as T
     }
 
     private fun getPublicMethodMap(): Map<KFunction<*>, Module> {

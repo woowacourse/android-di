@@ -20,38 +20,32 @@ class DefaultApplicationModule(applicationContext: Context) :
     ApplicationModule(applicationContext) {
     @InMemoryCartRepository
     fun getInMemoryCartRepository(@InMemory localDataSource: LocalDataSource): CartRepository {
-        return getOrCreateInstance {
-            MemoryCartRepository(localDataSource)
-        }
+        return MemoryCartRepository(localDataSource)
     }
 
     @RoomDbCartRepository
     fun getRoomCartRepository(@RoomDb localDataSource: LocalDataSource): CartRepository {
-        return getOrCreateInstance {
-            DefaultCartRepository(localDataSource)
-        }
+        return DefaultCartRepository(localDataSource)
     }
 
     @RoomDb
     fun getRoomDataSource(cartProductDao: CartProductDao): LocalDataSource {
-        return getOrCreateInstance { DefaultLocalDataSource(cartProductDao) }
+        return DefaultLocalDataSource(cartProductDao)
     }
 
     @InMemory
     fun getInMemoryDataSource(): LocalDataSource {
-        return getOrCreateInstance { InMemoryLocalDataSource() }
+        return InMemoryLocalDataSource()
     }
 
     fun getCartDao(): CartProductDao {
-        return getOrCreateInstance {
-            val applicationContext =
-                context ?: throw IllegalStateException("애플리케이션이 아직 초기화되지 않았습니다")
-            Room.databaseBuilder(
-                applicationContext,
-                ShoppingDatabase::class.java,
-                SHOPPING_DATABASE_NAME,
-            ).build().cartProductDao()
-        }
+        val applicationContext =
+            context ?: throw IllegalStateException("애플리케이션이 아직 초기화되지 않았습니다")
+        return Room.databaseBuilder(
+            applicationContext,
+            ShoppingDatabase::class.java,
+            SHOPPING_DATABASE_NAME,
+        ).build().cartProductDao()
     }
 
     companion object {

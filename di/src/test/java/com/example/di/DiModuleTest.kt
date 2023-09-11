@@ -49,7 +49,7 @@ internal class DiModuleTest {
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
             ActivityModule(activityContext, applicationModule) {
             fun getFakeDefaultProductRepository(): FakeProductRepository {
-                return getOrCreateInstance { FakeDefaultProductRepository() }
+                return FakeDefaultProductRepository()
             }
         }
 
@@ -81,7 +81,7 @@ internal class DiModuleTest {
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
             ActivityModule(activityContext, applicationModule) {
             fun getFakeDefaultProductRepository(): FakeProductRepository {
-                return getOrCreateInstance { FakeDefaultProductRepository() }
+                return FakeDefaultProductRepository()
             }
         }
 
@@ -111,7 +111,7 @@ internal class DiModuleTest {
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
             ActivityModule(activityContext, applicationModule) {
             fun getFakeDefaultProductRepository(): FakeProductRepository {
-                return getOrCreateInstance { FakeDefaultProductRepository() }
+                return FakeDefaultProductRepository()
             }
         }
 

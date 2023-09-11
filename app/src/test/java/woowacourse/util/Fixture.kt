@@ -18,21 +18,17 @@ class FakeApplicationModule(context: Context) : ApplicationModule(context) {
     fun getCartRepository(): CartRepository = cartRepository
 
     fun getRoomCartRepository(): CartRepository {
-        return getOrCreateInstance {
-            DefaultCartRepository(InMemoryLocalDataSource())
-        }
+        return DefaultCartRepository(InMemoryLocalDataSource())
     }
 
     @RoomDbCartRepository
     fun getRoomCartRepository(@RoomDb localDataSource: LocalDataSource): CartRepository {
-        return getOrCreateInstance {
-            DefaultCartRepository(localDataSource)
-        }
+        return DefaultCartRepository(localDataSource)
     }
 
     @RoomDb
     fun getRoomDataSource(): LocalDataSource {
-        return getOrCreateInstance { InMemoryLocalDataSource() }
+        return InMemoryLocalDataSource()
     }
 }
 
