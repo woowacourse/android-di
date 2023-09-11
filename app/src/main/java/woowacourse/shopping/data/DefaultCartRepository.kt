@@ -16,7 +16,7 @@ class DefaultCartRepository(private val db: ShoppingDatabase) : CartRepository {
         return db.cartProductDao().getAll().map { it.toDomain() }
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        db.cartProductDao().delete(id.toLong())
+    override suspend fun deleteCartProduct(id: Long) {
+        db.cartProductDao().delete(id)
     }
 }
