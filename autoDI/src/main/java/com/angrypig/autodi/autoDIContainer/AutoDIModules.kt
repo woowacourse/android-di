@@ -29,16 +29,27 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
         if (!existingState) _value.add(autoDIModule)
     }
 
-    private fun selectModuleByQualifier(
-        existingModule: AutoDIModule,
-        autoDIModule: AutoDIModule,
-    ) = when (existingModule.qualifier == autoDIModule.qualifier) {
-        true -> autoDIModule
-        false -> existingModule
+    internal fun overrideModule(qualifier: String, autoDIModule: AutoDIModule) {
+        setQualifier(autoDIModule, qualifier)
+        replaceOrThrowByQualifier(qualifier, autoDIModule)
     }
 
-    internal fun searchModule(qualifier: String): AutoDIModule? =
-        value.find { autoDIModule -> autoDIModule.qualifier == qualifier }
+    private fun replaceOrThrowByQualifier(qualifier: String, autoDIModule: AutoDIModule) {
+        var existingState = false
+        value.map { existingModule ->
+            if (existingModule.qualifier == qualifier) {
+                existingState = true
+                autoDIModule
+            } else {
+                existingModule
+            }
+        }
+        if (!existingState) throw IllegalStateException(NOT_EXISTING_MODULE_OVERRIDE_ERROR)
+    }
+
+    private fun setQualifier(autoDIModule: AutoDIModule, qualifier: String) {
+        autoDIModule.qualifier = qualifier
+    }
 
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T? {
         value.forEach { autoDIModule ->
@@ -54,5 +65,10 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
             if (eachSearchResult != null) return eachSearchResult
         }
         return null
+    }
+
+    companion object {
+        private const val NOT_EXISTING_MODULE_OVERRIDE_ERROR =
+            "존재하지 않는 모듈에 대한 override 가 일어났습니다. qualifier를 확인하세요"
     }
 }

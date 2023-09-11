@@ -14,6 +14,10 @@ object AutoDI {
         AutoDIModuleContainer.registerModule(autoDIModule)
     }
 
+    fun overrideModule(qualifier: String, autoDIModule: AutoDIModule) {
+        AutoDIModuleContainer.overrideModule(qualifier, autoDIModule)
+    }
+
     inline fun <reified T : Any> inject(qualifier: String? = null): T {
         val kType = typeOf<T>()
         return publishedSearchLifeCycleType(kType, qualifier)

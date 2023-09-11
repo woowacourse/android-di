@@ -15,6 +15,10 @@ object AutoDIModuleContainer {
         autoDIModules.addModule(autoDIModule)
     }
 
+    internal fun overrideModule(qualifier: String, autoDIModule: AutoDIModule) {
+        autoDIModules.overrideModule(qualifier, autoDIModule)
+    }
+
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T =
         autoDIModules.searchLifeCycleType(kType, qualifier) ?: throw IllegalStateException(
             NOT_EXIST_DEPENDENCY_ERROR,

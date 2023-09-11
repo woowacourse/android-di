@@ -5,7 +5,7 @@ import com.angrypig.autodi.AutoDI
 import com.angrypig.autodi.ViewModelBundle
 import kotlin.reflect.KType
 
-class AutoDIModule(val qualifier: String? = null) {
+class AutoDIModule(internal var qualifier: String? = null) {
     private val lifeCycleTypeContainer: LifeCycleTypeContainer = LifeCycleTypeContainer()
     private val androidComponentsContainer: AndroidComponentsContainer =
         AndroidComponentsContainer()
