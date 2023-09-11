@@ -6,21 +6,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.inject
+import woowacourse.shopping.ui.cart.adapter.CartProductAdapter
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-
     private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
+        ViewModelProvider(this, inject<CartViewModel>())[CartViewModel::class.java]
     }
 
-    private lateinit var dateFormatter: DateFormatter
+    private val dateFormatter by lazy { DateFormatter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -31,10 +31,6 @@ class CartActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
-    }
-
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -43,7 +39,6 @@ class CartActivity : AppCompatActivity() {
     private fun setupBinding() {
         binding.lifecycleOwner = this
         binding.vm = viewModel
-        setContentView(binding.root)
     }
 
     private fun setupView() {
@@ -60,7 +55,7 @@ class CartActivity : AppCompatActivity() {
             val adapter = CartProductAdapter(
                 items = it,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
+                onClickDelete = viewModel::deleteCartProduct,
             )
             binding.rvCartProducts.adapter = adapter
         }
