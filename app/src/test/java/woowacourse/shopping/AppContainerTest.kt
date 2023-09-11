@@ -5,12 +5,26 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.Inject
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 import kotlin.reflect.full.createInstance
 
-class TargetClass(val cartRepository: CartRepository)
+class TargetClass(val cartRepository: CartRepository) {
+    @Inject
+    lateinit var productRepository: ProductRepository
+        private set
+
+    lateinit var name: String
+        private set
+
+    fun isProductRepositoryInitialized() = this::productRepository.isInitialized
+
+    fun isNameInitialized() = this::name.isInitialized
+}
 
 class AppContainerTest {
     private lateinit var appContainer: AppContainer
@@ -19,6 +33,7 @@ class AppContainerTest {
     fun setup() {
         appContainer = AppContainer()
         appContainer.addProvider(CartProductDao::class, FakeCartProductDao::class::createInstance)
+        appContainer.addImplementationClass(ProductRepository::class, DefaultProductRepository::class)
         appContainer.addImplementationClass(CartRepository::class, DefaultCartRepository::class)
     }
 
@@ -44,5 +59,27 @@ class AppContainerTest {
 
         // then
         assertThat(targetClass1.cartRepository).isEqualTo(targetClass2.cartRepository)
+    }
+
+    @Test
+    fun `TargetClass의 프로퍼티 중 productRepository는 필드 주입 대상이다`() {
+        // given
+        val targetClass = appContainer.inject(TargetClass::class.java)
+
+        // when
+
+        // then
+        assertThat(targetClass.isProductRepositoryInitialized()).isTrue
+    }
+
+    @Test
+    fun `TargetClass의 프로퍼티 중 name은 필드 주입 대상이 아니다`() {
+        // given
+        val targetClass = appContainer.inject(TargetClass::class.java)
+
+        // when
+
+        // then
+        assertThat(targetClass.isNameInitialized()).isFalse
     }
 }

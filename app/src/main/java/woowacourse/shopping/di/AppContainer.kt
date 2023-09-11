@@ -2,9 +2,12 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class AppContainer {
@@ -30,6 +33,8 @@ class AppContainer {
         instances[implementationClass]?.let { return it as T }
 
         val instance = getInstanceOf(implementationClass) ?: createInstanceOf(implementationClass)
+        injectFields(implementationClass, instance)
+
         saveInstance(implementationClass, instance)
         return instance as T
     }
@@ -52,6 +57,15 @@ class AppContainer {
             inject(it.type.jvmErasure.java)
         }.toTypedArray()
         return constructor.call(*args)
+    }
+
+    private fun <T : Any> injectFields(clazz: KClass<out T>, instance: T) {
+        clazz.declaredMemberProperties.forEach {
+            if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
+                it.isAccessible = true
+                it.setter.call(instance, inject(it.returnType.jvmErasure.java))
+            }
+        }
     }
 
     private fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
