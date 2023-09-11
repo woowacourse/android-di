@@ -6,9 +6,9 @@ import woowacourse.shopping.repository.ProductRepository
 
 object RepositoryContainer {
 
-    private val db = ShoppingDatabase.getInstance(ShoppingApplication.getApplicationContext())
+    private val dao = ShoppingDatabase.getInstance(ShoppingApplication.getApplicationContext()).cartProductDao()
 
-    val cartRepository: CartRepository = DefaultCartRepository(db)
+    val cartRepository: CartRepository = DefaultCartRepository(dao)
 
     val productRepository: ProductRepository = DefaultProductRepository()
 }
