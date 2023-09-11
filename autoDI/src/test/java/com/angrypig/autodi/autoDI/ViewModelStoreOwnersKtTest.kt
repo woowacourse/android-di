@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.lifecycle.ViewModel
+import com.angrypig.autodi.AutoDI
+import com.angrypig.autodi.autoDIModule.autoDIModule
 import com.angrypig.autodi.injectActivityViewModel
 import com.angrypig.autodi.injectViewModel
 import com.google.common.truth.Truth
@@ -56,9 +58,13 @@ class ViewModelStoreOwnersKtTestNoOwnerProducerNoExtrasProducer {
     }
 
     init {
-        com.angrypig.autodi.AutoDI {
-            singleton { FakeRepository() }
-            viewModel { FakeViewModel(inject()) }
+        AutoDI {
+            registerModule(
+                autoDIModule {
+                    singleton { FakeRepository() }
+                    viewModel { FakeViewModel(inject()) }
+                },
+            )
         }
     }
 
