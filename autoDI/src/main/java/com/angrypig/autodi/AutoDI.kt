@@ -1,5 +1,6 @@
 package com.angrypig.autodi
 
+import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.autoDIContainer.AutoDIModuleContainer
 import com.angrypig.autodi.autoDIModule.AutoDIModule
 import com.angrypig.autodi.autoDIModule.autoDIModule
@@ -36,6 +37,21 @@ object AutoDI {
         initializeMethod: () -> T,
     ) {
         AutoDIModuleContainer.overrideSingleLifeCycleType<T>(kType, qualifier, initializeMethod)
+    }
+
+    inline fun <reified VM : ViewModel> overrideSingleViewModel(
+        noinline initializeMethod: () -> VM,
+    ) {
+        val kType = typeOf<VM>()
+        publishedOverrideViewModelBundle(kType, initializeMethod)
+    }
+
+    @PublishedApi
+    internal fun <VM : ViewModel> publishedOverrideViewModelBundle(
+        kType: KType,
+        initializeMethod: () -> VM,
+    ) {
+        AutoDIModuleContainer.overrideSingleViewModelBundle<VM>(kType, initializeMethod)
     }
 
     inline fun <reified T : Any> inject(qualifier: String? = null): T {

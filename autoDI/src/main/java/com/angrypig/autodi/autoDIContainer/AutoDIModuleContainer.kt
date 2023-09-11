@@ -1,5 +1,6 @@
 package com.angrypig.autodi.autoDIContainer
 
+import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.LifeCycleType
 import com.angrypig.autodi.ViewModelBundle
 import com.angrypig.autodi.autoDIModule.AutoDIModule
@@ -11,6 +12,8 @@ object AutoDIModuleContainer {
         "search 함수로 검색한 dependency 가 존재하지 않습니다. qualifier 혹은 선언 모듈을 확인하세요"
     const val NOT_EXIST_SINGLE_LIFE_CYCLE_TYPE_OVERRIDE_ERROR =
         "override 하려는 lifeCycleType이 존재하지 않습니다. 입력하신 qualifier 혹은 선언 모듈을 확인하세요"
+    const val NOT_EXIST_VIEW_MODEL_BUNDLE_OVERRIDE_ERROR =
+        "override 하려는 ViewModel이 존재하지 않습니다. 입력하신 선언 모듈을 확인하세요"
 
     private val autoDIModules: AutoDIModules = AutoDIModules(mutableListOf())
 
@@ -32,6 +35,17 @@ object AutoDIModuleContainer {
                 NOT_EXIST_SINGLE_LIFE_CYCLE_TYPE_OVERRIDE_ERROR,
             )
         lifeCycleType.override(initializeMethod)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun <VM : ViewModel> overrideSingleViewModelBundle(
+        kType: KType,
+        initializeMethod: () -> VM,
+    ) {
+        val viewModelBundle: ViewModelBundle<VM> =
+            autoDIModules.searchViewModelBundle(kType) as ViewModelBundle<VM>?
+                ?: throw IllegalStateException(NOT_EXIST_VIEW_MODEL_BUNDLE_OVERRIDE_ERROR)
+        viewModelBundle.override(initializeMethod)
     }
 
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): LifeCycleType<T> =
