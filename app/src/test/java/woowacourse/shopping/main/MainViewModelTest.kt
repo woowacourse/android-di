@@ -14,7 +14,7 @@ import org.junit.Test
 import woowacourse.shopping.di.annotation.CustomInject
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
-import woowacourse.shopping.fake.testDatas
+import woowacourse.shopping.fake.testData
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -66,7 +66,7 @@ class MainViewModelTest {
         viewModel.getAllProducts()
 
         // then
-        assertEquals(viewModel.products.value, testDatas)
+        assertEquals(viewModel.products.value, testData)
     }
 
     @Test

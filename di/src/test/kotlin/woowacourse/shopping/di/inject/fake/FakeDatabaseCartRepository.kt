@@ -1,16 +1,12 @@
-package woowacourse.shopping.fake
+package woowacourse.shopping.di.inject.fake
 
-import woowacourse.shopping.di.annotation.InMemoryMode
+import woowacourse.shopping.di.annotation.DatabaseMode
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-class TestCartInfo
-
-@InMemoryMode
-class FakeCartRepository(
-    private val testCartInfo: TestCartInfo,
-) : CartRepository {
+@DatabaseMode
+class FakeDatabaseCartRepository : CartRepository {
     private val cartProducts = mutableListOf<CartProduct>()
 
     override suspend fun addCartProduct(product: Product) {

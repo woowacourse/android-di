@@ -9,4 +9,9 @@ class FakeViewModel {
     @CustomInject
     @InMemoryMode
     lateinit var cartRepository: CartRepository
+
+    @CustomInject
+    lateinit var datas: List<String>
+
+    lateinit var items: List<Int>
 }
