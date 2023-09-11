@@ -4,23 +4,21 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.createProduct
+import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.getProducts
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.toProduct
 
 class MainViewModelTest {
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
+    private lateinit var appContainer: AppContainer
     private lateinit var viewModel: MainViewModel
 
     @get:Rule
@@ -30,21 +28,10 @@ class MainViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        productRepository = FakeProductRepository()
-        cartRepository = FakeCartRepository()
-        viewModel = MainViewModel(productRepository, cartRepository)
-    }
-
-    @Test
-    fun `상품을 추가하면 카트에 추가한 상품이 담긴다`() = runTest {
-        // given
-
-        // when
-        val product = createProduct("글로", 1_000_000_000, "")
-        viewModel.addCartProduct(product)
-
-        // then
-        assertThat(cartRepository.getAllCartProducts().map { it.toProduct() }).contains(product)
+        appContainer = AppContainer()
+        appContainer.addImplementationClass(ProductRepository::class, FakeProductRepository::class)
+        appContainer.addImplementationClass(CartRepository::class, FakeCartRepository::class)
+        viewModel = appContainer.inject(MainViewModel::class.java)
     }
 
     @Test

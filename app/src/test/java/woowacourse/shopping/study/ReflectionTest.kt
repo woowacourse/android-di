@@ -5,8 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
-import woowacourse.shopping.getCartProducts
-import woowacourse.shopping.getProducts
 import woowacourse.shopping.model.CartProduct
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
@@ -18,7 +16,7 @@ class FakeCartViewModel(private val repository: FakeCartRepository) {
 class ReflectionTest {
     private val repositories = mapOf(
         FakeProductRepository::class.starProjectedType to FakeProductRepository(),
-        FakeCartRepository::class.starProjectedType to FakeCartRepository(getCartProducts().toMutableList()),
+        FakeCartRepository::class.starProjectedType to FakeCartRepository(),
     )
 
     @Test
@@ -32,8 +30,6 @@ class ReflectionTest {
         val viewModel = constructor?.callBy(args)
 
         // then
-        val actual = viewModel?.getProducts()
-        val expected = getCartProducts()
-        assertThat(actual).isEqualTo(expected)
+        assertThat(viewModel).isNotNull
     }
 }

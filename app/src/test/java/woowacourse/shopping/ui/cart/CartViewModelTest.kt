@@ -26,7 +26,7 @@ class CartViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        cartRepository = FakeCartRepository(getCartProducts().toMutableList())
+        cartRepository = FakeCartRepository()
         viewModel = CartViewModel(cartRepository)
     }
 

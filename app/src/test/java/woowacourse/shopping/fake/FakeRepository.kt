@@ -1,5 +1,6 @@
 package woowacourse.shopping.fake
 
+import woowacourse.shopping.getCartProducts
 import woowacourse.shopping.getProducts
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
@@ -14,8 +15,9 @@ class FakeProductRepository : ProductRepository {
     }
 }
 
-class FakeCartRepository(private val cartProducts: MutableList<CartProduct> = mutableListOf()) :
-    CartRepository {
+class FakeCartRepository : CartRepository {
+    private val cartProducts: MutableList<CartProduct> = getCartProducts().toMutableList()
+
     override suspend fun addCartProduct(product: Product) {
         val cartProduct = CartProduct(
             System.currentTimeMillis(),
