@@ -9,7 +9,7 @@ class ShoppingApplication : Application() {
         super.onCreate()
 
         injector = Injector(
-            SingletonModule(context = this),
+            SingletonModule.getSingletonModule(context = applicationContext),
         )
     }
 

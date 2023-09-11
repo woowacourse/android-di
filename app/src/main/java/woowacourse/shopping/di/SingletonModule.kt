@@ -18,13 +18,15 @@ class SingletonModule(
     }
     private val cacheData: MutableMap<String, Any> = mutableMapOf()
 
-    fun provideCartRepository(): CartRepository {
+    fun provideCartRepository(cartProductDao: CartProductDao): CartRepository {
         return getInstance { DefaultCartRepository(cartProductDao) }
     }
 
     fun provideProductRepository(): ProductRepository {
         return getInstance { DefaultProductRepository() }
     }
+
+    fun provideCartProductDao(): CartProductDao = cartProductDao
 
     private inline fun <reified T : Any> getInstance(create: () -> T): T {
         val qualifiedName = T::class.qualifiedName ?: throw IllegalArgumentException()
