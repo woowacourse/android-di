@@ -45,6 +45,7 @@ object DiContainer {
         val qualifiedFunctions = allFunctions.filter { it.hasAnnotation<Qualifier>() }
         qualifiedFunctions.forEach {
             val qualifierName = it.findAnnotation<Qualifier>()?.name.toString()
+            if(qualifierName.isBlank()) throw IllegalStateException("Annotation 이름이 비었어요")
             qualifiedDeclarations[qualifierName] =
                 { it.call(module) ?: throw IllegalStateException("함수 형태가 잘못됐어요") }
         }
@@ -55,15 +56,9 @@ object DiContainer {
             allFunctions.filter { it.hasAnnotation<Singleton>() && it.hasAnnotation<Qualifier>() }
         singletonQualifiedFunctions.forEach {
             val qualifierName = it.findAnnotation<Qualifier>()?.name.toString()
+            if(qualifierName.isBlank()) throw IllegalStateException("Annotation 이름이 비었어요")
             qualifiedSingletons[qualifierName] =
                 qualifiedDeclarations[qualifierName]?.invoke() as Any
         }
-    }
-
-    fun clear(){
-        singletons.clear()
-        declarations.clear()
-        qualifiedDeclarations.clear()
-        qualifiedSingletons.clear()
     }
 }

@@ -28,20 +28,28 @@ inline fun <reified T : Any> get(): T {
 // 컴파일 타입에서 인자의 정보를 알 수 없을 때, KClass 를 통해 주입한 객체들 가져오기
 fun get(kClazz: KClass<*>): Any {
     return when {
-        DiContainer.singletons.keys.contains(kClazz) -> DiContainer.singletons[kClazz]!!
-        DiContainer.declarations.keys.contains(kClazz) -> DiContainer.declarations[kClazz]?.invoke()!!
+        DiContainer.singletons.keys.contains(kClazz)
+        -> DiContainer.singletons[kClazz]
+            ?: throw IllegalStateException("Singletons Key는 있는데, value가 없어요")
+
+        DiContainer.declarations.keys.contains(kClazz)
+        -> DiContainer.declarations[kClazz]?.invoke()
+            ?: throw IllegalStateException("declarations Key는 있는데, value가 없어요")
+
         else -> throw IllegalArgumentException("KClass $kClazz 의존성 주입할 객체가 없습니다.")
     }
 }
 
-// Quliified 로 주입한 객체들 가져오기
+// Quliified로 주입한 객체들 가져오기
 fun get(qualifierName: String): Any {
     return when {
         DiContainer.qualifiedSingletons.keys.contains(qualifierName)
-        -> DiContainer.qualifiedSingletons[qualifierName]!!
+        -> DiContainer.qualifiedSingletons[qualifierName]
+            ?: throw IllegalStateException("QualifiedSingleton Key는 있는데 Value 가 없어요")
 
         DiContainer.qualifiedDeclarations.keys.contains(qualifierName)
-        -> DiContainer.qualifiedDeclarations[qualifierName]?.invoke()!!
+        -> DiContainer.qualifiedDeclarations[qualifierName]?.invoke()
+            ?: throw IllegalStateException("QualifiedDeclaration Key는 있는데 Value 가 없어요")
 
         else -> throw IllegalArgumentException("Qulifeier $qualifierName 의존성 주입할 객체가 없습니다.")
     }
