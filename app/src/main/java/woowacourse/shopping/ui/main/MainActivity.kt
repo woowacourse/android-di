@@ -8,17 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.inject
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.main.adapter.ProductAdapter
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by lazy {
-        ViewModelProvider(
-            this,
-            DependencyInjector.inject<MainViewModel>(),
-        )[MainViewModel::class.java]
+        ViewModelProvider(this, inject<MainViewModel>())[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
