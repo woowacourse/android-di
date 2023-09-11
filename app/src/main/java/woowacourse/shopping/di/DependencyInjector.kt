@@ -1,29 +1,19 @@
 package woowacourse.shopping.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 object DependencyInjector {
-    lateinit var repositoryDependency: RepositoryDependency
-
-    inline fun <reified T : ViewModel> inject(): ViewModelProvider.Factory {
-        val clazz = T::class
-        val instance = clazz.primaryConstructor!!.parameters.map { params ->
-            val paramType = params.type.jvmErasure
-            repositoryDependency::class.declaredMemberProperties.find {
-                it.returnType.jvmErasure == paramType
-            }?.getter?.call(repositoryDependency)
+    inline fun <reified T : Any> inject(): T {
+        val constructor = T::class.primaryConstructor
+            ?: throw IllegalArgumentException()
+        // 이후 생성자가 없을 경우 처리 필요
+        val arguments = constructor.parameters.map { parameter ->
+            val type: KClass<*> = parameter.type.jvmErasure
+            DependencyContainer.repositories[type]
         }
 
-        return viewModelFactory {
-            initializer {
-                clazz.primaryConstructor!!.call(*instance.toTypedArray())
-            }
-        }
+        return constructor.call(*arguments.toTypedArray())
     }
 }
