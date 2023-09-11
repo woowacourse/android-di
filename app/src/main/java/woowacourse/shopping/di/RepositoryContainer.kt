@@ -8,5 +8,5 @@ import woowacourse.shopping.data.repository.ProductRepository
 class RepositoryContainer : Container {
 
     val productRepository: ProductRepository = DefaultProductRepository()
-    val cartRepository: CartRepository = DefaultCartRepository()
+    val cartRepository: CartRepository = DefaultCartRepository(DaoContainer.cartProductDao)
 }

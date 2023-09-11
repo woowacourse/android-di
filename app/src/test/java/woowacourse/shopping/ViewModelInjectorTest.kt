@@ -28,14 +28,12 @@ class FakeActivity : AppCompatActivity() {
 
 interface FakeRepository2
 
-class DefaultFakeRepository2 : FakeRepository2
-
-class FakeViewModel2(
+class FakeViewModel1(
     val fakeRepository2: FakeRepository2,
 ) : ViewModel()
 
 class FakeActivity2 : AppCompatActivity() {
-    val viewModel by getViewModel<FakeViewModel2>(TestApplication.injector)
+    val viewModel by getViewModel<FakeViewModel1>(TestApplication.injector)
 }
 
 object TestRepositoryContainer : Container {

@@ -7,7 +7,7 @@ class InjectorTest {
 
     interface FakeRepository
 
-    class DefaultFakeRepository : FakeRepository
+    class DefaultFakeRepository() : FakeRepository
 
     class FakeRepositoryContainer : Container {
         val fakeRepository: FakeRepository = DefaultFakeRepository()
