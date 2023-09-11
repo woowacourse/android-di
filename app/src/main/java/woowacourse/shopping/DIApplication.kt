@@ -13,6 +13,7 @@ class DIApplication : Application() {
 
     private fun initAutoDI() {
         AutoDI {
+            registerApplicationContext(applicationContext)
             registerModule(repositoryModule)
             registerModule(viewModelModule)
         }

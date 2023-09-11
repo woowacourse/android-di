@@ -1,5 +1,6 @@
 package com.angrypig.autodi.autoDIContainer
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.LifeCycleType
 import com.angrypig.autodi.ViewModelBundle
@@ -14,8 +15,21 @@ object AutoDIModuleContainer {
         "override 하려는 lifeCycleType이 존재하지 않습니다. 입력하신 qualifier 혹은 선언 모듈을 확인하세요"
     const val NOT_EXIST_VIEW_MODEL_BUNDLE_OVERRIDE_ERROR =
         "override 하려는 ViewModel이 존재하지 않습니다. 입력하신 선언 모듈을 확인하세요"
+    const val APPLICATION_CONTEXT_NOT_INITIALIZE_ERROR =
+        "application context를 초기화 하지않고 사용하셨습니다. application context를 등록해주세요"
 
     private val autoDIModules: AutoDIModules = AutoDIModules(mutableListOf())
+
+    private lateinit var applicationContext: Context
+
+    internal fun registerApplicationContext(applicationContext: Context) {
+        this.applicationContext = applicationContext
+    }
+
+    internal fun getApplicationContext(): Context {
+        if (::applicationContext.isInitialized) return applicationContext
+        throw IllegalStateException(APPLICATION_CONTEXT_NOT_INITIALIZE_ERROR)
+    }
 
     internal fun registerModule(autoDIModule: AutoDIModule) {
         autoDIModules.addModule(autoDIModule)

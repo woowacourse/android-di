@@ -1,5 +1,6 @@
 package com.angrypig.autodi
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.autoDIContainer.AutoDIModuleContainer
 import com.angrypig.autodi.autoDIModule.AutoDIModule
@@ -12,6 +13,10 @@ object AutoDI {
 
     operator fun invoke(init: AutoDI.() -> Unit) {
         this.init()
+    }
+
+    fun registerApplicationContext(applicationContext: Context) {
+        AutoDIModuleContainer.registerApplicationContext(applicationContext)
     }
 
     fun registerModule(autoDIModule: AutoDIModule) {
@@ -62,6 +67,8 @@ object AutoDI {
     @PublishedApi
     internal fun <T : Any> publishedSearchLifeCycleType(kType: KType, qualifier: String?): T =
         AutoDIModuleContainer.searchLifeCycleType<T>(kType, qualifier).getInstance()
+
+    fun injectApplicationContext(): Context = AutoDIModuleContainer.getApplicationContext()
 
     fun clearModuleContainer() {
         AutoDIModuleContainer.clear()

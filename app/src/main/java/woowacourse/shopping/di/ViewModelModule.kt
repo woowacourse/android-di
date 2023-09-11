@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.ui.MainViewModel
 import com.angrypig.autodi.autoDIModule.autoDIModule
+import woowacourse.shopping.ui.MainViewModel
 
-val viewModelModule = com.angrypig.autodi.autoDIModule.autoDIModule {
+val viewModelModule = autoDIModule {
     viewModel { MainViewModel(inject(), inject()) }
 }
