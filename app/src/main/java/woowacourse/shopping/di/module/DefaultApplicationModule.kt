@@ -6,7 +6,6 @@ import com.example.di.module.ApplicationModule
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.MemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.dataSorce.DefaultLocalDataSource
 import woowacourse.shopping.data.dataSorce.InMemoryLocalDataSource
@@ -20,7 +19,7 @@ class DefaultApplicationModule(applicationContext: Context) :
     ApplicationModule(applicationContext) {
     @InMemoryCartRepository
     fun getInMemoryCartRepository(@InMemory localDataSource: LocalDataSource): CartRepository {
-        return MemoryCartRepository(localDataSource)
+        return DefaultCartRepository(localDataSource)
     }
 
     @RoomDbCartRepository
