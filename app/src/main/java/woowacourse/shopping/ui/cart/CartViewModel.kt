@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.util.annotation.WooWaField
 
-class CartViewModel(
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class CartViewModel : ViewModel() {
+    @WooWaField
+    private lateinit var cartRepository: CartRepository
+
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
