@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.core
 
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.InjectField

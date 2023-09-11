@@ -1,5 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.core
 
+import woowacourse.shopping.di.module.DependencyModule
 import kotlin.reflect.KClass
 
 object DIContainer {
