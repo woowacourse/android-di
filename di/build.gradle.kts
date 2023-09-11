@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
@@ -25,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
@@ -37,7 +38,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
@@ -50,4 +50,25 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     implementation("androidx.test:core-ktx:1.5.0")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "com.github.rhthrhrl0"
+                artifactId = "di"
+                version = "1.0.0"
+            }
+            create<MavenPublication>("debug") {
+                from(components["debug"])
+
+                groupId = "com.github.rhthrhrl0"
+                artifactId = "di"
+                version = "1.0.0"
+            }
+        }
+    }
 }
