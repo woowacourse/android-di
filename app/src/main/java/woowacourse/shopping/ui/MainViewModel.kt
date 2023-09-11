@@ -3,11 +3,12 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class MainViewModel(
+class MainViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
@@ -27,3 +28,4 @@ class MainViewModel(
         _products.value = productRepository.getAllProducts()
     }
 }
+

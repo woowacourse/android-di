@@ -10,7 +10,7 @@ object RepositoryModule: DependencyModule {
     override fun invoke(): Map<KClass<*>, Any> {
         return mapOf(
             ProductRepository::class to ProductRepositoryImpl(),
-            CartRepository::class to CartRepositoryImpl()
+            CartRepository::class to CartRepositoryImpl(),
         )
     }
 }
