@@ -30,7 +30,7 @@ object CartFakeRepository
 class FakeRepositoryWithDataSource(
     @Inject
     @RoomDB
-    fakeDatasource: FakeDataSource,
+    val fakeDatasource: FakeDataSource,
 )
 
 interface FakeDataSource

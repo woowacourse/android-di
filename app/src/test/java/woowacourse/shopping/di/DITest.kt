@@ -2,6 +2,8 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotSame
+import junit.framework.Assert.assertSame
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,7 +74,7 @@ class DITest {
     }
 
     @Test
-    fun `재귀 의존성 주입 및 어노테이션으로 데이터소스 구분하여 주입한다`() {
+    fun `재귀 의존성 주입으로 뷰모델 생성한다`() {
         // given
         FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
 
@@ -81,6 +83,20 @@ class DITest {
 
         // then
         assertThat(vm).isNotNull
+    }
+
+    @Test
+    fun `어노테이션으로 Room 사용하는 데이터소스 주입한다`() {
+        // given
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
+
+        // when
+        val vm = FakeApplication.injector.inject(FakeViewModelWithRecursiveDI::class)
+
+        // then
+        val actualDatasource = vm.fakeRepositoryWithDataSource.fakeDatasource
+        assertSame(FakeRoomDataSource, actualDatasource)
+        assertNotSame(FakeInMemoryDataSource, actualDatasource)
     }
 }
 
