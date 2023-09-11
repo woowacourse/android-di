@@ -1,8 +1,8 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.woosuk.scott_di.startDI
 import woowacourse.shopping.di.DefaultModule
-import woowacourse.shopping.di.startDI
 
 class ShoppingApplication : Application() {
     override fun onCreate() {

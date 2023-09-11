@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.woosuk.scott_di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties

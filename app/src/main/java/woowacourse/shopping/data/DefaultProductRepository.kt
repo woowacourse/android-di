@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.Inject
+import com.woosuk.scott_di.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 

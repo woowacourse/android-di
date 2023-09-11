@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.woosuk.scott_di
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

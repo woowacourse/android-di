@@ -2,6 +2,11 @@ package woowacourse.shopping.di
 
 import android.app.Application
 import androidx.room.Room
+import com.woosuk.scott_di.Module
+import com.woosuk.scott_di.Qualifier
+import com.woosuk.scott_di.Singleton
+import com.woosuk.scott_di.get
+import com.woosuk.scott_di.inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import woowacourse.shopping.ShoppingApplication
