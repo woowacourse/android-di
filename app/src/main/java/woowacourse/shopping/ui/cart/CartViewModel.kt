@@ -13,8 +13,7 @@ class CartViewModel(
     @RoomDbCartRepository private val cartRepository: CartRepository,
 ) : ViewModel() {
 
-    private val _cartProducts: MutableLiveData<List<CartProduct>> =
-        MutableLiveData(emptyList())
+    private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())
     val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)

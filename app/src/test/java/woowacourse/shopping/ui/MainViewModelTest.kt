@@ -15,11 +15,10 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.mapper.toDomain
-import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
+import woowacourse.util.getCartProduct
 import woowacourse.util.getProduct
 import woowacourse.util.getProducts
 
@@ -47,10 +46,8 @@ internal class MainViewModelTest {
         // given
         val carts = mutableListOf<CartProduct>()
         val addCartProductSlot = slot<Product>()
-        var addedTime: Long = 0L
         coEvery { cartRepository.addCartProduct(capture(addCartProductSlot)) } answers {
-            val cartProduct = addCartProductSlot.captured.toEntity().toDomain()
-            addedTime = cartProduct.createdAt
+            val cartProduct = getCartProduct(0L, addCartProductSlot.captured.name)
             carts.add(cartProduct)
         }
 
@@ -59,9 +56,7 @@ internal class MainViewModelTest {
 
         // then
         assertThat(carts.size).isEqualTo(1)
-        assertThat(carts.first()).isEqualTo(
-            getProduct("사과").toEntity().toDomain().copy(createdAt = addedTime),
-        )
+        assertThat(carts.first()).isEqualTo(getCartProduct(0L, "사과"))
     }
 
     @Test

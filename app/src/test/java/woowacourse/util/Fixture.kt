@@ -53,11 +53,7 @@ fun getFakeCartRepository(): CartRepository = object : CartRepository {
 }
 
 fun getProducts(names: List<String> = listOf("사과", "포도")): List<Product> {
-    return mutableListOf<Product>().apply {
-        names.forEach {
-            add(getProduct(it))
-        }
-    }
+    return names.map { getProduct(it) }
 }
 
 fun getProduct(
@@ -66,4 +62,16 @@ fun getProduct(
     imageUrl: String = "https://cdn-mart.baemin.com/sellergoods/api/main/711c39ee-ff8e-4983-aa01-f669e82bddae.jpg?h=700&w=700",
 ): Product {
     return Product(name, price, imageUrl)
+}
+
+fun getCartProducts(names: List<String> = listOf("사과", "포도")): List<CartProduct> {
+    return names.mapIndexed { index, name -> getCartProduct(index.toLong(), name) }
+}
+
+fun getCartProduct(
+    id: Long,
+    name: String,
+    createdAt: Long = 1L,
+): CartProduct {
+    return CartProduct(id, createdAt, getProduct(name))
 }
