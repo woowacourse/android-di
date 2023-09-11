@@ -48,4 +48,6 @@ dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
 
     testImplementation("org.robolectric:robolectric:4.9")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    implementation("androidx.test:core-ktx:1.5.0")
 }
