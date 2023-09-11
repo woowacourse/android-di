@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.hashdi
 
-import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.hashdi.annotation.Inject
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation

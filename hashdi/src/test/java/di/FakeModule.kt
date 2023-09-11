@@ -1,10 +1,10 @@
-package woowacourse.shopping.di
+package di
 
-import woowacourse.shopping.di.annotation.InMemory
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.RoomDB
+import woowacourse.shopping.hashdi.Module
+import woowacourse.shopping.hashdi.annotation.Inject
+import woowacourse.shopping.hashdi.annotation.Qualifier
 
-object FakeRepositoryModule : Module {
+object FakeModule : Module {
 
     fun provideProductRepository(): ProductFakeRepository = ProductFakeRepository
 
@@ -40,3 +40,9 @@ object FakeInMemoryDataSource : FakeDataSource
 
 @RoomDB
 object FakeRoomDataSource : FakeDataSource
+
+@Qualifier
+annotation class RoomDB
+
+@Qualifier
+annotation class InMemory

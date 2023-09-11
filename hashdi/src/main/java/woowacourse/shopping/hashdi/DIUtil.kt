@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.hashdi
 
-import woowacourse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.hashdi.annotation.Qualifier
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
