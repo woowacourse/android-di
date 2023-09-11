@@ -31,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -43,4 +46,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+
+    testImplementation("org.robolectric:robolectric:4.9")
 }

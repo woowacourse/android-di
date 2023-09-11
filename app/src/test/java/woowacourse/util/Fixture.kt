@@ -1,31 +1,40 @@
 package woowacourse.util
 
 import android.content.Context
-import com.example.di.module.ActivityModule
 import com.example.di.module.ApplicationModule
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.dataSorce.InMemoryLocalDataSource
+import woowacourse.shopping.data.dataSorce.LocalDataSource
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.di.annotation.RoomDb
+import woowacourse.shopping.di.annotation.RoomDbCartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class FakeApplicationModule(context: Context) : ApplicationModule(context) {
     private val cartRepository = getFakeCartRepository()
     fun getCartRepository(): CartRepository = cartRepository
-}
 
-fun getFakeApplicationModule(context: Context): ApplicationModule = FakeApplicationModule(context)
-
-fun getFakeActivityModule(
-    context: Context,
-    fakeApplicationModule: ApplicationModule,
-): ActivityModule =
-    object : ActivityModule(context, fakeApplicationModule) {
-        fun getProductRepository(): ProductRepository {
-            return getFakeProductRepository()
+    fun getRoomCartRepository(): CartRepository {
+        return getOrCreateInstance {
+            DefaultCartRepository(InMemoryLocalDataSource())
         }
     }
+
+    @RoomDbCartRepository
+    fun getRoomCartRepository(@RoomDb localDataSource: LocalDataSource): CartRepository {
+        return getOrCreateInstance {
+            DefaultCartRepository(localDataSource)
+        }
+    }
+
+    @RoomDb
+    fun getRoomDataSource(): LocalDataSource {
+        return getOrCreateInstance { InMemoryLocalDataSource() }
+    }
+}
 
 fun getFakeCartRepository(): CartRepository = object : CartRepository {
     private val carts = mutableListOf<CartProduct>()
@@ -40,14 +49,6 @@ fun getFakeCartRepository(): CartRepository = object : CartRepository {
 
     override suspend fun deleteCartProduct(id: Long) {
         carts.removeAt(id.toInt())
-    }
-}
-
-fun getFakeProductRepository(): ProductRepository = object : ProductRepository {
-    private val products: List<Product> = getProducts()
-
-    override fun getAllProducts(): List<Product> {
-        return products
     }
 }
 

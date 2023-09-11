@@ -70,5 +70,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Mockk
+    testImplementation("io.mockk:mockk-android:1.13.5")
+
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
 }
