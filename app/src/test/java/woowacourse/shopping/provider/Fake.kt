@@ -1,5 +1,6 @@
 package woowacourse.shopping.provider
 
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -19,13 +20,14 @@ private class FakeProductRepository : ProductRepository {
 }
 
 private class FakeCartRepository : CartRepository {
-    private val products: MutableList<Product> = mutableListOf()
+    private val products: MutableList<CartProduct> = mutableListOf()
 
     override fun addCartProduct(product: Product) {
-        products.add(product)
+        val cartProduct = CartProduct(0, product, 0L)
+        products.add(cartProduct)
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override fun getAllCartProducts(): List<CartProduct> {
         return products.toList()
     }
 
