@@ -30,7 +30,7 @@ class Injector(private val appContainer: AppContainer) {
     private fun <T : Any> fieldInjection(clazz: KClass<T>, target: T) {
         clazz.declaredMemberProperties.forEach { property ->
             if (property.hasAnnotation<Inject>()) {
-                val injectValue = appContainer.getInstance(property.returnType)
+                val injectValue = appContainer.getInstance(property.identifyKey())
                 property.isAccessible = true
                 (property as KMutableProperty<*>).setter.call(target, injectValue)
             }
@@ -38,8 +38,8 @@ class Injector(private val appContainer: AppContainer) {
     }
 
     private fun getArgumentsMapping(parameters: List<KParameter>): Map<KParameter, Any> {
-        return parameters.associateWith {
-            appContainer.getInstance(it.type)
+        return parameters.associateWith { param ->
+            appContainer.getInstance(param.identifyKey())
         }
     }
 }

@@ -70,6 +70,18 @@ class DITest {
         assertThat(vm).isNotNull
         assertEquals(vm.cartFakeRepository, CartFakeRepository)
     }
+
+    @Test
+    fun `재귀 의존성 주입 및 어노테이션으로 데이터소스 구분하여 주입한다`() {
+        // given
+        FakeApplication.injector = Injector(AppContainer(listOf(FakeRepositoryModule)))
+
+        // when
+        val vm = FakeApplication.injector.inject(FakeViewModelWithRecursiveDI::class)
+
+        // then
+        assertThat(vm).isNotNull
+    }
 }
 
 class FakeViewModel(
@@ -91,3 +103,7 @@ class FakeViewModelWithFieldInjection() : ViewModel() {
     @Inject
     lateinit var cartFakeRepository: CartFakeRepository
 }
+
+class FakeViewModelWithRecursiveDI(
+    @Inject val fakeRepositoryWithDataSource: FakeRepositoryWithDataSource,
+)
