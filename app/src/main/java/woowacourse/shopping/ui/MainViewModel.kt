@@ -34,7 +34,7 @@ class MainViewModel(
 
     fun getAllProducts() {
         viewModelScope.launch {
-            kotlin.runCatching {
+            runCatching {
                 productRepository.getAllProducts()
             }.onSuccess { products ->
                 _products.value = products
