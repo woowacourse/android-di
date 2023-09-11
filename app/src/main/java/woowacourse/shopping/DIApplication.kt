@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import android.app.Application
 import com.angrypig.autodi.AutoDI
+import woowacourse.shopping.di.localStorageModule
 import woowacourse.shopping.di.repositoryModule
 import woowacourse.shopping.di.viewModelModule
 
@@ -16,6 +17,7 @@ class DIApplication : Application() {
             registerApplicationContext(applicationContext)
             registerModule(repositoryModule)
             registerModule(viewModelModule)
+            registerModule(localStorageModule)
         }
     }
 }
