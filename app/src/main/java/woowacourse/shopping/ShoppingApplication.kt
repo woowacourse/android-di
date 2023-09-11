@@ -2,8 +2,12 @@ package woowacourse.shopping
 
 import android.app.Application
 import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 class ShoppingApplication : Application() {
     lateinit var appContainer: AppContainer
@@ -16,5 +20,7 @@ class ShoppingApplication : Application() {
             CartProductDao::class,
             ShoppingDatabase.getInstance(this)::cartProductDao,
         )
+        appContainer.addImplementationClass(ProductRepository::class, DefaultProductRepository::class)
+        appContainer.addImplementationClass(CartRepository::class, DefaultCartRepository::class)
     }
 }

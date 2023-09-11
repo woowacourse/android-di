@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
@@ -18,6 +19,7 @@ class AppContainerTest {
     fun setup() {
         appContainer = AppContainer()
         appContainer.addProvider(CartProductDao::class, FakeCartProductDao::class::createInstance)
+        appContainer.addImplementationClass(CartRepository::class, DefaultCartRepository::class)
     }
 
     @Test
