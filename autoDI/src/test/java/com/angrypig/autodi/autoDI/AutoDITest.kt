@@ -1,17 +1,34 @@
 package com.angrypig.autodi.autoDI
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.AutoDI
-import com.angrypig.autodi.autoDI.dummys.Test1
-import com.angrypig.autodi.autoDI.dummys.Test2
-import com.angrypig.autodi.autoDI.dummys.Test3
-import com.angrypig.autodi.autoDI.dummys.TestThing
 import com.angrypig.autodi.autoDIModule.autoDIModule
+import com.angrypig.autodi.injectViewModel
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
 
 private class TestDependency(var testValue: String)
 
+private interface TestThing {
+    val testValue: String
+}
+
+private class Test1(override val testValue: String) : TestThing
+private class Test2(override val testValue: String) : TestThing
+private class Test3(override val testValue: String) : TestThing
+
+private class TestViewModel(var testValue: String) : ViewModel()
+
+private class TestActivity : AppCompatActivity() {
+    val viewModel: TestViewModel by injectViewModel()
+}
+
+@RunWith(RobolectricTestRunner::class)
 class AutoDITest {
 
     @After
@@ -167,5 +184,36 @@ class AutoDITest {
 
         // then
         assertThat(AutoDI.inject<TestThing>(firstString).testValue).isEqualTo(overrideString)
+    }
+
+    @Test
+    fun `개별적인 viewModel 을 override한다`() {
+        // given
+        val firstString = "First"
+        val firstModule = autoDIModule {
+            viewModel { TestViewModel(firstString) }
+        }
+        val extraString = "Extra"
+        val extraModule = autoDIModule {
+            disposable<TestThing> { Test2(extraString) }
+        }
+        AutoDI {
+            registerModule(firstModule)
+            registerModule(extraModule)
+        }
+
+        // when
+        val overrideString = "override"
+        val overrideInitializeMethod = { TestViewModel(overrideString) }
+        AutoDI.overrideSingleViewModel<TestViewModel>(overrideInitializeMethod)
+
+        val activity: TestActivity? = Robolectric
+            .buildActivity(TestActivity::class.java)
+            .create()
+            .get()
+        val viewModel = activity?.viewModel
+
+        // then
+        assertThat(viewModel?.testValue).isEqualTo(overrideString)
     }
 }
