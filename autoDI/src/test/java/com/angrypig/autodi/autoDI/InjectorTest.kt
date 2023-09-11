@@ -2,15 +2,13 @@ package com.angrypig.autodi.autoDI
 
 import com.angrypig.autodi.AutoDI
 import com.angrypig.autodi.Injector
+import com.angrypig.autodi.autoDI.dummys.FakeRepository
+import com.angrypig.autodi.autoDI.dummys.FakeRepositoryImpl
 import com.angrypig.autodi.autoDIModule.autoDIModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Test
 import kotlin.reflect.full.isSubclassOf
-
-private interface FakeRepository
-
-private class FakeRepositoryImpl : FakeRepository
 
 class InjectorTest {
     @After
