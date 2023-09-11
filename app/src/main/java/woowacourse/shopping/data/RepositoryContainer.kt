@@ -1,11 +1,14 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.application.ShoppingApplication
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 object RepositoryContainer {
 
-    val cartRepository: CartRepository = CartRepositoryImpl()
+    private val db = ShoppingDatabase.getInstance(ShoppingApplication.getApplicationContext())
 
-    val productRepository: ProductRepository = ProductRepositoryImpl()
+    val cartRepository: CartRepository = DefaultCartRepository(db)
+
+    val productRepository: ProductRepository = DefaultProductRepository()
 }

@@ -13,17 +13,14 @@ abstract class ShoppingDatabase : RoomDatabase() {
         private var instance: ShoppingDatabase? = null
 
         @Synchronized
-        fun getInstance(context: Context): ShoppingDatabase? {
-            if (instance == null) {
-                synchronized(ShoppingDatabase::class) {
-                    instance = Room.databaseBuilder(
-                        context,
-                        ShoppingDatabase::class.java,
-                        "shopping-database",
-                    ).build()
-                }
+        fun getInstance(context: Context): ShoppingDatabase {
+            return instance ?: synchronized(ShoppingDatabase::class) {
+                Room.databaseBuilder(
+                    context,
+                    ShoppingDatabase::class.java,
+                    "shopping-database",
+                ).build().also { instance = it }
             }
-            return instance
         }
     }
 }
