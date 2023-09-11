@@ -14,7 +14,7 @@ class CartRepositoryTest {
 
     @Before
     fun setup() {
-        repository = DefaultCartRepository(FakeCartProductDao())
+        repository = DatabaseCartRepository(FakeCartProductDao())
     }
 
     @Test
