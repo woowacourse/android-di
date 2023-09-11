@@ -4,6 +4,7 @@ import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.InjectField
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
@@ -19,12 +20,21 @@ object Injector {
         return instance as T
     }
 
+    private fun injectRecursive(param: KClass<*>) {
+        if (param::class.declaredMemberProperties.any {
+                it.hasAnnotation<InjectField>() || it.hasAnnotation<Inject>()
+            }) {
+            inject<Any>(param::class.java)
+        }
+    }
+
     private fun getParameterTypes(kClass: KClass<out Any>): MutableList<Any> {
         val parameterTypes = mutableListOf<Any>()
         if (kClass.primaryConstructor?.hasAnnotation<Inject>() == false) {
             return parameterTypes
         }
         kClass.primaryConstructor?.valueParameters?.forEach { param ->
+            injectRecursive(param::class)
             val parameterType: KClass<*> = param.type.classifier as KClass<*>
             if (parameterType.isAbstract) {
                 val instance = DIContainer.get(parameterType)
@@ -37,9 +47,11 @@ object Injector {
         return parameterTypes
     }
 
+
     private fun injectFields(instance: Any?) {
         val instanceClass = instance?.javaClass as Class<*>
         instanceClass.declaredFields.forEach { field ->
+            injectRecursive(field.javaClass.kotlin)
             field.isAccessible = true
             if (field.isAnnotationPresent(InjectField::class.java)) {
                 val fieldInstance: Any =
