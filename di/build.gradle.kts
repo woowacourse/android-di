@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("maven-publish")
 }
 
 java {
@@ -16,5 +17,16 @@ dependencies {
 tasks {
     test {
         useJUnitPlatform()
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "io.hyemdooly.di"
+            artifactId = "final"
+            version = "v1.0.0"
+            from(components["kotlin"])
+        }
     }
 }
