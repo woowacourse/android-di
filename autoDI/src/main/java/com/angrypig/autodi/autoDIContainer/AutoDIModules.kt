@@ -30,11 +30,6 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
     }
 
     internal fun overrideModule(qualifier: String, autoDIModule: AutoDIModule) {
-        setQualifier(autoDIModule, qualifier)
-        replaceOrThrowByQualifier(qualifier, autoDIModule)
-    }
-
-    private fun replaceOrThrowByQualifier(qualifier: String, autoDIModule: AutoDIModule) {
         var existingState = false
         value.map { existingModule ->
             if (existingModule.qualifier == qualifier) {
@@ -45,10 +40,6 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
             }
         }
         if (!existingState) throw IllegalStateException(NOT_EXISTING_MODULE_OVERRIDE_ERROR)
-    }
-
-    private fun setQualifier(autoDIModule: AutoDIModule, qualifier: String) {
-        autoDIModule.qualifier = qualifier
     }
 
     internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T? {
