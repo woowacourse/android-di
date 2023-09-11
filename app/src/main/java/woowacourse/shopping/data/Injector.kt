@@ -1,20 +1,26 @@
 package woowacourse.shopping.data
 
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.annotation.KoalaRepository
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.primaryConstructor
 
 object Injector {
 
     fun <T : ViewModel> inject(modelClass: Class<T>): T {
-        val constructor =
-            modelClass.kotlin.primaryConstructor ?: throw NullPointerException("주 생성자가 null 입니다")
-        val args = constructor.parameters.map {
-            getRepositoryWithType(it.type)
+        val properties = modelClass.kotlin.declaredMemberProperties
+        val viewModel = modelClass.newInstance()
+
+        properties.forEach { property ->
+            property.annotations.forEach { annotation ->
+                if (annotation is KoalaRepository && property is KMutableProperty1<*, *>) {
+                    property.setter.call(viewModel, getRepositoryWithType(property.returnType))
+                }
+            }
         }
 
-        return constructor.call(*args.toTypedArray())
+        return viewModel
     }
 
     private fun getRepositoryWithType(type: KType): Any {
