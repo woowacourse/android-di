@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":bixx-di-annotation"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -71,4 +72,8 @@ dependencies {
 
     // refelction
     implementation(kotlin("reflect"))
+
+    // Koin main features for Android
+    implementation("io.insert-koin:koin-android:3.4.3")
+    testImplementation("org.koin:koin-test:3.4.3")
 }
