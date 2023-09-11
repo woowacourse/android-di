@@ -1,12 +1,14 @@
 package woowacourse.shopping.di.injector
 
 import woowacourse.shopping.di.annotation.Injected
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.container.ShoppingContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -30,7 +32,6 @@ class Injector(
         val instance = constructor.callBy(arguments) as T
 
         injectOnFields(clazz, instance)
-//        container.createInstance(clazz, instance as Any)
 
         return instance
     }
@@ -40,9 +41,14 @@ class Injector(
             .filter { it.hasAnnotation<Injected>() }
 
         return parameters.associateWith { parameter ->
-            val type = parameter.type.jvmErasure
-            container.getInstance(type)
-                ?: container.createInstance(type, create(type))
+            if (parameter.hasAnnotation<Qualifier>()) {
+                val qualifier = parameter.findAnnotation<Qualifier>()!!.type
+                container.getInstance(qualifier)
+                    ?: throw IllegalArgumentException("$ERROR_NO_FIELD: $qualifier")
+            } else {
+                val type = parameter.type.jvmErasure
+                container.getInstance(type) ?: container.createInstance(type, create(type))
+            }
         }
     }
 
@@ -53,7 +59,14 @@ class Injector(
 
         properties.forEach { property ->
             property.isAccessible = true
-            property.setter.call(instance, container.getInstance(property.returnType.jvmErasure))
+            val newInstance = if (property.hasAnnotation<Qualifier>()) {
+                val qualifier = property.findAnnotation<Qualifier>()!!.type
+                container.getInstance(qualifier)
+                    ?: throw IllegalArgumentException("${clazz.jvmName} $ERROR_NO_FIELD")
+            } else {
+                container.getInstance(property.returnType.jvmErasure)
+            }
+            property.setter.call(instance, newInstance)
         }
     }
 
