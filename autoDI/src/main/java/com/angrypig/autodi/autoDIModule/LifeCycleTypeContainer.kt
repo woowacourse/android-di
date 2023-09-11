@@ -1,5 +1,6 @@
 package com.angrypig.autodi.autoDIModule
 
+import com.angrypig.autodi.LifeCycleType
 import com.angrypig.autodi.autoDIModule.LifeCycleTypes.*
 import com.angrypig.autodi.autoDIModule.register.DisposableRegister
 import com.angrypig.autodi.autoDIModule.register.SingletonRegister
@@ -24,17 +25,19 @@ internal class LifeCycleTypeContainer {
         disposableRegister.register(qualifier, registerBlock)
     }
 
-    internal fun <T : Any> search(kType: KType, qualifier: String?): T? {
+    internal fun <T : Any> search(kType: KType, qualifier: String?): LifeCycleType<T>? {
         when (qualifier.isNullOrEmpty()) {
             true -> {
                 totalLifeCycleTypes.forEach {
-                    val eachLifeCyclesSearchResult: T? = it.searchWithOutQualifier<T>(kType)
+                    val eachLifeCyclesSearchResult: LifeCycleType<T>? =
+                        it.searchWithOutQualifier<T>(kType)
                     if (eachLifeCyclesSearchResult != null) return eachLifeCyclesSearchResult
                 }
             }
             false -> {
                 totalLifeCycleTypes.forEach {
-                    val eachLifeCyclesSearchResult: T? = it.searchWithQualifier<T>(kType, qualifier)
+                    val eachLifeCyclesSearchResult: LifeCycleType<T>? =
+                        it.searchWithQualifier<T>(kType, qualifier)
                     if (eachLifeCyclesSearchResult != null) return eachLifeCyclesSearchResult
                 }
             }

@@ -1,5 +1,6 @@
 package com.angrypig.autodi.autoDIContainer
 
+import com.angrypig.autodi.LifeCycleType
 import com.angrypig.autodi.ViewModelBundle
 import com.angrypig.autodi.autoDIModule.AutoDIModule
 import kotlin.reflect.KType
@@ -51,9 +52,13 @@ class AutoDIModules(value: MutableList<AutoDIModule>) {
         _value.addAll(newValue)
     }
 
-    internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T? {
+    internal fun <T : Any> searchLifeCycleType(
+        kType: KType,
+        qualifier: String?,
+    ): LifeCycleType<T>? {
         value.forEach { autoDIModule ->
-            val eachSearchResult: T? = autoDIModule.searchLifeCycleType(kType, qualifier)
+            val eachSearchResult: LifeCycleType<T>? =
+                autoDIModule.searchLifeCycleType(kType, qualifier)
             if (eachSearchResult != null) return eachSearchResult
         }
         return null

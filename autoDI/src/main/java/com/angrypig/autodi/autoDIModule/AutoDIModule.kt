@@ -2,6 +2,7 @@ package com.angrypig.autodi.autoDIModule
 
 import androidx.lifecycle.ViewModel
 import com.angrypig.autodi.AutoDI
+import com.angrypig.autodi.LifeCycleType
 import com.angrypig.autodi.ViewModelBundle
 import kotlin.reflect.KType
 
@@ -25,7 +26,7 @@ class AutoDIModule(internal var qualifier: String? = null) {
         androidComponentsContainer.registerViewModel(registerBlock)
     }
 
-    internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): T? =
+    internal fun <T : Any> searchLifeCycleType(kType: KType, qualifier: String?): LifeCycleType<T>? =
         lifeCycleTypeContainer.search(kType, qualifier)
 
     internal fun searchViewModelBundle(kType: KType): ViewModelBundle<*>? =
