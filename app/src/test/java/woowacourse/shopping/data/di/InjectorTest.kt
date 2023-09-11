@@ -26,7 +26,7 @@ class InjectorTest {
     }
 
     class DefaultFakeRepository : FakeRepository
-    class RecursiveFakeRepository(fakeDao: FakeDao) : FakeRepository
+    class RecursiveFakeRepository(@Inject fakeDao: FakeDao) : FakeRepository
     class DefaultFakeDao : FakeDao
 
     @Before
@@ -73,6 +73,20 @@ class InjectorTest {
         assertEquals(
             FakeContainer.getInstance(FakeRepository::class),
             actual.fakeRepository
+        )
+    }
+
+    @Test
+    fun `의존성 주입이 필요한 필드에만 의존성을 주입한다`() {
+        //given
+        FakeContainer.addInstance(FakeRepository::class, DefaultFakeRepository())
+        val activity = Robolectric.buildActivity(FakeFieldInjectActivity::class.java).create().get()
+
+        // then
+        val actual = activity.viewModel
+        assertEquals(
+            FakeContainer.getInstance(FakeRepository::class),
+            actual.productRepository
         )
     }
 }
