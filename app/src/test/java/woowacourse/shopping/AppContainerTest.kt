@@ -26,6 +26,22 @@ class TargetClass(val cartRepository: CartRepository) {
     fun isNameInitialized() = this::name.isInitialized
 }
 
+class TestProvider private constructor(val nameTag: NameTag) {
+    companion object {
+        fun createInstance(nameTag: NameTag): TestProvider {
+            return TestProvider(nameTag)
+        }
+    }
+}
+
+class NameTag private constructor(val name: String) {
+    companion object {
+        fun createInstance(): NameTag {
+            return NameTag("글로")
+        }
+    }
+}
+
 class AppContainerTest {
     private lateinit var appContainer: AppContainer
 
@@ -33,6 +49,8 @@ class AppContainerTest {
     fun setup() {
         appContainer = AppContainer()
         appContainer.addProvider(CartProductDao::class, FakeCartProductDao::class::createInstance)
+        appContainer.addProvider(TestProvider::class, TestProvider::createInstance)
+        appContainer.addProvider(NameTag::class, NameTag::createInstance)
         appContainer.addImplementationClass(ProductRepository::class, DefaultProductRepository::class)
         appContainer.addImplementationClass(CartRepository::class, DefaultCartRepository::class)
     }
@@ -81,5 +99,16 @@ class AppContainerTest {
 
         // then
         assertThat(targetClass.isNameInitialized()).isFalse
+    }
+
+    @Test
+    fun `TestProvider의 nameTag 프로퍼티의 name의 값은 글로이다`() {
+        // given
+        val provider = appContainer.inject(TestProvider::class.java)
+
+        // when
+
+        // then
+        assertThat(provider.nameTag.name).isEqualTo("글로")
     }
 }

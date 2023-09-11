@@ -41,21 +41,26 @@ class AppContainer {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> getInstanceOf(implementationClass: KClass<out T>): T? {
-        return providers[implementationClass]?.let {
-            it.call() as T
+        return providers[implementationClass]?.let { provider ->
+            val args = getArguments(provider)
+            provider.call(*args) as T
         }
+    }
+
+    private fun getArguments(func: KFunction<*>): Array<Any> {
+        val args = func.parameters.map {
+            inject(it.type.jvmErasure.java)
+        }.toTypedArray()
+        return args
     }
 
     private fun <T : Any> createInstanceOf(implementationClass: KClass<out T>): T {
         val constructor = implementationClass.primaryConstructor
             ?: throw NullPointerException("주입할 클래스의 주생성자가 존재하지 않습니다.")
-        val parameters = constructor.parameters
 
-        if (parameters.isEmpty()) return implementationClass.createInstance()
+        if (constructor.parameters.isEmpty()) return implementationClass.createInstance()
 
-        val args = parameters.map {
-            inject(it.type.jvmErasure.java)
-        }.toTypedArray()
+        val args = getArguments(constructor)
         return constructor.call(*args)
     }
 
