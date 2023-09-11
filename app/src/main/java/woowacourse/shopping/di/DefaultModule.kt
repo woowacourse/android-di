@@ -8,6 +8,7 @@ import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DataBaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
@@ -58,11 +59,19 @@ object DefaultModule : Module {
         )
     }
 
+    @Singleton
     fun provideProductRepository(): ProductRepository {
         return inject<DefaultProductRepository>()
     }
 
-    fun provideCartRepository(): CartRepository {
+    @Qualifier("Database")
+    fun provideDatabaseCartRepository(): CartRepository {
         return inject<DataBaseCartRepository>()
+    }
+
+    @Singleton
+    @Qualifier("InMemory")
+    fun provideInMemoryCartRepository(): CartRepository {
+        return inject<InMemoryCartRepository>()
     }
 }

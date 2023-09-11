@@ -7,9 +7,12 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.primaryConstructor
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
@@ -20,6 +23,14 @@ class Person(var firstName: String, val lastName: String, private var age: Int) 
         fun noname(age: Int): Person = Person("", "", age)
     }
 }
+
+annotation class Qualifier(
+    val name: String
+)
+
+class Foo(
+    @Qualifier("hi") private val name: String
+)
 
 class ReflectionTest {
 
@@ -93,5 +104,17 @@ class ReflectionTest {
         assertThat(personReflection.functions.size).isEqualTo(6)
         // fullName, greeting, isAdult
         assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+    }
+
+    @Test
+    fun `annotation class 수정`() {
+        var boolean: Boolean = false
+        val foo = Foo::class.primaryConstructor!!.parameters.forEach {
+            println(it.findAnnotation<Qualifier>()!!.name)
+        }
+        Foo::class.primaryConstructor!!.parameters.forEach {
+            println(it.toString())
+        }
+        assertThat(boolean).isTrue
     }
 }
