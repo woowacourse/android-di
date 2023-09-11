@@ -53,6 +53,6 @@ class AppContainer(private val modules: List<Module>) {
 
             return provideFunc.callBy(args)
         }
-        return provideFunc.call(receiver)
+        return provideFunc.callBy(mapOf(provideFunc.parameters.first() to receiver))
     }
 }
