@@ -10,7 +10,9 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.common.AppContainer
+import woowacourse.shopping.common.BandalInject
 import woowacourse.shopping.common.CommonViewModelFactory
+import woowacourse.shopping.common.DIError
 import woowacourse.shopping.common.viewModelInject
 import kotlin.reflect.KClass
 
@@ -18,7 +20,14 @@ interface FakeRepository
 
 class DefaultFakeRepository : FakeRepository
 
-class FakeViewModel(val repository: FakeRepository) : ViewModel()
+class FakeViewModelWithConstructor @BandalInject constructor(
+    val repository: FakeRepository,
+) : ViewModel()
+
+class FakeViewModelWithField : ViewModel() {
+    @BandalInject
+    lateinit var repository: FakeRepository
+}
 
 object FakeAppContainer : AppContainer {
     private val instances: HashMap<KClass<*>, Any> = HashMap()
@@ -36,8 +45,20 @@ object FakeAppContainer : AppContainer {
     }
 }
 
-class FakeActivity : AppCompatActivity() {
-    val viewModel: FakeViewModel by viewModelInject { CommonViewModelFactory(FakeAppContainer) }
+class FakeActivityWithConstructor : AppCompatActivity() {
+    val viewModel: FakeViewModelWithConstructor by viewModelInject {
+        CommonViewModelFactory(
+            FakeAppContainer,
+        )
+    }
+}
+
+class FakeActivityWithField : AppCompatActivity() {
+    val viewModel: FakeViewModelWithField by viewModelInject {
+        CommonViewModelFactory(
+            FakeAppContainer,
+        )
+    }
 }
 
 @RunWith(RobolectricTestRunner::class)
@@ -53,25 +74,48 @@ class ViewModelFactoryTest {
         // given
         val defaultFakeRepository = DefaultFakeRepository()
         FakeAppContainer.addInstance(
-            FakeRepository::class,
-            defaultFakeRepository,
+            type = FakeRepository::class,
+            instance = defaultFakeRepository,
         )
 
         // when
-        val activity: FakeActivity? = Robolectric.buildActivity(FakeActivity::class.java)
-            .create()
-            .get()
-        val viewModel: FakeViewModel? = activity?.viewModel
+        val activity: FakeActivityWithConstructor? =
+            Robolectric.buildActivity(FakeActivityWithConstructor::class.java)
+                .create()
+                .get()
+        val viewModel: FakeViewModelWithConstructor? = activity?.viewModel
 
         // then
         assertNotNull(viewModel)
         assertEquals(viewModel?.repository, defaultFakeRepository)
     }
 
-    @Test(expected = NullPointerException::class)
+    @Test
+    fun `다`() {
+        // given
+        val defaultFakeRepository = DefaultFakeRepository()
+        FakeAppContainer.addInstance(
+            type = FakeRepository::class,
+            instance = defaultFakeRepository,
+        )
+
+        // when
+        val activity = Robolectric
+            .buildActivity(FakeActivityWithField::class.java)
+            .create()
+            .get()
+
+        val viewModel: FakeViewModelWithField? = activity?.viewModel
+
+        // then
+        assertNotNull(viewModel)
+        assertEquals(viewModel?.repository, defaultFakeRepository)
+    }
+
+    @Test(expected = DIError.NotFoundInstanceForInject::class)
     fun `적절한 객체 인스턴스가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(FakeActivityWithConstructor::class.java)
             .create()
             .get()
         activity.viewModel
