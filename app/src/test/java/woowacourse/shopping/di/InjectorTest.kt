@@ -12,7 +12,16 @@ class FakeFirst
 
 class FakeImplOfInterface : FakeInterface
 
-class FakeOnceConstructor(fakeInterface: FakeInterface)
+class FakeImplOfInterface2 : FakeInterface
+
+class FakeOnceConstructor(
+    fakeInterface: FakeInterface,
+)
+
+class FakeOnceConstructorQualifier(
+    @Qualifier(FakeImplOfInterface2::class)
+    val fakeInterface: FakeInterface,
+)
 
 class FakeHaveTwiceConstructor(
     fakeFirst: FakeFirst,
@@ -24,6 +33,16 @@ class FakeHaveFieldAndConstructor(
 ) {
     @Inject
     lateinit var fakeFirst: FakeFirst
+}
+
+class FakeQualifierModule : Module {
+    fun provideFakeImplOfInterface1(): FakeInterface = FakeImplOfInterface()
+
+    fun provideFakeImplOfInterface2(): FakeInterface = FakeImplOfInterface2()
+
+    fun provideFakeOnceConstructor(
+        fakeInterface: FakeInterface,
+    ): FakeOnceConstructor = FakeOnceConstructor(fakeInterface)
 }
 
 class FakeModule : Module {
@@ -78,5 +97,16 @@ class InjectorTest {
     fun `생성자가 있는 클래스와 @Inject 어노테이션이 붙은 필드를 갖는 클래스의 의존성을 주입한다`() {
         val instance = injector.inject(FakeHaveFieldAndConstructor::class.java)
         assertThat(instance).isInstanceOf(FakeHaveFieldAndConstructor::class.java)
+    }
+
+    @Test
+    fun `추상화 된 객체를 @Qualifier 어노테이션으로 구분하여 FakeImplOfInterface2의 의존성을 주입한다`() {
+        // 어노테이션 Qualifier 테스트를 위한 모듈 적용
+        injector = Injector(FakeQualifierModule())
+
+        val instance = injector.inject(FakeOnceConstructorQualifier::class.java)
+        assertThat(instance).isInstanceOf(FakeOnceConstructorQualifier::class.java)
+        // 실제로 주입된 객체가 어노테이션으로 지정한 FakeImplOfInterface2 클래스가 맞는지 검증
+        assertThat(instance.fakeInterface).isInstanceOf(FakeImplOfInterface2::class.java)
     }
 }

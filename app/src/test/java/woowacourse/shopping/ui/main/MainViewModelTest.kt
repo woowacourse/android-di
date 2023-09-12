@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultFakeCartRepository
+import woowacourse.shopping.data.DefaultFakeProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 
@@ -31,6 +32,7 @@ class MainViewModelTest {
         val cartRepository: CartRepository = DefaultFakeCartRepository()
 
         viewModel = MainViewModel(cartRepository)
+        viewModel.productRepository = DefaultFakeProductRepository()
     }
 
     @Test

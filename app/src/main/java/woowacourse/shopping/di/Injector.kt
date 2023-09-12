@@ -6,6 +6,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
@@ -51,7 +52,12 @@ class Injector(
 
     private fun getInstances(kFunction: KFunction<*>): List<Any?> =
         kFunction.valueParameters.map { kParameter ->
-            val instance = findInstance(kParameter.type.jvmErasure)
+            val instance =
+                kParameter.findAnnotation<Qualifier>()?.let {
+                    findInstance(it.clazz)
+                } ?: run {
+                    findInstance(kParameter.type.jvmErasure)
+                }
             instance
         }
 

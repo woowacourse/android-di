@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 class SingletonModule(
@@ -19,7 +20,11 @@ class SingletonModule(
     private val cacheData: MutableMap<String, Any> = mutableMapOf()
 
     fun provideCartRepository(cartProductDao: CartProductDao): CartRepository {
-        return getInstance { DefaultCartRepository(cartProductDao) }
+        return getInstance { RoomCartRepository(cartProductDao) }
+    }
+
+    fun provideInMemoryCartRepository(): CartRepository {
+        return getInstance { InMemoryCartRepository() }
     }
 
     fun provideProductRepository(): ProductRepository {
