@@ -13,6 +13,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmErasure
 
 abstract class Module(var context: Context?, private val parentModule: Module? = null) {
     private val cache = mutableMapOf<String, Any>()
@@ -40,12 +41,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
         qualifier: KClass<out Annotation>? = null,
     ): Map<KFunction<*>, Module> {
         return getPublicMethodMap()
-            .filter { (func, _) ->
-                val returnKClass = func.returnType.classifier as KClass<*>
-                clazz.kotlin.isSubclassOf(returnKClass)
-            }.filter { (func, _) ->
-                qualifier?.let { hasQualifierAtFunc(func, it) } ?: true
-            }.takeUnless { it.isEmpty() }
+            .filter { (func, _) -> clazz.kotlin.isSubclassOf(func.returnType.jvmErasure) }
+            .filter { (func, _) -> qualifier?.let { hasQualifierAtFunc(func, it) } ?: true }
+            .takeUnless { it.isEmpty() }
             ?: parentModule?.searchInjectableFunctions(clazz, qualifier) ?: mapOf()
     }
 
@@ -73,10 +71,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
 
     private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
         return func.valueParameters.map { param ->
-            val paramKClass = param.type.classifier as KClass<*>
             val qualifier =
                 param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-            baseModule.provideInstance(paramKClass.java, qualifier?.annotationClass)
+            baseModule.provideInstance(param.type.jvmErasure.java, qualifier?.annotationClass)
         }
     }
 
@@ -88,10 +85,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
                 if (field.visibility != KVisibility.PUBLIC) throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
                 val qualifier =
                     field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-                val fieldKClass = field.returnType.classifier as KClass<*>
                 field.setter.call(
                     instance,
-                    provideInstance(fieldKClass.java, qualifier?.annotationClass),
+                    provideInstance(field.returnType.jvmErasure.java, qualifier?.annotationClass),
                 )
             }
         return instance
