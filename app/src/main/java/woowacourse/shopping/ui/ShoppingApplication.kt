@@ -10,7 +10,7 @@ import woowacourse.shopping.data.di.Injector
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
-class MyApplication : Application() {
+class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Injector.container = DefaultContainer
