@@ -1,12 +1,10 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.Injector
-import woowacourse.shopping.di.Module
 
 interface FakeInterface
 
@@ -21,6 +19,13 @@ class FakeHaveTwiceConstructor(
     fakeOnceConstructor: FakeOnceConstructor,
 )
 
+class FakeHaveFieldAndConstructor(
+    fakeOnceConstructor: FakeOnceConstructor,
+) {
+    @Inject
+    lateinit var fakeFirst: FakeFirst
+}
+
 class FakeModule : Module {
     fun provideFakeFirst(): FakeFirst = FakeFirst()
 
@@ -34,6 +39,10 @@ class FakeModule : Module {
         fakeFirst: FakeFirst,
         fakeOnceConstructor: FakeOnceConstructor,
     ): FakeHaveTwiceConstructor = FakeHaveTwiceConstructor(fakeFirst, fakeOnceConstructor)
+
+    fun provideFakeHaveFieldAndConstructor(
+        fakeOnceConstructor: FakeOnceConstructor,
+    ): FakeHaveFieldAndConstructor = FakeHaveFieldAndConstructor(fakeOnceConstructor)
 }
 
 class InjectorTest {
@@ -63,5 +72,11 @@ class InjectorTest {
     fun `생성자가 있는 클래스와 디폴트 생성자만 존재하는 클래스를 주 생성자로 갖는 클래스의 의존성을 주입한다`() {
         val instance = injector.inject(FakeHaveTwiceConstructor::class.java)
         assertThat(instance).isInstanceOf(FakeHaveTwiceConstructor::class.java)
+    }
+
+    @Test
+    fun `생성자가 있는 클래스와 @Inject 어노테이션이 붙은 필드를 갖는 클래스의 의존성을 주입한다`() {
+        val instance = injector.inject(FakeHaveFieldAndConstructor::class.java)
+        assertThat(instance).isInstanceOf(FakeHaveFieldAndConstructor::class.java)
     }
 }

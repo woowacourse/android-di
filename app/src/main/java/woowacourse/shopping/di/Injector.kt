@@ -4,8 +4,12 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
@@ -15,8 +19,26 @@ class Injector(
         val primaryConstructor =
             clazz.kotlin.primaryConstructor ?: throw NullPointerException(ERROR_PRIMARY_CONSTRUCTOR)
 
+        val fields =
+            clazz.kotlin.declaredMemberProperties
+                .filter { it.hasAnnotation<Inject>() }
+                .map { kProperty -> kProperty.apply { isAccessible = true }.javaField }
+
         val instances = getInstances(primaryConstructor)
-        return primaryConstructor.call(*instances.toTypedArray())
+        val instance = primaryConstructor.call(*instances.toTypedArray())
+
+        return if (fields.isEmpty()) {
+            instance
+        } else {
+            instance.apply {
+                fields.forEach { field ->
+                    field?.run {
+                        val obj = findInstance(this.type.kotlin)
+                        set(instance, obj)
+                    }
+                }
+            }
+        }
     }
 
     private fun getInstances(kFunction: KFunction<*>): List<Any?> =
