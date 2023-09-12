@@ -72,8 +72,4 @@ dependencies {
 
     // refelction
     implementation(kotlin("reflect"))
-
-    // Koin main features for Android
-    implementation("io.insert-koin:koin-android:3.4.3")
-    testImplementation("org.koin:koin-test:3.4.3")
 }
