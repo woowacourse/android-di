@@ -45,7 +45,7 @@ class DependencyContainerTest {
         DependencyContainer.addInstance(Person::class, MatPig())
 
         // when
-        val sopt = Injector.inject<Sopt>(Sopt::class)
+        val sopt = Injector.injectSingleton<Sopt>(Sopt::class)
         val actual = sopt.person.name
 
         // then
@@ -58,7 +58,7 @@ class DependencyContainerTest {
         DependencyContainer.addInstance(String::class, "Captain")
 
         // when
-        val jason = Injector.inject<Jason>(Jason::class)
+        val jason = Injector.injectSingleton<Jason>(Jason::class)
 
         // then
         assertAll(

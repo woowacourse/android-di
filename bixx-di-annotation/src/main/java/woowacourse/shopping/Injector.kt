@@ -18,6 +18,20 @@ object Injector {
         }
     }
 
+    fun <T> injectSingleton(target: KClass<*>, nameTag: String? = null): T {
+        return if (nameTag == null) {
+            (DependencyContainer.getInstance(target) ?: createSingletonInstance(target)) as T
+        } else {
+            (DependencyContainer.getInstance(target, nameTag) ?: createSingletonInstance(target)) as T
+        }
+    }
+
+    private fun createSingletonInstance(target: KClass<*>): Any {
+        val instance = createInstance(target)
+        DependencyContainer.addInstance(target, instance)
+        return instance
+    }
+
     private fun createInstance(target: KClass<*>): Any {
         val constructor = target.primaryConstructor
             ?: throw NullPointerException("{${target.simpleName}}의 주 생성자를 찾을 수 없습니다")
@@ -25,8 +39,6 @@ object Injector {
 
         val instance = constructor.call(*paramInstances.toTypedArray())
         instance.injectProperties()
-        DependencyContainer.addInstance(target, instance)
-
         return instance
     }
 
@@ -36,10 +48,10 @@ object Injector {
         kParams.forEach {
             val qualifier = it.findAnnotation<Qualifier>()
             if (qualifier != null) {
-                val instance: Any = inject(it.type.jvmErasure, qualifier.className)
+                val instance: Any = injectSingleton(it.type.jvmErasure, qualifier.className)
                 paramInstances.add(instance)
             } else {
-                paramInstances.add(inject(it.type.jvmErasure))
+                paramInstances.add(injectSingleton(it.type.jvmErasure))
             }
         }
         return paramInstances
@@ -52,7 +64,7 @@ object Injector {
             if (inject != null) {
                 this@injectProperties::class.java.getDeclaredField(it.name).apply {
                     isAccessible = true
-                    set(this@injectProperties, inject(it.returnType.jvmErasure))
+                    set(this@injectProperties, injectSingleton(it.returnType.jvmErasure))
                 }
             }
         }
