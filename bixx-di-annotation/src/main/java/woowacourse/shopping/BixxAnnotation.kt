@@ -1,6 +1,6 @@
 package woowacourse.shopping
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.PROPERTY)
 annotation class Inject
 
 @Target(

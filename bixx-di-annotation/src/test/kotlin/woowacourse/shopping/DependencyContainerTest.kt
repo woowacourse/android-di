@@ -14,7 +14,6 @@ class DependencyContainerTest {
     class Sangun(override val name: String = "sangun") : Person
     class MatPig(override val name: String = "matPig") : Person
     class Sopt(
-        @Inject
         @Qualifier("MatPig")
         val person: Person,
     )

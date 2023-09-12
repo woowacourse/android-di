@@ -34,7 +34,6 @@ object Injector {
         val kParams: List<KParameter> = constructor.parameters
         val paramInstances = mutableListOf<Any>()
         kParams.forEach {
-            if (it.findAnnotation<Inject>() == null) return@forEach
             val qualifier = it.findAnnotation<Qualifier>()
             if (qualifier != null) {
                 val instance: Any = inject(it.type.jvmErasure, qualifier.className)
