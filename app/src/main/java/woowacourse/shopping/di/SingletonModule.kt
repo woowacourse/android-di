@@ -11,7 +11,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 
 class SingletonModule(
     context: Context,
-) {
+) : Module {
     private val cartProductDao: CartProductDao by lazy {
         Room.databaseBuilder(context, ShoppingDatabase::class.java, CART_PRODUCT_DATABASE)
             .build().cartProductDao()
