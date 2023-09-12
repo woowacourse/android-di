@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.SingleInstance
+import woowacourse.shopping.di.annotation.SingleInstance
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 

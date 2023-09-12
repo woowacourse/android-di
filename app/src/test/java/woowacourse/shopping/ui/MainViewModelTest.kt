@@ -11,11 +11,10 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.createProduct
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.getProducts
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModelTest {
     private lateinit var appContainer: AppContainer
@@ -29,8 +28,11 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         appContainer = AppContainer()
-        appContainer.addImplementationClass(ProductRepository::class, FakeProductRepository::class)
-        appContainer.addImplementationClass(CartRepository::class, FakeCartRepository::class)
+        appContainer.addQualifier(
+            Qualifier("defaultProductRepository"),
+            FakeProductRepository::class,
+        )
+        appContainer.addQualifier(Qualifier("databaseCartRepository"), FakeCartRepository::class)
         viewModel = appContainer.inject(MainViewModel::class.java)
     }
 

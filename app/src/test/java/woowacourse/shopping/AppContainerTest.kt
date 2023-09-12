@@ -7,14 +7,16 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import kotlin.reflect.full.createInstance
 
-class TargetClass(val cartRepository: CartRepository) {
+class TargetClass(@Qualifier("databaseCartRepository") val cartRepository: CartRepository) {
     @Inject
+    @Qualifier("defaultProductRepository")
     lateinit var productRepository: ProductRepository
         private set
 
@@ -51,8 +53,14 @@ class AppContainerTest {
         appContainer.addProvider(CartProductDao::class, FakeCartProductDao::class::createInstance)
         appContainer.addProvider(TestProvider::class, TestProvider::createInstance)
         appContainer.addProvider(NameTag::class, NameTag::createInstance)
-        appContainer.addImplementationClass(ProductRepository::class, DefaultProductRepository::class)
-        appContainer.addImplementationClass(CartRepository::class, DatabaseCartRepository::class)
+        appContainer.addQualifier(
+            Qualifier("defaultProductRepository"),
+            DefaultProductRepository::class,
+        )
+        appContainer.addQualifier(
+            Qualifier("databaseCartRepository"),
+            DatabaseCartRepository::class,
+        )
     }
 
     @Test

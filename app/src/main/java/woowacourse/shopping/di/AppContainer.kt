@@ -1,10 +1,16 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.di.annotation.SingleInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -12,31 +18,28 @@ import kotlin.reflect.jvm.jvmErasure
 
 class AppContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-
     private val providers: MutableMap<KClass<*>, KFunction<*>> = mutableMapOf()
-
-    private val implementationClasses: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
+    private val qualifiers: MutableMap<Qualifier, KClass<*>> = mutableMapOf()
 
     fun <T : Any> addProvider(clazz: KClass<T>, provider: KFunction<T>) {
         providers[clazz] = provider
     }
 
-    fun <T : Any> addImplementationClass(abstract: KClass<T>, implement: KClass<out T>) {
-        implementationClasses[abstract] = implement
+    fun <T : Any> addQualifier(qualifier: Qualifier, clazz: KClass<T>) {
+        qualifiers[qualifier] = clazz
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> inject(clazz: Class<T>): T {
-        val implementationClass =
-            implementationClasses[clazz.kotlin] ?: clazz.kotlin as KClass<out T>
+        val kClass = clazz.kotlin
 
-        instances[implementationClass]?.let { return it as T }
+        instances[kClass]?.let { return it as T }
 
-        val instance = getInstanceOf(implementationClass) ?: createInstanceOf(implementationClass)
-        injectFields(implementationClass, instance)
+        val instance = getInstanceOf(kClass) ?: createInstanceOf(kClass)
+        injectFields(kClass, instance)
 
-        saveInstance(implementationClass, instance)
-        return instance as T
+        saveInstance(kClass, instance)
+        return instance
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -49,9 +52,16 @@ class AppContainer {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.type.jvmErasure.java)
+            inject(it.getImplementationClass().java)
         }.toTypedArray()
         return args
+    }
+
+    private fun KParameter.getImplementationClass(): KClass<*> {
+        val qualifier = findAnnotation<Qualifier>()
+        return qualifier?.let {
+            qualifiers[it]
+        } ?: type.jvmErasure
     }
 
     private fun <T : Any> createInstanceOf(implementationClass: KClass<out T>): T {
@@ -68,9 +78,16 @@ class AppContainer {
         clazz.declaredMemberProperties.forEach {
             if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
                 it.isAccessible = true
-                it.setter.call(instance, inject(it.returnType.jvmErasure.java))
+                it.setter.call(instance, inject(it.getImplementationClass().java))
             }
         }
+    }
+
+    private fun <T : Any> KProperty1<T, *>.getImplementationClass(): KClass<*> {
+        val qualifier = findAnnotation<Qualifier>()
+        return qualifier?.let {
+            qualifiers[it]
+        } ?: returnType.jvmErasure
     }
 
     private fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
