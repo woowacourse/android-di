@@ -23,7 +23,7 @@ class CustomInjector {
 
     private fun <T : Any> createInstanceFromKClass(kClass: KClass<T>): T {
         val constructor = kClass.primaryConstructor
-            ?: throw IllegalArgumentException("주 생성자를 찾을 수 없습니다.")
+            ?: throw NoSuchElementException("주 생성자를 찾을 수 없습니다.")
 
         val parameterValues =
             constructor.parameters.associateWith {
