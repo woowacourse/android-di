@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.module.Module
 import woowacourse.shopping.di.viewModels
 import woowacourse.shopping.provider.Fake

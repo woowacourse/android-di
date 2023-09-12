@@ -1,5 +1,6 @@
 package woowacourse.shopping.di.injector
 
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KType
