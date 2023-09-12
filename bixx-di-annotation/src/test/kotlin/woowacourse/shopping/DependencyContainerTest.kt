@@ -38,7 +38,7 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트`() {
+    fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트(싱글톤)`() {
         // given
         DependencyContainer.addInstance(Person::class, Bixx())
         DependencyContainer.addInstance(Person::class, Sangun())
@@ -53,12 +53,42 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `생성자가 아닌 프로퍼티에 값이 제대로 주입됐는지 테스트`() {
+    fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트`() {
+        // given
+        DependencyContainer.addInstance(Person::class, Bixx())
+        DependencyContainer.addInstance(Person::class, Sangun())
+        DependencyContainer.addInstance(Person::class, MatPig())
+
+        // when
+        val sopt = Injector.inject<Sopt>(Sopt::class)
+        val actual = sopt.person.name
+
+        // then
+        assertThat(actual).isEqualTo("matPig")
+    }
+
+    @Test
+    fun `생성자가 아닌 프로퍼티에 값이 제대로 주입됐는지 테스트(싱글톤)`() {
         // given
         DependencyContainer.addInstance(String::class, "Captain")
 
         // when
         val jason = Injector.injectSingleton<Jason>(Jason::class)
+
+        // then
+        assertAll(
+            { assertThat(jason.role).isEqualTo("Captain") },
+            { assertThrows<UninitializedPropertyAccessException> { jason.github } },
+        )
+    }
+
+    @Test
+    fun `생성자가 아닌 프로퍼티에 값이 제대로 주입됐는지 테스트`() {
+        // given
+        DependencyContainer.addInstance(String::class, "Captain")
+
+        // when
+        val jason = Injector.inject<Jason>(Jason::class)
 
         // then
         assertAll(
