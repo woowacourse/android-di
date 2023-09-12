@@ -41,6 +41,7 @@ class Injector(private val container: Container) {
     private fun <T : Any> injectField(instance: T) {
         instance::class.memberProperties.forEach { property ->
             if (property.annotations.any { it is InjectField }) {
+                println()
                 if (property is KMutableProperty<*>) {
                     property.setter.call(instance, getInstance(property.returnType))
                 }

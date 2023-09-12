@@ -1,6 +1,5 @@
 package woowacourse.shopping
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import org.junit.Assert.assertEquals
@@ -10,56 +9,27 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.Injector
 import woowacourse.shopping.di.getViewModel
-
-interface FakeRepository
-
-class DefaultFakeRepository : FakeRepository
-
-class FakeViewModel(
-    val fakeRepository: FakeRepository,
-) : ViewModel()
-
-class FakeActivity : AppCompatActivity() {
-    val viewModel by getViewModel<FakeViewModel>(TestApplication.injector)
-}
 
 interface FakeRepository2
 
-class FakeViewModel1(
+class FakeViewModel2(
     val fakeRepository2: FakeRepository2,
 ) : ViewModel()
 
 class FakeActivity2 : AppCompatActivity() {
-    val viewModel by getViewModel<FakeViewModel1>(TestApplication.injector)
-}
-
-object TestRepositoryContainer : Container {
-    val fakeRepository: FakeRepository = DefaultFakeRepository()
-}
-
-class TestApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        injector = Injector(TestRepositoryContainer)
-    }
-
-    companion object {
-        lateinit var injector: Injector
-    }
+    val viewModel by getViewModel<FakeViewModel2>(Fake.TestApplication.injector)
 }
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
+@Config(application = Fake.TestApplication::class)
 class ViewModelInjectorTest {
 
     @Test
     fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(Fake.FakeActivity::class.java)
             .create()
             .get()
 
@@ -68,7 +38,7 @@ class ViewModelInjectorTest {
         // then
         val viewModel = activity.viewModel
         assertNotNull(viewModel)
-        assertEquals(DefaultFakeRepository::class, viewModel.fakeRepository::class)
+        assertEquals(Fake.DefaultFakeRepository::class, viewModel.repository::class)
     }
 
     @Test(expected = IllegalArgumentException::class)
