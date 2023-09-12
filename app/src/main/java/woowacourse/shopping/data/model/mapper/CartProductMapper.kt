@@ -1,5 +1,6 @@
 package woowacourse.shopping.data.model.mapper
 
+import woowacourse.shopping.data.localStorage.CartProductEntity
 import woowacourse.shopping.data.model.DataCartProduct
 import woowacourse.shopping.model.CartProduct
 
@@ -20,3 +21,13 @@ fun DataCartProduct.toDomain(): CartProduct =
         imageUrl = imageUrl,
         createdAt = createdAt,
     )
+
+fun CartProductEntity.toData(): DataCartProduct =
+    DataCartProduct(
+        id = id,
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+        createdAt = createdAt,
+    )
+

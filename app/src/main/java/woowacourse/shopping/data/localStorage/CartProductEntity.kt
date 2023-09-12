@@ -2,6 +2,7 @@ package woowacourse.shopping.data.localStorage
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
 @Entity(tableName = "cart_products")
 data class CartProductEntity(val name: String, val price: Int, val imageUrl: String) {
@@ -9,5 +10,5 @@ data class CartProductEntity(val name: String, val price: Int, val imageUrl: Str
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
-    var createdAt: Long = System.currentTimeMillis()
+    var createdAt: LocalDateTime = LocalDateTime.now()
 }
