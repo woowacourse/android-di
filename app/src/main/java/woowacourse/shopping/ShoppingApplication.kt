@@ -5,8 +5,8 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.Injector
-import woowacourse.shopping.di.RepositoryContainer
 
 class ShoppingApplication : Application() {
 
@@ -14,15 +14,14 @@ class ShoppingApplication : Application() {
         super.onCreate()
         database = ShoppingDatabase.getDatabase(this)
 
-        val container = RepositoryContainer()
-        container.addInstance(DefaultProductRepository::class, null)
-        container.addInstance(DefaultCartRepository::class, null)
-        container.addInstance(
+        Container.addInstance(DefaultProductRepository::class, null)
+        Container.addInstance(DefaultCartRepository::class, null)
+        Container.addInstance(
             CartProductDao::class,
             ShoppingDatabase.getDatabase(this).cartProductDao(),
         )
 
-        injector = Injector(container)
+        injector = Injector(Container)
     }
 
     companion object {
