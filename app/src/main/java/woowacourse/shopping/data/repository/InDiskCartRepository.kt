@@ -3,12 +3,13 @@ package woowacourse.shopping.data.repository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toProduct
+import woowacourse.shopping.di.annotation.InDisk
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
-class DefaultCartRepository(
+@InDisk
+class InDiskCartRepository(
     @Inject
     private val cartProductDao: CartProductDao,
 ) : CartRepository {
