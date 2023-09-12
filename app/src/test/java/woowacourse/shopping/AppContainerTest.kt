@@ -49,12 +49,12 @@ class AppContainerTest {
     @Before
     fun setup() {
         appContainer = AppContainer()
-        appContainer.providers {
+        appContainer.registerProviders {
             provider(CartProductDao::class to FakeCartProductDao::class::createInstance)
             provider(TestProvider::class to TestProvider::createInstance)
             provider(NameTag::class to NameTag::createInstance)
         }
-        appContainer.qualifiers {
+        appContainer.registerQualifiers {
             qualifier(Qualifier("defaultProductRepository") to DefaultProductRepository::class)
             qualifier(Qualifier("databaseCartRepository") to DatabaseCartRepository::class)
         }

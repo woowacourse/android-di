@@ -15,10 +15,10 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContainer = AppContainer()
-        appContainer.providers {
+        appContainer.registerProviders {
             provider(CartProductDao::class to ShoppingDatabase.getInstance(applicationContext)::cartProductDao)
         }
-        appContainer.qualifiers {
+        appContainer.registerQualifiers {
             qualifier(Qualifier("defaultProductRepository") to DefaultProductRepository::class)
             qualifier(Qualifier("databaseCartRepository") to DatabaseCartRepository::class)
             qualifier(Qualifier("inMemoryCartRepository") to InMemoryCartRepository::class)

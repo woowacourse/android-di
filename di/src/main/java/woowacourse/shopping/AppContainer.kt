@@ -23,11 +23,11 @@ class AppContainer {
     private var providers: Map<KClass<*>, KFunction<*>> = emptyMap()
     private var qualifiers: Map<Qualifier, KClass<*>> = emptyMap()
 
-    fun providers(block: ProviderBuilder.() -> Unit) {
+    fun registerProviders(block: ProviderBuilder.() -> Unit) {
         providers = ProviderBuilder().apply(block).build()
     }
 
-    fun qualifiers(block: QualifierBuilder.() -> Unit) {
+    fun registerQualifiers(block: QualifierBuilder.() -> Unit) {
         qualifiers = QualifierBuilder().apply(block).build()
     }
 
