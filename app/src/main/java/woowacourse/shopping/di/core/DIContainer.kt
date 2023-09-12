@@ -1,18 +1,29 @@
 package woowacourse.shopping.di.core
 
+import android.content.Context
 import woowacourse.shopping.di.module.DependencyModule
+import woowacourse.shopping.di.module.Provider
 import kotlin.reflect.KClass
 
 object DIContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
+    private val moduleInstances = mutableMapOf<KClass<*>, KClass<*>>()
+    private val providerInstances = mutableMapOf<KClass<*>, Any>()
 
-    fun init(moduleList: List<DependencyModule>) {
+    fun init(moduleList: List<DependencyModule>, providerList: List<Provider>, context: Context) {
         moduleList.map {
-            instances.putAll(it.invoke())
+            moduleInstances.putAll(it.invoke(context))
+        }
+        providerList.map {
+            it.init(context)
+            providerInstances.putAll(it.get())
         }
     }
 
-    fun get(clazz: KClass<*>): Any {
-        return instances[clazz] ?: throw IllegalArgumentException()
+    fun getModuleKClass(clazz: KClass<*>): KClass<*>? {
+        return moduleInstances[clazz]
+    }
+
+    fun getProviderInstance(clazz: KClass<*>): Any {
+        return providerInstances[clazz] ?: throw IllegalArgumentException()
     }
 }

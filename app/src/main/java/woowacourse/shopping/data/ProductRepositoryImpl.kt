@@ -23,9 +23,10 @@ class ProductRepositoryImpl(
             imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
             1694326257
         ),
-
-    ),
+    )
 ) : ProductRepository {
+
+
     override fun getAllProducts(): List<Product> {
         return products
     }

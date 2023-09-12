@@ -6,6 +6,6 @@ import woowacourse.shopping.di.core.Injector
 
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return Injector.inject(modelClass)
+        return Injector.inject(modelClass.kotlin)
     }
 }
