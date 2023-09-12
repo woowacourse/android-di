@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.common.ViewModelFactory
 
@@ -59,7 +60,7 @@ class CartActivity : AppCompatActivity() {
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
             val adapter = CartProductAdapter(
-                items = it,
+                items = it.map { products -> products.toEntity() },
                 dateFormatter = dateFormatter,
                 onClickDelete = viewModel::deleteCartProduct,
             )
