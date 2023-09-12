@@ -5,8 +5,10 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 class CartInMemoryRepository(
-    private val cartProducts: MutableList<CartProduct> = mutableListOf(),
+    cartProducts: List<CartProduct> = emptyList(),
 ) : CartRepository {
+    private val cartProducts = cartProducts.toMutableList()
+
     private var id: Int = 0
         get() = field++
 
