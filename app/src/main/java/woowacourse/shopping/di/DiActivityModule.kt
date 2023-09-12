@@ -1,9 +1,7 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import com.re4rk.arkdi.DiContainer
-import com.re4rk.arkdi.HasDiContainer
 import com.re4rk.arkdi.Singleton
 import woowacourse.shopping.data.CartInDiskRepository
 import woowacourse.shopping.data.CartProductDao
@@ -36,13 +34,4 @@ class DiActivityModule(
     fun provideDateFormatter(
         @ContextType(ACTIVITY) context: Context,
     ): DateFormatter = DateFormatter(context)
-
-    companion object {
-        fun create(activity: AppCompatActivity): DiActivityModule {
-            return DiActivityModule(
-                (activity.application as? HasDiContainer)?.diContainer,
-                activity,
-            )
-        }
-    }
 }

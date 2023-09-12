@@ -2,24 +2,17 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.re4rk.arkdi.ArkInject
-import com.re4rk.arkdi.DiContainer
-import com.re4rk.arkdi.HasDiContainer
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DiActivityModule
+import woowacourse.shopping.di.DiAppCompatActivity
 import woowacourse.shopping.ui.util.viewModels
 
-class CartActivity : AppCompatActivity(), HasDiContainer {
+class CartActivity : DiAppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels()
-
-    override val diContainer: DiContainer by lazy {
-        DiActivityModule.create(this).also { it.inject(this) }
-    }
 
     @ArkInject
     private lateinit var dateFormatter: DateFormatter

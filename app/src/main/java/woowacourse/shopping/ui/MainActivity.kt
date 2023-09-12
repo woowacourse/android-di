@@ -4,24 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.re4rk.arkdi.DiContainer
-import com.re4rk.arkdi.HasDiContainer
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.DiActivityModule
+import woowacourse.shopping.di.DiAppCompatActivity
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.viewModels
 
-class MainActivity : AppCompatActivity(), HasDiContainer {
+class MainActivity : DiAppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels()
-
-    override val diContainer: DiContainer by lazy {
-        DiActivityModule.create(this).also { it.inject(this) }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
