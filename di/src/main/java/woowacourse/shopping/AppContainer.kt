@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.annotation.SingleInstance
+import woowacourse.shopping.annotation.Inject
+import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.annotation.SingleInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty

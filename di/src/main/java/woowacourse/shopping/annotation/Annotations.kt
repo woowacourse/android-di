@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package woowacourse.shopping.annotation
 
 @Target(AnnotationTarget.CLASS)
 annotation class SingleInstance

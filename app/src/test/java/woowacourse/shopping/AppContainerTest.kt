@@ -3,12 +3,11 @@ package woowacourse.shopping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.annotation.Inject
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository

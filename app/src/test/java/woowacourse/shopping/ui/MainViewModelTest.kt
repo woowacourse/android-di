@@ -9,9 +9,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.AppContainer
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.createProduct
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.getProducts
