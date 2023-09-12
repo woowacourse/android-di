@@ -28,11 +28,10 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         appContainer = AppContainer()
-        appContainer.addQualifier(
-            Qualifier("defaultProductRepository"),
-            FakeProductRepository::class,
-        )
-        appContainer.addQualifier(Qualifier("databaseCartRepository"), FakeCartRepository::class)
+        appContainer.qualifiers {
+            qualifier(Qualifier("defaultProductRepository") to FakeProductRepository::class)
+            qualifier(Qualifier("databaseCartRepository") to FakeCartRepository::class)
+        }
         viewModel = appContainer.inject(MainViewModel::class.java)
     }
 

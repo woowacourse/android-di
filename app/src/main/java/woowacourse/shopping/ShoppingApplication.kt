@@ -18,17 +18,10 @@ class ShoppingApplication : Application() {
         appContainer.providers {
             provider(CartProductDao::class to ShoppingDatabase.getInstance(applicationContext)::cartProductDao)
         }
-        appContainer.addQualifier(
-            Qualifier("defaultProductRepository"),
-            DefaultProductRepository::class,
-        )
-        appContainer.addQualifier(
-            Qualifier("databaseCartRepository"),
-            DatabaseCartRepository::class,
-        )
-        appContainer.addQualifier(
-            Qualifier("inMemoryCartRepository"),
-            InMemoryCartRepository::class,
-        )
+        appContainer.qualifiers {
+            qualifier(Qualifier("defaultProductRepository") to DefaultProductRepository::class)
+            qualifier(Qualifier("databaseCartRepository") to DatabaseCartRepository::class)
+            qualifier(Qualifier("inMemoryCartRepository") to InMemoryCartRepository::class)
+        }
     }
 }

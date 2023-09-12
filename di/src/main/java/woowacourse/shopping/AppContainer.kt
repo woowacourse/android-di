@@ -4,6 +4,7 @@ import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.SingleInstance
 import woowacourse.shopping.dslbuilder.ProviderBuilder
+import woowacourse.shopping.dslbuilder.QualifierBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -20,14 +21,14 @@ import kotlin.reflect.jvm.jvmErasure
 class AppContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private var providers: Map<KClass<*>, KFunction<*>> = emptyMap()
-    private val qualifiers: MutableMap<Qualifier, KClass<*>> = mutableMapOf()
+    private var qualifiers: Map<Qualifier, KClass<*>> = emptyMap()
 
     fun providers(block: ProviderBuilder.() -> Unit) {
         providers = ProviderBuilder().apply(block).build()
     }
 
-    fun <T : Any> addQualifier(qualifier: Qualifier, clazz: KClass<T>) {
-        qualifiers[qualifier] = clazz
+    fun qualifiers(block: QualifierBuilder.() -> Unit) {
+        qualifiers = QualifierBuilder().apply(block).build()
     }
 
     @Suppress("UNCHECKED_CAST")

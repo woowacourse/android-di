@@ -54,14 +54,10 @@ class AppContainerTest {
             provider(TestProvider::class to TestProvider::createInstance)
             provider(NameTag::class to NameTag::createInstance)
         }
-        appContainer.addQualifier(
-            Qualifier("defaultProductRepository"),
-            DefaultProductRepository::class,
-        )
-        appContainer.addQualifier(
-            Qualifier("databaseCartRepository"),
-            DatabaseCartRepository::class,
-        )
+        appContainer.qualifiers {
+            qualifier(Qualifier("defaultProductRepository") to DefaultProductRepository::class)
+            qualifier(Qualifier("databaseCartRepository") to DatabaseCartRepository::class)
+        }
     }
 
     @Test
