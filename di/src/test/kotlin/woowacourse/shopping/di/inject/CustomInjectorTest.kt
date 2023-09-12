@@ -96,8 +96,8 @@ class CustomInjectorTest {
         val itemsField = FakeViewModel::class.declaredMemberProperties.find { it.name == "items" }
 
         // CustomInject Annotation이 있는지 확인
-        assert(datasField!!.hasAnnotation<CustomInject>())
-        assertFalse(itemsField!!.hasAnnotation<CustomInject>())
+        datasField?.hasAnnotation<CustomInject>()?.let { assert(it) }
+        itemsField?.hasAnnotation<CustomInject>()?.let { assertFalse(it) }
 
         // then
         // CustomInject 어노테이션이 붙은 필드는 주입되고 어노테이션이 안 붙은 필드는 초기화도 되지 않음

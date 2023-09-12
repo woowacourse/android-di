@@ -20,9 +20,9 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import woowacourse.shopping.ui.MainViewModel
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.isAccessible
 
 class MainViewModelTest {
@@ -46,7 +46,7 @@ class MainViewModelTest {
         viewModel::class.declaredMemberProperties.filter { it.hasAnnotation<CustomInject>() }
             .forEach {
                 it.isAccessible = true
-                if (it.returnType == CartRepository::class.starProjectedType) {
+                if (it.returnType == CartRepository::class.createType()) {
                     (it as KMutableProperty<*>).setter.call(viewModel, cartRepository)
                 } else {
                     (it as KMutableProperty<*>).setter.call(viewModel, productRepository)
