@@ -16,6 +16,7 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 open class DiContainer(private val parentDiContainer: DiContainer? = null) {
+    private val instanceHolderMap = mutableMapOf<KFunction<*>, Any>()
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
         val injectedConstructor = clazz.constructors.filter { it.hasAnnotation<ArkInject>() }
@@ -55,8 +56,11 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
     private fun getInstance(kType: KType, qualifier: Annotation?): Any? {
         val method = getKFunction(kType, qualifier)
             ?: return parentDiContainer?.getInstance(kType, qualifier)
-        val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
-        return method.callBy(parameters)
+
+        return instanceHolderMap.getOrPut(method) {
+            val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
+            method.callBy(parameters) ?: throw IllegalArgumentException("Instance must not be null")
+        }
     }
 
     private fun getKFunction(kType: KType, qualifier: Annotation?): KFunction<*>? {

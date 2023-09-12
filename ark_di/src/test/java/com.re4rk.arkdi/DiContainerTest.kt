@@ -349,4 +349,20 @@ class DiContainerTest {
         assertThat(viewModel.fakeDiRepository).isInstanceOf(FakeDiProtoTypeRepository::class.java)
         assertThat(viewModel.fakeDiSingletonRepository).isInstanceOf(FakeDiProtoTypeRepository::class.java)
     }
+
+    @Test
+    fun `메소드를 생성하면 캐싱된다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            fun provideFakeDiRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        // when
+        val first = fakeDiObject.getInstance(FakeDiRepository::class)
+        val second = fakeDiObject.getInstance(FakeDiRepository::class)
+
+        // then
+        assertThat(first).isEqualTo(second)
+    }
 }

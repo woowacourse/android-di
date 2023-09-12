@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.re4rk.arkdi.DiContainer
 import com.re4rk.arkdi.HasDiContainer
-import com.re4rk.arkdi.InstanceHolder
 import woowacourse.shopping.data.CartInDiskRepository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
@@ -18,35 +17,20 @@ class DiActivityModule(
     private val context: Context,
 ) : DiContainer(parentDiContainer) {
     @ContextType(ACTIVITY)
-    fun provideContext(): Context = Cache.context.get {
-        context
-    }
+    fun provideContext(): Context = context
 
     @StorageType(DATABASE)
     fun provideCartInDiskRepository(
         cartProductDao: CartProductDao,
-    ): CartRepository = Cache.cartInDiskRepository.get {
-        CartInDiskRepository(cartProductDao)
-    }
+    ): CartRepository = CartInDiskRepository(cartProductDao)
 
     fun provideCartProductDao(
         shoppingDatabase: ShoppingDatabase,
-    ): CartProductDao = Cache.cartProductDao.get {
-        shoppingDatabase.cartProductDao()
-    }
+    ): CartProductDao = shoppingDatabase.cartProductDao()
 
     fun provideDateFormatter(
         @ContextType(ACTIVITY) context: Context,
-    ): DateFormatter = Cache.dataFormatter.get {
-        DateFormatter(context)
-    }
-
-    private object Cache {
-        val cartInDiskRepository = InstanceHolder<CartRepository>()
-        val cartProductDao = InstanceHolder<CartProductDao>()
-        val dataFormatter = InstanceHolder<DateFormatter>()
-        val context = InstanceHolder<Context>()
-    }
+    ): DateFormatter = DateFormatter(context)
 
     companion object {
         fun create(activity: AppCompatActivity): DiActivityModule {
