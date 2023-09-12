@@ -351,7 +351,24 @@ class DiContainerTest {
     }
 
     @Test
-    fun `메소드를 생성하면 캐싱된다`() {
+    fun `@Singlone을 붙이면 메소드로 생성하면 캐싱된다`() {
+        // given
+        val fakeDiObject = object : DiContainer() {
+            @Singleton
+            fun provideFakeDiRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        // when
+        val first = fakeDiObject.getInstance(FakeDiRepository::class)
+        val second = fakeDiObject.getInstance(FakeDiRepository::class)
+
+        // then
+        assertThat(first).isEqualTo(second)
+    }
+
+    @Test
+    fun `@Singlone을 붙이지 않으면 매번 새로운 객체를 생성한다`() {
         // given
         val fakeDiObject = object : DiContainer() {
             fun provideFakeDiRepository(): FakeDiRepository =
@@ -363,6 +380,6 @@ class DiContainerTest {
         val second = fakeDiObject.getInstance(FakeDiRepository::class)
 
         // then
-        assertThat(first).isEqualTo(second)
+        assertThat(first).isNotEqualTo(second)
     }
 }

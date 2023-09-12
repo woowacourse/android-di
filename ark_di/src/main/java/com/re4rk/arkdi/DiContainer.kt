@@ -57,10 +57,21 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         val method = getKFunction(kType, qualifier)
             ?: return parentDiContainer?.getInstance(kType, qualifier)
 
-        return instanceHolderMap.getOrPut(method) {
-            val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
-            method.callBy(parameters) ?: throw IllegalArgumentException("Instance must not be null")
+        return if (method.hasAnnotation<Singleton>()) {
+            getSingletonInstance(method)
+        } else {
+            getProtoTypeInstance(method)
         }
+    }
+
+    private fun getSingletonInstance(method: KFunction<*>): Any {
+        return instanceHolderMap.getOrPut(method) { getProtoTypeInstance(method) }
+    }
+
+    private fun getProtoTypeInstance(method: KFunction<*>): Any {
+        val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
+        return method.callBy(parameters)
+            ?: throw IllegalArgumentException("Instance must not be null")
     }
 
     private fun getKFunction(kType: KType, qualifier: Annotation?): KFunction<*>? {
