@@ -12,5 +12,5 @@ fun Product.toEntity(): CartProductEntity {
 }
 
 fun CartProductEntity.toDomain(): Product {
-    return Product(id, name, price, imageUrl)
+    return Product(id, name, price, imageUrl, createdAt)
 }
