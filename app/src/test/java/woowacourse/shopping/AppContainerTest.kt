@@ -8,6 +8,7 @@ import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -115,5 +116,38 @@ class AppContainerTest {
 
         // then
         assertThat(provider.nameTag.name).isEqualTo("글로")
+    }
+
+    @Test
+    fun `TargetClass의 productRepository는 DefaultProductRepository이다`() {
+        // given
+        val targetClass = appContainer.inject(TargetClass::class.java)
+
+        // when
+
+        // then
+        assertThat(targetClass.productRepository).isInstanceOf(DefaultProductRepository::class.java)
+    }
+
+    @Test
+    fun `TargetClass의 cartRepository는 DatabaseCartRepository이다`() {
+        // given
+        val targetClass = appContainer.inject(TargetClass::class.java)
+
+        // when
+
+        // then
+        assertThat(targetClass.cartRepository).isInstanceOf(DatabaseCartRepository::class.java)
+    }
+
+    @Test
+    fun `TargetClass의 cartRepository는 InMemoryCartRepository가 아니다`() {
+        // given
+        val targetClass = appContainer.inject(TargetClass::class.java)
+
+        // when
+
+        // then
+        assertThat(targetClass.cartRepository).isNotInstanceOf(InMemoryCartRepository::class.java)
     }
 }
