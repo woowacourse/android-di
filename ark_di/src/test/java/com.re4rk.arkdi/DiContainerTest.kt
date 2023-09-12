@@ -382,4 +382,83 @@ class DiContainerTest {
         // then
         assertThat(first).isNotEqualTo(second)
     }
+
+    @Test
+    fun `@ArkInject를 통해 필드 주입도 가능하다`() {
+        // given
+        class FakeViewModel {
+            @ArkInject
+            lateinit var fakeDiRepository: FakeDiRepository
+
+            fun get(): String {
+                return fakeDiRepository.get()
+            }
+        }
+
+        // when
+        val fakeDiObject = object : DiContainer() {
+            @Singleton
+            fun provideFakeDiRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        val fakeViewModel = FakeViewModel()
+        fakeDiObject.inject(fakeViewModel)
+
+        // then
+        assertThat(fakeViewModel.get()).isEqualTo("FakeDiSingletonRepository")
+    }
+
+    @Test
+    fun `@ArkInject를 붙이지 않으면 주입되지 않는다`() {
+        // given
+        class FakeViewModel {
+            var fakeDiRepository: FakeDiRepository? = null
+
+            fun get(): String {
+                return fakeDiRepository?.get() ?: ""
+            }
+        }
+
+        // when
+        val fakeDiObject = object : DiContainer() {
+            @Singleton
+            fun provideFakeDiRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        val fakeViewModel = FakeViewModel()
+        fakeDiObject.inject(fakeViewModel)
+
+        // then
+        assertThat(fakeViewModel.fakeDiRepository).isNull()
+    }
+
+    @Test
+    fun `필드 주입도 어노테이션으로 구분이 가능하다`() {
+        // given
+        class FakeViewModel {
+            @FakeStorageType(DATABASE)
+            @ArkInject
+            lateinit var fakeDiRepository: FakeDiRepository
+
+            fun get(): String {
+                return fakeDiRepository.get()
+            }
+        }
+
+        // when
+        val fakeDiObject = object : DiContainer() {
+            @FakeStorageType(DATABASE)
+            @Singleton
+            fun provideFakeDiRepository(): FakeDiRepository =
+                FakeDiSingletonRepository()
+        }
+
+        val fakeViewModel = FakeViewModel()
+        fakeDiObject.inject(fakeViewModel)
+
+        // then
+        assertThat(fakeViewModel.get()).isEqualTo("FakeDiSingletonRepository")
+    }
 }

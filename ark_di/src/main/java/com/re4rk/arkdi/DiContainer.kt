@@ -96,7 +96,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
                 property.isAccessible = true
                 property.javaField?.set(
                     instance,
-                    getInstance(property.returnType.jvmErasure),
+                    getInstance(property.returnType, property.qualifier),
                 )
             }
     }
