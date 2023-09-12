@@ -3,8 +3,11 @@ package woowacourse.shopping.di.inject
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDependencyInjector {
@@ -26,6 +29,22 @@ object AutoDependencyInjector {
             val type = parameter.type.jvmErasure
             Container.getInstance(type) ?: inject(type)
         }
-        return constructor.call(*arguments.toTypedArray()) as T
+        val instance = constructor.call(*arguments.toTypedArray()) as T
+        injectField(instance)
+        return instance
+    }
+
+    private fun <T : Any> injectField(instance: T) {
+        val properties = instance::class.declaredMemberProperties.filter { property ->
+            property.hasAnnotation<Inject>()
+        }
+        properties.forEach { property ->
+            property.isAccessible = true
+            property.javaField?.let {
+                val type = it.type.kotlin
+                val fieldValue = Container.getInstance(type)
+                it.set(instance, fieldValue)
+            }
+        }
     }
 }
