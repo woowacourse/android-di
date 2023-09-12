@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -22,20 +23,27 @@ class Injector(
         val fields =
             clazz.kotlin.declaredMemberProperties
                 .filter { it.hasAnnotation<Inject>() }
-                .map { kProperty -> kProperty.apply { isAccessible = true }.javaField }
+                .map { kProperty ->
+                    kProperty.apply {
+                        isAccessible = true
+                    }.javaField
+                }
 
         val instances = getInstances(primaryConstructor)
         val instance = primaryConstructor.call(*instances.toTypedArray())
 
-        return if (fields.isEmpty()) {
-            instance
-        } else {
-            instance.apply {
-                fields.forEach { field ->
-                    field?.run {
-                        val obj = findInstance(this.type.kotlin)
-                        set(instance, obj)
-                    }
+        if (fields.isNotEmpty()) {
+            injectAnnotationFields(instance, fields)
+        }
+        return instance
+    }
+
+    private fun <T : Any> injectAnnotationFields(instance: T, fields: List<Field?>) {
+        instance.apply {
+            fields.forEach { field ->
+                field?.run {
+                    val obj = findInstance(this.type.kotlin)
+                    set(instance, obj)
                 }
             }
         }
