@@ -8,7 +8,7 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.base.BaseActivity
 
 class CartActivity : BaseActivity() {
-
+    private lateinit var adapter: CartProductAdapter
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
@@ -47,8 +47,17 @@ class CartActivity : BaseActivity() {
     }
 
     private fun setupView() {
+        setUpAdapter()
         setupCartProductData()
         setupCartProductList()
+    }
+
+    private fun setUpAdapter() {
+        adapter = CartProductAdapter(
+            dateFormatter = dateFormatter,
+            onClickDelete = viewModel::deleteCartProduct,
+        )
+        binding.rvCartProducts.adapter = adapter
     }
 
     private fun setupCartProductData() {
@@ -57,15 +66,11 @@ class CartActivity : BaseActivity() {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct,
-            )
-            binding.rvCartProducts.adapter = adapter
+            adapter.submitList(it)
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
+            viewModel.getAllCartProducts()
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
     }
