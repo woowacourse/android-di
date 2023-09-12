@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemCartProductBinding
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.cart.DateFormatter
 
 class CartProductViewHolder(
@@ -17,9 +17,9 @@ class CartProductViewHolder(
         binding.ivCartProductDelete.setOnClickListener { onClickDelete(adapterPosition) }
     }
 
-    fun bind(product: Product) {
-        binding.item = product
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+    fun bind(cartProduct: CartProduct) {
+        binding.item = cartProduct.product
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.createdAt)
     }
 
     companion object {
