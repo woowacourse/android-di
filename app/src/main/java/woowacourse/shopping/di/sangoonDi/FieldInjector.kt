@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.sangoonDi
 
 // @WooWaLazyInject
 // class FieldInjector {
