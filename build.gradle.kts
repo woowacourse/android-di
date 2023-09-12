@@ -13,3 +13,9 @@ plugins {
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 }
+
+buildscript {
+    dependencies {
+        classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
+    }
+}
