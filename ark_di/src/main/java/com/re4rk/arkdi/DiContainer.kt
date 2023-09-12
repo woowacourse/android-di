@@ -52,15 +52,16 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
         return getInstance(kParameter.type, kParameter.qualifier)
     }
 
-    private fun getInstance(kType: KType, qualifier: String?): Any? {
+    private fun getInstance(kType: KType, qualifier: Annotation?): Any? {
         val method = getKFunction(kType, qualifier)
             ?: return parentDiContainer?.getInstance(kType, qualifier)
         val parameters = method.parameters.associateWith { parameter -> getArgument(parameter) }
         return method.callBy(parameters)
     }
 
-    private fun getKFunction(kType: KType, qualifier: String?): KFunction<*>? {
-        return this::class.declaredFunctions.filter { it.qualifier == qualifier }
+    private fun getKFunction(kType: KType, qualifier: Annotation?): KFunction<*>? {
+        return this::class.declaredFunctions
+            .filter { it.qualifier == qualifier }
             .firstOrNull { kFunction ->
                 kFunction.isAccessible = true
                 kFunction.returnType == kType
