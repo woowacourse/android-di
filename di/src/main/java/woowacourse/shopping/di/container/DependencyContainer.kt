@@ -20,8 +20,9 @@ object DependencyContainer {
     }
 
     fun getInstance(kClass: KClass<*>, annotations: List<Annotation> = emptyList()): Any? {
-        val key = Pair(kClass, annotations)
-        return instances[key]
+        return instances.keys.firstOrNull { (clazz, annotationList) ->
+            clazz == kClass && annotationList.containsAll(annotations)
+        }?.let { instances[it] }
     }
 
     fun clear() {
