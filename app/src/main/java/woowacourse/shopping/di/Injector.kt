@@ -1,36 +1,49 @@
 package woowacourse.shopping.di
 
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 class Injector(private val container: Container) {
 
-    inline fun <reified T : Any> getInstance(): T {
-        val constructor = T::class.primaryConstructor ?: throw IllegalStateException()
+    fun inject(modelClass: KClass<*>): Any =
+        getInstance(modelClass.createType()) ?: createInstance(modelClass)
+
+    private fun getInstance(type: KType): Any? =
+        container.getInstance(type)
+
+    fun createInstance(kClass: KClass<*>): Any {
+        val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
         val parameters = constructor.parameters
-        val arguments = parameters.map { getArgument(it.type) }
-        val instance = constructor.call(*arguments.toTypedArray())
+        val instance = createInstanceWithArgument(parameters, kClass, constructor)
         injectField(instance)
+
         return instance
     }
 
-    fun <T : Any> injectField(instance: T) {
+    private fun createInstanceWithArgument(
+        parameters: List<KParameter>,
+        kClass: KClass<*>,
+        constructor: KFunction<Any>,
+    ): Any = if (parameters.isEmpty()) {
+        kClass.createInstance()
+    } else {
+        val arguments = parameters.map { getInstance(it.type) }
+        constructor.call(*arguments.toTypedArray())
+    }
+
+    private fun <T : Any> injectField(instance: T) {
         instance::class.memberProperties.forEach { property ->
             if (property.annotations.any { it is InjectField }) {
                 if (property is KMutableProperty<*>) {
-                    property.setter.call(instance, getArgument(property.returnType))
+                    property.setter.call(instance, getInstance(property.returnType))
                 }
-            }
-        }
-    }
-
-    fun getArgument(type: KType): Any {
-        return container::class.declaredMemberProperties.forEach {
-            if (type == it.returnType) {
-                return it.getter.call(container) ?: throw java.lang.IllegalArgumentException()
             }
         }
     }

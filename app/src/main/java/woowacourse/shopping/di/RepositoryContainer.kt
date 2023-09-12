@@ -1,12 +1,39 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.data.repository.ProductRepository
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
 class RepositoryContainer : Container {
 
-    val productRepository: ProductRepository = DefaultProductRepository()
-    val cartRepository: CartRepository = DefaultCartRepository(DaoContainer.cartProductDao)
+    private val instances = mutableMapOf<KClass<*>, Any?>()
+
+    override fun addInstance(key: KClass<*>, instance: Any?) {
+        instances[key] = instance
+    }
+
+    override fun getInstance(type: KType): Any? {
+        instances.forEach { instance ->
+            val modelClass = instance.key
+            if (modelClass.createType() == type) {
+                return instance.value
+            }
+            if (modelClass.supertypes.any { it == type }) {
+                return createInstance(instance.value, modelClass)
+            }
+        }
+        return null
+    }
+
+    private fun createInstance(
+        instanceValue: Any?,
+        modelClass: KClass<*>,
+    ): Any? {
+        return if (instanceValue == null) {
+            instances[modelClass] = Injector(this).createInstance(modelClass)
+            instances[modelClass]
+        } else {
+            instanceValue
+        }
+    }
 }

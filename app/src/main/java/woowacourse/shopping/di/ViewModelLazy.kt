@@ -16,7 +16,7 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.getViewModel(injector: I
         {
             viewModelFactory {
                 initializer {
-                    injector.getInstance<VM>()
+                    injector.inject(VM::class) as ViewModel
                 }
             }
         },
