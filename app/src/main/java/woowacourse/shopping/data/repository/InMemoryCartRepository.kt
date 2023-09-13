@@ -6,9 +6,7 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.ui.common.di.qualifier.InMemoryCartRepositoryQualifier
 
-@InMemoryCartRepositoryQualifier
 class InMemoryCartRepository : CartRepository {
     private val cartProducts = mutableListOf<CartProductEntity>()
     private var lastId: Long = 0
