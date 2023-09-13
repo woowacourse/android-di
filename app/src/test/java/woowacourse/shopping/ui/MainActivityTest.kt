@@ -141,7 +141,7 @@ class MainActivityTest {
     fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val fakeRepository = DefaultFakeRepository()
-        Container.addInstance(FakeRepository::class, fakeRepository)
+        Container.addInstance(FakeRepository::class, fakeRepository, null)
 
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)
@@ -154,7 +154,7 @@ class MainActivityTest {
         assertEquals(viewModel.fakeRepository, fakeRepository)
     }
 
-    @Test(expected = NullPointerException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `적절한 객체 인스턴가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)

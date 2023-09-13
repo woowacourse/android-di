@@ -6,11 +6,9 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.now.di.Injector
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactory
-import woowacourse.shopping.repository.ProductRepository
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupBinding()
-        viewModel.productRepository = Injector.inject(ProductRepository::class)
         setupToolbar()
         setupView()
     }
