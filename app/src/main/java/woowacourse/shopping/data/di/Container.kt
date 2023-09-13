@@ -1,11 +1,9 @@
 package woowacourse.shopping.data.di
 
-import kotlin.reflect.KClass
-
 interface Container {
-    val instances:MutableMap<KClass<*>, Any>
+    val instances: MutableMap<AnnotationType, Any>
 
-    fun addInstance(clazz: KClass<*>, instance:Any)
+    fun addInstance(instance: Any)
 
-    fun getInstance(clazz: KClass<*>):Any?
+    fun getInstance(annotationType: AnnotationType): Any?
 }

@@ -8,19 +8,24 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.reflect.KClass
+import kotlin.reflect.jvm.jvmErasure
 
 @Config(application = FakeApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class InjectorTest {
     object FakeContainer : Container {
-        override val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-        override fun addInstance(clazz: KClass<*>, instance: Any) {
-            instances[clazz] = instance
+
+        override val instances: MutableMap<AnnotationType, Any> = mutableMapOf()
+        override fun addInstance(instance: Any) {
+            val kclass = instance::class
+            val annotations: List<Annotation> = kclass.annotations
+            val annotationType =
+                AnnotationType(annotations.getOrNull(0), kclass.supertypes[0].jvmErasure)
+            instances[annotationType] = instance
         }
 
-        override fun getInstance(clazz: KClass<*>): Any? {
-            return instances[clazz]
+        override fun getInstance(annotationType: AnnotationType): Any? {
+            return instances[annotationType]
         }
 
     }
@@ -43,7 +48,7 @@ class InjectorTest {
     fun `의존성 모듈이 모두 제공될 때 자동 DI 가 성공하는지 테스트`() {
         // given
         val fakeRepository: FakeRepository = DefaultFakeRepository()
-        FakeContainer.addInstance(FakeRepository::class, fakeRepository)
+        FakeContainer.addInstance(fakeRepository)
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -63,15 +68,14 @@ class InjectorTest {
     @Test
     fun `재귀 DI 가 잘 작동하는지 테스트`() {
         //given
-        val fakeDao = DefaultFakeDao()
-        FakeContainer.addInstance(FakeDao::class, fakeDao)
-        FakeContainer.addInstance(FakeRepository::class, Injector.inject<RecursiveFakeRepository>())
+        FakeContainer.addInstance(DefaultFakeDao())
+        FakeContainer.addInstance(Injector.inject<RecursiveFakeRepository>())
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         val actual = activity.viewModel
         assertEquals(
-            FakeContainer.getInstance(FakeRepository::class),
+            FakeContainer.getInstance(AnnotationType(null, FakeRepository::class)),
             actual.fakeRepository
         )
     }
@@ -79,13 +83,13 @@ class InjectorTest {
     @Test
     fun `의존성 주입이 필요한 필드에만 의존성을 주입한다`() {
         //given
-        FakeContainer.addInstance(FakeRepository::class, DefaultFakeRepository())
+        FakeContainer.addInstance(DefaultFakeRepository())
         val activity = Robolectric.buildActivity(FakeFieldInjectActivity::class.java).create().get()
 
         // then
         val actual = activity.viewModel
         assertEquals(
-            FakeContainer.getInstance(FakeRepository::class),
+            FakeContainer.getInstance(AnnotationType(null, FakeRepository::class)),
             actual.productRepository
         )
     }

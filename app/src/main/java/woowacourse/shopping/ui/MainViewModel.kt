@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.di.InMemory
 import woowacourse.shopping.data.di.Inject
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
@@ -14,6 +15,7 @@ class MainViewModel(
     @Inject
     private val productRepository: ProductRepository,
     @Inject
+    @InMemory
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
@@ -26,7 +28,7 @@ class MainViewModel(
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
-            cartRepository. addCartProduct(product)
+            cartRepository.addCartProduct(product)
             _onProductAdded.value = true
         }
     }
