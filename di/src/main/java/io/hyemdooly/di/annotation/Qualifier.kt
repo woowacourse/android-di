@@ -1,4 +1,5 @@
 package io.hyemdooly.di.annotation
 
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-annotation class Qualifier
+import kotlin.reflect.KClass
+
+annotation class Qualifier(val clazz: KClass<*>)

@@ -4,12 +4,9 @@ import android.app.Application
 import androidx.room.Room
 import io.hyemdooly.di.Container
 import io.hyemdooly.di.Injector
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.InDiskCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.Product
 
@@ -44,11 +41,11 @@ class ShoppingApplication : Application() {
             ),
         )
 
-        Container.addInstance(List::class, products)
-        Container.addInstance(CartProductDao::class, inDiskDb.cartProductDao())
+        Container.addInstance(products)
+        Container.addInstance(inDiskDb.cartProductDao())
 
-        Container.addInstance(ProductRepository::class, Injector.inject(InMemoryProductRepository::class))
-        Container.addInstance(CartRepository::class, Injector.inject(InDiskCartRepository::class))
-        Container.addInstance(CartRepository::class, Injector.inject(InMemoryCartRepository::class))
+        Container.addInstance(Injector.inject(InMemoryProductRepository::class))
+        Container.addInstance(Injector.inject(InDiskCartRepository::class))
+        Container.addInstance(Injector.inject(InMemoryCartRepository::class))
     }
 }

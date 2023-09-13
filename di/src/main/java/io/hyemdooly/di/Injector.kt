@@ -1,9 +1,11 @@
 package io.hyemdooly.di
 
 import io.hyemdooly.di.annotation.Inject
+import io.hyemdooly.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -30,7 +32,13 @@ object Injector {
     private fun <T> getParamInstances(constructor: KFunction<T>): List<Any> {
         val paramInstances = constructor.parameters.map { param ->
             val type = param.type.jvmErasure
-            Container.getInstance(type, param.annotations) ?: inject(type)
+
+            val annotation = param.findAnnotation<Qualifier>()
+            if (annotation != null) {
+                Container.getInstance(annotation.clazz) ?: inject(annotation.clazz)
+            } else {
+                Container.getInstance(type) ?: inject(type)
+            }
         }
         return paramInstances
     }
