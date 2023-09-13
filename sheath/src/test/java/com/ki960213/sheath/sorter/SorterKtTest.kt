@@ -5,7 +5,7 @@ import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.component.SheathComponentByClass
 import org.junit.Test
 
-internal class Sorter1KtTest {
+internal class SorterKtTest {
 
     @Test
     fun `SheathComponent 목록을 받으면 위상 정렬된 목록을 반환한다`() {

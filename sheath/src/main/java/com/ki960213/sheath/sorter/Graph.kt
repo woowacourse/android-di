@@ -1,8 +1,8 @@
 package com.ki960213.sheath.sorter
 
-class Graph1(nodes: Set<Node1>) {
+class Graph(nodes: Set<Node>) {
 
-    private val dependencyMap: Map<Node1, List<Node1>> = nodes.associateWith { node ->
+    private val dependencyMap: Map<Node, List<Node>> = nodes.associateWith { node ->
         val otherNodes = nodes.filterNot { it == node }
         otherNodes.filter { it.isDependingOn(node) }
     }
@@ -11,10 +11,10 @@ class Graph1(nodes: Set<Node1>) {
         validateNodes(nodes)
     }
 
-    fun getNodesThatDependOn(node: Node1): List<Node1> =
+    fun getNodesThatDependOn(node: Node): List<Node> =
         dependencyMap[node] ?: throw IllegalArgumentException("$node 노드는 그래프에 없는 노드입니다.")
 
-    private fun validateNodes(nodes: Set<Node1>) {
+    private fun validateNodes(nodes: Set<Node>) {
         nodes.forEach { node ->
             val otherNodes = nodes.filterNot { it == node }
             val dependentCountInGraph = node.getDependentCount(otherNodes)
@@ -27,6 +27,6 @@ class Graph1(nodes: Set<Node1>) {
         }
     }
 
-    private fun Node1.getDependentCount(otherNodes: List<Node1>): Int =
+    private fun Node.getDependentCount(otherNodes: List<Node>): Int =
         otherNodes.count { this.isDependingOn(it) }
 }

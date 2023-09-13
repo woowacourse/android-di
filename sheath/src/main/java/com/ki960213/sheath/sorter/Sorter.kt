@@ -5,11 +5,11 @@ import java.util.LinkedList
 import java.util.Queue
 
 fun List<SheathComponent>.sorted(): List<SheathComponent> {
-    val nodes: Set<Node1> = this.map(::Node1).toSet()
-    val graph = Graph1(nodes)
+    val nodes: Set<Node> = this.map(::Node).toSet()
+    val graph = Graph(nodes)
 
-    val result: MutableList<Node1> = mutableListOf()
-    val queue: Queue<Node1> = LinkedList()
+    val result: MutableList<Node> = mutableListOf()
+    val queue: Queue<Node> = LinkedList()
     queue.addAll(nodes.filter { it.inDegreeCount == 0 })
 
     repeat(nodes.size) {
@@ -19,10 +19,10 @@ fun List<SheathComponent>.sorted(): List<SheathComponent> {
         queue.minusInDegreeAndAddNotDependentNodes(dependNodes)
     }
 
-    return result.map(Node1::sheathComponent)
+    return result.map(Node::sheathComponent)
 }
 
-private fun Queue<Node1>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node1>) {
+private fun Queue<Node>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node>) {
     nodes.forEach {
         it.minusInDegree()
         if (it.inDegreeCount == 0) this.add(it)

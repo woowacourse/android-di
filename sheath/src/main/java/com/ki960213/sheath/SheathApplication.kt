@@ -6,7 +6,7 @@ import com.ki960213.sheath.component.SheathComponentByContext
 import com.ki960213.sheath.provider.InstanceProvider
 import com.ki960213.sheath.scanner.DefaultComponentScanner
 
-object SheathApplication1 {
+object SheathApplication {
 
     fun run(context: Context) {
         val scanner = DefaultComponentScanner(context)

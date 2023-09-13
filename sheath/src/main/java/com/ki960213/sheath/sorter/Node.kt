@@ -3,7 +3,7 @@ package com.ki960213.sheath.sorter
 import com.ki960213.sheath.component.SheathComponent
 import kotlin.properties.Delegates
 
-class Node1(val sheathComponent: SheathComponent) {
+class Node(val sheathComponent: SheathComponent) {
 
     val dependentCount: Int = sheathComponent.dependentCount
 
@@ -16,10 +16,10 @@ class Node1(val sheathComponent: SheathComponent) {
         inDegreeCount--
     }
 
-    fun isDependingOn(other: Node1): Boolean = sheathComponent.isDependingOn(other.sheathComponent)
+    fun isDependingOn(other: Node): Boolean = sheathComponent.isDependingOn(other.sheathComponent)
 
     override fun equals(other: Any?): Boolean =
-        if (other is Node1) sheathComponent == other.sheathComponent else false
+        if (other is Node) sheathComponent == other.sheathComponent else false
 
     override fun hashCode(): Int = sheathComponent.hashCode()
 }
