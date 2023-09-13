@@ -1,48 +1,17 @@
 package woowacourse.shopping
 
 import android.app.Application
-import androidx.room.Room
-import com.now.di.Container
 import com.now.di.Injector
-import woowacourse.shopping.data.CartDatabase
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DatabaseCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import woowacourse.shopping.di.module.DefaultModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        injectDependency()
+        injectModule()
     }
 
-    private fun injectDependency() {
-        val database = Room
-            .databaseBuilder(this, CartDatabase::class.java, "kkrong-database")
-            .build()
-        val cartProductDao = database.cartProductDao()
-
-        Container.addInstance(
-            CartProductDao::class,
-            cartProductDao,
-        )
-
-        Container.addInstance(
-            ProductRepository::class,
-            Injector.inject(DefaultProductRepository::class),
-        )
-
-        Container.addInstance(
-            CartRepository::class,
-            Injector.inject(DatabaseCartRepository::class),
-        )
-
-        Container.addInstance(
-            CartRepository::class,
-            Injector.inject(InMemoryCartRepository::class),
-        )
+    private fun injectModule() {
+        Injector.addModule(DefaultModule(applicationContext))
     }
 }

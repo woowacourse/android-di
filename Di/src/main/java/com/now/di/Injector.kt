@@ -4,11 +4,64 @@ import com.now.annotation.Inject
 import com.now.annotation.Qualifier
 import com.now.di.Container.defaultQualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
+    // 인자로 받은 모듈에 있는 메서드를 인스턴스화 하여 Container에 저장한다
+    fun addModule(module: Module) {
+        val kFunctions = module::class.declaredFunctions
+        kFunctions.forEach { kFunction ->
+            createOrAdd(module, kFunction)
+        }
+    }
+
+    private fun createOrAdd(receiver: Module, kFunction: KFunction<*>) {
+        val functionReturnType = kFunction.returnType
+        val qualifier = kFunction.annotations.firstOrNull {
+            it.annotationClass.hasAnnotation<Qualifier>()
+        }
+
+        val dependencyType = DependencyType(functionReturnType.jvmErasure, qualifier)
+
+        // 컨테이너에 이미 있다면 종료
+        if (Container.getInstance(dependencyType) != null) return
+
+        // Container에 없는 경우
+        // 함수에 파라미터가 없는 경우 인스턴스를 생성하고 Container에 추가 후 종료
+        if (kFunction.valueParameters.isEmpty()) {
+            val kclass = kFunction.call(receiver)
+            kclass?.let { Container.addInstance2(functionReturnType.jvmErasure, kclass, qualifier) }
+                ?: throw IllegalArgumentException("문제 생김")
+            return
+        }
+
+        // 함수에 파라미터가 있는 경우 컨테이너에서 가져오거나 생성해야 함
+        val requiredParams = kFunction.valueParameters.map { kParameter ->
+            getParameterInstance(receiver, kFunction, kParameter)
+        }
+    }
+
+    private fun getParameterInstance(receiver: Module, kFunction: KFunction<*>, kParameter: KParameter): Any {
+        val klass = kParameter::class
+        val annotation = kParameter.findAnnotation<Qualifier>()
+        val dependencyType = DependencyType(klass, annotation)
+
+        // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테이너에 추가로 저장
+        if (Container.getInstance(dependencyType) == null) {
+            createOrAdd(receiver, kFunction)
+        }
+
+        // 재귀적 호출을 통해 컨테이너에 저장했기 때문에 무조건 있음
+        return Container.getInstance(dependencyType)!!
+    }
+
     // klass의 인스턴스를 생성하여 반환한다
     fun <T : Any> inject(klass: KClass<*>): T {
         // 1. Container에 인자로 넘겨준 클래스의 인스턴스가 존재하는지 확인한다
