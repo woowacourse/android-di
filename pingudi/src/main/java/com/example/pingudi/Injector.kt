@@ -18,7 +18,7 @@ class Injector(private val container: Container) {
     }
 
     private fun getInstance(type: KType): Any? =
-        Container.getInstance(type)
+        container.getInstance(type)
 
     fun createInstance(kClass: KClass<*>): Any {
         val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
@@ -45,14 +45,16 @@ class Injector(private val container: Container) {
 
     private fun getInstancesWithAnnotation(type: KType, annotation: List<Annotation>): Any {
         if (annotation.isEmpty()) {
-            return Container.getInstance(type)
+            // 어노테이션이 없다면 해당 타입에 해당하는 인스턴스를 내보낸다
+            return container.getInstance(type)
                 ?: throw java.lang.IllegalArgumentException()
         }
-        val instances = Container.getInstances(type)
+        val instances = container.getInstances(type)
+        // 가져온 인스턴스들의 어노테이션들과 그 인스턴스가 들어가야하는 파라미터의 어노테이션들을 비교하여 일치하는 것이 하나라도 있는 것들을 고른다
         val result = instances.filter {
-            it::class.annotations.any { ano1 ->
-                annotation.any { ano2 ->
-                    ano1 == ano2
+            it::class.annotations.any { instanceAnnotaion ->
+                annotation.any { parameterAnnotation ->
+                    instanceAnnotaion == parameterAnnotation
                 }
             }
         }
