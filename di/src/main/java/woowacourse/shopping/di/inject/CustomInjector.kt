@@ -27,7 +27,7 @@ class CustomInjector {
 
         val parameterValues =
             constructor.parameters.associateWith {
-                findPropertyGetValue(
+                getValueFromAnnotatedProperty(
                     it.type.jvmErasure,
                     it.annotations,
                 )
@@ -42,12 +42,12 @@ class CustomInjector {
             .forEach { prop ->
                 prop.isAccessible = true
                 val propertyType = prop.returnType.jvmErasure
-                val value = findPropertyGetValue(propertyType, prop.annotations)
+                val value = getValueFromAnnotatedProperty(propertyType, prop.annotations)
                 (prop as KMutableProperty<*>).setter.call(instance, value)
             }
     }
 
-    private fun <T : Any> findPropertyGetValue(
+    private fun <T : Any> getValueFromAnnotatedProperty(
         kClass: KClass<T>,
         annotations: List<Annotation>,
     ): Any {

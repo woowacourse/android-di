@@ -6,7 +6,7 @@ import woowacourse.shopping.model.CartProduct
 
 class CartProductAdapter(
     items: List<CartProduct>,
-    onClickDelete: (position: Long) -> Unit,
+    onClickDelete: (id: Long) -> Unit,
     private val dateFormatter: DateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
 
