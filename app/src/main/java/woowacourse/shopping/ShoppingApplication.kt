@@ -1,19 +1,14 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.repository.DefaultCartRepository
-import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.injector.modules
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import com.woowacourse.bunadi.dsl.modules
+import woowacourse.shopping.ui.common.di.module.DaoModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
         modules {
-            inject<ProductRepository>(DefaultProductRepository())
-            inject<CartRepository>(DefaultCartRepository())
+            module(DaoModule(this@ShoppingApplication))
         }
     }
 }
