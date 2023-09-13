@@ -1,36 +1,39 @@
+package di
+
 import com.boogiwoogi.di.WoogiContainer
 import com.boogiwoogi.di.WoogiInjector
 import com.boogiwoogi.di.WoogiProperty
+import com.boogiwoogi.di.WoogiQualifier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.jvm.jvmErasure
 
-class ClassA(
-    @WoogiProperty
-    val arg1: ClassB
-)
-
-class ClassB(val arg1: ClassC)
-class ClassC
-
-class ClassD(val arg1: ClassE)
-class ClassE(val arg1: ClassF)
-class ClassF
-
-class ClassG {
-    @WoogiProperty
-    lateinit var property1: ClassH
-}
-
-data class ClassH(val message: String = "")
-
 class DependencyInjectorTest {
+
+    class ClassA(
+        @WoogiProperty
+        val arg1: ClassB
+    )
+
+    class ClassB(val arg1: ClassC)
+    class ClassC
+
+    class ClassD(val arg1: ClassE)
+    class ClassE(val arg1: ClassF)
+    class ClassF
+
+    class ClassG {
+        @WoogiProperty
+        lateinit var property1: ClassH
+    }
+
+    data class ClassH(val message: String = "")
 
     @Test
     fun `생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
@@ -83,7 +86,7 @@ class DependencyInjectorTest {
 
         // then
         val expected = ClassB::class
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
         verify { container.find(ClassB::class) }
     }
 
@@ -117,6 +120,82 @@ class DependencyInjectorTest {
 
         // then
         val expected = ClassH()
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    interface Repository
+
+    class ExampleRepository : Repository
+    class ExampleRepository2 : Repository
+    class ExampleViewModel(
+        @WoogiQualifier(ExampleRepository::class)
+        val repository: Repository
+    )
+
+    class ExampleViewModel2(
+        @WoogiQualifier(ExampleRepository::class)
+        val repository: Repository,
+        @WoogiQualifier(ExampleRepository2::class)
+        val repository2: Repository
+    )
+
+    @Test
+    fun `같은 인터페이스에 대한 구현체가 여러개가 있어도 Qualifier 어노테이션 타입으로 의존성 주입이 이루어진다`() {
+        // given
+        val woogiContainer: WoogiContainer = mockk(relaxed = true)
+        val woogiInjector = WoogiInjector(woogiContainer)
+
+        every {
+            woogiContainer.find(ExampleRepository::class)
+        } returns ExampleRepository()
+
+        // when
+        val viewModel = woogiInjector.inject<ExampleViewModel>()
+        val actual = viewModel.repository
+
+        // then
+        Assertions.assertTrue(actual is ExampleRepository)
+        verify { woogiContainer.find(ExampleRepository::class) }
+    }
+
+    @Test
+    fun `Qualifier에 선언한 타입의 인스턴스가 Container에 없는 경우 예외가 발생한다`() {
+        // given
+        val woogiContainer: WoogiContainer = mockk(relaxed = true)
+        val woogiInjector = WoogiInjector(woogiContainer)
+
+        every {
+            woogiContainer.find(ExampleRepository::class)
+        } returns null
+
+        // then
+        assertThrows<NoSuchElementException> {
+            val viewModel = woogiInjector.inject<ExampleViewModel>()
+        }
+    }
+
+    @Test
+    fun `같은 인터페이스에 대한 구현체가 여러개가 있어도 각각의 Qualifier 어노테이션 타입으로 의존성 주입이 이루어진다`() {
+        // given
+        val woogiContainer: WoogiContainer = mockk(relaxed = true)
+        val woogiInjector = WoogiInjector(woogiContainer)
+
+        every {
+            woogiContainer.find(ExampleRepository::class)
+        } returns ExampleRepository()
+
+        every {
+            woogiContainer.find(ExampleRepository2::class)
+        } returns ExampleRepository2()
+
+        // when
+        val viewModel = woogiInjector.inject<ExampleViewModel2>()
+        val actual = viewModel.repository
+        val actual2 = viewModel.repository2
+
+        // then
+        Assertions.assertTrue(actual is ExampleRepository && actual2 is ExampleRepository2)
+        verify { woogiContainer.find(ExampleRepository::class) }
+        verify { woogiContainer.find(ExampleRepository2::class) }
     }
 }
