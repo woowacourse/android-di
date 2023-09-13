@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":ark_di"))
+    implementation(project(":ark-di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")

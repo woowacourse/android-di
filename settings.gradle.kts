@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "android-di"
 include(":app")
 include(":domain")
-include(":ark_di")
+include(":ark-di")
