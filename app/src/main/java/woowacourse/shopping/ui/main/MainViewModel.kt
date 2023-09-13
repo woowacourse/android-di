@@ -8,13 +8,13 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.ui.common.di.qualifier.InMemoryCartRepositoryQualifier2
+import woowacourse.shopping.ui.common.di.qualifier.DatabaseCartRepositoryQualifier
+import woowacourse.shopping.ui.common.di.qualifier.DefaultProductRepositoryQualifier
 
 class MainViewModel(
-    private val productRepository: ProductRepository,
-    @InMemoryCartRepositoryQualifier2 private val cartRepository: CartRepository,
+    @DefaultProductRepositoryQualifier private val productRepository: ProductRepository,
+    @DatabaseCartRepositoryQualifier private val cartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 

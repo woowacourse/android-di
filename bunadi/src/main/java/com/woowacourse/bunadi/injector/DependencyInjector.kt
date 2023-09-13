@@ -1,6 +1,8 @@
 package com.woowacourse.bunadi.injector
 
 import com.woowacourse.bunadi.annotation.Inject
+import com.woowacourse.bunadi.annotation.Qualifier
+import com.woowacourse.bunadi.annotation.Singleton
 import com.woowacourse.bunadi.module.Module
 import com.woowacourse.bunadi.util.core.Cache
 import com.woowacourse.bunadi.util.core.SubTypeConverter
@@ -20,13 +22,18 @@ object DependencyInjector {
     private val cache = Cache()
 
     fun <T : Any> inject(clazz: KClass<T>): T {
-        val cached = cache[DependencyKey.createDependencyKey(clazz)]
+        val dependencyKey = DependencyKey.createDependencyKey(clazz)
+        val cached = cache[dependencyKey]
         if (cached != null) return cached as T
 
         val primaryConstructor = clazz.validateHasPrimaryConstructor()
         val dependency = primaryConstructor.createInstance(subTypeConverter)
 
         injectMemberProperties(clazz, dependency)
+
+        if (clazz.hasAnnotation<Singleton>()) {
+            caching(dependencyKey, dependency)
+        }
         return dependency
     }
 
@@ -38,10 +45,16 @@ object DependencyInjector {
 
             val dependencyKey = DependencyKey.createDependencyKey(property)
             val propertyType = property.returnType
-            val subType = subTypeConverter.convertType(dependencyKey, propertyType)
-            val propertyInstance = inject(subType.jvmErasure)
 
-            cache.caching(dependencyKey, propertyInstance)
+            val annotation = property.annotations.find { it !is Inject }
+            val qualifier = annotation?.annotationClass
+            val qualifier2 = qualifier?.annotations?.find { it is Qualifier } as? Qualifier
+            val realType = qualifier2?.clazz
+            val propertyInstance = inject(realType ?: propertyType.jvmErasure)
+
+            if (clazz.hasAnnotation<Singleton>()) {
+                caching(dependencyKey, propertyInstance)
+            }
             property.setter.call(instance, propertyInstance)
         }
     }

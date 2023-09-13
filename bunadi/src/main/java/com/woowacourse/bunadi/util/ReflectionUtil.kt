@@ -25,15 +25,15 @@ fun List<KParameter>.createInstances(converter: SubTypeConverter): Array<Any> = 
     val realType = qualifier2?.clazz
 
     val instance: Any?
-    if (realType != null) {
-        instance = DependencyInjector.inject(realType)
+    val paramDependencyKey = DependencyKey.createDependencyKey(parameter)
+
+    instance = if (realType != null) {
+        DependencyInjector.inject(realType)
     } else {
-        val paramDependencyKey = DependencyKey.createDependencyKey(parameter)
         val paramType = parameter.type
         val subType = converter.convertType(paramDependencyKey, paramType)
-        instance = DependencyInjector.inject(subType.jvmErasure)
-
-        DependencyInjector.caching(paramDependencyKey, instance)
+        DependencyInjector.inject(subType.jvmErasure)
     }
+    DependencyInjector.caching(paramDependencyKey, instance)
     instance
 }.toTypedArray()

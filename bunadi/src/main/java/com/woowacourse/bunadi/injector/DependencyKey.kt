@@ -14,7 +14,7 @@ data class DependencyKey(
 ) {
     companion object {
         fun createDependencyKey(clazz: KClass<*>): DependencyKey {
-            val returnType = clazz.supertypes.getOrElse(0) { clazz.starProjectedType }
+            val returnType = clazz.starProjectedType
             val annotation = clazz.annotations.firstOrNull()
 
             return DependencyKey(returnType, annotation)

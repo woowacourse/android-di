@@ -1,11 +1,11 @@
 package woowacourse
 
-import com.buna.di.injector.fakeClasses.AConstructorDependency
-import com.buna.di.injector.fakeClasses.AFieldDependency
-import com.buna.di.injector.fakeClasses.ConstructorDependency
-import com.buna.di.injector.fakeClasses.ConstructorTestActivity
-import com.buna.di.injector.fakeClasses.FieldDependency
-import com.buna.di.injector.fakeClasses.FieldTestActivity
+import woowacourse.fakeClasses.AConstructorDependency
+import woowacourse.fakeClasses.AFieldDependency
+import woowacourse.fakeClasses.ConstructorDependency
+import woowacourse.fakeClasses.ConstructorTestActivity
+import woowacourse.fakeClasses.FieldDependency
+import woowacourse.fakeClasses.FieldTestActivity
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue

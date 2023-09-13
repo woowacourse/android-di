@@ -1,14 +1,15 @@
-package com.buna.di.injector.fakeClasses
+package woowacourse.fakeClasses
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.woowacourse.bunadi.annotation.Qualifier
 import woowacourse.shopping.ui.util.viewModel.viewModel
 
+@Qualifier(AConstructorDependency::class)
 annotation class AConstructorDependencyQualifier
 
 interface ConstructorDependency
 
-@AConstructorDependencyQualifier
 class AConstructorDependency : ConstructorDependency
 
 class ConstructorTestActivity : AppCompatActivity() {
