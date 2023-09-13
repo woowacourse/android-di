@@ -1,5 +1,6 @@
 package woowacourse
 
+import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Qualifier
 import com.woowacourse.bunadi.annotation.Singleton
 import com.woowacourse.bunadi.injector.DependencyInjector
@@ -15,6 +16,9 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.fakeClasses.AConstructorDependency
 import woowacourse.fakeClasses.AFieldDependency
+import woowacourse.fakeClasses.AFieldDependencyQualifier
+import woowacourse.fakeClasses.BFieldDependency
+import woowacourse.fakeClasses.BFieldDependencyQualifier
 import woowacourse.fakeClasses.ConstructorTestActivity
 import woowacourse.fakeClasses.FieldTestActivity
 import kotlin.reflect.full.declaredMemberProperties
@@ -75,6 +79,30 @@ class DependencyInjectorTest {
         activity.viewModel.run {
             assertFalse(isFieldWithoutInjectAnnotationInitialized())
         }
+    }
+
+    @Test
+    fun 클래스_멤버_프로퍼티가_복수개여도_종속_항목을_주입한다() {
+        // given: 멤버 프로퍼티가 2개인 클래스가 존재한다.
+        class TwoMemberPropertyClass {
+            @Inject
+            @AFieldDependencyQualifier
+            private lateinit var first: AFieldDependency
+
+            @Inject
+            @BFieldDependencyQualifier
+            private lateinit var second: BFieldDependency
+
+            fun isAllMemberPropertyInitialized(): Boolean {
+                return ::first.isInitialized && ::second.isInitialized
+            }
+        }
+
+        // when: 클래스를 주입한다.
+        val actual = DependencyInjector.inject(TwoMemberPropertyClass::class)
+
+        // then: 멤버 프로퍼티가 모두 주입되어 있다.
+        assertTrue(actual.isAllMemberPropertyInitialized())
     }
 
     // given: 클래스의 프로퍼티도 프로퍼티가 필요하다.

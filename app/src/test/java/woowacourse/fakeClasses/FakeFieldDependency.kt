@@ -9,9 +9,13 @@ import woowacourse.shopping.ui.util.viewModel.viewModel
 interface FieldDependency
 
 class AFieldDependency : FieldDependency
+class BFieldDependency : FieldDependency
 
 @Qualifier(AFieldDependency::class)
 annotation class AFieldDependencyQualifier
+
+@Qualifier(BFieldDependency::class)
+annotation class BFieldDependencyQualifier
 
 class FieldTestActivity : AppCompatActivity() {
     val viewModel: FieldTestViewModel by viewModel()
