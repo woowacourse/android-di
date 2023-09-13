@@ -7,7 +7,13 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
+
 dependencies {
+    // Reflection
     implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("org.robolectric:robolectric:4.9")
+    testImplementation("com.google.truth:truth:1.1.3")
 }
