@@ -10,7 +10,7 @@ class ReflectionTest {
     @Test
     fun `모듈에 있는 함수를 실행하여 인스턴스를 생성할 수 있다`() {
         // given
-        val module = FakeModule()
+        val module = KeyboardModule()
         val kFunctions = module::class.declaredFunctions
 
         // when
@@ -25,7 +25,7 @@ class ReflectionTest {
     fun `모듈에 있는 함수의 애노테이션을 가져올 수 있다`() {
         // given
         val annotations = mutableListOf<Annotation>()
-        val module = FakeModule()
+        val module = KeyboardModule()
         val kFunctions = module::class.declaredFunctions
 
         // when
@@ -43,7 +43,7 @@ class ReflectionTest {
     fun `모듈에 있는 함수에 Qualifier 애노테이션이 붙어있는 애노테이션이 있는지 확인할 수 있다`() {
         // given
         val annotations = mutableListOf<Boolean>()
-        val module = FakeModule()
+        val module = KeyboardModule()
         val kFunctions = module::class.declaredFunctions
 
         // when
