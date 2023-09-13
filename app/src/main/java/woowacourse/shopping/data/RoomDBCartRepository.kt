@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.data.di.Inject
-import woowacourse.shopping.data.di.RoomDB
+import com.hyegyeong.di.Inject
+import com.hyegyeong.di.RoomDB
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toModel
 import woowacourse.shopping.data.repository.CartRepository

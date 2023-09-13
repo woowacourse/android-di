@@ -1,12 +1,12 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import com.hyegyeong.di.DefaultContainer
+import com.hyegyeong.di.Injector
 import woowacourse.shopping.data.RoomDBCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.data.di.DefaultContainer
-import woowacourse.shopping.data.di.Injector
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
