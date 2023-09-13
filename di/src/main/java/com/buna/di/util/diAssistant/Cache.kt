@@ -23,6 +23,7 @@ data class Cache(
     }
 
     fun clear(): Cache {
+        cache.clear()
         return copy(cache = mutableMapOf())
     }
 }

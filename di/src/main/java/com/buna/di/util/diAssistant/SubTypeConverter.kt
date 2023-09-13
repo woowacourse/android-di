@@ -15,6 +15,7 @@ data class SubTypeConverter(
     }
 
     fun clear(): SubTypeConverter {
+        converter.clear()
         return copy(converter = mutableMapOf())
     }
 }
