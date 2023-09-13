@@ -15,7 +15,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.primaryConstructor
 
-internal class SheathComponentTest {
+internal class SheathComponentByClassTest {
 
     @JvmField
     @Rule
@@ -23,8 +23,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 클래스의 애노테이션이 붙을 수 있는 요소 중 @Inject 애노테이션이 붙은 요소가 없을 때, 주 생성자의 파라미터들 중 어떤 파라미터의 타입이 다른 SheathComponent의 클래스의 서브 타입이라면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test1::class)
-        val sheathComponent2 = SheathComponent(Test2::class)
+        val sheathComponent1 = SheathComponentByClass(Test1::class)
+        val sheathComponent2 = SheathComponentByClass(Test2::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -39,8 +39,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 클래스의 멤버 변수 중 @Inject가 붙은 어떤 멤버 변수의 타입이 다른 SheathComponent의 클래스의 서브 타입이라면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test3::class)
-        val sheathComponent2 = SheathComponent(Test4::class)
+        val sheathComponent1 = SheathComponentByClass(Test3::class)
+        val sheathComponent2 = SheathComponentByClass(Test4::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -58,8 +58,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 클래스의 @Inject가 붙은 KCallable 타입 중 매개 변수 중 타입이 다른 SheathComponent의 클래스의 서브 타입이라면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test5::class)
-        val sheathComponent2 = SheathComponent(Test6::class)
+        val sheathComponent1 = SheathComponentByClass(Test5::class)
+        val sheathComponent2 = SheathComponentByClass(Test6::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -77,10 +77,10 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 클래스의 애노테이션이 붙을 수 있는 요소 중 @Inject 애노테이션이 붙은 요소가 여러 개면 모두 의존하는지 판단하는 대상이다`() {
-        val sheathComponent1 = SheathComponent(Test7::class)
-        val sheathComponent2 = SheathComponent(Test8::class)
-        val sheathComponent3 = SheathComponent(Test9::class)
-        val sheathComponent4 = SheathComponent(Test10::class)
+        val sheathComponent1 = SheathComponentByClass(Test7::class)
+        val sheathComponent2 = SheathComponentByClass(Test8::class)
+        val sheathComponent3 = SheathComponentByClass(Test9::class)
+        val sheathComponent4 = SheathComponentByClass(Test10::class)
 
         expect.that(sheathComponent1.isDependingOn(sheathComponent2)).isTrue()
         expect.that(sheathComponent1.isDependingOn(sheathComponent3)).isTrue()
@@ -107,8 +107,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 클래스에 @Inject가 붙은 요소 중 파라미터 타입이나 프로퍼티의 타입이 다른 SheathComponent의 클래스의 서브 타입이 없으면 의존하지 않는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test11::class)
-        val sheathComponent2 = SheathComponent(Test15::class)
+        val sheathComponent1 = SheathComponentByClass(Test11::class)
+        val sheathComponent2 = SheathComponentByClass(Test15::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -139,7 +139,7 @@ internal class SheathComponentTest {
     @Test
     fun `클래스에 여러 개의 생성자에 @Inject 애노테이션이 붙어있다면 생성할 때 에러가 발생한다`() {
         try {
-            SheathComponent(Test16::class)
+            SheathComponentByClass(Test16::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("여러 개의 생성자에 @Inject 애노테이션을 붙일 수 없습니다.")
         }
@@ -159,7 +159,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `@Inject가 붙은 요소가 없고 주 생성자의 매개 변수가 없다면 인스턴스화 할 수 있다`() {
-        val sheathComponent = SheathComponent(Test19::class)
+        val sheathComponent = SheathComponentByClass(Test19::class)
 
         val actual = sheathComponent.instantiated(listOf())
 
@@ -173,7 +173,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `@Inject가 붙은 요소가 없고 주 생성자의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 없다면 인스턴스 생성 시 에러가 발생한다`() {
-        val sheathComponent = SheathComponent(Test20::class)
+        val sheathComponent = SheathComponentByClass(Test20::class)
 
         try {
             sheathComponent.instantiated(listOf())
@@ -188,7 +188,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `@Inject가 붙은 요소가 없고 주 생성자의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 있다면 인스턴스화 할 수 있다`() {
-        val sheathComponent = SheathComponent(Test20::class)
+        val sheathComponent = SheathComponentByClass(Test20::class)
 
         val actual = sheathComponent.instantiated(listOf(Test19()))
 
@@ -197,7 +197,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `생성자에 @Inject가 붙어 있고 매개 변수가 없다면 인스턴스화 할 수 있다`() {
-        val sheathComponent = SheathComponent(Test21::class)
+        val sheathComponent = SheathComponentByClass(Test21::class)
 
         val actual = sheathComponent.instantiated(listOf())
 
@@ -209,7 +209,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `생성자에 @Inject가 붙어 있고 그 생성자의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 없다면 인스턴스 생성 시 에러가 발생한다`() {
-        val sheathComponent = SheathComponent(Test22::class)
+        val sheathComponent = SheathComponentByClass(Test22::class)
 
         try {
             sheathComponent.instantiated(listOf())
@@ -227,7 +227,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `생성자에 @Inject가 붙어 있고 그 생성자의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 있다면 인스턴스화 할 수 있다`() {
-        val sheathComponent = SheathComponent(Test22::class)
+        val sheathComponent = SheathComponentByClass(Test22::class)
 
         val actual = sheathComponent.instantiated(listOf(Test23()))
 
@@ -236,7 +236,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `프로퍼티에 @Inject가 붙어 있고 그 프로퍼티 타입의 인스턴스가 인스턴스 목록에 없다면 인스턴스 생성 시 에러가 발생한다`() {
-        val sheathComponent = SheathComponent(Test24::class)
+        val sheathComponent = SheathComponentByClass(Test24::class)
 
         try {
             sheathComponent.instantiated(listOf())
@@ -260,7 +260,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `프로퍼티에 @Inject가 붙어 있고 그 프로퍼티 타입의 인스턴스가 인스턴스 목록에 있다면 필드 주입 된 인스턴스를 생성할 수 있다`() {
-        val sheathComponent = SheathComponent(Test24::class)
+        val sheathComponent = SheathComponentByClass(Test24::class)
         val injectInstance = Test25()
 
         val actual = sheathComponent.instantiated(listOf(injectInstance))
@@ -272,7 +272,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `메서드에 @Inject가 붙어 있고 그 메서드에 매개 변수가 없다면 인스턴스를 생성할 수 있다`() {
-        val sheathComponent = SheathComponent(Test26::class)
+        val sheathComponent = SheathComponentByClass(Test26::class)
 
         val actual = sheathComponent.instantiated(listOf())
 
@@ -287,7 +287,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `메서드에 @Inject가 붙어 있고 그 메서드의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 없다면 인스턴스 생성 시 에러가 발생한다`() {
-        val sheathComponent = SheathComponent(Test27::class)
+        val sheathComponent = SheathComponentByClass(Test27::class)
 
         try {
             sheathComponent.instantiated(listOf())
@@ -315,7 +315,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `메서드에 @Inject가 붙어 있고 그 메서드의 매개 변수가 있을 때 인스턴스 목록에 필요한 종속 항목이 있다면 메서드 주입된 인스턴스를 생성할 수 있다`() {
-        val sheathComponent = SheathComponent(Test27::class)
+        val sheathComponent = SheathComponentByClass(Test27::class)
         val injectedInstance = Test28()
 
         val actual = sheathComponent.instantiated(listOf(injectedInstance))
@@ -326,7 +326,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `여러 요소에 @Inject가 붙어 있을 때 인스턴스 목록에 필요한 종속 항목이 있다면 모든 의존성이 주입된 인스턴스를 생성할 수 있다`() {
-        val sheathComponent = SheathComponent(Test29::class)
+        val sheathComponent = SheathComponentByClass(Test29::class)
         val instance30 = Test30()
         val instance31 = Test31()
         val instance32 = Test32()
@@ -363,23 +363,23 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent는 클래스가 같으면 같다고 판단한다`() {
-        val sheathComponent1 = SheathComponent(Test1::class)
-        val sheathComponent2 = SheathComponent(Test1::class)
+        val sheathComponent1 = SheathComponentByClass(Test1::class)
+        val sheathComponent2 = SheathComponentByClass(Test1::class)
 
         assertThat(sheathComponent1).isEqualTo(sheathComponent2)
     }
 
     @Test
     fun `SheathComponent는 클래스가 다르면 다르다고 판단한다`() {
-        val sheathComponent1 = SheathComponent(Test1::class)
-        val sheathComponent2 = SheathComponent(Test2::class)
+        val sheathComponent1 = SheathComponentByClass(Test1::class)
+        val sheathComponent2 = SheathComponentByClass(Test2::class)
 
         assertThat(sheathComponent1).isNotEqualTo(sheathComponent2)
     }
 
     @Test
     fun `SheathComponent의 해시 코드는 클래스의 해시 코드와 같다`() {
-        val sheathComponent = SheathComponent(Test1::class)
+        val sheathComponent = SheathComponentByClass(Test1::class)
 
         val actual = sheathComponent.hashCode()
 
@@ -389,7 +389,7 @@ internal class SheathComponentTest {
     @Test
     fun `@Component 애노테이션 혹은 @Component 애노테이션이 붙은 애노테이션이 없는 클래스로 SheathComponent를 생성하면 에러가 발생한다`() {
         try {
-            SheathComponent(Test33::class)
+            SheathComponentByClass(Test33::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat()
                 .isEqualTo("@Component가 붙은 클래스 혹은 @Component가 붙은 애노테이션이 붙은 클래스로만 SheathComponent를 생성할 수 있습니다.")
@@ -400,7 +400,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `@Prototype 애노테이션이 붙어있다면 싱글톤이 아니다`() {
-        val sheathComponent = SheathComponent(Test34::class)
+        val sheathComponent = SheathComponentByClass(Test34::class)
 
         val actual = sheathComponent.isSingleton
 
@@ -413,7 +413,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `@Prototype이 붙어있지 않다면 싱글톤이다`() {
-        val sheathComponent = SheathComponent(Test35::class)
+        val sheathComponent = SheathComponentByClass(Test35::class)
 
         val actual = sheathComponent.isSingleton
 
@@ -426,7 +426,7 @@ internal class SheathComponentTest {
     @Test
     fun `여러 개의 한정자 애노테이션이 붙어있는 클래스로 생성하면 에러가 발생한다`() {
         try {
-            SheathComponent(Test36::class)
+            SheathComponentByClass(Test36::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
         }
@@ -442,7 +442,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `한정자 애노테이션이 붙지 않았다면 이름은 클래스의 qualifiedName과 같다`() {
-        val sheathComponent = SheathComponent(Test37::class)
+        val sheathComponent = SheathComponentByClass(Test37::class)
 
         val actual = sheathComponent.name
 
@@ -454,7 +454,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `한정자 애노테이션이 붙어있다면 이름은 한정자 애노테이션으로 설정된 이름이다`() {
-        val sheathComponent = SheathComponent(Test38::class)
+        val sheathComponent = SheathComponentByClass(Test38::class)
 
         val actual = sheathComponent.name
 
@@ -467,7 +467,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `커스텀 한정자 애노테이션이 붙어있다면 이름은 커스텀 한정자 애노테이션으로 설정된 이름이다`() {
-        val sheathComponent = SheathComponent(Test39::class)
+        val sheathComponent = SheathComponentByClass(Test39::class)
 
         val actual = sheathComponent.name
 
@@ -487,7 +487,7 @@ internal class SheathComponentTest {
         class Test1
 
         try {
-            SheathComponent(Test1::class)
+            SheathComponentByClass(Test1::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
         }
@@ -496,7 +496,7 @@ internal class SheathComponentTest {
     @Test
     fun `주입 대상 생성자의 파라미터의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
         try {
-            SheathComponent(Test40::class)
+            SheathComponentByClass(Test40::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
         }
@@ -519,7 +519,7 @@ internal class SheathComponentTest {
     @Test
     fun `주입 대상 프로퍼티의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
         try {
-            SheathComponent(Test43::class)
+            SheathComponentByClass(Test43::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
         }
@@ -546,7 +546,7 @@ internal class SheathComponentTest {
     @Test
     fun `주입 대상 메서드의 파라미터의 Qualifier가 여러 개라면 생성 시 에러가 발생한다`() {
         try {
-            SheathComponent(Test44::class)
+            SheathComponentByClass(Test44::class)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat().isEqualTo("여러 개의 한정자 애노테이션을 붙일 수 없습니다.")
         }
@@ -572,8 +572,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `주입 대상에 한정자가 설정되어 있을 때 컴포넌트의 이름이 한정자가 아니라면 의존하지 않는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test46::class)
-        val sheathComponent2 = SheathComponent(Test47::class)
+        val sheathComponent1 = SheathComponentByClass(Test46::class)
+        val sheathComponent2 = SheathComponentByClass(Test47::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -591,8 +591,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `주입 대상에 한정자가 설정되어 있을 때 컴포넌트의 이름이 한정자와 같다면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponent(Test48::class)
-        val sheathComponent2 = SheathComponent(Test49::class)
+        val sheathComponent1 = SheathComponentByClass(Test48::class)
+        val sheathComponent2 = SheathComponentByClass(Test49::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
