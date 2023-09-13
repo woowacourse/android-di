@@ -3,27 +3,35 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.common.BandalInject
-import woowacourse.shopping.model.Product
+import androidx.lifecycle.viewModelScope
+import com.bandal.di.BandalInject
+import com.bandal.di.Database
+import kotlinx.coroutines.launch
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel : ViewModel() {
+    @Database
     @BandalInject
     private lateinit var cartRepository: CartRepository
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
+    private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        _cartProducts.value = cartRepository.getAllCartProducts()
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.getAllCartProducts()
+        }
     }
 
     fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        _onCartProductDeleted.value = true
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id.toLong())
+            _onCartProductDeleted.value = true
+        }
     }
 }

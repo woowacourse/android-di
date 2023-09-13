@@ -1,4 +1,4 @@
-package woowacourse.shopping.common
+package com.bandal.di
 
 import kotlin.reflect.KClass
 

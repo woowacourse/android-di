@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.common.CommonViewModelFactory
-import woowacourse.shopping.common.DefaultAppContainer
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
 
@@ -41,7 +40,7 @@ class CartActivityTest {
         val viewModel =
             ViewModelProvider(
                 activity,
-                CommonViewModelFactory(DefaultAppContainer()),
+                CommonViewModelFactory,
             )[CartViewModel::class.java]
 
         // then
