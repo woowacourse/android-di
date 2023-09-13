@@ -1,11 +1,12 @@
 package woowacourse.shopping.di.injector
 
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -13,21 +14,39 @@ class Injector(private val modules: List<Module>) {
 
     constructor(vararg modules: Module) : this(modules.toList())
 
-    private val providers: MutableMap<KType, Any?> =
-        mutableMapOf<KType, Any?>().apply {
+    private val providers: MutableMap<String, Any?> =
+        mutableMapOf<String, Any?>().apply {
             modules.forEach { module ->
                 module::class.declaredMemberFunctions.forEach {
-                    val returnType = it.returnType
+                    val returnType = it.returnType.toString()
                     val instance = it.call(module)
-                    this[returnType] = instance
+                    if (it.findAnnotation<Qualifier>() == null) {
+                        this[returnType] = instance
+                    } else {
+                        val implementationName =
+                            it.findAnnotation<Qualifier>()?.implementation.toString()
+                        this[implementationName] = instance
+                    }
                 }
             }
         }
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = T::class.primaryConstructor
-            ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다.")
-        val dependencies = getDependencies(primaryConstructor.parameters.map { it.type })
+            ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다. 인터페이스와 같이 주생성자가 없는 객체인지 확인해주세요.")
+        val params = primaryConstructor.parameters
+
+        val dependencyTypes: MutableList<String> = mutableListOf()
+        params.forEach { param ->
+            dependencyTypes.add(
+                if (param.findAnnotation<Qualifier>() == null) {
+                    param.type.toString()
+                } else {
+                    param.findAnnotation<Qualifier>()?.implementation.toString()
+                },
+            )
+        }
+        val dependencies = getDependencies(dependencyTypes)
         val instance = primaryConstructor.call(*dependencies.toTypedArray())
         injectProperties(instance)
         return instance
@@ -38,14 +57,14 @@ class Injector(private val modules: List<Module>) {
             instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
         mutableProperties.forEach { property ->
             if (property.annotations.any { it is Inject }.not()) return@forEach
-            val dependency = providers[property.returnType]
+            val dependency = providers[property.returnType.toString()]
                 ?: throw NullPointerException("${property.name}에 대한 의존성을 가져오는데 실피하였습니다.")
             property.isAccessible = true
             property.setter.call(instance, dependency)
         }
     }
 
-    fun getDependencies(dependencyTypes: List<KType>): List<Any> {
+    fun getDependencies(dependencyTypes: List<String>): List<Any> {
         val dependencies = mutableListOf<Any>()
 
         dependencyTypes.forEach { paramType ->
