@@ -3,7 +3,7 @@ package woowacourse.shopping.di
 import android.app.Application
 import com.re4rk.arkdi.DiContainer
 
-open class DIApplication : Application() {
+open class DiApplication : Application() {
     val diContainer: DiContainer by lazy {
         DiApplicationModule(applicationContext)
     }

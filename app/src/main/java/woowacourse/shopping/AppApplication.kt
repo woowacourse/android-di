@@ -1,5 +1,5 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.di.DIApplication
+import woowacourse.shopping.di.DiApplication
 
-class AppApplication : DIApplication()
+class AppApplication : DiApplication()
