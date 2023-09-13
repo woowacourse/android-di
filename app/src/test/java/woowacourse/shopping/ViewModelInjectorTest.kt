@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.di.getViewModel
+import woowacourse.shopping.ui.common.getViewModel
 
 interface FakeRepository2
 

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.pingudi.Container
 import com.example.pingudi.Injector
 import com.example.pingudi.annotation.InjectField
-import woowacourse.shopping.di.getViewModel
+import woowacourse.shopping.ui.common.getViewModel
 
 object Fake {
     interface FakeRepository
