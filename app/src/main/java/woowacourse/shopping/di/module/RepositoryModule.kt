@@ -14,5 +14,4 @@ object RepositoryModule: DependencyModule {
             CartRepository::class to CartRepositoryImpl::class
         )
     }
-
 }

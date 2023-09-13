@@ -1,8 +1,10 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
+@Qualifier
 class ProductRepositoryImpl(
     private val products: List<Product> = listOf(
         Product(
