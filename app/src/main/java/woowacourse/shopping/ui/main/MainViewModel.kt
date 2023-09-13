@@ -9,13 +9,10 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import woowacourse.shopping.ui.common.di.qualifier.InMemoryCartRepositoryQualifier
-import woowacourse.shopping.ui.common.di.qualifier.InMemoryProductRepositoryQualifier
 
 class MainViewModel(
-    @InMemoryProductRepositoryQualifier
     private val productRepository: ProductRepository,
-    @InMemoryCartRepositoryQualifier
-    private val cartRepository: CartRepository,
+    @InMemoryCartRepositoryQualifier private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

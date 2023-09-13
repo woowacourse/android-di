@@ -2,9 +2,7 @@ package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.ui.common.di.qualifier.InMemoryProductRepositoryQualifier
 
-@InMemoryProductRepositoryQualifier
 class DefaultProductRepository : ProductRepository {
     private val products: List<Product> = listOf(
         Product(

@@ -3,5 +3,3 @@ package woowacourse.shopping.ui.common.di.qualifier
 annotation class InMemoryCartRepositoryQualifier
 
 annotation class DatabaseCartRepositoryQualifier
-
-annotation class InMemoryProductRepositoryQualifier
