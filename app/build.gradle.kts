@@ -74,6 +74,8 @@ dependencies {
     androidTestImplementation("io.mockk:mockk-android:1.13.5")
     // DI Library
     implementation(project(":bunadi"))
+    // Reflection
+    implementation(kotlin("reflect"))
 }
 
 kapt {
