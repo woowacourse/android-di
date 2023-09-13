@@ -5,7 +5,7 @@ import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
-val KAnnotatedElement.customQualifiedName: String?
+internal val KAnnotatedElement.customQualifiedName: String?
     get() {
         val qualifiedName = this.findAnnotation<Qualifier>()?.value
         if (qualifiedName != null) return qualifiedName

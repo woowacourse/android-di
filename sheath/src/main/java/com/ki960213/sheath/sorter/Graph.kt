@@ -1,6 +1,6 @@
 package com.ki960213.sheath.sorter
 
-class Graph(nodes: Set<Node>) {
+internal class Graph(nodes: Set<Node>) {
 
     private val dependencyMap: Map<Node, List<Node>> = nodes.associateWith { node ->
         val otherNodes = nodes.filterNot { it == node }

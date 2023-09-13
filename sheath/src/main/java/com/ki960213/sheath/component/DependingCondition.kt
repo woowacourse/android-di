@@ -5,7 +5,7 @@ import com.ki960213.sheath.extention.customQualifiedName
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.hasAnnotation
 
-data class DependingCondition(
+internal data class DependingCondition(
     val isSingleton: Boolean = true,
     val qualifiedName: String? = null,
 ) {

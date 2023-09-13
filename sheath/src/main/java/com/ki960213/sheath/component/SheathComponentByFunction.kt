@@ -13,7 +13,7 @@ import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.javaMethod
 
-class SheathComponentByFunction(private val function: KFunction<*>) : SheathComponent() {
+internal class SheathComponentByFunction(private val function: KFunction<*>) : SheathComponent() {
     override val clazz: KClass<*> = function.returnType.classifier as KClass<*>
 
     override val name: String = function.customQualifiedName ?: clazz.qualifiedName

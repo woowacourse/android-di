@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
-class DefaultComponentScanner(private val context: Context) : ComponentScanner {
+internal class DefaultComponentScanner(private val context: Context) : ComponentScanner {
     override fun findAll(): List<SheathComponent> {
         val components = mutableListOf<SheathComponent>()
         val classLoader = context.classLoader as PathClassLoader

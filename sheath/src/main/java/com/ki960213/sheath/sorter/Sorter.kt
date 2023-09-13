@@ -4,7 +4,7 @@ import com.ki960213.sheath.component.SheathComponent
 import java.util.LinkedList
 import java.util.Queue
 
-fun List<SheathComponent>.sorted(): List<SheathComponent> {
+internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
     val nodes: Set<Node> = this.map(::Node).toSet()
     val graph = Graph(nodes)
 
