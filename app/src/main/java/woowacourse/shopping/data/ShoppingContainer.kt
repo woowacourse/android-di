@@ -33,12 +33,12 @@ class ShoppingContainer(private val context: Context) : Container {
     }
 
     @InMemoryDataSource
-    fun getRoomDBCartDataSource(): CartDataSource {
+    fun getInMemoryCartDataSource(): CartDataSource {
         return InMemoryCartDataSource()
     }
 
     @RoomDBDataSource
-    fun getInMemoryCartDataSource(
+    fun getRoomDBCartDataSource(
         cartProductDao: CartProductDao,
     ): CartDataSource {
         return DefaultCartDataSource(cartProductDao)

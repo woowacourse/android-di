@@ -21,14 +21,15 @@ class Injector(
         val args = constructor.parameters.map {
             getParameterInstance(it)
         }
-        val viewModel = constructor.call(*args.toTypedArray())
+        val instance = constructor.call(*args.toTypedArray())
 
         val properties = clazz.declaredMemberProperties.filterIsInstance<KMutableProperty1<T, *>>()
+            .filter { it.hasAnnotation<KoalaFieldInject>() }
         properties.forEach { property ->
-            property.setter.call(viewModel, getPropertyInstance(property))
+            property.setter.call(instance, getPropertyInstance(property))
         }
 
-        return viewModel
+        return instance
     }
 
     private fun getParameterInstance(parameter: KParameter): Any {
@@ -58,10 +59,14 @@ class Injector(
     }
 
     private fun getInstanceWithType(type: KType): Any {
-        val function = container.javaClass.kotlin.declaredMemberFunctions.find { func ->
+        val functions = container.javaClass.kotlin.declaredMemberFunctions.filter { func ->
             func.returnType == type
-        } ?: throw IllegalStateException("${type}을 찾을 수 없습니다.")
-        return callFunction(function)
+        }
+        when (functions.size) {
+            1 -> return callFunction(functions.first())
+            0 -> throw IllegalStateException("찾을 수 없습니다.")
+            else -> throw IllegalStateException("여러개 일치할 수 없습니다")
+        }
     }
 
     private fun callFunction(function: KFunction<*>): Any {

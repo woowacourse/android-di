@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bignerdranch.android.koala.KoalaFieldInject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.annotation.RoomDBCartRepository
 import woowacourse.shopping.model.Product
@@ -12,8 +13,10 @@ import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
 
+    @KoalaFieldInject
     lateinit var productRepository: ProductRepository
 
+    @KoalaFieldInject
     @RoomDBCartRepository
     lateinit var cartRepository: CartRepository
 
