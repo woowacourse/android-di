@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -26,9 +27,9 @@ import kotlin.reflect.jvm.jvmName
 @Config(application = TestApplication::class)
 class InjectorTest {
     @Test
-    fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
+    fun `repository를 찾아 ViewModel 의존성을 주입한다`() {
         // given
-        val fakeRepository: FakeRepository = DefaultFakeRepository()
+        val fakeRepository: FakeRepository = InMemoryFakeRepository()
         TestApplication.container.createInstance(FakeRepository::class, fakeRepository)
 
         val activity = Robolectric
@@ -43,12 +44,12 @@ class InjectorTest {
     }
 
     @Test
-    fun `적절한 객체 인스턴스를 재귀적으로 찾아 ViewModel 의존성을 주입한다`() {
+    fun `dao, repository 인스턴스를 재귀적으로 찾아 ViewModel 의존성을 주입한다`() {
         // given
         TestApplication.container.createInstance(FakeDao::class, DefaultFakeDao())
         TestApplication.container.createInstance(
             FakeRepository::class,
-            TestApplication.injector.create(FakeDaoRepository::class)
+            TestApplication.injector.create(DefaultFakeRepository::class)
         )
 
         val activity = Robolectric
@@ -63,7 +64,7 @@ class InjectorTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `적절한 객체 인스턴스가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
+    fun `repository 인스턴스가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         val activity = Robolectric
             .buildActivity(FakeActivity::class.java)
             .create()
@@ -72,13 +73,13 @@ class InjectorTest {
     }
 
     @Test
-    fun `적절한 객체 인스턴스를 찾아 ViewModel 프로퍼티와 필드에 의존성을 주입한다`() {
+    fun `@Inject가 붙은 파라미터와 private 필드의 인스턴스만 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val fakeDao: FakeDao = DefaultFakeDao()
         TestApplication.container.createInstance(FakeDao::class, fakeDao)
         TestApplication.container.createInstance(
             FakeRepository::class,
-            TestApplication.injector.create(FakeFieldRepository::class)
+            TestApplication.injector.create(DatabaseFakeRepository::class)
         )
 
         val activity = Robolectric
@@ -90,21 +91,28 @@ class InjectorTest {
         val viewModel = activity.viewModel
         assertNotNull(viewModel)
         assertNotNull(viewModel.repository)
-        assertNotNull(viewModel.repository::class.java.getDeclaredField("fieldDao"))
+        viewModel.repository::class.java.getDeclaredField("fieldDao").run {
+            isAccessible = true
+            assertNotNull(this.get(viewModel.repository))
+        }
+        viewModel.repository::class.java.getDeclaredField("fakeName").run {
+            isAccessible = true
+            assertNull(this.get(viewModel.repository))
+        }
     }
 
     @Test
-    fun `Qualifier를 구분해 적절한 객체 인스턴스를 찾아 ViewModel 프로퍼티와 필드에 의존성을 주입한다`() {
+    fun `파라미터와 private 필드에 @Qualifier를 구분하여 적절한 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
         val fakeDao: FakeDao = DefaultFakeDao()
         TestApplication.container.createInstance(FakeDao::class, fakeDao)
         TestApplication.container.createInstance(
             IN_MEMORY,
-            TestApplication.injector.create(DefaultFakeRepository::class)
+            TestApplication.injector.create(InMemoryFakeRepository::class)
         )
         TestApplication.container.createInstance(
             DATABASE,
-            TestApplication.injector.create(FakeFieldRepository::class)
+            TestApplication.injector.create(DatabaseFakeRepository::class)
         )
 
         val activity = Robolectric
@@ -115,7 +123,12 @@ class InjectorTest {
         // then
         val viewModel = activity.viewModel
         assertNotNull(viewModel.inMemoryRepository)
-        assertNotNull(viewModel::class.java.getDeclaredField("databaseRepository"))
+        assert(viewModel.inMemoryRepository is InMemoryFakeRepository)
+        viewModel::class.java.getDeclaredField("databaseRepository").run {
+            isAccessible = true
+            assertNotNull(this.get(viewModel))
+            assert(this.get(viewModel) is DatabaseFakeRepository)
+        }
     }
 }
 
@@ -158,17 +171,19 @@ interface FakeDao
 class DefaultFakeDao : FakeDao
 
 interface FakeRepository
-class DefaultFakeRepository : FakeRepository
-class FakeDaoRepository(
+
+class DefaultFakeRepository(
     @Injected val dao: FakeDao,
 ) : FakeRepository
 
-class FakeFieldRepository(
+class InMemoryFakeRepository : FakeRepository
+
+class DatabaseFakeRepository(
     @Injected val propertyDao: FakeDao,
 ) : FakeRepository {
     @Injected
-    private lateinit var fieldDao: FakeDao
-    private lateinit var fakeName: String
+    private var fieldDao: FakeDao? = null
+    private var fakeName: String? = null
 }
 
 class FakeViewModel(
@@ -192,7 +207,7 @@ class FakeQualifierViewModel(
 ) : ViewModel() {
     @Injected
     @Qualifier(DATABASE)
-    private lateinit var databaseRepository: FakeRepository
+    private var databaseRepository: FakeRepository? = null // 테스트를 용이하게 하기 위해 null
 
     companion object {
         val factory = viewModelFactory {
