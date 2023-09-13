@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.app.covi_di.annotation
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

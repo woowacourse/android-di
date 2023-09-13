@@ -1,8 +1,7 @@
-package woowacourse.shopping.di.core
+package com.app.covi_di.core
 
-import android.util.Log
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.InjectField
+import com.app.covi_di.annotation.Inject
+import com.app.covi_di.annotation.InjectField
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.hasAnnotation
@@ -38,7 +37,7 @@ object Injector {
                     parameterTypes.add(getByProvider(parameterType))
                 } else {
                     val instance = DIContainer.getModuleKClass(parameterType)
-                            ?: throw IllegalArgumentException()
+                        ?: throw IllegalArgumentException()
                     val recursiveInstance = injectRecursive(instance)
                     parameterTypes.add(recursiveInstance)
                 }

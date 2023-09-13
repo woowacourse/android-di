@@ -1,7 +1,7 @@
 package woowacourse.shopping.global
 
 import android.app.Application
-import woowacourse.shopping.di.core.DIContainer
+import com.app.covi_di.core.DIContainer
 import woowacourse.shopping.di.module.DataBaseProvider
 import woowacourse.shopping.di.module.RepositoryModule
 

@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.Qualifier
+import com.app.covi_di.annotation.Qualifier
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
