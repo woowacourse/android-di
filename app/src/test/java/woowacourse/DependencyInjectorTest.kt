@@ -21,7 +21,9 @@ import woowacourse.fakeClasses.AFieldDependencyQualifier
 import woowacourse.fakeClasses.BFieldDependency
 import woowacourse.fakeClasses.BFieldDependencyQualifier
 import woowacourse.fakeClasses.ConstructorTestActivity
+import woowacourse.fakeClasses.FieldDependency
 import woowacourse.fakeClasses.FieldTestActivity
+import java.lang.IllegalArgumentException
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.isAccessible
@@ -169,5 +171,21 @@ class DependencyInjectorTest {
 
         return cacheProperty.call() as? Cache
             ?: throw IllegalStateException("[ERROR] 캐시를 생성할 수 없습니다.")
+    }
+
+    interface Dependency
+
+    @Test
+    fun 인터페이스_타입인_프로퍼티에_식별자_애노테이션을_추가하지_않으면_주입할_때_예외가_발생하다() {
+        // given: 인터페이스 타입을 생성자로 프로퍼티를 가진 클래스가 존재한다.
+        class InterfacePropertyClass(
+            private val dependency: Dependency,
+        )
+
+        // when: 클래스를 주입한다.
+        // then: 식별자 애노테이션이 없으므로 예외가 발생한다.
+        assertThrows<IllegalArgumentException> {
+            DependencyInjector.inject(InterfacePropertyClass::class)
+        }
     }
 }
