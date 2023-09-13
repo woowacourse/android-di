@@ -2,16 +2,24 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
-import woowacourse.shopping.data.CartDefaultRepository
+import woowacourse.shopping.data.CartInMemoryRepository
+import woowacourse.shopping.data.CartOnDiskRepository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ProductDefaultRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.annotation.InMemory
+import woowacourse.shopping.di.annotation.OnDisk
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 object NormalModule : Module {
-    fun provideCartRepository(cartProductDao: CartProductDao): CartRepository =
-        CartDefaultRepository(cartProductDao)
+
+    @OnDisk
+    fun provideInMemoryCartRepository(cartProductDao: CartProductDao): CartRepository =
+        CartOnDiskRepository(cartProductDao)
+
+    @InMemory
+    fun provideInMemoryCartRepository(): CartRepository = CartInMemoryRepository()
 
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()
 
