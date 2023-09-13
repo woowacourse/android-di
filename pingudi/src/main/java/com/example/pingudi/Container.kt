@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.pingudi
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KType

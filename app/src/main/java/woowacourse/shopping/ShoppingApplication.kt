@@ -1,13 +1,13 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.example.pingudi.Container
+import com.example.pingudi.Injector
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.InDiskCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.Injector
 
 class ShoppingApplication : Application() {
 

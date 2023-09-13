@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.pingudi
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -18,7 +18,7 @@ class Injector(private val container: Container) {
     }
 
     private fun getInstance(type: KType): Any? =
-        container.getInstance(type)
+        Container.getInstance(type)
 
     fun createInstance(kClass: KClass<*>): Any {
         val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
@@ -45,10 +45,10 @@ class Injector(private val container: Container) {
 
     private fun getInstancesWithAnnotation(type: KType, annotation: List<Annotation>): Any {
         if (annotation.isEmpty()) {
-            return container.getInstance(type)
+            return Container.getInstance(type)
                 ?: throw java.lang.IllegalArgumentException()
         }
-        val instances = container.getInstances(type)
+        val instances = Container.getInstances(type)
         val result = instances.filter {
             it::class.annotations.any { ano1 ->
                 annotation.any { ano2 ->
@@ -65,7 +65,7 @@ class Injector(private val container: Container) {
 
     private fun <T : Any> injectField(instance: T) {
         instance::class.memberProperties.forEach { property ->
-            if (property.annotations.any { it is InjectField }) {
+            if (property.annotations.any { it is com.example.pingudi.annotation.InjectField }) {
                 if (property is KMutableProperty<*>) {
                     property.setter.call(instance, getInstance(property.returnType))
                 }

@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
+import com.example.pingudi.annotation.InMemory
 import woowacourse.shopping.data.repository.ProductRepository
-import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.Product
 
 @InMemory

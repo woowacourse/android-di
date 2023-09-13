@@ -3,9 +3,9 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.InjectField
-import woowacourse.shopping.di.Injector
+import com.example.pingudi.Container
+import com.example.pingudi.Injector
+import com.example.pingudi.annotation.InjectField
 import woowacourse.shopping.di.getViewModel
 
 object Fake {

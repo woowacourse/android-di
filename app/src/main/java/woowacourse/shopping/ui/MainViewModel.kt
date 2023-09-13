@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pingudi.annotation.InDisk
+import com.example.pingudi.annotation.InMemory
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
-import woowacourse.shopping.di.InDisk
-import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
