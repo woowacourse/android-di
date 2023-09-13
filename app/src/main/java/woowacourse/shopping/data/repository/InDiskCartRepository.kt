@@ -1,10 +1,10 @@
 package woowacourse.shopping.data.repository
 
+import com.example.bbottodi.di.annotation.InDisk
+import com.example.bbottodi.di.annotation.Inject
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toProduct
-import woowacourse.shopping.di.annotation.InDisk
-import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 

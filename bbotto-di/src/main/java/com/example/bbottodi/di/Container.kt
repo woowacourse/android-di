@@ -1,7 +1,7 @@
-package woowacourse.shopping.di
+package com.example.bbottodi.di
 
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.model.InstanceIdentifier
+import com.example.bbottodi.di.annotation.Inject
+import com.example.bbottodi.di.model.InstanceIdentifier
 import kotlin.reflect.KClass
 
 object Container {

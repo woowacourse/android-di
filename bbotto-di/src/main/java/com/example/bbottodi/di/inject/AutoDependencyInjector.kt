@@ -1,7 +1,7 @@
-package woowacourse.shopping.di.inject
+package com.example.bbottodi.di.inject
 
-import woowacourse.shopping.di.Container
-import woowacourse.shopping.di.annotation.Inject
+import com.example.bbottodi.di.Container
+import com.example.bbottodi.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation

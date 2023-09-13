@@ -1,6 +1,6 @@
 package woowacourse.shopping.data.repository
 
-import woowacourse.shopping.di.annotation.InMemory
+import com.example.bbottodi.di.annotation.InMemory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 

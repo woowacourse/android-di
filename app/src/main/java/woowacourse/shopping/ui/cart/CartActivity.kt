@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.bbottodi.di.common.ViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.common.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
 

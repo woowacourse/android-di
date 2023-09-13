@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.model
+package com.example.bbottodi.di.model
 
 import kotlin.reflect.KClass
 
