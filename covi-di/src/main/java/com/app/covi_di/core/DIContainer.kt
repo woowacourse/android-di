@@ -1,9 +1,9 @@
 package com.app.covi_di.core
 
 import android.content.Context
+import com.app.covi_di.annotation.Qualifier
 import com.app.covi_di.module.DependencyModule
 import com.app.covi_di.module.Provider
-import com.app.covi_di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
@@ -25,10 +25,11 @@ object DIContainer {
     }
 
     fun getModuleKClass(clazz: KClass<*>): KClass<*>? {
-        return moduleInstances[clazz]?.find {
+        val result = moduleInstances[clazz]?.filter {
             it.hasAnnotation<Qualifier>()
-        }
-
+        } ?: return null
+        if (result.size > 1) throw IllegalArgumentException()
+        return result.first()
     }
 
     fun getProviderInstance(clazz: KClass<*>): Any {
