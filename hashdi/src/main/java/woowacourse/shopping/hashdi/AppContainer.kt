@@ -1,7 +1,10 @@
 package woowacourse.shopping.hashdi
 
 import woowacourse.shopping.hashdi.annotation.Inject
+import woowacourse.shopping.hashdi.annotation.Qualifier
+import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
@@ -19,7 +22,14 @@ class AppContainer(private val modules: List<Module>) {
         initContainer()
     }
 
-    fun getInstance(identifyKey: String): Any {
+    fun getInstance(kCallable: KCallable<*>): Any {
+        val identifyKey = kCallable.identifyKey()
+        return appContainer[identifyKey]
+            ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $identifyKey")
+    }
+
+    fun getInstance(kParam: KParameter): Any {
+        val identifyKey = kParam.identifyKey()
         return appContainer[identifyKey]
             ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $identifyKey")
     }
@@ -54,5 +64,25 @@ class AppContainer(private val modules: List<Module>) {
             return provideFunc.callBy(args)
         }
         return provideFunc.callBy(mapOf(provideFunc.parameters.first() to receiver))
+    }
+
+    private fun KCallable<*>.identifyKey(): String {
+        val type = this.returnType
+        val qualifier = this.qualifier()
+        return "${type}${qualifier ?: ""}"
+    }
+
+    private fun KParameter.identifyKey(): String {
+        val type = this.type
+        val qualifier = this.qualifier()
+        return "${type}${qualifier ?: ""}"
+    }
+
+    private fun KCallable<*>.qualifier(): Annotation? {
+        return this.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+    }
+
+    private fun KParameter.qualifier(): Annotation? {
+        return this.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
     }
 }
