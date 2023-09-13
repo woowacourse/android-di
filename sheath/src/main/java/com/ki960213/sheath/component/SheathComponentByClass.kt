@@ -23,7 +23,8 @@ class SheathComponentByClass(override val clazz: KClass<*>) : SheathComponent() 
     override val name: String = clazz.customQualifiedName ?: clazz.qualifiedName
         ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
-    override val isSingleton: Boolean = !clazz.hasAnnotation<Prototype>()
+    override val isSingleton: Boolean =
+        !clazz.hasAnnotation<Prototype>() && !clazz.annotations.all { it.annotationClass.hasAnnotation<Prototype>() }
 
     private val dependingConditions: Map<KClass<*>, DependingCondition> = (
         (

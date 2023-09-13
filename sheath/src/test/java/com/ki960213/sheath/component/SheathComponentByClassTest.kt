@@ -6,6 +6,7 @@ import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Prototype
 import com.ki960213.sheath.annotation.Qualifier
+import com.ki960213.sheath.annotation.SheathViewModel
 import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -608,4 +609,16 @@ internal class SheathComponentByClassTest {
     @Qualifier("test49")
     @Component
     class Test49
+
+    @Test
+    fun `클래스의 애노테이션 중 @Prototype이 붙은 애노테이션이 있다면 그 클래스로 생성한 SheathComponent는 싱글톤이 아니다`() {
+        val sheathComponent = SheathComponentByClass(TestViewModel::class)
+
+        val actual = sheathComponent.isSingleton
+
+        assertThat(actual).isFalse()
+    }
+
+    @SheathViewModel
+    class TestViewModel
 }
