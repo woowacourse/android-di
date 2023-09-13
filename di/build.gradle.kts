@@ -25,7 +25,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "io.hyemdooly.di"
             artifactId = "final"
-            version = "v2.0.0"
+            version = "v3.0.0"
             from(components["kotlin"])
         }
     }
