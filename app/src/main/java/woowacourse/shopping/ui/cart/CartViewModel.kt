@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ki960213.sheath.annotation.SheathViewModel
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 @SheathViewModel
 class CartViewModel(
+    @InMemoryCart
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
