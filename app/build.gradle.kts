@@ -44,9 +44,9 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-//    implementation("com.github.hyemdooly:android-di:v2.0.0")
-    implementation(project(":di"))
-    implementation(project(mapOf("path" to ":di")))
+    implementation("com.github.hyemdooly:android-di:v4.0.0")
+//    implementation(project(":di"))
+//    implementation(project(mapOf("path" to ":di")))
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
