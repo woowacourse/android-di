@@ -22,7 +22,6 @@ import woowacourse.fakeClasses.BFieldDependency
 import woowacourse.fakeClasses.BFieldDependencyQualifier
 import woowacourse.fakeClasses.ConstructorTestActivity
 import woowacourse.fakeClasses.FieldTestActivity
-import java.lang.IllegalArgumentException
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.jvm.isAccessible
@@ -185,6 +184,21 @@ class DependencyInjectorTest {
         // then: 식별자 애노테이션이 없으므로 예외가 발생한다.
         assertThrows<IllegalArgumentException> {
             DependencyInjector.inject(InterfacePropertyClass::class)
+        }
+    }
+
+    @Test
+    fun 인터페이스_타입인_필드에_식별자_애노테이션을_추가하지_않으면_주입할_성_예외가_발생한다() {
+        // given: 인터페이스 타입을 필드로 가진 클래스가 존재한다.
+        class InterfaceFieldClass {
+            @Inject
+            private lateinit var dependency: Dependency
+        }
+
+        // when: 클래스를 주입한다.
+        // then: 인터페이스 타입인 필드에 식별자 애노테이션이 없으므로 예외가 발생한다.
+        assertThrows<Exception> {
+            DependencyInjector.inject(InterfaceFieldClass::class)
         }
     }
 }
