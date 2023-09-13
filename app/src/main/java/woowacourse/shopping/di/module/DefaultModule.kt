@@ -6,9 +6,12 @@ import com.now.di.Module
 import woowacourse.shopping.data.CartDatabase
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.di.annotation.Database
 import woowacourse.shopping.di.annotation.InMemory
+import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 class DefaultModule(private val context: Context) : Module {
 
@@ -20,12 +23,16 @@ class DefaultModule(private val context: Context) : Module {
     }
 
     @InMemory
-    fun inMemoryCartRepository(): InMemoryCartRepository {
+    fun inMemoryCartRepository(): CartRepository {
         return InMemoryCartRepository()
     }
 
     @Database
-    fun databaseCartRepository(cartProductDao: CartProductDao): DatabaseCartRepository {
+    fun databaseCartRepository(cartProductDao: CartProductDao): CartRepository {
         return DatabaseCartRepository(cartProductDao)
+    }
+
+    fun productRepository(): ProductRepository {
+        return DefaultProductRepository()
     }
 }
