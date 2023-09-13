@@ -13,6 +13,7 @@ fun Product.toEntity(): CartProductEntity {
 
 fun CartProductEntity.toData(): Product {
     return Product(
+        id = id,
         name = name,
         price = price,
         imageUrl = imageUrl,
