@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.annotation.KoalaRepository
 import woowacourse.shopping.annotation.KoalaViewModel
+import woowacourse.shopping.annotation.RoomDBCartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -17,6 +18,7 @@ class MainViewModel : ViewModel() {
     @KoalaRepository
     lateinit var productRepository: ProductRepository
 
+    @RoomDBCartRepository
     @KoalaRepository
     lateinit var cartRepository: CartRepository
 
