@@ -1,6 +1,9 @@
 package woowacourse.shopping.data.repository
 
 import com.example.bbottodi.di.annotation.InMemory
+import woowacourse.shopping.data.mapper.toCartProduct
+import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
@@ -13,8 +16,8 @@ class InMemoryCartRepository : CartRepository {
         cartProducts.add(product)
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
-        return cartProducts.toList()
+    override suspend fun getAllCartProducts(): List<CartProduct> {
+        return cartProducts.toList().map { it.toEntity().toCartProduct() }
     }
 
     override suspend fun deleteCartProduct(id: Int) {
