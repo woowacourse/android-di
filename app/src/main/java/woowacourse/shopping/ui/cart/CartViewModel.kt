@@ -10,7 +10,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel (
-    @Qualifier("InMemory")
+    @Qualifier("Database")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
@@ -33,4 +33,6 @@ class CartViewModel (
             _onCartProductDeleted.value = true
         }
     }
+
+
 }
