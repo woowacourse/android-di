@@ -17,8 +17,8 @@ class ReflectionTest {
         val instances = kFunctions.map { it.call(module) }
 
         // then
-        assertThat(instances.size).isEqualTo(2)
-        assertThat(kFunctions.size).isEqualTo(2)
+        assertThat(instances.size).isEqualTo(4)
+        assertThat(kFunctions.size).isEqualTo(4)
     }
 
     @Test
@@ -36,7 +36,7 @@ class ReflectionTest {
         }
 
         // then
-        assertThat(annotations.size).isEqualTo(1)
+        assertThat(annotations.size).isEqualTo(4)
     }
 
     @Test
@@ -54,7 +54,7 @@ class ReflectionTest {
         }
 
         // then
-        assertThat(annotations.size).isEqualTo(1)
+        assertThat(annotations.size).isEqualTo(4)
         assertThat(annotations[0]).isTrue
     }
 }
