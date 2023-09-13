@@ -1,6 +1,7 @@
 package com.ki960213.sheath.sorter
 
 import com.google.common.truth.Truth.assertThat
+import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.component.SheathComponentByClass
 import org.junit.Test
 
@@ -27,12 +28,16 @@ internal class Sorter1KtTest {
         assertThat(result).isEqualTo(expected)
     }
 
+    @Component
     private class Test1(val test2: Test2, val test3: Test3)
 
+    @Component
     private class Test2(val test4: Test4)
 
+    @Component
     private class Test3(val test4: Test4)
 
+    @Component
     private class Test4
 
     @Test
@@ -51,9 +56,12 @@ internal class Sorter1KtTest {
         }
     }
 
+    @Component
     private class Test5(val test6: Test6)
 
+    @Component
     private class Test6(val test7: Test7)
 
+    @Component
     private class Test7(val test5: Test5)
 }

@@ -4,6 +4,7 @@ import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Prototype
 import com.ki960213.sheath.annotation.Qualifier
+import com.ki960213.sheath.extention.customQualifiedName
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -11,7 +12,6 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.isAccessible
 
 class SheathComponentByClass(override val clazz: KClass<*>) : SheathComponent() {
 
-    override val name: String = clazz.getQualifiedName() ?: clazz.qualifiedName
+    override val name: String = clazz.customQualifiedName ?: clazz.qualifiedName
         ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
     override val isSingleton: Boolean = !clazz.hasAnnotation<Prototype>()
@@ -138,33 +138,4 @@ class SheathComponentByClass(override val clazz: KClass<*>) : SheathComponent() 
             function.call(this, *arguments.toTypedArray())
         }
     }
-
-    override fun equals(other: Any?): Boolean =
-        if (other is SheathComponent) clazz == other.clazz else false
-
-    override fun hashCode(): Int = clazz.hashCode()
-
-    override fun toString(): String = "SheathComponent(clazz=$clazz)"
-}
-
-data class DependingCondition(
-    val isSingleton: Boolean = true,
-    val qualifiedName: String? = null,
-) {
-    companion object {
-        fun from(element: KAnnotatedElement): DependingCondition =
-            DependingCondition(element.hasAnnotation<Prototype>(), element.getQualifiedName())
-    }
-}
-
-private fun KAnnotatedElement.getQualifiedName(): String? {
-    val qualifiedName = this.findAnnotation<Qualifier>()?.value
-    if (qualifiedName != null) return qualifiedName
-
-    val annotationAttachedQualifier = this.annotations
-        .find { it.annotationClass.hasAnnotation<Qualifier>() } ?: return null
-
-    return annotationAttachedQualifier.annotationClass
-        .findAnnotation<Qualifier>()
-        ?.value
 }

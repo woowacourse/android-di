@@ -1,6 +1,7 @@
 package com.ki960213.sheath.sorter
 
 import com.google.common.truth.Truth.assertThat
+import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.component.SheathComponentByClass
 import org.junit.Test
 
@@ -46,8 +47,10 @@ internal class Node1Test {
         assertThat(actual).isFalse()
     }
 
+    @Component
     private class Test1(test2: Test2)
 
+    @Component
     private class Test2
 
     @Test

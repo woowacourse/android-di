@@ -15,4 +15,11 @@ abstract class SheathComponent {
     abstract fun isDependingOn(component: SheathComponent): Boolean
 
     abstract fun instantiated(instances: List<Any>): Any
+
+    override fun equals(other: Any?): Boolean =
+        if (other is SheathComponent) clazz == other.clazz else false
+
+    override fun hashCode(): Int = clazz.hashCode()
+
+    override fun toString(): String = "SheathComponent(clazz=$clazz)"
 }

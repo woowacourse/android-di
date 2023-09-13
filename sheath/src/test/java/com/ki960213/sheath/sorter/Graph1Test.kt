@@ -2,6 +2,7 @@ package com.ki960213.sheath.sorter
 
 import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
+import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.component.SheathComponentByClass
 import org.junit.Rule
 import org.junit.Test
@@ -26,8 +27,10 @@ internal class Graph1Test {
         }
     }
 
+    @Component
     private class Test1(val test2: Test2)
 
+    @Component
     private class Test2
 
     @Test
@@ -46,12 +49,16 @@ internal class Graph1Test {
         }
     }
 
+    @Component
     private class Test3(test5: Test5, test6: Test6)
 
+    @Component
     private open class Test4
 
+    @Component
     private class Test5 : Test4()
 
+    @Component
     private class Test6 : Test4()
 
     @Test
@@ -81,9 +88,12 @@ internal class Graph1Test {
         }
     }
 
+    @Component
     private class Test7(val test8: Test8)
 
+    @Component
     private class Test8
 
+    @Component
     private class Test9(val test7: Test7, val test8: Test8)
 }
