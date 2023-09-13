@@ -10,23 +10,21 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
-import kotlin.reflect.jvm.jvmErasure
 
 class DependencyInjectorTest {
 
-    class ClassA(
+    data class ClassA(
         @WoogiProperty
         val arg1: ClassB
     )
 
-    class ClassB(val arg1: ClassC)
-    class ClassC
+    data class ClassB(val arg1: ClassC)
+    data class ClassC(val data: String = "")
 
-    class ClassD(val arg1: ClassE)
-    class ClassE(val arg1: ClassF)
-    class ClassF
+    data class ClassD(val arg1: ClassE)
+    data class ClassE(val arg1: ClassF)
+    data class ClassF(val data: String = "")
 
     class ClassG {
         @WoogiProperty
@@ -42,10 +40,10 @@ class DependencyInjectorTest {
 
         // when
         val instanceB = injector.inject<ClassB>()
-        val actual = instanceB::arg1.returnType.jvmErasure
+        val actual = instanceB.arg1
 
         // then
-        val expected = ClassC::class
+        val expected = ClassC()
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -57,17 +55,12 @@ class DependencyInjectorTest {
 
         // when
         val instanceD = injector.inject<ClassD>()
-        val actual1 = instanceD::arg1.returnType.jvmErasure
-        val actual2 = instanceD.arg1::arg1.returnType.jvmErasure
+        val actual = instanceD.arg1
 
         // then
-        val expected1 = ClassE::class
-        val expected2 = ClassF::class
+        val expected = ClassE(ClassF())
 
-        assertAll(
-            { assertThat(actual1).isEqualTo(expected1) },
-            { assertThat(actual2).isEqualTo(expected2) }
-        )
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -82,10 +75,10 @@ class DependencyInjectorTest {
 
         // when
         val instanceA = injector.inject<ClassA>()
-        val actual = instanceA::arg1.returnType.jvmErasure
+        val actual = instanceA.arg1
 
         // then
-        val expected = ClassB::class
+        val expected = ClassB(ClassC())
         assertThat(actual).isEqualTo(expected)
         verify { container.find(ClassB::class) }
     }
