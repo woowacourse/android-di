@@ -2,9 +2,9 @@ package woowacourse.shopping.data.cart
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.otterdi.annotation.Inject
 import woowacourse.shopping.repository.CartRepository
 
 class DefaultCartRepository(

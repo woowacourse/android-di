@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package woowacourse.shopping.otterdi.annotation
 
 @Target(
     AnnotationTarget.FUNCTION,

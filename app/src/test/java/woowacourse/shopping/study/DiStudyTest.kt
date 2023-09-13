@@ -9,10 +9,10 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.injector.Injector
-import woowacourse.shopping.di.module.Module
 import woowacourse.shopping.di.viewModels
+import woowacourse.shopping.otterdi.Injector
+import woowacourse.shopping.otterdi.Module
+import woowacourse.shopping.otterdi.annotation.Inject
 
 interface FakeRepository1
 class DefaultFakeRepository1 : FakeRepository1

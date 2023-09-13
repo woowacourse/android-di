@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.di.injector.Injector
+import woowacourse.shopping.otterdi.Injector
 
 @MainThread
 inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModels(injector: Injector = ShoppingApplication.injector): Lazy<VM> {

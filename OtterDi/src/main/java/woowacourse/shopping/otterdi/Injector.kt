@@ -1,8 +1,7 @@
-package woowacourse.shopping.di.injector
+package woowacourse.shopping.otterdi
 
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.module.Module
+import woowacourse.shopping.otterdi.annotation.Inject
+import woowacourse.shopping.otterdi.annotation.Qualifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
