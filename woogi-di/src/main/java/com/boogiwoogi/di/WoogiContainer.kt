@@ -7,6 +7,4 @@ interface WoogiContainer {
     fun <T : Any> declareDependency(dependency: Dependency<T>)
 
     fun find(clazz: KClass<*>): Any?
-
-    fun find(clazzName: String): Any?
 }

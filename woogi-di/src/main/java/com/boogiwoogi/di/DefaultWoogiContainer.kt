@@ -14,9 +14,6 @@ class DefaultWoogiContainer(
 
     override fun find(clazz: KClass<*>): Any? =
         values.find { it.isTypeOf(clazz) }?.instance
-
-    override fun find(clazzName: String): Any? =
-        values.find { it.instance::class.simpleName == clazzName }?.instance
 }
 
 fun woogiInitializer(declareDependencies: WoogiContainer.() -> Unit): WoogiInjector =
