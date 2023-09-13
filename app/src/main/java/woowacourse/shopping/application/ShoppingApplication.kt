@@ -23,6 +23,21 @@ class ShoppingApplication : Application() {
         val appContainer: ShoppingContainer = DefaultContainer()
         injector = Injector(appContainer)
 
+        addInstancesToContainer(appContainer, dao)
+    }
+
+    private fun createRoomDatabase(): ShoppingDatabase {
+        return Room.databaseBuilder(
+            this,
+            ShoppingDatabase::class.java,
+            "cart_products",
+        ).build()
+    }
+
+    private fun addInstancesToContainer(
+        appContainer: ShoppingContainer,
+        dao: CartProductDao,
+    ) {
         appContainer.createInstance(CartProductDao::class, dao)
         appContainer.createInstance(
             ProductRepository::class,
@@ -36,14 +51,6 @@ class ShoppingApplication : Application() {
             Qualifier.IN_MEMORY,
             injector.create(InMemoryCartRepository::class)
         )
-    }
-
-    private fun createRoomDatabase(): ShoppingDatabase {
-        return Room.databaseBuilder(
-            this,
-            ShoppingDatabase::class.java,
-            "cart_products",
-        ).build()
     }
 
     companion object {
