@@ -53,7 +53,6 @@ object Injector {
         }
         return dependencies
     }
-
     inline fun <reified T> injectField(
         instance: T,
         properties: List<KProperty<*>>,
