@@ -10,3 +10,11 @@ fun Product.toEntity(): CartProductEntity {
         imageUrl = imageUrl,
     )
 }
+
+fun CartProductEntity.toData(): Product {
+    return Product(
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+    )
+}
