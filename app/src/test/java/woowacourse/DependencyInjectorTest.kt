@@ -11,6 +11,7 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -103,6 +104,34 @@ class DependencyInjectorTest {
 
         // then: 멤버 프로퍼티가 모두 주입되어 있다.
         assertTrue(actual.isAllMemberPropertyInitialized())
+    }
+
+    @Test
+    fun 클래스_멤버_프로퍼티가_복수일_때_Inject_애노테이션이_없는_멤버는_주입하지_않는다() {
+        // given: 멤버 프로퍼티가 2개인 클래스가 존재한다.
+        class TwoMemberPropertyClass {
+            @Inject
+            @AFieldDependencyQualifier
+            private lateinit var first: AFieldDependency
+
+            @BFieldDependencyQualifier
+            private lateinit var second: BFieldDependency
+
+            fun isFirstInitialized(): Boolean {
+                return ::first.isInitialized
+            }
+
+            fun isSecondInitialized(): Boolean {
+                return ::second.isInitialized
+            }
+        }
+
+        // when: 클래스를 주입한다.
+        val twoMemberClass = DependencyInjector.inject(TwoMemberPropertyClass::class)
+
+        // then: second 멤버는 초기화되어 있지 않다.
+        assertTrue(twoMemberClass.isFirstInitialized())
+        assertFalse(twoMemberClass.isSecondInitialized())
     }
 
     // given: 클래스의 프로퍼티도 프로퍼티가 필요하다.
