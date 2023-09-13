@@ -36,4 +36,18 @@ object Container {
             instanceValue
         }
     }
+
+    fun getInstances(type: KType): List<Any> {
+        val result = mutableListOf<Any>()
+        instances.forEach { instance ->
+            val modelClass = instance.key
+            if (modelClass.createType() == type) {
+                result.add(instance.value!!)
+            }
+            if (modelClass.supertypes.any { it == type }) {
+                result.add(createInstance(instance.value, modelClass)!!)
+            }
+        }
+        return result
+    }
 }

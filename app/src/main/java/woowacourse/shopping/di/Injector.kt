@@ -12,8 +12,10 @@ import kotlin.reflect.full.primaryConstructor
 
 class Injector(private val container: Container) {
 
-    fun inject(modelClass: KClass<*>): Any =
-        getInstance(modelClass.createType()) ?: createInstance(modelClass)
+    fun <T : Any> inject(modelClass: KClass<T>): T {
+        val result = getInstance(modelClass.createType()) ?: createInstance(modelClass)
+        return result as T
+    }
 
     private fun getInstance(type: KType): Any? =
         container.getInstance(type)
@@ -34,14 +36,36 @@ class Injector(private val container: Container) {
     ): Any = if (parameters.isEmpty()) {
         kClass.createInstance()
     } else {
-        val arguments = parameters.map { getInstance(it.type) }
+        // parameter의 어노테이션과 get해온 argument의 어노테이션을 비교하여 골라준다
+        val arguments = parameters.map {
+            getInstancesWithAnnotation(it.type, it.annotations)
+        }
         constructor.call(*arguments.toTypedArray())
+    }
+
+    private fun getInstancesWithAnnotation(type: KType, annotation: List<Annotation>): Any {
+        if (annotation.isEmpty()) {
+            return container.getInstance(type)
+                ?: throw java.lang.IllegalArgumentException()
+        }
+        val instances = container.getInstances(type)
+        val result = instances.filter {
+            it::class.annotations.any { ano1 ->
+                annotation.any { ano2 ->
+                    ano1 == ano2
+                }
+            }
+        }
+        if (result.isEmpty()) {
+            throw java.lang.IllegalStateException()
+        } else {
+            return result.first()
+        }
     }
 
     private fun <T : Any> injectField(instance: T) {
         instance::class.memberProperties.forEach { property ->
             if (property.annotations.any { it is InjectField }) {
-                println()
                 if (property is KMutableProperty<*>) {
                     property.setter.call(instance, getInstance(property.returnType))
                 }
