@@ -1,9 +1,10 @@
 package woowacourse.shopping.activity.viewmodel
 
 import androidx.lifecycle.ViewModel
-import io.hyemdooly.di.annotation.InDisk
+import io.hyemdooly.di.annotation.Qualifier
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 
 class InMemoryCartViewModel constructor(
-    @InDisk private val cartRepository: CartRepository,
+    @Qualifier(InMemoryCartRepository::class) private val cartRepository: CartRepository,
 ) : ViewModel()
