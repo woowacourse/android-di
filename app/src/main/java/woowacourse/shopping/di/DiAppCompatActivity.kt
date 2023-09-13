@@ -7,7 +7,8 @@ import kotlin.reflect.KClass
 
 open class DiAppCompatActivity : AppCompatActivity() {
     private val diContainer: DiContainer by lazy {
-        DiActivityModule((application as? DiApplication)?.diContainer, this)
+        (application as? DiApplication)?.getActivityDiContainer(this)
+            ?: throw IllegalStateException("Application should be subclass of DiApplication.")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

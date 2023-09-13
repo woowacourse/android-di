@@ -1,10 +1,11 @@
 package woowacourse.shopping.di
 
+import android.app.Activity
 import android.app.Application
 import com.re4rk.arkdi.DiContainer
 
 open class DiApplication : Application() {
-    val diContainer: DiContainer by lazy {
+    private val diContainer: DiContainer by lazy {
         DiApplicationModule(applicationContext)
     }
 
@@ -12,4 +13,6 @@ open class DiApplication : Application() {
         super.onCreate()
         diContainer.inject(this)
     }
+
+    fun getActivityDiContainer(activity: Activity) = DiActivityModule(diContainer, activity)
 }
