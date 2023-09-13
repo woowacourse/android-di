@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.injector.Injector
 import woowacourse.shopping.di.module.Module
 import woowacourse.shopping.di.viewModels
@@ -31,8 +32,8 @@ class FakeActivity2 : AppCompatActivity() {
     val viewModel: FakeViewModel2 by viewModels(TestApplication.injector)
 }
 
-class FakeViewModel1(val fakeRepository1: FakeRepository1) : ViewModel()
-class FakeViewModel2(val fakeRepository2: FakeRepository2) : ViewModel()
+class FakeViewModel1(@Inject val fakeRepository1: FakeRepository1) : ViewModel()
+class FakeViewModel2(@Inject val fakeRepository2: FakeRepository2) : ViewModel()
 
 class TestApplication : Application() {
     override fun onCreate() {

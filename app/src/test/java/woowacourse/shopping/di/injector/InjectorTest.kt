@@ -3,7 +3,7 @@ package woowacourse.shopping.di.injector
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import junit.framework.TestCase
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +34,8 @@ class InjectorTest() {
 
         // then
         val viewModel = activity.viewModel
-        TestCase.assertNotNull(viewModel.productRepository)
+        assertNotNull(viewModel.productRepository)
+        assertNotNull(viewModel.cartMultiRepository)
     }
 
     @Test(expected = UninitializedPropertyAccessException::class)
@@ -65,6 +66,7 @@ class InjectorTest() {
 }
 
 class InjectorTestViewModel(
+    @Inject
     @Qualifier("InjectorTestMultiImplementation")
     val cartMultiRepository: CartRepository,
 ) : ViewModel() {

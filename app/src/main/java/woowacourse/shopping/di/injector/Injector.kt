@@ -4,9 +4,11 @@ import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -24,7 +26,7 @@ class Injector(private val modules: List<Module>) {
                         this[returnType] = instance
                     } else {
                         val implementationName =
-                            it.findAnnotation<Qualifier>()?.implementation.toString()
+                            it.findAnnotation<Qualifier>()?.implementationName.toString()
                         this[implementationName] = instance
                     }
                 }
@@ -34,19 +36,22 @@ class Injector(private val modules: List<Module>) {
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = T::class.primaryConstructor
             ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다. 인터페이스와 같이 주생성자가 없는 객체인지 확인해주세요.")
-        val params = primaryConstructor.parameters
+
+        val injectParams: List<KParameter> =
+            primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
 
         val dependencyTypes: MutableList<String> = mutableListOf()
-        params.forEach { param ->
+        injectParams.forEach { param ->
             dependencyTypes.add(
                 if (param.findAnnotation<Qualifier>() == null) {
                     param.type.toString()
                 } else {
-                    param.findAnnotation<Qualifier>()?.implementation.toString()
+                    param.findAnnotation<Qualifier>()?.implementationName.toString()
                 },
             )
         }
         val dependencies = getDependencies(dependencyTypes)
+
         val instance = primaryConstructor.call(*dependencies.toTypedArray())
         injectProperties(instance)
         return instance
