@@ -36,22 +36,9 @@ class Injector(private val modules: List<Module>) {
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = T::class.primaryConstructor
             ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다. 인터페이스와 같이 주생성자가 없는 객체인지 확인해주세요.")
-
         val injectParams: List<KParameter> =
             primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
-
-        val dependencyTypes: MutableList<String> = mutableListOf()
-        injectParams.forEach { param ->
-            dependencyTypes.add(
-                if (param.findAnnotation<Qualifier>() == null) {
-                    param.type.toString()
-                } else {
-                    param.findAnnotation<Qualifier>()?.implementationName.toString()
-                },
-            )
-        }
-        val dependencies = getDependencies(dependencyTypes)
-
+        val dependencies = getDependencies(getDependenciesTypes(injectParams))
         val instance = primaryConstructor.call(*dependencies.toTypedArray())
         injectProperties(instance)
         return instance
@@ -67,6 +54,20 @@ class Injector(private val modules: List<Module>) {
             property.isAccessible = true
             property.setter.call(instance, dependency)
         }
+    }
+
+    fun getDependenciesTypes(params: List<KParameter>): List<String> {
+        val dependencyTypes: MutableList<String> = mutableListOf()
+        params.forEach { param ->
+            dependencyTypes.add(
+                if (param.findAnnotation<Qualifier>() == null) {
+                    param.type.toString()
+                } else {
+                    param.findAnnotation<Qualifier>()?.implementationName.toString()
+                },
+            )
+        }
+        return dependencyTypes
     }
 
     fun getDependencies(dependencyTypes: List<String>): List<Any> {
