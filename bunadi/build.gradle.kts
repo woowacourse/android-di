@@ -10,5 +10,4 @@ java {
 
 dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
-    implementation("androidx.activity:activity-ktx:1.7.2")
 }

@@ -1,8 +1,8 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.buna.di.dsl.modules
-import com.buna.di.dsl.types
+import com.woowacourse.bunadi.dsl.modules
+import com.woowacourse.bunadi.dsl.types
 import woowacourse.shopping.data.repository.DatabaseCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.InMemoryCartRepository
