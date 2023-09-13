@@ -4,10 +4,15 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    // Reflection
+    implementation(kotlin("reflect"))
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("org.robolectric:robolectric:4.9")
 }

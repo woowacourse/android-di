@@ -1,18 +1,16 @@
-package woowacourse.shopping.data.di
-
+import com.hyegyeong.di.AnnotationType
+import com.hyegyeong.di.Container
+import com.hyegyeong.di.InMemory
+import com.hyegyeong.di.Inject
+import com.hyegyeong.di.Injector
+import com.hyegyeong.di.RoomDB
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmErasure
 
-@Config(application = FakeApplication::class)
-@RunWith(RobolectricTestRunner::class)
 class InjectorTest {
     object FakeContainer : Container {
 
@@ -57,20 +55,21 @@ class InjectorTest {
         // given
         FakeContainer.addInstance(DefaultFakeDao())
         FakeContainer.addInstance(Injector.inject<FakeRoomDBRepository>())
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+
+        // when
+        val actual = Injector.inject<FakeViewModel>()
 
         // then
-        val actual = activity.viewModel
-        assertEquals( FakeContainer.getInstance(AnnotationType(RoomDB(), FakeRepository::class)), actual.fakeRepository)
+        Assert.assertEquals(FakeContainer.getInstance(AnnotationType(RoomDB(), FakeRepository::class)), actual.fakeRepository
+        )
     }
 
     @Test(expected = NoSuchElementException::class)
     fun `의존성 모듈이 제공되지 않을 때 자동 DI 가 실패하는지 테스트`() {
         // given
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
-        // then
-        activity.viewModel
+        // when
+        Injector.inject<FakeViewModel>()
     }
 
     @Test
@@ -78,11 +77,12 @@ class InjectorTest {
         //given
         FakeContainer.addInstance(DefaultFakeDao())
         FakeContainer.addInstance(Injector.inject<FakeRoomDBRepository>())
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+
+        // when
+        val actual = Injector.inject<FakeViewModel>()
 
         // then
-        val actual = activity.viewModel
-        assertEquals(
+        Assert.assertEquals(
             FakeContainer.getInstance(AnnotationType(RoomDB(), FakeRepository::class)),
             actual.fakeRepository
         )
@@ -92,11 +92,11 @@ class InjectorTest {
     fun `의존성 주입이 필요한 필드에만 의존성을 주입한다`() {
         //given
         FakeContainer.addInstance(DefaultFakeRepository())
-        val activity = Robolectric.buildActivity(FakeFieldInjectActivity::class.java).create().get()
 
+        // when
+        val actual = Injector.inject<FakeFieldInjectViewModel>()
         // then
-        val actual = activity.viewModel
-        assertEquals(
+        Assert.assertEquals(
             FakeContainer.getInstance(AnnotationType(InMemory(), FakeRepository::class)),
             actual.productRepository
         )
@@ -104,18 +104,18 @@ class InjectorTest {
 
     @Test
     fun `같은 타입의 의존성이 두 개 있을 때 어노테이션으로 주입할 의존성을 구분한다`() {
-        //given
+        // given
         FakeContainer.addInstance(DefaultFakeRepository())
         FakeContainer.addInstance(DefaultFakeDao())
         FakeContainer.addInstance(Injector.inject<FakeRoomDBRepository>())
-        val activity = Robolectric.buildActivity(FakeFieldInjectActivity::class.java).create().get()
+
+        // when
+        val actual = Injector.inject<FakeFieldInjectViewModel>()
 
         // then
-        val actual = activity.viewModel
-        assertEquals(
+        Assert.assertEquals(
             FakeContainer.getInstance(AnnotationType(InMemory(), FakeRepository::class)),
             actual.productRepository
         )
     }
 }
-

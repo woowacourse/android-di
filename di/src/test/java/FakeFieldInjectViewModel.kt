@@ -1,8 +1,7 @@
-package woowacourse.shopping.data.di
+import com.hyegyeong.di.InMemory
+import com.hyegyeong.di.Inject
 
-import androidx.lifecycle.ViewModel
-
-class FakeFieldInjectViewModel : ViewModel() {
+class FakeFieldInjectViewModel {
     @Inject
     @InMemory
     lateinit var productRepository: FakeRepository
