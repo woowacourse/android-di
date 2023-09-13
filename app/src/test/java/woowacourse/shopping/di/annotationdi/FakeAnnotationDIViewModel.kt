@@ -1,7 +1,7 @@
 package woowacourse.shopping.di.annotationdi
 
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.di.annotation.Inject
+import com.di.berdi.annotation.Inject
 
 class FakeAnnotationDIViewModel : ViewModel() {
     @Inject

@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.di.DIApplication
-import woowacourse.shopping.di.Injector
+import com.di.berdi.DIApplication
+import com.di.berdi.Injector
 import woowacourse.shopping.di.NormalModule
 
 class ShoppingApplication : DIApplication() {

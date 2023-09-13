@@ -1,6 +1,6 @@
 package woowacourse.shopping.di.annotationdi
 
-import woowacourse.shopping.di.DIActivity
+import com.di.berdi.DIActivity
 
 class FakeAnnotationDIActivity : DIActivity() {
     lateinit var viewModel: FakeAnnotationDIViewModel

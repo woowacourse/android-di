@@ -1,6 +1,6 @@
 package woowacourse.shopping.di.annotationdi
 
-import woowacourse.shopping.di.Module
+import com.di.berdi.Module
 
 object FakeAnnotationDIModule : Module {
     fun provideFakeObj(): FakeObj = FakeObj

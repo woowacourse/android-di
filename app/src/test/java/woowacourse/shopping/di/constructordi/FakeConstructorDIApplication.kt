@@ -1,7 +1,7 @@
 package woowacourse.shopping.di.constructordi
 
-import woowacourse.shopping.di.DIApplication
-import woowacourse.shopping.di.Injector
+import com.di.berdi.DIApplication
+import com.di.berdi.Injector
 
 class FakeConstructorDIApplication : DIApplication() {
     override fun inject() {

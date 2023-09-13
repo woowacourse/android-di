@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.di.berdi.annotation
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)

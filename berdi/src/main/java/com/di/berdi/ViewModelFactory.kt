@@ -1,9 +1,9 @@
-package woowacourse.shopping.di
+package com.di.berdi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
+import com.di.berdi.annotation.Inject
+import com.di.berdi.annotation.Qualifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties

@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
+import com.di.berdi.DIActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.DIActivity
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DIActivity() {

@@ -1,7 +1,7 @@
-package woowacourse.shopping.di
+package com.di.berdi
 
 import android.content.Context
-import woowacourse.shopping.di.annotation.Qualifier
+import com.di.berdi.annotation.Qualifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
