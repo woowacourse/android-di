@@ -2,7 +2,6 @@ package com.now.di
 
 import com.now.annotation.Inject
 import com.now.annotation.Qualifier
-import com.now.di.Container.defaultQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -37,7 +36,7 @@ object Injector {
         // 함수에 파라미터가 없는 경우 인스턴스를 생성하고 Container에 추가 후 종료
         if (kFunction.valueParameters.isEmpty()) {
             val kclass = kFunction.call(receiver)
-            kclass?.let { Container.addInstance2(functionReturnType.jvmErasure, kclass, qualifier) }
+            kclass?.let { Container.addInstance(functionReturnType.jvmErasure, it, qualifier) }
                 ?: throw IllegalArgumentException("문제 생김")
             return
         }
@@ -46,14 +45,22 @@ object Injector {
         val requiredParams = kFunction.valueParameters.map { kParameter ->
             getParameterInstance(receiver, kFunction, kParameter)
         }
+
+        kFunction.call(receiver, *requiredParams.toTypedArray())?.let {
+            Container.addInstance(functionReturnType.jvmErasure, it, qualifier)
+        }
     }
 
-    private fun getParameterInstance(receiver: Module, kFunction: KFunction<*>, kParameter: KParameter): Any {
-        val klass = kParameter::class
+    private fun getParameterInstance(
+        receiver: Module,
+        kFunction: KFunction<*>,
+        kParameter: KParameter,
+    ): Any {
+        val klass = kParameter.type.jvmErasure
         val annotation = kParameter.findAnnotation<Qualifier>()
         val dependencyType = DependencyType(klass, annotation)
 
-        // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테이너에 추가로 저장
+        // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테트이너에 추가로 저장
         if (Container.getInstance(dependencyType) == null) {
             createOrAdd(receiver, kFunction)
         }
@@ -64,37 +71,21 @@ object Injector {
 
     // klass의 인스턴스를 생성하여 반환한다
     fun <T : Any> inject(klass: KClass<*>): T {
-        // 1. Container에 인자로 넘겨준 클래스의 인스턴스가 존재하는지 확인한다
-        val instance = Container.getInstance(klass)
-
-        // 2. 존재하는데 qualifier가 아니면 바로 반환한다
-        if (instance != null && instance != defaultQualifier) {
-            return instance as T
-        }
-
-        // 3. 존재하지 않으면 인스턴스를 생성한다
-        return createInstance(klass)
-    }
-
-    private fun <T> createInstance(klass: KClass<*>): T {
         //  주생성자를 가져온다
         val primaryConstructor =
             klass.primaryConstructor ?: throw NullPointerException("주 생성자가 없습니다.")
 
         // 인자들 중 Inject 어노테이션 붙은 인자들만 가져온다
-        val parameters =
-            primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
+        val parameters = primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
 
         // 주생성자의 인자들을 인스턴스화 시킨다
         // Container에 있는 경우 바로 가져오고 없다면 인스턴스를 생성한다
-        val insertedParameters = parameters.associateWith {
-            val type = it.type.jvmErasure
-
-            // Qualifier 어노테이션 분기
-            if (it.hasAnnotation<Qualifier>()) {
-            } else {
-                Container.getInstance(type) ?: inject(type)
+        val insertedParameters = parameters.associateWith { kParameter ->
+            val type = kParameter.type.jvmErasure
+            val annotation = kParameter.annotations.firstOrNull { _annotation ->
+                _annotation.annotationClass.hasAnnotation<Qualifier>()
             }
+            Container.getInstance(DependencyType(type, annotation))
         }
 
         return primaryConstructor.callBy(insertedParameters) as T
