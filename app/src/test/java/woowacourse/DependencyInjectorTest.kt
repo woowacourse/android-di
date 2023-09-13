@@ -21,7 +21,6 @@ import woowacourse.fakeClasses.AFieldDependencyQualifier
 import woowacourse.fakeClasses.BFieldDependency
 import woowacourse.fakeClasses.BFieldDependencyQualifier
 import woowacourse.fakeClasses.ConstructorTestActivity
-import woowacourse.fakeClasses.FieldDependency
 import woowacourse.fakeClasses.FieldTestActivity
 import java.lang.IllegalArgumentException
 import kotlin.reflect.full.declaredMemberProperties
