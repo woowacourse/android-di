@@ -1,5 +1,6 @@
 package com.ki960213.sheath.component
 
+import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Module
 import com.ki960213.sheath.annotation.Prototype
 import com.ki960213.sheath.annotation.Qualifier
@@ -28,7 +29,9 @@ class SheathComponentByFunction(private val function: KFunction<*>) : SheathComp
     override val dependentCount: Int = function.valueParameters.size
 
     init {
+        validateModuleObject()
         validateModuleAnnotation()
+        validateComponentAnnotation()
         validateReturnType()
         validateQualifier()
     }
@@ -44,14 +47,25 @@ class SheathComponentByFunction(private val function: KFunction<*>) : SheathComp
     }
 
     override fun instantiated(instances: List<Any>): Any {
-        return function.call(*function.getArguments(instances).toTypedArray())
+        val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
+        return function.call(obj, *function.getArguments(instances).toTypedArray())
             ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 
+    private fun validateModuleObject() {
+        requireNotNull(function.javaMethod?.declaringClass?.kotlin?.objectInstance) {
+            "${function.name} 함수가 정의된 클래스가 object가 아닙니다."
+        }
+    }
+
     private fun validateModuleAnnotation() {
-        require(
-            function.javaMethod?.declaringClass?.getAnnotation(Module::class.java) != null,
-        ) { "${function.name} 함수가 정의된 클래스에 @Module이 붙어있어야 합니다." }
+        requireNotNull(function.javaMethod?.declaringClass?.getAnnotation(Module::class.java)) {
+            "${function.name} 함수가 정의된 클래스에 @Module이 붙어있어야 합니다."
+        }
+    }
+
+    private fun validateComponentAnnotation() {
+        require(function.hasAnnotation<Component>()) { "${function.name} 함수에 @Component가 붙어있지 않습니다." }
     }
 
     private fun validateReturnType() {
