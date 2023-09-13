@@ -23,7 +23,7 @@ internal class SheathComponentByClassTest {
     val expect: Expect = Expect.create()
 
     @Test
-    fun `SheathComponent의 클래스의 애노테이션이 붙을 수 있는 요소 중 @Inject 애노테이션이 붙은 요소가 없을 때, 주 생성자의 파라미터들 중 어떤 파라미터의 타입이 다른 SheathComponent의 클래스의 서브 타입이라면 의존하는 것이다`() {
+    fun `SheathComponent의 클래스의 주 생성자의 파라미터들 중 어떤 파라미터의 타입이 다른 SheathComponent의 클래스의 서브 타입이라면 의존하는 것이다`() {
         val sheathComponent1 = SheathComponentByClass(Test1::class)
         val sheathComponent2 = SheathComponentByClass(Test2::class)
 
