@@ -1,5 +1,7 @@
 package woowacourse.shopping.annotation
 
+import com.bignerdranch.android.koala.KoalaQualifier
+
 @KoalaQualifier
 annotation class RoomDBCartRepository
 

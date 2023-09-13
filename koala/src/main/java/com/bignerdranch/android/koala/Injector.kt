@@ -1,6 +1,5 @@
-package woowacourse.shopping.data
+package com.bignerdranch.android.koala
 
-import woowacourse.shopping.annotation.KoalaQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -13,7 +12,9 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
-object KoalaInjector {
+class Injector(
+    private val container: Container,
+) {
 
     fun <T : Any> inject(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalStateException("찾을 수 없습니다.")
@@ -49,7 +50,7 @@ object KoalaInjector {
     }
 
     private fun getInstanceWithQualifier(qualifier: Annotation): Any {
-        val function = Container.javaClass.kotlin.declaredMemberFunctions.find { func ->
+        val function = container.javaClass.kotlin.declaredMemberFunctions.find { func ->
             func.annotations.any { it == qualifier }
         } ?: throw IllegalStateException("찾을 수 없습니다.")
 
@@ -57,7 +58,7 @@ object KoalaInjector {
     }
 
     private fun getInstanceWithType(type: KType): Any {
-        val function = Container.javaClass.kotlin.declaredMemberFunctions.find { func ->
+        val function = container.javaClass.kotlin.declaredMemberFunctions.find { func ->
             func.returnType == type
         } ?: throw IllegalStateException("${type}을 찾을 수 없습니다.")
         return callFunction(function)
@@ -68,7 +69,7 @@ object KoalaInjector {
         function.valueParameters.forEach { parameter ->
             args.add(getParameterInstance(parameter))
         }
-        return function.call(Container, *args.toTypedArray())
+        return function.call(container, *args.toTypedArray())
             ?: throw IllegalStateException("instance를 생성할 수 없습니다.")
     }
 }
