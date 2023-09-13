@@ -7,8 +7,8 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-class DefaultCartRepository(
-    @Injected private val dao: CartProductDao,
+class DefaultCartRepository @Injected constructor(
+    private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())

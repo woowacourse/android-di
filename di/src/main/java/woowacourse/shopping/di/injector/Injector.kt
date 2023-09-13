@@ -26,8 +26,8 @@ class Injector(
     }
 
     private fun <T> createInstance(clazz: KClass<*>): T {
-        val constructor = clazz.primaryConstructor
-            ?: throw IllegalArgumentException("${clazz.jvmName} $ERROR_NO_CONSTRUCTOR")
+        val constructor = getPrimaryClass(clazz)
+
         val arguments = getArguments(constructor)
         val instance = constructor.callBy(arguments) as T
 
@@ -36,15 +36,22 @@ class Injector(
         return instance
     }
 
+    private fun getPrimaryClass(
+        clazz: KClass<*>,
+    ): KFunction<*> {
+        val constructors = clazz.constructors.filter { it.hasAnnotation<Injected>() }
+        return constructors.firstOrNull() ?: clazz.primaryConstructor
+        ?: throw IllegalArgumentException("${clazz.jvmName} $ERROR_NO_CONSTRUCTOR")
+    }
+
     private fun getArguments(constructor: KFunction<*>): Map<KParameter, Any?> {
         val parameters = constructor.parameters
-            .filter { it.hasAnnotation<Injected>() }
 
         return parameters.associateWith { parameter ->
             if (parameter.hasAnnotation<Qualifier>()) {
                 val qualifier = parameter.findAnnotation<Qualifier>()!!.type
                 container.getInstance(qualifier)
-                    ?: throw IllegalArgumentException("$ERROR_NO_FIELD: $qualifier")
+                    ?: throw IllegalArgumentException("$qualifier $ERROR_NO_FIELD")
             } else {
                 val type = parameter.type.jvmErasure
                 container.getInstance(type) ?: container.createInstance(type, create(type))

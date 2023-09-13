@@ -11,8 +11,8 @@ import woowacourse.shopping.di.annotation.Qualifier.Companion.DATABASE
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
-class CartViewModel(
-    @Injected @Qualifier(DATABASE) private val cartRepository: CartRepository,
+class CartViewModel @Injected constructor(
+    @Qualifier(DATABASE) private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())

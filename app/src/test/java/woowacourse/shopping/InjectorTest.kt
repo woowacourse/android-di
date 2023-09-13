@@ -172,22 +172,22 @@ class DefaultFakeDao : FakeDao
 
 interface FakeRepository
 
-class DefaultFakeRepository(
-    @Injected val dao: FakeDao,
+class DefaultFakeRepository @Injected constructor(
+    val dao: FakeDao,
 ) : FakeRepository
 
 class InMemoryFakeRepository : FakeRepository
 
-class DatabaseFakeRepository(
-    @Injected val propertyDao: FakeDao,
+class DatabaseFakeRepository @Injected constructor(
+    val propertyDao: FakeDao,
 ) : FakeRepository {
     @Injected
     private var fieldDao: FakeDao? = null
     private var fakeName: String? = null
 }
 
-class FakeViewModel(
-    @Injected val repository: FakeRepository,
+class FakeViewModel @Injected constructor(
+    val repository: FakeRepository,
 ) : ViewModel() {
     companion object {
         val factory = viewModelFactory {
@@ -202,8 +202,8 @@ class FakeActivity : AppCompatActivity() {
     val viewModel: FakeViewModel by createViewModel(FakeViewModel.factory)
 }
 
-class FakeQualifierViewModel(
-    @Injected @Qualifier(IN_MEMORY) val inMemoryRepository: FakeRepository,
+class FakeQualifierViewModel @Injected constructor(
+    @Qualifier(IN_MEMORY) val inMemoryRepository: FakeRepository,
 ) : ViewModel() {
     @Injected
     @Qualifier(DATABASE)

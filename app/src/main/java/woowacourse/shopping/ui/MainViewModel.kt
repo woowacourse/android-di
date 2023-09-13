@@ -12,8 +12,8 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class MainViewModel(
-    @Injected private val productRepository: ProductRepository,
+class MainViewModel @Injected constructor(
+    private val productRepository: ProductRepository,
 ) : ViewModel() {
 
     @Injected
