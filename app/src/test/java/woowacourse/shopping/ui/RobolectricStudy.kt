@@ -11,6 +11,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.R
+import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartProductAdapter
@@ -113,7 +114,7 @@ class RobolectricStudy {
 
         val products = listOf(Product("과자", 1000, ""))
         val newAdapter = CartProductAdapter(
-            items = products,
+            items = products.map { it.toCartProduct(0) },
             dateFormatter = DateFormatter(activity),
             onClickDelete = viewModel::deleteCartProduct,
         )

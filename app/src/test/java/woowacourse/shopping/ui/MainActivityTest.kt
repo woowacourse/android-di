@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
+import com.now.annotation.Inject
+import com.now.di.Container
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.After
@@ -18,8 +20,6 @@ import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.annotation.Inject
-import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
 
