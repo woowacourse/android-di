@@ -3,13 +3,18 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 
 class Container {
-    private val store: HashMap<KClass<*>, Any> = hashMapOf()
+    private val store: HashMap<StoreKey, Any> = hashMapOf()
 
-    fun getInstance(type: KClass<*>): Any? {
-        return store[type]
+    fun getInstance(type: KClass<*>, annotation: Annotation?): Any? {
+        return store[StoreKey(type, annotation)]
     }
 
-    fun setInstance(type: KClass<*>, instance: Any) {
-        store[type] = instance
+    fun setInstance(instance: Any, type: KClass<*>, annotation: Annotation?) {
+        store[StoreKey(type, annotation)] = instance
     }
+
+    data class StoreKey(
+        val clazz: KClass<*>,
+        val qualifier: Annotation?,
+    )
 }

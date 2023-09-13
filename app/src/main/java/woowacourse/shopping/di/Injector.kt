@@ -1,9 +1,11 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
@@ -20,12 +22,14 @@ class Injector(private val container: Container, private val context: Context) {
         module: Module,
     ) {
         val funcClazz = func.returnType.jvmErasure
+        val annotation = getQualifierAnnotation(func)
+
         // 이미 생성했다면 return
-        if (container.getInstance(funcClazz) != null) return
+        if (container.getInstance(funcClazz, annotation) != null) return
 
         // 파라미터가 없다면 만든다
         if (func.valueParameters.isEmpty()) {
-            func.call(module)?.let { container.setInstance(funcClazz, it) }
+            func.call(module)?.let { container.setInstance(it, funcClazz, annotation) }
             return
         }
 
@@ -39,8 +43,11 @@ class Injector(private val container: Container, private val context: Context) {
 
         // 생성하고 컨테이너 에 삽입
         val newInstance = requireNotNull(func.call(module, *params.toTypedArray()))
-        container.setInstance(funcClazz, newInstance)
+        container.setInstance(newInstance, funcClazz, annotation)
     }
+
+    private fun getQualifierAnnotation(func: KFunction<*>): Annotation? =
+        func.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
     private fun getParamInstance(
         param: KParameter,
@@ -48,13 +55,15 @@ class Injector(private val container: Container, private val context: Context) {
         module: Module,
     ): Any {
         val paramClazz = param.type.jvmErasure
+        val annotation =
+            param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
         // 없으면 재귀로 생성
-        if (container.getInstance(paramClazz) == null) {
+        if (container.getInstance(type = paramClazz, annotation = annotation) == null) {
             recursive(functions, functions.first { it.returnType == param.type }, module)
         }
 
         // 있으면 그대로 반환
-        return container.getInstance(paramClazz)!!
+        return container.getInstance(type = paramClazz, annotation = annotation)!!
     }
 }

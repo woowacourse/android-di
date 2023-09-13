@@ -2,13 +2,13 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KFunction
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
@@ -22,7 +22,9 @@ class ViewModelFactory(private val container: Container) : ViewModelProvider.Fac
 
     private fun mapModulesInConstructor(constructor: KFunction<Any>): List<Any?> {
         return constructor.parameters.map { param ->
-            requireNotNull(container.getInstance(param.type.jvmErasure)) {
+            val annotation =
+                param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+            requireNotNull(container.getInstance(param.type.jvmErasure, annotation)) {
                 "No matching same type in param | type : ${param.type}"
             }
         }
@@ -36,10 +38,12 @@ class ViewModelFactory(private val container: Container) : ViewModelProvider.Fac
     }
 
     private fun injectProperty(property: KProperty1<out ViewModel, *>, viewModel: ViewModel) {
-        val obj = container.getInstance(property.returnType.jvmErasure)
-        if (property is KMutableProperty<*>) {
-            property.isAccessible = true
-            property.javaField?.set(viewModel, obj)
+        val annotation =
+            property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+        val instance = container.getInstance(property.returnType.jvmErasure, annotation)
+        property.javaField?.apply {
+            isAccessible = true
+            set(viewModel, instance)
         }
     }
 }
