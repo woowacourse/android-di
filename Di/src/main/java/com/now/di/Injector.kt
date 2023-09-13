@@ -4,7 +4,6 @@ import com.now.annotation.Inject
 import com.now.annotation.Qualifier
 import com.now.di.Container.defaultQualifier
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -40,7 +39,6 @@ object Injector {
 
             // Qualifier 어노테이션 분기
             if (it.hasAnnotation<Qualifier>()) {
-                Container.getInstance(it.findAnnotation<Qualifier>()!!) ?: inject(type)
             } else {
                 Container.getInstance(type) ?: inject(type)
             }

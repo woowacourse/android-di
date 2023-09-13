@@ -6,7 +6,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@Qualifier("InMemoryCartRepository")
+@Qualifier
 class InMemoryCartRepository() : CartRepository {
     private var id: Long = 0
     private val cartProducts: MutableList<CartProduct> = mutableListOf()

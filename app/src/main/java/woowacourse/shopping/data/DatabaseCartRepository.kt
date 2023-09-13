@@ -8,7 +8,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@Qualifier("DatabaseCartRepository")
+@Qualifier
 class DatabaseCartRepository(
     @Inject private val dao: CartProductDao,
 ) : CartRepository {

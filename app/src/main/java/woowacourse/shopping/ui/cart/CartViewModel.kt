@@ -11,7 +11,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel(
-    @Qualifier("DatabaseCartRepository")
+    @Qualifier
     @Inject
     private val cartRepository: CartRepository,
 ) : ViewModel() {
