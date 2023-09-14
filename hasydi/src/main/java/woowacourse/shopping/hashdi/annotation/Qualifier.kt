@@ -1,4 +1,4 @@
 package woowacourse.shopping.hashdi.annotation
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class Qualifier
