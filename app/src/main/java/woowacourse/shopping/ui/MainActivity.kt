@@ -6,11 +6,11 @@ import android.view.Menu
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.DiActivity
+import woowacourse.shopping.di.DiAppCompatActivity
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.viewModels
 
-class MainActivity : DiActivity() {
+class MainActivity : DiAppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
@@ -18,6 +18,7 @@ class MainActivity : DiActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(binding.root)
 
         setupBinding()
@@ -55,7 +56,7 @@ class MainActivity : DiActivity() {
         viewModel.products.observe(this) {
             val adapter = ProductAdapter(
                 items = it,
-                onClickProduct = viewModel::addCartProduct
+                onClickProduct = viewModel::addCartProduct,
             )
             binding.rvProducts.adapter = adapter
         }

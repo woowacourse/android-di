@@ -5,17 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.di.DiActivity
+import woowacourse.shopping.di.DiAppCompatActivity
 
 @MainThread
-inline fun <reified VM : ViewModel> DiActivity.viewModels(): Lazy<VM> {
+inline fun <reified VM : ViewModel> DiAppCompatActivity.viewModels(): Lazy<VM> {
     return ViewModelLazy(
         viewModelClass = VM::class,
         storeProducer = { viewModelStore },
         factoryProducer = {
             viewModelFactory {
-                initializer { this@viewModels.createInstance(VM::class) }
+                initializer {
+                    this@viewModels.createInstance(VM::class)
+                }
             }
-        }
+        },
     )
 }

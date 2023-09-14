@@ -2,23 +2,24 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
+import com.re4rk.arkdi.ArkInject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DiActivity
+import woowacourse.shopping.di.DiAppCompatActivity
 import woowacourse.shopping.ui.util.viewModels
 
-class CartActivity : DiActivity() {
+class CartActivity : DiAppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels()
 
+    @ArkInject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -27,10 +28,6 @@ class CartActivity : DiActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -58,7 +55,7 @@ class CartActivity : DiActivity() {
             val adapter = CartProductAdapter(
                 items = it,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
+                onClickDelete = viewModel::deleteCartProduct,
             )
             binding.rvCartProducts.adapter = adapter
         }
