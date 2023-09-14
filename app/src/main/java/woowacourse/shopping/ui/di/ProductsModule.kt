@@ -1,9 +1,10 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.ui.di
 
+import io.hyemdooly.di.Module
 import woowacourse.shopping.model.Product
 
-class ProductRepositoryImpl : ProductRepository {
-    private val products: List<Product> = listOf(
+class ProductsModule : Module {
+    fun provideProducts(): List<Product> = listOf(
         Product(
             name = "우테코 과자",
             price = 10_000,
@@ -20,8 +21,4 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
         ),
     )
-
-    override fun getAllProducts(): List<Product> {
-        return products
-    }
 }

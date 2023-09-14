@@ -8,8 +8,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.activity.viewmodel.InMemoryCartViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.viewModelFactory
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -30,13 +32,26 @@ class CartActivityTest {
     }
 
     @Test
-    fun `ViewModel 주입 테스트`() {
+    fun `CartViewModel 주입 테스트`() {
         // given
         val activity = Robolectric
             .buildActivity(CartActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
+        val viewModel = ViewModelProvider(activity, viewModelFactory)[CartViewModel::class.java]
+
+        // then
+        assertThat(viewModel).isNotNull()
+    }
+
+    @Test
+    fun `InMemoryCartViewModel 주입 테스트`() {
+        // given
+        val activity = Robolectric
+            .buildActivity(CartActivity::class.java)
+            .create()
+            .get()
+        val viewModel = ViewModelProvider(activity, viewModelFactory)[InMemoryCartViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()

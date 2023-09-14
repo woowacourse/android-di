@@ -44,7 +44,9 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-
+//    implementation("com.github.hyemdooly:android-di:v4.0.0")
+    implementation(project(":di"))
+    implementation(project(mapOf("path" to ":di")))
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
@@ -70,5 +72,4 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
 
     implementation("androidx.fragment:fragment-ktx:1.5.7")
-    implementation(kotlin("reflect"))
 }

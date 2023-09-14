@@ -1,11 +1,9 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.di.Container
+import io.hyemdooly.di.Container
+import woowacourse.shopping.ui.di.DaoModule
+import woowacourse.shopping.ui.di.ProductsModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -14,7 +12,10 @@ class ShoppingApplication : Application() {
     }
 
     private fun inject() {
-        Container.addInstance(CartRepository::class, CartRepositoryImpl())
-        Container.addInstance(ProductRepository::class, ProductRepositoryImpl())
+        val daoModule = DaoModule(applicationContext)
+        val products = ProductsModule()
+
+        Container.addInstances(products)
+        Container.addInstances(daoModule)
     }
 }
