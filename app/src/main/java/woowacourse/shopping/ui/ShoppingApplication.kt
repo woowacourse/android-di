@@ -1,10 +1,9 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import androidx.room.Room
 import io.hyemdooly.di.Container
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.di.DaoModule
+import woowacourse.shopping.ui.di.ProductsModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -13,31 +12,10 @@ class ShoppingApplication : Application() {
     }
 
     private fun inject() {
-        val inDiskDb = Room.databaseBuilder(
-            applicationContext,
-            ShoppingDatabase::class.java,
-            ShoppingDatabase.name,
-        ).build()
+        val daoModule = DaoModule(applicationContext)
+        val products = ProductsModule()
 
-        val products = listOf(
-            Product(
-                name = "우테코 과자",
-                price = 10_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/api/main/df6d76fb-925b-40f8-9d1c-f0920c3c697a.jpg?h=700&w=700",
-            ),
-            Product(
-                name = "우테코 쥬스",
-                price = 8_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/52dca718-31c5-4f80-bafa-7e300d8c876a.jpg?h=700&w=700",
-            ),
-            Product(
-                name = "우테코 아이스크림",
-                price = 20_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
-            ),
-        )
-
-        Container.addInstance(products)
-        Container.addInstance(inDiskDb.cartProductDao())
+        Container.addInstances(products)
+        Container.addInstances(daoModule)
     }
 }

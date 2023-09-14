@@ -10,16 +10,30 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class InjectorTest {
+    class DbModule : Module {
+        fun provideDatabase(): FakeDatabase = DefaultFakeDatabase()
+    }
 
-    class FakeDatabase
+    class NameModule : Module {
+        fun provideName(): FakeName = DefaultFakeName()
+    }
 
-    interface FakeName
+    interface FakeDatabase
+    class DefaultFakeDatabase : FakeDatabase
+
+    interface FakeName {
+        val name: String
+    }
+    class DefaultFakeName : FakeName {
+        override val name: String = "SONG"
+    }
 
     interface FakeRepository {
         var name: FakeName
     }
 
-    class DefaultFakeRepository(private val database: FakeDatabase) : FakeRepository {
+    class DefaultFakeRepository(@Qualifier(DefaultFakeDatabase::class) private val database: FakeDatabase) :
+        FakeRepository {
         @Inject
         override lateinit var name: FakeName
     }
@@ -36,11 +50,12 @@ class InjectorTest {
     @Test
     fun `Container에서 타입에 맞는 instance를 찾아 의존성을 주입한다`() {
         // given
-        val name = object : FakeName {}
+        val nameModule = NameModule()
+        val dbModule = DbModule()
 
         // when
-        Container.addInstance(name)
-        Container.addInstance(Injector.inject(FakeDatabase::class))
+        Container.addInstances(nameModule)
+        Container.addInstances(dbModule)
         Container.addInstance(Injector.inject(DefaultFakeRepository::class))
         val viewModel = Injector.inject<FakeViewModel>(FakeViewModel::class)
 
@@ -48,24 +63,26 @@ class InjectorTest {
         assertAll(
             { assertNotNull(viewModel) },
             { assertNotNull(viewModel.fakeRepository) },
-            { assertEquals(name, viewModel.fakeRepository.name) },
+            { assertEquals(nameModule.provideName().name, viewModel.fakeRepository.name.name) },
         )
     }
 
     @Test
     fun `Container에서 찾을 수 없는 instance는 재귀로 생성하여 주입한다`() {
         // given
-        val name = object : FakeName {}
+        val nameModule = NameModule()
+        val dbModule = DbModule()
 
         // when
-        Container.addInstance(name)
+        Container.addInstances(nameModule)
+        Container.addInstances(dbModule)
         val viewModel = Injector.inject<FakeViewModel>(FakeViewModel::class)
 
         // then
         assertAll(
             { assertNotNull(viewModel) },
             { assertNotNull(viewModel.fakeRepository) },
-            { assertEquals(name, viewModel.fakeRepository.name) },
+            { assertEquals(nameModule.provideName().name, viewModel.fakeRepository.name.name) },
         )
     }
 
