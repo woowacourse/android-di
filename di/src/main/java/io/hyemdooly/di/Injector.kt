@@ -31,14 +31,9 @@ object Injector {
 
     private fun <T> getParamInstances(constructor: KFunction<T>): List<Any> {
         val paramInstances = constructor.parameters.map { param ->
-            val type = param.type.jvmErasure
-
             val annotation = param.findAnnotation<Qualifier>()
-            if (annotation != null) {
-                Container.getInstance(annotation.clazz) ?: inject(annotation.clazz)
-            } else {
-                Container.getInstance(type) ?: inject(type)
-            }
+            val type = annotation?.clazz ?: param.type.jvmErasure
+            Container.getInstance(type) ?: inject(type)
         }
         return paramInstances
     }
