@@ -3,7 +3,10 @@ package com.example.di.container
 import android.content.Context
 import com.example.di.module.ActivityModule
 import com.example.di.module.ApplicationModule
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmErasure
 
 class DiActivityModuleContainer(private val applicationModule: ApplicationModule) {
     private val moduleMap: MutableMap<Int, ActivityModule> = mutableMapOf()
@@ -26,11 +29,28 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
     ): T {
         val primaryConstructor = clazz.kotlin.primaryConstructor
             ?: throw NullPointerException("액티비티 모듈의 주 생성자는 애플리케이션 모듈만 매개변수로 선언되어있어야 합니다.")
+        validateActivityModulePrimaryConstructor(primaryConstructor)
         return primaryConstructor.call(owner, applicationModule)
     }
 
     fun removeModule(ownerHashCode: Int) {
         val module = moduleMap.remove(ownerHashCode)
         module?.context = null
+    }
+
+    private fun validateActivityModulePrimaryConstructor(primaryConstructor: KFunction<ActivityModule>) {
+        check(primaryConstructor.valueParameters.size == 2) {
+            ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
+        }
+        check(primaryConstructor.valueParameters.map { it.type.jvmErasure } == ACTIVITY_MODULE_VALUE_PARAMETER_TYPES) {
+            ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
+        }
+    }
+
+    companion object {
+        private const val ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION =
+            "[ERROR] ActivityModule를 상속한 클래스의 생성자의 매개변수는 2개여야 하고, 그 타입은 Context와 ApplicationModule이어야 합니다."
+        private val ACTIVITY_MODULE_VALUE_PARAMETER_TYPES =
+            listOf(Context::class.java, ApplicationModule::class.java)
     }
 }
