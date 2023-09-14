@@ -45,7 +45,6 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation("com.github.rhthrhrl0:android-di:1.0.1")
-//    implementation(project(":di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -73,6 +72,4 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // Mockk
     testImplementation("io.mockk:mockk-android:1.13.5")
-
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
 }

@@ -26,9 +26,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
         return when (injectableFunctionWithModuleMap.size) {
             0 -> createWithPrimaryConstructor(clazz)
             1 -> {
-                val entry = injectableFunctionWithModuleMap.entries.first()
-                entry.value.getOrCreateInstance(entry.key.name) {
-                    createWithModuleFunc(entry.value, entry.key)
+                val (function, module) = injectableFunctionWithModuleMap.entries.first()
+                module.getOrCreateInstance(function.name) {
+                    createWithModuleFunc(module, function)
                 }
             }
 
@@ -48,10 +48,9 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
     }
 
     private fun hasQualifierAtFunc(func: KFunction<*>, qualifier: KClass<out Annotation>): Boolean {
-        val funcQualifiers =
-            func.annotations
-                .filter { it.annotationClass.hasAnnotation<Qualifier>() }
-                .map { it.annotationClass }
+        val funcQualifiers = func.annotations
+            .filter { it.annotationClass.hasAnnotation<Qualifier>() }
+            .map { it.annotationClass }
         if (funcQualifiers.contains(qualifier)) return true
         return false
     }
@@ -62,9 +61,8 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
     }
 
     private fun <T : Any> createWithPrimaryConstructor(clazz: Class<T>): T {
-        val primaryConstructor =
-            clazz.kotlin.primaryConstructor
-                ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
+        val primaryConstructor = clazz.kotlin.primaryConstructor
+            ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
         val args = getArguments(this, primaryConstructor)
         return provideInjectField(primaryConstructor.call(*args.toTypedArray()))
     }
@@ -103,8 +101,8 @@ abstract class Module(var context: Context?, private val parentModule: Module? =
     }
 
     private fun getPublicMethodMap(): Map<KFunction<*>, Module> {
-        return this@Module::class.declaredMemberFunctions.filter {
-            it.visibility == KVisibility.PUBLIC
-        }.associateWith { this@Module }
+        return this@Module::class.declaredMemberFunctions
+            .filter { it.visibility == KVisibility.PUBLIC }
+            .associateWith { this@Module }
     }
 }

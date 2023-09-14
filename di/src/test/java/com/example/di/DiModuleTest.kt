@@ -9,12 +9,12 @@ import com.example.di.annotation.FieldInject
 import com.example.di.application.DiApplication
 import com.example.di.module.ActivityModule
 import com.example.di.module.ApplicationModule
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -44,6 +44,8 @@ internal class DiModuleTest {
         ) : ViewModel() {
             @FieldInject
             lateinit var productRepository: FakeProductRepository
+
+            lateinit var a: String
         }
 
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
@@ -64,8 +66,8 @@ internal class DiModuleTest {
         val instance = activityModule.provideInstance(FakeViewModel::class.java)
 
         // then
-        assertEquals(true, instance::class.isSubclassOf(FakeViewModel::class))
-        assertNotNull(instance.productRepository)
+        assertTrue(instance::class.isSubclassOf(FakeViewModel::class))
+        assertDoesNotThrow { instance.productRepository }
     }
 
     @Test

@@ -4,6 +4,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class InMemoryLocalDataSource : LocalDataSource {
+    private var id: Long = 0
     private val imMemoryCarts = mutableListOf<CartProduct>()
 
     override suspend fun getAll(): List<CartProduct> {
@@ -13,7 +14,7 @@ class InMemoryLocalDataSource : LocalDataSource {
     override suspend fun insert(product: Product) {
         imMemoryCarts.add(
             CartProduct(
-                imMemoryCarts.size.toLong(),
+                id++,
                 System.currentTimeMillis(),
                 product,
             ),
