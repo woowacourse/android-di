@@ -1,7 +1,6 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -13,10 +12,8 @@ import woowacourse.shopping.data.ShoppingDatabase
 class SingletonModule(
     context: Context,
 ) : Module {
-    private val cartProductDao: CartProductDao by lazy {
-        Room.databaseBuilder(context, ShoppingDatabase::class.java, CART_PRODUCT_DATABASE)
-            .build().cartProductDao()
-    }
+    private val cartProductDao: CartProductDao =
+        ShoppingDatabase.getShoppingDatabase(context).cartProductDao()
     private val cacheData: MutableMap<String, Any> = mutableMapOf()
 
     fun provideCartRepository(cartProductDao: CartProductDao): CartRepository {
