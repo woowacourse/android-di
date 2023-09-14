@@ -24,9 +24,7 @@ object Injector {
 
         val paramInstances = getParamInstances(constructor)
         val instance = constructor.call(*paramInstances.toTypedArray()) as T
-        injectFields(instance)
-
-        return instance
+        return instance.also { injectFields(it) }
     }
 
     private fun <T : Any> getParamInstances(constructor: KFunction<T>): List<Any> {
