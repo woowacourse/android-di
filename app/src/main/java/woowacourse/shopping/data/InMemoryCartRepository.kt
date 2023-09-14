@@ -8,7 +8,7 @@ class InMemoryCartRepository : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         products.add(
             CartProduct(
-                products.size.toLong(),
+                getNewProductId(),
                 product.name,
                 product.price,
                 product.imageUrl,
@@ -17,11 +17,23 @@ class InMemoryCartRepository : CartRepository {
         )
     }
 
+    private fun getNewProductId(): Long {
+        return if (products.isNotEmpty()) {
+            products.maxOf { it.id }.toLong() + 1
+        } else {
+            DEFAULT_ID
+        }
+    }
+
     override suspend fun getAllCartProducts(): List<CartProduct> {
         return products.toList()
     }
 
     override suspend fun deleteCartProduct(id: Long) {
         products.removeIf { it.id == id }
+    }
+
+    companion object {
+        private const val DEFAULT_ID = 1L
     }
 }
