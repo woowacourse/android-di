@@ -1,8 +1,8 @@
 package io.hyemdooly.di
 
-// import io.hyemdooly.di.annotation.InMemory
 import io.hyemdooly.di.annotation.Inject
 import io.hyemdooly.di.annotation.Qualifier
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -53,10 +53,12 @@ class InjectorTest {
         val viewModel = Injector.inject<FakeViewModel>(FakeViewModel::class)
 
         // then
-        assertNotNull(viewModel)
-        assertNotNull(viewModel.fakeRepository)
-        assertEquals(name, viewModel.fakeRepository.name)
-        assertEquals(items, viewModel.fakeRepository.items)
+        assertAll(
+            { assertNotNull(viewModel) },
+            { assertNotNull(viewModel.fakeRepository) },
+            { assertEquals(name, viewModel.fakeRepository.name) },
+            { assertEquals(items, viewModel.fakeRepository.items) },
+        )
     }
 
     @Test
@@ -72,10 +74,12 @@ class InjectorTest {
         val viewModel = Injector.inject<FakeViewModel>(FakeViewModel::class)
 
         // then
-        assertNotNull(viewModel)
-        assertNotNull(viewModel.fakeRepository)
-        assertEquals(name, viewModel.fakeRepository.name)
-        assertEquals(items, viewModel.fakeRepository.items)
+        assertAll(
+            { assertNotNull(viewModel) },
+            { assertNotNull(viewModel.fakeRepository) },
+            { assertEquals(name, viewModel.fakeRepository.name) },
+            { assertEquals(items, viewModel.fakeRepository.items) },
+        )
     }
 
     @Test
