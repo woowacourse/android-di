@@ -21,7 +21,7 @@ class MainActivityTest {
 
     @Before
     fun setUp() {
-        DIContainer.init()
+        DIContainer.init(listOf(), listOf())
     }
 
     @Test
