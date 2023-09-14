@@ -15,9 +15,7 @@ fun Product.toEntity(): CartProductEntity {
 fun Product.toCartProduct(id: Long): CartProduct {
     return CartProduct(
         id = id,
-        name = name,
-        price = price,
-        imageUrl = imageUrl,
+        product = this,
         createdAt = System.currentTimeMillis(),
     )
 }
