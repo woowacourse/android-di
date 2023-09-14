@@ -13,12 +13,12 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
-    fun <T> inject(modelClass: KClass<*>): T {
+    fun <T : Any> inject(modelClass: KClass<*>): T {
         val instance = Container.getInstance(modelClass) ?: createInstance(modelClass)
         return instance as T
     }
 
-    private fun <T> createInstance(modelClass: KClass<*>): T {
+    private fun <T : Any> createInstance(modelClass: KClass<*>): T {
         val constructor = modelClass.primaryConstructor
         requireNotNull(constructor) { "Unknown ViewModel Class $modelClass" }
 
@@ -29,7 +29,7 @@ object Injector {
         return instance
     }
 
-    private fun <T> getParamInstances(constructor: KFunction<T>): List<Any> {
+    private fun <T : Any> getParamInstances(constructor: KFunction<T>): List<Any> {
         val paramInstances = constructor.parameters.map { param ->
             val annotation = param.findAnnotation<Qualifier>()
             val type = annotation?.clazz ?: param.type.jvmErasure
@@ -38,10 +38,9 @@ object Injector {
         return paramInstances
     }
 
-    private fun <T> injectFields(instance: T) {
-        val notNullInstance = requireNotNull(instance) { "Instance should not null" }
+    private fun <T : Any> injectFields(instance: T) {
         val properties =
-            notNullInstance::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
+            instance::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
 
         properties.forEach { property ->
             property.isAccessible = true
