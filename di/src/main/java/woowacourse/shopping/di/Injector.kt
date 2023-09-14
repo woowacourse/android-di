@@ -3,8 +3,6 @@ package woowacourse.shopping.di
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -39,17 +37,6 @@ class Injector(
         return instance
     }
 
-    private fun <T : Any> injectAnnotationFields(instance: T, fields: List<Field?>) {
-        instance.apply {
-            fields.forEach { field ->
-                field?.run {
-                    val obj = findInstance(this.type.kotlin)
-                    set(instance, obj)
-                }
-            }
-        }
-    }
-
     private fun getInstances(kFunction: KFunction<*>): List<Any?> =
         kFunction.valueParameters.map { kParameter ->
             val instance =
@@ -61,26 +48,15 @@ class Injector(
             instance
         }
 
-    private fun searchFunctions(kClass: KClass<*>): List<KFunction<*>> =
-        module::class.declaredFunctions
-            .filter { it.visibility == KVisibility.PUBLIC }
-            .filter { it.returnType.jvmErasure == kClass }
-
-    private fun searchFunction(kClass: KClass<*>): KFunction<*> =
-        module::class.declaredFunctions
-            .filter { it.visibility == KVisibility.PUBLIC }
-            .find { it.returnType.jvmErasure == kClass }
-            ?: throw IllegalArgumentException(ERROR_NON_EXIST_FUNCTION)
-
     private fun findInstance(kClass: KClass<*>): Any {
-        val instances = searchFunctions(kClass)
+        val instances = module.searchFunctions(kClass)
         return when (instances.size) {
             0 -> {
                 createInstanceForPrimaryConstructor(kClass)
             }
 
             1 -> {
-                val moduleFunction = searchFunction(kClass)
+                val moduleFunction = module.searchFunction(kClass)
                 createInstanceForFunction(moduleFunction)
             }
 
@@ -104,9 +80,19 @@ class Injector(
         return kFunction.call(module, *arguments.toTypedArray()) as T
     }
 
+    private fun <T : Any> injectAnnotationFields(instance: T, fields: List<Field?>) {
+        instance.apply {
+            fields.forEach { field ->
+                field?.run {
+                    val obj = findInstance(this.type.kotlin)
+                    set(instance, obj)
+                }
+            }
+        }
+    }
+
     companion object {
         private const val ERROR_PRIMARY_CONSTRUCTOR = "[ERROR] 주 생성자가 없습니다."
-        private const val ERROR_NON_EXIST_FUNCTION = "[ERROR] 존재하지 않는 함수입니다."
         private const val ERROR_CAN_NOT_INJECT = "[ERROR] 주입할 수 없습니다."
     }
 }
