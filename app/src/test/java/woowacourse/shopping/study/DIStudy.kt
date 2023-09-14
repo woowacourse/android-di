@@ -49,22 +49,6 @@ class DiTest {
 
     @Test
     fun `리플렉션 테스트`() {
-//        println("public func: ${injector::class.declaredFunctions}")
-
-//        val functions = injector::class.declaredFunctions
-
-//        functions.forEach { function ->
-//            when (function.returnType.jvmErasure.qualifiedName) {
-//                FakeRepository::class.qualifiedName -> {
-//                    println("Here FakeRepo")
-//                }
-//
-//                FakeDao::class.qualifiedName -> {
-//                    println("Here FakeDao")
-//                }
-//            }
-//        }
-
         val clazz = FakeViewModel::class.java
 
         val primaryConstructor =
