@@ -2,19 +2,17 @@ package woowacourse.shopping.di
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.re4rk.arkdi.DiContainer
 import kotlin.reflect.KClass
 
 open class DiAppCompatActivity : AppCompatActivity() {
-    private val diContainer: DiContainer by lazy {
-        (application as? DiApplication)?.getActivityDiContainer(this)
-            ?: throw IllegalStateException("Application should be subclass of DiApplication.")
-    }
+    private lateinit var diViewModel: DiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        diContainer.inject(this)
+        diViewModel = (application as DiApplication).getActivityDiContainer(this)
+        diViewModel.ownerDiContainer.inject(this)
     }
 
-    fun <T : Any> createInstance(clazz: KClass<T>) = diContainer.createInstance(clazz)
+    fun <T : Any> injectViewModel(clazz: KClass<T>) =
+        diViewModel.viewModelDiContainer.createInstance(clazz)
 }

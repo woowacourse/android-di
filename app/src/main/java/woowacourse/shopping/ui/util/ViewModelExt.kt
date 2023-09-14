@@ -15,7 +15,7 @@ inline fun <reified VM : ViewModel> DiAppCompatActivity.viewModels(): Lazy<VM> {
         factoryProducer = {
             viewModelFactory {
                 initializer {
-                    this@viewModels.createInstance(VM::class)
+                    this@viewModels.injectViewModel(VM::class)
                 }
             }
         },

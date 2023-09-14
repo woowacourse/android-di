@@ -11,10 +11,8 @@ import com.re4rk.arkdi.annotations.StorageType.Type.IN_MEMORY
 import woowacourse.shopping.data.CartInDiskRepository
 import woowacourse.shopping.data.CartInMemoryRepository
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
 
 @Suppress("unused")
 class DiApplicationModule(
@@ -23,9 +21,6 @@ class DiApplicationModule(
     @Singleton
     @ContextType(APPLICATION)
     fun provideApplicationContext(): Context = applicationContext
-
-    @Singleton
-    fun provideProductRepository(): ProductRepository = ProductSampleRepository()
 
     @Singleton
     @StorageType(IN_MEMORY)
