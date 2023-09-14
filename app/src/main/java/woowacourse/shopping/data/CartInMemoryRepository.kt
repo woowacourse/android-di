@@ -25,7 +25,6 @@ class CartInMemoryRepository : CartRepository {
     }
 
     override suspend fun deleteCartProduct(id: Int) {
-        val removeIndex = cartProducts.indexOfFirst { it.cartProductId == id.toLong() }
-        cartProducts.removeAt(removeIndex)
+        cartProducts.removeIf { it.cartProductId == id.toLong() }
     }
 }
