@@ -8,16 +8,14 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.util.annotation.WooWaField
 import woowacourse.shopping.util.annotation.WooWaInject
+import woowacourse.shopping.util.annotation.WooWaQualifier
 
 class MainViewModel @WooWaInject constructor(
     private val productRepository: ProductRepository,
+    @WooWaQualifier(WooWaQualifier.DATABASE)
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-
-    @WooWaField
-    private lateinit var cartRepository2: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

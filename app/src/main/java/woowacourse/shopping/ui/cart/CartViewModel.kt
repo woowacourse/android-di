@@ -8,9 +8,12 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.util.annotation.WooWaField
+import woowacourse.shopping.util.annotation.WooWaQualifier
 
 class CartViewModel : ViewModel() {
+
     @WooWaField
+    @WooWaQualifier(WooWaQualifier.IN_MEMORY)
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())

@@ -3,8 +3,11 @@ package woowacourse.shopping.di.sgDi
 import woowacourse.shopping.util.annotation.WooWaField
 import woowacourse.shopping.util.annotation.WooWaInject
 import woowacourse.shopping.util.annotation.WooWaLazyInject
-import kotlin.reflect.KClass
+import woowacourse.shopping.util.annotation.WooWaQualifier
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -15,16 +18,19 @@ object DependencyInjector {
 
     inline fun <reified T : Any> inject(): T {
         val clazz = T::class
-        val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException()
-        val arguments: MutableList<Any> = mutableListOf()
+        val constructor =
+            clazz.primaryConstructor
+                ?: throw IllegalArgumentException("[ERROR] DependencyInjector:22")
+        val instances: MutableList<Any> = mutableListOf()
 
         when {
             constructor.hasAnnotation<WooWaInject>() -> {
                 constructor.parameters.forEach { parameter ->
-                    val type: KClass<*> = parameter.type.jvmErasure
-                    val argument =
-                        DependencyContainer.repositories[type] ?: throw IllegalArgumentException()
-                    arguments.add(argument)
+                    val instance = when (parameter.hasAnnotation<WooWaQualifier>()) {
+                        true -> getQualifiedInstance(parameter)
+                        false -> getInstance(parameter)
+                    }
+                    instances.add(instance)
                 }
             }
 
@@ -33,7 +39,7 @@ object DependencyInjector {
             }
         }
 
-        return constructor.call(*arguments.toTypedArray()).apply {
+        return constructor.call(*instances.toTypedArray()).apply {
             injectField<T>(this)
         }
     }
@@ -42,13 +48,38 @@ object DependencyInjector {
         val properties = T::class.declaredMemberProperties.filter { property ->
             property.hasAnnotation<WooWaField>()
         }
+
         if (properties.isEmpty()) return
+
         properties.forEach { property ->
-            val type = property.returnType.jvmErasure
-            val instance =
-                DependencyContainer.repositories[type] ?: throw IllegalArgumentException()
+            val instance = when (property.hasAnnotation<WooWaQualifier>()) {
+                true -> getQualifiedInstance(property)
+                false -> getInstance(property)
+            }
             property.isAccessible = true
             property.javaField?.set(clazz, instance)
         }
+    }
+
+    fun getQualifiedInstance(argument: Any): Any {
+        val type = when (argument) {
+            is KParameter -> argument.findAnnotation<WooWaQualifier>()?.type
+            is KProperty1<*, *> -> argument.findAnnotation<WooWaQualifier>()?.type
+            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:68")
+        }
+
+        return DependencyContainer.qualifiedRepository[type]
+            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:72")
+    }
+
+    fun getInstance(argument: Any): Any {
+        val type = when (argument) {
+            is KParameter -> argument.type.jvmErasure
+            is KProperty1<*, *> -> argument.returnType.jvmErasure
+            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:78")
+        }
+
+        return DependencyContainer.repositories[type]
+            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:83")
     }
 }

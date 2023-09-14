@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.sangoonDi.inject
+import woowacourse.shopping.di.sgDi.inject
 import woowacourse.shopping.ui.cart.adapter.CartProductAdapter
 
 class CartActivity : AppCompatActivity() {
