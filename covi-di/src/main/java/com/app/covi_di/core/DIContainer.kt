@@ -14,7 +14,7 @@ object DIContainer {
     private const val ERROR_PROVIDER_NOT_CONTAINED = "Provider is not contained in DIContainer"
     private const val ERROR_QUALIFIER_MUST_BE_ONE = "Qualifier must be one in implemenation"
 
-    fun init(moduleList: List<DependencyModule>, providerList: List<Provider>, context: Context) {
+    fun init(moduleList: List<DependencyModule>, providerList: List<Provider>) {
         moduleList.map {
             it.invoke().map { (key, value) ->
                 moduleInstances[key] =
@@ -22,7 +22,6 @@ object DIContainer {
             }
         }
         providerList.map {
-            it.init(context)
             providerInstances.putAll(it.get())
         }
     }

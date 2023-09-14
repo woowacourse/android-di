@@ -7,11 +7,9 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.reflect.KClass
 
-object DataBaseProvider : Provider {
-    private lateinit var database: ShoppingDatabase
-
-    override fun init(context: Context) {
-        database = initDataBase(context)
+class DataBaseProvider(context: Context) : Provider {
+    private val database: ShoppingDatabase by lazy {
+        initDataBase(context)
     }
 
     private fun initDataBase(context: Context): ShoppingDatabase {

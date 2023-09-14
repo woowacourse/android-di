@@ -8,6 +8,6 @@ import woowacourse.shopping.di.module.RepositoryModule
 class Application : Application() {
     override fun onCreate() {
         super.onCreate()
-        DIContainer.init(listOf(RepositoryModule), listOf(DataBaseProvider), applicationContext)
+        DIContainer.init(listOf(RepositoryModule), listOf(DataBaseProvider(this)))
     }
 }
