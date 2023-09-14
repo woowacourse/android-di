@@ -13,11 +13,14 @@ import kotlin.reflect.jvm.jvmErasure
 
 class CustomInjector {
 
-    fun <T : Any> inject(kClass: KClass<T>): T {
+    fun <T : Any> inject(kClass: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        val annotationWithQualifier =
+            annotations.filter { it.annotationClass.java.isAnnotationPresent(Qualifier::class.java) }
         return (
-            DependencyContainer.getInstance(kClass) ?: createInstanceFromKClass(
-                kClass,
-            )
+            DependencyContainer.getInstance(kClass, annotationWithQualifier)
+                ?: createInstanceFromKClass(
+                    kClass,
+                )
             ) as T
     }
 
@@ -27,7 +30,7 @@ class CustomInjector {
 
         val parameterValues =
             constructor.parameters.associateWith {
-                getValueFromAnnotatedProperty(
+                inject(
                     it.type.jvmErasure,
                     it.annotations,
                 )
@@ -42,20 +45,8 @@ class CustomInjector {
             .forEach { prop ->
                 prop.isAccessible = true
                 val propertyType = prop.returnType.jvmErasure
-                val value = getValueFromAnnotatedProperty(propertyType, prop.annotations)
+                val value = inject(propertyType, prop.annotations)
                 (prop as KMutableProperty<*>).setter.call(instance, value)
             }
-    }
-
-    private fun <T : Any> getValueFromAnnotatedProperty(
-        kClass: KClass<T>,
-        annotations: List<Annotation>,
-    ): Any {
-        val annotationWithQualifier =
-            annotations.filter { it.annotationClass.java.isAnnotationPresent(Qualifier::class.java) }
-        return DependencyContainer.getInstance(kClass, annotationWithQualifier)
-            ?: createInstanceFromKClass(
-                kClass,
-            )
     }
 }
