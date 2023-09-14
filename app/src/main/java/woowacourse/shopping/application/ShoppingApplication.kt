@@ -1,13 +1,11 @@
 package woowacourse.shopping.application
 
 import android.app.Application
-import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.annotations.StorageType
 import woowacourse.shopping.di.container.DefaultContainer
 import woowacourse.shopping.di.container.DiContainer
@@ -19,27 +17,17 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val db: ShoppingDatabase = createRoomDatabase()
-        val dao = db.cartProductDao()
         val appContainer: DiContainer = DefaultContainer()
         injector = Injector(appContainer)
 
-        addInstancesToContainer(appContainer, dao)
-    }
-
-    private fun createRoomDatabase(): ShoppingDatabase {
-        return Room.databaseBuilder(
-            this,
-            ShoppingDatabase::class.java,
-            "cart_products",
-        ).build()
+        addInstancesToContainer(appContainer)
     }
 
     private fun addInstancesToContainer(
         appContainer: DiContainer,
-        dao: CartProductDao,
     ) {
-        appContainer.createInstance(CartProductDao::class, dao)
+        val db: ShoppingDatabase = ShoppingDatabase.getInstance(this)
+        appContainer.createInstance(CartProductDao::class, db.cartProductDao())
         appContainer.createInstance(
             ProductRepository::class,
             injector.create(DefaultProductRepository::class)
