@@ -8,7 +8,10 @@ object FakeModule : Module {
 
     fun provideProductRepository(): ProductFakeRepository = ProductFakeRepository
 
-    fun provideCartRepository(): CartFakeRepository = CartFakeRepository
+    fun provideCartRepository(): FakeCartRepository = FakeCartDefaultRepository
+
+    @InMemory
+    fun provideInMemoryCartRepository(): FakeCartRepository = FakeCartInMemoryRepository
 
     fun provideRepositoryWithDataSource(
         @Inject
@@ -25,7 +28,11 @@ object FakeModule : Module {
 
 object ProductFakeRepository
 
-object CartFakeRepository
+interface FakeCartRepository
+
+object FakeCartDefaultRepository : FakeCartRepository
+
+object FakeCartInMemoryRepository : FakeCartRepository
 
 class FakeRepositoryWithDataSource(
     @Inject

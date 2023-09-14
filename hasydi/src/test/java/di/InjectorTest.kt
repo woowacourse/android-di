@@ -1,7 +1,8 @@
 package di
 
-import junit.framework.Assert
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotSame
+import junit.framework.Assert.assertSame
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +27,7 @@ class InjectorTest {
         // then
         Assertions.assertThat(vm).isNotNull
         assertEquals(vm.productFakeRepository, ProductFakeRepository)
-        assertEquals(vm.cartFakeRepository, CartFakeRepository)
+        assertEquals(vm.cartFakeRepository, FakeCartDefaultRepository)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -61,7 +62,7 @@ class InjectorTest {
 
         // then
         Assertions.assertThat(vm).isNotNull
-        assertEquals(vm.cartFakeRepository, CartFakeRepository)
+        assertEquals(vm.cartFakeRepository, FakeCartDefaultRepository)
     }
 
     @Test
@@ -80,19 +81,30 @@ class InjectorTest {
 
         // then
         val actualDatasource = vm.fakeRepositoryWithDataSource.fakeDatasource
-        Assert.assertSame(FakeRoomDataSource, actualDatasource)
-        Assert.assertNotSame(FakeInMemoryDataSource, actualDatasource)
+        assertSame(FakeRoomDataSource, actualDatasource)
+        assertNotSame(FakeInMemoryDataSource, actualDatasource)
+    }
+
+    @Test
+    fun `필드 주입 시 Qualifier로 구분해 Room 사용하는 데이터소스를 주입한다`() {
+        // when
+        val vm = injector.inject(FakeViewModelWithFieldInjectionAndQualifier::class)
+
+        // then
+        val actualRepository = vm.fakeCartInMemoryRepository
+        assertSame(FakeCartInMemoryRepository, actualRepository)
+        assertNotSame(FakeCartDefaultRepository, actualRepository)
     }
 }
 
 class FakeViewModel(
     @Inject val productFakeRepository: ProductFakeRepository,
-    @Inject val cartFakeRepository: CartFakeRepository,
+    @Inject val cartFakeRepository: FakeCartRepository,
 )
 
 class FakeViewModelMissingAnnotation(
     @Inject val productFakeRepository: ProductFakeRepository,
-    val cartFakeRepository: CartFakeRepository,
+    val cartFakeRepository: FakeCartDefaultRepository,
 )
 
 class FakeViewModelWithDefaultValue(
@@ -102,7 +114,13 @@ class FakeViewModelWithDefaultValue(
 
 class FakeViewModelWithFieldInjection() {
     @Inject
-    lateinit var cartFakeRepository: CartFakeRepository
+    lateinit var cartFakeRepository: FakeCartRepository
+}
+
+class FakeViewModelWithFieldInjectionAndQualifier() {
+    @Inject
+    @InMemory
+    lateinit var fakeCartInMemoryRepository: FakeCartRepository
 }
 
 class FakeViewModelWithRecursiveDI(
