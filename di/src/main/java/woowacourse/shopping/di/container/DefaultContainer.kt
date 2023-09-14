@@ -3,7 +3,7 @@ package woowacourse.shopping.di.container
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-class DefaultContainer : ShoppingContainer {
+class DefaultContainer : DiContainer {
     private val instances = mutableMapOf<String, Any?>()
 
     override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {

@@ -2,7 +2,7 @@ package woowacourse.shopping.di.container
 
 import kotlin.reflect.KClass
 
-interface ShoppingContainer {
+interface DiContainer {
     fun <T : Any> createInstance(clazz: KClass<*>, instance: T)
     fun <T : Any> createInstance(qualifier: String, instance: T)
     fun <T : Any> getInstance(clazz: KClass<T>): T?

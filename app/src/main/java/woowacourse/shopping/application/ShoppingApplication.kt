@@ -9,7 +9,7 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.container.DefaultContainer
-import woowacourse.shopping.di.container.ShoppingContainer
+import woowacourse.shopping.di.container.DiContainer
 import woowacourse.shopping.di.injector.Injector
 import woowacourse.shopping.repository.ProductRepository
 
@@ -20,7 +20,7 @@ class ShoppingApplication : Application() {
 
         val db: ShoppingDatabase = createRoomDatabase()
         val dao = db.cartProductDao()
-        val appContainer: ShoppingContainer = DefaultContainer()
+        val appContainer: DiContainer = DefaultContainer()
         injector = Injector(appContainer)
 
         addInstancesToContainer(appContainer, dao)
@@ -35,7 +35,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun addInstancesToContainer(
-        appContainer: ShoppingContainer,
+        appContainer: DiContainer,
         dao: CartProductDao,
     ) {
         appContainer.createInstance(CartProductDao::class, dao)

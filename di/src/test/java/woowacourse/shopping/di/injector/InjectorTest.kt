@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import woowacourse.shopping.di.annotation.Injected
 import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.ShoppingContainer
+import woowacourse.shopping.di.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -118,7 +118,7 @@ class InjectorTest {
     }
 }
 
-class TestContainer : ShoppingContainer {
+class TestContainer : DiContainer {
     private val instances = mutableMapOf<String, Any>()
 
     override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {

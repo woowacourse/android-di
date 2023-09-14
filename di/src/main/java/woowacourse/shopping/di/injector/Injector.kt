@@ -2,7 +2,7 @@ package woowacourse.shopping.di.injector
 
 import woowacourse.shopping.di.annotation.Injected
 import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.ShoppingContainer
+import woowacourse.shopping.di.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
-    private val container: ShoppingContainer,
+    private val container: DiContainer,
 ) {
     fun <T : Any> create(clazz: KClass<T>): T {
         val instance = container.getInstance(clazz)
