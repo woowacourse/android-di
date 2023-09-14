@@ -16,6 +16,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
+@Suppress("unused")
 class DiApplicationModule(
     private val applicationContext: Context,
 ) : DiContainer() {
