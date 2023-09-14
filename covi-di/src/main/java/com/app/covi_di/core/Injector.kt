@@ -11,6 +11,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
+    private const val ERROR_MODULE_NOT_CONTAINED = "Module is not contained in DIContainer"
 
     fun <T> inject(clazz: KClass<*>): T {
         val parameterTypes = getParameterTypes(clazz)
@@ -65,7 +66,7 @@ object Injector {
             if (field.isAnnotationPresent(InjectField::class.java)) {
                 val fieldInstance: Any =
                     if (field.type.kotlin.isAbstract) DIContainer.getModuleKClass(field.type.kotlin)
-                        ?: throw IllegalArgumentException()
+                        ?: throw IllegalArgumentException(ERROR_MODULE_NOT_CONTAINED)
                     else field.type.newInstance()
                 field.set(instance, fieldInstance)
             }

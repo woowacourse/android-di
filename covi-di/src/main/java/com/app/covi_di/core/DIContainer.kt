@@ -11,6 +11,9 @@ object DIContainer {
     private val moduleInstances = mutableMapOf<KClass<*>, MutableList<KClass<*>>>()
     private val providerInstances = mutableMapOf<KClass<*>, Any>()
 
+    private const val ERROR_PROVIDER_NOT_CONTAINED = "Provider is not contained in DIContainer"
+    private const val ERROR_QUALIFIER_MUST_BE_ONE = "Qualifier must be one in implemenation"
+
     fun init(moduleList: List<DependencyModule>, providerList: List<Provider>, context: Context) {
         moduleList.map {
             it.invoke().map { (key, value) ->
@@ -28,11 +31,13 @@ object DIContainer {
         val result = moduleInstances[clazz]?.filter {
             it.hasAnnotation<Qualifier>()
         } ?: return null
-        if (result.size > 1) throw IllegalArgumentException()
+        if (result.size > 1) throw IllegalArgumentException(ERROR_QUALIFIER_MUST_BE_ONE)
         return result.first()
     }
 
     fun getProviderInstance(clazz: KClass<*>): Any {
-        return providerInstances[clazz] ?: throw IllegalArgumentException()
+        return providerInstances[clazz] ?: throw IllegalArgumentException(
+            ERROR_PROVIDER_NOT_CONTAINED
+        )
     }
 }
