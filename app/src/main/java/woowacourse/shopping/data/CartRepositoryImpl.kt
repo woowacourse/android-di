@@ -19,7 +19,7 @@ class CartRepositoryImpl @Inject constructor(private val cartProduct: CartProduc
         return cartProduct.getAll().map { it.toProduct() }
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        cartProduct.delete(id.toLong())
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProduct.delete(id)
     }
 }
