@@ -11,7 +11,7 @@ object Container {
     }
 
     fun getInstance(type: KClass<*>): Any? {
-        if (instances[type] != null) instances[type]
+        if (instances[type] != null) return instances[type]
         val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
         return instances[key]
     }
