@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.sangoonDi
+package woowacourse.shopping.di.sgDi
 
 import woowacourse.shopping.util.annotation.WooWaField
 import woowacourse.shopping.util.annotation.WooWaInject
