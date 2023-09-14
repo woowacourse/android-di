@@ -2,6 +2,8 @@ package woowacourse.shopping.data
 
 import com.app.covi_di.annotation.Inject
 import com.app.covi_di.annotation.Qualifier
+import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.data.mapper.toProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -10,11 +12,11 @@ import woowacourse.shopping.repository.CartRepository
 class CartRepositoryImpl @Inject constructor(private val cartProduct: CartProductDao) :
     CartRepository {
     override suspend fun addCartProduct(product: Product) {
-        cartProduct.insert(CartProductEntity(product.name, product.price, product.imageUrl))
+        cartProduct.insert(product.toEntity())
     }
 
     override suspend fun getAllCartProducts(): List<Product> {
-        return cartProduct.getAll().map { Product(it.name, it.price, it.imageUrl, it.createdAt) }
+        return cartProduct.getAll().map { it.toProduct() }
     }
 
     override suspend fun deleteCartProduct(id: Int) {
