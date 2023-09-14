@@ -11,12 +11,15 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
+
     fun <T> inject(clazz: KClass<*>): T {
         val parameterTypes = getParameterTypes(clazz)
         clazz.primaryConstructor?.isAccessible = true
-        val instance = clazz.primaryConstructor?.call(*parameterTypes.toTypedArray())
+
+        @Suppress("UNCHECKED_CAST")
+        val instance = clazz.primaryConstructor?.call(*parameterTypes.toTypedArray()) as T
         injectFields(instance)
-        return instance as T
+        return instance
     }
 
     private fun injectRecursive(param: KClass<*>): Any {
@@ -28,14 +31,14 @@ object Injector {
         return param.createInstance()
     }
 
-    private fun getParameterTypes(kClass: KClass<out Any>): MutableList<Any> {
+    private fun getParameterTypes(kClass: KClass<out Any>): List<Any> {
         val parameterTypes = mutableListOf<Any>()
 
         kClass.primaryConstructor?.valueParameters?.forEach { param ->
             val parameterType = param.type.jvmErasure
             if (parameterType.isAbstract) {
                 if (DIContainer.getModuleKClass(parameterType) == null) {
-                    parameterTypes.add(getByProvider(parameterType))
+                    parameterTypes.add(getInstanceByProvider(parameterType))
                 } else {
                     val instance = DIContainer.getModuleKClass(parameterType)
                         ?: throw IllegalArgumentException()
@@ -50,7 +53,7 @@ object Injector {
         return parameterTypes
     }
 
-    private fun getByProvider(parameterType: KClass<*>): Any {
+    private fun getInstanceByProvider(parameterType: KClass<*>): Any {
         return DIContainer.getProviderInstance(parameterType)
     }
 
