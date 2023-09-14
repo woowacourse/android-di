@@ -13,7 +13,6 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.jvmName
 
 class Injector(
     private val container: ShoppingContainer,
@@ -41,7 +40,7 @@ class Injector(
     ): KFunction<*> {
         val constructors = clazz.constructors.filter { it.hasAnnotation<Injected>() }
         return constructors.firstOrNull() ?: clazz.primaryConstructor
-        ?: throw IllegalArgumentException("${clazz.jvmName} $ERROR_NO_CONSTRUCTOR")
+        ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_CONSTRUCTOR")
     }
 
     private fun getArguments(constructor: KFunction<*>): Map<KParameter, Any?> {
@@ -54,7 +53,8 @@ class Injector(
                     ?: throw IllegalArgumentException("$qualifier $ERROR_NO_FIELD")
             } else {
                 val type = parameter.type.jvmErasure
-                container.getInstance(type) ?: container.createInstance(type, create(type))
+                container.getInstance(type)
+                    ?: throw IllegalArgumentException("${type.simpleName} $ERROR_NO_FIELD")
             }
         }
     }
@@ -69,9 +69,10 @@ class Injector(
             val newInstance = if (property.hasAnnotation<Qualifier>()) {
                 val qualifier = property.findAnnotation<Qualifier>()!!.type
                 container.getInstance(qualifier)
-                    ?: throw IllegalArgumentException("${clazz.jvmName} $ERROR_NO_FIELD")
+                    ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_FIELD")
             } else {
                 container.getInstance(property.returnType.jvmErasure)
+                    ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_FIELD")
             }
             property.setter.call(instance, newInstance)
         }
