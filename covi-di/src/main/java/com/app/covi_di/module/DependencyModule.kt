@@ -4,5 +4,5 @@ import android.content.Context
 import kotlin.reflect.KClass
 
 interface DependencyModule {
-    fun invoke(context: Context): Map<KClass<*>, KClass<*>>
+    fun invoke(): Map<KClass<*>, KClass<*>>
 }

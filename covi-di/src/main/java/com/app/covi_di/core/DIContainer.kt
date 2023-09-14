@@ -13,7 +13,7 @@ object DIContainer {
 
     fun init(moduleList: List<DependencyModule>, providerList: List<Provider>, context: Context) {
         moduleList.map {
-            it.invoke(context).map { (key, value) ->
+            it.invoke().map { (key, value) ->
                 moduleInstances[key] =
                     moduleInstances[key]?.apply { add(value) } ?: mutableListOf(value)
             }
