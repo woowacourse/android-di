@@ -6,9 +6,9 @@ import woowacourse.shopping.data.repository.DatabaseCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.InMemoryCartRepository
 import woowacourse.shopping.di.sgDi.StartInjection
+import woowacourse.shopping.di.sgDi.annotation.WooWaQualifier
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.util.annotation.WooWaQualifier
 
 class ShoppingApplication : Application() {
     override fun onCreate() {

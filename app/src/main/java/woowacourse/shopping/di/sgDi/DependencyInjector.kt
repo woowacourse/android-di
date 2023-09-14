@@ -1,9 +1,7 @@
 package woowacourse.shopping.di.sgDi
 
-import woowacourse.shopping.util.annotation.WooWaField
-import woowacourse.shopping.util.annotation.WooWaInject
-import woowacourse.shopping.util.annotation.WooWaLazyInject
-import woowacourse.shopping.util.annotation.WooWaQualifier
+import woowacourse.shopping.di.sgDi.annotation.WooWaField
+import woowacourse.shopping.di.sgDi.annotation.WooWaQualifier
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -20,23 +18,15 @@ object DependencyInjector {
         val clazz = T::class
         val constructor =
             clazz.primaryConstructor
-                ?: throw IllegalArgumentException("[ERROR] DependencyInjector:22")
+                ?: throw IllegalArgumentException("[ERROR] DependencyInjector:inject:constructor")
         val instances: MutableList<Any> = mutableListOf()
 
-        when {
-            constructor.hasAnnotation<WooWaInject>() -> {
-                constructor.parameters.forEach { parameter ->
-                    val instance = when (parameter.hasAnnotation<WooWaQualifier>()) {
-                        true -> getQualifiedInstance(parameter)
-                        false -> getInstance(parameter)
-                    }
-                    instances.add(instance)
-                }
+        constructor.parameters.forEach { parameter ->
+            val instance = when (parameter.hasAnnotation<WooWaQualifier>()) {
+                true -> getQualifiedInstance(parameter)
+                false -> getInstance(parameter)
             }
-
-            clazz.hasAnnotation<WooWaLazyInject>() -> {
-                // 지연초기화 대응
-            }
+            instances.add(instance)
         }
 
         return constructor.call(*instances.toTypedArray()).apply {
@@ -65,21 +55,21 @@ object DependencyInjector {
         val type = when (argument) {
             is KParameter -> argument.findAnnotation<WooWaQualifier>()?.type
             is KProperty1<*, *> -> argument.findAnnotation<WooWaQualifier>()?.type
-            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:68")
+            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:getQualifiedInstance:type")
         }
 
         return DependencyContainer.qualifiedRepository[type]
-            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:72")
+            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:getQualifiedInstance")
     }
 
     fun getInstance(argument: Any): Any {
         val type = when (argument) {
             is KParameter -> argument.type.jvmErasure
             is KProperty1<*, *> -> argument.returnType.jvmErasure
-            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:78")
+            else -> throw IllegalArgumentException("[ERROR] DependencyInjector:getInstance:type")
         }
 
         return DependencyContainer.repositories[type]
-            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:83")
+            ?: throw IllegalArgumentException("[ERROR] DependencyInjector:getInstance")
     }
 }
