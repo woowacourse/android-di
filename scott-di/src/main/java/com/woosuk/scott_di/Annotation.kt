@@ -1,5 +1,7 @@
 package com.woosuk.scott_di
 
+import kotlin.reflect.full.hasAnnotation
+
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Singleton
@@ -9,13 +11,6 @@ annotation class Singleton
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject
 
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.FIELD
-)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier(
-    val name: String
-)
+annotation class Qualifier

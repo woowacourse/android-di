@@ -3,12 +3,7 @@ package woowacourse.shopping.di
 import android.app.Application
 import androidx.room.Room
 import com.woosuk.scott_di.Module
-import com.woosuk.scott_di.Qualifier
 import com.woosuk.scott_di.Singleton
-import com.woosuk.scott_di.get
-import com.woosuk.scott_di.inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DataBaseCartRepository
@@ -26,21 +21,20 @@ object DefaultModule : Module {
     }
 
     @Singleton
-    fun provideAppDatabase(): ShoppingDatabase {
+    fun provideAppDatabase(
+        application: Application
+    ): ShoppingDatabase {
         return Room.databaseBuilder(
-            get<Application>().applicationContext,
+            application.applicationContext,
             ShoppingDatabase::class.java, "cart_product"
         ).build()
     }
 
     @Singleton
-    fun provideCartProductDao(): CartProductDao {
-        return get<ShoppingDatabase>().cartProductDao()
-    }
-
-    @Singleton
-    fun provideDispatcherIO(): CoroutineDispatcher {
-        return Dispatchers.IO
+    fun provideCartProductDao(
+        shoppingDatabase: ShoppingDatabase
+    ): CartProductDao {
+        return shoppingDatabase.cartProductDao()
     }
 
     @Singleton
@@ -66,17 +60,19 @@ object DefaultModule : Module {
 
     @Singleton
     fun provideProductRepository(): ProductRepository {
-        return inject<DefaultProductRepository>()
-    }
-
-    @Qualifier("Database")
-    fun provideDatabaseCartRepository(): CartRepository {
-        return inject<DataBaseCartRepository>()
+        return DefaultProductRepository()
     }
 
     @Singleton
-    @Qualifier("InMemory")
+    @InMemoryCartRepo
     fun provideInMemoryCartRepository(): CartRepository {
-        return inject<InMemoryCartRepository>()
+        return InMemoryCartRepository()
+    }
+
+    @DatabaseCartRepo
+    fun provideDatabaseCartRepository(
+        cartProductDao: CartProductDao
+    ): CartRepository {
+        return DataBaseCartRepository(cartProductDao = cartProductDao)
     }
 }

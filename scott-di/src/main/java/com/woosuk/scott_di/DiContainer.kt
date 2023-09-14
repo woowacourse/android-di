@@ -2,63 +2,86 @@ package com.woosuk.scott_di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 typealias Declaration<T> = () -> T
-object DiContainer {
-    val singletons: MutableMap<KClass<*>, Any> = HashMap()
-    val declarations: MutableMap<KClass<*>, Declaration<Any>> = HashMap()
 
-    val qualifiedSingletons: MutableMap<String, Any> = HashMap()
-    val qualifiedDeclarations: MutableMap<String, Declaration<Any>> = HashMap()
+object DiContainer {
+    private val providers: Providers = Providers()
 
     fun loadModule(module: Module) {
         val allFunctions = module::class.declaredMemberFunctions
-        loadDeclarations(module, allFunctions)
-        loadSingletons(allFunctions)
-        loadQualifiedDeclarations(module, allFunctions)
-        loadQualifiedSingletons(allFunctions)
+        initServices(module, allFunctions)
     }
 
-    private fun loadDeclarations(module: Module, allFunctions: Collection<KFunction<*>>) {
-        val normalFunctions = allFunctions.filter { !it.hasAnnotation<Qualifier>() }
-        normalFunctions.forEach {
-            declarations[it.returnType.jvmErasure] =
-                { it.call(module) ?: throw IllegalStateException("함수 형태가 잘못됐어요") }
+    fun <T : Any> inject(kClazz: KClass<T>): T {
+        val instance = initWithDependencies(kClazz).apply {
+            injectFields(kClazz)
         }
+        return instance
     }
 
-    private fun loadSingletons(allFunctions: Collection<KFunction<*>>) {
-        val normalSingletonFunctions = allFunctions.filter {
-            !it.hasAnnotation<Qualifier>() && it.hasAnnotation<Singleton>()
-        }
-        normalSingletonFunctions.forEach {
-            val kClass = it.returnType.jvmErasure
-            singletons[kClass] = declarations[kClass]?.invoke() as Any
+    private fun initServices(module: Module, functions: Collection<KFunction<*>>) {
+        functions.forEach { function ->
+            val provider = Provider(module, function = function)
+            providers.addService(provider)
         }
     }
 
-    private fun loadQualifiedDeclarations(module: Module, allFunctions: Collection<KFunction<*>>) {
-        val qualifiedFunctions = allFunctions.filter { it.hasAnnotation<Qualifier>() }
-        qualifiedFunctions.forEach {
-            val qualifierName = it.findAnnotation<Qualifier>()?.name.toString()
-            if(qualifierName.isBlank()) throw IllegalStateException("Annotation 이름이 비었어요")
-            qualifiedDeclarations[qualifierName] =
-                { it.call(module) ?: throw IllegalStateException("함수 형태가 잘못됐어요") }
+    // 생성자 주입
+    private fun <T : Any> initWithDependencies(kClazz: KClass<T>): T {
+        val primaryConstructor =
+            kClazz.primaryConstructor
+                ?: throw IllegalStateException("${kClazz.simpleName} 주 생성자가 없어요...ㅠ")
+
+        val constructorParameters = primaryConstructor.parameters
+
+        val instances = constructorParameters.map { parameter ->
+            providers.getInstance(parameter.type.jvmErasure, parameter.getQualifierAnnotation())
+        }.toTypedArray()
+        return primaryConstructor.call(*instances)
+    }
+
+    private fun <T : Any> injectFields(instance: T) {
+        val properties = instance::class
+            .declaredMemberProperties.filter { property ->
+                property.hasInjectAnnotation() || property.hasQualifierAnnotation()
+            }
+
+        properties.forEach { property ->
+            property.isAccessible = true
+            property.javaField?.set(
+                instance,
+                providers.getInstance(
+                    property.returnType.jvmErasure,
+                    property.getQualifierAnnotation()
+                )
+            )
         }
     }
 
-    private fun loadQualifiedSingletons(allFunctions: Collection<KFunction<*>>) {
-        val singletonQualifiedFunctions =
-            allFunctions.filter { it.hasAnnotation<Singleton>() && it.hasAnnotation<Qualifier>() }
-        singletonQualifiedFunctions.forEach {
-            val qualifierName = it.findAnnotation<Qualifier>()?.name.toString()
-            if(qualifierName.isBlank()) throw IllegalStateException("Annotation 이름이 비었어요")
-            qualifiedSingletons[qualifierName] =
-                qualifiedDeclarations[qualifierName]?.invoke() as Any
-        }
+    private fun KProperty<*>.hasInjectAnnotation(): Boolean {
+        return this.annotations.any { it.annotationClass.hasAnnotation<Inject>() }
+    }
+
+    private fun KProperty<*>.hasQualifierAnnotation(): Boolean {
+        return this.annotations.any { it.annotationClass.hasAnnotation<Qualifier>() }
     }
 }
+
+fun KParameter.getQualifierAnnotation() =
+    annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+
+fun KProperty<*>.getQualifierAnnotation() =
+    annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+
+fun KFunction<*>.getQualifierAnnotation() =
+    annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }

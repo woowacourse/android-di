@@ -1,19 +1,24 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woosuk.scott_di.Qualifier
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.DatabaseCartRepo
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel (
-    @Qualifier("Database")
+    @DatabaseCartRepo
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
+    init {
+        Log.d("wooseok", cartRepository::class.simpleName.toString())
+    }
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
     val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
