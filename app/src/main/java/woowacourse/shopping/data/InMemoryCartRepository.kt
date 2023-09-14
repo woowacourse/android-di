@@ -3,7 +3,6 @@ package woowacourse.shopping.data
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
 class InMemoryCartRepository : CartRepository {
     private val products = mutableListOf<CartProduct>()
     override suspend fun addCartProduct(product: Product) {

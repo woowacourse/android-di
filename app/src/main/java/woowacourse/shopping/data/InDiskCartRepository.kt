@@ -5,7 +5,6 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
 class InDiskCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
