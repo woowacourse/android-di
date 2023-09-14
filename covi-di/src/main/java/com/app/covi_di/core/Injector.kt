@@ -8,6 +8,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
     fun <T> inject(clazz: KClass<*>): T {
@@ -31,7 +32,7 @@ object Injector {
         val parameterTypes = mutableListOf<Any>()
 
         kClass.primaryConstructor?.valueParameters?.forEach { param ->
-            val parameterType: KClass<*> = param.type.classifier as KClass<*>
+            val parameterType = param.type.jvmErasure
             if (parameterType.isAbstract) {
                 if (DIContainer.getModuleKClass(parameterType) == null) {
                     parameterTypes.add(getByProvider(parameterType))

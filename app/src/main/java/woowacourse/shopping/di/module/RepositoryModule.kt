@@ -9,7 +9,7 @@ import woowacourse.shopping.repository.ProductRepository
 import kotlin.reflect.KClass
 
 object RepositoryModule: DependencyModule {
-    override fun invoke(context: Context): Map<KClass<*>, KClass<*>> {
+    override fun invoke(): Map<KClass<*>, KClass<*>> {
         return mapOf(
             ProductRepository::class to ProductRepositoryImpl::class,
             CartRepository::class to CartRepositoryImpl::class
