@@ -23,7 +23,7 @@ object DiContainer {
     }
 
     fun <T : Any> inject(kClazz: KClass<T>): T {
-        val instance = initWithDependencies(kClazz).apply {
+        val instance = injectConstructor(kClazz).apply {
             injectFields(kClazz)
         }
         return instance
@@ -37,7 +37,7 @@ object DiContainer {
     }
 
     // 생성자 주입
-    private fun <T : Any> initWithDependencies(kClazz: KClass<T>): T {
+    private fun <T : Any> injectConstructor(kClazz: KClass<T>): T {
         val primaryConstructor =
             kClazz.primaryConstructor
                 ?: throw IllegalStateException("${kClazz.simpleName} 주 생성자가 없어요...ㅠ")

@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 class Providers(
     private val _values: MutableList<Provider> = mutableListOf()
 ) {
-    val values: List<Provider>
+    private val values: List<Provider>
         get() = _values.toList()
 
     fun addService(provider: Provider) {
