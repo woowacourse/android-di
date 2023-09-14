@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.re4rk.arkdi.ArkInject
+import com.re4rk.arkdi.annotations.StorageType
+import com.re4rk.arkdi.annotations.StorageType.Type.DATABASE
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.StorageType
-import woowacourse.shopping.di.StorageType.Type.DATABASE
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository

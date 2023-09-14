@@ -3,11 +3,13 @@ package woowacourse.shopping.di
 import android.content.Context
 import com.re4rk.arkdi.DiContainer
 import com.re4rk.arkdi.Singleton
+import com.re4rk.arkdi.annotations.ContextType
+import com.re4rk.arkdi.annotations.ContextType.Type.ACTIVITY
+import com.re4rk.arkdi.annotations.StorageType
+import com.re4rk.arkdi.annotations.StorageType.Type.DATABASE
 import woowacourse.shopping.data.CartInDiskRepository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.ContextType.Type.ACTIVITY
-import woowacourse.shopping.di.StorageType.Type.DATABASE
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.ui.cart.DateFormatter
 

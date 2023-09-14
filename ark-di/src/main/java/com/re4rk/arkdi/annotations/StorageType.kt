@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdi.annotations
 
 import com.re4rk.arkdi.Qualifier
 import kotlin.annotation.AnnotationRetention.RUNTIME
