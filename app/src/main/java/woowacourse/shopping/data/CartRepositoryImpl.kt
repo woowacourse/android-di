@@ -2,8 +2,9 @@ package woowacourse.shopping.data
 
 import com.app.covi_di.annotation.Inject
 import com.app.covi_di.annotation.Qualifier
+import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.data.mapper.toProduct
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -15,8 +16,8 @@ class CartRepositoryImpl @Inject constructor(private val cartProduct: CartProduc
         cartProduct.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
-        return cartProduct.getAll().map { it.toProduct() }
+    override suspend fun getAllCartProducts(): List<CartProduct> {
+        return cartProduct.getAll().map { it.toDomain() }
     }
 
     override suspend fun deleteCartProduct(id: Long) {

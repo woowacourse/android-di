@@ -1,8 +1,16 @@
 package woowacourse.shopping.data.mapper
 
 import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-fun CartProductEntity.toProduct(): Product {
-    return Product(name, price, imageUrl, createdAt)
+fun CartProductEntity.toDomain(): CartProduct {
+    return CartProduct(
+        product = Product(
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+        ),
+        createdAt = createdAt,
+    )
 }

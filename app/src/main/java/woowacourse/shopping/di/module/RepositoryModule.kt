@@ -1,6 +1,5 @@
 package woowacourse.shopping.di.module
 
-import android.content.Context
 import com.app.covi_di.module.DependencyModule
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
