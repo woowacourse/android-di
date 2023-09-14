@@ -9,32 +9,32 @@ class FakeApplication : DiApplication(FakeApplicationModule::class.java)
 
 class FakeApplicationModule(context: Context) : ApplicationModule(context) {
 
-    @FakeInMemoryCartRepository
-    fun getInMemoryCartRepository(@FakeInMemory localDataSource: FakeLocalDataSource): FakeCartRepository {
+    @FakeInMemoryCartRepositoryQualiefier
+    fun getInMemoryCartRepository(@FakeInMemoryQualifier localDataSource: FakeLocalDataSource): FakeCartRepository {
         return FakeImMemoryCartRepository(FakeInMemoryLocalDataSource())
     }
 
-    @FakeRoomDbCartRepository
-    fun getRoomCartRepository(@FakeRoomDb localDataSource: FakeLocalDataSource): FakeCartRepository {
+    @FakeRoomDbCartRepositoryQualifier
+    fun getRoomCartRepository(@FakeRoomDbQualifier localDataSource: FakeLocalDataSource): FakeCartRepository {
         return FakeDefaultCartRepository(localDataSource)
     }
 
-    @FakeInMemory
+    @FakeInMemoryQualifier
     fun getInMemoryLocalDataSource(): FakeLocalDataSource {
         return FakeInMemoryLocalDataSource()
     }
 
-    @FakeRoomDb
+    @FakeRoomDbQualifier
     fun getDefaultLocalDataSource(): FakeLocalDataSource {
         return FakeDefaultLocalDataSource()
     }
 }
 
 interface FakeCartRepository
-class FakeDefaultCartRepository(private val localDataSource: FakeLocalDataSource) :
+class FakeDefaultCartRepository(val localDataSource: FakeLocalDataSource) :
     FakeCartRepository
 
-class FakeImMemoryCartRepository(private val localDataSource: FakeLocalDataSource) :
+class FakeImMemoryCartRepository(val localDataSource: FakeLocalDataSource) :
     FakeCartRepository
 
 interface FakeLocalDataSource
@@ -45,13 +45,13 @@ interface FakeProductRepository
 class FakeDefaultProductRepository : FakeProductRepository
 
 @Qualifier
-annotation class FakeRoomDb
+annotation class FakeRoomDbQualifier
 
 @Qualifier
-annotation class FakeInMemory
+annotation class FakeInMemoryQualifier
 
 @Qualifier
-annotation class FakeRoomDbCartRepository
+annotation class FakeRoomDbCartRepositoryQualifier
 
 @Qualifier
-annotation class FakeInMemoryCartRepository
+annotation class FakeInMemoryCartRepositoryQualiefier

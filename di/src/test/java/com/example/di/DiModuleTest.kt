@@ -9,8 +9,8 @@ import com.example.di.annotation.FieldInject
 import com.example.di.application.DiApplication
 import com.example.di.module.ActivityModule
 import com.example.di.module.ApplicationModule
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +19,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.reflect.full.isSubclassOf
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = FakeApplication::class)
@@ -39,13 +38,9 @@ internal class DiModuleTest {
     @Test
     fun `가시성이 공개된 필드인 productRepository를 필드 주입 받을 수 있다`() {
         // given
-        class FakeViewModel(
-            @FakeRoomDbCartRepository private val cartRepository: FakeCartRepository,
-        ) : ViewModel() {
+        class FakeViewModel : ViewModel() {
             @FieldInject
             lateinit var productRepository: FakeProductRepository
-
-            lateinit var a: String
         }
 
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
@@ -63,19 +58,17 @@ internal class DiModuleTest {
         val activityModule = FakeActivityModule(activity, applicationModule)
 
         // when
-        val instance = activityModule.provideInstance(FakeViewModel::class.java)
+        val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
 
         // then
-        assertTrue(instance::class.isSubclassOf(FakeViewModel::class))
-        assertDoesNotThrow { instance.productRepository }
+        assertThat(viewModel).isInstanceOf(FakeViewModel::class.java)
+        assertDoesNotThrow { viewModel.productRepository }
     }
 
     @Test
-    fun `가시성이 공개되지 않은 필드는 주입받을 수 없다`() {
+    fun `가시성이 공개되지 않은 필드인 productRepository는 필드주입 받을 수 없다`() {
         // given
-        class FakeViewModel(
-            @FakeRoomDbCartRepository private val cartRepository: FakeCartRepository,
-        ) : ViewModel() {
+        class FakeViewModel : ViewModel() {
             @FieldInject
             private lateinit var productRepository: FakeProductRepository
         }
@@ -95,24 +88,25 @@ internal class DiModuleTest {
         val activityModule = FakeActivityModule(activity, applicationModule)
 
         // then
-        assertThrows(IllegalStateException::class.java) {
-            activityModule.provideInstance(FakeViewModel::class.java)
-        }
+        assertThatThrownBy { activityModule.provideInstance(FakeViewModel::class.java) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("필드 주입을 받으려는 productRepository의 가시성이 공개되어 있지 않습니다.")
     }
 
     @Test
-    fun `두 가지 이상 모듈 내 함수와 매칭되면, 주입받을 수 없다`() {
+    fun `두 가지 이상 모듈 내 함수와 매칭되는데, 퀄리파이어가 지정되어 있지 않다면, 주입받을 수 없다`() {
         // given
         class FakeViewModel(
-            private val cartRepository: FakeCartRepository, // 이거 때문에 에러 발생.
-        ) : ViewModel() {
-            @FieldInject
-            lateinit var productRepository: FakeProductRepository
-        }
+            private val productRepository: FakeProductRepository,
+        ) : ViewModel()
 
         class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
             ActivityModule(activityContext, applicationModule) {
-            fun getFakeDefaultProductRepository(): FakeProductRepository {
+            fun getProductRepository1(): FakeProductRepository {
+                return FakeDefaultProductRepository()
+            }
+
+            fun getProductRepository2(): FakeProductRepository {
                 return FakeDefaultProductRepository()
             }
         }
@@ -125,8 +119,59 @@ internal class DiModuleTest {
         val activityModule = FakeActivityModule(activity, applicationModule)
 
         // then
-        assertThrows(IllegalStateException::class.java) {
-            activityModule.provideInstance(FakeViewModel::class.java)
+        assertThatThrownBy { activityModule.provideInstance(FakeViewModel::class.java) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("실행할 함수를 선택할 수 없습니다.")
+    }
+
+    @Test
+    fun `두 가지 이상 모듈 내 함수와 매칭되더라도,퀄리파이어 어노테이션이 붙어있다면 주입받을 수 있다`() {
+        // given
+        class FakeViewModel(
+            @FakeInMemoryCartRepositoryQualiefier val cartRepository: FakeCartRepository,
+        ) : ViewModel()
+
+        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityModule(activityContext, applicationModule)
+
+        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+            val viewModel by viewModel<FakeViewModel>()
+        }
+
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+        val activityModule = FakeActivityModule(activity, applicationModule)
+
+        // when
+        val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
+
+        // then
+        assertThat(viewModel).isInstanceOf(FakeViewModel::class.java)
+    }
+
+    @Test
+    fun `주입 받으려는 객체 안에 있는 객체도 재귀적으로 주입받아서 FakeCartRepository객체를 제공해줄 수 있다`() {
+        // given
+        class FakeViewModel(
+            @FakeInMemoryCartRepositoryQualiefier val cartRepository: FakeCartRepository,
+        ) : ViewModel()
+
+        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityModule(activityContext, applicationModule)
+
+        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+            val viewModel by viewModel<FakeViewModel>()
+        }
+
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+        val activityModule = FakeActivityModule(activity, applicationModule)
+
+        // then
+        val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
+        val cartRepository =
+            assertDoesNotThrow { viewModel.cartRepository as? FakeImMemoryCartRepository }
+        cartRepository?.let { cartRepository ->
+            assertDoesNotThrow { cartRepository.localDataSource }
+            assertThat(cartRepository.localDataSource).isInstanceOf(FakeInMemoryLocalDataSource::class.java)
         }
     }
 }
