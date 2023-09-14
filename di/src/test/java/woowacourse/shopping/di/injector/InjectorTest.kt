@@ -96,11 +96,11 @@ class InjectorTest {
         val fakeDao: FakeDao = DefaultFakeDao()
         container.createInstance(FakeDao::class, fakeDao)
         container.createInstance(
-            Qualifier.IN_MEMORY,
+            "A",
             injector.create(InMemoryFakeRepository::class)
         )
         container.createInstance(
-            Qualifier.DATABASE,
+            "B",
             injector.create(DatabaseFakeRepository::class)
         )
 
@@ -162,9 +162,9 @@ class FakeViewModel @Injected constructor(
 )
 
 class FakeQualifierViewModel @Injected constructor(
-    @Qualifier(Qualifier.IN_MEMORY) val inMemoryRepository: FakeRepository,
+    @Qualifier("A") val inMemoryRepository: FakeRepository,
 ) {
     @Injected
-    @Qualifier(Qualifier.DATABASE)
+    @Qualifier("B")
     private var databaseRepository: FakeRepository? = null // 테스트를 용이하게 하기 위해 null
 }

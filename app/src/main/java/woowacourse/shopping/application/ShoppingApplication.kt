@@ -8,6 +8,7 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.di.annotations.StorageType
 import woowacourse.shopping.di.container.DefaultContainer
 import woowacourse.shopping.di.container.DiContainer
 import woowacourse.shopping.di.injector.Injector
@@ -44,11 +45,11 @@ class ShoppingApplication : Application() {
             injector.create(DefaultProductRepository::class)
         )
         appContainer.createInstance(
-            Qualifier.DATABASE,
+            StorageType.DATABASE,
             injector.create(DefaultCartRepository::class)
         )
         appContainer.createInstance(
-            Qualifier.IN_MEMORY,
+            StorageType.IN_MEMORY,
             injector.create(InMemoryCartRepository::class)
         )
     }
