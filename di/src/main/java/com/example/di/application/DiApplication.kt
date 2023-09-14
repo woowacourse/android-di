@@ -28,7 +28,7 @@ open class DiApplication(private val applicationModuleClazz: Class<out Applicati
         check(primaryConstructor.valueParameters.size == 1) {
             ERROR_APPLICATION_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
         }
-        check(primaryConstructor.valueParameters.first().type.jvmErasure == Context::class.java) {
+        check(primaryConstructor.valueParameters.first().type.jvmErasure == Context::class) {
             ERROR_APPLICATION_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
         }
     }

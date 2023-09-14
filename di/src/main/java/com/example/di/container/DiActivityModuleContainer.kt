@@ -34,8 +34,7 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
     }
 
     fun removeModule(ownerHashCode: Int) {
-        val module = moduleMap.remove(ownerHashCode)
-        module?.context = null
+        moduleMap.remove(ownerHashCode)
     }
 
     private fun validateActivityModulePrimaryConstructor(primaryConstructor: KFunction<ActivityModule>) {
@@ -51,6 +50,6 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         private const val ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION =
             "[ERROR] ActivityModule를 상속한 클래스의 생성자의 매개변수는 2개여야 하고, 그 타입은 Context와 ApplicationModule이어야 합니다."
         private val ACTIVITY_MODULE_VALUE_PARAMETER_TYPES =
-            listOf(Context::class.java, ApplicationModule::class.java)
+            listOf(Context::class, ApplicationModule::class)
     }
 }

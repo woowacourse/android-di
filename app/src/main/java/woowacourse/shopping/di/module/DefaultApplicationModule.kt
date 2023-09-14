@@ -38,10 +38,8 @@ class DefaultApplicationModule(applicationContext: Context) :
     }
 
     fun getCartDao(): CartProductDao {
-        val applicationContext =
-            context ?: throw IllegalStateException("애플리케이션이 아직 초기화되지 않았습니다")
         return Room.databaseBuilder(
-            applicationContext,
+            context,
             ShoppingDatabase::class.java,
             SHOPPING_DATABASE_NAME,
         ).build().cartProductDao()

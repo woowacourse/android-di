@@ -15,7 +15,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class Module(var context: Context?, private val parentModule: Module? = null) {
+abstract class Module(var context: Context, private val parentModule: Module? = null) {
     private val cache = mutableMapOf<String, Any>()
 
     fun <T : Any> provideInstance(clazz: Class<T>, qualifier: KClass<out Annotation>? = null): T {
