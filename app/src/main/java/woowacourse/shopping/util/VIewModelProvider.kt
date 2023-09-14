@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.application.ShoppingApplication
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
+inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM> {
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
