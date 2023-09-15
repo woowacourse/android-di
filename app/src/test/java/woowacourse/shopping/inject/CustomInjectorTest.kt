@@ -19,6 +19,8 @@ import woowacourse.shopping.inject.fake.FakeViewModel
 import woowacourse.shopping.repository.CartRepository
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 
 class CustomInjectorTest {
 
@@ -80,6 +82,9 @@ class CustomInjectorTest {
         // then
         assertNotNull(viewModel)
         assertNotNull(viewModel.cartRepository)
+        // viewModel 생성자 파라미터안에 있는 타입이 TestCartInfo임을 확인
+        assertEquals(viewModel.cartRepository::class.primaryConstructor?.parameters?.first()?.type?.jvmErasure, TestCartInfo::class)
+        assertNotNull(viewModel.cartRepository::class.primaryConstructor?.parameters)
         assertEquals(viewModel.cartRepository.javaClass.kotlin, FakeInMemoryCartRepository::class)
     }
 
