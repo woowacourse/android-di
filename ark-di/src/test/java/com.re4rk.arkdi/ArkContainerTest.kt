@@ -24,7 +24,7 @@ private annotation class FakeNoQualifier(val type: Type) {
     }
 }
 
-class DiContainerTest {
+class ArkContainerTest {
     interface FakeDiRepository {
         fun get(): String
     }
@@ -61,7 +61,7 @@ class DiContainerTest {
         }
     }
 
-    private class FakeDiContainer : DiContainer() {
+    private class FakeArkContainer : ArkContainer() {
         fun provideFakeDiDataSource(): FakeDiDataSource =
             this.createInstance(FakeDiProtoTypeDataSource::class)
 
@@ -69,7 +69,7 @@ class DiContainerTest {
             this.createInstance(FakeDiProtoTypeRepository::class)
     }
 
-    private val fakeDiContainer = FakeDiContainer()
+    private val fakeDiContainer = FakeArkContainer()
 
     @Test
     fun `DiContainer안에 있는 객체를 반환한다`() {
@@ -101,7 +101,7 @@ class DiContainerTest {
     @Test
     fun `의존성 부여 순서는 상관 없다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             fun provideFakeDiRepository(): FakeDiRepository =
                 this.createInstance(FakeDiProtoTypeRepository::class)
 
@@ -228,7 +228,7 @@ class DiContainerTest {
     fun `어노테이션을 통해 의존성을 주입할 수 있다`() {
         // given
 
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
         }
@@ -252,7 +252,7 @@ class DiContainerTest {
     @Test
     fun `어노테이션을 통해 의존성을 주입할 때 Qualifier 어노테이션의 이름이 다르면 예외를 발생시킨다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
         }
@@ -275,7 +275,7 @@ class DiContainerTest {
     @Test
     fun `같은 타입이면 Qualifier 어노테이션으로 구분한다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(
                 fakeDiDataSource: FakeDiDataSource,
@@ -314,7 +314,7 @@ class DiContainerTest {
     @Test
     fun `@Qualifier 어노테이션이 아니면 확인하지 않는다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @FakeNoQualifier(FIRST)
             fun provideFakeDiRepository(
                 fakeDiDataSource: FakeDiDataSource,
@@ -353,7 +353,7 @@ class DiContainerTest {
     @Test
     fun `@Singlone을 붙이면 메소드로 생성하면 캐싱된다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -370,7 +370,7 @@ class DiContainerTest {
     @Test
     fun `@Singlone을 붙이지 않으면 매번 새로운 객체를 생성한다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
         }
@@ -396,7 +396,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -421,7 +421,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -448,7 +448,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkContainer() {
             @FakeStorageType(DATABASE)
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =

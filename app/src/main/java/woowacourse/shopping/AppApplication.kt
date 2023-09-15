@@ -1,30 +1,30 @@
 package woowacourse.shopping
 
 import android.content.Context
-import com.re4rk.arkdi.DiContainer
-import com.re4rk.arkdiAndroid.DiApplication
-import com.re4rk.arkdiAndroid.DiGenerator
-import woowacourse.shopping.di.DiActivityModule
-import woowacourse.shopping.di.DiApplicationModule
-import woowacourse.shopping.di.DiRetainedActivityModule
-import woowacourse.shopping.di.DiViewModelModule
+import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdiAndroid.ArkApplication
+import com.re4rk.arkdiAndroid.ArkGenerator
+import woowacourse.shopping.di.ActivityModule
+import woowacourse.shopping.di.ApplicationModule
+import woowacourse.shopping.di.RetainedActivityModule
+import woowacourse.shopping.di.ViewModelModule
 
-class AppApplication : DiApplication() {
-    override val diGenerator = object : DiGenerator {
-        override fun createApplicationModule(applicationContext: Context): DiApplicationModule =
-            DiApplicationModule(applicationContext)
+class AppApplication : ArkApplication() {
+    override val arkGenerator = object : ArkGenerator {
+        override fun createApplicationModule(applicationContext: Context): ApplicationModule =
+            ApplicationModule(applicationContext)
 
         override fun createRetainedActivityModule(
-            parentDiModule: DiContainer,
+            parentDiModule: ArkContainer,
             context: Context,
-        ): DiRetainedActivityModule = DiRetainedActivityModule(parentDiModule, context)
+        ): RetainedActivityModule = RetainedActivityModule(parentDiModule, context)
 
         override fun createActivityModule(
-            parentDiModule: DiContainer,
+            parentDiModule: ArkContainer,
             context: Context,
-        ): DiActivityModule = DiActivityModule(parentDiModule, context)
+        ): ActivityModule = ActivityModule(parentDiModule, context)
 
-        override fun createViewModelModule(parentDiModule: DiContainer): DiViewModelModule =
-            DiViewModelModule(parentDiModule)
+        override fun createViewModelModule(parentDiModule: ArkContainer): ViewModelModule =
+            ViewModelModule(parentDiModule)
     }
 }

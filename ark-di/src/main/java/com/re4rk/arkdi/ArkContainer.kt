@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-open class DiContainer(private val parentDiContainer: DiContainer? = null) {
+open class ArkContainer(private val parentArkContainer: ArkContainer? = null) {
     private val instanceHolderMap = mutableMapOf<KFunction<*>, Any>()
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
@@ -29,7 +29,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
         val args = constructor.parameters.associateWith { parameter -> getInstance(parameter) }
         return constructor.callBy(args).apply {
-            this@DiContainer.inject(this)
+            this@ArkContainer.inject(this)
         }
     }
 
@@ -55,7 +55,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     private fun getInstance(kType: KType, qualifier: Annotation?): Any? {
         val method = getKFunction(kType, qualifier)
-            ?: return parentDiContainer?.getInstance(kType, qualifier)
+            ?: return parentArkContainer?.getInstance(kType, qualifier)
 
         return if (method.hasAnnotation<Singleton>()) {
             getSingletonInstance(method)
@@ -85,7 +85,7 @@ open class DiContainer(private val parentDiContainer: DiContainer? = null) {
 
     private fun getArgument(parameter: KParameter): Any? {
         return when {
-            parameter.type.jvmErasure.isSubclassOf(DiContainer::class) -> this@DiContainer
+            parameter.type.jvmErasure.isSubclassOf(ArkContainer::class) -> this@ArkContainer
             else -> getInstance(parameter)
         }
     }

@@ -3,12 +3,12 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.re4rk.arkdi.ArkInject
-import com.re4rk.arkdiAndroid.DiAppCompatActivity
+import com.re4rk.arkdiAndroid.ArkAppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.util.viewModels
 
-class CartActivity : DiAppCompatActivity() {
+class CartActivity : ArkAppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
