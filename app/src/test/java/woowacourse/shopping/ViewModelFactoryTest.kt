@@ -2,7 +2,6 @@ package woowacourse.shopping
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.bandal.di.BandalInject
 import com.bandal.di.BandalInjectorAppContainer
 import com.bandal.di.DIError
@@ -14,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.common.CommonViewModelFactory
+import woowacourse.shopping.common.injectViewModelByBandal
 
 interface FakeRepository
 
@@ -32,21 +31,11 @@ class FakeViewModelWithField : ViewModel() {
 }
 
 class FakeActivityWithConstructor : AppCompatActivity() {
-    val viewModel: FakeViewModelWithConstructor by lazy {
-        ViewModelProvider(
-            this,
-            CommonViewModelFactory,
-        )[FakeViewModelWithConstructor::class.java]
-    }
+    val viewModel: FakeViewModelWithConstructor by injectViewModelByBandal()
 }
 
 class FakeActivityWithField : AppCompatActivity() {
-    val viewModel: FakeViewModelWithField by lazy {
-        ViewModelProvider(
-            this,
-            CommonViewModelFactory,
-        )[FakeViewModelWithField::class.java]
-    }
+    val viewModel: FakeViewModelWithField by injectViewModelByBandal()
 }
 
 @RunWith(RobolectricTestRunner::class)
