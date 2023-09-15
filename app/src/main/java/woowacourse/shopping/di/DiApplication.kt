@@ -6,13 +6,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.re4rk.arkdi.DiContainer
 
 open class DiApplication : Application() {
-    private val diApplicationModule: DiApplicationModule by lazy {
-        DiApplicationModule(applicationContext)
-    }
+    private val diApplicationModule: DiApplicationModule
+        by lazy { DiApplicationModule(applicationContext) }
 
-    private val diContainer: DiContainer by lazy {
-        DiContainer(diApplicationModule)
-    }
+    private val diContainer: DiContainer
+        by lazy { DiContainer(diApplicationModule) }
 
     override fun onCreate() {
         super.onCreate()
