@@ -1,15 +1,15 @@
 package com.re4rk.arkdiAndroid
 
 import androidx.lifecycle.ViewModel
-import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdi.ArkModule
 
 class ArkViewModel : ViewModel() {
-    lateinit var ownerRetainedArkContainer: ArkContainer
-    lateinit var ownerArkContainer: ArkContainer
-    lateinit var viewModelArkContainer: ArkContainer
+    lateinit var ownerRetainedModule: ArkModule
+    lateinit var ownerModule: ArkModule
+    lateinit var viewModelModule: ArkModule
 
     val isInitialized
-        get() = ::ownerRetainedArkContainer.isInitialized &&
-            ::ownerArkContainer.isInitialized &&
-            ::viewModelArkContainer.isInitialized
+        get() = ::ownerRetainedModule.isInitialized &&
+            ::ownerModule.isInitialized &&
+            ::viewModelModule.isInitialized
 }

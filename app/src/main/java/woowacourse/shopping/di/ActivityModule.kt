@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdi.ArkModule
 
 @Suppress("unused")
-class ActivityModule(parentArkContainer: ArkContainer, context: Context) :
-    ArkContainer(parentArkContainer)
+class ActivityModule(parentArkModule: ArkModule, context: Context) :
+    ArkModule(parentArkModule)

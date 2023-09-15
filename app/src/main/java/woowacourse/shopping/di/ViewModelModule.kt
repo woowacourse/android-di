@@ -1,14 +1,14 @@
 package woowacourse.shopping.di
 
-import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdi.ArkModule
 import com.re4rk.arkdi.Singleton
 import woowacourse.shopping.data.ProductSampleRepository
 import woowacourse.shopping.repository.ProductRepository
 
 @Suppress("unused")
 class ViewModelModule(
-    parentArkContainer: ArkContainer,
-) : ArkContainer(parentArkContainer) {
+    parentArkModule: ArkModule,
+) : ArkModule(parentArkModule) {
     @Singleton
     fun provideProductRepository(): ProductRepository = ProductSampleRepository()
 }

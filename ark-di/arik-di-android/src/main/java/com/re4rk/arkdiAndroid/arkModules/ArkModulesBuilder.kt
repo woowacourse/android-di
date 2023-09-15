@@ -1,35 +1,35 @@
 package com.re4rk.arkdiAndroid.arkModules
 
 import android.content.Context
-import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdi.ArkModule
 
 class ArkModulesBuilder {
-    var applicationModule: (Context) -> ArkContainer =
-        { ArkContainer() }
-    var retainedActivityModule: (ArkContainer, Context) -> ArkContainer =
-        { parent, _ -> ArkContainer(parent) }
-    var activityModule: (ArkContainer, Context) -> ArkContainer =
-        { parent, _ -> ArkContainer(parent) }
-    var viewModelModule: (ArkContainer) -> ArkContainer =
-        { parent -> ArkContainer(parent) }
+    var applicationModule: (Context) -> ArkModule =
+        { ArkModule() }
+    var retainedActivityModule: (ArkModule, Context) -> ArkModule =
+        { parentModule, _ -> ArkModule(parentModule) }
+    var activityModule: (ArkModule, Context) -> ArkModule =
+        { parentModule, _ -> ArkModule(parentModule) }
+    var viewModelModule: (ArkModule) -> ArkModule =
+        { parentModule -> ArkModule(parentModule) }
 
     fun build(): ArkModules {
         return object : ArkModules {
-            override fun createApplicationModule(applicationContext: Context): ArkContainer =
+            override fun createApplicationModule(applicationContext: Context): ArkModule =
                 applicationModule(applicationContext)
 
             override fun createRetainedActivityModule(
-                parent: ArkContainer,
+                parentModule: ArkModule,
                 context: Context,
-            ): ArkContainer = retainedActivityModule(parent, context)
+            ): ArkModule = retainedActivityModule(parentModule, context)
 
             override fun createActivityModule(
-                parent: ArkContainer,
+                parentModule: ArkModule,
                 context: Context,
-            ): ArkContainer = activityModule(parent, context)
+            ): ArkModule = activityModule(parentModule, context)
 
-            override fun createViewModelModule(parent: ArkContainer): ArkContainer =
-                viewModelModule(parent)
+            override fun createViewModelModule(parentModule: ArkModule): ArkModule =
+                viewModelModule(parentModule)
         }
     }
 }

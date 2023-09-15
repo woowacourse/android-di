@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-open class ArkContainer(private val parentArkContainer: ArkContainer? = null) {
+open class ArkModule(private val parentModule: ArkModule? = null) {
     private val instanceHolderMap = mutableMapOf<KFunction<*>, Any>()
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
@@ -29,7 +29,7 @@ open class ArkContainer(private val parentArkContainer: ArkContainer? = null) {
 
         val args = constructor.parameters.associateWith { parameter -> getInstance(parameter) }
         return constructor.callBy(args).apply {
-            this@ArkContainer.inject(this)
+            this@ArkModule.inject(this)
         }
     }
 
@@ -55,7 +55,7 @@ open class ArkContainer(private val parentArkContainer: ArkContainer? = null) {
 
     private fun getInstance(kType: KType, qualifier: Annotation?): Any? {
         val method = getKFunction(kType, qualifier)
-            ?: return parentArkContainer?.getInstance(kType, qualifier)
+            ?: return parentModule?.getInstance(kType, qualifier)
 
         return if (method.hasAnnotation<Singleton>()) {
             getSingletonInstance(method)
@@ -85,7 +85,7 @@ open class ArkContainer(private val parentArkContainer: ArkContainer? = null) {
 
     private fun getArgument(parameter: KParameter): Any? {
         return when {
-            parameter.type.jvmErasure.isSubclassOf(ArkContainer::class) -> this@ArkContainer
+            parameter.type.jvmErasure.isSubclassOf(ArkModule::class) -> this@ArkModule
             else -> getInstance(parameter)
         }
     }

@@ -6,13 +6,13 @@ import kotlin.reflect.KClass
 
 open class ArkAppCompatActivity : AppCompatActivity() {
     private val arkViewModel: ArkViewModel
-        by lazy { (application as ArkApplication).getActivityDiContainer(this) }
+        by lazy { (application as ArkApplication).getActivityModule(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arkViewModel.ownerArkContainer.inject(this)
+        arkViewModel.ownerModule.inject(this)
     }
 
     fun <T : Any> injectViewModel(clazz: KClass<T>) =
-        arkViewModel.viewModelArkContainer.createInstance(clazz)
+        arkViewModel.viewModelModule.createInstance(clazz)
 }

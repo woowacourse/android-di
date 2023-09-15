@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdi.ArkModule
 import com.re4rk.arkdi.Singleton
 import com.re4rk.arkdi.annotations.ContextType
 import com.re4rk.arkdi.annotations.ContextType.Type.APPLICATION
@@ -17,7 +17,7 @@ import woowacourse.shopping.repository.CartRepository
 @Suppress("unused")
 class ApplicationModule(
     private val applicationContext: Context,
-) : ArkContainer() {
+) : ArkModule() {
     @Singleton
     @ContextType(APPLICATION)
     fun provideApplicationContext(): Context = applicationContext
