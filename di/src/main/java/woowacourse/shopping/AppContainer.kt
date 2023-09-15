@@ -25,15 +25,13 @@ class AppContainer {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> inject(clazz: Class<T>): T {
-        val kClass = clazz.kotlin
+    fun <T : Any> inject(clazz: KClass<T>): T {
+        instances[clazz]?.let { return it as T }
 
-        instances[kClass]?.let { return it as T }
+        val instance = getInstanceOf(clazz) ?: createInstanceOf(clazz)
+        injectFields(clazz, instance)
 
-        val instance = getInstanceOf(kClass) ?: createInstanceOf(kClass)
-        injectFields(kClass, instance)
-
-        saveInstance(kClass, instance)
+        saveInstance(clazz, instance)
         return instance
     }
 
@@ -47,7 +45,7 @@ class AppContainer {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.getImplementationClass().java)
+            inject(it.getImplementationClass())
         }.toTypedArray()
         return args
     }
@@ -80,7 +78,7 @@ class AppContainer {
         clazz.declaredMemberProperties.forEach {
             if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
                 it.isAccessible = true
-                it.setter.call(instance, inject(it.getImplementationClass().java))
+                it.setter.call(instance, inject(it.getImplementationClass()))
             }
         }
     }

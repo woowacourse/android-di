@@ -25,7 +25,7 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         appContainer = AppContainer()
-        viewModel = appContainer.inject(MainViewModel::class.java)
+        viewModel = appContainer.inject(MainViewModel::class)
     }
 
     @Test

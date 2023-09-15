@@ -10,6 +10,6 @@ val viewModelFactory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val application = checkNotNull(extras[APPLICATION_KEY]) as ShoppingApplication
         val appContainer = application.appContainer
-        return appContainer.inject(modelClass)
+        return appContainer.inject(modelClass.kotlin)
     }
 }
