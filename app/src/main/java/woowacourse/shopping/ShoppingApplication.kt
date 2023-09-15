@@ -14,9 +14,9 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Container.addInstance(InMemoryProductRepository::class, null)
-        Container.addInstance(InDiskCartRepository::class, null)
-        Container.addInstance(InMemoryCartRepository::class, null)
+        Container.addInstance(InMemoryProductRepository::class)
+        Container.addInstance(InDiskCartRepository::class)
+        Container.addInstance(InMemoryCartRepository::class)
         Container.addInstance(
             CartProductDao::class,
             ShoppingDatabase.getDatabase(this).cartProductDao(),

@@ -8,7 +8,7 @@ object Container {
 
     private val instances = mutableMapOf<KClass<*>, Any?>()
 
-    fun addInstance(key: KClass<*>, instance: Any?) {
+    fun addInstance(key: KClass<*>, instance: Any? = null) {
         instances[key] = instance
     }
 
