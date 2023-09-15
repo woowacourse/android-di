@@ -4,7 +4,6 @@ import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.SingleInstance
 import woowacourse.shopping.dslbuilder.ProviderBuilder
-import woowacourse.shopping.dslbuilder.QualifierBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -12,7 +11,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -21,14 +19,9 @@ import kotlin.reflect.jvm.jvmErasure
 class AppContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private var providers: Map<KClass<*>, KFunction<*>> = emptyMap()
-    private var qualifiers: Map<Qualifier, KClass<*>> = emptyMap()
 
     fun registerProviders(block: ProviderBuilder.() -> Unit) {
         providers = ProviderBuilder().apply(block).build()
-    }
-
-    fun registerQualifiers(block: QualifierBuilder.() -> Unit) {
-        qualifiers = QualifierBuilder().apply(block).build()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -60,10 +53,17 @@ class AppContainer {
     }
 
     private fun KParameter.getImplementationClass(): KClass<*> {
-        val qualifier = findAnnotation<Qualifier>()
+        val implementationClass = getImplementationClassFromAnnotations(annotations)
+        return implementationClass ?: type.jvmErasure
+    }
+
+    private fun getImplementationClassFromAnnotations(annotations: List<Annotation>): KClass<*>? {
+        val qualifier =
+            annotations.firstOrNull { it.annotationClass == Qualifier::class } as? Qualifier
         return qualifier?.let {
-            qualifiers[it]
-        } ?: type.jvmErasure
+            val packageName = it.name
+            Class.forName(packageName).kotlin
+        }
     }
 
     private fun <T : Any> createInstanceOf(implementationClass: KClass<out T>): T {
@@ -86,10 +86,8 @@ class AppContainer {
     }
 
     private fun <T : Any> KProperty1<T, *>.getImplementationClass(): KClass<*> {
-        val qualifier = findAnnotation<Qualifier>()
-        return qualifier?.let {
-            qualifiers[it]
-        } ?: returnType.jvmErasure
+        val implementationClass = getImplementationClassFromAnnotations(annotations)
+        return implementationClass ?: returnType.jvmErasure
     }
 
     private fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
