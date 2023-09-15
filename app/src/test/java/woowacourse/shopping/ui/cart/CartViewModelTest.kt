@@ -2,14 +2,21 @@ package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.Runs
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -22,30 +29,47 @@ class CartViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private val fakeCartProductList = mutableListOf(
-        Product(
-            name = "Eddie Finley",
-            price = 3686,
-            imageUrl = "https://www.google.com/#q=nostrum",
+        CartProduct(
+            cartProductId = 7311,
+            product = Product(
+                name = "Geneva Moon",
+                price = 4521,
+                imageUrl = "http://www.bing.com/search?q=dapibus",
+            ),
+            createdAt = 2124,
+
         ),
-        Product(
-            name = "Salvador Carter",
-            price = 5308,
-            imageUrl = "https://search.yahoo.com/search?p=euismod",
+        CartProduct(
+            cartProductId = 2254,
+            product = Product(
+                name = "Sonya Black",
+                price = 3862,
+                imageUrl = "http://www.bing.com/search?q=splendide",
+            ),
+            createdAt = 5752,
         ),
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         cartRepository = mockk()
         vm = CartViewModel(cartRepository)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
     fun `전체 카트 상품 목록 조회`() {
         // given
-        every {
+        coEvery {
             cartRepository.getAllCartProducts()
-        } answers {
+        } coAnswers {
             fakeCartProductList
         }
 
@@ -58,7 +82,7 @@ class CartViewModelTest {
 
     @Test
     fun `카트 상품 목록에서 상품 삭제하면 삭제 상태가 true다`() {
-        every { cartRepository.deleteCartProduct(any()) } just Runs
+        coEvery { cartRepository.deleteCartProduct(any()) } just Runs
 
         vm.deleteCartProduct(0)
 

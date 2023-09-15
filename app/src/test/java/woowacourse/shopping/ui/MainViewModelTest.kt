@@ -2,10 +2,17 @@ package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,6 +22,7 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModelTest {
+
     private lateinit var vm: MainViewModel
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
@@ -22,11 +30,19 @@ class MainViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = mockk()
         cartRepository = mockk()
         vm = MainViewModel(productRepository, cartRepository)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
@@ -34,7 +50,7 @@ class MainViewModelTest {
         // given
         val fakeProduct = mockk<Product>()
 
-        every {
+        coEvery {
             cartRepository.addCartProduct(any())
         } just Runs
 
