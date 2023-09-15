@@ -13,6 +13,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 class CustomInjector {
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> inject(kClass: KClass<T>, annotations: List<Annotation> = emptyList()): T {
         val annotationWithQualifier =
             annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
