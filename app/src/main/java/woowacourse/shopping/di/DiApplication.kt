@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.re4rk.arkdi.DiContainer
+import com.re4rk.arkdiAndroid.DiGenerator
 
-open class DiApplication : Application() {
-    private val diApplicationModule: DiApplicationModule
-        by lazy { DiApplicationModule(applicationContext) }
+abstract class DiApplication : Application() {
+    abstract val diGenerator: DiGenerator
 
     private val diContainer: DiContainer
-        by lazy { DiContainer(diApplicationModule) }
+        by lazy { diGenerator.createApplicationModule(applicationContext) }
 
     override fun onCreate() {
         super.onCreate()
@@ -20,10 +20,11 @@ open class DiApplication : Application() {
     fun getActivityDiContainer(activity: ComponentActivity): DiViewModel {
         return ViewModelProvider(activity)[DiViewModel::class.java].apply {
             if (isInitialized.not()) {
-                ownerRetainedDiContainer = DiRetainedActivityModule(diApplicationModule, activity)
-                viewModelDiContainer = DiViewModelModule(ownerRetainedDiContainer)
+                ownerRetainedDiContainer =
+                    diGenerator.createRetainedActivityModule(diContainer, activity)
+                viewModelDiContainer = diGenerator.createViewModelModule(ownerRetainedDiContainer)
             }
-            ownerDiContainer = DiActivityModule(ownerRetainedDiContainer)
+            ownerDiContainer = diGenerator.createActivityModule(ownerRetainedDiContainer, activity)
         }
     }
 }
