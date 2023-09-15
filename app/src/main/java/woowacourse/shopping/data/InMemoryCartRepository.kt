@@ -11,8 +11,8 @@ class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf(
         CartProduct(
             0,
-            "하이",
-            2345,
+            "우테코 껌",
+            2300,
             "",
             System.currentTimeMillis(),
         ),
@@ -21,7 +21,7 @@ class InMemoryCartRepository : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         cartProducts.add(
             CartProduct(
-                0,
+                cartProducts.size.toLong(),
                 product.name,
                 product.price,
                 product.imageUrl,
