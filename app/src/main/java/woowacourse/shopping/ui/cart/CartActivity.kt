@@ -5,13 +5,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.util.viewModel
+import woowacourse.shopping.util.injectViewModel
 
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModel()
+    private val viewModel: CartViewModel by injectViewModel()
 
     private lateinit var dateFormatter: DateFormatter
 
@@ -54,13 +54,13 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct,
-            )
-            binding.rvCartProducts.adapter = adapter
+        val adapter = CartProductAdapter(
+            dateFormatter = dateFormatter,
+            viewModel::deleteCartProduct,
+        )
+        binding.rvCartProducts.adapter = adapter
+        viewModel.cartProducts.observe(this) { cartProducts ->
+            adapter.submitList(cartProducts)
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
