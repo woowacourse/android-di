@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.re4rk.arkdi.ArkContainer
-import com.re4rk.arkdiAndroid.arkGenerator.ArkGenerator
+import com.re4rk.arkdiAndroid.arkModules.ArkModules
 
 abstract class ArkApplication : Application() {
-    abstract val arkGenerator: ArkGenerator
+    abstract val arkModules: ArkModules
 
     private val arkContainer: ArkContainer
-        by lazy { arkGenerator.createApplicationModule(applicationContext) }
+        by lazy { arkModules.createApplicationModule(applicationContext) }
 
     override fun onCreate() {
         super.onCreate()
@@ -21,10 +21,10 @@ abstract class ArkApplication : Application() {
         return ViewModelProvider(activity)[ArkViewModel::class.java].apply {
             if (isInitialized.not()) {
                 ownerRetainedArkContainer =
-                    arkGenerator.createRetainedActivityModule(arkContainer, activity)
-                viewModelArkContainer = arkGenerator.createViewModelModule(ownerRetainedArkContainer)
+                    arkModules.createRetainedActivityModule(arkContainer, activity)
+                viewModelArkContainer = arkModules.createViewModelModule(ownerRetainedArkContainer)
             }
-            ownerArkContainer = arkGenerator.createActivityModule(ownerRetainedArkContainer, activity)
+            ownerArkContainer = arkModules.createActivityModule(ownerRetainedArkContainer, activity)
         }
     }
 }

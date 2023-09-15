@@ -1,9 +1,9 @@
-package com.re4rk.arkdiAndroid.arkGenerator
+package com.re4rk.arkdiAndroid.arkModules
 
 import android.content.Context
 import com.re4rk.arkdi.ArkContainer
 
-class ArkGeneratorBuilder {
+class ArkModulesBuilder {
     var applicationModule: (Context) -> ArkContainer =
         { ArkContainer() }
     var retainedActivityModule: (ArkContainer, Context) -> ArkContainer =
@@ -13,8 +13,8 @@ class ArkGeneratorBuilder {
     var viewModelModule: (ArkContainer) -> ArkContainer =
         { parent -> ArkContainer(parent) }
 
-    fun build(): ArkGenerator {
-        return object : ArkGenerator {
+    fun build(): ArkModules {
+        return object : ArkModules {
             override fun createApplicationModule(applicationContext: Context): ArkContainer =
                 applicationModule(applicationContext)
 
