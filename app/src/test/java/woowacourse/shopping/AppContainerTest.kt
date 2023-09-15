@@ -9,14 +9,15 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.di.PackageName
 import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import kotlin.reflect.full.createInstance
 
-class TargetClass(@Qualifier("databaseCartRepository") val cartRepository: CartRepository) {
+class TargetClass(@Qualifier(PackageName.DATABASE_CART) val cartRepository: CartRepository) {
     @Inject
-    @Qualifier("defaultProductRepository")
+    @Qualifier(PackageName.PRODUCT)
     lateinit var productRepository: ProductRepository
         private set
 
