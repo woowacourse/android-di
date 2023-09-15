@@ -11,15 +11,12 @@ object DependencyContainer {
         val annotationWithQualifier = instance::class.annotations.find {
             it.annotationClass.hasAnnotation<Qualifier>()
         }
-        val key = Pair(
-            kClass,
-            annotationWithQualifier,
-        )
+        val key = kClass to annotationWithQualifier
         instances[key] = instance
     }
 
     fun getInstance(kClass: KClass<*>, annotation: Annotation?): Any? {
-        return instances[Pair(kClass, annotation)]
+        return instances[kClass to annotation]
     }
 
     fun clear() {
