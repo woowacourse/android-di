@@ -2,6 +2,7 @@ package woowacourse.shopping.repository
 
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
+import java.util.UUID
 
 interface CartRepository {
 
@@ -9,5 +10,5 @@ interface CartRepository {
 
     suspend fun getAllCartProducts(): List<CartProduct>
 
-    suspend fun deleteCartProduct(id: Long)
+    suspend fun deleteCartProduct(id: UUID)
 }

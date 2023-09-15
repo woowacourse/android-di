@@ -3,6 +3,7 @@ package woowacourse.shopping.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import java.util.UUID
 
 @Dao
 interface CartProductDao {
@@ -14,5 +15,5 @@ interface CartProductDao {
     suspend fun insert(cartProduct: CartProductEntity)
 
     @Query("DELETE FROM cart_products WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: UUID)
 }

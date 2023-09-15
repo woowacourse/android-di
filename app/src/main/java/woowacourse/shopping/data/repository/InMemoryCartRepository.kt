@@ -25,7 +25,7 @@ class InMemoryCartRepository : CartRepository {
         return cartProducts
     }
 
-    override suspend fun deleteCartProduct(id: Long) {
-        cartProducts.removeAt(id.toInt())
+    override suspend fun deleteCartProduct(id: UUID) {
+        cartProducts.removeIf { it.id == id }
     }
 }

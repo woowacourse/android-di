@@ -7,6 +7,7 @@ import woowacourse.shopping.data.mapper.toCartProductEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
+import java.util.UUID
 
 @Database
 class DatabaseCartRepository(
@@ -20,7 +21,7 @@ class DatabaseCartRepository(
         return dao.getAll().map { it.toCartProduct() }
     }
 
-    override suspend fun deleteCartProduct(id: Long) {
+    override suspend fun deleteCartProduct(id: UUID) {
         dao.delete(id)
     }
 }

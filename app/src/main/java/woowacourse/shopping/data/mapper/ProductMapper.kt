@@ -22,7 +22,7 @@ fun Product.toCartProduct(): CartProduct = CartProduct(
 )
 
 fun CartProductEntity.toCartProduct(): CartProduct = CartProduct(
-    id = UUID.randomUUID(),
+    id = this.id,
     name = name,
     price = price,
     imageUrl = imageUrl,

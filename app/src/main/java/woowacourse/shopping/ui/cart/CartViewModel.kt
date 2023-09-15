@@ -9,6 +9,7 @@ import com.bandal.di.Database
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
+import java.util.UUID
 
 class CartViewModel : ViewModel() {
     @Database
@@ -28,9 +29,9 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun deleteCartProduct(id: Int) {
+    fun deleteCartProduct(id: UUID) {
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id.toLong())
+            cartRepository.deleteCartProduct(id)
             _onCartProductDeleted.value = true
         }
     }

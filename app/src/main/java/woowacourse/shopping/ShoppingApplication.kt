@@ -34,6 +34,7 @@ class ShoppingApplication : Application() {
     private fun initCartProductDao(): CartProductDao {
         val database = Room
             .databaseBuilder(this, ShoppingDatabase::class.java, "shopping_database")
+            .fallbackToDestructiveMigration()
             .build()
         return database.cartProductDao()
     }
