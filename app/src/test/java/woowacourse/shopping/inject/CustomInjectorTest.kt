@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.inject
+package woowacourse.shopping.inject
 
 import com.lope.di.annotation.CustomInject
 import com.lope.di.container.DependencyContainer
@@ -8,13 +8,14 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNotSame
 import org.junit.After
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
-import woowacourse.shopping.di.inject.fake.FakeDatabaseCartRepository
-import woowacourse.shopping.di.inject.fake.FakeViewModel
 import woowacourse.shopping.fake.FakeInMemoryCartRepository
 import woowacourse.shopping.fake.TestCartInfo
+import woowacourse.shopping.inject.fake.FakeDatabaseCartRepository
+import woowacourse.shopping.inject.fake.FakeViewModel
 import woowacourse.shopping.repository.CartRepository
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
@@ -61,7 +62,7 @@ class CustomInjectorTest {
     }
 
     @Test
-    fun `DependencyContainer에서 instance가 없다면 생성하여 주입한다`() {
+    fun `TestCartInfo instance를 주입해주지 않는다면 DependencyContainer에서 생성하여 주입한다`() {
         // given && when
         val datas = listOf("가", "나", "다", "라")
         DependencyContainer.setInstance(
@@ -72,6 +73,8 @@ class CustomInjectorTest {
             List::class,
             datas,
         )
+        // TestCartInfo instance를 주입해주지 않음을 확인
+        assertNull(DependencyContainer.getInstance(TestCartInfo::class, null))
         val viewModel = customInjector.inject(FakeViewModel::class)
 
         // then
@@ -103,7 +106,9 @@ class CustomInjectorTest {
         // then
         // CustomInject 어노테이션이 붙은 필드는 주입되고 어노테이션이 안 붙은 필드는 초기화도 되지 않음
         assertEquals(viewModel.datas, datas)
-        assertThrows<UninitializedPropertyAccessException> { viewModel.items }
+        assertThrows(UninitializedPropertyAccessException::class.java) {
+            viewModel.items
+        }
     }
 
     @Test
