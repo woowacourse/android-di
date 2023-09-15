@@ -4,7 +4,7 @@ import com.bandal.di.InMemory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-@com.bandal.di.InMemory
+@InMemory
 class InMemoryProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(
