@@ -44,6 +44,8 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":di"))
+//    implementation("com.github.rhthrhrl0:android-di:1.0.2")
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -69,5 +71,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    // Mockk
+    testImplementation("io.mockk:mockk-android:1.13.5")
 }

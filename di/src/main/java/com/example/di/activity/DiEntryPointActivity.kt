@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.activity
+package com.example.di.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.di.application.DiApplication
-import woowacourse.shopping.di.module.ActivityModule
+import com.example.di.application.DiApplication
+import com.example.di.module.ActivityModule
 
-abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModuleClassType: Class<T>) :
+abstract class DiEntryPointActivity(private val activityModuleClassType: Class<out ActivityModule>) :
     AppCompatActivity() {
 
     lateinit var activityModule: ActivityModule
@@ -19,10 +19,10 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val diApplication = application as DiApplication<*>
+        val diApplication = application as DiApplication
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
         this.activityModule = diApplication.diContainer.provideActivityModule(
-            this.hashCode(),
+            this,
             previousHashCode,
             activityModuleClassType,
         )
@@ -39,7 +39,7 @@ abstract class DiEntryPointActivity<T : ActivityModule>(private val activityModu
     override fun onDestroy() {
         super.onDestroy()
         if (isFinishing) {
-            val diApplication = application as DiApplication<*>
+            val diApplication = application as DiApplication
             diApplication.diContainer.removeModule(this.hashCode())
         }
     }
