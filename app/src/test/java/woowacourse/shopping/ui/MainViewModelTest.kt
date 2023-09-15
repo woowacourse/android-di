@@ -12,7 +12,10 @@ import org.junit.Test
 import woowacourse.shopping.AppContainer
 import woowacourse.shopping.Injector
 import woowacourse.shopping.createProduct
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.fake.FakeCartProductDao
 import woowacourse.shopping.getProducts
+import kotlin.reflect.full.createInstance
 
 class MainViewModelTest {
     private lateinit var appContainer: AppContainer
@@ -26,7 +29,12 @@ class MainViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+
         appContainer = AppContainer()
+        appContainer.registerProviders {
+            provider(CartProductDao::class to FakeCartProductDao::class::createInstance)
+        }
+
         injector = Injector(appContainer)
         viewModel = injector.inject(MainViewModel::class)
     }
