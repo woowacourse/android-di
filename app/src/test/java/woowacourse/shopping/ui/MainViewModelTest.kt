@@ -1,6 +1,9 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -11,6 +14,9 @@ import woowacourse.shopping.dummy.createFakeProducts
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 
 class MainViewModelTest {
 
@@ -23,10 +29,10 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
-
-        viewModel = MainViewModel(productRepository, cartRepository)
+        viewModel = MainViewModel(productRepository)
     }
 
     @Test
@@ -45,6 +51,11 @@ class MainViewModelTest {
         val product = createFakeProduct(3)
 
         // when
+        viewModel::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+            .first { it.name == "cartRepository" }.apply {
+                isAccessible = true
+                setter.call(viewModel, cartRepository)
+            }
         viewModel.addCartProduct(product)
 
         // then
