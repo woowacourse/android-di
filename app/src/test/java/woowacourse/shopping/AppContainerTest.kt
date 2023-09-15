@@ -47,6 +47,7 @@ class NameTag private constructor(val name: String) {
 
 class AppContainerTest {
     private lateinit var appContainer: AppContainer
+    private lateinit var injector: Injector
 
     @Before
     fun setup() {
@@ -56,6 +57,8 @@ class AppContainerTest {
             provider(TestProvider::class to TestProvider::createInstance)
             provider(NameTag::class to NameTag::createInstance)
         }
+
+        injector = Injector(appContainer)
     }
 
     @Test
@@ -63,7 +66,7 @@ class AppContainerTest {
         // given
 
         // when
-        val actual = appContainer.inject(TargetClass::class)
+        val actual = injector.inject(TargetClass::class)
 
         // then
         assertThat(actual).isInstanceOf(TargetClass::class.java)
@@ -72,8 +75,8 @@ class AppContainerTest {
     @Test
     fun `서로 다른 TargetClass가 주입받은 cartRepository는 같은 객체이다`() {
         // given
-        val targetClass1 = appContainer.inject(TargetClass::class)
-        val targetClass2 = appContainer.inject(TargetClass::class)
+        val targetClass1 = injector.inject(TargetClass::class)
+        val targetClass2 = injector.inject(TargetClass::class)
 
         // when
         assertThat(targetClass1).isNotEqualTo(targetClass2)
@@ -85,7 +88,7 @@ class AppContainerTest {
     @Test
     fun `TargetClass의 프로퍼티 중 productRepository는 필드 주입 대상이다`() {
         // given
-        val targetClass = appContainer.inject(TargetClass::class)
+        val targetClass = injector.inject(TargetClass::class)
 
         // when
 
@@ -96,7 +99,7 @@ class AppContainerTest {
     @Test
     fun `TargetClass의 프로퍼티 중 name은 필드 주입 대상이 아니다`() {
         // given
-        val targetClass = appContainer.inject(TargetClass::class)
+        val targetClass = injector.inject(TargetClass::class)
 
         // when
 
@@ -107,7 +110,7 @@ class AppContainerTest {
     @Test
     fun `TestProvider의 nameTag 프로퍼티의 name의 값은 글로이다`() {
         // given
-        val provider = appContainer.inject(TestProvider::class)
+        val provider = injector.inject(TestProvider::class)
 
         // when
 
@@ -118,7 +121,7 @@ class AppContainerTest {
     @Test
     fun `TargetClass의 productRepository는 DefaultProductRepository이다`() {
         // given
-        val targetClass = appContainer.inject(TargetClass::class)
+        val targetClass = injector.inject(TargetClass::class)
 
         // when
 
@@ -129,7 +132,7 @@ class AppContainerTest {
     @Test
     fun `TargetClass의 cartRepository는 DatabaseCartRepository이다`() {
         // given
-        val targetClass = appContainer.inject(TargetClass::class)
+        val targetClass = injector.inject(TargetClass::class)
 
         // when
 
@@ -140,7 +143,7 @@ class AppContainerTest {
     @Test
     fun `TargetClass의 cartRepository는 InMemoryCartRepository가 아니다`() {
         // given
-        val targetClass = appContainer.inject(TargetClass::class)
+        val targetClass = injector.inject(TargetClass::class)
 
         // when
 

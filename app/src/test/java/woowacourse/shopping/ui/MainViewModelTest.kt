@@ -10,11 +10,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.AppContainer
+import woowacourse.shopping.Injector
 import woowacourse.shopping.createProduct
 import woowacourse.shopping.getProducts
 
 class MainViewModelTest {
     private lateinit var appContainer: AppContainer
+    private lateinit var injector: Injector
     private lateinit var viewModel: MainViewModel
 
     @get:Rule
@@ -25,7 +27,8 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         appContainer = AppContainer()
-        viewModel = appContainer.inject(MainViewModel::class)
+        injector = Injector(appContainer)
+        viewModel = injector.inject(MainViewModel::class)
     }
 
     @Test
