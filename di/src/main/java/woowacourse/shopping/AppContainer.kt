@@ -15,16 +15,16 @@ class AppContainer {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getSavedInstanceOf(implementationClass: KClass<out T>): T? {
+    internal fun <T : Any> getSavedInstanceOf(implementationClass: KClass<out T>): T? {
         return instances[implementationClass] as? T
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getProviderOf(implementationClass: KClass<out T>): KFunction<T>? {
+    internal fun <T : Any> getProviderOf(implementationClass: KClass<out T>): KFunction<T>? {
         return providers[implementationClass] as? KFunction<T>
     }
 
-    fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
+    internal fun <T : Any> saveInstance(implementationClass: KClass<out T>, instance: T) {
         if (implementationClass.hasAnnotation<SingleInstance>()) {
             instances[implementationClass] = instance
         }
