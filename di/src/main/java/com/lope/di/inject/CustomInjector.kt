@@ -1,8 +1,8 @@
-package woowacourse.shopping.di.inject
+package com.lope.di.inject
 
-import woowacourse.shopping.di.annotation.CustomInject
-import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.DependencyContainer
+import com.lope.di.annotation.CustomInject
+import com.lope.di.annotation.Qualifier
+import com.lope.di.container.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties

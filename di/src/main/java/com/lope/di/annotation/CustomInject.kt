@@ -1,3 +1,3 @@
-package woowacourse.shopping.di.annotation
+package com.lope.di.annotation
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class CustomInject

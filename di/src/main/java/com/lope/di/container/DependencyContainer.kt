@@ -1,6 +1,6 @@
-package woowacourse.shopping.di.container
+package com.lope.di.container
 
-import woowacourse.shopping.di.annotation.Qualifier
+import com.lope.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.lope.di.annotation
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class Qualifier

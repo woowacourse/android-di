@@ -1,6 +1,7 @@
 package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.lope.di.annotation.CustomInject
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,7 +12,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.di.annotation.CustomInject
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.fake.testData

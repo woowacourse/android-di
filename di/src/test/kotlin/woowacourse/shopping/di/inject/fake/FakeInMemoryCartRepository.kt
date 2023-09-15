@@ -1,6 +1,6 @@
 package woowacourse.shopping.fake
 
-import woowacourse.shopping.di.annotation.InMemoryMode
+import com.lope.di.annotation.InMemoryMode
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository

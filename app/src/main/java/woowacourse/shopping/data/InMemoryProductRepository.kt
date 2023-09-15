@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.InMemoryMode
+import com.lope.di.annotation.InMemoryMode
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 

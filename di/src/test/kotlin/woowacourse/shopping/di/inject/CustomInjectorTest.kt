@@ -1,5 +1,8 @@
 package woowacourse.shopping.di.inject
 
+import com.lope.di.annotation.CustomInject
+import com.lope.di.container.DependencyContainer
+import com.lope.di.inject.CustomInjector
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
@@ -8,8 +11,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
-import woowacourse.shopping.di.annotation.CustomInject
-import woowacourse.shopping.di.container.DependencyContainer
 import woowacourse.shopping.di.inject.fake.FakeDatabaseCartRepository
 import woowacourse.shopping.di.inject.fake.FakeViewModel
 import woowacourse.shopping.fake.FakeInMemoryCartRepository

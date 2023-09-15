@@ -1,6 +1,6 @@
 package woowacourse.shopping.di.inject.fake
 
-import woowacourse.shopping.di.annotation.DatabaseMode
+import com.lope.di.annotation.DatabaseMode
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
