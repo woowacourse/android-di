@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.re4rk.arkdi.ArkContainer
+import com.re4rk.arkdiAndroid.arkGenerator.ArkGenerator
 
 abstract class ArkApplication : Application() {
     abstract val arkGenerator: ArkGenerator
