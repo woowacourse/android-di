@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdiAndroid
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

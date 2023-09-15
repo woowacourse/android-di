@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.di.DiAppCompatActivity
+import com.re4rk.arkdiAndroid.DiAppCompatActivity
 
 @MainThread
 inline fun <reified VM : ViewModel> DiAppCompatActivity.viewModels(): Lazy<VM> {

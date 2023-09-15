@@ -2,9 +2,9 @@ package woowacourse.shopping
 
 import android.content.Context
 import com.re4rk.arkdi.DiContainer
+import com.re4rk.arkdiAndroid.DiApplication
 import com.re4rk.arkdiAndroid.DiGenerator
 import woowacourse.shopping.di.DiActivityModule
-import woowacourse.shopping.di.DiApplication
 import woowacourse.shopping.di.DiApplicationModule
 import woowacourse.shopping.di.DiRetainedActivityModule
 import woowacourse.shopping.di.DiViewModelModule

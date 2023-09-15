@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdiAndroid
 
 import androidx.lifecycle.ViewModel
 import com.re4rk.arkdi.DiContainer

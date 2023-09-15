@@ -1,10 +1,9 @@
-package woowacourse.shopping.di
+package com.re4rk.arkdiAndroid
 
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.re4rk.arkdi.DiContainer
-import com.re4rk.arkdiAndroid.DiGenerator
 
 abstract class DiApplication : Application() {
     abstract val diGenerator: DiGenerator

@@ -3,9 +3,9 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.re4rk.arkdi.ArkInject
+import com.re4rk.arkdiAndroid.DiAppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DiAppCompatActivity
 import woowacourse.shopping.ui.util.viewModels
 
 class CartActivity : DiAppCompatActivity() {
