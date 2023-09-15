@@ -15,7 +15,7 @@ class CustomInjector {
 
     fun <T : Any> inject(kClass: KClass<T>, annotations: List<Annotation> = emptyList()): T {
         val annotationWithQualifier =
-            annotations.filter { it.annotationClass.java.isAnnotationPresent(Qualifier::class.java) }
+            annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         return (
             DependencyContainer.getInstance(kClass, annotationWithQualifier)
                 ?: createInstanceFromKClass(
