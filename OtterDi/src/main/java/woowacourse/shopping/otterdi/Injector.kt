@@ -15,22 +15,21 @@ class Injector(private val modules: List<Module>) {
 
     constructor(vararg modules: Module) : this(modules.toList())
 
-    private val providers: MutableMap<String, Any?> =
-        mutableMapOf<String, Any?>().apply {
-            modules.forEach { module ->
-                module::class.declaredMemberFunctions.forEach {
-                    val returnType = it.returnType.toString()
-                    val instance = it.call(module)
-                    if (it.findAnnotation<Qualifier>() == null) {
-                        this[returnType] = instance
-                    } else {
-                        val implementationName =
-                            it.findAnnotation<Qualifier>()?.implementationName.toString()
-                        this[implementationName] = instance
-                    }
+    private val providers: MutableMap<String, Any?> = mutableMapOf<String, Any?>().apply {
+        modules.forEach { module ->
+            module::class.declaredMemberFunctions.forEach {
+                val returnType = it.returnType.toString()
+                val instance = it.call(module)
+                if (it.findAnnotation<Qualifier>() == null) {
+                    this[returnType] = instance
+                } else {
+                    val implementationName =
+                        it.findAnnotation<Qualifier>()?.implementationName.toString()
+                    this[implementationName] = instance
                 }
             }
         }
+    }
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = T::class.primaryConstructor
@@ -48,35 +47,29 @@ class Injector(private val modules: List<Module>) {
             instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
         mutableProperties.forEach { property ->
             if (property.annotations.any { it is Inject }.not()) return@forEach
-            val dependency = providers[property.returnType.toString()]
-                ?: throw NullPointerException("${property.name}에 대한 의존성을 가져오는데 실피하였습니다.")
+            val dependency = getDependency(property.returnType.toString())
             property.isAccessible = true
             property.setter.call(instance, dependency)
         }
     }
 
     fun getDependenciesTypes(params: List<KParameter>): List<String> {
-        val dependencyTypes: MutableList<String> = mutableListOf()
-        params.forEach { param ->
-            dependencyTypes.add(
-                if (param.findAnnotation<Qualifier>() == null) {
-                    param.type.toString()
-                } else {
-                    param.findAnnotation<Qualifier>()?.implementationName.toString()
-                },
-            )
+        return params.map { param ->
+            if (param.findAnnotation<Qualifier>() == null) {
+                param.type.toString()
+            } else {
+                param.findAnnotation<Qualifier>()?.implementationName.toString()
+            }
         }
-        return dependencyTypes
+    }
+
+    private fun getDependency(type: String): Any {
+        return providers[type] ?: throw IllegalArgumentException("${type}에 대한 의존성을 가져오는데 실피하였습니다.")
     }
 
     fun getDependencies(dependencyTypes: List<String>): List<Any> {
-        val dependencies = mutableListOf<Any>()
-
-        dependencyTypes.forEach { paramType ->
-            val instance = providers[paramType]
-            instance?.let { dependencies.add(instance) }
+        return dependencyTypes.map { dependencyType ->
+            getDependency(type = dependencyType)
         }
-
-        return dependencies
     }
 }
