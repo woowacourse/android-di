@@ -28,13 +28,12 @@ object BandalInjector {
         val constructor = kClass.primaryConstructor
             ?: throw NotFoundPrimaryConstructor()
 
-        val parameterValues =
-            constructor.parameters.associateWith { kParameter ->
-                findInstance(
-                    kParameter.type.jvmErasure,
-                    kParameter.annotations,
-                )
-            }
+        val parameterValues = constructor.parameters.associateWith { kParameter ->
+            findInstance(
+                kParameter.type.jvmErasure,
+                kParameter.annotations,
+            )
+        }
 
         return constructor.callBy(parameterValues).apply { injectFields(this) }
     }

@@ -1,6 +1,7 @@
 package com.bandal.di
 
 import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 object BandalInjectorAppContainer : AppContainer {
 
@@ -14,9 +15,7 @@ object BandalInjectorAppContainer : AppContainer {
 
     override fun addInstance(type: KClass<*>, clazz: KClass<*>) {
         val annotationWithQualifier = clazz.annotations.filter { annotation ->
-            annotation.annotationClass.java.isAnnotationPresent(
-                Qualifier::class.java,
-            )
+            annotation.annotationClass.hasAnnotation<Qualifier>()
         }
         val key = Pair(type, annotationWithQualifier)
         instances[key] = BandalInjector.inject(clazz)
@@ -24,9 +23,7 @@ object BandalInjectorAppContainer : AppContainer {
 
     override fun addInstance(type: KClass<*>, instance: Any) {
         val annotationWithQualifier = instance::class.annotations.filter { annotation ->
-            annotation.annotationClass.java.isAnnotationPresent(
-                Qualifier::class.java,
-            )
+            annotation.annotationClass.hasAnnotation<Qualifier>()
         }
         val key = Pair(type, annotationWithQualifier)
         instances[key] = instance
