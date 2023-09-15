@@ -3,9 +3,9 @@ package woowacourse.shopping.data
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-class ProductRepositoryImpl : ProductRepository {
+class DefaultProductRepository : ProductRepository {
 
-    private val products: List<Product> = listOf(
+    private var products: List<Product> = listOf(
         Product(
             name = "우테코 과자",
             price = 10_000,

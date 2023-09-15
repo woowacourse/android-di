@@ -1,22 +1,19 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.di.module
-import woowacourse.shopping.di.startDI
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import com.woosuk.scott_di.startDI
+import woowacourse.shopping.di.DefaultModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        val dataModule = module {
-            provide<ProductRepository> { ProductRepositoryImpl() }
-            provide<CartRepository> { CartRepositoryImpl() }
-        }
+        instance = this
         startDI {
-            loadModule(dataModule)
+            loadModule(DefaultModule)
         }
+    }
+
+    companion object {
+        lateinit var instance: ShoppingApplication
     }
 }

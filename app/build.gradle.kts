@@ -43,7 +43,9 @@ android {
 }
 
 dependencies {
+    // project
     implementation(project(":domain"))
+    implementation(project(":scott-di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -69,4 +71,8 @@ dependencies {
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
     implementation(kotlin("reflect"))
+
+    // Mockk
+    testImplementation("io.mockk:mockk:1.13.5")
+    androidTestImplementation("io.mockk:mockk-android:1.13.5")
 }
