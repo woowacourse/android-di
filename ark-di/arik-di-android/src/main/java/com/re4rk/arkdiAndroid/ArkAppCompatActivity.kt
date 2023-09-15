@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlin.reflect.KClass
 
 open class ArkAppCompatActivity : AppCompatActivity() {
-    private lateinit var arkViewModel: ArkViewModel
+    private val arkViewModel: ArkViewModel
+        by lazy { (application as ArkApplication).getActivityDiContainer(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arkViewModel = (application as ArkApplication).getActivityDiContainer(this)
         arkViewModel.ownerArkContainer.inject(this)
     }
 
