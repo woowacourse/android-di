@@ -4,7 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.re4rk.arkdi.DiContainer
 
 class DiViewModel : ViewModel() {
-    var ownerRetainedDiContainer: DiContainer? = null
-    var ownerDiContainer: DiContainer? = null
-    var viewModelDiContainer: DiContainer? = null
+    lateinit var ownerRetainedDiContainer: DiContainer
+    lateinit var ownerDiContainer: DiContainer
+    lateinit var viewModelDiContainer: DiContainer
+
+    val isInitialized
+        get() = ::ownerRetainedDiContainer.isInitialized &&
+            ::ownerDiContainer.isInitialized &&
+            ::viewModelDiContainer.isInitialized
 }

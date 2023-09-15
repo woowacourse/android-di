@@ -21,21 +21,11 @@ open class DiApplication : Application() {
 
     fun getActivityDiContainer(activity: ComponentActivity): DiViewModel {
         return ViewModelProvider(activity)[DiViewModel::class.java].apply {
-            val retainedActivityModule = DiRetainedActivityModule(activity)
-            val activityModule = DiActivityModule()
-            val viewModelModule = DiViewModelModule()
-
-            if (ownerRetainedDiContainer == null) {
-                ownerRetainedDiContainer = DiContainer(diApplicationModule, retainedActivityModule)
+            if (isInitialized.not()) {
+                ownerRetainedDiContainer = DiRetainedActivityModule(diApplicationModule, activity)
+                viewModelDiContainer = DiViewModelModule(ownerRetainedDiContainer)
             }
-
-            ownerDiContainer =
-                DiContainer(diApplicationModule, retainedActivityModule, activityModule)
-
-            if (viewModelDiContainer == null) {
-                viewModelDiContainer =
-                    DiContainer(diApplicationModule, retainedActivityModule, viewModelModule)
-            }
+            ownerDiContainer = DiActivityModule(ownerRetainedDiContainer)
         }
     }
 }

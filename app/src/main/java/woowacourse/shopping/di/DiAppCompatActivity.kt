@@ -10,9 +10,9 @@ open class DiAppCompatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         diViewModel = (application as DiApplication).getActivityDiContainer(this)
-        diViewModel.ownerDiContainer?.inject(this)
+        diViewModel.ownerDiContainer.inject(this)
     }
 
     fun <T : Any> injectViewModel(clazz: KClass<T>) =
-        diViewModel.viewModelDiContainer!!.createInstance(clazz)
+        diViewModel.viewModelDiContainer.createInstance(clazz)
 }
