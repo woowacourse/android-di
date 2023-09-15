@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity() {
             )
             binding.rvProducts.adapter = adapter
         }
-        viewModel.onProductAdded.observe(this) {
-            if (!it) return@observe
+        viewModel.onProductAdded.observe(this) { isProductAdded ->
+            if (!isProductAdded) return@observe
             Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
         }
     }

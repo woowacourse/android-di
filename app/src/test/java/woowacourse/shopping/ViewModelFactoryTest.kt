@@ -107,7 +107,7 @@ class ViewModelFactoryTest {
     }
 
     @Test
-    fun `다`() {
+    fun `ViewModel 필드에 의존성을 주입할 수 있다`() {
         // given
         val defaultFakeRepository = DefaultFakeRepository()
         FakeAppContainer.addInstance(

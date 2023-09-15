@@ -13,8 +13,8 @@ object BandalInjectorAppContainer : AppContainer {
     }
 
     override fun addInstance(type: KClass<*>, instance: Any) {
-        val annotationWithQualifier = instance::class.annotations.filter {
-            it.annotationClass.java.isAnnotationPresent(
+        val annotationWithQualifier = instance::class.annotations.filter { annotation ->
+            annotation.annotationClass.java.isAnnotationPresent(
                 Qualifier::class.java,
             )
         }

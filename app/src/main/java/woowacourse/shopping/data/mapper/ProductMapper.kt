@@ -5,7 +5,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import java.util.UUID
 
-fun Product.toEntity(): CartProductEntity {
+fun Product.toCartProductEntity(): CartProductEntity {
     return CartProductEntity(
         name = name,
         price = price,
