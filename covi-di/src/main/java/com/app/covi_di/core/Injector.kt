@@ -13,11 +13,10 @@ import kotlin.reflect.jvm.jvmErasure
 object Injector {
     private const val ERROR_MODULE_NOT_CONTAINED = "Module is not contained in DIContainer"
 
-    fun <T> inject(clazz: KClass<*>): T {
+    fun <T: Any> inject(clazz: KClass<T>): T {
         val parameterTypes = getParameterTypes(clazz)
         clazz.primaryConstructor?.isAccessible = true
 
-        @Suppress("UNCHECKED_CAST")
         val instance = clazz.primaryConstructor?.call(*parameterTypes.toTypedArray()) as T
         injectFields(instance)
         return instance
