@@ -3,7 +3,6 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import com.bandal.di.AppContainer
-import com.bandal.di.BandalInjector
 import com.bandal.di.BandalInjectorAppContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
@@ -26,10 +25,10 @@ class ShoppingApplication : Application() {
         defaultAppContainer.addInstance(CartProductDao::class, initCartProductDao())
         defaultAppContainer.addInstance(
             CartRepository::class,
-            BandalInjector.inject(DatabaseCartRepository::class),
+            DatabaseCartRepository::class,
         )
-        defaultAppContainer.addInstance(CartRepository::class, InMemoryCartRepository())
-        defaultAppContainer.addInstance(ProductRepository::class, InMemoryProductRepository())
+        defaultAppContainer.addInstance(CartRepository::class, InMemoryCartRepository::class)
+        defaultAppContainer.addInstance(ProductRepository::class, InMemoryProductRepository::class)
     }
 
     private fun initCartProductDao(): CartProductDao {

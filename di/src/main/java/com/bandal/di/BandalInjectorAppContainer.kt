@@ -12,16 +12,23 @@ object BandalInjectorAppContainer : AppContainer {
         }?.let { instances[it] }
     }
 
+    override fun addInstance(type: KClass<*>, clazz: KClass<*>) {
+        val annotationWithQualifier = clazz.annotations.filter { annotation ->
+            annotation.annotationClass.java.isAnnotationPresent(
+                Qualifier::class.java,
+            )
+        }
+        val key = Pair(type, annotationWithQualifier)
+        instances[key] = BandalInjector.inject(clazz)
+    }
+
     override fun addInstance(type: KClass<*>, instance: Any) {
         val annotationWithQualifier = instance::class.annotations.filter { annotation ->
             annotation.annotationClass.java.isAnnotationPresent(
                 Qualifier::class.java,
             )
         }
-        val key = Pair(
-            type,
-            annotationWithQualifier,
-        )
+        val key = Pair(type, annotationWithQualifier)
         instances[key] = instance
     }
 

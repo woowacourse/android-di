@@ -1,6 +1,7 @@
 package com.bandal.di
 
 import com.bandal.di.DIError.NotFoundPrimaryConstructor
+import com.bandal.di.DIError.NotFoundQualifierOrInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -58,10 +59,11 @@ object BandalInjector {
     /**
      * AppContainer로부터 원하는 타입의 인스턴스를 찾아오는 메서드입니다.
      *
-     * 이 때 찾는 인스턴스가 없을 땐 인스턴스를 생성합니다.
+     * 이 때 찾는 인스턴스가 없을 땐 예외 처리합니다.
      *
      * @param kClass 찾을 인스턴스의 타입을 명시해줍니다.
      * @param annotations 찾을 인스턴스가 가질 수 있는 어노테이션들입니다.
+     * @throws NotFoundQualifierOrInstance 인스턴스를 찾을 때 필요한 Qualifier Annotation이 없거나 알맞는 인스턴스가 없을 때 발생합니다.
      */
     private fun <T : Any> findInstance(
         kClass: KClass<T>,
@@ -70,6 +72,6 @@ object BandalInjector {
         val annotationWithQualifier =
             annotations.filter { it.annotationClass.java.isAnnotationPresent(Qualifier::class.java) }
         return BandalInjectorAppContainer.getInstance(kClass, annotationWithQualifier)
-            ?: createInstance(kClass)
+            ?: throw NotFoundQualifierOrInstance(kClass)
     }
 }
