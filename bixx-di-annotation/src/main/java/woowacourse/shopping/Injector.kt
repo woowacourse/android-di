@@ -48,9 +48,9 @@ object Injector {
     private fun provideConstructorParameters(constructor: KFunction<*>): List<Any> {
         val kParams: List<KParameter> = constructor.parameters
         val paramInstances = mutableListOf<Any>()
-        kParams.forEach {
-            val qualifier = it.findAnnotation<Qualifier>()
-            paramInstances.add(injectSingleton(it.type.jvmErasure, qualifier?.className))
+        kParams.forEach { param: KParameter ->
+            val qualifier = param.findAnnotation<Qualifier>()
+            paramInstances.add(injectSingleton(param.type.jvmErasure, qualifier?.className))
         }
         return paramInstances
     }
