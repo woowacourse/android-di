@@ -12,6 +12,8 @@ class ArkModulesBuilder {
         { parentModule, _ -> ArkModule(parentModule) }
     var viewModelModule: (ArkModule) -> ArkModule =
         { parentModule -> ArkModule(parentModule) }
+    var serviceModule: (ArkModule) -> ArkModule =
+        { parentModule -> ArkModule(parentModule) }
 
     fun build(): ArkModules {
         return object : ArkModules {
@@ -30,6 +32,9 @@ class ArkModulesBuilder {
 
             override fun createViewModelModule(parentModule: ArkModule): ArkModule =
                 viewModelModule(parentModule)
+
+            override fun createServiceModule(parentModule: ArkModule): ArkModule =
+                serviceModule(parentModule)
         }
     }
 }

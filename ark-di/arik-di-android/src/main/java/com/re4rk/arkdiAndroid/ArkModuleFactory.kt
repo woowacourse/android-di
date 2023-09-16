@@ -7,8 +7,8 @@ import com.re4rk.arkdi.ArkModule
 import com.re4rk.arkdiAndroid.arkModules.ArkModules
 
 internal class ArkModuleFactory(private val arkModules: ArkModules) {
-    fun createApplicationModule(applicationContext: Context) {
-        arkModules.createApplicationModule(applicationContext)
+    fun createApplicationModule(applicationContext: Context): ArkModule {
+        return arkModules.createApplicationModule(applicationContext)
     }
 
     fun createActivityModule(parentModule: ArkModule, activity: ComponentActivity): ArkViewModel {
@@ -20,5 +20,9 @@ internal class ArkModuleFactory(private val arkModules: ArkModules) {
             }
             ownerModule = arkModules.createActivityModule(ownerRetainedModule, activity)
         }
+    }
+
+    fun createServiceModule(arkModule: ArkModule): ArkModule {
+        return arkModules.createServiceModule(arkModule)
     }
 }

@@ -1,0 +1,3 @@
+package com.re4rk.arkdiAndroid.fakeDependency
+
+class FakeApplicationDependencyImpl : FakeApplicationDependency

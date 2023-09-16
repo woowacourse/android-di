@@ -8,4 +8,5 @@ interface ArkModules {
     fun createRetainedActivityModule(parentModule: ArkModule, context: Context): ArkModule
     fun createActivityModule(parentModule: ArkModule, context: Context): ArkModule
     fun createViewModelModule(parentModule: ArkModule): ArkModule
+    fun createServiceModule(parentModule: ArkModule): ArkModule
 }
