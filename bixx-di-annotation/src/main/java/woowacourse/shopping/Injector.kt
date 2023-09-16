@@ -22,7 +22,10 @@ object Injector {
         return if (nameTag == null) {
             (DependencyContainer.getInstance(target) ?: createSingletonInstance(target)) as T
         } else {
-            (DependencyContainer.getInstance(target, nameTag) ?: createSingletonInstance(target)) as T
+            (
+                DependencyContainer.getInstance(target, nameTag)
+                    ?: createSingletonInstance(target)
+                ) as T
         }
     }
 
@@ -60,12 +63,10 @@ object Injector {
     private fun Any.injectProperties() {
         val properties = this@injectProperties::class.declaredMemberProperties
         properties.forEach {
-            val inject = it.findAnnotation<Inject>()
-            if (inject != null) {
-                this@injectProperties::class.java.getDeclaredField(it.name).apply {
-                    isAccessible = true
-                    set(this@injectProperties, injectSingleton(it.returnType.jvmErasure))
-                }
+            it.findAnnotation<Inject>() ?: return@forEach
+            this@injectProperties::class.java.getDeclaredField(it.name).apply {
+                isAccessible = true
+                set(this@injectProperties, injectSingleton(it.returnType.jvmErasure))
             }
         }
     }
