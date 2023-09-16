@@ -23,7 +23,7 @@ abstract class InjectableActivity : AppCompatActivity() {
     }
 
     private fun getDependencyInjector(): Injector {
-        return ActivityInjectorManager.getInjector(this, activityClazz.qualifiedName)
+        return NonConfigurationActivityInjectorManager.getInjector(this, activityClazz.qualifiedName)
     }
 
     private fun Injector.injectActivityContext() {

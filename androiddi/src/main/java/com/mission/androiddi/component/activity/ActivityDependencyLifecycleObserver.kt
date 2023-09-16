@@ -13,7 +13,7 @@ class ActivityDependencyLifecycleObserver(
         super.onDestroy(owner)
         if (activity.isChangingConfigurations) {
             val key = activity.activityClazz.qualifiedName ?: return
-            ActivityInjectorManager.saveInjector(key, injector)
+            NonConfigurationActivityInjectorManager.saveInjector(key, injector)
             return
         }
 

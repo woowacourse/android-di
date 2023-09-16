@@ -4,7 +4,7 @@ import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.Injector
 
-object ActivityInjectorManager {
+object NonConfigurationActivityInjectorManager {
     private val injectors = HashMap<String, Injector>()
 
     fun saveInjector(key: String, injector: Injector) {
