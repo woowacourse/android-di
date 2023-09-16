@@ -8,15 +8,15 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class Injector(val dependencyContainer: DependencyContainer) {
-    constructor(vararg modules: Module) : this(DependencyContainer(modules.toList()))
+class Injector(val dependencies: Dependencies) {
+    constructor(vararg modules: Module) : this(Dependencies(modules.toList()))
 
     inline fun <reified T : Any> inject(): T {
         val primaryConstructor = T::class.primaryConstructor
             ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다. 인터페이스와 같이 주생성자가 없는 객체인지 확인해주세요.")
         val injectParams: List<KParameter> =
             primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
-        val dependencies = dependencyContainer.getInstances(injectParams)
+        val dependencies = dependencies.getInstances(injectParams)
         val instance = primaryConstructor.call(*dependencies.toTypedArray())
         injectProperties(instance)
         return instance
@@ -27,7 +27,7 @@ class Injector(val dependencyContainer: DependencyContainer) {
             instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
         mutableProperties.forEach { property ->
             if (property.annotations.any { it is Inject }.not()) return@forEach
-            val dependency = dependencyContainer.getInstance(property.returnType.toString())
+            val dependency = dependencies.getInstance(property.returnType.toString())
             property.isAccessible = true
             property.setter.call(instance, dependency)
         }
