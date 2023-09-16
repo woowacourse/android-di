@@ -34,7 +34,7 @@ class MainViewModelTest {
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = mockk()
-        cartRepository = mockk(relaxed = true)
+        cartRepository = mockk()
         vm = MainViewModel(productRepository = productRepository, cartRepository = cartRepository)
     }
 

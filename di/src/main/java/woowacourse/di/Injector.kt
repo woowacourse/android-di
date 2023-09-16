@@ -20,7 +20,8 @@ class Injector(private val container: Container) {
     }
 
     private fun <T : Any> createInstance(modelClass: KClass<*>): T {
-        val constructor = modelClass.primaryConstructor ?: throw IllegalStateException()
+        val constructor =
+            modelClass.primaryConstructor ?: throw IllegalStateException("주생성자를 가져올 수 없습니다")
 
         val argument = getArgument(constructor)
         val instance = constructor.call(*argument.toTypedArray()) as T
@@ -32,7 +33,7 @@ class Injector(private val container: Container) {
         val argument = constructor.parameters.map { parameter ->
             val annotation = parameter.findAnnotation<Qualifier>()
             val type = annotation?.clazz ?: parameter.type.jvmErasure
-            container.getInstance(type) ?: inject(type)
+            container.getInstance(type) ?: createInstance(type)
         }
         return argument
     }
