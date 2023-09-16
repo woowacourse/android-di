@@ -24,9 +24,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): ShoppingDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance = createInstance(context)
-                INSTANCE = instance
-                return instance
+                return INSTANCE ?: createInstance(context).also { INSTANCE = it }
             }
         }
     }
