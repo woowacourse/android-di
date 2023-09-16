@@ -1,14 +1,18 @@
 package woowacourse.shopping
 
-import com.di.berdi.Container
-import com.di.berdi.DIApplication
-import com.di.berdi.Injector
-import woowacourse.shopping.di.NormalModule
+import woowacourse.shopping.data.CartDefaultRepository
+import woowacourse.shopping.data.ProductDefaultRepository
+import woowacourse.shopping.di.DIApplication
+import woowacourse.shopping.di.RepositoryContainer
+import woowacourse.shopping.repository.CartRepository
+import woowacourse.shopping.repository.ProductRepository
 
 class ShoppingApplication : DIApplication() {
 
     override fun inject() {
-        val container = Container()
-        injector = Injector(container, applicationContext).apply { inject(NormalModule) }
+        repositoryContainer = RepositoryContainer.of(
+            CartRepository::class to CartDefaultRepository(),
+            ProductRepository::class to ProductDefaultRepository(),
+        )
     }
 }

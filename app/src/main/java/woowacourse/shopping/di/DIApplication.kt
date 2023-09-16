@@ -1,10 +1,11 @@
-package com.di.berdi
+package woowacourse.shopping.di
 
 import android.app.Application
 
 abstract class DIApplication : Application() {
 
-    lateinit var injector: Injector
+    lateinit var repositoryContainer: RepositoryContainer
+        protected set
 
     override fun onCreate() {
         super.onCreate()

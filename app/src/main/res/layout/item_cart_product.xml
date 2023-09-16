@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="woowacourse.shopping.model.CartProduct" />
+            type="woowacourse.shopping.model.Product" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,7 @@
         android:padding="20dp">
 
         <TextView
-            android:id="@+id/tv_cart_product_time_in_cart"
+            android:id="@+id/tv_cart_product_created_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
@@ -46,7 +46,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/iv_cart_product_delete"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_cart_product_time_in_cart"
+            app:layout_constraintTop_toBottomOf="@id/tv_cart_product_created_at"
             tools:text="우테코 과자" />
 
         <ImageView

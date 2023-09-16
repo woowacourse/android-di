@@ -3,34 +3,26 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.di.berdi.annotation.OnDisk
-import kotlinx.coroutines.launch
-import woowacourse.shopping.model.CartProduct
+import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel(
-    @OnDisk
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
-    private val _cartProducts: MutableLiveData<List<CartProduct>> =
+    private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
+    val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
-        }
+        _cartProducts.value = cartRepository.getAllCartProducts()
     }
 
-    fun deleteCartProduct(id: Long) {
-        viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
-            _onCartProductDeleted.value = true
-        }
+    fun deleteCartProduct(id: Int) {
+        cartRepository.deleteCartProduct(id)
+        _onCartProductDeleted.value = true
     }
 }
