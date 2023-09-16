@@ -1,11 +1,10 @@
 package com.di.berdi
 
 import android.content.Context
-import com.di.berdi.annotation.Qualifier
+import com.di.berdi.util.hasQualifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
@@ -22,7 +21,7 @@ class Injector(private val container: Container, private val context: Context) {
         module: Module,
     ) {
         val funcClazz = func.returnType.jvmErasure
-        val annotation = getQualifierAnnotation(func)
+        val annotation = getQualifiers(func)
 
         // 이미 생성했다면 return
         if (container.getInstance(funcClazz, annotation) != null) return
@@ -46,8 +45,9 @@ class Injector(private val container: Container, private val context: Context) {
         container.setInstance(newInstance, funcClazz, annotation)
     }
 
-    private fun getQualifierAnnotation(func: KFunction<*>): Annotation? =
-        func.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+    private fun getQualifiers(
+        func: KFunction<*>,
+    ): Annotation? = func.annotations.firstOrNull { it.hasQualifier() }
 
     private fun getParamInstance(
         param: KParameter,
@@ -56,7 +56,7 @@ class Injector(private val container: Container, private val context: Context) {
     ): Any {
         val paramClazz = param.type.jvmErasure
         val annotation =
-            param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+            param.annotations.firstOrNull { it.hasQualifier() }
 
         // 없으면 재귀로 생성
         if (container.getInstance(type = paramClazz, annotation = annotation) == null) {
