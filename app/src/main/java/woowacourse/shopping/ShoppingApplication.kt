@@ -14,7 +14,7 @@ class ShoppingApplication : Application() {
 
     private fun initDependencies() {
         cartProductDao = ShoppingDatabase.getDatabase(this@ShoppingApplication).cartProductDao()
-        injector = Injector(RepositoryModule)
+        injector = Injector(RepositoryModule(this))
     }
 
     companion object {
