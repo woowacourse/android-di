@@ -12,13 +12,13 @@ class ActivityDependencyLifecycleObserver(
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        val key = activity.activityClazz.qualifiedName ?: return
+        val injectorKey = activity.activityClazz.qualifiedName ?: return
         val injectableApplication = activity.application as InjectableApplication
-        val activityInjectManager = injectableApplication.requireActivityInjectManager()
+        val injectManager = injectableApplication.requireActivityInjectManager()
 
         when {
-            activity.isChangingConfigurations -> activityInjectManager.saveInjector(key, injector)
-            activity.isFinishing -> activityInjectManager.removeInjector(key)
+            activity.isChangingConfigurations -> injectManager.saveInjector(injectorKey, injector)
+            activity.isFinishing -> injectManager.removeInjector(injectorKey)
         }
     }
 }
