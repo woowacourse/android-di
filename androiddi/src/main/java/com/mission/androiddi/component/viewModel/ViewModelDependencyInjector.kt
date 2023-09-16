@@ -1,6 +1,5 @@
 package com.mission.androiddi.component.viewModel
 
-import android.util.Log
 import com.mission.androiddi.scope.ViewModelScope
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.cache.Cache
@@ -31,12 +30,11 @@ class ViewModelDependencyInjector(
 
         if (clazz.hasAnnotation<ViewModelScope>()) {
             caching(dependencyKey, dependency)
-            Log.d("buna", "$cache")
         }
         return dependency
     }
 
-    override fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: T) {
+    override fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: Any) {
         clazz.memberProperties.forEach { property ->
             if (!property.hasAnnotation<Inject>()) return@forEach
             if (property !is KMutableProperty<*>) return@forEach

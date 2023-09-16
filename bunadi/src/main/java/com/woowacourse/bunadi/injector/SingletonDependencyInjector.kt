@@ -34,7 +34,7 @@ object SingletonDependencyInjector : Injector {
         return dependency
     }
 
-    override fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: T) {
+    override fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: Any) {
         clazz.memberProperties.forEach { property ->
             if (!property.hasAnnotation<Inject>()) return@forEach
             if (property !is KMutableProperty<*>) return@forEach
