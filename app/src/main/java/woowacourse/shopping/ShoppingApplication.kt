@@ -1,28 +1,16 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.pingudi.Container
-import com.example.pingudi.Injector
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.InDiskCartRepository
-import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.InMemoryProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.di.Container
+import woowacourse.di.Injector
+import woowacourse.shopping.di.AppModule
 
 class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        Container.addInstance(InMemoryProductRepository::class)
-        Container.addInstance(InDiskCartRepository::class)
-        Container.addInstance(InMemoryCartRepository::class)
-        Container.addInstance(
-            CartProductDao::class,
-            ShoppingDatabase.getDatabase(this).cartProductDao(),
-        )
-
-        injector = Injector(Container)
+        injector = Injector(Container(AppModule(applicationContext)))
     }
 
     companion object {

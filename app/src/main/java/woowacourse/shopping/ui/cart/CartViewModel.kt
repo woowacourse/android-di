@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pingudi.annotation.InDisk
 import kotlinx.coroutines.launch
+import woowacourse.di.annotation.Qualifier
+import woowacourse.shopping.data.InDiskCartRepository
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel(
-    @InDisk private val cartRepository: CartRepository,
+    @Qualifier(InDiskCartRepository::class) private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

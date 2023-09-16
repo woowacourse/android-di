@@ -1,13 +1,11 @@
 package woowacourse.shopping.data
 
-import com.example.pingudi.annotation.InDisk
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-@InDisk
 class InDiskCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

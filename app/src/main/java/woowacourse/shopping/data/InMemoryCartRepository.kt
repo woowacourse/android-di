@@ -1,11 +1,9 @@
 package woowacourse.shopping.data
 
-import com.example.pingudi.annotation.InMemory
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-@InMemory
 class InMemoryCartRepository : CartRepository {
     private val products = mutableListOf<CartProduct>()
     override suspend fun addCartProduct(product: Product) {

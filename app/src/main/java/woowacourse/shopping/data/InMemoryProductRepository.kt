@@ -1,10 +1,8 @@
 package woowacourse.shopping.data
 
-import com.example.pingudi.annotation.InMemory
 import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
-@InMemory
 class InMemoryProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(
