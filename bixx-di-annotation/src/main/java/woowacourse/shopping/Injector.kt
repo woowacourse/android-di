@@ -36,8 +36,8 @@ object Injector {
     }
 
     private fun createInstance(target: KClass<*>): Any {
-        val constructor = target.primaryConstructor
-            ?: throw NullPointerException("{${target.simpleName}}의 주 생성자를 찾을 수 없습니다")
+        val constructor =
+            requireNotNull(target.primaryConstructor) { "{${target.simpleName}}의 주 생성자를 찾을 수 없습니다" }
         val paramInstances = provideConstructorParameters(constructor)
 
         val instance = constructor.call(*paramInstances.toTypedArray())
