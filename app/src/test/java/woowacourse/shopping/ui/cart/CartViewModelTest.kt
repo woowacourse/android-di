@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.getOrAwaitValue
@@ -22,7 +23,7 @@ internal class CartViewModelTest : DefaultViewModelTest() {
     }
 
     @Test
-    fun `장바구니 제품 전체를 조회한다`() {
+    fun `장바구니 제품 전체를 조회한다`() = runTest {
         // given
         val products = cartRepository.getAllCartProducts()
 
@@ -34,14 +35,15 @@ internal class CartViewModelTest : DefaultViewModelTest() {
     }
 
     @Test
-    fun `장바구니 제품을 삭제하면 장바구니 제품 삭제 상태로 변경한다`() {
+    fun `장바구니 제품을 삭제하면 장바구니 제품 삭제 상태로 변경한다`() = runTest {
         // given
-        val deleteProduct = Dummy.Product()
-        val deleteProductId = 0
-        cartRepository.addCartProduct(deleteProduct)
+        val product = Dummy.Product()
+        cartRepository.addCartProduct(product)
+
+        val deleteCartProduct = cartRepository.getAllCartProducts().find { it.product == product }!!
 
         // when
-        sut.deleteCartProduct(deleteProductId)
+        sut.deleteCartProduct(deleteCartProduct)
 
         // then
         assertTrue(sut.onCartProductDeleted.getOrAwaitValue())
