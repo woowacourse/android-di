@@ -4,7 +4,7 @@ import android.app.Application
 
 abstract class DIApplication : Application() {
 
-    val container: Container = Container()
+    lateinit var injector: Injector
 
     override fun onCreate() {
         super.onCreate()

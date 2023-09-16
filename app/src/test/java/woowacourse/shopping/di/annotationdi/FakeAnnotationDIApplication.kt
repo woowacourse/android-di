@@ -1,10 +1,12 @@
 package woowacourse.shopping.di.annotationdi
 
+import com.di.berdi.Container
 import com.di.berdi.DIApplication
 import com.di.berdi.Injector
 
 class FakeAnnotationDIApplication : DIApplication() {
     override fun inject() {
-        Injector(container, applicationContext).inject(FakeAnnotationDIModule)
+        val container = Container()
+        injector = Injector(container, applicationContext).apply { inject(FakeAnnotationDIModule) }
     }
 }
