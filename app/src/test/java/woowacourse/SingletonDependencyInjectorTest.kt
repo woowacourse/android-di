@@ -3,13 +3,13 @@ package woowacourse
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Qualifier
 import com.woowacourse.bunadi.annotation.Singleton
-import com.woowacourse.bunadi.cache.DefaultCache
+import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.injector.DependencyKey
+import com.woowacourse.bunadi.injector.Injector
 import com.woowacourse.bunadi.injector.SingletonDependencyInjector
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
-import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
@@ -28,11 +28,6 @@ import kotlin.reflect.jvm.isAccessible
 
 @RunWith(RobolectricTestRunner::class)
 class SingletonDependencyInjectorTest {
-
-    @Before
-    fun setup() {
-        SingletonDependencyInjector.clear()
-    }
 
     @Test
     fun 뷰모델의_생성자_종속_항목을_자동_주입해준다() {
@@ -100,7 +95,7 @@ class SingletonDependencyInjectorTest {
         }
 
         // when: 클래스를 주입한다.
-        val actual = SingletonDependencyInjector.inject(TwoMemberPropertyClass::class)
+        val actual = SingletonDependencyInjector().inject(TwoMemberPropertyClass::class)
 
         // then: 멤버 프로퍼티가 모두 주입되어 있다.
         assertTrue(actual.isAllMemberPropertyInitialized())
@@ -127,7 +122,7 @@ class SingletonDependencyInjectorTest {
         }
 
         // when: 클래스를 주입한다.
-        val twoMemberClass = SingletonDependencyInjector.inject(TwoMemberPropertyClass::class)
+        val twoMemberClass = SingletonDependencyInjector().inject(TwoMemberPropertyClass::class)
 
         // then: second 멤버는 초기화되어 있지 않다.
         assertTrue(twoMemberClass.isFirstInitialized())
@@ -153,21 +148,21 @@ class SingletonDependencyInjectorTest {
         val outerKey = DependencyKey.createDependencyKey(Outer::class)
 
         // when: 주입했던 클래스를 받아온다.
-        val actual = SingletonDependencyInjector.inject(Outer::class)
+        val actual = SingletonDependencyInjector(cache).inject(Outer::class)
         val expected = cache[outerKey]
 
         // then: 주입했던 클래스를 재귀적으로 생성하여 반환한다.
         assert(actual == expected)
     }
 
-    private fun getDependencyInjectorCache(): DefaultCache {
-        val singletonCacheProperty = SingletonDependencyInjector::class
+    private fun getDependencyInjectorCache(): Cache {
+        val singletonCacheProperty = Injector::class
             .declaredMemberProperties
-            .find { it.returnType == DefaultCache::class.starProjectedType }
+            .find { it.returnType == Cache::class.starProjectedType }
             ?.also { it.isAccessible = true }
             ?: throw IllegalStateException("[ERROR] 캐시가 없습니다.")
 
-        return singletonCacheProperty.call() as? DefaultCache
+        return singletonCacheProperty.call(SingletonDependencyInjector()) as? Cache
             ?: throw IllegalStateException("[ERROR] 캐시를 생성할 수 없습니다.")
     }
 
@@ -183,7 +178,7 @@ class SingletonDependencyInjectorTest {
         // when: 클래스를 주입한다.
         // then: 식별자 애노테이션이 없으므로 예외가 발생한다.
         assertThrows<IllegalArgumentException> {
-            SingletonDependencyInjector.inject(InterfacePropertyClass::class)
+            SingletonDependencyInjector().inject(InterfacePropertyClass::class)
         }
     }
 
@@ -198,7 +193,7 @@ class SingletonDependencyInjectorTest {
         // when: 클래스를 주입한다.
         // then: 인터페이스 타입인 필드에 식별자 애노테이션이 없으므로 예외가 발생한다.
         assertThrows<Exception> {
-            SingletonDependencyInjector.inject(InterfaceFieldClass::class)
+            SingletonDependencyInjector().inject(InterfaceFieldClass::class)
         }
     }
 }
