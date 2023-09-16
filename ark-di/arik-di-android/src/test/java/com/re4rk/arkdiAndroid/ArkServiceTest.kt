@@ -36,8 +36,8 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `어플리케이션 의존성이 주입이 됐다`()
-            `서비스 의존성이 주입이 됐다`()
+            `어플리케이션 의존성이 주입이 된다`()
+            `서비스 의존성이 주입이 된다`()
             `@ArkInject 어노테이션이 없는 필드에는 주입이 안된다`()
         }
     }
@@ -47,7 +47,7 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `어플리케이션 의존성이 주입이 됐다`()
+            `어플리케이션 의존성이 주입이 된다`()
         }
     }
 
@@ -56,7 +56,7 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `서비스 의존성이 주입이 됐다`()
+            `서비스 의존성이 주입이 된다`()
         }
     }
 
@@ -65,7 +65,7 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `리테인드 액티비티 의존성이 주입이 안됐다`()
+            `리테인드 액티비티 의존성이 주입이 안된다`()
         }
     }
 
@@ -74,7 +74,7 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `액티비티 의존성이 주입이 안됐다`()
+            `액티비티 의존성이 주입이 안된다`()
         }
     }
 
@@ -83,7 +83,7 @@ class ArkServiceTest {
         // when
         `서비스를 생성했을 때`().apply {
             // then
-            `뷰모델 의존성이 주입이 안됐다`()
+            `뷰모델 의존성이 주입이 안된다`()
         }
     }
 
@@ -108,11 +108,11 @@ class ArkServiceTest {
         @ArkInject
         lateinit var fakeViewModelDependency: FakeViewModelDependency
 
-        fun `어플리케이션 의존성이 주입이 됐다`() {
+        fun `어플리케이션 의존성이 주입이 된다`() {
             assertThat(::fakeApplicationDependency.isInitialized).isTrue
         }
 
-        fun `서비스 의존성이 주입이 됐다`() {
+        fun `서비스 의존성이 주입이 된다`() {
             assertThat(::fakeServiceDependency.isInitialized).isTrue
         }
 
@@ -120,15 +120,15 @@ class ArkServiceTest {
             assertThat(::fakeServiceDependencyNoInject.isInitialized).isFalse
         }
 
-        fun `리테인드 액티비티 의존성이 주입이 안됐다`() {
+        fun `리테인드 액티비티 의존성이 주입이 안된다`() {
             assertThat(::fakeRetainedActivityDependency.isInitialized).isFalse
         }
 
-        fun `액티비티 의존성이 주입이 안됐다`() {
+        fun `액티비티 의존성이 주입이 안된다`() {
             assertThat(::fakeActivityDependency.isInitialized).isFalse
         }
 
-        fun `뷰모델 의존성이 주입이 안됐다`() {
+        fun `뷰모델 의존성이 주입이 안된다`() {
             assertThat(::fakeViewModelDependency.isInitialized).isFalse
         }
     }
