@@ -20,10 +20,12 @@ class ShoppingApplication : Application() {
     }
 
     private fun initContainer() {
-        Container.addInstance(CartProductDao::class, localDatabase.cartProductDao())
-        Container.addInstance(ProductRepository::class, inject(DefaultProductRepository::class))
-        Container.addInstance(CartRepository::class, inject(InDiskCartRepository::class))
-        Container.addInstance(CartRepository::class, inject(InMemoryCartRepository::class))
+        Container.apply {
+            addInstance(CartProductDao::class, localDatabase.cartProductDao())
+            addInstance(ProductRepository::class, inject(DefaultProductRepository::class))
+            addInstance(CartRepository::class, inject(InDiskCartRepository::class))
+            addInstance(CartRepository::class, inject(InMemoryCartRepository::class))
+        }
     }
 
     companion object {
