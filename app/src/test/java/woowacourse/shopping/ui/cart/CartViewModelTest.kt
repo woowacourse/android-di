@@ -1,13 +1,19 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.createProduct
+import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.getCartProducts
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.toProduct
 
 class CartViewModelTest {
     private lateinit var cartRepository: CartRepository
@@ -16,13 +22,11 @@ class CartViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
-        val cartProducts = listOf(
-            Product("멘델", 0, ""),
-            Product("글로", 1000000000, ""),
-        )
-        cartRepository = FakeCartRepository(cartProducts.toMutableList())
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        cartRepository = FakeCartRepository()
         viewModel = CartViewModel(cartRepository)
     }
 
@@ -34,26 +38,23 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        val expected = listOf(
-            Product("멘델", 0, ""),
-            Product("글로", 1000000000, ""),
-        )
+        val expected = getCartProducts()
         assertThat(viewModel.cartProducts.value).isEqualTo(expected)
     }
 
     @Test
     fun `카트 상품을 삭제하면 카트에서 상품이 삭제된다`() {
         // given
-        val product = Product("글로", 1000000000, "")
+        val product = createProduct()
         viewModel.getAllCartProducts()
-        assertThat(viewModel.cartProducts.value).contains(product)
+        assertThat(viewModel.cartProducts.value?.map { it.toProduct() }).contains(product)
 
         // when
-        viewModel.deleteCartProduct(1)
+        viewModel.deleteCartProduct(0)
 
         // then
         viewModel.getAllCartProducts()
-        assertThat(viewModel.cartProducts.value).doesNotContain(product)
+        assertThat(viewModel.cartProducts.value?.map { it.toProduct() }).doesNotContain(product)
     }
 
     @Test
@@ -62,7 +63,7 @@ class CartViewModelTest {
         assertThat(viewModel.onCartProductDeleted.value).isFalse
 
         // when
-        viewModel.deleteCartProduct(1)
+        viewModel.deleteCartProduct(0)
 
         // then
         assertThat(viewModel.onCartProductDeleted.value).isTrue

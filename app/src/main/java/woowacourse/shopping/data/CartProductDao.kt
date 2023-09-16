@@ -3,7 +3,9 @@ package woowacourse.shopping.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import woowacourse.shopping.annotation.SingleInstance
 
+@SingleInstance
 @Dao
 interface CartProductDao {
 

@@ -1,8 +1,10 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.annotation.SingleInstance
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
+@SingleInstance
 class DefaultProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(

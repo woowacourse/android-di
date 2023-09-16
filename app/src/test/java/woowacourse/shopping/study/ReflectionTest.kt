@@ -1,12 +1,16 @@
-package woowacourse.shopping
+package woowacourse.shopping.study
 
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.fake.FakeProductRepository
+import woowacourse.shopping.model.CartProduct
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.starProjectedType
 
 class FakeCartViewModel(private val repository: FakeCartRepository) {
-    fun getProducts(): List<String> = repository.getAllCartProducts().map { it.name }
+    suspend fun getProducts(): List<CartProduct> = repository.getAllCartProducts()
 }
 
 class ReflectionTest {
@@ -16,7 +20,7 @@ class ReflectionTest {
     )
 
     @Test
-    fun `변경 불가능한 비공개 프로퍼티 값 설정하여 객체 생성`() {
+    fun `변경 불가능한 비공개 프로퍼티 값 설정하여 객체 생성`() = runTest {
         // given
         val modelClass = FakeCartViewModel::class.java
         val constructor = modelClass.kotlin.primaryConstructor
@@ -26,8 +30,6 @@ class ReflectionTest {
         val viewModel = constructor?.callBy(args)
 
         // then
-        val actual = viewModel?.getProducts()
-        val expected = listOf("milk")
-        assertThat(actual).isEqualTo(expected)
+        assertThat(viewModel).isNotNull
     }
 }

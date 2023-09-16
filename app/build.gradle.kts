@@ -71,4 +71,7 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // Kotlin Reflection
     implementation(kotlin("reflect"))
+    // di
+    implementation(project(":di"))
+    // implementation("com.github.ippnsj:android-di:1.0.0")
 }
