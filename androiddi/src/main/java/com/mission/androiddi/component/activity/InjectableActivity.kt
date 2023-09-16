@@ -11,8 +11,7 @@ abstract class InjectableActivity : AppCompatActivity() {
     abstract val activityClazz: KClass<out InjectableActivity>
     private val dependencyLifecycleObserver by lazy {
         val injector = getDependencyInjector().apply {
-            injectActivityContext()
-            injectActivityMembers()
+            injectActivityDependencies()
         }
         ActivityDependencyLifecycleObserver(injector, this)
     }
@@ -23,7 +22,15 @@ abstract class InjectableActivity : AppCompatActivity() {
     }
 
     private fun getDependencyInjector(): Injector {
-        return NonConfigurationActivityInjectorManager.getInjector(this, activityClazz.qualifiedName)
+        return NonConfigurationActivityInjectorManager.getInjector(
+            this,
+            activityClazz.qualifiedName,
+        )
+    }
+
+    private fun Injector.injectActivityDependencies() {
+        injectActivityContext()
+        injectActivityMembers()
     }
 
     private fun Injector.injectActivityContext() {
