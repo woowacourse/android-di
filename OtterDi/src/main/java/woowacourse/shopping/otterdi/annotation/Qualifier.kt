@@ -5,4 +5,4 @@ package woowacourse.shopping.otterdi.annotation
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.PROPERTY
 )
-annotation class Qualifier(val implementationName: String)
+annotation class Qualifier(val name: String)

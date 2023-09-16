@@ -7,10 +7,10 @@ object FakeModule : Module {
 
     fun provideProductRepository(): FakeProductRepository = FakeDefaultProductRepository()
 
-    @Qualifier("FakeDefaultCartRepository")
+    @Qualifier("MultiImplCartRepositoryDefault")
     fun provideCartRepository(): FakeCartRepository = FakeDefaultCartRepository()
 
-    @Qualifier("FakeDefaultCartRepository2")
+    @Qualifier("MultiImplCartRepositorySecond")
     fun provideCartRepository2(): FakeCartRepository = FakeDefaultCartRepository2()
 }
 

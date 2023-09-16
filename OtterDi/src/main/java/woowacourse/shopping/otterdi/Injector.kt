@@ -16,8 +16,9 @@ class Injector(val dependencies: Dependencies) {
             ?: throw NullPointerException("${T::class.simpleName} 클래스의 주생성자를 가져오는데 실패하였습니다. 인터페이스와 같이 주생성자가 없는 객체인지 확인해주세요.")
         val injectParams: List<KParameter> =
             primaryConstructor.parameters.filter { it.hasAnnotation<Inject>() }
-        val dependencies = dependencies.getInstances(injectParams)
-        val instance = primaryConstructor.call(*dependencies.toTypedArray())
+        val args = dependencies.getInstances(injectParams)
+        val instance = primaryConstructor.call(*args.toTypedArray())
+
         injectProperties(instance)
         return instance
     }
@@ -27,7 +28,7 @@ class Injector(val dependencies: Dependencies) {
             instance::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
         mutableProperties.forEach { property ->
             if (property.annotations.any { it is Inject }.not()) return@forEach
-            val dependency = dependencies.getInstance(property.returnType.toString())
+            val dependency = dependencies.getInstance(property)
             property.isAccessible = true
             property.setter.call(instance, dependency)
         }

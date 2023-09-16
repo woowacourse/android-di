@@ -2,68 +2,71 @@ package woowacourse.shopping.otterdi
 
 import woowacourse.shopping.otterdi.annotation.Inject
 import woowacourse.shopping.otterdi.annotation.Qualifier
+import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 class Dependencies(private val modules: List<Module>) {
     constructor(vararg modules: Module) : this(modules.toList())
 
-    private val instances: MutableMap<String, Any?> = mutableMapOf<String, Any?>().apply {
+    private val providers: MutableMap<String, KFunction<*>> = mutableMapOf()
+    private val instances: MutableMap<String, Any?> = mutableMapOf()
+
+    init {
+        initProviders()
+        initInstances()
+    }
+
+    private fun initProviders() {
         modules.forEach { module ->
             module::class.declaredMemberFunctions.forEach {
-                val key = getDependencyKey(it)
-                this[key] = createInstance(it, module)
+                providers[it.identifyKey()] = it
             }
         }
     }
-    private val providers: MutableMap<String, KFunction<*>> =
-        modules::class.declaredMemberFunctions.associateBy { it.returnType.toString() }
-            .toMutableMap()
+
+    private fun initInstances() {
+        modules.forEach { module ->
+            module::class.declaredMemberFunctions.forEach {
+                instances[it.identifyKey()] = createInstance(it, module)
+            }
+        }
+    }
 
     private fun createInstance(provideFunc: KFunction<*>, receiver: Module): Any? {
         val injectParams = provideFunc.parameters.filter { it.hasAnnotation<Inject>() }
         if (injectParams.isEmpty()) return provideFunc.call(receiver)
 
         injectParams.forEach { param ->
-            val key = getDependencyKey(param)
-            if (providers[key] == null) throw IllegalArgumentException("필요한 의존성을 찾을 수 없습니다. ($key)")
-            if (instances[key] == null) instances[key] = createInstance(providers[key]!!, receiver)
+            val key = param.identifyKey()
+            providers[key]?.let { provider ->
+                if (instances[key] == null) instances[key] = createInstance(provider, receiver)
+            } ?: throw IllegalArgumentException("필요한 의존성을 찾을 수 없습니다. ($param)")
         }
 
-        val args = injectParams.map { instances[it.type.toString()] }
-        return provideFunc.call(receiver, args.toTypedArray())
+        val args = injectParams.associateWith { instances[it.identifyKey()] }.toMutableMap()
+        args[provideFunc.parameters.first()] = receiver
+        return provideFunc.callBy(args)
     }
 
-    fun getInstance(type: String): Any {
-        return instances[type] ?: throw IllegalArgumentException("${type}에 대한 의존성을 가져오는데 실피하였습니다.")
-    }
+    fun getInstances(params: List<KParameter>): List<Any> = params.map { getInstance(it) }
 
-    fun getInstances(params: List<KParameter>): List<Any> {
-        return params.map { param ->
-            if (param.findAnnotation<Qualifier>() == null) {
-                getInstance(param.type.toString())
-            } else {
-                getInstance(param.findAnnotation<Qualifier>()?.implementationName.toString())
-            }
-        }
-    }
+    fun getInstance(kParam: KParameter): Any = instances[kParam.identifyKey()]
+        ?: throw IllegalArgumentException("${kParam}에 대한 의존성을 가져오는데 실피하였습니다.")
 
-    private fun getDependencyKey(function: KFunction<*>): String {
-        return if (function.findAnnotation<Qualifier>() == null) {
-            function.returnType.toString()
-        } else {
-            function.findAnnotation<Qualifier>()!!.implementationName
-        }
-    }
+    fun getInstance(kCallable: KCallable<*>): Any = instances[kCallable.identifyKey()]
+        ?: throw IllegalArgumentException("${kCallable}에 대한 의존성을 가져오는데 실피하였습니다.")
 
-    private fun getDependencyKey(param: KParameter): String {
-        return if (param.findAnnotation<Qualifier>() == null) {
-            param.type.toString()
-        } else {
-            param.findAnnotation<Qualifier>()!!.implementationName
-        }
-    }
+    private fun KCallable<*>.identifyKey(): String =
+        "$returnType:${qualifier()?.name ?: ""}"
+
+    private fun KParameter.identifyKey(): String = "$type:${qualifier()?.name ?: ""}"
+
+    private fun KCallable<*>.qualifier(): Qualifier? =
+        this.annotations.find { it is Qualifier } as Qualifier?
+
+    private fun KParameter.qualifier(): Qualifier? =
+        this.annotations.find { it is Qualifier } as Qualifier?
 }
