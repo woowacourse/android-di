@@ -8,21 +8,20 @@ import com.re4rk.arkdiAndroid.arkModules.ArkModules
 
 internal class ArkModuleFactory(private val arkModules: ArkModules) {
     fun createApplicationModule(applicationContext: Context): ArkModule {
-        return arkModules.createApplicationModule(applicationContext)
+        return arkModules.applicationModule(applicationContext)
     }
 
     fun createActivityModule(parentModule: ArkModule, activity: ComponentActivity): ArkViewModel {
         return ViewModelProvider(activity)[ArkViewModel::class.java].apply {
             if (isInitialized.not()) {
-                ownerRetainedModule =
-                    arkModules.createRetainedActivityModule(parentModule, activity)
-                viewModelModule = arkModules.createViewModelModule(ownerRetainedModule)
+                ownerRetainedModule = arkModules.retainedActivityModule(parentModule, activity)
+                viewModelModule = arkModules.viewModelModule(ownerRetainedModule)
             }
-            ownerModule = arkModules.createActivityModule(ownerRetainedModule, activity)
+            ownerModule = arkModules.activityModule(ownerRetainedModule, activity)
         }
     }
 
     fun createServiceModule(arkModule: ArkModule): ArkModule {
-        return arkModules.createServiceModule(arkModule)
+        return arkModules.serviceModule(arkModule)
     }
 }

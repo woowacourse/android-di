@@ -17,24 +17,11 @@ class ArkModulesBuilder {
 
     fun build(): ArkModules {
         return object : ArkModules {
-            override fun createApplicationModule(applicationContext: Context): ArkModule =
-                applicationModule(applicationContext)
-
-            override fun createRetainedActivityModule(
-                parentModule: ArkModule,
-                context: Context,
-            ): ArkModule = retainedActivityModule(parentModule, context)
-
-            override fun createActivityModule(
-                parentModule: ArkModule,
-                context: Context,
-            ): ArkModule = activityModule(parentModule, context)
-
-            override fun createViewModelModule(parentModule: ArkModule): ArkModule =
-                viewModelModule(parentModule)
-
-            override fun createServiceModule(parentModule: ArkModule): ArkModule =
-                serviceModule(parentModule)
+            override val applicationModule = this@ArkModulesBuilder.applicationModule
+            override val retainedActivityModule = this@ArkModulesBuilder.retainedActivityModule
+            override val activityModule = this@ArkModulesBuilder.activityModule
+            override val viewModelModule = this@ArkModulesBuilder.viewModelModule
+            override val serviceModule = this@ArkModulesBuilder.serviceModule
         }
     }
 }

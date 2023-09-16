@@ -20,6 +20,6 @@ class FakeApplication : ArkApplication(fakeKArkModules) {
 
     override fun onCreate() {
         super.onCreate()
-        fakeArkModuleFactory.createApplicationModule(applicationContext).inject(this)
+        fakeArkModuleFactory.applicationModule(applicationContext).inject(this)
     }
 }

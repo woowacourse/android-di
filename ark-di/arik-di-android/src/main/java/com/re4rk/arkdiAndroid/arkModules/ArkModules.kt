@@ -4,9 +4,9 @@ import android.content.Context
 import com.re4rk.arkdi.ArkModule
 
 interface ArkModules {
-    fun createApplicationModule(applicationContext: Context): ArkModule
-    fun createRetainedActivityModule(parentModule: ArkModule, context: Context): ArkModule
-    fun createActivityModule(parentModule: ArkModule, context: Context): ArkModule
-    fun createViewModelModule(parentModule: ArkModule): ArkModule
-    fun createServiceModule(parentModule: ArkModule): ArkModule
+    val applicationModule: (Context) -> ArkModule
+    val retainedActivityModule: (ArkModule, Context) -> ArkModule
+    val activityModule: (ArkModule, Context) -> ArkModule
+    val viewModelModule: (ArkModule) -> ArkModule
+    val serviceModule: (ArkModule) -> ArkModule
 }

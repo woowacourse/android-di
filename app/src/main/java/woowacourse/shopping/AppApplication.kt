@@ -9,9 +9,9 @@ import woowacourse.shopping.di.ViewModelModule
 
 class AppApplication : ArkApplication(
     arkModules = arkModules {
-        applicationModule = { applicationContext -> ApplicationModule(applicationContext) }
-        retainedActivityModule = { parent, context -> RetainedActivityModule(parent, context) }
-        activityModule = { parent, context -> ActivityModule(parent, context) }
-        viewModelModule = { parent -> ViewModelModule(parent) }
+        applicationModule = ::ApplicationModule
+        retainedActivityModule = ::RetainedActivityModule
+        activityModule = ::ActivityModule
+        viewModelModule = ::ViewModelModule
     },
 )
