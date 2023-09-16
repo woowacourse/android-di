@@ -11,8 +11,12 @@ class ActivityDependencyLifecycleObserver(
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        if (!activity.isChangingConfigurations) {
-            injector.clear()
+        if (activity.isChangingConfigurations) {
+            val key = activity.activityClazz.qualifiedName ?: return
+            ActivityInjectorManager.saveInjector(key, injector)
+            return
         }
+
+        injector.clear()
     }
 }
