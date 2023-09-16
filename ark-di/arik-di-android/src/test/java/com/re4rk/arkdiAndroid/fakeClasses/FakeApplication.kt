@@ -1,11 +1,12 @@
-package com.re4rk.arkdiAndroid
+package com.re4rk.arkdiAndroid.fakeClasses
 
+import com.re4rk.arkdiAndroid.ArkApplication
 import com.re4rk.arkdiAndroid.arkModules.arkModules
-import com.re4rk.arkdiAndroid.fakeModules.FakeActivityModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeApplicationModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeRetainedActivityModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeServiceModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeViewModelModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeActivityModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeApplicationModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeRetainedActivityModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeServiceModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeViewModelModule
 
 private val fakeKArkModules = arkModules {
     applicationModule = ::FakeApplicationModule

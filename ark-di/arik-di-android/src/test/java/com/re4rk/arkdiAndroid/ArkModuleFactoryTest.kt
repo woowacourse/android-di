@@ -3,11 +3,12 @@ package com.re4rk.arkdiAndroid
 import com.re4rk.arkdi.ArkModule
 import com.re4rk.arkdiAndroid.arkModules.ArkModules
 import com.re4rk.arkdiAndroid.arkModules.arkModules
-import com.re4rk.arkdiAndroid.fakeModules.FakeActivityModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeApplicationModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeRetainedActivityModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeServiceModule
-import com.re4rk.arkdiAndroid.fakeModules.FakeViewModelModule
+import com.re4rk.arkdiAndroid.fakeClasses.FakeApplication
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeActivityModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeApplicationModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeRetainedActivityModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeServiceModule
+import com.re4rk.arkdiAndroid.fakeClasses.fakeModules.FakeViewModelModule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test

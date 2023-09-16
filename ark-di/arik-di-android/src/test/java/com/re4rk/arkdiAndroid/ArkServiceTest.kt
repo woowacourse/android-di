@@ -2,7 +2,8 @@ package com.re4rk.arkdiAndroid
 
 import androidx.test.rule.ServiceTestRule
 import com.re4rk.arkdi.ArkInject
-import com.re4rk.arkdiAndroid.fakeDependency.FakeServiceDependency
+import com.re4rk.arkdiAndroid.fakeClasses.FakeApplication
+import com.re4rk.arkdiAndroid.fakeClasses.fakeDependency.FakeServiceDependency
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule

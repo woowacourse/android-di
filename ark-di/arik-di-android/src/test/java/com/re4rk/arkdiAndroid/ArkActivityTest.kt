@@ -1,7 +1,8 @@
 package com.re4rk.arkdiAndroid
 
 import com.re4rk.arkdi.ArkInject
-import com.re4rk.arkdiAndroid.fakeDependency.FakeActivityDependency
+import com.re4rk.arkdiAndroid.fakeClasses.FakeApplication
+import com.re4rk.arkdiAndroid.fakeClasses.fakeDependency.FakeActivityDependency
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
