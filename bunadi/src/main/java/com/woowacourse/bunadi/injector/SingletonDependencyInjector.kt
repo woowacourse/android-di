@@ -3,7 +3,7 @@ package com.woowacourse.bunadi.injector
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Singleton
 import com.woowacourse.bunadi.cache.Cache
-import com.woowacourse.bunadi.cache.SingletonCache
+import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.module.Module
 import com.woowacourse.bunadi.util.createInstance
 import com.woowacourse.bunadi.util.parseFromQualifier
@@ -17,7 +17,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object SingletonDependencyInjector : Injector {
-    var cache: Cache = SingletonCache()
+    var cache: Cache = DefaultCache()
 
     override fun <T : Any> inject(clazz: KClass<T>): T {
         val dependencyKey = DependencyKey.createDependencyKey(clazz)

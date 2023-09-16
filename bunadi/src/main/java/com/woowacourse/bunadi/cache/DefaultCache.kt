@@ -1,12 +1,11 @@
-package com.mission.androiddi.cache
+package com.woowacourse.bunadi.cache
 
-import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.injector.DependencyKey
 import com.woowacourse.bunadi.module.Module
 import com.woowacourse.bunadi.util.Dependency
 import com.woowacourse.bunadi.util.ProviderFunction
 
-data class ViewModelCache(
+data class DefaultCache(
     private val parentCache: Cache? = null,
     private val cache: MutableMap<DependencyKey, Dependency?> = mutableMapOf(),
 ) : Cache {

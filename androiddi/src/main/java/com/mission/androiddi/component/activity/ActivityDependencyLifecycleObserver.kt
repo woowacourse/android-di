@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.mission.androiddi.cache.ActivityCache
 import com.woowacourse.bunadi.cache.Cache
+import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.DependencyKey
 import kotlin.reflect.KClass
 
@@ -18,7 +18,7 @@ class ActivityDependencyLifecycleObserver<out T : AppCompatActivity>(
     init {
         val parentCache = activity.application
         if (parentCache is Cache) {
-            dependencyInjector = ActivityDependencyInjector(ActivityCache(parentCache))
+            dependencyInjector = ActivityDependencyInjector(DefaultCache(parentCache))
         }
 
         injectActivityContext(activity.baseContext)

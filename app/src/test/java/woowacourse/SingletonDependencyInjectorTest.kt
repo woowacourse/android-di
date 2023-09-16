@@ -3,9 +3,9 @@ package woowacourse
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Qualifier
 import com.woowacourse.bunadi.annotation.Singleton
-import com.woowacourse.bunadi.injector.SingletonDependencyInjector
+import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.DependencyKey
-import com.woowacourse.bunadi.cache.SingletonCache
+import com.woowacourse.bunadi.injector.SingletonDependencyInjector
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
@@ -160,14 +160,14 @@ class SingletonDependencyInjectorTest {
         assert(actual == expected)
     }
 
-    private fun getDependencyInjectorCache(): SingletonCache {
+    private fun getDependencyInjectorCache(): DefaultCache {
         val singletonCacheProperty = SingletonDependencyInjector::class
             .declaredMemberProperties
-            .find { it.returnType == SingletonCache::class.starProjectedType }
+            .find { it.returnType == DefaultCache::class.starProjectedType }
             ?.also { it.isAccessible = true }
             ?: throw IllegalStateException("[ERROR] 캐시가 없습니다.")
 
-        return singletonCacheProperty.call() as? SingletonCache
+        return singletonCacheProperty.call() as? DefaultCache
             ?: throw IllegalStateException("[ERROR] 캐시를 생성할 수 없습니다.")
     }
 
