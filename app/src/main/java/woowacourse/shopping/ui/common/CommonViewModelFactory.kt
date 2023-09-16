@@ -10,6 +10,6 @@ object CommonViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         val application = checkNotNull(extras[APPLICATION_KEY]) as ShoppingApplication
-        return application.inject.getInstanceFromClass(modelClass)
+        return application.injector.inject(modelClass.kotlin)
     }
 }

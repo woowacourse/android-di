@@ -1,15 +1,17 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.inject.CustomInjector
+import com.lope.di.inject.CustomInjector
+import woowacourse.shopping.di.ApplicationModule
 
 class ShoppingApplication : Application() {
 
-    lateinit var inject: CustomInjector
+    lateinit var injector: CustomInjector
         private set
 
     override fun onCreate() {
         super.onCreate()
-        inject = CustomInjector()
+        injector = CustomInjector()
+        ApplicationModule(this, injector)
     }
 }

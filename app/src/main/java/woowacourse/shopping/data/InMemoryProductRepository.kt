@@ -1,9 +1,11 @@
 package woowacourse.shopping.data
 
+import com.lope.di.annotation.InMemoryMode
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-class DefaultProductRepository : ProductRepository {
+@InMemoryMode
+class InMemoryProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(
         Product(
