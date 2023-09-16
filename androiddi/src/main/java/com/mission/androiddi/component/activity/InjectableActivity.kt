@@ -3,6 +3,7 @@ package com.mission.androiddi.component.activity
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.injector.DependencyKey
 import com.woowacourse.bunadi.injector.Injector
 import kotlin.reflect.KClass
@@ -22,7 +23,10 @@ abstract class InjectableActivity : AppCompatActivity() {
     }
 
     private fun getDependencyInjector(): Injector {
-        return NonConfigurationActivityInjectorManager.getInjector(
+        val injectableApplication = application as InjectableApplication
+        val activityInjectManager = injectableApplication.requireActivityInjectManager()
+
+        return activityInjectManager.getInjector(
             this,
             activityClazz.qualifiedName,
         )

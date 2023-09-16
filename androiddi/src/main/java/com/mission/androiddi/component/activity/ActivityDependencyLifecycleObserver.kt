@@ -2,6 +2,7 @@ package com.mission.androiddi.component.activity
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.injector.Injector
 
 class ActivityDependencyLifecycleObserver(
@@ -12,13 +13,12 @@ class ActivityDependencyLifecycleObserver(
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         val key = activity.activityClazz.qualifiedName ?: return
+        val injectableApplication = activity.application as InjectableApplication
+        val activityInjectManager = injectableApplication.requireActivityInjectManager()
 
-        if (activity.isChangingConfigurations) {
-            NonConfigurationActivityInjectorManager.saveInjector(key, injector)
-            return
+        when {
+            activity.isChangingConfigurations -> activityInjectManager.saveInjector(key, injector)
+            activity.isFinishing -> activityInjectManager.removeInjector(key)
         }
-
-        injector.clear()
-        NonConfigurationActivityInjectorManager.removeInjector(key)
     }
 }

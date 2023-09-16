@@ -1,19 +1,17 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.woowacourse.bunadi.cache.Cache
-import com.woowacourse.bunadi.cache.DefaultCache
+import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.dsl.modules
 import com.woowacourse.bunadi.injector.SingletonDependencyInjector
 import woowacourse.shopping.ui.common.di.module.DaoModule
 
-class ShoppingApplication : Application(), Cache by DefaultCache() {
+class ShoppingApplication : InjectableApplication() {
     override fun onCreate() {
         super.onCreate()
-        initDi()
+        initModules()
     }
 
-    private fun initDi() {
+    private fun initModules() {
         SingletonDependencyInjector(this).modules {
             module(DaoModule(this@ShoppingApplication))
         }

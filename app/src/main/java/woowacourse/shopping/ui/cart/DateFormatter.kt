@@ -9,7 +9,6 @@ import java.util.Locale
 
 @ActivityScope
 class DateFormatter(context: Context) {
-
     private val formatter = SimpleDateFormat(
         context.getString(R.string.date_format),
         Locale.KOREA,
