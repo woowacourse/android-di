@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import woowacourse.di.Module
+import woowacourse.di.annotation.InjectField
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.InDiskCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
@@ -16,8 +17,8 @@ class AppModule(private val context: Context) : Module {
 
     fun provideInMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 
-    fun provideInDiskCartRepository(): CartRepository =
-        InDiskCartRepository(provideCartProductDao())
+    fun provideInDiskCartRepository(@InjectField cartDao: CartProductDao): CartRepository =
+        InDiskCartRepository(cartDao)
 
     fun provideCartProductDao(): CartProductDao =
         ShoppingDatabase.getDatabase(context).cartProductDao()

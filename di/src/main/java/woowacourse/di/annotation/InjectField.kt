@@ -1,4 +1,4 @@
 package woowacourse.di.annotation
 
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 annotation class InjectField

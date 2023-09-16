@@ -48,13 +48,16 @@ class InjectorTest {
     class FakeViewModel2(val repo: IsNotExist)
 
     @Test
-    fun `재귀가 필요한 경우`() {
-        // given
-
+    fun `요구하는 값의 생성자가 주입이 필요한 파라미터를 가진 경우 재귀를 통해 인스턴스를 생성하여 반환한다`() {
         // when
+        val actual = injector.inject(RecursiveViewModel::class)
 
         // then
+        assertNotNull(actual)
+        assertEquals(InDiskFakeCartRepository::class, actual.cartRepository::class)
     }
+
+    class RecursiveViewModel(@Qualifier(InDiskFakeCartRepository::class) val cartRepository: FakeCartRepository)
 
     @Test
     fun `Qualifier 어노테이션으로 각각 해당하는 인자를 넣어 만든 인스턴스를 반환한다`() {
