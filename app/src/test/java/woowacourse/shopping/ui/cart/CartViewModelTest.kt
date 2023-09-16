@@ -37,12 +37,13 @@ internal class CartViewModelTest : DefaultViewModelTest() {
     @Test
     fun `장바구니 제품을 삭제하면 장바구니 제품 삭제 상태로 변경한다`() = runTest {
         // given
-        val deleteProduct = Dummy.Product()
-        val deleteProductId = 0L
-        cartRepository.addCartProduct(deleteProduct)
+        val product = Dummy.Product()
+        cartRepository.addCartProduct(product)
+
+        val deleteCartProduct = cartRepository.getAllCartProducts().find { it.product == product }!!
 
         // when
-        sut.deleteCartProduct(deleteProductId)
+        sut.deleteCartProduct(deleteCartProduct)
 
         // then
         assertTrue(sut.onCartProductDeleted.getOrAwaitValue())
