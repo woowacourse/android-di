@@ -14,9 +14,11 @@ fun Product.toEntity(): CartProductEntity {
 
 fun CartProductEntity.toCartProduct(): CartProduct {
     return CartProduct(
-        name = name,
-        price = price,
-        imageUrl = imageUrl,
+        Product(
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+        ),
         id = id,
         createdAt = createdAt,
     )
