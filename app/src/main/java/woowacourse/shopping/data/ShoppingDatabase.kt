@@ -13,7 +13,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
         private var instance: ShoppingDatabase? = null
 
         @Synchronized
-        fun getInstance(context: Context): ShoppingDatabase? {
+        fun getInstance(context: Context): ShoppingDatabase {
             if (instance == null) {
                 synchronized(ShoppingDatabase::class) {
                     instance = Room.databaseBuilder(
@@ -23,7 +23,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
                     ).build()
                 }
             }
-            return instance
+            return instance ?: throw IllegalStateException()
         }
     }
 }

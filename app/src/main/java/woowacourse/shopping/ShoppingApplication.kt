@@ -15,7 +15,7 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        localDatabase = ShoppingDatabase.getInstance(this)!!
+        localDatabase = ShoppingDatabase.getInstance(this)
         initContainer()
     }
 
