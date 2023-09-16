@@ -20,10 +20,15 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycle.addObserver(ActivityDependencyLifecycleObserver(CartActivity::class, this))
+        initDi()
         setupBinding()
         setupToolbar()
         setupView()
+    }
+
+    private fun initDi() {
+        dependencyLifecycleObserver = ActivityDependencyLifecycleObserver(CartActivity::class, this)
+        lifecycle.addObserver(dependencyLifecycleObserver)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,18 +1,27 @@
 package com.mission.androiddi.util.viewModel
 
+import android.app.Activity
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import com.woowacourse.bunadi.injector.SingletonDependencyInjector
+import com.mission.androiddi.cache.ViewModelCache
+import com.mission.androiddi.component.viewModel.ViewModelDependencyInjector
+import com.woowacourse.bunadi.cache.Cache
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
-        { viewModelFactory { createViewModel<VM>() } },
+        { viewModelFactory { createViewModel<VM>(this) } },
     )
 }
 
-inline fun <reified VM : ViewModel> createViewModel(): VM {
-    return SingletonDependencyInjector.inject(VM::class)
+inline fun <reified VM : ViewModel> createViewModel(
+    activity: Activity,
+): VM {
+    val parentCache = activity.application
+    if (parentCache is Cache) {
+        return ViewModelDependencyInjector(ViewModelCache(parentCache)).inject(VM::class)
+    }
+    return ViewModelDependencyInjector().inject(VM::class)
 }
