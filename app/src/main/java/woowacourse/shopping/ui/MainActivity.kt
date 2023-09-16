@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.getViewModel
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.common.getViewModel
 
 class MainActivity : AppCompatActivity() {
 

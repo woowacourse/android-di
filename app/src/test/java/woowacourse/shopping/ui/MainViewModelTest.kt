@@ -5,6 +5,12 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -23,11 +29,19 @@ class MainViewModelTest {
     private lateinit var cartRepository: CartRepository
     private val fakeProduct = Product("name", 1000, "imageUrl")
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = mockk()
         cartRepository = mockk()
         vm = MainViewModel(productRepository = productRepository, cartRepository = cartRepository)
+    }
+
+    @After
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
