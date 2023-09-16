@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.constructordi
+package woowacourse.shopping.di.diactivity
 
 import com.di.berdi.Module
 import com.di.berdi.annotation.InMemory
@@ -11,8 +11,7 @@ import woowacourse.shopping.di.InMemoryFakeRepository
 import woowacourse.shopping.di.OnDiskFakeRepository
 import woowacourse.shopping.di.SecondDataSource
 
-object FakeConstructorDIModule : Module {
-
+object FakeRepositoryModule : Module {
     @OnDisk
     fun provideOnDiskFakeRepository(
         firstDataSource: FirstDataSource,
