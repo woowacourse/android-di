@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.common.di.qualifier
+package woowacourse.shopping.ui.common.di.annotation.qualifier
 
 import com.woowacourse.bunadi.annotation.Qualifier
 import woowacourse.shopping.data.repository.DatabaseCartRepository

@@ -1,11 +1,13 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
+import com.mission.androiddi.scope.ActivityScope
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@ActivityScope
 class DateFormatter(context: Context) {
 
     private val formatter = SimpleDateFormat(

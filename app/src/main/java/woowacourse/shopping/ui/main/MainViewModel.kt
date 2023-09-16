@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
-import woowacourse.shopping.ui.common.di.qualifier.DatabaseCartRepositoryQualifier
-import woowacourse.shopping.ui.common.di.qualifier.DefaultProductRepositoryQualifier
+import woowacourse.shopping.ui.common.di.annotation.qualifier.DatabaseCartRepositoryQualifier
+import woowacourse.shopping.ui.common.di.annotation.qualifier.DefaultProductRepositoryQualifier
 
 class MainViewModel(
     @DefaultProductRepositoryQualifier private val productRepository: ProductRepository,

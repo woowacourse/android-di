@@ -1,11 +1,11 @@
 package com.woowacourse.bunadi.dsl
 
-import com.woowacourse.bunadi.injector.DependencyInjector
+import com.woowacourse.bunadi.injector.SingletonDependencyInjector
 import com.woowacourse.bunadi.module.Module
 
 class DependencyModuleDsl {
     fun module(module: Module) {
-        DependencyInjector.module(module)
+        SingletonDependencyInjector.module(module)
     }
 }
 

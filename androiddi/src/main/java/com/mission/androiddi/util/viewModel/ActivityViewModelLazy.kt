@@ -1,9 +1,9 @@
-package woowacourse.shopping.ui.util.viewModel
+package com.mission.androiddi.util.viewModel
 
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import com.woowacourse.bunadi.injector.DependencyInjector
+import com.woowacourse.bunadi.injector.SingletonDependencyInjector
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
     return ViewModelLazy(
@@ -14,5 +14,5 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
 }
 
 inline fun <reified VM : ViewModel> createViewModel(): VM {
-    return DependencyInjector.inject(VM::class)
+    return SingletonDependencyInjector.inject(VM::class)
 }

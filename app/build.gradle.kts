@@ -76,6 +76,8 @@ dependencies {
     implementation(project(":bunadi"))
     // Reflection
     implementation(kotlin("reflect"))
+    // Android Di Library
+    implementation(project(":androiddi"))
 }
 
 kapt {

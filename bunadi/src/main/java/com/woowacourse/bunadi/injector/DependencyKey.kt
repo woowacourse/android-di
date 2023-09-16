@@ -36,7 +36,9 @@ data class DependencyKey(
 
         fun createDependencyKey(property: KProperty<*>): DependencyKey {
             val returnType = property.returnType
-            val annotation = property.annotations.first { it.annotationClass != Inject::class }
+            val annotation = property.annotations.firstOrNull {
+                it.annotationClass != Inject::class
+            }
 
             return DependencyKey(returnType, annotation)
         }

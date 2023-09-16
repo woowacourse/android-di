@@ -2,8 +2,9 @@ package com.woowacourse.bunadi.injector
 
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Singleton
+import com.woowacourse.bunadi.cache.Cache
+import com.woowacourse.bunadi.cache.SingletonCache
 import com.woowacourse.bunadi.module.Module
-import com.woowacourse.bunadi.util.core.Cache
 import com.woowacourse.bunadi.util.createInstance
 import com.woowacourse.bunadi.util.parseFromQualifier
 import com.woowacourse.bunadi.util.validateHasPrimaryConstructor
@@ -15,16 +16,16 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-object DependencyInjector {
-    private val cache = Cache()
+object SingletonDependencyInjector : Injector {
+    private val singletonCache: Cache = SingletonCache()
 
-    fun <T : Any> inject(clazz: KClass<T>): T {
+    override fun <T : Any> inject(clazz: KClass<T>): T {
         val dependencyKey = DependencyKey.createDependencyKey(clazz)
-        val cached = cache[dependencyKey]
+        val cached = singletonCache[dependencyKey]
         if (cached != null) return cached as T
 
         val primaryConstructor = clazz.validateHasPrimaryConstructor()
-        val dependency = primaryConstructor.createInstance()
+        val dependency = primaryConstructor.createInstance(this)
         injectMemberProperties(clazz, dependency)
 
         if (clazz.hasAnnotation<Singleton>()) {
@@ -33,7 +34,7 @@ object DependencyInjector {
         return dependency
     }
 
-    private fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: T) {
+    override fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: T) {
         clazz.memberProperties.forEach { property ->
             if (!property.hasAnnotation<Inject>()) return@forEach
             if (property !is KMutableProperty<*>) return@forEach
@@ -50,16 +51,16 @@ object DependencyInjector {
         }
     }
 
+    override fun caching(dependencyKey: DependencyKey, dependency: Any?) {
+        singletonCache.caching(dependencyKey, dependency)
+    }
+
+    override fun clear() {
+        singletonCache.clear()
+    }
+
     fun module(module: Module) {
         val providers = module::class.declaredMemberFunctions
-        providers.forEach { provider -> cache.caching(module, provider) }
-    }
-
-    fun caching(dependencyKey: DependencyKey, dependency: Any? = null) {
-        cache.caching(dependencyKey, dependency)
-    }
-
-    fun clear() {
-        cache.clear()
+        providers.forEach { provider -> singletonCache.caching(module, provider) }
     }
 }

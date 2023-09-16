@@ -1,29 +1,31 @@
-package com.woowacourse.bunadi.util.core
+package com.mission.androiddi.cache
 
+import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.injector.DependencyKey
 import com.woowacourse.bunadi.module.Module
 import com.woowacourse.bunadi.util.Dependency
 import com.woowacourse.bunadi.util.ProviderFunction
 
-data class Cache(
+data class ActivityCache(
+    private val parentCache: Cache? = null,
     private val cache: MutableMap<DependencyKey, Dependency?> = mutableMapOf(),
-) {
-    fun caching(module: Module, provider: ProviderFunction) {
+) : Cache {
+    override fun caching(module: Module, provider: ProviderFunction) {
         val dependencyKey = DependencyKey.createDependencyKey(provider)
         val dependency = provider.call(module)
 
         cache[dependencyKey] = dependency
     }
 
-    fun caching(dependencyKey: DependencyKey, dependency: Dependency? = null) {
+    override fun caching(dependencyKey: DependencyKey, dependency: Dependency?) {
         cache[dependencyKey] = dependency
     }
 
-    operator fun get(dependencyKey: DependencyKey): Dependency? {
-        return cache[dependencyKey]
+    override operator fun get(dependencyKey: DependencyKey): Dependency? {
+        return cache[dependencyKey] ?: parentCache?.get(dependencyKey)
     }
 
-    fun clear(): Cache {
+    override fun clear(): Cache {
         cache.clear()
         return copy(cache = mutableMapOf())
     }

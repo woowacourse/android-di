@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.ui.common.di.qualifier.DatabaseCartRepositoryQualifier
+import woowacourse.shopping.ui.common.di.annotation.qualifier.DatabaseCartRepositoryQualifier
 
 class CartViewModel(
     @DatabaseCartRepositoryQualifier val cartRepository: CartRepository,

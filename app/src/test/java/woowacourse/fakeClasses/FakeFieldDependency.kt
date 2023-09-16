@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.annotation.Qualifier
-import woowacourse.shopping.ui.util.viewModel.viewModel
+import com.mission.androiddi.util.viewModel.viewModel
 
 interface FieldDependency
 
