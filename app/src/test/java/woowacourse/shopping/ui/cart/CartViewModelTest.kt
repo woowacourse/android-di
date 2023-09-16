@@ -1,11 +1,17 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import org.assertj.core.api.Assertions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,35 +26,43 @@ class CartViewModelTest {
     private lateinit var vm: CartViewModel
     private lateinit var cartRepository: CartRepository
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         cartRepository = mockk()
         vm = CartViewModel(cartRepository)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
     fun `장바구니에 담긴 모든 상품을 요청하면 불러와진다`() {
-        val fakeProducts = ProductFixture.getProducts(listOf(1, 2, 3, 4, 5))
+        val fakeProducts = ProductFixture.getCartProducts(listOf(1, 2, 3, 4, 5))
 
         // given
-        every { cartRepository.getAllCartProducts() } returns fakeProducts
+        coEvery { cartRepository.getAllCartProducts() } returns fakeProducts
 
         // when
         vm.getAllCartProducts()
 
         // then
-        Assertions.assertThat(vm.cartProducts.value).isEqualTo(fakeProducts)
+        assertThat(vm.cartProducts.value).isEqualTo(fakeProducts)
     }
 
     @Test
     fun `상품 삭제 요청하면 상품이 삭제된다`() {
         // given
-        every { cartRepository.deleteCartProduct(any()) } just runs
+        coEvery { cartRepository.deleteCartProduct(any()) } just runs
 
         // when
-        vm.deleteCartProduct(1)
+        vm.deleteCartProduct(1L)
 
         // then
-        Assertions.assertThat(vm.onCartProductDeleted.value).isTrue
+        assertThat(vm.onCartProductDeleted.value).isTrue
     }
 }

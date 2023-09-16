@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.di.berdi
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +30,7 @@ abstract class DIActivity : AppCompatActivity() {
         val application = application as DIApplication
         return ViewModelProvider(
             owner = this@DIActivity,
-            factory = ViewModelFactory(application.repositoryContainer),
+            factory = ViewModelFactory(application.injector),
         )[type]
     }
 
