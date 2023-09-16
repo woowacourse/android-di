@@ -50,12 +50,7 @@ object Injector {
         val paramInstances = mutableListOf<Any>()
         kParams.forEach {
             val qualifier = it.findAnnotation<Qualifier>()
-            if (qualifier != null) {
-                val instance: Any = injectSingleton(it.type.jvmErasure, qualifier.className)
-                paramInstances.add(instance)
-            } else {
-                paramInstances.add(injectSingleton(it.type.jvmErasure))
-            }
+            paramInstances.add(injectSingleton(it.type.jvmErasure, qualifier?.className))
         }
         return paramInstances
     }
