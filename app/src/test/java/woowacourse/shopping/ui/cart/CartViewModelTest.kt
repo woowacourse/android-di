@@ -4,8 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.MainDispatcherRule
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.FakeCartRepository
 
@@ -13,6 +15,9 @@ class CartViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `뷰모델을 생성한 뒤 장바구니에 있는 모든 상품을 받아온 경우 개수는 0개다`() {
@@ -33,7 +38,10 @@ class CartViewModelTest {
         // given
         val fakeCartRepository = FakeCartRepository()
         val product = Product("과자", 100, "")
-        fakeCartRepository.addCartProduct(product)
+
+        runBlocking {
+            fakeCartRepository.addCartProduct(product)
+        }
 
         val viewModel = CartViewModel(fakeCartRepository)
 
@@ -49,7 +57,10 @@ class CartViewModelTest {
         // given
         val fakeCartRepository = FakeCartRepository()
         val product = Product("과자", 100, "")
-        fakeCartRepository.addCartProduct(product)
+
+        runBlocking {
+            fakeCartRepository.addCartProduct(product)
+        }
 
         val viewModel = CartViewModel(fakeCartRepository)
 
