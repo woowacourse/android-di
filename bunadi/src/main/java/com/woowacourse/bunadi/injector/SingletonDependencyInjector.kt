@@ -16,8 +16,9 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-object SingletonDependencyInjector : Injector {
-    var cache: Cache = DefaultCache()
+class SingletonDependencyInjector(
+    cache: Cache = DefaultCache(),
+) : Injector(cache) {
 
     override fun <T : Any> inject(clazz: KClass<T>): T {
         val dependencyKey = DependencyKey.createDependencyKey(clazz)
@@ -49,14 +50,6 @@ object SingletonDependencyInjector : Injector {
             }
             property.setter.call(instance, propertyInstance)
         }
-    }
-
-    override fun caching(dependencyKey: DependencyKey, dependency: Any?) {
-        cache.caching(dependencyKey, dependency)
-    }
-
-    override fun clear() {
-        cache.clear()
     }
 
     fun module(module: Module) {

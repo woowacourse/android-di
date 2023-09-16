@@ -17,8 +17,9 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class ActivityDependencyInjector(
-    private val cache: Cache = DefaultCache(),
-) : Injector {
+    cache: Cache = DefaultCache(),
+) : Injector(cache) {
+
     override fun <T : Any> inject(clazz: KClass<T>): T {
         val dependencyKey = DependencyKey.createDependencyKey(clazz)
         val cached = cache[dependencyKey]
@@ -49,13 +50,5 @@ class ActivityDependencyInjector(
             }
             property.setter.call(instance, propertyInstance)
         }
-    }
-
-    override fun caching(dependencyKey: DependencyKey, dependency: Any?) {
-        cache.caching(dependencyKey, dependency)
-    }
-
-    override fun clear() {
-        cache.clear()
     }
 }

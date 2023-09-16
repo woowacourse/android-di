@@ -1,10 +1,20 @@
 package com.woowacourse.bunadi.injector
 
+import com.woowacourse.bunadi.cache.Cache
+import com.woowacourse.bunadi.cache.DefaultCache
 import kotlin.reflect.KClass
 
-interface Injector {
-    fun <T : Any> inject(clazz: KClass<T>): T
-    fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: Any)
-    fun caching(dependencyKey: DependencyKey, dependency: Any? = null)
-    fun clear()
+abstract class Injector(
+    protected val cache: Cache = DefaultCache(),
+) {
+    abstract fun <T : Any> inject(clazz: KClass<T>): T
+    abstract fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: Any)
+
+    fun caching(dependencyKey: DependencyKey, dependency: Any?) {
+        cache.caching(dependencyKey, dependency)
+    }
+
+    fun clear() {
+        cache.clear()
+    }
 }

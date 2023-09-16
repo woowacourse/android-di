@@ -14,8 +14,7 @@ class ShoppingApplication : Application(), Cache by DefaultCache() {
     }
 
     private fun initDi() {
-        SingletonDependencyInjector.cache = this
-        modules {
+        SingletonDependencyInjector(this).modules {
             module(DaoModule(this@ShoppingApplication))
         }
     }
