@@ -2,8 +2,8 @@ package woowacourse.fakeClasses
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import com.woowacourse.bunadi.annotation.Qualifier
 import com.mission.androiddi.util.viewModel.viewModel
+import com.woowacourse.bunadi.annotation.Qualifier
 
 @Qualifier(AConstructorDependency::class)
 annotation class AConstructorDependencyQualifier
