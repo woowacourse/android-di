@@ -1,5 +1,6 @@
 package com.mission.androiddi.component.viewModel
 
+import android.util.Log
 import com.mission.androiddi.scope.ViewModelScope
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.cache.Cache
@@ -30,6 +31,7 @@ class ViewModelDependencyInjector(
 
         if (clazz.hasAnnotation<ViewModelScope>()) {
             caching(dependencyKey, dependency)
+            Log.d("buna", "$cache")
         }
         return dependency
     }
