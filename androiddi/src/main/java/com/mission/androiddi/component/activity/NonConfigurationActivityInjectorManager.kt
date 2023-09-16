@@ -11,6 +11,10 @@ object NonConfigurationActivityInjectorManager {
         injectors[key] = injector
     }
 
+    fun removeInjector(key: String?) {
+        injectors.remove(key)
+    }
+
     fun getInjector(activity: InjectableActivity, key: String?): Injector = injectors[key] ?: run {
         val parentCache = activity.application
         if (parentCache is Cache) {
