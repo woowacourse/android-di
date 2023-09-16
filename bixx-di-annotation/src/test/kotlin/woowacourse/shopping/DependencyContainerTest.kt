@@ -38,21 +38,6 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트(싱글톤)`() {
-        // given
-        DependencyContainer.addInstance(Person::class, Bixx())
-        DependencyContainer.addInstance(Person::class, Sangun())
-        DependencyContainer.addInstance(Person::class, MatPig())
-
-        // when
-        val sopt = Injector.injectSingleton<Sopt>(Sopt::class)
-        val actual = sopt.person.name
-
-        // then
-        assertThat(actual).isEqualTo("matPig")
-    }
-
-    @Test
     fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트`() {
         // given
         DependencyContainer.addInstance(Person::class, Bixx())

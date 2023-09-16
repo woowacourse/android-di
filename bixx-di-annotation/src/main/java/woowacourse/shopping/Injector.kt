@@ -11,22 +11,11 @@ import kotlin.reflect.jvm.jvmErasure
 @Suppress("UNCHECKED_CAST")
 object Injector {
     fun <T> inject(target: KClass<*>, nameTag: String? = null): T {
-        return if (nameTag == null) {
-            (DependencyContainer.getInstance(target) ?: createInstance(target)) as T
-        } else {
-            (DependencyContainer.getInstance(target, nameTag) ?: createInstance(target)) as T
-        }
+        return (DependencyContainer.getInstance(target, nameTag) ?: createInstance(target)) as T
     }
 
     fun <T> injectSingleton(target: KClass<*>, nameTag: String? = null): T {
-        return if (nameTag == null) {
-            (DependencyContainer.getInstance(target) ?: createSingletonInstance(target)) as T
-        } else {
-            (
-                DependencyContainer.getInstance(target, nameTag)
-                    ?: createSingletonInstance(target)
-                ) as T
-        }
+        return DependencyContainer.getInstance(target, nameTag) as T
     }
 
     private fun createSingletonInstance(target: KClass<*>): Any {
