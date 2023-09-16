@@ -8,11 +8,11 @@ import com.re4rk.arkdiAndroid.fakeModules.FakeServiceModule
 import com.re4rk.arkdiAndroid.fakeModules.FakeViewModelModule
 
 private val fakeKArkModules = arkModules {
-    applicationModule = { FakeApplicationModule() }
-    serviceModule = { parentModule -> FakeServiceModule(parentModule) }
-    activityModule = { parentModule, _ -> FakeActivityModule(parentModule) }
-    retainedActivityModule = { parentModule, _ -> FakeRetainedActivityModule(parentModule) }
-    viewModelModule = { parentModule -> FakeViewModelModule(parentModule) }
+    applicationModule = ::FakeApplicationModule
+    serviceModule = ::FakeServiceModule
+    activityModule = ::FakeActivityModule
+    retainedActivityModule = ::FakeRetainedActivityModule
+    viewModelModule = ::FakeViewModelModule
 }
 
 class FakeApplication : ArkApplication(fakeKArkModules) {
