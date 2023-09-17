@@ -3,6 +3,7 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.room.Room
 import com.di.berdi.Module
+import com.di.berdi.annotation.Qualifier
 import woowacourse.shopping.data.CartInMemoryRepository
 import woowacourse.shopping.data.CartOnDiskRepository
 import woowacourse.shopping.data.CartProductDao
@@ -13,11 +14,11 @@ import woowacourse.shopping.repository.ProductRepository
 
 object NormalModule : Module {
 
-    @OnDisk
+    @Qualifier(qualifiedName = "InMemory")
     fun provideInMemoryCartRepository(cartProductDao: CartProductDao): CartRepository =
         CartOnDiskRepository(cartProductDao)
 
-    @InMemory
+    @Qualifier(qualifiedName = "OnDisk")
     fun provideInMemoryCartRepository(): CartRepository = CartInMemoryRepository()
 
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()

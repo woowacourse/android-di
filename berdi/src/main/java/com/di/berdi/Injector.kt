@@ -2,7 +2,7 @@ package com.di.berdi
 
 import android.content.Context
 import com.di.berdi.annotation.Inject
-import com.di.berdi.util.hasQualifier
+import com.di.berdi.util.qualifiedName
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -30,14 +30,13 @@ class Injector(private val container: Container, private val context: Context) {
         module: Module,
     ) {
         val funcClazz = func.returnType.jvmErasure
-        val annotation = func.qualifierAnnotations
 
         // 이미 생성했다면 return
-        if (container.getInstance(funcClazz, annotation) != null) return
+        if (container.getInstance(funcClazz, func.qualifiedName) != null) return
 
         // 파라미터가 없다면 만든다
         if (func.valueParameters.isEmpty()) {
-            func.call(module)?.let { container.setInstance(it, funcClazz, annotation) }
+            func.call(module)?.let { container.setInstance(it, funcClazz, func.qualifiedName) }
             return
         }
 
@@ -51,10 +50,8 @@ class Injector(private val container: Container, private val context: Context) {
 
         // 생성하고 컨테이너 에 삽입
         val newInstance = requireNotNull(func.call(module, *params.toTypedArray()))
-        container.setInstance(newInstance, funcClazz, annotation)
+        container.setInstance(newInstance, funcClazz, qualifiedName = func.qualifiedName)
     }
-
-    private val KFunction<*>.qualifierAnnotations get() = annotations.firstOrNull { it.hasQualifier() }
 
     private fun getParamInstance(
         param: KParameter,
@@ -62,16 +59,14 @@ class Injector(private val container: Container, private val context: Context) {
         module: Module,
     ): Any {
         val paramClazz = param.type.jvmErasure
-        val annotation =
-            param.annotations.firstOrNull { it.hasQualifier() }
 
         // 없으면 재귀로 생성
-        if (container.getInstance(type = paramClazz, annotation = annotation) == null) {
+        if (container.getInstance(type = paramClazz, qualifiedName = param.qualifiedName) == null) {
             storeInstance(functions, functions.first { it.returnType == param.type }, module)
         }
 
-        // 있으면 그대로 반환
-        return container.getInstance(type = paramClazz, annotation = annotation)!!
+        // 있으면 그대로 param.qualifiedName
+        return container.getInstance(type = paramClazz, qualifiedName = param.qualifiedName)!!
     }
 
     fun <T : Any> createBy(constructor: KFunction<T>): T {
@@ -81,8 +76,8 @@ class Injector(private val container: Container, private val context: Context) {
 
     private fun getInstancesParamsOf(constructor: KFunction<Any>): List<Any?> {
         return constructor.parameters.map { param ->
-            val annotation = param.annotations.firstOrNull { it.hasQualifier() }
-            requireNotNull(container.getInstance(param.type.jvmErasure, annotation)) {
+            val qualifiedName = param.qualifiedName
+            requireNotNull(container.getInstance(param.type.jvmErasure, qualifiedName)) {
                 "No matching same type in param | type : ${param.type}"
             }
         }
@@ -96,8 +91,8 @@ class Injector(private val container: Container, private val context: Context) {
     }
 
     private fun <T : Any> KProperty<*>.inject(target: T) {
-        val annotation = annotations.firstOrNull { it.hasQualifier() }
-        val instance = container.getInstance(this.returnType.jvmErasure, annotation)
+        val instance = container.getInstance(returnType.jvmErasure, qualifiedName)
+
         javaField?.apply {
             isAccessible = true
             set(target, instance)
