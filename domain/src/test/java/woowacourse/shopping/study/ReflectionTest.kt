@@ -3,6 +3,7 @@ package woowacourse.shopping.study
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
@@ -14,10 +15,12 @@ import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.jvmErasure
 
+annotation class AA
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
     private fun fullName() {}
     private fun Int.isAdult() {}
+    fun aa(){}
 
     companion object {
         fun noname(age: Int): Person = Person("", "", age)
@@ -115,5 +118,13 @@ class ReflectionTest {
         val clazz: KClass<Repository> = Repository::class
         val declaredProperties = FakeModule::class.declaredMemberProperties
         val instance = declaredProperties.first { it.returnType.jvmErasure == clazz }
+    }
+
+    @Test
+    fun `함수의 매개변수 타입 가져오기`(){
+        val declaredFunctions = Person::class.declaredFunctions
+        val function:KFunction<*> = declaredFunctions.first{it.name == "aa"}
+        println(function.parameters)
+        function.call(Person::class)
     }
 }

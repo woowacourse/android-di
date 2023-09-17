@@ -8,3 +8,6 @@ annotation class DatabaseCartRepository
 
 @Qualifier
 annotation class InMemoryCartRepository
+
+@Qualifier
+annotation class InMemoryProductRepository
