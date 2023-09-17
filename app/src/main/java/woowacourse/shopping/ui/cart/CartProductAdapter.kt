@@ -6,12 +6,8 @@ import woowacourse.shopping.model.CartProduct
 
 class CartProductAdapter(
     private val dateFormatter: DateFormatter,
-    onClickDelete: (id: Long) -> Unit,
+    private val onClickDelete: (id: Long) -> Unit,
 ) : ListAdapter<CartProduct, CartProductViewHolder>(CartDiffUtilCallback) {
-    private val onClickDelete = { id: Long ->
-        onClickDelete(id)
-    }
-
     init {
         setHasStableIds(true)
     }
