@@ -22,6 +22,7 @@ inline fun <reified VM : ViewModel> woogiViewModelFactory(): ViewModelProvider.F
     viewModelFactory {
         initializer {
             ShoppingApplication.run {
-                injector.inject<VM>(modules, container) }
+                injector.inject<VM>(modules, container)
+            }
         }
     }

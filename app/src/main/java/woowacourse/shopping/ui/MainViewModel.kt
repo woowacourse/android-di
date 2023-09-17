@@ -4,18 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boogiwoogi.di.WoogiProperty
-import com.boogiwoogi.di.WoogiQualifier
+import com.boogiwoogi.di.Inject
+import com.boogiwoogi.di.Qualifier
 import kotlinx.coroutines.launch
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
 class MainViewModel(
-    @WoogiProperty
+    @Inject
     private val productRepository: ProductRepository,
-    @WoogiQualifier(InMemoryCartRepository::class)
+    @Qualifier("InMemoryCartRepository")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

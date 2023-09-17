@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.boogiwoogi.di.version2.woogiViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.woogiViewModels
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {

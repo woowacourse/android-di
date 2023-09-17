@@ -1,10 +1,10 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.boogiwoogi.di.version2.DiContainer
-import com.boogiwoogi.di.version2.Modules
 import com.boogiwoogi.di.version2.DefaultDiContainer
+import com.boogiwoogi.di.version2.DiContainer
 import com.boogiwoogi.di.version2.DiInjector
+import com.boogiwoogi.di.version2.Modules
 import woowacourse.shopping.di.application.ApplicationModule
 
 class ShoppingApplication : Application() {

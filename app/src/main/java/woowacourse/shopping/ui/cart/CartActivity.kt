@@ -2,11 +2,11 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import com.boogiwoogi.di.WoogiProperty
+import com.boogiwoogi.di.Inject
+import com.boogiwoogi.di.version2.woogiViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DiActivity
-import woowacourse.shopping.di.woogiViewModels
+import woowacourse.shopping.di.activity.DiActivity
 
 class CartActivity : DiActivity() {
 
@@ -14,7 +14,7 @@ class CartActivity : DiActivity() {
 
     private val viewModel by woogiViewModels<CartViewModel>()
 
-    @WoogiProperty
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {

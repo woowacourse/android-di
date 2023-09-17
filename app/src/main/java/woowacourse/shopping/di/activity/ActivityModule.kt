@@ -4,8 +4,8 @@ import android.content.Context
 import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Provides
 import com.boogiwoogi.di.Qualifier
-import woowacourse.shopping.di.ContextProvider
 import com.boogiwoogi.di.version2.Modules
+import woowacourse.shopping.di.ContextProvider
 import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation

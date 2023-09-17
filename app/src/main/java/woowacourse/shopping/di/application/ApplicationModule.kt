@@ -3,15 +3,15 @@ package woowacourse.shopping.di.application
 import android.content.Context
 import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Provides
-import com.boogiwoogi.di.UsableOn
 import com.boogiwoogi.di.Qualifier
+import com.boogiwoogi.di.UsableOn
 import com.boogiwoogi.di.version2.DiInjector
+import com.boogiwoogi.di.version2.Modules
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.ContextProvider
-import com.boogiwoogi.di.version2.Modules
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KClass
