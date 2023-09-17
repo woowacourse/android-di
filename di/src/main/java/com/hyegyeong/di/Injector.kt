@@ -5,8 +5,11 @@ import com.hyegyeong.di.annotations.Qualifier
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
@@ -22,13 +25,10 @@ object Injector {
         } else {
             constructor.call()
         }
-        return instance
-//        val instance = injectConstructor<T>()
-//        val properties: List<KProperty<*>> =
-//            T::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
-//        val propertyDependencies = provideFieldInstances(properties)
-//        injectField(instance, properties, propertyDependencies)
-//        return instance
+        val properties: List<KProperty<*>> =
+            T::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
+        if (properties.isEmpty()) return instance
+        return injectField(instance, properties)
     }
 
     inline fun <reified T : Any> injectConstructor(): T {
@@ -50,15 +50,40 @@ object Injector {
             parameterDependencies[it] = instance
         }
         qualifierInstanceParameters.forEach {
-            val annotation = filterQualifierAnnotation(it.annotations)
+            val annotation =
+                it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
             val instance = findContainerInstances(annotation = annotation)
             parameterDependencies[it] = instance
         }
         return constructor.callBy(parameterDependencies)
     }
 
-    fun filterQualifierAnnotation(annotations: List<Annotation>): Annotation? {
-        return annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+    inline fun <reified T : Any> injectField(instance: T, properties: List<KProperty<*>>): T {
+//         Inject 어노테이션 붙은 파라미터들만 들어옴
+        val dependencies: MutableMap<KProperty<*>, Any> = mutableMapOf()
+        val nonQualifierParameters = properties.filter {
+            it.annotations.none { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
+        }
+        val qualifierInstanceParameters = properties.filter {
+            it.annotations.any { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
+        }
+        nonQualifierParameters.forEach {
+            dependencies[it] = findContainerInstances(it.returnType.jvmErasure)
+        }
+        qualifierInstanceParameters.forEach {
+            val annotation =
+                it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
+            dependencies[it] = findContainerInstances(annotation = annotation)
+        }
+        properties.forEach {
+            it as KMutableProperty
+            it.setter.call(instance, dependencies[it])
+        }
+        return instance
     }
 
     fun findContainerInstances(kClass: KClass<*>? = null, annotation: Annotation? = null): Any {
@@ -81,7 +106,7 @@ object Injector {
                 instances.add(
                     findContainerInstances(
                         it.type.jvmErasure,
-                        filterQualifierAnnotation(it.annotations)
+                        it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
                     )
                 )
             }
@@ -90,65 +115,4 @@ object Injector {
             ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
     }
 
-//    fun findContainerInstances(kClass: KClass<*>? = null, annotation: Annotation? = null): Any {
-//        val containerFunctions: Collection<KFunction<*>> = container::class.declaredFunctions
-//        val function = containerFunctions.first { function ->
-//            (function.returnType.jvmErasure == kClass) && (function.annotations.containsAll(
-//                annotations
-//            ))
-//        }
-//        val instances = mutableListOf<Any>()
-//        if (function.valueParameters.isNotEmpty()) {
-//            function.valueParameters.forEach {
-//                instances.add(findContainerInstances(it.type.jvmErasure, it.annotations))
-//            }
-//        }
-//        return function.call(container, * instances.toTypedArray())
-//            ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
-//    }
-
-//    inline fun <reified T : Any> injectConstructor(): T {
-//        val constructor = requireNotNull(T::class.primaryConstructor)
-//        val parameters: List<KParameter> =
-//            constructor.parameters.filter { it.hasAnnotation<Inject>() }
-//        val parameterDependencies = provideConstructorInstances(parameters)
-//        return constructor.callBy(parameterDependencies)
-//    }
-
-//    fun provideConstructorInstances(parameters: List<KParameter>): Map<KParameter, Any> {
-//        // Inject 어노테이션 붙은 파라미터들만 들어옴
-//        val dependencies: MutableMap<KParameter, Any> = mutableMapOf()
-//        parameters.forEach { parameter ->
-//            val annotation: Annotation? = parameter.annotations.firstOrNull { it != Inject() }
-//            val annotationType = AnnotationType(annotation, parameter.type.jvmErasure)
-//            dependencies[parameter] =
-//                container.getInstance(annotationType) ?: throw NoSuchElementException()
-//        }
-//        return dependencies
-//    }
-//
-//    fun provideFieldInstances(properties: List<KProperty<*>>): Map<KProperty<*>, Any> {
-//        // Inject 어노테이션 붙은 파라미터들만 들어옴
-//        val dependencies: MutableMap<KProperty<*>, Any> = mutableMapOf()
-//        properties.forEach { property ->
-//            val annotation: Annotation? =
-//                property.annotations.firstOrNull { it.annotationClass != Inject().annotationClass }
-//            val annotationType = AnnotationType(annotation, property.returnType.jvmErasure)
-//            dependencies[property] =
-//                container.getInstance(annotationType) ?: throw NoSuchElementException()
-//        }
-//        return dependencies
-//    }
-//
-//    inline fun <reified T> injectField(
-//        instance: T,
-//        properties: List<KProperty<*>>,
-//        propertyDependencies: Map<KProperty<*>, Any>
-//    ) {
-//        properties.forEach {
-//            val property = it as KMutableProperty<*>
-//            property.isAccessible = true
-//            property.setter.call(instance, propertyDependencies[it])
-//        }
-//    }
 }
