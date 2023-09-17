@@ -1,9 +1,9 @@
 package com.ki960213.sheath.annotation
 
+import kotlin.reflect.KClass
+
 @Target(
-    AnnotationTarget.CLASS,
     AnnotationTarget.PROPERTY,
     AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.FUNCTION,
 )
-annotation class Qualifier(val value: String)
+annotation class Qualifier(val value: KClass<*>)
