@@ -35,53 +35,52 @@ object Injector {
         val constructor = requireNotNull(T::class.primaryConstructor)
         val parameters = constructor.parameters
         val parameterDependencies: MutableMap<KParameter, Any> = mutableMapOf()
-        val nonQualifierParameters = parameters.filter {
+        val dependencies: Map<KClass<*>, Any> = findInstance(parameters.map { it.type.jvmErasure })
+        for (parameter in parameters) {
+            // parameter의 타입 (KType)을 가져오고, 그 타입에 해당하는 의존성을 dependencies에서 찾아서 추가
+            val parameterType = parameter.type.jvmErasure
+            val dependency = dependencies[parameterType]
+            if (dependency != null) {
+                parameterDependencies[parameter] = dependency
+            }
+        }
+        return constructor.callBy(parameterDependencies)
+    }
+
+    fun findInstance(kclasss: List<KClass<*>>): MutableMap<KClass<*>, Any> {
+        val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
+        val nonQualifierParameters = kclasss.filter {
             it.annotations.none { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
         }
-        val qualifierInstanceParameters = parameters.filter {
+        val qualifierInstanceParameters = kclasss.filter {
             it.annotations.any { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
         }
         nonQualifierParameters.forEach {
-            val instance = findContainerInstances(it.type.jvmErasure)
-            parameterDependencies[it] = instance
+            val instance = findContainerInstances(it)
+            dependencies[it] = instance
         }
         qualifierInstanceParameters.forEach {
             val annotation =
                 it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
             val instance = findContainerInstances(annotation = annotation)
-            parameterDependencies[it] = instance
+            dependencies[it] = instance
         }
-        return constructor.callBy(parameterDependencies)
+        return dependencies
     }
 
     inline fun <reified T : Any> injectField(instance: T, properties: List<KProperty<*>>): T {
-//         Inject 어노테이션 붙은 파라미터들만 들어옴
-        val dependencies: MutableMap<KProperty<*>, Any> = mutableMapOf()
-        val nonQualifierParameters = properties.filter {
-            it.annotations.none { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
-        }
-        val qualifierInstanceParameters = properties.filter {
-            it.annotations.any { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
-        }
-        nonQualifierParameters.forEach {
-            dependencies[it] = findContainerInstances(it.returnType.jvmErasure)
-        }
-        qualifierInstanceParameters.forEach {
-            val annotation =
-                it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
-            dependencies[it] = findContainerInstances(annotation = annotation)
-        }
-        properties.forEach {
-            it as KMutableProperty
-            it.setter.call(instance, dependencies[it])
+        // Inject 어노테이션 붙은 파라미터들만 들어옴
+        val dependencies: Map<KClass<*>, Any> =
+            findInstance(properties.map { it.returnType.jvmErasure })
+        for (property in properties) {
+            val propertyType = property.returnType.jvmErasure
+            val dependency = dependencies[propertyType]
+            property as KMutableProperty
+            property.setter.call(instance, dependency)
         }
         return instance
     }
