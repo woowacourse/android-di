@@ -1,6 +1,5 @@
 package woowacourse.shopping.data.repository
 
-import com.example.bbottodi.di.annotation.InDisk
 import com.example.bbottodi.di.annotation.Inject
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toCartProduct
@@ -9,7 +8,6 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
-@InDisk
 class InDiskCartRepository(
     @Inject
     private val cartProductDao: CartProductDao,
