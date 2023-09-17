@@ -3,7 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.mission.androiddi.component.activity.InjectableActivity
-import com.mission.androiddi.scope.ActivityScope
+import com.mission.androiddi.scope.RetainActivityScope
 import com.mission.androiddi.util.viewModel.viewModel
 import com.woowacourse.bunadi.annotation.Inject
 import woowacourse.shopping.R
@@ -15,7 +15,7 @@ class CartActivity : InjectableActivity() {
     private val viewModel: CartViewModel by viewModel()
 
     @Inject
-    @ActivityScope
+    @RetainActivityScope
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {

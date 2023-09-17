@@ -4,7 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import com.mission.androiddi.component.activity.InjectableActivity
 import com.mission.androiddi.component.application.InjectableApplication
-import com.mission.androiddi.scope.ActivityScope
+import com.mission.androiddi.scope.RetainActivityScope
 import com.woowacourse.bunadi.annotation.Inject
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -30,7 +30,7 @@ class TestActivity : InjectableActivity() {
     override val activityClazz = TestActivity::class
 
     @Inject
-    @ActivityScope
+    @RetainActivityScope
     lateinit var notDestroyDependency: TestDependency
 
     val destroyDependency: TestDependency = TestDependency()

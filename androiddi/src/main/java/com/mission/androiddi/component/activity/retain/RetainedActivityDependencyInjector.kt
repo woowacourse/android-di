@@ -1,6 +1,6 @@
 package com.mission.androiddi.component.activity.retain
 
-import com.mission.androiddi.scope.ActivityScope
+import com.mission.androiddi.scope.RetainActivityScope
 import com.woowacourse.bunadi.annotation.Inject
 import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
@@ -29,7 +29,7 @@ class RetainedActivityDependencyInjector(
         val dependency = primaryConstructor.createInstance(this)
         injectMemberProperties(clazz, dependency)
 
-        if (clazz.hasAnnotation<ActivityScope>()) {
+        if (clazz.hasAnnotation<RetainActivityScope>()) {
             caching(dependencyKey, dependency)
         }
         return dependency
@@ -45,7 +45,7 @@ class RetainedActivityDependencyInjector(
             val realType = property.parseFromQualifier()
             val propertyInstance = inject(realType ?: property.returnType.jvmErasure)
 
-            if (property.hasAnnotation<ActivityScope>()) {
+            if (property.hasAnnotation<RetainActivityScope>()) {
                 caching(dependencyKey, propertyInstance)
             }
             property.setter.call(instance, propertyInstance)
