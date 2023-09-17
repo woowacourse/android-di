@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package com.boogiwoogi.di.version2
 
-import com.boogiwoogi.di.WoogiProperty
+import com.boogiwoogi.di.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -13,6 +13,6 @@ object ClazzInfoExtractor {
             .declaredMemberProperties
             .filterIsInstance<KMutableProperty<*>>()
             .filter {
-                it.hasAnnotation<WoogiProperty>()
+                it.hasAnnotation<Inject>()
             }
 }
