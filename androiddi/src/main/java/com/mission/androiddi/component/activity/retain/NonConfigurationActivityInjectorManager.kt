@@ -1,5 +1,6 @@
-package com.mission.androiddi.component.activity
+package com.mission.androiddi.component.activity.retain
 
+import com.mission.androiddi.component.activity.InjectableActivity
 import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.Injector
@@ -18,8 +19,8 @@ class NonConfigurationActivityInjectorManager(
     fun getInjector(activity: InjectableActivity, key: String?): Injector = injectors[key] ?: run {
         val parentCache = activity.application
         if (parentCache is Cache) {
-            return ActivityDependencyInjector(DefaultCache(parentCache))
+            return RetainedActivityDependencyInjector(DefaultCache(parentCache))
         }
-        ActivityDependencyInjector()
+        RetainedActivityDependencyInjector()
     }
 }

@@ -1,7 +1,7 @@
 package com.mission.androiddi.component.application
 
 import android.app.Application
-import com.mission.androiddi.component.activity.NonConfigurationActivityInjectorManager
+import com.mission.androiddi.component.activity.retain.NonConfigurationActivityInjectorManager
 import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
 

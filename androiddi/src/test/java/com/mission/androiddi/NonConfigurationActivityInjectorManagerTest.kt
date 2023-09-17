@@ -1,7 +1,7 @@
 package com.mission.androiddi
 
 import com.mission.androiddi.component.activity.InjectableActivity
-import com.mission.androiddi.component.activity.NonConfigurationActivityInjectorManager
+import com.mission.androiddi.component.activity.retain.NonConfigurationActivityInjectorManager
 import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.injector.Injector
 import io.mockk.every

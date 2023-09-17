@@ -1,4 +1,4 @@
-package com.mission.androiddi.component.activity
+package com.mission.androiddi.component.activity.retain
 
 import com.mission.androiddi.scope.ActivityScope
 import com.woowacourse.bunadi.annotation.Inject
@@ -16,7 +16,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class ActivityDependencyInjector(
+class RetainedActivityDependencyInjector(
     cache: Cache = DefaultCache(),
 ) : Injector(cache) {
 

@@ -3,6 +3,7 @@ package com.mission.androiddi.component.activity
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.mission.androiddi.component.activity.retain.RetainedActivityDependencyLifecycleObserver
 import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.injector.DependencyKey
 import com.woowacourse.bunadi.injector.Injector
@@ -14,7 +15,7 @@ abstract class InjectableActivity : AppCompatActivity() {
         val injector = getDependencyInjector().apply {
             injectActivityDependencies()
         }
-        ActivityDependencyLifecycleObserver(injector, this)
+        RetainedActivityDependencyLifecycleObserver(injector, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
