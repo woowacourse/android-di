@@ -22,9 +22,9 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         products = listOf(
-            Product("픽셀 폴드", 1500000, ""),
-            Product("갤럭시 z폴드 5", 1800000, ""),
-            Product("갤럭시 z플립 5", 1200000, ""),
+            Product(1, "픽셀 폴드", 1500000, ""),
+            Product(2, "갤럭시 z폴드 5", 1800000, ""),
+            Product(3, "갤럭시 z플립 5", 1200000, ""),
         )
         fakeCartRepository = FakeCartRepository(products)
         cartViewModel = CartViewModel(fakeCartRepository)
