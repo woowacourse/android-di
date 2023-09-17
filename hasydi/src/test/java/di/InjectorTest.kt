@@ -95,6 +95,34 @@ class InjectorTest {
         assertSame(FakeCartInMemoryRepository, actualRepository)
         assertNotSame(FakeCartDefaultRepository, actualRepository)
     }
+
+    @Test
+    fun `싱글톤 어노테이션을 붙이면 인스턴스가 싱글톤이다`() {
+        // given
+        val vm1 = injector.inject(FakeViewModelWithSingletonRepository::class)
+        val repositoryBefore = vm1.fakeRepository
+
+        // when
+        val vm2 = injector.inject(FakeViewModelWithSingletonRepository::class)
+        val repositoryAfter = vm2.fakeRepository
+
+        // then
+        assertSame(repositoryAfter, repositoryBefore)
+    }
+
+    @Test
+    fun `싱글톤 어노테이션이 없으면 인스턴스가 새로 생성된다`() {
+        // given
+        val vm1 = injector.inject(FakeViewModelWithDisposableRepository::class)
+        val repositoryBefore = vm1.fakeRepository
+
+        // when
+        val vm2 = injector.inject(FakeViewModelWithDisposableRepository::class)
+        val repositoryAfter = vm2.fakeRepository
+
+        // then
+        assertNotSame(repositoryAfter, repositoryBefore)
+    }
 }
 
 class FakeViewModel(
@@ -125,4 +153,12 @@ class FakeViewModelWithFieldInjectionAndQualifier() {
 
 class FakeViewModelWithRecursiveDI(
     @Inject val fakeRepositoryWithDataSource: FakeRepositoryWithDataSource,
+)
+
+class FakeViewModelWithSingletonRepository(
+    @Inject val fakeRepository: FakeSingletonRepository,
+)
+
+class FakeViewModelWithDisposableRepository(
+    @Inject val fakeRepository: FakeDisposableRepository,
 )

@@ -2,6 +2,7 @@ package woowacourse.shopping.hashdi
 
 import woowacourse.shopping.hashdi.annotation.Inject
 import woowacourse.shopping.hashdi.annotation.Qualifier
+import woowacourse.shopping.hashdi.annotation.Singleton
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -18,27 +19,47 @@ class AppContainer(private val modules: List<Module>) {
         }
     }.toMap()
 
+    private val providerModuleMap: Map<KFunction<*>, Module> = modules.flatMap { module ->
+        module::class.declaredMemberFunctions.map {
+            it to module
+        }
+    }.toMap()
+
     init {
         initContainer()
     }
 
     fun getInstance(kCallable: KCallable<*>): Any {
         val identifyKey = kCallable.identifyKey()
-        return appContainer[identifyKey]
-            ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $identifyKey")
+        return getOrCreateInstance(identifyKey)
     }
 
     fun getInstance(kParam: KParameter): Any {
         val identifyKey = kParam.identifyKey()
-        return appContainer[identifyKey]
+        return getOrCreateInstance(identifyKey)
+    }
+
+    private fun getOrCreateInstance(identifyKey: String): Any {
+        val containerValue = appContainer[identifyKey]
             ?: throw IllegalArgumentException("의존성 주입할 인스턴스 없음: $identifyKey")
+        if (containerValue is KFunction<*>) {
+            val module = providerModuleMap[containerValue]
+                ?: throw IllegalArgumentException("생성 함수가 없음: $containerValue")
+            return createInstance(containerValue, module)
+                ?: throw IllegalArgumentException("인스턴스 생성 실패")
+        }
+        return containerValue
     }
 
     private fun initContainer() {
         modules.forEach { module ->
             module::class.declaredMemberFunctions.forEach { kFunc ->
-                appContainer[kFunc.identifyKey()] =
-                    createInstance(provideFunc = kFunc, receiver = module)
+                if (!kFunc.hasAnnotation<Singleton>()) {
+                    appContainer[kFunc.identifyKey()] = kFunc
+                } else {
+                    appContainer[kFunc.identifyKey()] =
+                        createInstance(provideFunc = kFunc, receiver = module)
+                }
             }
         }
     }
@@ -68,21 +89,17 @@ class AppContainer(private val modules: List<Module>) {
 
     private fun KCallable<*>.identifyKey(): String {
         val type = this.returnType
-        val qualifier = this.qualifier()
+        val qualifier = this.annotations.firstOrNull {
+            it.annotationClass.hasAnnotation<Qualifier>()
+        }
         return "${type}${qualifier ?: ""}"
     }
 
     private fun KParameter.identifyKey(): String {
         val type = this.type
-        val qualifier = this.qualifier()
+        val qualifier = this.annotations.firstOrNull {
+            it.annotationClass.hasAnnotation<Qualifier>()
+        }
         return "${type}${qualifier ?: ""}"
-    }
-
-    private fun KCallable<*>.qualifier(): Annotation? {
-        return this.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-    }
-
-    private fun KParameter.qualifier(): Annotation? {
-        return this.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
     }
 }
