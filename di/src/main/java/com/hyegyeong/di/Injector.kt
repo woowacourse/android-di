@@ -1,5 +1,6 @@
 package com.hyegyeong.di
 
+import com.hyegyeong.di.annotations.Inject
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -53,6 +54,7 @@ object Injector {
         }
         return dependencies
     }
+
     inline fun <reified T> injectField(
         instance: T,
         properties: List<KProperty<*>>,

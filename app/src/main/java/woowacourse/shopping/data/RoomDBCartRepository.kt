@@ -1,15 +1,14 @@
 package woowacourse.shopping.data
 
-import com.hyegyeong.di.Inject
-import com.hyegyeong.di.RoomDB
+import com.hyegyeong.di.annotations.Inject
+import woowacourse.shopping.data.di.Database
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toModel
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
-@RoomDB
+@Database
 class RoomDBCartRepository(@Inject private val dao: CartProductDao) :
     CartRepository {
     override suspend fun addCartProduct(product: Product) {

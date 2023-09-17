@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import com.hyegyeong.di.InMemory
+import woowacourse.shopping.data.di.InMemory
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toModel
 import woowacourse.shopping.data.repository.CartRepository

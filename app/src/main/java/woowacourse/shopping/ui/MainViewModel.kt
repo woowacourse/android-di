@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hyegyeong.di.InMemory
-import com.hyegyeong.di.Inject
+import com.hyegyeong.di.annotations.Inject
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.di.InMemory
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.model.Product
@@ -14,7 +14,6 @@ import woowacourse.shopping.model.Product
 class MainViewModel(
     @Inject
     private val productRepository: ProductRepository,
-    @Inject
     @InMemory
     private val cartRepository: CartRepository,
 ) : ViewModel() {
