@@ -15,7 +15,11 @@ import kotlin.reflect.jvm.jvmErasure
 
 class Injector(private val container: Container, private val context: Context) {
 
-    fun inject(module: Module) {
+    fun injectBy(modules: List<Module>) {
+        modules.forEach { injectBy(it) }
+    }
+
+    fun injectBy(module: Module) {
         val functions = module::class.declaredFunctions
         functions.forEach { func -> storeInstance(functions, func, module) }
     }

@@ -8,7 +8,6 @@ import woowacourse.shopping.di.NormalModule
 class ShoppingApplication : DIApplication() {
 
     override fun inject() {
-        val container = Container()
-        injector = Injector(container, applicationContext).apply { inject(NormalModule) }
+        injector = Injector(Container(), applicationContext).apply { injectBy(NormalModule) }
     }
 }

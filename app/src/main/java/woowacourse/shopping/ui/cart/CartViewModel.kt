@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.di.berdi.annotation.OnDisk
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.OnDisk
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
