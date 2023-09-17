@@ -6,69 +6,53 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
-interface FakeInterface
+interface FakeDataSource
 
-// 주 생성자에 주입할 객체가 없는 객체
-class FakeFirst
+interface FakeRepository
 
-// 추상화된 객체 A
-class FakeImplOfInterface : FakeInterface
+class DefaultFakeDataSource : FakeDataSource
 
-// 추상화된 객체 B (동일한 인터페이스를 가질 때 Qualifier로 구분)
-class FakeImplOfInterface2 : FakeInterface
+// 주 생성자에 주입할 객체가 있는 Repository 구현체
+class InDiskFakeRepository(
+    fakeDataSource: FakeDataSource,
+) : FakeRepository
 
-// 추상화된 객체를 생성자 주입 받는 객체
-class FakeOnceConstructor(
-    fakeInterface: FakeInterface,
+// 추상화된 Repository 구현체 B (동일한 인터페이스를 가질 때 Qualifier로 구분)
+class InMemoryFakeRepository : FakeRepository
+
+// 생성자 주입이 필요없는 구현체 1, 주입이 필요한 구현체 1을 생성자로 받는 ViewModel
+class FakeDoubleViewModel(
+    fakeDataSource: FakeDataSource,
+    fakeRepository: FakeRepository,
 )
 
-// 추상화된 객체가 여러 개일 경우 Qualifier로 명시하여 생성자 주입 받는 객체
-class FakeOnceConstructorQualifier(
-    @Qualifier(FakeImplOfInterface2::class)
-    val fakeInterface: FakeInterface,
+// 재귀(InDiskFakeRepository)
+class FakeInDiskViewModel(
+    @Qualifier(InDiskFakeRepository::class)
+    val fakeRepository: FakeRepository,
 )
 
-// 주입이 필요 없는 객체와 추상화된 객체를 생성자 주입 받는 객체(재귀) 두 개를 주입 받는 객체
-class FakeHaveTwiceConstructor(
-    fakeFirst: FakeFirst,
-    fakeOnceConstructor: FakeOnceConstructor,
-)
-
-// 추상화된 객체를 생성자 주입 받는 객체와 필드 주입 두 개를 받는 객체
-class FakeHaveFieldAndConstructor(
-    fakeOnceConstructor: FakeOnceConstructor,
-) {
+// 필드 주입
+class FakeFieldInjectViewModel() {
     @Inject
-    lateinit var fakeFirst: FakeFirst
+    lateinit var fakeRepository: FakeRepository
 }
 
 class FakeQualifierModule : Module {
-    fun provideFakeImplOfInterface1(): FakeInterface = FakeImplOfInterface()
+    fun provideDefaultDataSource(): FakeDataSource = DefaultFakeDataSource()
 
-    fun provideFakeImplOfInterface2(): FakeInterface = FakeImplOfInterface2()
+    // 사용하진 않지만 모듈에서 동일한 추상 객체를 반환하는 경우 Qualifier 를 통해 구분함
+    fun provideInMemoryFakeRepository(): FakeRepository = InMemoryFakeRepository()
 
-    fun provideFakeOnceConstructor(
-        fakeInterface: FakeInterface,
-    ): FakeOnceConstructor = FakeOnceConstructor(fakeInterface)
+    fun provideInDiskRepository(fakeDataSource: FakeDataSource): FakeRepository =
+        InDiskFakeRepository(fakeDataSource)
 }
 
 class FakeModule : Module {
-    fun provideFakeFirst(): FakeFirst = FakeFirst()
+    fun provideDefaultDataSource(): FakeDataSource = DefaultFakeDataSource()
 
-    fun provideFakeImplOfInterface(): FakeInterface = FakeImplOfInterface()
-
-    fun provideFakeOnceConstructor(
-        fakeInterface: FakeInterface,
-    ): FakeOnceConstructor = FakeOnceConstructor(fakeInterface)
-
-    fun provideFakeHaveTwiceConstructor(
-        fakeFirst: FakeFirst,
-        fakeOnceConstructor: FakeOnceConstructor,
-    ): FakeHaveTwiceConstructor = FakeHaveTwiceConstructor(fakeFirst, fakeOnceConstructor)
-
-    fun provideFakeHaveFieldAndConstructor(
-        fakeOnceConstructor: FakeOnceConstructor,
-    ): FakeHaveFieldAndConstructor = FakeHaveFieldAndConstructor(fakeOnceConstructor)
+    fun provideInDiskRepository(fakeDataSource: FakeDataSource): FakeRepository =
+        InDiskFakeRepository(fakeDataSource)
 }
 
 class InjectorTest {
@@ -82,41 +66,41 @@ class InjectorTest {
     @Test
     fun `주 생성자가 없으면 NullPointException이 발생한다`() {
         val actualException = assertThrows(NullPointerException::class.java) {
-            injector.inject(FakeInterface::class.java)
+            injector.inject(FakeRepository::class.java)
         }
         assertEquals("[ERROR] 주 생성자가 없습니다.", actualException.message)
     }
 
     @Test
-    fun `추상화된 주 생성자 하나가 있는 클래스의 의존성을 주입한다`() {
-        val instance = injector.inject(FakeOnceConstructor::class.java)
-        assertThat(instance).isInstanceOf(FakeOnceConstructor::class.java)
+    fun `추상화된 주 생성자 하나가 있는 InDiskFakeRepository의 DataSource 의존성을 주입한다`() {
+        val instance = injector.inject(InDiskFakeRepository::class.java)
+        assertThat(instance).isInstanceOf(InDiskFakeRepository::class.java)
     }
 
     @Test
     fun `생성자가 있는 클래스와 디폴트 생성자만 존재하는 클래스를 주 생성자로 갖는 클래스의 의존성을 주입한다`() {
-        val instance = injector.inject(FakeHaveTwiceConstructor::class.java)
-        assertThat(instance).isInstanceOf(FakeHaveTwiceConstructor::class.java)
+        val instance = injector.inject(FakeDoubleViewModel::class.java)
+        assertThat(instance).isInstanceOf(FakeDoubleViewModel::class.java)
     }
 
     @Test
-    fun `생성자가 있는 클래스와 @Inject 어노테이션이 붙은 필드를 갖는 클래스의 의존성을 주입한다`() {
-        val instance = injector.inject(FakeHaveFieldAndConstructor::class.java)
-        assertThat(instance).isInstanceOf(FakeHaveFieldAndConstructor::class.java)
+    fun `@Inject 어노테이션이 붙은 필드를 갖는 클래스의 의존성을 주입한다`() {
+        val instance = injector.inject(FakeFieldInjectViewModel::class.java)
+        assertThat(instance).isInstanceOf(FakeFieldInjectViewModel::class.java)
     }
 
     @Test
-    fun `추상화 된 객체를 @Qualifier 어노테이션으로 구분하여 FakeImplOfInterface2의 의존성을 주입한다`() {
+    fun `추상화 된 객체를 @Qualifier 어노테이션으로 구분하여 FakeInDiskViewModel 의존성을 주입한다`() {
         // given
         // 어노테이션 Qualifier 테스트를 위한 모듈 적용
         injector = Injector(FakeQualifierModule())
 
         // when
-        val instance = injector.inject(FakeOnceConstructorQualifier::class.java)
+        val instance = injector.inject(FakeInDiskViewModel::class.java)
 
         // then
-        assertThat(instance).isInstanceOf(FakeOnceConstructorQualifier::class.java)
-        // 실제로 주입된 객체가 어노테이션으로 지정한 FakeImplOfInterface2 클래스가 맞는지 검증
-        assertThat(instance.fakeInterface).isInstanceOf(FakeImplOfInterface2::class.java)
+        assertThat(instance).isInstanceOf(FakeInDiskViewModel::class.java)
+        // 실제로 주입된 객체가 어노테이션으로 지정한 InDiskFakeRepository 클래스가 맞는지 검증
+        assertThat(instance.fakeRepository).isInstanceOf(InDiskFakeRepository::class.java)
     }
 }
