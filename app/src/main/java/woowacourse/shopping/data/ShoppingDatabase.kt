@@ -10,6 +10,8 @@ abstract class ShoppingDatabase : RoomDatabase() {
     abstract fun cartProductDao(): CartProductDao
 
     companion object {
+
+        @Volatile
         private var instance: ShoppingDatabase? = null
 
         @Synchronized

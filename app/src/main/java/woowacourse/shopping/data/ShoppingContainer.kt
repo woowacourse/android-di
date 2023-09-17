@@ -2,10 +2,10 @@ package woowacourse.shopping.data
 
 import android.content.Context
 import com.bignerdranch.android.koala.Container
+import woowacourse.shopping.annotation.DataBaseCartRepository
+import woowacourse.shopping.annotation.DataBaseDataSource
 import woowacourse.shopping.annotation.InMemoryCartRepository
 import woowacourse.shopping.annotation.InMemoryDataSource
-import woowacourse.shopping.annotation.RoomDBCartRepository
-import woowacourse.shopping.annotation.RoomDBDataSource
 import woowacourse.shopping.data.datasource.CartDataSource
 import woowacourse.shopping.data.datasource.DefaultCartDataSource
 import woowacourse.shopping.data.datasource.InMemoryCartDataSource
@@ -25,9 +25,9 @@ class ShoppingContainer(private val context: Context) : Container {
         return DefaultCartRepository(cartDataSource)
     }
 
-    @RoomDBCartRepository
+    @DataBaseCartRepository
     fun getRoomDBCartRepository(
-        @RoomDBDataSource cartDataSource: CartDataSource,
+        @DataBaseDataSource cartDataSource: CartDataSource,
     ): CartRepository {
         return DefaultCartRepository(cartDataSource)
     }
@@ -37,7 +37,7 @@ class ShoppingContainer(private val context: Context) : Container {
         return InMemoryCartDataSource()
     }
 
-    @RoomDBDataSource
+    @DataBaseDataSource
     fun getRoomDBCartDataSource(
         cartProductDao: CartProductDao,
     ): CartDataSource {
