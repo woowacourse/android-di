@@ -12,7 +12,7 @@ import woowacourse.shopping.di.OnDiskFakeRepository
 import woowacourse.shopping.di.SecondDataSource
 
 object FakeModule : Module {
-    fun provideFakeObj(): FakeObj = FakeObj()
+    fun provideFakeObj(): FakeObj = FakeObj
 
     @Qualifier(qualifiedName = "OnDisk")
     fun provideOnDiskFakeRepository(

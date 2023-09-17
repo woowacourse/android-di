@@ -20,12 +20,7 @@ import woowacourse.shopping.di.OnDiskFakeRepository
 
 class FakeDIApplication : DIApplication() {
     override fun inject() {
-        injector =
-            Injector(Container(), applicationContext).apply {
-                injectBy(
-                    listOf(FakeRepositoryModule, FakeObjModule),
-                )
-            }
+        injector = Injector(Container(), FakeModule)
     }
 }
 
