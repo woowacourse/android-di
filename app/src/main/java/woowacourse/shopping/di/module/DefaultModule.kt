@@ -15,7 +15,7 @@ import woowacourse.shopping.repository.ProductRepository
 
 class DefaultModule(private val context: Context) : Module {
 
-    fun cartProductDao(): CartProductDao {
+    fun provideCartProductDao(): CartProductDao {
         val database = Room
             .databaseBuilder(context, CartDatabase::class.java, "kkrong-database")
             .build()
@@ -23,16 +23,16 @@ class DefaultModule(private val context: Context) : Module {
     }
 
     @InMemory
-    fun inMemoryCartRepository(): CartRepository {
+    fun provideInMemoryCartRepository(): CartRepository {
         return InMemoryCartRepository()
     }
 
     @Database
-    fun databaseCartRepository(cartProductDao: CartProductDao): CartRepository {
+    fun provideDatabaseCartRepository(cartProductDao: CartProductDao): CartRepository {
         return DatabaseCartRepository(cartProductDao)
     }
 
-    fun productRepository(): ProductRepository {
+    fun provideProductRepository(): ProductRepository {
         return DefaultProductRepository()
     }
 }
