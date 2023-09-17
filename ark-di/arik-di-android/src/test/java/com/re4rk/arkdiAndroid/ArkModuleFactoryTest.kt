@@ -69,7 +69,7 @@ class ArkModuleFactoryTest {
     }
 
     @Test
-    fun `액티비티의 구성변경으로 생명주기는 ownerModule만 변한다`() {
+    fun `액티비티 구성변경으로 인한 생명주기는 ownerModule만 바꾼다 `() {
         // given
         val fakeActivity =
             Robolectric.buildActivity(ArkAppCompatActivity::class.java).create().get()
