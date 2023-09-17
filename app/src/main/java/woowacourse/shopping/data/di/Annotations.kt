@@ -4,7 +4,7 @@ import com.hyegyeong.di.annotations.Qualifier
 
 
 @Qualifier
-annotation class Database
+annotation class DatabaseCartRepository
 
 @Qualifier
-annotation class InMemory
+annotation class InMemoryCartRepository

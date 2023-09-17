@@ -6,15 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyegyeong.di.annotations.Inject
 import kotlinx.coroutines.launch
-import woowacourse.shopping.data.di.InMemory
+import woowacourse.shopping.data.di.InMemoryCartRepository
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel(
-    @Inject
+class MainViewModel
+@Inject constructor(
     private val productRepository: ProductRepository,
-    @InMemory
+    @InMemoryCartRepository
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
