@@ -20,7 +20,6 @@ import org.robolectric.annotation.Config
  * 테스트용 Fake 클래스
  * */
 
-@ActivityScope
 class TestDependency {
     private var value = 0
 
@@ -31,6 +30,7 @@ class TestActivity : InjectableActivity() {
     override val activityClazz = TestActivity::class
 
     @Inject
+    @ActivityScope
     lateinit var notDestroyDependency: TestDependency
 
     val destroyDependency: TestDependency = TestDependency()

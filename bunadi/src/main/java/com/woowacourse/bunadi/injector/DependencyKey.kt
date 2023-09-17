@@ -1,6 +1,5 @@
 package com.woowacourse.bunadi.injector
 
-import com.woowacourse.bunadi.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -36,11 +35,7 @@ data class DependencyKey(
 
         fun createDependencyKey(property: KProperty<*>): DependencyKey {
             val returnType = property.returnType
-            val annotation = property.annotations.firstOrNull {
-                it.annotationClass != Inject::class
-            }
-
-            return DependencyKey(returnType, annotation)
+            return DependencyKey(returnType)
         }
     }
 }

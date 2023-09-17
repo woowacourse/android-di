@@ -45,7 +45,7 @@ class ActivityDependencyInjector(
             val realType = property.parseFromQualifier()
             val propertyInstance = inject(realType ?: property.returnType.jvmErasure)
 
-            if (clazz.hasAnnotation<ActivityScope>()) {
+            if (property.hasAnnotation<ActivityScope>()) {
                 caching(dependencyKey, propertyInstance)
             }
             property.setter.call(instance, propertyInstance)

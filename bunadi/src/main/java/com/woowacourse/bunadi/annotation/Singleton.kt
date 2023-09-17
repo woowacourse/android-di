@@ -1,4 +1,4 @@
 package com.woowacourse.bunadi.annotation
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY)
 annotation class Singleton

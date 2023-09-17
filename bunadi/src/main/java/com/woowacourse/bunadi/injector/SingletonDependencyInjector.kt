@@ -45,7 +45,7 @@ class SingletonDependencyInjector(
             val realType = property.parseFromQualifier()
             val propertyInstance = inject(realType ?: property.returnType.jvmErasure)
 
-            if (clazz.hasAnnotation<Singleton>()) {
+            if (property.hasAnnotation<Singleton>()) {
                 caching(dependencyKey, propertyInstance)
             }
             property.setter.call(instance, propertyInstance)

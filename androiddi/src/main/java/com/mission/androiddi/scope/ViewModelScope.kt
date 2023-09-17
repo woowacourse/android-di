@@ -1,4 +1,4 @@
 package com.mission.androiddi.scope
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY)
 annotation class ViewModelScope

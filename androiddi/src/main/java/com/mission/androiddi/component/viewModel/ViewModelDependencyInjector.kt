@@ -45,7 +45,7 @@ class ViewModelDependencyInjector(
             val realType = property.parseFromQualifier()
             val propertyInstance = inject(realType ?: property.returnType.jvmErasure)
 
-            if (clazz.hasAnnotation<ViewModelScope>()) {
+            if (property.hasAnnotation<ViewModelScope>()) {
                 caching(dependencyKey, propertyInstance)
             }
             property.setter.call(instance, propertyInstance)

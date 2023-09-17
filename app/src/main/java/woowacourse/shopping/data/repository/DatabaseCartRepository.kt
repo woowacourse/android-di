@@ -1,6 +1,5 @@
 package woowacourse.shopping.data.repository
 
-import com.mission.androiddi.scope.ViewModelScope
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
@@ -8,7 +7,6 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@ViewModelScope
 class DatabaseCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

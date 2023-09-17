@@ -129,6 +129,10 @@ class SingletonDependencyInjectorTest {
         assertFalse(twoMemberClass.isSecondInitialized())
     }
 
+    /**
+     * =============================================================================================
+     * */
+
     // given: 클래스의 프로퍼티도 프로퍼티가 필요하다.
     @Qualifier(Inner::class)
     annotation class InnerQualifier
@@ -136,7 +140,6 @@ class SingletonDependencyInjectorTest {
     @Qualifier(NestedInner::class)
     annotation class NestedInnerQualifier
 
-    @Singleton
     class Outer(@InnerQualifier val inner: Inner)
     class Inner(@NestedInnerQualifier val realInner: NestedInner)
     class NestedInner
@@ -145,14 +148,14 @@ class SingletonDependencyInjectorTest {
     fun 클래스에_프로퍼티가_재귀적으로_존재하면_재귀적으로_주입하여_생성한다() {
         // given: 클래스를 재귀적으로 생성할 수 있는 종속 항목을 주입한다.
         val cache = getDependencyInjectorCache()
-        val outerKey = DependencyKey.createDependencyKey(Outer::class)
 
         // when: 주입했던 클래스를 받아온다.
+        // when: Inner 클래스는 싱글톤이므로 캐싱된다.
         val actual = SingletonDependencyInjector(cache).inject(Outer::class)
-        val expected = cache[outerKey]
 
         // then: 주입했던 클래스를 재귀적으로 생성하여 반환한다.
-        assert(actual == expected)
+        assertTrue(actual::class == Outer::class)
+        assertNotNull(actual)
     }
 
     private fun getDependencyInjectorCache(): Cache {
@@ -164,6 +167,30 @@ class SingletonDependencyInjectorTest {
 
         return singletonCacheProperty.call(SingletonDependencyInjector()) as? Cache
             ?: throw IllegalStateException("[ERROR] 캐시를 생성할 수 없습니다.")
+    }
+
+    /**
+     * =============================================================================================
+     * */
+
+    @Test
+    fun 싱글톤_애노테이션이_있는_프로퍼티는_캐싱된다() {
+        // given: 싱글톤 애노테이션이 있는 클래스가 존재한다.
+        class FakeSingletonClass
+        class SingletonPropertyClass(
+            @Inject
+            @Singleton
+            val fakeClass: FakeSingletonClass,
+        )
+
+        val cache = getDependencyInjectorCache()
+
+        // when: 클래스를 주입한다.
+        val actual = SingletonDependencyInjector(cache).inject(SingletonPropertyClass::class)
+
+        // then: 싱글톤 애노테이션이 있는 프로퍼티는 캐싱된다.
+        val dependencyKey = DependencyKey.createDependencyKey(FakeSingletonClass::class)
+        assertTrue(cache[dependencyKey] == actual.fakeClass)
     }
 
     interface Dependency
@@ -183,7 +210,7 @@ class SingletonDependencyInjectorTest {
     }
 
     @Test
-    fun 인터페이스_타입인_필드에_식별자_애노테이션을_추가하지_않으면_주입할_성_예외가_발생한다() {
+    fun 인터페이스_타입인_필드에_식별자_애노테이션을_추가하지_않으면_주입할_때_예외가_발생한다() {
         // given: 인터페이스 타입을 필드로 가진 클래스가 존재한다.
         class InterfaceFieldClass {
             @Inject
