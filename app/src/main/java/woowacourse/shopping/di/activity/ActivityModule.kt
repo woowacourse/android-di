@@ -1,18 +1,20 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.activity
 
 import android.content.Context
 import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Provides
-import com.boogiwoogi.di.UsableOn
+import com.boogiwoogi.di.Qualifier
+import woowacourse.shopping.di.ContextProvider
+import com.boogiwoogi.di.version2.Modules
 import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-@UsableOn(ActivityDiInjector::class)
 @Module
-class ActivityModule(private val context: Context) {
+class ActivityModule(override val context: Context) : ContextProvider, Modules {
 
     init {
         if (context == context.applicationContext) throw IllegalArgumentException(CONTEXT_TYPE_ERROR)
@@ -28,13 +30,22 @@ class ActivityModule(private val context: Context) {
         return context
     }
 
-    fun provideInstanceOf(clazz: KClass<*>): Any? {
+    override fun provideInstanceOf(clazz: KClass<*>): Any? {
         val functions = this::class
             .functions
             .filter { it.hasAnnotation<Provides>() }
             .firstOrNull { it.returnType.jvmErasure == clazz }
 
         return functions?.call(this)
+    }
+
+    override fun provideInstanceOf(simpleName: String): Any? {
+        val function = this::class
+            .functions
+            .filter { it.hasAnnotation<Qualifier>() }
+            .firstOrNull { it.findAnnotation<Qualifier>()!!.simpleName == simpleName }
+
+        return function?.call(this)
     }
 
     companion object {

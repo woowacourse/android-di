@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.boogiwoogi.di.version2
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
@@ -21,6 +21,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.woogiViewModels(): Lazy<VM
 inline fun <reified VM : ViewModel> woogiViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
-            ShoppingApplication.injector.inject<VM>()
+            ShoppingApplication.run {
+                injector.inject<VM>(modules, container) }
         }
     }
