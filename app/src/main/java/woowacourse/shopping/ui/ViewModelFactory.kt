@@ -2,10 +2,16 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.Injector
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.app.covi_di.core.Injector
 
-class ViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return Injector.inject(modelClass)
+object ViewModelFactory {
+    inline fun <reified T : ViewModel> provide(): ViewModelProvider.Factory {
+        return viewModelFactory {
+            initializer {
+                Injector.inject(T::class)
+            }
+        }
     }
 }
