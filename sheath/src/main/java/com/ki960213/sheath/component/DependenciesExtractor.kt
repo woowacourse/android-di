@@ -13,10 +13,7 @@ import kotlin.reflect.full.valueParameters
 object DependenciesExtractor {
 
     fun extractFrom(clazz: KClass<*>): Map<KType, DependentCondition> =
-        (clazz.extractFromConstructor() + clazz.extractFromProperties() + clazz.extractFromFunctions())
-            .takeUnless { it.isEmpty() }
-            ?: clazz.extractFromPrimaryConstructor()
-            ?: mapOf()
+        clazz.extractFromConstructor() + clazz.extractFromProperties() + clazz.extractFromFunctions()
 
     fun extractFrom(function: KFunction<*>): Map<KType, DependentCondition> =
         function.valueParameters
@@ -25,6 +22,11 @@ object DependenciesExtractor {
     private fun KClass<*>.extractFromConstructor(): Map<KType, DependentCondition> =
         constructors.find { it.hasAnnotation<Inject>() }
             ?.valueParameters
+            ?.associate { it.type to DependentCondition.from(it) }
+            ?: extractFromPrimaryConstructor()
+
+    private fun KClass<*>.extractFromPrimaryConstructor(): Map<KType, DependentCondition> =
+        primaryConstructor?.valueParameters
             ?.associate { it.type to DependentCondition.from(it) }
             ?: mapOf()
 
@@ -38,8 +40,4 @@ object DependenciesExtractor {
                 function.valueParameters.map { it.type to DependentCondition.from(it) }
             }
             .toMap()
-
-    private fun KClass<*>.extractFromPrimaryConstructor(): Map<KType, DependentCondition>? =
-        primaryConstructor?.valueParameters
-            ?.associate { it.type to DependentCondition.from(it) }
 }

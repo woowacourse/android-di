@@ -129,7 +129,7 @@ internal class DependenciesExtractorTest {
     class Test13
 
     @Test
-    fun `클래스에 @Inject가 붙은 요소가 없다면 주 생성자의 매개 변수의 의존 조건을 추출한다`() {
+    fun `클래스에 @Inject가 붙은 생성자가 없다면 주 생성자의 매개 변수의 의존 조건을 추출한다`() {
         val actual = DependenciesExtractor.extractFrom(Test14::class)
 
         expect.that(actual[Test15::class.createType()])
@@ -140,8 +140,10 @@ internal class DependenciesExtractorTest {
     class Test14(test15: Test15) {
         constructor(test16: Test16) : this(test16 as Test15)
 
+        @Inject
         private lateinit var test17: Test17
 
+        @Inject
         private fun test(test18: Test18): Unit = Unit
     }
 
