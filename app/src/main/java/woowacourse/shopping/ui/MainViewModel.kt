@@ -4,15 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bignerdranch.android.koala.KoalaFieldInject
 import kotlinx.coroutines.launch
+import woowacourse.shopping.annotation.DataBaseCartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class MainViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
+
+    @KoalaFieldInject
+    lateinit var productRepository: ProductRepository
+
+    @KoalaFieldInject
+    @DataBaseCartRepository
+    lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
@@ -34,7 +40,7 @@ class MainViewModel(
 
     fun getAllProducts() {
         viewModelScope.launch {
-            kotlin.runCatching {
+            runCatching {
                 productRepository.getAllProducts()
             }.onSuccess { products ->
                 _products.value = products

@@ -1,18 +1,20 @@
 package woowacourse.shopping.application
 
 import android.app.Application
-import android.content.Context
+import com.bignerdranch.android.koala.Injector
+import woowacourse.shopping.data.ShoppingContainer
 
 class ShoppingApplication : Application() {
 
-    init {
-        instance = this
+    override fun onCreate() {
+        super.onCreate()
+
+        injector = Injector(
+            ShoppingContainer(applicationContext),
+        )
     }
 
     companion object {
-        lateinit var instance: ShoppingApplication
-        fun getApplicationContext(): Context {
-            return instance.applicationContext
-        }
+        lateinit var injector: Injector
     }
 }

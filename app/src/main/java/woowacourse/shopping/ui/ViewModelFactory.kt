@@ -2,11 +2,11 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.Injector
+import woowacourse.shopping.application.ShoppingApplication.Companion.injector
 
 object ViewModelFactory : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return Injector.inject(modelClass)
+        return injector.inject(modelClass.kotlin)
     }
 }
