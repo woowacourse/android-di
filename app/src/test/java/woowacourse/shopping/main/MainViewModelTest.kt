@@ -1,6 +1,12 @@
 package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -21,11 +27,19 @@ class MainViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
-    fun setUp() {
+    fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
         viewModel = MainViewModel(productRepository, cartRepository)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
