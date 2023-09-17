@@ -3,8 +3,10 @@ package com.mission.androiddi.component.activity
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.mission.androiddi.component.activity.default.ActivityDependencyInjector
 import com.mission.androiddi.component.activity.retain.RetainedActivityDependencyLifecycleObserver
 import com.mission.androiddi.component.application.InjectableApplication
+import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.DependencyKey
 import com.woowacourse.bunadi.injector.Injector
 import kotlin.reflect.KClass
@@ -12,10 +14,11 @@ import kotlin.reflect.KClass
 abstract class InjectableActivity : AppCompatActivity() {
     abstract val activityClazz: KClass<out InjectableActivity>
     private val dependencyLifecycleObserver by lazy {
-        val injector = getDependencyInjector().apply {
+        val retainDependencyInjector = getDependencyInjector().apply {
             injectActivityDependencies()
         }
-        RetainedActivityDependencyLifecycleObserver(injector, this)
+        ActivityDependencyInjector(DefaultCache(retainDependencyInjector.cache)).injectActivityMembers()
+        RetainedActivityDependencyLifecycleObserver(retainDependencyInjector, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +30,7 @@ abstract class InjectableActivity : AppCompatActivity() {
         val injectableApplication = application as InjectableApplication
         val activityInjectManager = injectableApplication.requireActivityInjectManager()
 
-        return activityInjectManager.getInjector(
-            this,
-            activityClazz.qualifiedName,
-        )
+        return activityInjectManager.getInjector(this, activityClazz.qualifiedName)
     }
 
     private fun Injector.injectActivityDependencies() {

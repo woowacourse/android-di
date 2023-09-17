@@ -5,7 +5,7 @@ import com.woowacourse.bunadi.cache.DefaultCache
 import kotlin.reflect.KClass
 
 abstract class Injector(
-    protected val cache: Cache = DefaultCache(),
+    val cache: Cache = DefaultCache(),
 ) {
     abstract fun <T : Any> inject(clazz: KClass<T>): T
     abstract fun <T : Any> injectMemberProperties(clazz: KClass<T>, instance: Any)
