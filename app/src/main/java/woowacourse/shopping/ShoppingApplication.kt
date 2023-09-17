@@ -8,6 +8,6 @@ import woowacourse.shopping.di.NormalModule
 class ShoppingApplication : DIApplication() {
 
     override fun inject() {
-        injector = Injector(Container(), applicationContext).apply { injectBy(NormalModule) }
+        injector = Injector(Container(), NormalModule)
     }
 }
