@@ -26,8 +26,12 @@ class FakeContainer : Container {
     }
 
     @FakeRoomDBDataSource
-    fun getRoomDBCartDataSource(): FakeDataSource {
+    fun getRoomDBCartDataSource(dao: FakeDao): FakeDataSource {
         return FakeDefaultDataSource()
+    }
+
+    fun getFakeDao(): FakeDao {
+        return FakeDao()
     }
 }
 
@@ -38,6 +42,8 @@ class FakeImMemoryCartRepository(private val localDataSource: FakeDataSource) : 
 interface FakeDataSource
 class FakeDefaultDataSource : FakeDataSource
 class FakeMemoryDataSource : FakeDataSource
+
+class FakeDao
 
 interface FakeProductRepository
 class FakeDefaultProductRepository : FakeProductRepository

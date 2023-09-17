@@ -51,7 +51,7 @@ class Injector(
     }
 
     private fun getInstanceWithQualifier(qualifier: Annotation): Any {
-        val function = container.javaClass.kotlin.declaredMemberFunctions.find { func ->
+        val function = container::class.declaredMemberFunctions.find { func ->
             func.annotations.any { it == qualifier }
         } ?: throw IllegalStateException("찾을 수 없습니다.")
 
@@ -59,7 +59,7 @@ class Injector(
     }
 
     private fun getInstanceWithType(type: KType): Any {
-        val functions = container.javaClass.kotlin.declaredMemberFunctions.filter { func ->
+        val functions = container::class.declaredMemberFunctions.filter { func ->
             func.returnType == type
         }
         when (functions.size) {
