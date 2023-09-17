@@ -4,8 +4,11 @@ import android.app.Application
 import com.mission.androiddi.component.activity.retain.NonConfigurationActivityInjectorManager
 import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
+import com.woowacourse.bunadi.injector.Injectable
 
-open class InjectableApplication : Application(), Cache by DefaultCache() {
+open class InjectableApplication(
+    override val cache: Cache = DefaultCache(),
+) : Application(), Injectable {
     private var activityInjectManager: NonConfigurationActivityInjectorManager? = null
 
     override fun onCreate() {

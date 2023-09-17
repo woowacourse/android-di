@@ -6,18 +6,21 @@ import androidx.appcompat.app.AppCompatActivity
 import com.mission.androiddi.component.activity.default.ActivityDependencyInjector
 import com.mission.androiddi.component.activity.retain.RetainedActivityDependencyLifecycleObserver
 import com.mission.androiddi.component.application.InjectableApplication
+import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
 import com.woowacourse.bunadi.injector.DependencyKey
+import com.woowacourse.bunadi.injector.Injectable
 import com.woowacourse.bunadi.injector.Injector
 import kotlin.reflect.KClass
 
-abstract class InjectableActivity : AppCompatActivity() {
+abstract class InjectableActivity : AppCompatActivity(), Injectable {
     abstract val activityClazz: KClass<out InjectableActivity>
+    private val retainDependencyInjector by lazy {
+        getDependencyInjector().apply { injectActivityDependencies() }
+    }
+    override val cache: Cache by lazy { DefaultCache(retainDependencyInjector.cache) }
     private val dependencyLifecycleObserver by lazy {
-        val retainDependencyInjector = getDependencyInjector().apply {
-            injectActivityDependencies()
-        }
-        ActivityDependencyInjector(DefaultCache(retainDependencyInjector.cache)).injectActivityMembers()
+        ActivityDependencyInjector(cache).injectActivityMembers()
         RetainedActivityDependencyLifecycleObserver(retainDependencyInjector, this)
     }
 
