@@ -9,19 +9,19 @@ import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
 class AppDependencyContainer(private val context: Context) : DependencyContainer {
+    private val inMemoryCartRepository =
+        woowacourse.shopping.data.InMemoryCartRepository()
 
     fun provideCartProductDao(): CartProductDao =
         ShoppingDatabase.getDatabase(context).cartProductDao()
 
     @InMemoryCartRepository
-    fun provideInMemoryCartRepository(): CartRepository =
-        woowacourse.shopping.data.InMemoryCartRepository()
+    fun provideInMemoryCartRepository(): CartRepository = inMemoryCartRepository
 
     @DatabaseCartRepository
     fun provideDataBaseCartRepository(dao: CartProductDao): CartRepository =
         RoomDBCartRepository(dao)
 
-    @InMemoryProductRepository
     fun provideInMemoryProductRepository(): ProductRepository =
         woowacourse.shopping.data.InMemoryProductRepository()
 }

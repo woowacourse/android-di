@@ -1,70 +1,65 @@
-//import com.hyegyeong.di.AnnotationType
-//import com.hyegyeong.di.Container
-//import com.hyegyeong.di.Injector
-//import com.hyegyeong.di.annotations.Inject
-//import com.hyegyeong.di.annotations.Qualifier
-//import org.junit.After
-//import org.junit.Assert
-//import org.junit.Before
-//import org.junit.Test
-//import kotlin.reflect.KClass
-//import kotlin.reflect.jvm.jvmErasure
-//
-//class InjectorTest {
-//    object FakeContainer : Container {
-//
-//        override val instances: MutableMap<AnnotationType, Any> = mutableMapOf()
-//        override fun addInstance(instance: Any) {
-//            val kclass = instance::class
-//            val annotations: List<Annotation> = kclass.annotations
-//            val annotationType =
-//                AnnotationType(annotations.getOrNull(0), kclass.supertypes[0].jvmErasure)
-//            instances[annotationType] = instance
-//        }
-//
-//        override fun getInstance(annotationType: AnnotationType): Any? {
-//            return instances[annotationType]
-//        }
-//
-//        override fun hasDuplicateObjectsOfType(kClass: KClass<*>): Boolean {
-//            TODO("Not yet implemented")
-//        }
-//
-//    }
-//
-//    @Qualifier("InMemory")
-//    class DefaultFakeRepository : FakeRepository
-//
-//    @Qualifier("RoomDB")
-//    class FakeRoomDBRepository(@Inject fakeDao: FakeDao) : FakeRepository
-//    class DefaultFakeDao : FakeDao
-//
-//    @Before
-//    fun setUp() {
-//        Injector.container = FakeContainer
-//    }
-//
-//    @After
-//    fun tearDown() {
-//        FakeContainer.instances.clear()
-//    }
-//
-//    @Test
-//    fun `의존성 모듈이 모두 제공될 때 자동 DI 가 성공하는지 테스트`() {
-//        // given
-//        FakeContainer.addInstance(DefaultFakeDao())
-//        FakeContainer.addInstance(Injector.inject<FakeRoomDBRepository>())
-//
-//        // when
-//        val actual = Injector.inject<FakeViewModel>()
-//
-//        // then
-//        Assert.assertEquals(
-//            FakeContainer.getInstance(AnnotationType(Qualifier("RoomDB"), FakeRepository::class)),
-//            actual.fakeRepository
-//        )
-//    }
-//
+import annotations.DatabaseFakeRepository
+import annotations.InMemoryFakeRepository
+import com.hyegyeong.di.DependencyContainer
+import com.hyegyeong.di.Injector
+import com.hyegyeong.di.annotations.Inject
+import org.junit.Before
+import org.junit.Test
+
+class InjectorTest {
+
+    interface FakeRepositoryInterface
+    class FakeRepository
+    class FakeDaoImpl : FakeDaoInterface
+    class FakeInMemoryRepository : FakeRepositoryInterface
+    class FakeDatabaseRepository(dao: FakeDaoInterface) : FakeRepositoryInterface
+    class FakeContainer : DependencyContainer {
+
+        fun provideCartProductDao(): FakeDaoInterface = FakeDaoImpl()
+
+        @InMemoryFakeRepository
+        fun provideInMemoryCartRepository(): FakeRepositoryInterface = FakeInMemoryRepository()
+
+        @DatabaseFakeRepository
+        fun provideDataBaseCartRepository(dao: FakeDaoInterface): FakeRepositoryInterface =
+            FakeDatabaseRepository(dao)
+
+        fun provideFakeRepository() = FakeRepository()
+
+    }
+
+    @Before
+    fun setUp() {
+        Injector.container = FakeContainer()
+    }
+
+    @Test
+    fun `인터페이스가 아닌 클래스를 생성자로 주입받는 경우 생성자에 @Inject 키워드만 붙이면 된다`() {
+        // given
+        class FakeViewModel @Inject constructor(val fakeRepository: FakeRepository)
+
+        // when
+        Injector.inject<FakeViewModel>()
+    }
+
+    @Test
+    fun `인터페이스를 생성자로 주입받는 경우, 생성자에 @Inject 어노테이션을 붙이고, 파라미터 앞에 원하는 어노테이션을 붙이면 된다`() {
+        // given
+        class FakeViewModel @Inject constructor(@InMemoryFakeRepository val fakeRepository: FakeRepositoryInterface)
+
+        // when
+        Injector.inject<FakeViewModel>()
+    }
+
+    @Test
+    fun `인터페이스를 생성자로 주입받는 경우, 원하는 구현체가 또 다른 생성자를 주입받을 수 있다`() {
+        // given
+        class FakeViewModel @Inject constructor(@DatabaseFakeRepository val fakeRepository: FakeRepositoryInterface)
+
+        // when
+        Injector.inject<FakeViewModel>()
+    }
+
 //    @Test(expected = NoSuchElementException::class)
 //    fun `의존성 모듈이 제공되지 않을 때 자동 DI 가 실패하는지 테스트`() {
 //        // given
@@ -187,4 +182,4 @@
 //            actual.productRepository
 //        )
 //    }
-//}
+}

@@ -1,11 +1,11 @@
 package com.hyegyeong.di
 
 import com.hyegyeong.di.annotations.Inject
+import com.hyegyeong.di.annotations.Qualifier
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
-import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -35,38 +35,77 @@ object Injector {
         val constructor = requireNotNull(T::class.primaryConstructor)
         val parameters = constructor.parameters
         val parameterDependencies: MutableMap<KParameter, Any> = mutableMapOf()
-        val autoAvailableParameters = parameters.filter { it.annotations.isEmpty() }
-        val autoNotAvailableParameters = parameters.filter { it.annotations.isNotEmpty() }
-        autoAvailableParameters.forEach {
-            parameterDependencies[it] = it::class.createInstance()
+        val nonQualifierParameters = parameters.filter {
+            it.annotations.none { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
         }
-        autoNotAvailableParameters.forEach {
-            //Container 의 인스턴스 제공 함수 중 에서 해당 KParameter 와 같은 타입을 찾고, 그 중에서 어노테이션이 같은 인스턴스를 찾는다.
-            val kclass = it.type.jvmErasure
-            val annotations = it.annotations
-            // 내가 찾는 의존성 제공 함수
-            val instance = findContainerInstances(kclass, annotations)
+        val qualifierInstanceParameters = parameters.filter {
+            it.annotations.any { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
+        }
+        nonQualifierParameters.forEach {
+            val instance = findContainerInstances(it.type.jvmErasure)
+            parameterDependencies[it] = instance
+        }
+        qualifierInstanceParameters.forEach {
+            val annotation = filterQualifierAnnotation(it.annotations)
+            val instance = findContainerInstances(annotation = annotation)
             parameterDependencies[it] = instance
         }
         return constructor.callBy(parameterDependencies)
     }
 
-    fun findContainerInstances(kClass: KClass<*>, annotations: List<Annotation>): Any {
+    fun filterQualifierAnnotation(annotations: List<Annotation>): Annotation? {
+        return annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+    }
+
+    fun findContainerInstances(kClass: KClass<*>? = null, annotation: Annotation? = null): Any {
         val containerFunctions: Collection<KFunction<*>> = container::class.declaredFunctions
-        val function = containerFunctions.first { function ->
-            (function.returnType.jvmErasure == kClass) && (function.annotations.containsAll(
-                annotations
-            ))
+        lateinit var function: KFunction<*>
+        if (kClass == null) {
+            function = containerFunctions.first { it.annotations.contains(annotation) }
+        }
+        if (annotation == null) {
+            function = containerFunctions.first { it.returnType.jvmErasure == kClass }
+        }
+        if (kClass != null && annotation != null) {
+            function = containerFunctions.first {
+                (it.returnType.jvmErasure == kClass) && it.annotations.contains(annotation)
+            }
         }
         val instances = mutableListOf<Any>()
         if (function.valueParameters.isNotEmpty()) {
             function.valueParameters.forEach {
-                instances.add(findContainerInstances(it.type.jvmErasure, it.annotations))
+                instances.add(
+                    findContainerInstances(
+                        it.type.jvmErasure,
+                        filterQualifierAnnotation(it.annotations)
+                    )
+                )
             }
         }
         return function.call(container, * instances.toTypedArray())
             ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
     }
+
+//    fun findContainerInstances(kClass: KClass<*>? = null, annotation: Annotation? = null): Any {
+//        val containerFunctions: Collection<KFunction<*>> = container::class.declaredFunctions
+//        val function = containerFunctions.first { function ->
+//            (function.returnType.jvmErasure == kClass) && (function.annotations.containsAll(
+//                annotations
+//            ))
+//        }
+//        val instances = mutableListOf<Any>()
+//        if (function.valueParameters.isNotEmpty()) {
+//            function.valueParameters.forEach {
+//                instances.add(findContainerInstances(it.type.jvmErasure, it.annotations))
+//            }
+//        }
+//        return function.call(container, * instances.toTypedArray())
+//            ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
+//    }
 
 //    inline fun <reified T : Any> injectConstructor(): T {
 //        val constructor = requireNotNull(T::class.primaryConstructor)
