@@ -5,7 +5,7 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingApplication : Application() {
-    private lateinit var appContainer: AppContainer
+    private lateinit var diContainer: DiContainer
     lateinit var injector: Injector
         private set
 
@@ -16,13 +16,13 @@ class ShoppingApplication : Application() {
     }
 
     private fun setupContainer() {
-        appContainer = AppContainer()
-        appContainer.registerProviders {
+        diContainer = DiContainer()
+        diContainer.registerProviders {
             provider(CartProductDao::class to ShoppingDatabase.getInstance(applicationContext)::cartProductDao)
         }
     }
 
     private fun setupInjector() {
-        injector = Injector(appContainer)
+        injector = Injector(diContainer)
     }
 }

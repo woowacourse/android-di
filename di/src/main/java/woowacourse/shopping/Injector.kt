@@ -14,15 +14,15 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(private val container: AppContainer) {
+class Injector(private val container: DiContainer) {
 
-    fun <T : Any> inject(clazz: KClass<T>): T {
-        container.getSavedInstanceOf(clazz)?.let { return it }
+    fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        container.getSavedInstanceOf(annotations, clazz)?.let { return it }
 
         val instance = getInstanceOf(clazz) ?: createInstanceOf(clazz)
         injectFields(clazz, instance)
 
-        container.saveInstance(clazz, instance)
+        container.saveInstance(annotations, clazz, instance)
         return instance
     }
 
@@ -36,7 +36,7 @@ class Injector(private val container: AppContainer) {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.getImplementationClass())
+            inject(it.getImplementationClass(), it.annotations)
         }.toTypedArray()
         return args
     }
@@ -69,7 +69,7 @@ class Injector(private val container: AppContainer) {
         clazz.declaredMemberProperties.forEach {
             if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
                 it.isAccessible = true
-                it.setter.call(instance, inject(it.getImplementationClass()))
+                it.setter.call(instance, inject(it.getImplementationClass(), it.annotations))
             }
         }
     }

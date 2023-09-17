@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.AppContainer
+import woowacourse.shopping.DiContainer
 import woowacourse.shopping.Injector
 import woowacourse.shopping.createProduct
 import woowacourse.shopping.data.CartProductDao
@@ -18,7 +18,7 @@ import woowacourse.shopping.getProducts
 import kotlin.reflect.full.createInstance
 
 class MainViewModelTest {
-    private lateinit var appContainer: AppContainer
+    private lateinit var diContainer: DiContainer
     private lateinit var injector: Injector
     private lateinit var viewModel: MainViewModel
 
@@ -30,12 +30,12 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
 
-        appContainer = AppContainer()
-        appContainer.registerProviders {
+        diContainer = DiContainer()
+        diContainer.registerProviders {
             provider(CartProductDao::class to FakeCartProductDao::class::createInstance)
         }
 
-        injector = Injector(appContainer)
+        injector = Injector(diContainer)
         viewModel = injector.inject(MainViewModel::class)
     }
 

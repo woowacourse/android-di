@@ -1,11 +1,9 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.annotation.SingleInstance
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@SingleInstance
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 
