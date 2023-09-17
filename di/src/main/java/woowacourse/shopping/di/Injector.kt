@@ -19,21 +19,11 @@ class Injector(
         val primaryConstructor =
             clazz.kotlin.primaryConstructor ?: throw NullPointerException(ERROR_PRIMARY_CONSTRUCTOR)
 
-        val fields =
-            clazz.kotlin.declaredMemberProperties
-                .filter { it.hasAnnotation<Inject>() }
-                .map { kProperty ->
-                    kProperty.apply {
-                        isAccessible = true
-                    }.javaField
-                }
-
         val instances = getInstances(primaryConstructor)
-        val instance = primaryConstructor.call(*instances.toTypedArray())
-
-        if (fields.isNotEmpty()) {
-            injectAnnotationFields(instance, fields)
+        val instance = primaryConstructor.call(*instances.toTypedArray()).apply {
+            injectAnnotationFields(clazz.kotlin)
         }
+
         return instance
     }
 
@@ -80,16 +70,33 @@ class Injector(
         return kFunction.call(module, *arguments.toTypedArray()) as T
     }
 
-    private fun <T : Any> injectAnnotationFields(instance: T, fields: List<Field?>) {
-        instance.apply {
-            fields.forEach { field ->
-                field?.run {
-                    val obj = findInstance(this.type.kotlin)
-                    set(instance, obj)
-                }
+    private fun <T : Any> T.injectAnnotationFields(clazz: KClass<T>) {
+        val fields = clazz.filterHasAnnotationFields<Inject>()
+        when (fields.isEmpty()) {
+            true -> return
+            false -> {
+                injectFields(fields)
             }
         }
     }
+
+    private fun <T : Any> T.injectFields(fields: List<Field>) {
+        fields.forEach { field: Field ->
+            val obj = findInstance(field.type.kotlin)
+            field.set(this, obj)
+        }
+    }
+
+    private inline fun <reified T : Annotation> KClass<*>.filterHasAnnotationFields(): List<Field> =
+        declaredMemberProperties.filter {
+            it.hasAnnotation<T>()
+        }.map { kProperty ->
+            requireNotNull(
+                kProperty.apply {
+                    isAccessible = true
+                }.javaField,
+            )
+        }
 
     companion object {
         private const val ERROR_PRIMARY_CONSTRUCTOR = "[ERROR] 주 생성자가 없습니다."
