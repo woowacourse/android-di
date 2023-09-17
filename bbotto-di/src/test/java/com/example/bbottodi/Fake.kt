@@ -42,6 +42,15 @@ class FakeViewModelWithQualifierFieldInject(
     private lateinit var cartRepository: FakeCartRepository
 }
 
+class FakeViewModelWithInDiskAndInMemory(
+    @Inject
+    @InDisk
+    cartInDiskRepository: FakeCartRepository,
+    @Inject
+    @InMemory
+    cartInMemoryRepository: FakeCartRepository,
+)
+
 class FakeProductRepository()
 interface FakeCartRepository
 class FakeDefaultCartRepository() : FakeCartRepository

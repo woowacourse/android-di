@@ -75,10 +75,23 @@ class InjectTest {
     @Test
     fun `Qualifier로 @InDisk 구분하여 필드에 의존성 주입 성공`() {
         // when
-        val viewModel = inject<FakeViewModelWithQualifierFieldInject>(FakeViewModelWithQualifierFieldInject::class)
+        val viewModel =
+            inject<FakeViewModelWithQualifierFieldInject>(FakeViewModelWithQualifierFieldInject::class)
 
         // then
         val expect = FakeViewModelWithQualifierFieldInject::class
+        val actual = viewModel::class
+        assertEquals(expect, actual)
+    }
+
+    @Test
+    fun `Qualifier로 @InDisk @InMemory 구분해 주입해주기`() {
+        // when
+        val viewModel =
+            inject<FakeViewModelWithInDiskAndInMemory>(FakeViewModelWithInDiskAndInMemory::class)
+
+        // then
+        val expect = FakeViewModelWithInDiskAndInMemory::class
         val actual = viewModel::class
         assertEquals(expect, actual)
     }
