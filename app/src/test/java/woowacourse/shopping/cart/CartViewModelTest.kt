@@ -1,11 +1,17 @@
 package woowacourse.shopping.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.Dummy.product
+import woowacourse.shopping.Dummy.cartProduct
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.repository.CartRepository
@@ -18,10 +24,18 @@ class CartViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
-    fun setUp() {
+    fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         cartRepository = FakeCartRepository()
         viewModel = CartViewModel(cartRepository)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
@@ -30,7 +44,7 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        assertEquals(listOf(product), viewModel.cartProducts.getOrAwaitValue())
+        assertEquals(listOf(cartProduct), viewModel.cartProducts.getOrAwaitValue())
     }
 
     @Test
