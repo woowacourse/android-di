@@ -3,6 +3,7 @@ package com.app.covi_di.core
 import com.app.covi_di.annotation.Inject
 import com.app.covi_di.annotation.InjectField
 import com.app.covi_di.annotation.Qualifier
+import com.app.covi_di.annotation.QualifierType
 import com.app.covi_di.module.DependencyModule
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -47,30 +48,10 @@ internal class InjectorTest {
         DIContainer.init(listOf(FakeRepositoryModule), listOf())
 
         // when
-        val instance = Injector.inject<FakeRepository>(FakeRepositoryImpl::class)
+        val instance = Injector.inject(FakeRepositoryImpl::class)
 
         // then
         assertTrue(instance is FakeRepositoryImpl)
-    }
-
-    @Test
-    fun `interface에 구현체가 두개 이상 있으면 Qualifier 어노테이션이 붙은 객체를 가져온다`() {
-        // given
-        DIContainer.init(listOf(FakeRepositoryModule), listOf())
-        val instance = Injector.inject<FakeRepository>(FakeRepositoryImpl::class)
-
-        // when
-        assertTrue(instance is FakeRepositoryImpl)
-    }
-
-    @Test
-    fun `interface에 구현체가 두개 이상 있으면 Qualifier 어노테이션이 붙지 않는 객체는 가져오지 않는다`() {
-        // given
-        DIContainer.init(listOf(FakeRepositoryModule), listOf())
-        val instance = Injector.inject<FakeRepository>(FakeRepositoryImpl::class)
-
-        // when
-        assertFalse(instance is FakeRepositoryImpl2)
     }
 
 
@@ -79,8 +60,7 @@ internal class InjectorTest {
 interface FakeRepository
 
 
-
-@Qualifier
+@Qualifier(QualifierType.DB)
 class FakeRepositoryImpl @Inject constructor(private val fakeClass: FakeClass) : FakeRepository {
     @InjectField
     lateinit var fakeClass2: FakeClass2
@@ -90,7 +70,10 @@ class FakeRepositoryImpl2() : FakeRepository
 
 interface FakeDataSource
 
-class FakeDataSourceImpl: FakeDataSource
+class FakeViewModel @Inject constructor(
+    @Qualifier(QualifierType.DB)
+    private val fakeRepository: FakeRepository
+)
 
 
 class FakeClass()

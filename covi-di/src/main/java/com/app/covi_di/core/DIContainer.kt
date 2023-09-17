@@ -1,11 +1,10 @@
 package com.app.covi_di.core
 
-import android.content.Context
 import com.app.covi_di.annotation.Qualifier
 import com.app.covi_di.module.DependencyModule
 import com.app.covi_di.module.Provider
 import kotlin.reflect.KClass
-import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.findAnnotation
 
 object DIContainer {
     private val moduleInstances = mutableMapOf<KClass<*>, MutableList<KClass<*>>>()
@@ -27,11 +26,14 @@ object DIContainer {
     }
 
     fun getModuleKClass(clazz: KClass<*>): KClass<*>? {
-        val result = moduleInstances[clazz]?.filter {
-            it.hasAnnotation<Qualifier>()
-        } ?: return null
-        if (result.size > 1) throw IllegalArgumentException(ERROR_QUALIFIER_MUST_BE_ONE)
-        return result.first()
+        val result = moduleInstances[clazz] ?: return null
+
+        if (result.size > 1) {
+            result.find {
+                it.findAnnotation<Qualifier>()?.type == it.findAnnotation<Qualifier>()?.type
+            } ?: throw IllegalStateException(ERROR_QUALIFIER_MUST_BE_ONE)
+        }
+        return result.firstOrNull()
     }
 
     fun getProviderInstance(clazz: KClass<*>): Any {

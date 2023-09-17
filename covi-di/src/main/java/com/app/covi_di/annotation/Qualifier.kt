@@ -1,5 +1,5 @@
 package com.app.covi_di.annotation
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier
+annotation class Qualifier(val type: QualifierType)
