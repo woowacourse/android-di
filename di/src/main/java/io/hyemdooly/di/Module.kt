@@ -25,25 +25,41 @@ open class Module(private val parentModule: Module? = null) {
 
     fun <T : Any> getInstance(type: KClass<T>): T {
         // 싱글톤에서 찾기
-        if (instances[type] != null) return instances[type] as T
-        val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
-        if (key != null && instances[key] != null) return instances[key] as T
+        val fromSingleton = getFromSingleton(type)
+        if (fromSingleton != null) return fromSingleton as T
 
         // 선언된 멤버 함수에서 찾기
+        val fromFunctions = getFromDeclaredFunctions(type)
+        if (fromFunctions != null) return fromFunctions as T
+
+        // 그래도 없으면 부모 모듈에서 찾기
+        val fromParents = getFromParentModule(type)
+        if (fromParents != null) return fromParents as T
+
+        // 없으면 생성하기
+        return createInstance(type)
+    }
+
+    private fun getFromSingleton(type: KClass<*>): Any? {
+        if (instances[type] != null) return instances[type]
+        val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
+        if (key != null && instances[key] != null) return instances[key]
+        return null
+    }
+
+    private fun getFromDeclaredFunctions(type: KClass<*>): Any? {
         this::class.declaredMemberFunctions.firstOrNull { it.hasAnnotation<Singleton>() && it.returnType.jvmErasure == type }
             ?.let { provider ->
                 val instance = provider.callBy(getParamInstances(provider.parameters))
                     ?: throw NoSuchElementException("declared member functions should not be null")
                 instances[provider.returnType.jvmErasure] = instance
-                return instance as T
+                return instance
             }
+        return null
+    }
 
-        // 그래도 없으면 부모 모듈에서 찾기
-        val parentInstance = parentModule?.getInstance<T>(type)
-        if (parentInstance != null) return parentInstance
-
-        // 없으면 생성하기
-        return createInstance(type)
+    private fun getFromParentModule(type: KClass<*>): Any? {
+        return parentModule?.getInstance(type)
     }
 
     private fun <T : Any> createInstance(modelClass: KClass<*>): T {
@@ -64,7 +80,7 @@ open class Module(private val parentModule: Module? = null) {
         }
     }
 
-    private fun <T : Any> getParamInstances(constructor: KFunction<T>): List<Any?> {
+    private fun getParamInstances(constructor: KFunction<*>): List<Any?> {
         val paramInstances = constructor.parameters.map { param ->
             val annotation = param.findAnnotation<Qualifier>()
             val type = annotation?.clazz ?: param.type.jvmErasure

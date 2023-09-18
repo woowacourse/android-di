@@ -21,7 +21,6 @@ class CartProductViewHolder(
 
     fun bind(cartProduct: CartProduct) {
         binding.item = cartProduct
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
         binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.timeAdded)
     }
 
