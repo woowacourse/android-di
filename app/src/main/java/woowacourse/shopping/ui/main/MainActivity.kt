@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.common.viewModelInject
+import woowacourse.shopping.common.CommonViewModelFactory
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.main.adapter.ProductAdapter
@@ -15,7 +16,9 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModelInject()
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, CommonViewModelFactory)[MainViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +63,8 @@ class MainActivity : AppCompatActivity() {
             )
             binding.rvProducts.adapter = adapter
         }
-        viewModel.onProductAdded.observe(this) {
-            if (!it) return@observe
+        viewModel.onProductAdded.observe(this) { isProductAdded ->
+            if (!isProductAdded) return@observe
             Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
         }
     }

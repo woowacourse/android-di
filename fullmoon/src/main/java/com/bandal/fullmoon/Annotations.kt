@@ -1,0 +1,13 @@
+package com.bandal.fullmoon
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+annotation class FullMoonInject
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.PROPERTY,
+)
+annotation class Qualifier(val key: String)
