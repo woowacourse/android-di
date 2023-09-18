@@ -1,6 +1,6 @@
 package woowacourse.shopping.di.module
 
-import com.now.androdi.module.Module
+import com.now.di.Module
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.repository.ProductRepository
 
