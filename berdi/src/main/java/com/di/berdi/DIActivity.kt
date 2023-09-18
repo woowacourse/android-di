@@ -48,10 +48,10 @@ abstract class DIActivity : AppCompatActivity() {
     }
 
     private fun injectField(application: DIApplication, property: KProperty1<out DIActivity, *>) {
-        val instance = application.injector.createInstance(
-            this,
-            property.returnType,
-            property.qualifiedName,
+        val instance = application.injector.getInstanceOf(
+            context = this,
+            type = property.returnType,
+            qualifiedName = property.qualifiedName,
         )
         property.javaField?.setInstance(instance)
     }

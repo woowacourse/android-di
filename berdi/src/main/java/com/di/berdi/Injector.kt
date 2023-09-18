@@ -6,7 +6,6 @@ import com.di.berdi.annotation.Singleton
 import com.di.berdi.util.qualifiedName
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredFunctions
@@ -27,25 +26,27 @@ class Injector(private val container: Container, private val module: Module) {
 
     // 파라미터의 인스턴스를 다 가져온다
     private fun getInstancesParamsOf(context: Context, callable: KCallable<*>): List<Any?> {
-        return callable.parameters.map { param -> getInstanceOf(context, param) }
+        return callable.parameters.map { param ->
+            getInstanceOf(context, param.type, param.qualifiedName)
+        }
     }
 
     // 인스턴스를 가져온다
-    private fun getInstanceOf(context: Context, param: KParameter): Any {
+    fun getInstanceOf(context: Context, type: KType, qualifiedName: String?): Any {
         // 해당 param 타입의 인스턴스를 Container 에서 가져온다
-        container.getInstance(param.type.jvmErasure, param.qualifiedName)?.let { return it }
+        container.getInstance(type.jvmErasure, qualifiedName)?.let { return it }
 
         // 없으면 생성한다
-        return createInstance(context, param.type, param.qualifiedName)
+        return createInstance(context, type, qualifiedName)
     }
 
-    fun createInstance(context: Context, type: KType, qualifiedName: String?): Any {
+    private fun createInstance(context: Context, type: KType, qualifiedName: String?): Any {
         // 모듈에서 파람과 맞는 타입을 찾는다
         val targetModule = requireNotNull(
             module::class.declaredFunctions.find { moduleFunc ->
                 isTargetModule(moduleFunc, type, qualifiedName)
             },
-        )
+        ) { ERROR_NOT_FOUND_MATCHED_MODULE }
 
         // 파라미터가 없다면 만든다
         if (targetModule.valueParameters.isEmpty()) {
@@ -59,7 +60,7 @@ class Injector(private val container: Container, private val module: Module) {
             when {
                 param.type.jvmErasure == Context::class && targetModule.hasAnnotation<Singleton>() -> context.applicationContext
                 param.type.jvmErasure == Context::class -> context
-                else -> getInstanceOf(context, param)
+                else -> getInstanceOf(context, param.type, param.qualifiedName)
             }
         }
 
@@ -100,5 +101,9 @@ class Injector(private val container: Container, private val module: Module) {
             isAccessible = true
             set(target, paramInstances)
         }
+    }
+
+    companion object {
+        private const val ERROR_NOT_FOUND_MATCHED_MODULE = "모듈에 맞는 매치되는 인스턴스를 찾을 수 없습니다"
     }
 }
