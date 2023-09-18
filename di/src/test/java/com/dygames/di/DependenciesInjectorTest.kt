@@ -10,7 +10,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import kotlin.reflect.typeOf
 
-class DependencyInjectorTest {
+class DependenciesInjectorTest {
     interface TestCartRepository
     interface TestProductRepository
 

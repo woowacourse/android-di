@@ -3,6 +3,9 @@ package com.dygames.di
 import com.dygames.di.annotation.Injectable
 import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
+import com.dygames.di.model.LifecycleAwareDependencies
+import com.dygames.di.model.LifecycleAwareProviders
+import com.dygames.di.model.QualifiableDependencies
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -12,45 +15,83 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
-    lateinit var dependencies: Dependencies
+    val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
+    private val lifecycleAwareDependencies: LifecycleAwareDependencies =
+        LifecycleAwareDependencies()
 
-    inline fun <reified T : Any> inject(): T {
-        return inject(typeOf<T>()) as T
+    inline fun <reified T : Any> inject(lifecycle: KType? = null): T {
+        return inject(typeOf<T>(), lifecycle = lifecycle) as T
     }
 
-    fun inject(type: KType, qualifier: Annotation? = null): Any {
-        return findDependency(type, qualifier) ?: instantiate(type).apply {
-            injectFields(this)
+    fun inject(
+        type: KType,
+        qualifier: Annotation? = null,
+        lifecycle: KType? = null,
+    ): Any {
+        return findDependency(type, qualifier) ?: instantiate(type, qualifier, lifecycle)
+    }
+
+    fun createDependencies(lifecycle: KType?) {
+        lifecycleAwareDependencies.value[lifecycle] = QualifiableDependencies()
+        println(lifecycleAwareDependencies)
+    }
+
+    fun deleteDependencies(lifecycle: KType?) {
+        lifecycleAwareDependencies.value.remove(lifecycle)
+    }
+
+    private fun instantiate(
+        type: KType,
+        qualifier: Annotation? = null,
+        lifecycle: KType? = null
+    ): Any {
+        val provider = lifecycleAwareProviders.value.values.firstNotNullOfOrNull {
+            val providers = it.value[qualifier] ?: return@firstNotNullOfOrNull null
+            val factory = providers.factories[type]
+                ?: return@firstNotNullOfOrNull providers.constructors[type]
+            return factory()
+        }
+
+        val constructor =
+            type.jvmErasure.primaryConstructor ?: (
+                provider?.jvmErasure?.primaryConstructor
+                    ?: throw InjectError.ConstructorNoneAvailable(type)
+                )
+        val parameters = constructor.parameters
+        val arguments = gatherArguments(parameters, lifecycle)
+        return constructor.call(*arguments).also {
+            lifecycleAwareDependencies.value[lifecycle]?.value?.get(qualifier)?.value?.set(
+                type, this
+            )
+        }.apply {
+            injectFields(lifecycle, this)
         }
     }
 
-    fun instantiate(type: KType): Any {
-        val constructor = type.jvmErasure.primaryConstructor
-            ?: throw InjectError.ConstructorNoneAvailable(type)
-        val parameters = constructor.parameters
-        val arguments = gatherArguments(parameters)
-        return constructor.call(*arguments)
-    }
-
     private fun findDependency(type: KType, qualifier: Annotation?): Any? {
-        if (!::dependencies.isInitialized) throw InjectError.DependenciesNotInitialized()
-        return dependencies.findDependency(type, qualifier)
+        val qualifiableDependencies =
+            lifecycleAwareDependencies.value.values.firstOrNull { qualifiableDependencies ->
+                qualifiableDependencies.value.values.firstOrNull { dependencies ->
+                    dependencies.value[type] != null
+                } != null
+            }
+        val dependencies = qualifiableDependencies?.value?.get(qualifier) ?: return null
+        return dependencies.value[type]
     }
 
-    private fun gatherArguments(parameters: List<KParameter>): Array<*> {
+    private fun gatherArguments(parameters: List<KParameter>, lifecycle: KType? = null): Array<*> {
         return parameters.map { parameter ->
             val qualifier = findQualifier(parameter.annotations)
-            inject(parameter.type, qualifier)
+            inject(parameter.type, qualifier, lifecycle)
         }.toTypedArray()
     }
 
-    private fun injectFields(instance: Any): Any {
+    private fun injectFields(lifecycle: KType?, instance: Any): Any {
         val fields = instance::class.declaredMemberProperties
         fields.filter { it.annotations.filterIsInstance<Injectable>().isNotEmpty() }
-            .filterIsInstance<KMutableProperty<*>>()
-            .forEach {
+            .filterIsInstance<KMutableProperty<*>>().forEach {
                 val qualifier = findQualifier(it.annotations)
-                it.setter.call(instance, inject(it.returnType, qualifier))
+                it.setter.call(instance, inject(it.returnType, qualifier, lifecycle))
             }
         return instance
     }
