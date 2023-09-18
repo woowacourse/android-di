@@ -19,7 +19,8 @@ class Instantiator {
             modules.provideInstanceOf(simpleName)
         } ?: throw NoSuchElementException()
 
-        parameter.hasAnnotation<Inject>() -> modules.provideInstanceOf(parameter.type.jvmErasure) ?: throw NoSuchElementException()
+        parameter.hasAnnotation<Inject>() -> modules.provideInstanceOf(parameter.type.jvmErasure)
+            ?: throw NoSuchElementException()
 
         else -> parameter.type.jvmErasure.instantiateRecursively(modules)
     }
