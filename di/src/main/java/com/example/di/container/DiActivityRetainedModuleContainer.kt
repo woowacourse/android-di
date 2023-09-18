@@ -11,7 +11,7 @@ class DiActivityRetainedModuleContainer(private val applicationModule: Applicati
     private val moduleMap: MutableMap<Int, ActivityRetainedModule> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ActivityRetainedModule> provideActivityModule(
+    fun <T : ActivityRetainedModule> provideActivityRetainedModule(
         newOwnerHashCode: Int,
         oldOwnerHashCode: Int?,
         clazz: Class<T>,
