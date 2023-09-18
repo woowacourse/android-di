@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ki960213.sheath.annotation.Inject
+import com.ki960213.sheath.annotation.NewInstance
 import com.ki960213.sheath.annotation.Qualifier
 import com.ki960213.sheath.annotation.SheathViewModel
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ class MainViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
+    @NewInstance
     @Inject
     private lateinit var productRepository: ProductRepository
 
