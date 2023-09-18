@@ -1,9 +1,9 @@
-package woowacourse.shopping.di.injector
+package com.ssu.di.injector
 
-import woowacourse.shopping.di.annotation.Injected
-import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.DiContainer
-import woowacourse.shopping.di.module.Module
+import com.ssu.di.annotation.Injected
+import com.ssu.di.annotation.Qualifier
+import com.ssu.di.container.DiContainer
+import com.ssu.di.module.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty

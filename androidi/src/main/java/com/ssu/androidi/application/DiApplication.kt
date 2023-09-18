@@ -1,8 +1,8 @@
-package com.example.androidi.application
+package com.ssu.androidi.application
 
 import android.app.Application
-import com.example.androidi.container.DefaultContainer
-import woowacourse.shopping.di.injector.Injector
+import com.ssu.androidi.container.DefaultContainer
+import com.ssu.di.injector.Injector
 
 open class DiApplication : Application() {
     companion object {

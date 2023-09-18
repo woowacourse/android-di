@@ -1,6 +1,6 @@
-package com.example.androidi.container
+package com.ssu.androidi.container
 
-import woowacourse.shopping.di.container.DiContainer
+import com.ssu.di.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 

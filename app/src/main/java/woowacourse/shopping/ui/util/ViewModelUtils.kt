@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-import com.example.androidi.application.DiApplication
+import com.ssu.androidi.application.DiApplication
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(factory: ViewModelProvider.Factory = ShoppingViewModelFactory): ViewModelLazy<T> {
     return ViewModelLazy(

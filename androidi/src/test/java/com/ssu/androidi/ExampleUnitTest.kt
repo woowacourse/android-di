@@ -1,4 +1,4 @@
-package com.example.androidi
+package com.ssu.androidi
 
 import org.junit.Test
 

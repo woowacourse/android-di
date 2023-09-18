@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.ssu.di.annotation
 
 annotation class Injected
 

@@ -1,6 +1,6 @@
 package woowacourse.shopping.application
 
-import com.example.androidi.application.DiApplication
+import com.ssu.androidi.application.DiApplication
 import woowacourse.shopping.di.module.ApplicationModule
 
 class ShoppingApplication : DiApplication() {

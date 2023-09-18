@@ -5,7 +5,8 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.annotation.Qualifier
+import com.ssu.di.annotation.Qualifier
+import com.ssu.di.module.Module
 import woowacourse.shopping.di.annotations.StorageType
 import woowacourse.shopping.repository.CartRepository
 

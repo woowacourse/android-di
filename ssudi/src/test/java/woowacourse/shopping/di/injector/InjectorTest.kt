@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import woowacourse.shopping.di.annotation.Injected
-import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.DiContainer
+import com.ssu.di.annotation.Injected
+import com.ssu.di.annotation.Qualifier
+import com.ssu.di.container.DiContainer
+import com.ssu.di.injector.Injector
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
