@@ -6,7 +6,7 @@ import android.view.Menu
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.hashdi.DiActivity
+import woowacourse.shopping.hasydi.DiActivity
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiActivity() {

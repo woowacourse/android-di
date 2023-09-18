@@ -6,9 +6,7 @@ import junit.framework.Assert.assertSame
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.hashdi.AppContainer
-import woowacourse.shopping.hashdi.Injector
-import woowacourse.shopping.hashdi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Inject
 
 class InjectorTest {
 

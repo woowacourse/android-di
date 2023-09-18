@@ -1,9 +1,8 @@
 package woowacourse.shopping.hasydi
 
-import woowacourse.shopping.hashdi.Module
-import woowacourse.shopping.hashdi.annotation.Inject
-import woowacourse.shopping.hashdi.annotation.Qualifier
-import woowacourse.shopping.hashdi.annotation.Singleton
+import woowacourse.shopping.hasydi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Qualifier
+import woowacourse.shopping.hasydi.annotation.Singleton
 
 object FakeModule : Module {
 

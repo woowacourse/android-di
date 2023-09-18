@@ -1,4 +1,4 @@
-package woowacourse.shopping.hashdi
+package woowacourse.shopping.hasydi
 
 import android.os.Bundle
 import androidx.annotation.MainThread

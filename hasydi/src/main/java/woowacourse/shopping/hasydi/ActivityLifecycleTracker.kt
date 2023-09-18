@@ -1,4 +1,4 @@
-package woowacourse.shopping.hashdi
+package woowacourse.shopping.hasydi
 
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver

@@ -1,6 +1,6 @@
-package woowacourse.shopping.hashdi
+package woowacourse.shopping.hasydi
 
-import woowacourse.shopping.hashdi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter

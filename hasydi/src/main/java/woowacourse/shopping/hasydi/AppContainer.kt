@@ -1,11 +1,11 @@
-package woowacourse.shopping.hashdi
+package woowacourse.shopping.hasydi
 
 import android.content.Context
-import woowacourse.shopping.hashdi.annotation.ActivityContext
-import woowacourse.shopping.hashdi.annotation.ApplicationContext
-import woowacourse.shopping.hashdi.annotation.Inject
-import woowacourse.shopping.hashdi.annotation.Qualifier
-import woowacourse.shopping.hashdi.annotation.Singleton
+import woowacourse.shopping.hasydi.annotation.ActivityContext
+import woowacourse.shopping.hasydi.annotation.ApplicationContext
+import woowacourse.shopping.hasydi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Qualifier
+import woowacourse.shopping.hasydi.annotation.Singleton
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
