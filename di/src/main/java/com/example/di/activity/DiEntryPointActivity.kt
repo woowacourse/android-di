@@ -13,7 +13,7 @@ import com.example.di.module.ViewModelModule
 
 abstract class DiEntryPointActivity : AppCompatActivity() {
 
-    lateinit var activityRetainedModule: ActivityRetainedModule
+    lateinit var activityRetainedModule: ActivityRetainedModule // DiActivityRetainedModuleContainer에서 액티비티의 생명주기를 관찰하고 제거시킴.
         private set
 
     private lateinit var activityModule: ActivityModule
@@ -24,9 +24,9 @@ abstract class DiEntryPointActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_RETAINED_MODULE_KEY)
         activityRetainedModule =
-            diApplication.getActivityRetainedModule(this.hashCode(), previousHashCode)
+            diApplication.getActivityRetainedModule(this, previousHashCode)
 
-        activityModule = diApplication.getActivityModule(activityRetainedModule)
+        activityModule = diApplication.getActivityModule(this, activityRetainedModule)
         activityModule.inject(this) // DiEntryPointActivity 객체에 대한 필드 주입
     }
 
@@ -34,11 +34,6 @@ abstract class DiEntryPointActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         // 객체가 사라지기 전에 해시코드값 저장. 강제 재생성시 모듈 다시 불러오기 위해
         outState.putInt(ACTIVITY_RETAINED_MODULE_KEY, this.hashCode())
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isFinishing) diApplication.removeActivityRetainedModule(this.hashCode())
     }
 
     inline fun <reified VM : ViewModel> viewModel(): Lazy<VM> {
