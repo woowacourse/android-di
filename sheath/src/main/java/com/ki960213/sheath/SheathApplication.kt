@@ -9,7 +9,7 @@ import kotlin.reflect.KType
 
 object SheathApplication {
 
-    lateinit var sheathComponentContainer: Map<KType, SheathComponent>
+    lateinit var sheathComponentContainer: SheathComponentContainer
 
     fun run(context: Context) {
         val scanner = ComponentScanner(context)
@@ -20,11 +20,13 @@ object SheathApplication {
     }
 
     private fun initContainer(components: List<SheathComponent>) {
-        sheathComponentContainer = components.sorted()
+        val container: Map<KType, SheathComponent> = components.sorted()
             .fold(mutableMapOf()) { acc, component ->
                 component.instantiate(acc.values.toList())
                 acc[component.type] = component
                 acc
             }
+
+        sheathComponentContainer = SheathComponentContainer(container)
     }
 }
