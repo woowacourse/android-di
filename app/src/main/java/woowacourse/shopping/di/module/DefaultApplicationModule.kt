@@ -39,7 +39,7 @@ class DefaultApplicationModule(applicationContext: Context) :
 
     fun getCartDao(): CartProductDao {
         return Room.databaseBuilder(
-            context,
+            applicationContext,
             ShoppingDatabase::class.java,
             SHOPPING_DATABASE_NAME,
         ).build().cartProductDao()
