@@ -4,17 +4,48 @@ import io.hyemdooly.di.annotation.Inject
 import io.hyemdooly.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-object Injector {
-    fun <T : Any> inject(modelClass: KClass<*>): T {
-        val instance = Container.getInstance(modelClass) ?: createInstance(modelClass)
+class Injector(private val parentInjector: Injector? = null) {
+    private val instances = mutableMapOf<KClass<*>, Any>()
+
+    fun addInstance(instance: Any) {
+        instances[instance::class] = instance
+    }
+
+    fun addInstances(module: Module) {
+        module::class.declaredMemberFunctions.forEach { provider ->
+            provider.call(module)?.let {
+                addInstance(it)
+            }
+        }
+    }
+
+    fun getInstance(type: KClass<*>): Any? {
+        if (instances[type] != null) return instances[type]
+        val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
+        if (key != null && instances[key] != null) return instances[key]
+
+        val parentInstance = parentInjector?.getInstance(type)
+        if (parentInstance != null) return parentInstance
+
+        return createInstance(type)
+    }
+
+    fun clear() {
+        instances.clear()
+    }
+
+    private fun <T : Any> inject(modelClass: KClass<*>): T {
+        val instance = getInstance(modelClass) ?: createInstance(modelClass)
         return instance as T
     }
 
@@ -31,7 +62,7 @@ object Injector {
         val paramInstances = constructor.parameters.map { param ->
             val annotation = param.findAnnotation<Qualifier>()
             val type = annotation?.clazz ?: param.type.jvmErasure
-            Container.getInstance(type) ?: inject(type)
+            getInstance(type) ?: inject(type)
         }
         return paramInstances
     }
@@ -44,7 +75,7 @@ object Injector {
             property.isAccessible = true
             property.javaField?.let {
                 val type = it.type.kotlin
-                val fieldValue = Container.getInstance(type) ?: inject(type)
+                val fieldValue = getInstance(type) ?: inject(type)
                 it.set(instance, fieldValue)
             }
         }
