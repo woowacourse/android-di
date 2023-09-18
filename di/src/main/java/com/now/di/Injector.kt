@@ -12,7 +12,10 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
-object Injector {
+class Injector(
+    private val parentContainer: Container?,
+    private val container: Container,
+) {
     // 인자로 받은 모듈에 있는 메서드를 인스턴스화 하여 Container에 저장한다
     fun addModule(module: Module) {
         val kFunctions = module::class.declaredFunctions
@@ -30,13 +33,13 @@ object Injector {
         val dependencyType = DependencyType(functionKlass, qualifier)
 
         // 컨테이너에 이미 있다면 종료
-        if (Container.getInstance(dependencyType) != null) return
+        if (container.getInstance(dependencyType) != null) return
 
         // Container에 없는 경우
         // 함수에 파라미터가 없는 경우 인스턴스를 생성하고 Container에 추가 후 종료
         if (kFunction.valueParameters.isEmpty()) {
             val kclass = kFunction.call(receiver)
-            kclass?.let { Container.addInstance(functionKlass, it, qualifier) }
+            kclass?.let { container.addInstance(functionKlass, it, qualifier) }
                 ?: throw IllegalArgumentException("문제 생김")
             return
         }
@@ -47,7 +50,7 @@ object Injector {
         }
 
         kFunction.call(receiver, *requiredParams.toTypedArray())?.let {
-            Container.addInstance(functionKlass, it, qualifier)
+            container.addInstance(functionKlass, it, qualifier)
         }
     }
 
@@ -61,12 +64,12 @@ object Injector {
         val dependencyType = DependencyType(klass, annotation)
 
         // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테트이너에 추가로 저장
-        if (Container.getInstance(dependencyType) == null) {
+        if (container.getInstance(dependencyType) == null) {
             createOrAdd(receiver, kFunction)
         }
 
         // 재귀적 호출을 통해 컨테이너에 저장했기 때문에 무조건 있음
-        return Container.getInstance(dependencyType)!!
+        return container.getInstance(dependencyType)!!
     }
 
     // klass의 인스턴스를 생성하여 반환한다
@@ -85,9 +88,14 @@ object Injector {
             val annotation = kParameter.annotations.firstOrNull { _annotation ->
                 _annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-            Container.getInstance(DependencyType(type, annotation)) ?: throw IllegalArgumentException()
+            container.getInstance(DependencyType(type, annotation))
+                ?: parentContainer?.getInstance(DependencyType(type, annotation)) ?: throw IllegalArgumentException()
         }
 
         return primaryConstructor.callBy(insertedParameters) as T
+    }
+
+    fun getCurrentContainer(): Container {
+        return container
     }
 }

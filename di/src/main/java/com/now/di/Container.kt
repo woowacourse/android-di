@@ -2,7 +2,7 @@ package com.now.di
 
 import kotlin.reflect.KClass
 
-object Container {
+class Container {
     private val dependency = mutableMapOf<DependencyType, Any>()
 
     fun getInstance(dependencyType: DependencyType): Any? {

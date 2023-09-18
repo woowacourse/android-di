@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.now.androdi.ActivityInjectable
+import com.now.androdi.activity.ActivityInjectable
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactory
@@ -16,7 +16,7 @@ class MainActivity : ActivityInjectable() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
-        ViewModelProvider(this, ViewModelFactory)[MainViewModel::class.java]
+        ViewModelProvider(this, ViewModelFactory(this))[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
