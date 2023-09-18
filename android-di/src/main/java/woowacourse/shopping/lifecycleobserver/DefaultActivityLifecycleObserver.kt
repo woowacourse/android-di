@@ -1,6 +1,7 @@
 package woowacourse.shopping.lifecycleobserver
 
 import android.app.Activity
+import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -28,6 +29,7 @@ class DefaultActivityLifecycleObserver : DefaultLifecycleObserver, ActivityLifec
         super.onCreate(owner)
         injector.addDependency(
             dependency = "Released" + activity::class.simpleName + "Container",
+            clazz = Context::class,
             instance = activity,
         )
         injector.injectFields(activity::class, activity)

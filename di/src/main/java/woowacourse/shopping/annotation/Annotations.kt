@@ -4,15 +4,15 @@ package woowacourse.shopping.annotation
 annotation class Lifecycle
 
 @Lifecycle
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
 annotation class ApplicationLifecycle
 
 @Lifecycle
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
 annotation class RetainedActivityLifecycle(val activityClassName: String)
 
 @Lifecycle
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
 annotation class ReleasedActivityLifecycle(val activityClassName: String)
 
 @Target(AnnotationTarget.PROPERTY)

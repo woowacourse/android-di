@@ -18,6 +18,8 @@ import kotlin.reflect.jvm.jvmErasure
 class Injector(private val container: DiContainer) {
 
     fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        println("1 " + clazz)
+        println("2 " + annotations)
         container.getSavedInstanceOf(annotations, clazz)?.let { return it }
 
         val instance = getInstanceOf(clazz) ?: createInstanceOf(clazz)
@@ -37,7 +39,9 @@ class Injector(private val container: DiContainer) {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.getImplementationClass(), it.type.jvmErasure.annotations)
+            println("3 " + it)
+            println("4 " + it.annotations)
+            inject(it.getImplementationClass(), it.annotations)
         }.toTypedArray()
         return args
     }
@@ -80,8 +84,8 @@ class Injector(private val container: DiContainer) {
         return implementationClass ?: returnType.jvmErasure
     }
 
-    fun addDependency(dependency: String, instance: Any) {
-        container.addDependency(dependency, instance)
+    fun <T : Any> addDependency(dependency: String, clazz: KClass<out T>, instance: T) {
+        container.addDependency(dependency, clazz, instance)
     }
 
     fun releaseDependency(dependency: String) {

@@ -11,6 +11,9 @@ class LifecycleContainer {
 
     @Suppress("UNCHECKED_CAST")
     internal fun <T : Any> getSavedInstanceOf(clazz: KClass<out T>): T? {
+        println(instances.toString())
+        println(clazz)
+        println(instances[clazz])
         return instances[clazz] as? T
     }
 }
