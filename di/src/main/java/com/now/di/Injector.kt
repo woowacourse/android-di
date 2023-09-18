@@ -22,12 +22,12 @@ object Injector {
     }
 
     private fun createOrAdd(receiver: Module, kFunction: KFunction<*>) {
-        val functionReturnType = kFunction.returnType
+        val functionKlass = kFunction.returnType.jvmErasure
         val qualifier = kFunction.annotations.firstOrNull {
             it.annotationClass.hasAnnotation<Qualifier>()
         }
 
-        val dependencyType = DependencyType(functionReturnType.jvmErasure, qualifier)
+        val dependencyType = DependencyType(functionKlass, qualifier)
 
         // 컨테이너에 이미 있다면 종료
         if (Container.getInstance(dependencyType) != null) return
@@ -36,7 +36,7 @@ object Injector {
         // 함수에 파라미터가 없는 경우 인스턴스를 생성하고 Container에 추가 후 종료
         if (kFunction.valueParameters.isEmpty()) {
             val kclass = kFunction.call(receiver)
-            kclass?.let { Container.addInstance(functionReturnType.jvmErasure, it, qualifier) }
+            kclass?.let { Container.addInstance(functionKlass, it, qualifier) }
                 ?: throw IllegalArgumentException("문제 생김")
             return
         }
@@ -47,7 +47,7 @@ object Injector {
         }
 
         kFunction.call(receiver, *requiredParams.toTypedArray())?.let {
-            Container.addInstance(functionReturnType.jvmErasure, it, qualifier)
+            Container.addInstance(functionKlass, it, qualifier)
         }
     }
 
@@ -70,6 +70,7 @@ object Injector {
     }
 
     // klass의 인스턴스를 생성하여 반환한다
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> inject(klass: KClass<*>): T {
         //  주생성자를 가져온다
         val primaryConstructor =
