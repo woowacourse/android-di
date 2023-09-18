@@ -1,6 +1,5 @@
 package woowacourse.shopping.data
 
-import com.ki960213.sheath.annotation.Qualifier
 import com.ki960213.sheath.annotation.Repository
 import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toEntity
@@ -8,7 +7,6 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
-@DatabaseCart
 @Repository
 class DatabaseCartRepository(private val dao: CartProductDao) : CartRepository {
 
@@ -24,6 +22,3 @@ class DatabaseCartRepository(private val dao: CartProductDao) : CartRepository {
         dao.delete(id)
     }
 }
-
-@Qualifier("DatabaseCart")
-annotation class DatabaseCart

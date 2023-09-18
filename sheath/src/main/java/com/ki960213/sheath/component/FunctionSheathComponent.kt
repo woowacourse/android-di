@@ -24,7 +24,7 @@ internal class FunctionSheathComponent(
         val dependingComponents = components.filter { this.isDependingOn(it) }
 
         val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
-        instance = function.call(*function.getArguments(dependingComponents).toTypedArray())
+        instance = function.call(obj, *function.getArguments(dependingComponents).toTypedArray())
             ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 
@@ -41,7 +41,7 @@ internal class FunctionSheathComponent(
                 }
             }
         }
-        return function.call(*arguments.toTypedArray())!!
+        return function.call(obj, *arguments.toTypedArray())!!
     }
 
     private fun KFunction<*>.getArguments(components: List<SheathComponent>): List<Any> {

@@ -1,11 +1,9 @@
 package woowacourse.shopping.data
 
-import com.ki960213.sheath.annotation.Qualifier
 import com.ki960213.sheath.annotation.Repository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@InMemoryCart
 @Repository
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<Product> = mutableListOf()
@@ -21,6 +19,3 @@ class InMemoryCartRepository : CartRepository {
         cartProducts.removeIf { it.id == id }
     }
 }
-
-@Qualifier("InMemoryCart")
-annotation class InMemoryCart
