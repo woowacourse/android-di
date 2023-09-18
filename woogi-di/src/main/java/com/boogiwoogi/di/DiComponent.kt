@@ -1,4 +1,4 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
 interface DiComponent {
 

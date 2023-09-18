@@ -1,7 +1,5 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
-import com.boogiwoogi.di.Inject
-import com.boogiwoogi.di.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter

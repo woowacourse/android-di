@@ -1,7 +1,5 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
-import com.boogiwoogi.di.Provides
-import com.boogiwoogi.di.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions

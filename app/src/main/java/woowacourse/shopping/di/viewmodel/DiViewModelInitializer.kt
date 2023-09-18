@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.boogiwoogi.di.version2.InstanceContainer
+import com.boogiwoogi.di.InstanceContainer
 import woowacourse.shopping.ShoppingApplication
 
 @MainThread

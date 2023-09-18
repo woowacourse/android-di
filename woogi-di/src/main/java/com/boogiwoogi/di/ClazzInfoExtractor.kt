@@ -1,6 +1,5 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
-import com.boogiwoogi.di.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties

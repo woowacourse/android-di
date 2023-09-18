@@ -2,8 +2,8 @@ package woowacourse.shopping.di.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.boogiwoogi.di.version2.DiComponent
-import com.boogiwoogi.di.version2.InstanceContainer
+import com.boogiwoogi.di.DiComponent
+import com.boogiwoogi.di.InstanceContainer
 import woowacourse.shopping.ShoppingApplication
 
 open class DiActivity : AppCompatActivity(), DiComponent {

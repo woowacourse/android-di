@@ -1,6 +1,5 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
-import com.boogiwoogi.di.Scoped
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible

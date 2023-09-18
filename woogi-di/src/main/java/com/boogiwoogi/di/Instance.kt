@@ -1,4 +1,4 @@
-package com.boogiwoogi.di.version2
+package com.boogiwoogi.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
