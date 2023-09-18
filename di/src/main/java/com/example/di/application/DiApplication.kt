@@ -2,7 +2,7 @@ package com.example.di.application
 
 import android.app.Application
 import android.content.Context
-import com.example.di.container.DiActivityModuleContainer
+import com.example.di.container.DiActivityRetainedModuleContainer
 import com.example.di.module.ApplicationModule
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.jvmErasure
 open class DiApplication(private val applicationModuleClazz: Class<out ApplicationModule>) :
     Application() {
     private lateinit var applicationModule: ApplicationModule
-    lateinit var diContainer: DiActivityModuleContainer
+    lateinit var diContainer: DiActivityRetainedModuleContainer
         private set
 
     override fun onCreate() {
@@ -21,7 +21,7 @@ open class DiApplication(private val applicationModuleClazz: Class<out Applicati
             ?: throw NullPointerException("ApplicationModule은 매개변수가 없는 주생성자가 있어야 합니다")
         validateApplicationModulePrimaryConstructor(primaryConstructor)
         applicationModule = primaryConstructor.call(this)
-        diContainer = DiActivityModuleContainer(applicationModule)
+        diContainer = DiActivityRetainedModuleContainer(applicationModule)
     }
 
     private fun validateApplicationModulePrimaryConstructor(primaryConstructor: KFunction<ApplicationModule>) {
