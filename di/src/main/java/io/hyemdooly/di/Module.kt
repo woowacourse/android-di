@@ -23,36 +23,23 @@ open class Module(private val parentModule: Module? = null) {
         instances[instance::class] = instance
     }
 
-    fun addInstances() {
-        this::class.declaredMemberFunctions.filter { it.hasAnnotation<Singleton>() }
-            .forEach { provider ->
-                provider.call()?.let {
-                    addInstance(it)
-                }
-            }
-    }
-
-    fun getInstance(type: KClass<*>): Any? {
+    fun <T : Any> getInstance(type: KClass<T>): T {
         // 싱글톤에서 찾기
-        if (instances[type] != null) return instances[type]
+        if (instances[type] != null) return instances[type] as T
         val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
-        if (key != null && instances[key] != null) return instances[key]
+        if (key != null && instances[key] != null) return instances[key] as T
 
         // 선언된 멤버 함수에서 찾기
         this::class.declaredMemberFunctions.firstOrNull { it.hasAnnotation<Singleton>() && it.returnType.jvmErasure == type }
             ?.let { provider ->
-                println("$type START")
-                provider.parameters.forEach {
-                    println("$it")
-                }
                 val instance = provider.callBy(getParamInstances(provider.parameters))
                     ?: throw NoSuchElementException("declared member functions should not be null")
                 instances[provider.returnType.jvmErasure] = instance
-                return instance
+                return instance as T
             }
 
         // 그래도 없으면 부모 모듈에서 찾기
-        val parentInstance = parentModule?.getInstance(type)
+        val parentInstance = parentModule?.getInstance<T>(type)
         if (parentInstance != null) return parentInstance
 
         // 없으면 생성하기
