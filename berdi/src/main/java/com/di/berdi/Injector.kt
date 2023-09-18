@@ -45,12 +45,11 @@ class Injector(private val container: Container, private val module: Module) {
         qualifiedName: String?,
     ): Any {
         // 모듈에서 파람과 맞는 타입을 찾는다
-        val target =
+        val targetModule = requireNotNull(
             module::class.declaredFunctions.find { moduleFunc ->
                 isTargetModule(moduleFunc, type, qualifiedName)
-            }
-
-        val targetModule = requireNotNull(target)
+            },
+        )
 
         // 파라미터가 없다면 만든다
         if (targetModule.valueParameters.isEmpty()) {
