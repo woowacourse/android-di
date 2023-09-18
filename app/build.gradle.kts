@@ -45,6 +45,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":ssudi"))
+    implementation(project(mapOf("path" to ":androidi")))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")

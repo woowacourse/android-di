@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.application.ShoppingApplication
+import com.example.androidi.application.DiApplication
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(factory: ViewModelProvider.Factory = ShoppingViewModelFactory): ViewModelLazy<T> {
     return ViewModelLazy(
@@ -16,6 +16,6 @@ inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(factory: Vi
 
 val ShoppingViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ShoppingApplication.injector.create(modelClass.kotlin)
+        return DiApplication.injector.create(modelClass.kotlin)
     }
 }
