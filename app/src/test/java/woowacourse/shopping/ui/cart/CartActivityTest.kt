@@ -13,8 +13,8 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.R
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.main.MainActivity
+import woowacourse.shopping.ui.main.MainViewModel
 import kotlin.reflect.full.functions
 
 @RunWith(RobolectricTestRunner::class)

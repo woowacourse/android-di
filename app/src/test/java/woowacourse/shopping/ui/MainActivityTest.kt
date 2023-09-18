@@ -24,6 +24,8 @@ import woowacourse.shopping.R
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.main.MainActivity
+import woowacourse.shopping.ui.main.MainViewModel
 
 interface FakeRepository
 
