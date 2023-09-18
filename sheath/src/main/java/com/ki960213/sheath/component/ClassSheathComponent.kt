@@ -47,8 +47,7 @@ internal class ClassSheathComponent(
         val constructor = clazz.getInjectConstructor()
 
         val arguments = constructor.getArgumentsAndSaveInCache(dependingComponents)
-        instance = constructor.call(*arguments.toTypedArray())
-            ?: throw IllegalArgumentException("인스턴스화 하는 데 필요한 SheathComponent가 없습니다. 정렬 로직을 다시 살펴보세요.")
+        instance = constructor.call(*arguments.toTypedArray())!!
 
         instance.injectPropertiesAndSaveInCache(dependingComponents)
         instance.injectFunctionsAndSaveInCache(dependingComponents)
