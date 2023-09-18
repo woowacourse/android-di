@@ -1,60 +1,67 @@
 package di
 
-import com.boogiwoogi.di.WoogiContainer
-import com.boogiwoogi.di.WoogiInjector
-import com.boogiwoogi.di.WoogiProperty
-import com.boogiwoogi.di.WoogiQualifier
+import com.boogiwoogi.di.DefaultInstanceContainer
+import com.boogiwoogi.di.DefaultModules
+import com.boogiwoogi.di.DiInjector
+import com.boogiwoogi.di.Inject
+import com.boogiwoogi.di.InstanceContainer
+import com.boogiwoogi.di.Modules
+import com.boogiwoogi.di.Qualifier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class DependencyInjectorTest {
 
-    data class ClassA(
-        @WoogiProperty
-        val arg1: ClassB
-    )
+    private lateinit var modules: Modules
+    private lateinit var container: InstanceContainer
+    private lateinit var injector: DiInjector
 
-    data class ClassB(val arg1: ClassC)
-    data class ClassC(val data: String = "")
+    interface FakeInterface
 
-    data class ClassD(val arg1: ClassE)
-    data class ClassE(val arg1: ClassF)
-    data class ClassF(val data: String = "")
-
-    class ClassG {
-        @WoogiProperty
-        lateinit var property1: ClassH
+    @BeforeEach
+    fun setup() {
+        modules = DefaultModules()
+        container = DefaultInstanceContainer()
+        injector = DiInjector()
     }
-
-    data class ClassH(val message: String = "")
 
     @Test
     fun `생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
         // given
-        val injector = WoogiInjector()
+        data class ClassB(val data: String = "")
+        class ClassA(val arg1: ClassB)
 
         // when
-        val instanceB = injector.inject<ClassB>()
-        val actual = instanceB.arg1
+        val instanceA = injector.inject<ClassA>(
+            modules = DefaultModules(),
+            container = DefaultInstanceContainer()
+        )
+        val actual = instanceA.arg1
 
         // then
-        val expected = ClassC()
-
+        val expected = ClassB()
         assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `생성자의 인자의 생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
         // given
-        val injector = WoogiInjector()
+        data class ClassF(val data: String = "")
+        data class ClassE(val arg1: ClassF)
+        data class ClassD(val arg1: ClassE)
 
         // when
-        val instanceD = injector.inject<ClassD>()
+        val instanceD = injector.inject<ClassD>(
+            modules = DefaultModules(),
+            container = DefaultInstanceContainer()
+        )
         val actual = instanceD.arg1
 
         // then
@@ -64,131 +71,187 @@ class DependencyInjectorTest {
     }
 
     @Test
-    fun `생성자의 인자에 WoogiAnnotation이 붙어있는 프로퍼티의 경우 Container로부터 해당 프로퍼티 타입의 인스턴스를 가져온다`() {
+    fun `생성자의 인자에 Ineject annotation이 붙어있는 프로퍼티의 경우 Container로부터 해당 프로퍼티 타입의 인스턴스를 가져온다`() {
         // given
-        val container: WoogiContainer = mockk()
-        val injector = WoogiInjector(container)
+        data class ClassB(val data: String = "")
+        class ClassA(@Inject val arg1: ClassB)
+
+        val container: InstanceContainer = mockk(relaxed = true)
 
         every {
-            container.find(ClassB::class)
-        } returns ClassB(ClassC())
+            container.find(parameter = any())
+        } returns ClassB()
 
         // when
-        val instanceA = injector.inject<ClassA>()
+        val instanceA = injector.inject<ClassA>(
+            modules,
+            container
+        )
         val actual = instanceA.arg1
 
         // then
-        val expected = ClassB(ClassC())
+        val expected = ClassB()
+
         assertThat(actual).isEqualTo(expected)
-        verify { container.find(ClassB::class) }
-    }
-
-    @Test
-    fun `생성자의 인자에 WoogiAnnotation이 붙어있는 프로퍼티의 경우 Container에 존재하지 않으면 예외가 발생한다`() {
-        // given
-        val container: WoogiContainer = mockk()
-        val injector = WoogiInjector(container)
-
-        every {
-            container.find(ClassB::class)
-        } returns null
-
-        // then
-        assertThrows<NoSuchElementException> { injector.inject<ClassA>() }
-    }
-
-    @Test
-    fun `파라미터가 아닌 클래스 내부에 위치한 WoogiAnnotation이 붙어있는 프로퍼티에 대한 의존성 주입을 수행할 수 있다`() {
-        // given
-        val container: WoogiContainer = mockk()
-        val injector = WoogiInjector(container)
-
-        every {
-            container.find(ClassH::class)
-        } returns ClassH()
-
-        // when
-        val instance = injector.inject<ClassG>()
-        val actual = instance.property1
-
-        // then
-        val expected = ClassH()
-        assertThat(actual).isEqualTo(expected)
-    }
-
-    interface Repository
-
-    class ExampleRepository : Repository
-    class ExampleRepository2 : Repository
-    class ExampleViewModel(
-        @WoogiQualifier(ExampleRepository::class)
-        val repository: Repository
-    )
-
-    class ExampleViewModel2(
-        @WoogiQualifier(ExampleRepository::class)
-        val repository: Repository,
-        @WoogiQualifier(ExampleRepository2::class)
-        val repository2: Repository
-    )
-
-    @Test
-    fun `같은 인터페이스에 대한 구현체가 여러개가 있어도 Qualifier 어노테이션 타입으로 의존성 주입이 이루어진다`() {
-        // given
-        val woogiContainer: WoogiContainer = mockk(relaxed = true)
-        val woogiInjector = WoogiInjector(woogiContainer)
-
-        every {
-            woogiContainer.find(ExampleRepository::class)
-        } returns ExampleRepository()
-
-        // when
-        val viewModel = woogiInjector.inject<ExampleViewModel>()
-        val actual = viewModel.repository
-
-        // then
-        Assertions.assertTrue(actual is ExampleRepository)
-        verify { woogiContainer.find(ExampleRepository::class) }
-    }
-
-    @Test
-    fun `Qualifier에 선언한 타입의 인스턴스가 Container에 없는 경우 예외가 발생한다`() {
-        // given
-        val woogiContainer: WoogiContainer = mockk(relaxed = true)
-        val woogiInjector = WoogiInjector(woogiContainer)
-
-        every {
-            woogiContainer.find(ExampleRepository::class)
-        } returns null
-
-        // then
-        assertThrows<NoSuchElementException> {
-            val viewModel = woogiInjector.inject<ExampleViewModel>()
+        verify {
+            container.find(parameter = any())
         }
     }
 
     @Test
-    fun `같은 인터페이스에 대한 구현체가 여러개가 있어도 각각의 Qualifier 어노테이션 타입으로 의존성 주입이 이루어진다`() {
+    fun `생성자의 인자에 Inject annotation이 붙어있는 프로퍼티가 Container에 존재하지 않으면 해당 프로퍼티를 module을 통해 바로 생성한다`() {
         // given
-        val woogiContainer: WoogiContainer = mockk(relaxed = true)
-        val woogiInjector = WoogiInjector(woogiContainer)
+        data class ClassB(val data: String = "")
+        class ClassA(@Inject val arg1: ClassB)
+
+        val container: InstanceContainer = mockk(relaxed = true)
+        val modules: Modules = mockk(relaxed = true)
 
         every {
-            woogiContainer.find(ExampleRepository::class)
-        } returns ExampleRepository()
+            container.find(parameter = any())
+        } returns null
 
         every {
-            woogiContainer.find(ExampleRepository2::class)
-        } returns ExampleRepository2()
+            modules.provideInstanceOf(clazz = ClassB::class)
+        } returns ClassB()
 
         // when
-        val viewModel = woogiInjector.inject<ExampleViewModel2>()
-        val actual = viewModel.repository
-        val actual2 = viewModel.repository2
+        val instanceA = injector.inject<ClassA>(
+            modules = modules,
+            container = container
+        )
+        val actual = instanceA.arg1
 
         // then
-        Assertions.assertTrue(actual is ExampleRepository && actual2 is ExampleRepository2)
-        verify { woogiContainer.find(ExampleRepository::class) }
-        verify { woogiContainer.find(ExampleRepository2::class) }
+        val expected = ClassB()
+
+        assertThat(actual).isEqualTo(expected)
+        verify {
+            modules.provideInstanceOf(clazz = ClassB::class)
+        }
+    }
+
+    @Test
+    fun `생성자의 인자에 Inject annotation이 붙어있는 프로퍼티가 Container에도 존재하지 않고 module을 통해 생성할 수 없는 경우 예외가 발생한다`() {
+        // given
+        data class ClassB(val data: String = "")
+        class ClassA(@Inject val arg1: ClassB)
+
+        val container: InstanceContainer = mockk(relaxed = true)
+        val modules: Modules = mockk(relaxed = true)
+
+        every {
+            container.find(parameter = any())
+        } returns null
+
+        every {
+            modules.provideInstanceOf(clazz = ClassB::class)
+        } returns null
+
+        // then
+        assertThrows<NoSuchElementException> {
+            injector.inject<ClassA>(
+                modules = modules,
+                container = container
+            )
+        }
+    }
+
+    @Test
+    fun `파라미터가 아닌 클래스 내부에 위치한 @Inject annotation이 붙어있는 프로퍼티에 대한 의존성 주입을 수행할 수 있다`() {
+        // given
+        data class ClassB(val data: String = "")
+        class ClassA {
+            @Inject
+            var property: ClassB? = null
+        }
+
+        val instanceA = ClassA()
+
+        // when
+        injector.inject(
+            modules = modules,
+            container = container,
+            target = instanceA
+        )
+        val actual = instanceA.property
+
+        // then
+        val expected = ClassB()
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `같은 인터페이스에 대한 구현체가 여러개가 있어도 Qualifier 어노테이션 타입으로 의존성 주입이 이루어진다`() {
+        // given
+        class FakeImpl1 : FakeInterface
+        class FakeImpl2 : FakeInterface
+
+        class ClassA(
+            @Qualifier("FakeImpl1")
+            val fake1: FakeInterface,
+            @Qualifier("FakeImpl2")
+            val fake2: FakeInterface
+        )
+
+        val modules: Modules = mockk(relaxed = true)
+
+        every {
+            modules.provideInstanceOf("FakeImpl1")
+        } returns FakeImpl1()
+
+        every {
+            modules.provideInstanceOf("FakeImpl2")
+        } returns FakeImpl2()
+
+        // when
+        val instanceA = injector.inject<ClassA>(
+            modules = modules,
+            container = container
+        )
+        val actual1 = instanceA.fake1
+        val actual2 = instanceA.fake2
+
+        // then
+        assertAll(
+            {
+                assertTrue(actual1 is FakeImpl1)
+                assertTrue(actual2 is FakeImpl2)
+            }
+        )
+    }
+
+    //
+    @Test
+    fun `Qualifier에 선언한 타입의 인스턴스가 Container에 존재하지 않고 module에서 생성이 가능하지 않다면 예외가 발생한다`() {
+        // given
+        class FakeImpl1 : FakeInterface
+        class FakeImpl2 : FakeInterface
+
+        class ClassA(
+            @Qualifier("FakeImpl1")
+            val fake1: FakeInterface,
+            @Qualifier("FakeImpl2")
+            val fake2: FakeInterface
+        )
+
+        val modules: Modules = mockk(relaxed = true)
+
+        every {
+            modules.provideInstanceOf("FakeImpl1")
+        } returns null
+
+        every {
+            modules.provideInstanceOf("FakeImpl2")
+        } returns null
+
+        // then
+        assertThrows<NoSuchElementException> {
+            injector.inject<ClassA>(
+                modules = modules,
+                container = container
+            )
+        }
     }
 }
