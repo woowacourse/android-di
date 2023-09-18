@@ -11,7 +11,5 @@ object ClazzInfoExtractor {
         clazz
             .declaredMemberProperties
             .filterIsInstance<KMutableProperty<*>>()
-            .filter {
-                it.hasAnnotation<Inject>()
-            }
+            .filter { it.hasAnnotation<Inject>() }
 }
