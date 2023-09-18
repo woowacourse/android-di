@@ -1,8 +1,8 @@
 package com.ki960213.sheath
 
 import android.content.Context
+import com.ki960213.sheath.component.ContextSheathComponent
 import com.ki960213.sheath.component.SheathComponent
-import com.ki960213.sheath.component.SheathComponentFactory
 import com.ki960213.sheath.scanner.ComponentScanner
 import com.ki960213.sheath.sorter.sorted
 
@@ -13,7 +13,7 @@ object SheathApplication {
     fun run(context: Context) {
         val scanner = ComponentScanner(context)
         val components: List<SheathComponent> =
-            scanner.findAll() + SheathComponentFactory.create(context)
+            scanner.findAll() + ContextSheathComponent(context)
 
         initContainer(components)
     }

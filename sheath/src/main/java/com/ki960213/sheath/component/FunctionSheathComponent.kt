@@ -1,25 +1,40 @@
 package com.ki960213.sheath.component
 
+import com.ki960213.sheath.annotation.Component
+import com.ki960213.sheath.annotation.Module
+import com.ki960213.sheath.annotation.Prototype
+import com.ki960213.sheath.extention.hasAnnotationOrHasAttachedAnnotation
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.javaMethod
+import kotlin.reflect.jvm.jvmErasure
 
 internal class FunctionSheathComponent(
-    type: KType,
-    name: String,
-    isSingleton: Boolean,
-    dependentConditions: Map<KType, DependentCondition>,
     private val function: KFunction<*>,
-) : SheathComponent(
-    type = type,
-    name = name,
-    isSingleton = isSingleton,
-    dependentConditions = dependentConditions,
-) {
+) : SheathComponent() {
+
+    override val type: KType = function.returnType
+
+    override val name: String = function.returnType.jvmErasure.qualifiedName
+        ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
+
+    override val isSingleton: Boolean = !function.hasAnnotationOrHasAttachedAnnotation<Prototype>()
+
+    override val dependentConditions: Map<KType, DependentCondition> = function.valueParameters
+        .associate { it.type to DependentCondition.from(it) }
+
     private val cache: MutableMap<KType, SheathComponent> = mutableMapOf()
+
+    init {
+        function.validateComponentAnnotation()
+        function.validateModuleIsObject()
+        function.validateModuleAnnotation()
+        function.validateReturnType()
+        function.validateDuplicateDependingType()
+    }
 
     override fun instantiate(components: List<SheathComponent>) {
         val dependingComponents = components.filter { this.isDependingOn(it) }
@@ -39,9 +54,41 @@ internal class FunctionSheathComponent(
             ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 
+    private fun KFunction<*>.validateComponentAnnotation() {
+        require(hasAnnotationOrHasAttachedAnnotation<Component>()) {
+            "함수에 @Component 혹은 @Component가 붙은 애노테이션이 붙어 있지 않다면 SheathComponent를 생성할 수 없습니다."
+        }
+    }
+
+    private fun KFunction<*>.validateModuleIsObject() {
+        requireNotNull(javaMethod?.declaringClass?.kotlin?.objectInstance) {
+            "${this.name} 함수가 정의된 클래스가 object가 아닙니다."
+        }
+    }
+
+    private fun KFunction<*>.validateModuleAnnotation() {
+        requireNotNull(javaMethod?.declaringClass?.getAnnotation(Module::class.java)) {
+            "${this.name} 함수가 정의된 클래스에 @Module이 붙어있어야 합니다."
+        }
+    }
+
+    private fun KFunction<*>.validateReturnType() {
+        require(!returnType.isMarkedNullable) {
+            "SheathComponent를 생성할 함수의 리턴 타입이 nullable이면 안됩니다"
+        }
+    }
+
+    private fun KFunction<*>.validateDuplicateDependingType() {
+        require(getDependingTypes() == getDependingTypes().distinct()) {
+            "${this.name} 함수는 같은 타입을 여러 매개 변수로 가지고 있습니다."
+        }
+    }
+
+    private fun KFunction<*>.getDependingTypes(): List<KType> = valueParameters.map { it.type }
+
     private fun KParameter.getOrCreateInstance(): Any {
         val dependentCondition = dependentConditions[type]
-            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. SheathComponentValidator 로직을 다시 살펴보세요.")
+            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. 의존 조건 초기화 로직을 다시 살펴보세요.")
         val component = cache[type]
             ?: throw IllegalArgumentException("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
 

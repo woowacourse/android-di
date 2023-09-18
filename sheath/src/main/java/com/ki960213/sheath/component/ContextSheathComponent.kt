@@ -2,19 +2,19 @@ package com.ki960213.sheath.component
 
 import android.content.Context
 import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
 internal class ContextSheathComponent(
-    type: KType,
-    name: String,
-    isSingleton: Boolean,
-    dependentConditions: Map<KType, DependentCondition>,
     private val context: Context,
-) : SheathComponent(
-    type = type,
-    name = name,
-    isSingleton = isSingleton,
-    dependentConditions = dependentConditions,
-) {
+) : SheathComponent() {
+    override val type: KType = Context::class.createType()
+
+    override val name: String = Context::class.qualifiedName!!
+
+    override val isSingleton: Boolean = true
+
+    override val dependentConditions: Map<KType, DependentCondition> = emptyMap()
+
     override fun instantiate(components: List<SheathComponent>) {
         instance = context
     }

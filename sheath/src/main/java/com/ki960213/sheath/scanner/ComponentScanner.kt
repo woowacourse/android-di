@@ -3,8 +3,9 @@ package com.ki960213.sheath.scanner
 import android.content.Context
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Module
+import com.ki960213.sheath.component.ClassSheathComponent
+import com.ki960213.sheath.component.FunctionSheathComponent
 import com.ki960213.sheath.component.SheathComponent
-import com.ki960213.sheath.component.SheathComponentFactory
 import dalvik.system.DexFile
 import dalvik.system.PathClassLoader
 import kotlin.reflect.KClass
@@ -30,7 +31,7 @@ internal class ComponentScanner(private val context: Context) {
     ) {
         if (className.isInTargetPackage()) {
             val clazz = classLoader.loadClass(className).kotlin
-            if (clazz.java.isComponent()) this.add(SheathComponentFactory.create(clazz))
+            if (clazz.java.isComponent()) this.add(ClassSheathComponent(clazz))
             if (clazz.java.isModule()) this.addAll(extractSheathComponent(clazz))
         }
     }
@@ -46,6 +47,6 @@ internal class ComponentScanner(private val context: Context) {
 
     private fun extractSheathComponent(clazz: KClass<*>): List<SheathComponent> =
         clazz.functions.mapNotNull { function ->
-            if (function.hasAnnotation<Component>()) SheathComponentFactory.create(function) else null
+            if (function.hasAnnotation<Component>()) FunctionSheathComponent(function) else null
         }
 }
