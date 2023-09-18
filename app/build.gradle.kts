@@ -45,6 +45,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":mendeldi"))
+    implementation(project(":di"))
     //    implementation("com.github.rhthrhrl0:android-di:1.0.2")
 
     implementation("androidx.core:core-ktx:1.10.1")
