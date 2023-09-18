@@ -3,10 +3,12 @@ package woowacourse.shopping.di.injector
 import woowacourse.shopping.di.annotation.Injected
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.container.DiContainer
+import woowacourse.shopping.di.module.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
+import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -17,6 +19,20 @@ import kotlin.reflect.jvm.jvmErasure
 class Injector(
     private val container: DiContainer,
 ) {
+    fun addModuleInstances(module: Module) {
+        module::class.declaredFunctions.forEach { function ->
+            val arguments = getArguments(function, module)
+            val instance = function.callBy(arguments)
+                ?: throw IllegalArgumentException("${function.returnType.jvmErasure.simpleName} $ERROR_INVALID_ARGUMENTS")
+
+            if (function.hasAnnotation<Qualifier>()) {
+                container.createInstance(function.findAnnotation<Qualifier>()!!.type, instance)
+            } else {
+                container.createInstance(function.returnType.jvmErasure, instance)
+            }
+        }
+    }
+
     fun <T : Any> create(clazz: KClass<T>): T {
         val instance = container.getInstance(clazz)
 
@@ -27,7 +43,7 @@ class Injector(
     private fun <T> createInstance(clazz: KClass<*>): T {
         val constructor = getPrimaryClass(clazz)
 
-        val arguments = getArguments(constructor)
+        val arguments = getArguments(constructor, null)
         val instance = constructor.callBy(arguments) as T
 
         injectOnFields(clazz, instance)
@@ -43,11 +59,13 @@ class Injector(
         ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_CONSTRUCTOR")
     }
 
-    private fun getArguments(constructor: KFunction<*>): Map<KParameter, Any?> {
-        val parameters = constructor.parameters
+    private fun getArguments(kFunction: KFunction<*>, module: Module?): Map<KParameter, Any?> {
+        val parameters = kFunction.parameters
 
         return parameters.associateWith { parameter ->
-            if (parameter.hasAnnotation<Qualifier>()) {
+            if (module != null && parameter.type.jvmErasure == module::class) {
+                module
+            } else if (parameter.hasAnnotation<Qualifier>()) {
                 val qualifier = parameter.findAnnotation<Qualifier>()!!.type
                 container.getInstance(qualifier)
                     ?: throw IllegalArgumentException("$qualifier $ERROR_NO_FIELD")
@@ -81,5 +99,6 @@ class Injector(
     companion object {
         private const val ERROR_NO_CONSTRUCTOR = "주생성자가 존재하지 않습니다"
         private const val ERROR_NO_FIELD = "컨테이너에 해당 인스턴스가 존재하지 않습니다"
+        private const val ERROR_INVALID_ARGUMENTS = "인자가 잘못 전달되었습니다"
     }
 }
