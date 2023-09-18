@@ -9,11 +9,11 @@ annotation class ApplicationLifecycle
 
 @Lifecycle
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-annotation class ActivityLifecycle(val name: String)
+annotation class RetainedActivityLifecycle(val activityClassName: String)
 
 @Lifecycle
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-annotation class ViewModelLifecycle(val name: String)
+annotation class ReleasedActivityLifecycle(val activityClassName: String)
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Inject

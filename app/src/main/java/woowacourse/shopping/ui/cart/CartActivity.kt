@@ -5,10 +5,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.lifecycleobserver.ActivityLifecycleObserver
+import woowacourse.shopping.lifecycleobserver.DefaultActivityLifecycleObserver
 import woowacourse.shopping.ui.viewModelFactory
 
-class CartActivity : AppCompatActivity() {
+class CartActivity :
+    AppCompatActivity(),
+    ActivityLifecycleObserver by DefaultActivityLifecycleObserver() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
@@ -25,6 +30,8 @@ class CartActivity : AppCompatActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+
+        setupLifecycleObserver()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -69,5 +76,14 @@ class CartActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setupLifecycleObserver() {
+        val shoppingApplication = application as ShoppingApplication
+        setupLifecycleObserver(
+            lifecycle = lifecycle,
+            activity = this,
+            injector = shoppingApplication.injector,
+        )
     }
 }

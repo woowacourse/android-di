@@ -6,6 +6,7 @@ import org.junit.Test
 import woowacourse.shopping.annotation.ApplicationLifecycle
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.container.DiContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository

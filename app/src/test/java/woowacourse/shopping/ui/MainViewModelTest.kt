@@ -9,8 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.DiContainer
 import woowacourse.shopping.Injector
+import woowacourse.shopping.container.DiContainer
 import woowacourse.shopping.createProduct
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.fake.FakeCartProductDao

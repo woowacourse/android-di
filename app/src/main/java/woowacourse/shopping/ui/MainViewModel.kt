@@ -8,13 +8,15 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.annotation.ApplicationLifecycle
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.annotation.RetainedActivityLifecycle
+import woowacourse.shopping.di.ActivityClassName
 import woowacourse.shopping.di.PackageName
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel(
-    @ApplicationLifecycle
+    @RetainedActivityLifecycle(ActivityClassName.MAIN_ACTIVITY)
     @Qualifier(PackageName.PRODUCT)
     private val productRepository: ProductRepository,
 ) : ViewModel() {

@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -77,5 +78,9 @@ class Injector(private val container: DiContainer) {
     private fun <T : Any> KProperty1<T, *>.getImplementationClass(): KClass<*> {
         val implementationClass = getImplementationClassFromAnnotations(annotations)
         return implementationClass ?: returnType.jvmErasure
+    }
+
+    fun releaseDependency(dependency: String) {
+        container.releaseDependency(dependency)
     }
 }

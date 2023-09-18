@@ -7,3 +7,10 @@ class PackageName private constructor() {
         const val DATABASE_CART = "woowacourse.shopping.data.DatabaseCartRepository"
     }
 }
+
+class ActivityClassName private constructor() {
+    companion object {
+        const val MAIN_ACTIVITY = "MainActivity"
+        const val CART_ACTIVITY = "CartActivity"
+    }
+}

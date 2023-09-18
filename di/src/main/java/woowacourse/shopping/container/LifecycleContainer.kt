@@ -2,7 +2,7 @@ package woowacourse.shopping.container
 
 import kotlin.reflect.KClass
 
-abstract class LifecycleContainer {
+class LifecycleContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     internal fun <T : Any> saveInstance(clazz: KClass<out T>, instance: T) {
