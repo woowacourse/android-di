@@ -107,7 +107,7 @@ class DatabaseProductRepository : ProductRepository {
 
 그렇지 않다면 종속 항목이 모호하므로 프레임워크가 실행된 후 에러가 발생합니다.
 
-### 8. NewInstance
+#### 8. NewInstance
 이 애노테이션은 종속 항목 주입 대상에 붙일 수 있습니다.
 
 종속 항목 주입 대상에 붙이면 항상 새로운 인스턴스를 주입 받습니다.
