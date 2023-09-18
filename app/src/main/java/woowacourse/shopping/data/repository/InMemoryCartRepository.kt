@@ -18,7 +18,7 @@ class InMemoryCartRepository : CartRepository {
     )
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(product.toCartProduct())
+        cartProducts.add(product.toCartProduct(UUID.randomUUID()))
     }
 
     override suspend fun getAllCartProducts(): List<CartProduct> {

@@ -13,8 +13,8 @@ fun Product.toCartProductEntity(): CartProductEntity {
     )
 }
 
-fun Product.toCartProduct(): CartProduct = CartProduct(
-    id = UUID.randomUUID(),
+fun Product.toCartProduct(id: UUID): CartProduct = CartProduct(
+    id = id,
     name = name,
     price = price,
     imageUrl = imageUrl,
