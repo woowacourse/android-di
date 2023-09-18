@@ -2,6 +2,7 @@ package com.mission.androiddi
 
 import android.os.Build
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.mission.androiddi.component.activity.InjectableActivity
 import com.mission.androiddi.component.application.InjectableApplication
 import com.mission.androiddi.component.fragment.InjectableFragment
@@ -106,16 +107,13 @@ class InjectableFragmentTest {
     @Test
     fun `프래그먼트는 부모 액티비티의 ActivityScope 애노테이션 프로퍼티를 공유한다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragment = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
+        val fragment = `ChildFragment를 가져온다`()
 
         // when: 자식 프래그먼트의 onViewCreated()가 호출될 때
-        fragment.onViewCreated(mockk(), mockk())
+        fragment.`onViewCreated를 호출한다`()
         val sharedResource = fragment.notRetainSharedResource
 
         // then: 자식 프래그먼트는 부모 액티비티의 ActivityScope 애노테이션이 붙은 프로퍼티를 공유한다.
@@ -125,22 +123,15 @@ class InjectableFragmentTest {
     @Test
     fun `부모 액티비티의 RetainActivityScope 애노테이션 프로퍼티는 구성 변경이 일어나도 프래그먼트에서도 유지된다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragment = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
-        fragment.onViewCreated(mockk(), mockk())
-
-        val valueBeforeConfigurationChange =
-            fragment.retainSharedResource.increase() // 1
+        val fragment = `ChildFragment를 가져온다`()
+        fragment.`onViewCreated를 호출한다`()
+        val valueBeforeConfigurationChange = fragment.retainSharedResource.increase() // 1
 
         // when: 구성 변경이 일어났을 때
-        activityController.recreate()
-        activity = activityController.get()
-
+        activity = `Activity를 재생성한다`()
         val valueAfterConfigurationChange = fragment.retainSharedResource.increase() // 2
 
         // then: RetainActivityScope 애노테이션이 있는 프로퍼티는 유지된다.
@@ -152,28 +143,22 @@ class InjectableFragmentTest {
     @Test
     fun `FragmentScope 애노테이션 프로퍼티는 구성 변경이 일어나면 유지되지 않는다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragmentBeforeConfigurationChange = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
-        fragmentBeforeConfigurationChange.onViewCreated(mockk(), mockk())
+        val firstCreatedFragment = `ChildFragment를 가져온다`()
+        firstCreatedFragment.`onViewCreated를 호출한다`()
 
-        val valueBeforeConfigurationChange = fragmentBeforeConfigurationChange
+        val valueBeforeConfigurationChange = firstCreatedFragment
             .fragmentOnlyResource
             .increase() // 1
 
         // when: 구성 변경이 일어났을 때
-        activityController.recreate()
-        activity = activityController.get()
-        val fragmentAfterConfigurationChange = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
-        fragmentAfterConfigurationChange.onViewCreated(mockk(), mockk())
+        activity = `Activity를 재생성한다`()
+        val recreatedFragment = `ChildFragment를 가져온다`()
+        recreatedFragment.`onViewCreated를 호출한다`()
 
-        val valueAfterConfigurationChange = fragmentAfterConfigurationChange
+        val valueAfterConfigurationChange = recreatedFragment
             .fragmentOnlyResource
             .increase() // 1
 
@@ -185,28 +170,22 @@ class InjectableFragmentTest {
     @Test
     fun `부모 액티비티의 ActivityScope 애노테이션을 가진 프로퍼티는 구성 변경이 일어나면 유지되지 않는다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragmentBeforeConfigurationChange = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
-        fragmentBeforeConfigurationChange.onViewCreated(mockk(), mockk())
+        val firstCreatedFragment = `ChildFragment를 가져온다`()
+        firstCreatedFragment.`onViewCreated를 호출한다`()
 
-        val valueBeforeConfigurationChange = fragmentBeforeConfigurationChange
+        val valueBeforeConfigurationChange = firstCreatedFragment
             .notRetainSharedResource
             .increase() // 1
 
         // when: 구성 변경이 일어났을 때
-        activityController.recreate()
-        activity = activityController.get()
-        val fragmentAfterConfigurationChange = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
-        fragmentAfterConfigurationChange.onViewCreated(mockk(), mockk())
+        activity = `Activity를 재생성한다`()
+        val recreatedFragment = `ChildFragment를 가져온다`()
+        recreatedFragment.`onViewCreated를 호출한다`()
 
-        val valueAfterConfigurationChange = fragmentAfterConfigurationChange
+        val valueAfterConfigurationChange = recreatedFragment
             .notRetainSharedResource
             .increase() // 1
 
@@ -218,39 +197,52 @@ class InjectableFragmentTest {
     @Test
     fun `FragmentScope 애노테이션을 가진 프로퍼티는 프래그먼트 인젝터의 캐시에 캐싱된다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragment = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
+        val fragment = `ChildFragment를 가져온다`()
 
         // when: 자식 프래그먼트의 onViewCreated()가 호출될 때
-        fragment.onViewCreated(mockk(), mockk())
+        fragment.`onViewCreated를 호출한다`()
 
         // then: 프래그먼트 인젝터의 캐시에 캐싱된다
         val fragmentCache = fragment.cache
         val expected = fragment.fragmentOnlyResource
         val actual = fragmentCache[DependencyKey.createDependencyKey(FragmentOnlyResource::class)]
+
         assertTrue(actual === expected)
     }
 
     @Test
     fun `Inject 애노테이션이 없는 프로퍼티는 주입받지 않는다`() {
         // given: 부모 액티비티의 onCreate()가 호출된다
-        activityController.create()
-        activity = activityController.get()
+        activity = `Activity를 생성한다`()
 
         // given: 부모 액티비티의 프래그먼트를 가져온다.
-        val fragment = activity
-            .supportFragmentManager
-            .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
+        val fragment = `ChildFragment를 가져온다`()
 
         // when: 자식 프래그먼트의 onViewCreated()가 호출될 때
-        fragment.onViewCreated(mockk(), mockk())
+        fragment.`onViewCreated를 호출한다`()
 
         // then: Inject 애노테이션이 없는 프로퍼티는 주입받지 않는다.
         assertNull(fragment.notInjectedDependency)
+    }
+
+    private fun `ChildFragment를 가져온다`(): ChildFragment = activity
+        .supportFragmentManager
+        .findFragmentByTag(ChildFragment::class.simpleName) as ChildFragment
+
+    private fun `Activity를 생성한다`(): ActivityWithFragment {
+        activityController.create()
+        return activityController.get()
+    }
+
+    private fun `Activity를 재생성한다`(): ActivityWithFragment {
+        activityController.recreate()
+        return activityController.get()
+    }
+
+    private fun Fragment.`onViewCreated를 호출한다`() {
+        onViewCreated(mockk(), mockk())
     }
 }
