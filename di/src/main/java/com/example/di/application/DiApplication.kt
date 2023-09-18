@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.jvmErasure
 open class DiApplication(private val applicationModuleClazz: Class<out ApplicationModule>) :
     Application() {
     private lateinit var applicationModule: ApplicationModule
-    lateinit var diContainer: DiActivityRetainedModuleContainer
+    lateinit var diActivityRetainedContainer: DiActivityRetainedModuleContainer
         private set
 
     override fun onCreate() {
@@ -21,7 +21,8 @@ open class DiApplication(private val applicationModuleClazz: Class<out Applicati
             ?: throw NullPointerException("ApplicationModule은 매개변수가 없는 주생성자가 있어야 합니다")
         validateApplicationModulePrimaryConstructor(primaryConstructor)
         applicationModule = primaryConstructor.call(this)
-        diContainer = DiActivityRetainedModuleContainer(applicationModule)
+        applicationModule.inject(this) // DiApplication을 상속 구현한 클래스가 필드 주입이 필요하다면, 여기서 해줌.
+        diActivityRetainedContainer = DiActivityRetainedModuleContainer(applicationModule)
     }
 
     private fun validateApplicationModulePrimaryConstructor(primaryConstructor: KFunction<ApplicationModule>) {

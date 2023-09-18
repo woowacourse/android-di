@@ -21,7 +21,7 @@ abstract class DiEntryPointActivity(private val activityModuleClassType: Class<o
         super.onCreate(savedInstanceState)
         val diApplication = application as DiApplication
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
-        this.activityRetainedModule = diApplication.diContainer.provideActivityModule(
+        this.activityRetainedModule = diApplication.diActivityRetainedContainer.provideActivityModule(
             this,
             previousHashCode,
             activityModuleClassType,
@@ -40,7 +40,7 @@ abstract class DiEntryPointActivity(private val activityModuleClassType: Class<o
         super.onDestroy()
         if (isFinishing) {
             val diApplication = application as DiApplication
-            diApplication.diContainer.removeModule(this.hashCode())
+            diApplication.diActivityRetainedContainer.removeModule(this.hashCode())
         }
     }
 
