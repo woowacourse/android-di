@@ -174,7 +174,7 @@ class SingletonDependencyInjectorTest {
      * */
 
     @Test
-    fun 싱글톤_애노테이션이_있는_프로퍼티는_캐싱된다() {
+    fun 싱글톤_애노테이션_프로퍼티는_캐싱된다() {
         // given: 싱글톤 애노테이션이 있는 클래스가 존재한다.
         class FakeSingletonClass
         class SingletonPropertyClass(

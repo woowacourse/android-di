@@ -81,7 +81,7 @@ class InjectableActivityTest {
      * */
 
     @Test
-    fun ActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_CREATED_상태일_때_인스턴스가_존재한다() {
+    fun ActivityScope_애노테이션_프로퍼티는_액티비티가_CREATED_상태일_때_인스턴스가_존재한다() {
         // given: NotRetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(NotRetainDependency::class)
 
@@ -96,7 +96,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun ActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_STARTED_상태일_때_인스턴스가_존재한다() {
+    fun ActivityScope_애노테이션_프로퍼티는_액티비티가_STARTED_상태일_때_인스턴스가_존재한다() {
         // given: NotRetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(NotRetainDependency::class)
 
@@ -112,7 +112,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun ActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_RESUMED_상태일_때_인스턴스가_존재한다() {
+    fun ActivityScope_애노테이션_프로퍼티는_액티비티가_RESUMED_상태일_때_인스턴스가_존재한다() {
         // given: NotRetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(NotRetainDependency::class)
 
@@ -129,7 +129,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun ActivityScope_애노테이션이_있는_프로퍼티는_구성_변경이_발생했을_때_제거된다() {
+    fun ActivityScope_애노테이션_프로퍼티는_구성_변경이_발생했을_때_제거된다() {
         // given: 액티비티를 생성한다.
         activityController
             .create()
@@ -157,7 +157,7 @@ class InjectableActivityTest {
      * */
 
     @Test
-    fun RetainActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_CREATED_상태일_때_인스턴스가_존재한다() {
+    fun RetainActivityScope_애노테이션_프로퍼티는_액티비티가_CREATED_상태일_때_인스턴스가_존재한다() {
         // given: RetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(RetainDependency::class)
 
@@ -172,7 +172,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun RetainActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_STARTED_상태일_때_인스턴스가_존재한다() {
+    fun RetainActivityScope_애노테이션_프로퍼티는_액티비티가_STARTED_상태일_때_인스턴스가_존재한다() {
         // given: RetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(RetainDependency::class)
 
@@ -188,7 +188,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun RetainActivityScope_애노테이션이_있는_프로퍼티는_액티비티가_RESUMED_상태일_때_인스턴스가_존재한다() {
+    fun RetainActivityScope_애노테이션_프로퍼티는_액티비티가_RESUMED_상태일_때_인스턴스가_존재한다() {
         // given: RetainDependency 키가 주어진다.
         val dependencyKey = DependencyKey.createDependencyKey(RetainDependency::class)
 
@@ -205,7 +205,7 @@ class InjectableActivityTest {
     }
 
     @Test
-    fun RetainActivityScope_애노테이션이_있는_프로퍼티는_구성_변경이_발생했을_때_제거되지_않는다() {
+    fun RetainActivityScope_애노테이션_프로퍼티는_구성_변경이_발생했을_때_제거되지_않는다() {
         // given: 액티비티를 생성한다.
         activityController
             .create()
