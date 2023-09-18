@@ -17,6 +17,8 @@ import woowacourse.shopping.repository.ProductRepository
 
 class AppModule : Module {
 
+    override var context: Context? = null
+
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()
 
     @Singleton
@@ -33,6 +35,8 @@ class AppModule : Module {
     fun provideCartProductDao(
         @ApplicationContext @Inject
         context: Context,
-    ): CartProductDao =
-        ShoppingDatabase.getInstance(context).cartProductDao()
+    ): CartProductDao = ShoppingDatabase.getInstance(context).cartProductDao()
+
+    @ApplicationContext
+    fun provideContext(): Context = context!!
 }

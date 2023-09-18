@@ -41,7 +41,8 @@ abstract class DiActivity(private val module: Module = DefaultModule()) : AppCom
 
     private fun setupActivityContainer() {
         if (!injector.hasContainer(tag)) {
-            val activityContainer = AppContainer(module, this)
+            module.context = this
+            val activityContainer = AppContainer(module)
             injector.setActivityContainer(tag, activityContainer)
         }
     }

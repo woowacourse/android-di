@@ -1,3 +1,7 @@
 package woowacourse.shopping.hasydi
 
-interface Module
+import android.content.Context
+
+interface Module {
+    var context: Context?
+}

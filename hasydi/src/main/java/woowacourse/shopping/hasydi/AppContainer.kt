@@ -1,8 +1,5 @@
 package woowacourse.shopping.hasydi
 
-import android.content.Context
-import woowacourse.shopping.hasydi.annotation.ActivityContext
-import woowacourse.shopping.hasydi.annotation.ApplicationContext
 import woowacourse.shopping.hasydi.annotation.Inject
 import woowacourse.shopping.hasydi.annotation.Qualifier
 import woowacourse.shopping.hasydi.annotation.Singleton
@@ -12,7 +9,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
-class AppContainer(private val module: Module, private val context: Context? = null) {
+class AppContainer(private val module: Module) {
 
     private val appContainer: MutableMap<String, Any?> = mutableMapOf()
 
@@ -67,10 +64,6 @@ class AppContainer(private val module: Module, private val context: Context? = n
         if (injectParams.isNotEmpty()) {
             injectParams.forEach { param ->
                 val key = param.identifyKey()
-
-                if (param.hasAnnotation<ActivityContext>() || param.hasAnnotation<ApplicationContext>()) {
-                    appContainer[key] = context
-                }
 
                 if (appContainer[key] == null) {
                     provideFunctions[key]?.let {

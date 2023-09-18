@@ -8,9 +8,16 @@ import woowacourse.shopping.hasydi.annotation.Singleton
 import woowacourse.shopping.ui.cart.DateFormatter
 
 class CartActivityModule : Module {
+
+    override var context: Context? = null
+
     @Singleton
     fun provideDateFormatter(
         @ActivityContext @Inject
         context: Context,
     ) = DateFormatter(context)
+
+    @Singleton
+    @ActivityContext
+    fun provideContext(): Context = context!!
 }

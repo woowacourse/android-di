@@ -8,6 +8,7 @@ open class DiApplication(private val module: Module = DefaultModule()) : Applica
 
     override fun onCreate() {
         super.onCreate()
-        injector = Injector(AppContainer(module, this))
+        module.context = this
+        injector = Injector(AppContainer(module))
     }
 }

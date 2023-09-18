@@ -1,3 +1,7 @@
 package woowacourse.shopping.hasydi
 
-class DefaultModule : Module
+import android.content.Context
+
+class DefaultModule : Module {
+    override var context: Context? = null
+}
