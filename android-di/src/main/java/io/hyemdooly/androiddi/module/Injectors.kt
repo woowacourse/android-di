@@ -1,11 +1,11 @@
 package io.hyemdooly.androiddi.module
 
 import android.content.Context
-import io.hyemdooly.di.Injector
+import io.hyemdooly.di.Module
 
 interface Injectors {
-    val applicationInjector: (Context) -> Injector
-    val retainedActivityInjector: (Injector, Context) -> Injector
-    val activityInjector: (Injector, Context) -> Injector
-    val viewModelInjector: (Context) -> Injector
+    val applicationModule: (Context) -> Module
+    val retainedActivityModule: (Module, Context) -> Module
+    val activityModule: (Module, Context) -> Module
+    val viewModelModule: (Context) -> Module
 }
