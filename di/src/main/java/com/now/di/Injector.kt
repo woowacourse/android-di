@@ -114,11 +114,21 @@ class Injector(
             klass.declaredMemberProperties.filterIsInstance<KMutableProperty1<*, *>>()
                 .filter { it.hasAnnotation<Inject>() }
         properties.forEach {
-            println(it.isAccessible)
+            it.isAccessible = true
             it.setter.call(instance, getPropertyInstance(it))
         }
 
         return instance
+    }
+
+    fun injectParams(klass: KClass<*>, instance: Any) {
+        val properties =
+            klass.declaredMemberProperties.filterIsInstance<KMutableProperty1<*, *>>()
+                .filter { it.hasAnnotation<Inject>() }
+        properties.forEach {
+            it.isAccessible = true
+            it.setter.call(instance, getPropertyInstance(it))
+        }
     }
 
     fun getCurrentContainer(): Container {
