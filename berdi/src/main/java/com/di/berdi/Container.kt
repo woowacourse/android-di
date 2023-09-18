@@ -2,8 +2,7 @@ package com.di.berdi
 
 import kotlin.reflect.KClass
 
-class Container {
-    private val store: HashMap<StoreKey, Any> = hashMapOf()
+class Container(private val store: HashMap<StoreKey, Any> = hashMapOf()) {
 
     fun getInstance(type: KClass<*>, qualifiedName: String?): Any? {
         return store[StoreKey(type, qualifiedName)]
