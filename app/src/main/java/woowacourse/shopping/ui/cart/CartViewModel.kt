@@ -4,16 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bandal.di.BandalInject
-import com.bandal.di.Database
+import com.bandal.fullmoon.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 import java.util.UUID
 
 class CartViewModel : ViewModel() {
-    @Database
-    @BandalInject
+    @Qualifier("databaseCartRepository")
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

@@ -1,13 +1,11 @@
 package woowacourse.shopping.data.repository
 
-import com.bandal.di.InMemory
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import java.util.UUID
 
-@InMemory
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf(
         CartProduct(

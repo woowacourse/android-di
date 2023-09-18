@@ -1,10 +1,8 @@
 package woowacourse.shopping.data.repository
 
-import com.bandal.di.InMemory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-@InMemory
 class InMemoryProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(

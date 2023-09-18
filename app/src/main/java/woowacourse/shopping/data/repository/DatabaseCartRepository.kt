@@ -1,6 +1,5 @@
 package woowacourse.shopping.data.repository
 
-import com.bandal.di.Database
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.data.mapper.toCartProductEntity
@@ -9,7 +8,6 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import java.util.UUID
 
-@Database
 class DatabaseCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
