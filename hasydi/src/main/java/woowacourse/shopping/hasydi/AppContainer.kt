@@ -12,21 +12,17 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
-class AppContainer(private val modules: List<Module>, private val context: Context? = null) {
+class AppContainer(private val module: Module, private val context: Context? = null) {
 
     private val appContainer: MutableMap<String, Any?> = mutableMapOf()
 
-    private val provideFunctions: Map<String, KFunction<*>> = modules.flatMap { module ->
-        module::class.declaredMemberFunctions.map {
-            it.identifyKey() to it
+    private val provideFunctions: Map<String, KFunction<*>> =
+        module::class.declaredMemberFunctions.associateBy {
+            it.identifyKey()
         }
-    }.toMap()
 
-    private val providerModuleMap: Map<KFunction<*>, Module> = modules.flatMap { module ->
-        module::class.declaredMemberFunctions.map {
-            it to module
-        }
-    }.toMap()
+    private val providerModuleMap: Map<KFunction<*>, Module> =
+        module::class.declaredMemberFunctions.associateWith { module }
 
     init {
         initContainer()
@@ -55,14 +51,12 @@ class AppContainer(private val modules: List<Module>, private val context: Conte
     }
 
     private fun initContainer() {
-        modules.forEach { module ->
-            module::class.declaredMemberFunctions.forEach { kFunc ->
-                if (!kFunc.hasAnnotation<Singleton>()) {
-                    appContainer[kFunc.identifyKey()] = kFunc
-                } else {
-                    appContainer[kFunc.identifyKey()] =
-                        createInstance(provideFunc = kFunc, receiver = module)
-                }
+        module::class.declaredMemberFunctions.forEach { kFunc ->
+            if (!kFunc.hasAnnotation<Singleton>()) {
+                appContainer[kFunc.identifyKey()] = kFunc
+            } else {
+                appContainer[kFunc.identifyKey()] =
+                    createInstance(provideFunc = kFunc, receiver = module)
             }
         }
     }

@@ -3,4 +3,4 @@ package woowacourse.shopping
 import woowacourse.shopping.di.AppModule
 import woowacourse.shopping.hasydi.DiApplication
 
-class ShoppingApplication : DiApplication(listOf(AppModule()))
+class ShoppingApplication : DiApplication(AppModule())

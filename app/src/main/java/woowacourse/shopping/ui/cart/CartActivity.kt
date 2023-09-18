@@ -8,7 +8,7 @@ import woowacourse.shopping.di.CartActivityModule
 import woowacourse.shopping.hasydi.DiActivity
 import woowacourse.shopping.hasydi.annotation.Inject
 
-class CartActivity : DiActivity(listOf(CartActivityModule())) {
+class CartActivity : DiActivity(CartActivityModule()) {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

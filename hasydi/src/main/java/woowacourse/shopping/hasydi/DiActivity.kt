@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 
-abstract class DiActivity(private val modules: List<Module> = listOf()) : AppCompatActivity() {
+abstract class DiActivity(private val module: Module = DefaultModule()) : AppCompatActivity() {
 
     private val tag = this::class.simpleName.toString()
 
@@ -41,7 +41,7 @@ abstract class DiActivity(private val modules: List<Module> = listOf()) : AppCom
 
     private fun setupActivityContainer() {
         if (!injector.hasContainer(tag)) {
-            val activityContainer = AppContainer(modules, this)
+            val activityContainer = AppContainer(module, this)
             injector.setActivityContainer(tag, activityContainer)
         }
     }
