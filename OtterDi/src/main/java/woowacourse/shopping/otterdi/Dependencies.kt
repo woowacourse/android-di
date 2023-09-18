@@ -11,53 +11,43 @@ import kotlin.reflect.full.hasAnnotation
 class Dependencies(private val modules: List<Module>) {
     constructor(vararg modules: Module) : this(modules.toList())
 
-    private val providers: MutableMap<String, KFunction<*>> = mutableMapOf()
-    private val instances: MutableMap<String, Any?> = mutableMapOf()
-
-    init {
-        initProviders()
-        initInstances()
-    }
-
-    private fun initProviders() {
-        modules.forEach { module ->
-            module::class.declaredMemberFunctions.forEach {
-                providers[it.identifyKey()] = it
+    private val providers: MutableMap<String, KFunction<*>> =
+        mutableMapOf<String, KFunction<*>>().apply {
+            modules.forEach { module ->
+                module::class.declaredMemberFunctions.forEach {
+                    this[it.identifyKey()] = it
+                }
             }
         }
-    }
 
-    private fun initInstances() {
-        modules.forEach { module ->
-            module::class.declaredMemberFunctions.forEach {
-                instances[it.identifyKey()] = createInstance(it, module)
-            }
-        }
-    }
+    fun getInstances(params: List<KParameter>): List<Any> = params.map { getInstance(it) }
+
+    fun getInstance(kParam: KParameter): Any = createInstance(
+        providers[kParam.identifyKey()] ?: throwError(),
+        kParam.getProvideModule() ?: throwError(),
+    ) ?: throwError()
+
+    fun getInstance(kCallable: KCallable<*>): Any = createInstance(
+        providers[kCallable.identifyKey()] ?: throwError(),
+        kCallable.getProvideModule() ?: throwError(),
+    ) ?: throwError()
 
     private fun createInstance(provideFunc: KFunction<*>, receiver: Module): Any? {
+        val instances: MutableMap<String, Any?> = mutableMapOf() // 매번 필요한 인스턴스를 만들어 사용하도록 함
         val injectParams = provideFunc.parameters.filter { it.hasAnnotation<Inject>() }
         if (injectParams.isEmpty()) return provideFunc.call(receiver)
 
         injectParams.forEach { param ->
             val key = param.identifyKey()
-            providers[key]?.let { provider ->
-                if (instances[key] == null) instances[key] = createInstance(provider, receiver)
-            } ?: throw IllegalArgumentException("필요한 의존성을 찾을 수 없습니다. ($param)")
+            val provider: KFunction<*> = providers[key] ?: throwError()
+
+            if (instances[key] == null) instances[key] = createInstance(provider, receiver)
         }
 
         val args = injectParams.associateWith { instances[it.identifyKey()] }.toMutableMap()
         args[provideFunc.parameters.first()] = receiver
         return provideFunc.callBy(args)
     }
-
-    fun getInstances(params: List<KParameter>): List<Any> = params.map { getInstance(it) }
-
-    fun getInstance(kParam: KParameter): Any = instances[kParam.identifyKey()]
-        ?: throw IllegalArgumentException("${kParam}에 대한 의존성을 가져오는데 실피하였습니다.")
-
-    fun getInstance(kCallable: KCallable<*>): Any = instances[kCallable.identifyKey()]
-        ?: throw IllegalArgumentException("${kCallable}에 대한 의존성을 가져오는데 실피하였습니다.")
 
     private fun KCallable<*>.identifyKey(): String =
         "$returnType:${qualifier()?.name ?: ""}"
@@ -69,4 +59,20 @@ class Dependencies(private val modules: List<Module>) {
 
     private fun KParameter.qualifier(): Qualifier? =
         this.annotations.find { it is Qualifier } as Qualifier?
+
+    private fun KParameter.getProvideModule(): Module? =
+        modules.find { module: Module ->
+            module::class.declaredMemberFunctions.find { func ->
+                func.identifyKey() == this.identifyKey()
+            } != null
+        }
+
+    private fun KCallable<*>.getProvideModule(): Module? =
+        modules.find { module: Module ->
+            module::class.declaredMemberFunctions.find { func ->
+                func.identifyKey() == this.identifyKey()
+            } != null
+        }
+
+    private fun throwError(): Nothing = throw IllegalArgumentException("의존성을 제공할 수 없습니다.")
 }
