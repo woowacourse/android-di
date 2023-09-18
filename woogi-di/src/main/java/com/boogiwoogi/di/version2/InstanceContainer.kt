@@ -3,7 +3,7 @@ package com.boogiwoogi.di.version2
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
-interface DiContainer {
+interface InstanceContainer {
 
     var value: MutableList<Instance<out Any>>?
 

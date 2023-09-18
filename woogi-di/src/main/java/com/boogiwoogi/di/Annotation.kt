@@ -16,3 +16,6 @@ annotation class UsableOn(val clazz: KClass<*>)
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class Provides
+
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
+annotation class Scoped

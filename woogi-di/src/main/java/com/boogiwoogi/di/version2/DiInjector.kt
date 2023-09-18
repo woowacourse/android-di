@@ -1,5 +1,7 @@
 package com.boogiwoogi.di.version2
 
+import com.boogiwoogi.di.Scoped
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
@@ -10,12 +12,12 @@ class DiInjector {
 
     inline fun <reified T : Any> inject(
         modules: Modules,
-        container: DiContainer
+        container: InstanceContainer
     ): T {
         val primaryConstructor = requireNotNull(T::class.primaryConstructor)
         val arguments = primaryConstructor.parameters.map { parameter ->
             container.find(parameter) ?: instantiator.instantiate(modules, parameter).also {
-                container.add(Instance(it))
+                parameter.findAnnotation<Scoped>() ?: container.add(Instance(it))
             }
         }
         return primaryConstructor.call(*arguments.toTypedArray())
@@ -23,7 +25,7 @@ class DiInjector {
 
     inline fun <reified T : Any> inject(
         modules: Modules,
-        container: DiContainer,
+        container: InstanceContainer,
         target: T
     ) {
         ClazzInfoExtractor.extractInjectMemberProperties(target::class).forEach { memberProperty ->

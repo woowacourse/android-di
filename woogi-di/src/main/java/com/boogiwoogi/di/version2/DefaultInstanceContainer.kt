@@ -7,7 +7,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class DefaultDiContainer : DiContainer {
+open class DefaultInstanceContainer : InstanceContainer {
 
     override var value: MutableList<Instance<out Any>>? = mutableListOf()
 
