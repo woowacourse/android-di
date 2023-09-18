@@ -30,7 +30,7 @@ class DiInjector {
         ClazzInfoExtractor.extractInjectMemberProperties(target::class).forEach { memberProperty ->
             val instance = container.find(memberProperty.returnType.jvmErasure)
                 ?: instantiator.instantiateProperty(modules, memberProperty).also {
-                    container.add(Instance(it))
+                    memberProperty.findAnnotation<Scoped>() ?: container.add(Instance(it))
                 }
 
             memberProperty.isAccessible = true

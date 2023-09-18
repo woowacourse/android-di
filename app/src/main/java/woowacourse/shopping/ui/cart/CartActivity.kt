@@ -6,13 +6,13 @@ import com.boogiwoogi.di.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.activity.DiActivity
-import woowacourse.shopping.di.viewmodel.woogiViewModels
+import woowacourse.shopping.di.viewmodel.diViewModels
 
 class CartActivity : DiActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by woogiViewModels<CartViewModel>()
+    private val viewModel by diViewModels<CartViewModel>()
 
     @Inject
     private lateinit var dateFormatter: DateFormatter

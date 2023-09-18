@@ -11,17 +11,17 @@ import com.boogiwoogi.di.InstanceContainer
 import woowacourse.shopping.ShoppingApplication
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.woogiViewModels(
+inline fun <reified VM : ViewModel> ComponentActivity.diViewModels(
     container: InstanceContainer = ShoppingApplication.container
 ): Lazy<VM> {
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
-        { woogiViewModelFactory<VM>(container) },
+        { diViewModelFactory<VM>(container) },
     )
 }
 
-inline fun <reified VM : ViewModel> woogiViewModelFactory(container: InstanceContainer): ViewModelProvider.Factory =
+inline fun <reified VM : ViewModel> diViewModelFactory(container: InstanceContainer): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
             ShoppingApplication.run {
