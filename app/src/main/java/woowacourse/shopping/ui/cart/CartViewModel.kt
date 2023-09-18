@@ -8,7 +8,7 @@ import com.ki960213.sheath.annotation.Qualifier
 import com.ki960213.sheath.annotation.SheathViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 @SheathViewModel
@@ -17,9 +17,9 @@ class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
+    private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted

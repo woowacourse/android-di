@@ -2,7 +2,7 @@ package woowacourse.shopping.data
 
 import com.ki960213.sheath.annotation.Repository
 import woowacourse.shopping.data.mapper.toData
-import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
@@ -11,10 +11,10 @@ import woowacourse.shopping.repository.CartRepository
 class DatabaseCartRepository(private val dao: CartProductDao) : CartRepository {
 
     override suspend fun addCartProduct(product: Product) {
-        dao.insert(product.toEntity())
+        dao.insert(CartProductEntity.from(product))
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return dao.getAll().map(CartProductEntity::toData)
     }
 
