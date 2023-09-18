@@ -3,6 +3,7 @@ package com.ki960213.sheath.component
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Module
+import com.ki960213.sheath.extention.getDependingTypes
 import com.ki960213.sheath.extention.hasAnnotationOrHasAttachedAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -14,6 +15,7 @@ internal object SheathComponentValidator {
     fun validate(clazz: KClass<*>) {
         clazz.validateComponentAnnotation()
         clazz.validateConstructorInjection()
+        clazz.validateDuplicateDependingType()
     }
 
     fun validate(function: KFunction<*>) {
@@ -21,6 +23,7 @@ internal object SheathComponentValidator {
         function.validateModuleIsObject()
         function.validateModuleAnnotation()
         function.validateReturnType()
+        function.validateDuplicateDependingType()
     }
 
     private fun KClass<*>.validateComponentAnnotation() {
@@ -32,6 +35,12 @@ internal object SheathComponentValidator {
     private fun KClass<*>.validateConstructorInjection() {
         require(constructors.count { it.hasAnnotation<Inject>() } <= 1) {
             "여러 개의 생성자에 @Inject 애노테이션을 붙일 수 없습니다."
+        }
+    }
+
+    private fun KClass<*>.validateDuplicateDependingType() {
+        require(getDependingTypes() == getDependingTypes().distinct()) {
+            "${this.qualifiedName} 클래스는 같은 타입을 여러 곳에서 의존하고 있습니다."
         }
     }
 
@@ -56,6 +65,12 @@ internal object SheathComponentValidator {
     private fun KFunction<*>.validateReturnType() {
         require(!returnType.isMarkedNullable) {
             "SheathComponent를 생성할 함수의 리턴 타입이 nullable이면 안됩니다"
+        }
+    }
+
+    private fun KFunction<*>.validateDuplicateDependingType() {
+        require(getDependingTypes() == getDependingTypes().distinct()) {
+            "${this.name} 함수는 같은 타입을 여러 매개 변수로 가지고 있습니다."
         }
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.Module
+import com.ki960213.sheath.annotation.Qualifier
 import org.junit.Test
 
 internal class SheathComponentValidatorTest {
@@ -37,6 +38,32 @@ internal class SheathComponentValidatorTest {
         @Inject
         constructor(any: Any) : this()
     }
+
+    @Test
+    fun `클래스의 의존 타입 중 같은 타입이 있다면 한정자가 있어도 에러가 발생한다`() {
+        try {
+            SheathComponentValidator.validate(Test3::class)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e)
+                .hasMessageThat()
+                .isEqualTo("${Test3::class.qualifiedName} 클래스는 같은 타입을 여러 곳에서 의존하고 있습니다.")
+        }
+    }
+
+    @Component
+    class Test3(@Qualifier(Test5::class) test5: Test4) {
+        @Inject
+        @Qualifier(Test6::class)
+        private lateinit var test6: Test4
+    }
+
+    interface Test4
+
+    @Component
+    class Test5 : Test4
+
+    @Component
+    class Test6 : Test4
 
     @Test
     fun `함수에 Component 애노테이션이 붙어있지 않고 Component 애노테이션이 붙은 애노테이션이 붙어 있지 않다면 에러가 발생한다`() {
@@ -102,5 +129,25 @@ internal class SheathComponentValidatorTest {
     object Module4 {
         @Component
         fun test(): Unit? = Unit
+    }
+
+    @Test
+    fun `함수의 매개 변수 중 같은 타입이 있다면 한정자가 있어도 에러가 발생한다`() {
+        try {
+            SheathComponentValidator.validate(Module5::test)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e)
+                .hasMessageThat()
+                .isEqualTo("${Module5::test.name} 함수는 같은 타입을 여러 매개 변수로 가지고 있습니다.")
+        }
+    }
+
+    @Module
+    object Module5 {
+        @Component
+        fun test(
+            @Qualifier(Test5::class) test5: Test4,
+            @Qualifier(Test6::class) test6: Test4,
+        ): Unit = Unit
     }
 }
