@@ -22,8 +22,8 @@ class Injector(
     fun addModuleInstances(module: Module) {
         module::class.declaredFunctions.forEach { function ->
             val arguments = getArguments(function, module)
-            val instance = function.callBy(arguments)
-                ?: throw IllegalArgumentException("${function.returnType.jvmErasure.simpleName} $ERROR_INVALID_ARGUMENTS")
+            val instance =
+                requireNotNull(function.callBy(arguments)) { "${function.returnType.jvmErasure.simpleName} $ERROR_INVALID_ARGUMENTS" }
 
             if (function.hasAnnotation<Qualifier>()) {
                 container.createInstance(function.findAnnotation<Qualifier>()!!.type, instance)
@@ -54,9 +54,9 @@ class Injector(
     private fun getPrimaryClass(
         clazz: KClass<*>,
     ): KFunction<*> {
-        val constructors = clazz.constructors.filter { it.hasAnnotation<Injected>() }
-        return constructors.firstOrNull() ?: clazz.primaryConstructor
-        ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_CONSTRUCTOR")
+        val constructor = clazz.constructors.firstOrNull { it.hasAnnotation<Injected>() }
+            ?: clazz.primaryConstructor
+        return requireNotNull(constructor) { "${clazz.simpleName} $ERROR_NO_CONSTRUCTOR" }
     }
 
     private fun getArguments(kFunction: KFunction<*>, module: Module?): Map<KParameter, Any?> {
@@ -67,12 +67,10 @@ class Injector(
                 module
             } else if (parameter.hasAnnotation<Qualifier>()) {
                 val qualifier = parameter.findAnnotation<Qualifier>()!!.type
-                container.getInstance(qualifier)
-                    ?: throw IllegalArgumentException("$qualifier $ERROR_NO_FIELD")
+                requireNotNull(container.getInstance(qualifier)) { "$qualifier $ERROR_NO_FIELD" }
             } else {
                 val type = parameter.type.jvmErasure
-                container.getInstance(type)
-                    ?: throw IllegalArgumentException("${type.simpleName} $ERROR_NO_FIELD")
+                requireNotNull(container.getInstance(type)) { "${type.simpleName} $ERROR_NO_FIELD" }
             }
         }
     }
@@ -86,11 +84,9 @@ class Injector(
             property.isAccessible = true
             val newInstance = if (property.hasAnnotation<Qualifier>()) {
                 val qualifier = property.findAnnotation<Qualifier>()!!.type
-                container.getInstance(qualifier)
-                    ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_FIELD")
+                requireNotNull(container.getInstance(qualifier)) { "${clazz.simpleName} $ERROR_NO_FIELD" }
             } else {
-                container.getInstance(property.returnType.jvmErasure)
-                    ?: throw IllegalArgumentException("${clazz.simpleName} $ERROR_NO_FIELD")
+                requireNotNull(container.getInstance(property.returnType.jvmErasure)) { "${clazz.simpleName} $ERROR_NO_FIELD" }
             }
             property.setter.call(instance, newInstance)
         }
