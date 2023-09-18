@@ -3,6 +3,9 @@ package com.boogiwoogi.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
+/**
+ * the class that manages instances injected by DiInjector
+ */
 interface InstanceContainer {
 
     var value: MutableList<Instance<out Any>>?
