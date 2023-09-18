@@ -3,10 +3,10 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.boogiwoogi.di.Inject
-import com.boogiwoogi.di.version2.woogiViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.activity.DiActivity
+import woowacourse.shopping.di.viewmodel.woogiViewModels
 
 class CartActivity : DiActivity() {
 

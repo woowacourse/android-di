@@ -1,34 +1,14 @@
-package woowacourse.shopping.di.activity
+package com.boogiwoogi.di.version2
 
-import android.content.Context
-import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Provides
 import com.boogiwoogi.di.Qualifier
-import com.boogiwoogi.di.version2.Modules
-import woowacourse.shopping.di.ContextProvider
-import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-@Module
-class ActivityModule(override val context: Context) : ContextProvider, Modules {
-
-    init {
-        if (context == context.applicationContext) throw IllegalArgumentException(CONTEXT_TYPE_ERROR)
-    }
-
-    @Provides
-    fun provideDateFormatter(): DateFormatter {
-        return DateFormatter(context)
-    }
-
-    @Provides
-    fun provideActivityContext(): Context {
-        return context
-    }
+open class DefaultModules : Modules {
 
     override fun provideInstanceOf(clazz: KClass<*>): Any? {
         val functions = this::class
@@ -46,9 +26,5 @@ class ActivityModule(override val context: Context) : ContextProvider, Modules {
             .firstOrNull { it.findAnnotation<Qualifier>()!!.simpleName == simpleName }
 
         return function?.call(this)
-    }
-
-    companion object {
-        private const val CONTEXT_TYPE_ERROR = "inappropriate context"
     }
 }
