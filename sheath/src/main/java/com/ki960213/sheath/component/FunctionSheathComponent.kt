@@ -21,8 +21,10 @@ class FunctionSheathComponent(
     private val cache: MutableMap<KType, SheathComponent1> = mutableMapOf()
 
     override fun instantiate(components: List<SheathComponent1>) {
+        val dependingComponents = components.filter { this.isDependingOn(it) }
+
         val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
-        instance = function.call(*function.getArguments(components).toTypedArray())
+        instance = function.call(*function.getArguments(dependingComponents).toTypedArray())
             ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 

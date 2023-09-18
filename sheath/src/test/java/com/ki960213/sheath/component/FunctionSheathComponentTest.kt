@@ -6,6 +6,7 @@ import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Module
 import com.ki960213.sheath.annotation.NewInstance
 import com.ki960213.sheath.annotation.Prototype
+import com.ki960213.sheath.annotation.Qualifier
 import org.junit.Rule
 import org.junit.Test
 
@@ -35,6 +36,35 @@ internal class FunctionSheathComponentTest {
     }
 
     class Test1
+
+    @Test
+    fun `인스턴스화 할 때 한정자가 설정되어 있는 종속 항목이 주어지지 않았다면 에러가 발생한다`() {
+        val sheathComponent1 = SheathComponentFactory.create(Module7::test1)
+        val sheathComponent2 = SheathComponentFactory.create(Module7::test2)
+        sheathComponent1.instantiate(emptyList())
+        try {
+            sheathComponent2.instantiate(listOf(sheathComponent1))
+        } catch (e: IllegalArgumentException) {
+            assertThat(e)
+                .hasMessageThat()
+                .isEqualTo("${Module7::test2.name} 함수의 종속 항목이 존재하지 않아 인스턴스화 할 수 없습니다.")
+        }
+    }
+
+    @Module
+    object Module7 {
+        @Component
+        fun test1(): Test14 = Test14()
+
+        @Component
+        fun test2(@Qualifier(Test15::class) test13: Test13): Unit = Unit
+    }
+
+    interface Test13
+
+    class Test14 : Test13
+
+    class Test15 : Test13
 
     @Test
     fun `인스턴스화 하면 인스턴스가 할당된다`() {

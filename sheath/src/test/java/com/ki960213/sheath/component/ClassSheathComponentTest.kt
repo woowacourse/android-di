@@ -5,6 +5,7 @@ import com.ki960213.sheath.annotation.Component
 import com.ki960213.sheath.annotation.Inject
 import com.ki960213.sheath.annotation.NewInstance
 import com.ki960213.sheath.annotation.Prototype
+import com.ki960213.sheath.annotation.Qualifier
 import org.junit.Test
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -72,6 +73,31 @@ internal class ClassSheathComponentTest {
         @Inject
         private fun test(test2: Test2): Unit = Unit
     }
+
+    @Test
+    fun `인스턴스화 할 때 한정자가 설정되어 있는 종속 항목이 주어지지 않았다면 에러가 발생한다`() {
+        val sheathComponent1 = SheathComponentFactory.create(Test23::class)
+        val sheathComponent2 = SheathComponentFactory.create(Test26::class)
+        sheathComponent2.instantiate(emptyList())
+        try {
+            sheathComponent1.instantiate(listOf(sheathComponent2))
+        } catch (e: IllegalArgumentException) {
+            assertThat(e)
+                .hasMessageThat()
+                .isEqualTo("${Test23::class.qualifiedName}의 종속 항목이 존재하지 않아 인스턴스화 할 수 없습니다.")
+        }
+    }
+
+    @Component
+    class Test23(@Qualifier(Test25::class) test24: Test24)
+
+    interface Test24
+
+    @Component
+    class Test25 : Test24
+
+    @Component
+    class Test26 : Test24
 
     @Test
     fun `인스턴스화 하면 인스턴스가 할당된다`() {

@@ -29,12 +29,14 @@ class ClassSheathComponent(
     private val cache: MutableMap<KType, SheathComponent1> = mutableMapOf()
 
     override fun instantiate(components: List<SheathComponent1>) {
+        val dependingComponents = components.filter { this.isDependingOn(it) }
+
         val constructor = clazz.getInjectConstructor()
 
-        instance = constructor.call(*constructor.getArguments(components).toTypedArray()) ?: throw IllegalArgumentException("인스턴스화 하는 데 필요한 SheathComponent가 없습니다. 정렬 로직을 다시 살펴보세요.")
+        instance = constructor.call(*constructor.getArguments(dependingComponents).toTypedArray()) ?: throw IllegalArgumentException("인스턴스화 하는 데 필요한 SheathComponent가 없습니다. 정렬 로직을 다시 살펴보세요.")
 
-        instance.injectProperty(components)
-        instance.injectFunction(components)
+        instance.injectProperty(dependingComponents)
+        instance.injectFunction(dependingComponents)
     }
 
     override fun getNewInstance(): Any {
