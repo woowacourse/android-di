@@ -23,7 +23,6 @@ inline fun <reified T : Any> ComponentCallbacks.injectNewInstance(
 ) = lazy(mode) { create<T>() }
 
 inline fun <reified T : Any> ComponentCallbacks.create(): T {
-    val container = SheathApplication.sheathComponentContainer
-    val sheathComponent = container[T::class.createType()]
+    val sheathComponent = SheathApplication.sheathComponentContainer[T::class.createType()]
     return sheathComponent.getNewInstance() as T
 }
