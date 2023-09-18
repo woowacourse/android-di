@@ -11,6 +11,8 @@ import kotlin.reflect.jvm.isAccessible
 
 class Injector(private val appContainer: AppContainer) {
 
+    private val activityContainerMap: MutableMap<String, AppContainer?> = mutableMapOf()
+
     fun <T : Any> inject(clazz: KClass<T>): T {
         val primaryConstructor =
             clazz.primaryConstructor ?: throw IllegalArgumentException("주생성자 없음")
@@ -27,19 +29,32 @@ class Injector(private val appContainer: AppContainer) {
         return instance
     }
 
-    private fun <T : Any> fieldInjection(clazz: KClass<T>, target: T) {
+    fun <T : Any> fieldInjection(clazz: KClass<out T>, target: T) {
         clazz.declaredMemberProperties.forEach { property ->
             if (property.hasAnnotation<Inject>()) {
-                val injectValue = appContainer.getInstance(property)
+                val activityContainer = activityContainerMap[clazz.simpleName.toString()]
+                val injectValue =
+                    appContainer.getInstance(property) ?: activityContainer?.getInstance(property)
                 property.isAccessible = true
                 (property as KMutableProperty<*>).setter.call(target, injectValue)
             }
         }
     }
 
+    fun setActivityContainer(tag: String, container: AppContainer) {
+        activityContainerMap[tag] = container
+    }
+
+    fun removeActivityContainer(tag: String) {
+        activityContainerMap[tag] = null
+    }
+
+    fun hasContainer(tag: String): Boolean = activityContainerMap[tag] != null
+
     private fun getArgumentsMapping(parameters: List<KParameter>): Map<KParameter, Any> {
         return parameters.associateWith { param ->
             appContainer.getInstance(param)
+                ?: throw IllegalArgumentException("인스턴스 찾을 수 없음 $param")
         }
     }
 }

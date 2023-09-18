@@ -9,12 +9,13 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.qualifier.InMemory
 import woowacourse.shopping.di.qualifier.RoomDB
 import woowacourse.shopping.hashdi.Module
+import woowacourse.shopping.hashdi.annotation.ApplicationContext
 import woowacourse.shopping.hashdi.annotation.Inject
 import woowacourse.shopping.hashdi.annotation.Singleton
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class AppModule(private val context: Context) : Module {
+class AppModule : Module {
 
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()
 
@@ -29,6 +30,9 @@ class AppModule(private val context: Context) : Module {
     fun provideCartInMemoryRepository(): CartRepository = CartInMemoryRepository()
 
     @Singleton
-    fun provideCartProductDao(): CartProductDao =
+    fun provideCartProductDao(
+        @ApplicationContext @Inject
+        context: Context,
+    ): CartProductDao =
         ShoppingDatabase.getInstance(context).cartProductDao()
 }

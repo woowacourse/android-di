@@ -1,5 +1,8 @@
 package woowacourse.shopping.hashdi
 
+import android.content.Context
+import woowacourse.shopping.hashdi.annotation.ActivityContext
+import woowacourse.shopping.hashdi.annotation.ApplicationContext
 import woowacourse.shopping.hashdi.annotation.Inject
 import woowacourse.shopping.hashdi.annotation.Qualifier
 import woowacourse.shopping.hashdi.annotation.Singleton
@@ -9,7 +12,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
-class AppContainer(private val modules: List<Module>) {
+class AppContainer(private val modules: List<Module>, private val context: Context? = null) {
 
     private val appContainer: MutableMap<String, Any?> = mutableMapOf()
 
@@ -29,14 +32,14 @@ class AppContainer(private val modules: List<Module>) {
         initContainer()
     }
 
-    fun getInstance(kCallable: KCallable<*>): Any {
+    fun getInstance(kCallable: KCallable<*>): Any? {
         val identifyKey = kCallable.identifyKey()
-        return getOrCreateInstance(identifyKey)
+        return runCatching { getOrCreateInstance(identifyKey) }.getOrNull()
     }
 
-    fun getInstance(kParam: KParameter): Any {
+    fun getInstance(kParam: KParameter): Any? {
         val identifyKey = kParam.identifyKey()
-        return getOrCreateInstance(identifyKey)
+        return runCatching { getOrCreateInstance(identifyKey) }.getOrNull()
     }
 
     private fun getOrCreateInstance(identifyKey: String): Any {
@@ -70,6 +73,11 @@ class AppContainer(private val modules: List<Module>) {
         if (injectParams.isNotEmpty()) {
             injectParams.forEach { param ->
                 val key = param.identifyKey()
+
+                if (param.hasAnnotation<ActivityContext>() || param.hasAnnotation<ApplicationContext>()) {
+                    appContainer[key] = context
+                }
+
                 if (appContainer[key] == null) {
                     provideFunctions[key]?.let {
                         appContainer[key] = createInstance(it, receiver)

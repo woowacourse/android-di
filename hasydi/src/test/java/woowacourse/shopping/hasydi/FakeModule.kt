@@ -1,4 +1,4 @@
-package di
+package woowacourse.shopping.hasydi
 
 import woowacourse.shopping.hashdi.Module
 import woowacourse.shopping.hashdi.annotation.Inject
