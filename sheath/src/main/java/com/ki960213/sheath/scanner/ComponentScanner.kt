@@ -1,8 +1,8 @@
 package com.ki960213.sheath.scanner
 
-import com.ki960213.sheath.component.SheathComponent
+import com.ki960213.sheath.component.SheathComponent1
 
 internal interface ComponentScanner {
 
-    fun findAll(): List<SheathComponent>
+    fun findAll(): List<SheathComponent1>
 }

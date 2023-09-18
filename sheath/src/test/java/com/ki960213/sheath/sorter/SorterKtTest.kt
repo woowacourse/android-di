@@ -2,7 +2,7 @@ package com.ki960213.sheath.sorter
 
 import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
-import com.ki960213.sheath.component.SheathComponentByClass
+import com.ki960213.sheath.component.SheathComponentFactory
 import org.junit.Test
 
 internal class SorterKtTest {
@@ -11,19 +11,19 @@ internal class SorterKtTest {
     fun `SheathComponent 목록을 받으면 위상 정렬된 목록을 반환한다`() {
         val components =
             listOf(
-                SheathComponentByClass(Test1::class),
-                SheathComponentByClass(Test2::class),
-                SheathComponentByClass(Test3::class),
-                SheathComponentByClass(Test4::class),
+                SheathComponentFactory.create(Test1::class),
+                SheathComponentFactory.create(Test2::class),
+                SheathComponentFactory.create(Test3::class),
+                SheathComponentFactory.create(Test4::class),
             )
 
         val result = components.sorted()
 
         val expected = listOf(
-            SheathComponentByClass(Test4::class),
-            SheathComponentByClass(Test2::class),
-            SheathComponentByClass(Test3::class),
-            SheathComponentByClass(Test1::class),
+            SheathComponentFactory.create(Test4::class),
+            SheathComponentFactory.create(Test2::class),
+            SheathComponentFactory.create(Test3::class),
+            SheathComponentFactory.create(Test1::class),
         )
         assertThat(result).isEqualTo(expected)
     }
@@ -43,9 +43,9 @@ internal class SorterKtTest {
     @Test
     fun `SheathComponent 간에 의존 사이클이 존재하면 에러가 발생한다`() {
         val components = listOf(
-            SheathComponentByClass(Test5::class),
-            SheathComponentByClass(Test6::class),
-            SheathComponentByClass(Test7::class),
+            SheathComponentFactory.create(Test5::class),
+            SheathComponentFactory.create(Test6::class),
+            SheathComponentFactory.create(Test7::class),
         )
 
         try {

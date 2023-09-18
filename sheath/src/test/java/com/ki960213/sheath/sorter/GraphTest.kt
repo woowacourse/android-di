@@ -3,7 +3,7 @@ package com.ki960213.sheath.sorter
 import com.google.common.truth.Expect
 import com.google.common.truth.Truth.assertThat
 import com.ki960213.sheath.annotation.Component
-import com.ki960213.sheath.component.SheathComponentByClass
+import com.ki960213.sheath.component.SheathComponentFactory
 import org.junit.Rule
 import org.junit.Test
 
@@ -16,14 +16,14 @@ internal class GraphTest {
     @Test
     fun `그래프를 만들 때 어떤 노드가 노드 목록에 없는 노드를 의존한다면 에러가 발생한다`() {
         val nodes = setOf(
-            Node(SheathComponentByClass(Test1::class)),
+            Node(SheathComponentFactory.create(Test1::class)),
         )
 
         try {
             Graph(nodes)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat()
-                .isEqualTo("${SheathComponentByClass(Test1::class)} 컴포넌트의 종속 항목 중 등록되지 않은 컴포넌트가 있습니다.")
+                .isEqualTo("${SheathComponentFactory.create(Test1::class)} 컴포넌트의 종속 항목 중 등록되지 않은 컴포넌트가 있습니다.")
         }
     }
 
@@ -36,16 +36,16 @@ internal class GraphTest {
     @Test
     fun `그래프를 만들 때 어떤 노드의 중복 종속 항목이 존재한다면 에러가 발생한다`() {
         val nodes = setOf(
-            Node(SheathComponentByClass(Test3::class)),
-            Node(SheathComponentByClass(Test5::class)),
-            Node(SheathComponentByClass(Test6::class)),
+            Node(SheathComponentFactory.create(Test3::class)),
+            Node(SheathComponentFactory.create(Test5::class)),
+            Node(SheathComponentFactory.create(Test6::class)),
         )
 
         try {
             Graph(nodes)
         } catch (e: IllegalArgumentException) {
             assertThat(e).hasMessageThat()
-                .isEqualTo("${SheathComponentByClass(Test3::class)} 컴포넌트에 모호한 종속 항목이 존재합니다.")
+                .isEqualTo("${SheathComponentFactory.create(Test3::class)} 컴포넌트에 모호한 종속 항목이 존재합니다.")
         }
     }
 
@@ -63,9 +63,9 @@ internal class GraphTest {
 
     @Test
     fun `그래프를 노드를 이용해 생성하면 각 노드를 의존하는 노드들을 저장한다`() {
-        val node1 = Node(SheathComponentByClass(Test7::class))
-        val node2 = Node(SheathComponentByClass(Test8::class))
-        val node3 = Node(SheathComponentByClass(Test9::class))
+        val node1 = Node(SheathComponentFactory.create(Test7::class))
+        val node2 = Node(SheathComponentFactory.create(Test8::class))
+        val node3 = Node(SheathComponentFactory.create(Test9::class))
 
         val graph = Graph(setOf(node1, node2, node3))
 
@@ -76,9 +76,9 @@ internal class GraphTest {
 
     @Test
     fun `그래프에 없는 노드의 의존 노드를 가져오면 에러가 발생한다`() {
-        val node1 = Node(SheathComponentByClass(Test1::class))
-        val node2 = Node(SheathComponentByClass(Test2::class))
-        val node3 = Node(SheathComponentByClass(Test3::class))
+        val node1 = Node(SheathComponentFactory.create(Test1::class))
+        val node2 = Node(SheathComponentFactory.create(Test2::class))
+        val node3 = Node(SheathComponentFactory.create(Test3::class))
         val graph = Graph(setOf(node1, node2))
 
         try {
