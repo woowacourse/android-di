@@ -1,7 +1,7 @@
 package com.example.di.container
 
 import android.content.Context
-import com.example.di.module.ActivityModule
+import com.example.di.module.ActivityRetainedModule
 import com.example.di.module.ApplicationModule
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
@@ -9,10 +9,10 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
 class DiActivityModuleContainer(private val applicationModule: ApplicationModule) {
-    private val moduleMap: MutableMap<Int, ActivityModule> = mutableMapOf()
+    private val moduleMap: MutableMap<Int, ActivityRetainedModule> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ActivityModule> provideActivityModule(
+    fun <T : ActivityRetainedModule> provideActivityModule(
         newOwner: Context,
         oldOwnerHashCode: Int?,
         clazz: Class<T>,
@@ -23,7 +23,7 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         return module as T
     }
 
-    private fun <T : ActivityModule> createFromOwnerHashCode(
+    private fun <T : ActivityRetainedModule> createFromOwnerHashCode(
         owner: Context,
         clazz: Class<T>,
     ): T {
@@ -37,7 +37,7 @@ class DiActivityModuleContainer(private val applicationModule: ApplicationModule
         moduleMap.remove(ownerHashCode)
     }
 
-    private fun validateActivityModulePrimaryConstructor(primaryConstructor: KFunction<ActivityModule>) {
+    private fun validateActivityModulePrimaryConstructor(primaryConstructor: KFunction<ActivityRetainedModule>) {
         check(primaryConstructor.valueParameters.size == 2) {
             ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
         }

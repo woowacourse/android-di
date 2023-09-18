@@ -9,19 +9,19 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.di.application.DiApplication
-import com.example.di.module.ActivityModule
+import com.example.di.module.ActivityRetainedModule
 
-abstract class DiEntryPointActivity(private val activityModuleClassType: Class<out ActivityModule>) :
+abstract class DiEntryPointActivity(private val activityModuleClassType: Class<out ActivityRetainedModule>) :
     AppCompatActivity() {
 
-    lateinit var activityModule: ActivityModule
+    lateinit var activityRetainedModule: ActivityRetainedModule
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val diApplication = application as DiApplication
         val previousHashCode = savedInstanceState?.getInt(ACTIVITY_INJECTOR_KEY)
-        this.activityModule = diApplication.diContainer.provideActivityModule(
+        this.activityRetainedModule = diApplication.diContainer.provideActivityModule(
             this,
             previousHashCode,
             activityModuleClassType,
@@ -52,7 +52,7 @@ abstract class DiEntryPointActivity(private val activityModuleClassType: Class<o
             {
                 viewModelFactory {
                     initializer {
-                        activityModule.provideInstance(VM::class.java)
+                        activityRetainedModule.provideInstance(VM::class.java)
                     }
                 }
             },

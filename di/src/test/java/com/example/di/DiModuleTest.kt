@@ -7,7 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.example.di.activity.DiEntryPointActivity
 import com.example.di.annotation.FieldInject
 import com.example.di.application.DiApplication
-import com.example.di.module.ActivityModule
+import com.example.di.module.ActivityRetainedModule
 import com.example.di.module.ApplicationModule
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -43,19 +43,19 @@ internal class DiModuleTest {
             lateinit var productRepository: FakeProductRepository
         }
 
-        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
-            ActivityModule(activityContext, applicationModule) {
+        class FakeActivityRetainedModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityRetainedModule(activityContext, applicationModule) {
             fun getFakeDefaultProductRepository(): FakeProductRepository {
                 return FakeDefaultProductRepository()
             }
         }
 
-        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+        class FakeActivity : DiEntryPointActivity(FakeActivityRetainedModule::class.java) {
             val viewModel by viewModel<FakeViewModel>()
         }
 
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-        val activityModule = FakeActivityModule(activity, applicationModule)
+        val activityModule = FakeActivityRetainedModule(activity, applicationModule)
 
         // when
         val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
@@ -73,19 +73,19 @@ internal class DiModuleTest {
             private lateinit var productRepository: FakeProductRepository
         }
 
-        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
-            ActivityModule(activityContext, applicationModule) {
+        class FakeActivityRetainedModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityRetainedModule(activityContext, applicationModule) {
             fun getFakeDefaultProductRepository(): FakeProductRepository {
                 return FakeDefaultProductRepository()
             }
         }
 
-        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+        class FakeActivity : DiEntryPointActivity(FakeActivityRetainedModule::class.java) {
             val viewModel by viewModel<FakeViewModel>()
         }
 
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-        val activityModule = FakeActivityModule(activity, applicationModule)
+        val activityModule = FakeActivityRetainedModule(activity, applicationModule)
 
         // then
         assertThatThrownBy { activityModule.provideInstance(FakeViewModel::class.java) }
@@ -100,8 +100,8 @@ internal class DiModuleTest {
             private val productRepository: FakeProductRepository,
         ) : ViewModel()
 
-        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
-            ActivityModule(activityContext, applicationModule) {
+        class FakeActivityRetainedModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityRetainedModule(activityContext, applicationModule) {
             fun getProductRepository1(): FakeProductRepository {
                 return FakeDefaultProductRepository()
             }
@@ -111,12 +111,12 @@ internal class DiModuleTest {
             }
         }
 
-        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+        class FakeActivity : DiEntryPointActivity(FakeActivityRetainedModule::class.java) {
             val viewModel by viewModel<FakeViewModel>()
         }
 
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-        val activityModule = FakeActivityModule(activity, applicationModule)
+        val activityModule = FakeActivityRetainedModule(activity, applicationModule)
 
         // then
         assertThatThrownBy { activityModule.provideInstance(FakeViewModel::class.java) }
@@ -131,15 +131,15 @@ internal class DiModuleTest {
             @FakeInMemoryCartRepositoryQualiefier val cartRepository: FakeCartRepository,
         ) : ViewModel()
 
-        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
-            ActivityModule(activityContext, applicationModule)
+        class FakeActivityRetainedModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityRetainedModule(activityContext, applicationModule)
 
-        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+        class FakeActivity : DiEntryPointActivity(FakeActivityRetainedModule::class.java) {
             val viewModel by viewModel<FakeViewModel>()
         }
 
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-        val activityModule = FakeActivityModule(activity, applicationModule)
+        val activityModule = FakeActivityRetainedModule(activity, applicationModule)
 
         // when
         val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
@@ -155,15 +155,15 @@ internal class DiModuleTest {
             @FakeInMemoryCartRepositoryQualiefier val cartRepository: FakeCartRepository,
         ) : ViewModel()
 
-        class FakeActivityModule(activityContext: Context, applicationModule: ApplicationModule) :
-            ActivityModule(activityContext, applicationModule)
+        class FakeActivityRetainedModule(activityContext: Context, applicationModule: ApplicationModule) :
+            ActivityRetainedModule(activityContext, applicationModule)
 
-        class FakeActivity : DiEntryPointActivity(FakeActivityModule::class.java) {
+        class FakeActivity : DiEntryPointActivity(FakeActivityRetainedModule::class.java) {
             val viewModel by viewModel<FakeViewModel>()
         }
 
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-        val activityModule = FakeActivityModule(activity, applicationModule)
+        val activityModule = FakeActivityRetainedModule(activity, applicationModule)
 
         // then
         val viewModel = activityModule.provideInstance(FakeViewModel::class.java)
