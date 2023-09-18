@@ -24,6 +24,15 @@ class DefaultActivityLifecycleObserver : DefaultLifecycleObserver, ActivityLifec
         this.injector = injector
     }
 
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        injector.addDependency(
+            dependency = "Released" + activity::class.simpleName + "Container",
+            instance = activity,
+        )
+        injector.injectFields(activity::class, activity)
+    }
+
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         if (this::activity.isInitialized && this::injector.isInitialized) {

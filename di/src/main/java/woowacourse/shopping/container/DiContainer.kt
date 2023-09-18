@@ -65,6 +65,11 @@ class DiContainer {
         container.saveInstance(implementationClass, instance)
     }
 
+    internal fun addDependency(dependency: String, instance: Any) {
+        val container = containers.getOrPut(dependency) { LifecycleContainer() } as LifecycleContainer
+        container.saveInstance(instance::class, instance)
+    }
+
     internal fun releaseDependency(dependency: String) {
         containers.remove(dependency)
     }

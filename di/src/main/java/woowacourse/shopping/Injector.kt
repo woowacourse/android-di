@@ -37,7 +37,7 @@ class Injector(private val container: DiContainer) {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.getImplementationClass(), it.annotations)
+            inject(it.getImplementationClass(), it.type.jvmErasure.annotations)
         }.toTypedArray()
         return args
     }
@@ -66,7 +66,7 @@ class Injector(private val container: DiContainer) {
         return constructor.call(*args)
     }
 
-    private fun <T : Any> injectFields(clazz: KClass<out T>, instance: T) {
+    fun <T : Any> injectFields(clazz: KClass<out T>, instance: T) {
         clazz.declaredMemberProperties.forEach {
             if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
                 it.isAccessible = true
@@ -78,6 +78,10 @@ class Injector(private val container: DiContainer) {
     private fun <T : Any> KProperty1<T, *>.getImplementationClass(): KClass<*> {
         val implementationClass = getImplementationClassFromAnnotations(annotations)
         return implementationClass ?: returnType.jvmErasure
+    }
+
+    fun addDependency(dependency: String, instance: Any) {
+        container.addDependency(dependency, instance)
     }
 
     fun releaseDependency(dependency: String) {
