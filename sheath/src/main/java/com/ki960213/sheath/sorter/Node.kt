@@ -1,16 +1,13 @@
 package com.ki960213.sheath.sorter
 
-import kotlin.properties.Delegates.observable
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.isSupertypeOf
-import kotlin.reflect.full.primaryConstructor
+import com.ki960213.sheath.component.SheathComponent
+import kotlin.properties.Delegates
 
-internal class Node(val clazz: KClass<*>) {
+internal class Node(val sheathComponent: SheathComponent) {
 
-    val dependentCount = clazz.primaryConstructor?.parameters?.size ?: 0
+    val dependentCount: Int = sheathComponent.dependentCount
 
-    var inDegreeCount: Int by observable(dependentCount) { _, _, newValue ->
+    var inDegreeCount: Int by Delegates.observable(dependentCount) { _, _, newValue ->
         check(newValue >= 0) { "노드의 진입 차수가 0 미만일 수 없습니다." }
     }
         private set
@@ -19,14 +16,10 @@ internal class Node(val clazz: KClass<*>) {
         inDegreeCount--
     }
 
-    fun isDependingOn(other: Node): Boolean {
-        val constructor = this.clazz.primaryConstructor ?: return false
-        return constructor.parameters.any { it.type.isSupertypeOf(other.clazz.createType()) }
-    }
+    fun isDependingOn(other: Node): Boolean = sheathComponent.isDependingOn(other.sheathComponent)
 
-    override fun equals(other: Any?): Boolean = if (other is Node) clazz == other.clazz else false
+    override fun equals(other: Any?): Boolean =
+        if (other is Node) sheathComponent == other.sheathComponent else false
 
-    override fun hashCode(): Int = clazz.hashCode()
-
-    override fun toString(): String = clazz.toString()
+    override fun hashCode(): Int = sheathComponent.hashCode()
 }

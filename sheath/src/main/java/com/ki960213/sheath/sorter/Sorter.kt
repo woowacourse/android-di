@@ -1,11 +1,11 @@
 package com.ki960213.sheath.sorter
 
+import com.ki960213.sheath.component.SheathComponent
 import java.util.LinkedList
 import java.util.Queue
-import kotlin.reflect.KClass
 
-fun List<KClass<*>>.sortedTopologically(): List<KClass<*>> {
-    val nodes = this.map(::Node).toSet()
+internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
+    val nodes: Set<Node> = this.map(::Node).toSet()
     val graph = Graph(nodes)
 
     val result: MutableList<Node> = mutableListOf()
@@ -13,13 +13,13 @@ fun List<KClass<*>>.sortedTopologically(): List<KClass<*>> {
     queue.addAll(nodes.filter { it.inDegreeCount == 0 })
 
     repeat(nodes.size) {
-        val node = queue.poll() ?: throw IllegalStateException("클래스 간 의존 사이클이 존재합니다.")
+        val node = queue.poll() ?: throw IllegalStateException("SheathComponent 간 의존 사이클이 존재합니다.")
         result.add(node)
         val dependNodes = graph.getNodesThatDependOn(node)
         queue.minusInDegreeAndAddNotDependentNodes(dependNodes)
     }
 
-    return result.map(Node::clazz)
+    return result.map(Node::sheathComponent)
 }
 
 private fun Queue<Node>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node>) {

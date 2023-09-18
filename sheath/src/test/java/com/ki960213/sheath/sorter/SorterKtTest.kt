@@ -1,54 +1,67 @@
 package com.ki960213.sheath.sorter
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
+import com.ki960213.sheath.annotation.Component
+import com.ki960213.sheath.component.SheathComponentFactory
 import org.junit.Test
 
 internal class SorterKtTest {
-    @Test
-    fun `클래스들을 받으면 위상 정렬된 클래스들을 반환한다`() {
-        val classes =
-            listOf(Test1::class, Test2::class, Test3::class, Test4::class)
 
-        val result = classes.sortedTopologically()
+    @Test
+    fun `SheathComponent 목록을 받으면 위상 정렬된 목록을 반환한다`() {
+        val components =
+            listOf(
+                SheathComponentFactory.create(Test1::class),
+                SheathComponentFactory.create(Test2::class),
+                SheathComponentFactory.create(Test3::class),
+                SheathComponentFactory.create(Test4::class),
+            )
+
+        val result = components.sorted()
 
         val expected = listOf(
-            Test4::class,
-            Test2::class,
-            Test3::class,
-            Test1::class,
+            SheathComponentFactory.create(Test4::class),
+            SheathComponentFactory.create(Test2::class),
+            SheathComponentFactory.create(Test3::class),
+            SheathComponentFactory.create(Test1::class),
         )
-        Truth.assertThat(result).isEqualTo(expected)
+        assertThat(result).isEqualTo(expected)
     }
 
+    @Component
+    private class Test1(val test2: Test2, val test3: Test3)
+
+    @Component
+    private class Test2(val test4: Test4)
+
+    @Component
+    private class Test3(val test4: Test4)
+
+    @Component
+    private class Test4
+
     @Test
-    fun `클래스들 간에 의존 사이클이 존재하면 에러가 발생한다`() {
-        val classes = listOf(
-            Test5::class,
-            Test6::class,
-            Test7::class,
+    fun `SheathComponent 간에 의존 사이클이 존재하면 에러가 발생한다`() {
+        val components = listOf(
+            SheathComponentFactory.create(Test5::class),
+            SheathComponentFactory.create(Test6::class),
+            SheathComponentFactory.create(Test7::class),
         )
 
         try {
-            classes.sortedTopologically()
+            components.sorted()
         } catch (e: IllegalStateException) {
-            Truth.assertThat(e).hasMessageThat()
-                .isEqualTo("클래스 간 의존 사이클이 존재합니다.")
+            assertThat(e).hasMessageThat()
+                .isEqualTo("SheathComponent 간 의존 사이클이 존재합니다.")
         }
     }
 
-    // 위상 정렬 기능 해피 케이스 테스트 용
-    private class Test1(val test2: Test2, val test3: Test3)
-
-    private class Test2(val test4: Test4)
-
-    private class Test3(val test4: Test4)
-
-    private class Test4
-
-    // 의존 사아클 테스트 용
+    @Component
     private class Test5(val test6: Test6)
 
+    @Component
     private class Test6(val test7: Test7)
 
+    @Component
     private class Test7(val test5: Test5)
 }

@@ -1,10 +1,11 @@
 package woowacourse.shopping.data
 
-import com.ki960213.sheath.component.Repository
+import com.ki960213.sheath.annotation.Repository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.ProductRepository
 
-class DefaultProductRepository : ProductRepository, Repository {
+@Repository
+class DefaultProductRepository : ProductRepository {
 
     private val products: List<Product> = listOf(
         Product(
