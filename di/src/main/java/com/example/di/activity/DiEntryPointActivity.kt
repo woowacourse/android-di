@@ -17,8 +17,7 @@ import kotlin.reflect.full.primaryConstructor
 abstract class DiEntryPointActivity(
     private val activityModuleClassType: Class<out ActivityModule>,
     private val activityRetainedModuleClassType: Class<out ActivityRetainedModule>,
-) :
-    AppCompatActivity() {
+) : AppCompatActivity() {
 
     lateinit var activityRetainedModule: ActivityRetainedModule
         private set
