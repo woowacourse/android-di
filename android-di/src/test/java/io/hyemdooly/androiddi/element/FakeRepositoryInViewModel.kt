@@ -1,3 +1,3 @@
 package io.hyemdooly.androiddi.element
 
-class FakeRepositoryInViewModel
+class FakeRepositoryInViewModel : FakeRepository
