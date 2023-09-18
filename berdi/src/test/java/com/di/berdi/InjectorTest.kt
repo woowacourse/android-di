@@ -40,10 +40,15 @@ class InjectorTest {
     }
 
     private lateinit var injector: Injector
+    private lateinit var activity: AppCompatActivity
 
     @Before
     fun setup() {
         injector = Injector(Container(), FakeModule)
+        activity = Robolectric
+            .buildActivity(AppCompatActivity::class.java)
+            .create()
+            .get()
     }
 
     @Test
@@ -53,11 +58,6 @@ class InjectorTest {
             @Inject
             lateinit var fakeProperty: FakeProperty
         }
-
-        val activity = Robolectric
-            .buildActivity(AppCompatActivity::class.java)
-            .create()
-            .get()
 
         val constructor = requireNotNull(FakeSomething::class.primaryConstructor)
 
@@ -77,11 +77,6 @@ class InjectorTest {
         // given
         class FakeSomething(@Qualifier(qualifiedName = "TestQualifierParam") val fakeParam: FakeParam)
 
-        val activity = Robolectric
-            .buildActivity(AppCompatActivity::class.java)
-            .create()
-            .get()
-
         val constructor = requireNotNull(FakeSomething::class.primaryConstructor)
 
         // when
@@ -100,11 +95,6 @@ class InjectorTest {
         // given
         class FakeFirstViewModel(val fakeParam: FakeParam)
         class FakeSecondViewModel(val fakeParam: FakeParam)
-
-        val activity = Robolectric
-            .buildActivity(AppCompatActivity::class.java)
-            .create()
-            .get()
 
         val fakeFirstVMConstructor = requireNotNull(FakeFirstViewModel::class.primaryConstructor)
         val fakeSecondVMConstructor = requireNotNull(FakeSecondViewModel::class.primaryConstructor)
@@ -129,11 +119,6 @@ class InjectorTest {
     @Test
     fun `Singleton 어노테이션을 지정해주면 새로 생성하지 않고 저장된 인스턴스를 반환한다`() {
         // given
-        val activity = Robolectric
-            .buildActivity(AppCompatActivity::class.java)
-            .create()
-            .get()
-
         val type = FakeProperty::class.starProjectedType
 
         // when
@@ -153,6 +138,32 @@ class InjectorTest {
             it.assertThat(first).isInstanceOf(FakeSingletonProperty::class.java)
             // and
             it.assertThat(first).isSameAs(second)
+        }
+    }
+
+    @Test
+    fun `Singleton 어노테이션을 지정해주지 않으면 매번 새로 생성한 객체를 반환한다`() {
+        // given
+        val type = FakeProperty::class.starProjectedType
+
+        // when
+        val first = injector.getInstanceOf(
+            context = activity,
+            type = type,
+            qualifiedName = null,
+        )
+        val second = injector.getInstanceOf(
+            context = activity,
+            type = type,
+            qualifiedName = null,
+        )
+
+        // then
+        assertSoftly {
+            it.assertThat(first).isInstanceOf(FakeDefaultProperty::class.java)
+            it.assertThat(second).isInstanceOf(FakeDefaultProperty::class.java)
+            // and
+            it.assertThat(first).isNotSameAs(second)
         }
     }
 }
