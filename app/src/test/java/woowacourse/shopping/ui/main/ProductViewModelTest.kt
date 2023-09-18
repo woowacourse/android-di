@@ -14,10 +14,11 @@ import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import woowacourse.shopping.ui.main.product.ProductViewModel
 
-class MainViewModelTest {
+class ProductViewModelTest {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: ProductViewModel
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
 
@@ -32,7 +33,7 @@ class MainViewModelTest {
         productRepository = mockk()
         cartRepository = mockk()
 
-        viewModel = MainViewModel(
+        viewModel = ProductViewModel(
             productRepository = productRepository,
             cartRepository = cartRepository,
         )
