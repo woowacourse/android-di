@@ -20,15 +20,15 @@ class ClassSheathComponent(
     isSingleton: Boolean,
     dependentConditions: Map<KType, DependentCondition>,
     private val clazz: KClass<*>,
-) : SheathComponent1(
+) : SheathComponent(
     type = type,
     name = name,
     isSingleton = isSingleton,
     dependentConditions = dependentConditions,
 ) {
-    private val cache: MutableMap<KType, SheathComponent1> = mutableMapOf()
+    private val cache: MutableMap<KType, SheathComponent> = mutableMapOf()
 
-    override fun instantiate(components: List<SheathComponent1>) {
+    override fun instantiate(components: List<SheathComponent>) {
         val dependingComponents = components.filter { this.isDependingOn(it) }
 
         val constructor = clazz.getInjectConstructor()
@@ -104,7 +104,7 @@ class ClassSheathComponent(
             ?: primaryConstructor
             ?: throw IllegalStateException("생성자에 @Inject이 붙지 않고 주 생성자가 없는 클래스는 인스턴스화 할 수 없습니다.")
 
-    private fun KFunction<*>.getArguments(components: List<SheathComponent1>): List<Any> {
+    private fun KFunction<*>.getArguments(components: List<SheathComponent>): List<Any> {
         return valueParameters.map { param ->
             val component = components.find { param.type.isSupertypeOf(it.type) }
                 ?: throw IllegalArgumentException("${clazz.qualifiedName}의 종속 항목이 존재하지 않아 인스턴스화 할 수 없습니다.")
@@ -115,7 +115,7 @@ class ClassSheathComponent(
         }
     }
 
-    private fun Any.injectProperty(components: List<SheathComponent1>) {
+    private fun Any.injectProperty(components: List<SheathComponent>) {
         val properties = findAnnotatedProperties<Inject>()
         properties.forEach { property ->
             val component = components.find { property.returnType.isSupertypeOf(it.type) }
@@ -128,7 +128,7 @@ class ClassSheathComponent(
         }
     }
 
-    private fun Any.injectFunction(components: List<SheathComponent1>) {
+    private fun Any.injectFunction(components: List<SheathComponent>) {
         val functions = findAnnotatedFunctions<Inject>()
         functions.forEach { function ->
             val arguments = function.getArguments(components)

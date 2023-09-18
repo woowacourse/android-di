@@ -4,7 +4,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class SheathComponent1(
+abstract class SheathComponent(
     val type: KType,
     val name: String,
     val isSingleton: Boolean,
@@ -15,7 +15,7 @@ abstract class SheathComponent1(
     lateinit var instance: Any
         protected set
 
-    fun isDependingOn(component: SheathComponent1): Boolean {
+    fun isDependingOn(component: SheathComponent): Boolean {
         val type = dependentConditions.keys
             .find { it.isSupertypeOf(component.type) }
             ?: return false
@@ -25,12 +25,12 @@ abstract class SheathComponent1(
         return qualifier == component.type.jvmErasure
     }
 
-    abstract fun instantiate(components: List<SheathComponent1>)
+    abstract fun instantiate(components: List<SheathComponent>)
 
     abstract fun getNewInstance(): Any
 
     override fun equals(other: Any?): Boolean =
-        if (other is SheathComponent1) type == other.type else false
+        if (other is SheathComponent) type == other.type else false
 
     override fun hashCode(): Int = type.hashCode()
 

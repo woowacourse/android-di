@@ -1,6 +1,6 @@
 package com.ki960213.sheath.sorter
 
-import com.ki960213.sheath.component.SheathComponent1
+import com.ki960213.sheath.component.SheathComponent
 import java.util.LinkedList
 import java.util.Queue
 
@@ -29,7 +29,7 @@ private fun Queue<Node>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node>) 
     }
 }
 
-internal fun List<SheathComponent1>.sorted(): List<SheathComponent1> {
+internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
     val nodes: Set<Node> = this.map(::Node).toSet()
     val graph = Graph(nodes)
 

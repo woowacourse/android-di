@@ -10,7 +10,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 internal object SheathComponentFactory {
 
-    fun create(clazz: KClass<*>): SheathComponent1 {
+    fun create(clazz: KClass<*>): SheathComponent {
         SheathComponentValidator.validate(clazz)
 
         val name = clazz.qualifiedName
@@ -25,7 +25,7 @@ internal object SheathComponentFactory {
         )
     }
 
-    fun create(function: KFunction<*>): SheathComponent1 {
+    fun create(function: KFunction<*>): SheathComponent {
         SheathComponentValidator.validate(function)
 
         val name = function.returnType.jvmErasure.qualifiedName
@@ -40,7 +40,7 @@ internal object SheathComponentFactory {
         )
     }
 
-    fun create(context: Context): SheathComponent1 = ContextSheathComponent(
+    fun create(context: Context): SheathComponent = ContextSheathComponent(
         type = Context::class.createType(),
         name = Context::class.qualifiedName!!,
         isSingleton = true,

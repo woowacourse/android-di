@@ -1,9 +1,9 @@
 package com.ki960213.sheath.sorter
 
-import com.ki960213.sheath.component.SheathComponent1
+import com.ki960213.sheath.component.SheathComponent
 import kotlin.properties.Delegates
 
-internal class Node(val sheathComponent: SheathComponent1) {
+internal class Node(val sheathComponent: SheathComponent) {
 
     val dependentCount: Int = sheathComponent.dependentCount
 

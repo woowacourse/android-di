@@ -9,13 +9,13 @@ class ContextSheathComponent(
     isSingleton: Boolean,
     dependentConditions: Map<KType, DependentCondition>,
     private val context: Context,
-) : SheathComponent1(
+) : SheathComponent(
     type = type,
     name = name,
     isSingleton = isSingleton,
     dependentConditions = dependentConditions,
 ) {
-    override fun instantiate(components: List<SheathComponent1>) {
+    override fun instantiate(components: List<SheathComponent>) {
         instance = context
     }
 

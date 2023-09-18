@@ -9,7 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.reflect.full.createType
 
-internal class SheathComponent1Test {
+internal class SheathComponentTest {
 
     @JvmField
     @Rule
