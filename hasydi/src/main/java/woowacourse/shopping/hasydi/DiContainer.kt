@@ -9,7 +9,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
-class AppContainer(private val module: Module) {
+class DiContainer(private val module: Module) {
 
     private val appContainer: MutableMap<String, Any?> = mutableMapOf()
 

@@ -9,9 +9,9 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class Injector(private val appContainer: AppContainer) {
+class Injector(private val diContainer: DiContainer) {
 
-    private val activityContainerMap: MutableMap<String, AppContainer?> = mutableMapOf()
+    private val activityContainerMap: MutableMap<String, DiContainer?> = mutableMapOf()
 
     fun <T : Any> inject(clazz: KClass<T>): T {
         val primaryConstructor =
@@ -34,14 +34,14 @@ class Injector(private val appContainer: AppContainer) {
             if (property.hasAnnotation<Inject>()) {
                 val activityContainer = activityContainerMap[clazz.simpleName.toString()]
                 val injectValue =
-                    appContainer.getInstance(property) ?: activityContainer?.getInstance(property)
+                    diContainer.getInstance(property) ?: activityContainer?.getInstance(property)
                 property.isAccessible = true
                 (property as KMutableProperty<*>).setter.call(target, injectValue)
             }
         }
     }
 
-    fun setActivityContainer(tag: String, container: AppContainer) {
+    fun setActivityContainer(tag: String, container: DiContainer) {
         activityContainerMap[tag] = container
     }
 
@@ -53,7 +53,7 @@ class Injector(private val appContainer: AppContainer) {
 
     private fun getArgumentsMapping(parameters: List<KParameter>): Map<KParameter, Any> {
         return parameters.associateWith { param ->
-            appContainer.getInstance(param)
+            diContainer.getInstance(param)
                 ?: throw IllegalArgumentException("인스턴스 찾을 수 없음 $param")
         }
     }
