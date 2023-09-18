@@ -9,8 +9,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 object AutoDI {
-    private const val OVERRIDE_KTYPE_NULL_ERROR = "Override 하려는 인스턴스의 타입값이 Null 로 입력되었습니다."
-
     operator fun invoke(init: AutoDI.() -> Unit) {
         this.init()
     }
