@@ -1,35 +1,36 @@
-package woowacourse.shopping.di.application
+package woowacourse.shopping.di.module
 
 import android.content.Context
-import com.boogiwoogi.di.DiInjector
-import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Modules
 import com.boogiwoogi.di.Provides
 import com.boogiwoogi.di.Qualifier
-import com.boogiwoogi.di.UsableOn
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.ContextProvider
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-@UsableOn(DiInjector::class)
-@Module
-class ApplicationModule(override val context: Context) : ContextProvider, Modules {
+class ShoppingApplicationModules(private val context: Context) : Modules {
 
-    init {
-        if (context != context.applicationContext) throw IllegalArgumentException(CONTEXT_TYPE_ERROR)
-    }
-
+    @Qualifier("ApplicationContext")
     @Provides
     fun provideApplicationContext(): Context {
+        return context.applicationContext
+    }
+
+    @Qualifier("ActivityContext")
+    @Provides
+    fun provideActivityContext(): Context {
+        if (context == context.applicationContext) {
+            throw IllegalArgumentException(CONTEXT_TYPE_ERROR)
+        }
         return context
     }
 
@@ -50,6 +51,11 @@ class ApplicationModule(override val context: Context) : ContextProvider, Module
     @Provides
     fun provideProductRepository(): ProductRepository {
         return DefaultProductRepository()
+    }
+
+    @Provides
+    fun provideDateFormatter(): DateFormatter {
+        return DateFormatter(context)
     }
 
     override fun provideInstanceOf(clazz: KClass<*>): Any? {
