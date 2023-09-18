@@ -1,22 +1,19 @@
-package woowacourse.shopping.di.diactivity
+package com.di.berdi
 
 import androidx.lifecycle.ViewModel
-import com.di.berdi.Container
-import com.di.berdi.DIActivity
-import com.di.berdi.DIApplication
-import com.di.berdi.Injector
 import com.di.berdi.annotation.Inject
 import com.di.berdi.annotation.Qualifier
+import com.di.berdi.fake.FakeModule
+import com.di.berdi.fake.FakeObj
+import com.di.berdi.fake.FakeRepository
+import com.di.berdi.fake.InMemoryFakeRepository
+import com.di.berdi.fake.OnDiskFakeRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.di.FakeObj
-import woowacourse.shopping.di.FakeRepository
-import woowacourse.shopping.di.InMemoryFakeRepository
-import woowacourse.shopping.di.OnDiskFakeRepository
 
 class FakeDIApplication : DIApplication() {
     override fun inject() {

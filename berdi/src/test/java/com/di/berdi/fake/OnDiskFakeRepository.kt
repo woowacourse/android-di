@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.di.berdi.fake
 
 class OnDiskFakeRepository(
     val firstDataSource: FirstDataSource,

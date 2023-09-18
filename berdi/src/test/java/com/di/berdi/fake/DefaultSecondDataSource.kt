@@ -1,3 +1,3 @@
-package woowacourse.shopping.di
+package com.di.berdi.fake
 
 class DefaultSecondDataSource : SecondDataSource

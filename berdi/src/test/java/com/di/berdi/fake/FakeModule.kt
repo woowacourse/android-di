@@ -1,15 +1,7 @@
-package woowacourse.shopping.di.diactivity
+package com.di.berdi.fake
 
 import com.di.berdi.Module
 import com.di.berdi.annotation.Qualifier
-import woowacourse.shopping.di.DefaultFirstDataSource
-import woowacourse.shopping.di.DefaultSecondDataSource
-import woowacourse.shopping.di.FakeObj
-import woowacourse.shopping.di.FakeRepository
-import woowacourse.shopping.di.FirstDataSource
-import woowacourse.shopping.di.InMemoryFakeRepository
-import woowacourse.shopping.di.OnDiskFakeRepository
-import woowacourse.shopping.di.SecondDataSource
 
 object FakeModule : Module {
     fun provideFakeObj(): FakeObj = FakeObj

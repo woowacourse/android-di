@@ -39,11 +39,7 @@ class Injector(private val container: Container, private val module: Module) {
         return createInstance(context, param.type, param.qualifiedName)
     }
 
-    fun createInstance(
-        context: Context,
-        type: KType,
-        qualifiedName: String?,
-    ): Any {
+    fun createInstance(context: Context, type: KType, qualifiedName: String?): Any {
         // 모듈에서 파람과 맞는 타입을 찾는다
         val targetModule = requireNotNull(
             module::class.declaredFunctions.find { moduleFunc ->
