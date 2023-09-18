@@ -6,9 +6,11 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-open class DefaultInstanceContainer : InstanceContainer {
+open class DefaultInstanceContainer(
+    instances: List<Instance<out Any>> = listOf()
+) : InstanceContainer {
 
-    override var value: MutableList<Instance<out Any>>? = mutableListOf()
+    override var value: MutableList<Instance<out Any>>? = instances.toMutableList()
 
     override fun add(instance: Instance<*>) {
         value?.add(instance)
