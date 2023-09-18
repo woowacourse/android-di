@@ -14,7 +14,7 @@ class InjectorTest {
 
     @Before
     fun setup() {
-        injector = Injector(AppContainer(listOf(FakeModule)))
+        injector = Injector(DiContainer(FakeModule))
     }
 
     @Test
@@ -31,7 +31,7 @@ class InjectorTest {
     @Test(expected = IllegalArgumentException::class)
     fun `모듈이 정의되지 않아 의존성 주입에 필요한 인스턴스가 없어 인스턴스 생성에 실패한다`() {
         // given
-        injector = Injector(AppContainer(listOf()))
+        injector = Injector(DiContainer(FakeDefaultModule))
 
         // when
         val vm = injector.inject(FakeViewModel::class)

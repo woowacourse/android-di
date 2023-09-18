@@ -1,10 +1,13 @@
 package woowacourse.shopping.hasydi
 
+import android.content.Context
 import woowacourse.shopping.hasydi.annotation.Inject
 import woowacourse.shopping.hasydi.annotation.Qualifier
 import woowacourse.shopping.hasydi.annotation.Singleton
 
 object FakeModule : Module {
+
+    override var context: Context? = null
 
     fun provideProductRepository(): ProductFakeRepository = ProductFakeRepository
 
@@ -30,6 +33,10 @@ object FakeModule : Module {
     fun provideSingletonRepository(): FakeSingletonRepository = FakeSingletonRepository()
 
     fun provideDisposableRepository(): FakeDisposableRepository = FakeDisposableRepository()
+}
+
+object FakeDefaultModule : Module {
+    override var context: Context? = null
 }
 
 object ProductFakeRepository
