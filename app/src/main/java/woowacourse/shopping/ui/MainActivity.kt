@@ -21,11 +21,12 @@ class MainActivity : DiActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        addModuleInstances()
+        injectFields()
+
         setupBinding()
         setupToolbar()
         setupView()
-
-        injector.addModuleInstances(MainActivityModule())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -35,6 +36,12 @@ class MainActivity : DiActivity() {
         }
         return true
     }
+
+    override fun addModuleInstances() {
+        injector.addModuleInstances(MainActivityModule())
+    }
+
+    override fun injectFields() {}
 
     private fun setupBinding() {
         binding.lifecycleOwner = this

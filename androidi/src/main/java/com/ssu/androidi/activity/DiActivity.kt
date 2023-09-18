@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ssu.androidi.container.DefaultContainer
 import com.ssu.di.injector.Injector
 
-open class DiActivity : AppCompatActivity() {
+abstract class DiActivity : AppCompatActivity() {
     val injector: Injector = Injector(DefaultContainer())
+
+    abstract fun addModuleInstances()
+    abstract fun injectFields()
 }

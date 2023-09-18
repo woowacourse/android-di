@@ -75,7 +75,7 @@ class Injector(
         }
     }
 
-    private fun <T> injectOnFields(clazz: KClass<*>, instance: T) {
+    fun <T> injectOnFields(clazz: KClass<*>, instance: T) {
         val properties = clazz.declaredMemberProperties
             .filter { it.hasAnnotation<Injected>() }
             .filterIsInstance<KMutableProperty<*>>()
