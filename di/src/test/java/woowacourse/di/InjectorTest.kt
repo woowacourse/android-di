@@ -116,4 +116,17 @@ class InjectorTest {
     class NeedInjectFieldViewModel {
         lateinit var productRepository: FakeProductRepository
     }
+
+    @Test
+    fun `Singleton 어노테이션이 붙은 경우 한 번만 생성해준다`() {
+        // when
+        val firstCall = injector.inject(SingletonViewModel::class)
+        val secondCall = injector.inject(SingletonViewModel::class)
+
+        // then
+        assertEquals(SingleRepository::class, firstCall.repository::class)
+        assertEquals(firstCall.repository, secondCall.repository)
+    }
+
+    class SingletonViewModel(@Qualifier(SingleRepository::class) val repository: FakeSingleRepository)
 }

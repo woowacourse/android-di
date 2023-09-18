@@ -1,6 +1,7 @@
 package woowacourse.di
 
 import woowacourse.di.annotation.InjectField
+import woowacourse.di.annotation.Singleton
 
 class FakeModule : Module {
 
@@ -15,6 +16,9 @@ class FakeModule : Module {
         InDiskFakeCartRepository(dataSource)
 
     fun provideFakeRemoteDataSource(): FakeDataSource = FakeRemoteDataSource()
+
+    @Singleton
+    fun provideSingletonRepository(): FakeSingleRepository = SingleRepository()
 }
 
 interface FakeProductRepository
@@ -30,3 +34,5 @@ class InDiskFakeCartRepository(val dataSource: FakeDataSource) : FakeCartReposit
 interface FakeDataSource
 class FakeRoomDataSource : FakeDataSource
 class FakeRemoteDataSource : FakeDataSource
+interface FakeSingleRepository
+class SingleRepository : FakeSingleRepository

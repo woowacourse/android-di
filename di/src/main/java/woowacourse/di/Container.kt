@@ -1,67 +1,63 @@
 package woowacourse.di
 
 import woowacourse.di.annotation.InjectField
-import java.lang.IllegalStateException
+import woowacourse.di.annotation.Singleton
+import kotlin.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.isSubclassOf
 
 class Container(private val module: Module) {
 
     private val instances = mutableMapOf<KClass<*>, Any?>()
 
     init {
-        runModule()
+        createSingleTon()
     }
 
-    private fun runModule() {
+    private fun createSingleTon() {
         module::class.declaredMemberFunctions.forEach { provider ->
-            createInstance(provider)
+            if (provider.hasAnnotation<Singleton>()) {
+                val instance =
+                    createInstance(provider) ?: throw IllegalStateException("잘못된 인스턴스 값 입니다")
+                instances[instance::class] = instance
+            }
         }
     }
 
-    private fun createInstance(provider: KFunction<*>) {
+    fun getInstance(clazz: KClass<*>): Any? {
+        if (instances[clazz] != null) return instances[clazz]
+        val a = module::class.declaredMemberFunctions.filter {
+            clazz.supertypes.any { type -> type == it.returnType }
+        }.firstOrNull() ?: return null
+        return createInstance(a)
+    }
+
+    private fun createInstance(provider: KFunction<*>): Any? {
         val injectParams = provider.parameters.filter { it.hasAnnotation<InjectField>() }
 
-        if (injectParams.isNotEmpty()) {
+        return if (injectParams.isNotEmpty()) {
+            val instance = mutableListOf<Any?>()
             injectParams.forEach { param ->
                 val func = module::class.declaredMemberFunctions.firstOrNull {
                     it.returnType == param.type
-                } ?: throw java.lang.IllegalStateException()
-                createInstance(func)
+                } ?: throw IllegalStateException()
+                instance.add(createInstance(func))
             }
-            createParameterInstance(injectParams, provider)
+            createParameterInstance(instance, provider)
         } else {
-            provider.call(module)?.let {
-                instances[it::class] = it
-            }
+            provider.call(module)
         }
     }
 
     private fun createParameterInstance(
-        injectParams: List<KParameter>,
+        injectParams: List<Any?>,
         provider: KFunction<*>,
-    ) {
+    ): Any? {
         val args: MutableList<Any?> = mutableListOf(module)
-        injectParams.forEach { param ->
-            val parameterInstance = instances.filter { instance ->
-                instance.key.supertypes.any { param.type == it }
-            }.map { it.value }.firstOrNull()
-                ?: throw IllegalStateException("일치하는 값이 없습니다")
-            args.add(parameterInstance)
-        }
+        args.addAll(injectParams)
 
-        provider.call(*args.toTypedArray())?.let {
-            instances[it::class] = it
-        }
-    }
-
-    fun getInstance(type: KClass<*>): Any? {
-        if (instances[type] != null) return instances[type]
-        val key = instances.keys.firstOrNull { it.isSubclassOf(type) }
-        return instances[key]
+        return provider.call(*args.toTypedArray())
     }
 }
