@@ -12,6 +12,7 @@ import woowacourse.shopping.data.ProductDefaultRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 
 object NormalModule : Module {
 
@@ -39,4 +40,6 @@ object NormalModule : Module {
             "shopping_db",
         ).build()
     }
+
+    fun provideDateFormatter(context: Context): DateFormatter = DateFormatter(context)
 }

@@ -39,7 +39,7 @@ class Injector(private val container: Container, private val module: Module) {
         return createInstance(context, param.type, param.qualifiedName)
     }
 
-    private fun createInstance(
+    fun createInstance(
         context: Context,
         type: KType,
         qualifiedName: String?,

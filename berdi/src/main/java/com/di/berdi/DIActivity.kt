@@ -4,19 +4,61 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.di.berdi.annotation.Inject
+import com.di.berdi.util.qualifiedName
 import java.lang.reflect.Field
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.javaField
 
 abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModelField =
-            this::class.java.declaredFields.firstOrNull { ViewModel::class.java.isAssignableFrom(it.type) }
+        val properties = this::class.declaredMemberProperties
 
-        viewModelField?.let {
-            val viewModel = getNewViewModelByType(viewModelField)
-            setViewModelInstance(it, viewModel)
-        }
+        val propertiesToInject = properties.filterInjectsProperties()
+        setInjectFieldInstance(propertiesToInject)
+
+        val viewModelField = properties.findViewModelField()
+        viewModelField?.let { setViewModelInstance(it) }
 
         super.onCreate(savedInstanceState)
+    }
+
+    private fun Collection<KProperty1<out DIActivity, *>>.findViewModelField(): Field? {
+        return firstOrNull {
+            val fieldType = requireNotNull(it.javaField?.type)
+            ViewModel::class.java.isAssignableFrom(fieldType)
+        }?.javaField
+    }
+
+    private fun Collection<KProperty1<out DIActivity, *>>.filterInjectsProperties(): List<KProperty1<out DIActivity, *>> {
+        return filter { it.hasAnnotation<Inject>() }
+    }
+
+    private fun setViewModelInstance(viewModelField: Field) {
+        viewModelField.setInstance(getNewViewModelByType(viewModelField))
+    }
+
+    private fun setInjectFieldInstance(fieldsToInject: List<KProperty1<out DIActivity, *>>) {
+        val application = application as DIApplication
+        fieldsToInject.forEach { property ->
+            injectField(application, property)
+        }
+    }
+
+    private fun injectField(application: DIApplication, property: KProperty1<out DIActivity, *>) {
+        val instance = application.injector.createInstance(
+            this,
+            property.returnType,
+            property.qualifiedName,
+        )
+        property.javaField?.setInstance(instance)
+    }
+
+    private fun Field.setInstance(instance: Any) {
+        isAccessible = true
+        set(this@DIActivity, instance)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -32,10 +74,5 @@ abstract class DIActivity : AppCompatActivity() {
             owner = this@DIActivity,
             factory = ViewModelFactory(this, application.injector),
         )[type]
-    }
-
-    private fun setViewModelInstance(viewModelField: Field, viewModel: ViewModel) {
-        viewModelField.isAccessible = true
-        viewModelField.set(this, viewModel)
     }
 }
