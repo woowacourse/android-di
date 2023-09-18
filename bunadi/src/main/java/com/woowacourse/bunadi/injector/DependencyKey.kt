@@ -14,23 +14,17 @@ data class DependencyKey(
     companion object {
         fun createDependencyKey(clazz: KClass<*>): DependencyKey {
             val returnType = clazz.starProjectedType
-            val annotation = clazz.annotations.firstOrNull()
-
-            return DependencyKey(returnType, annotation)
+            return DependencyKey(returnType)
         }
 
         fun createDependencyKey(provider: KFunction<*>): DependencyKey {
             val returnType = provider.returnType
-            val annotation = provider.annotations.firstOrNull()
-
-            return DependencyKey(returnType, annotation)
+            return DependencyKey(returnType)
         }
 
         fun createDependencyKey(parameter: KParameter): DependencyKey {
             val returnType = parameter.type
-            val annotation = parameter.annotations.firstOrNull()
-
-            return DependencyKey(returnType, annotation)
+            return DependencyKey(returnType)
         }
 
         fun createDependencyKey(property: KProperty<*>): DependencyKey {

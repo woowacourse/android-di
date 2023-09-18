@@ -15,18 +15,23 @@ import kotlin.reflect.KClass
 
 abstract class InjectableActivity : AppCompatActivity(), Injectable {
     abstract val activityClazz: KClass<out InjectableActivity>
-    private val retainDependencyInjector by lazy {
+    override val cache: Cache by lazy { DefaultCache(retainActivityDependencyInjector.cache) }
+
+    private val activityDependencyInjector by lazy {
+        ActivityDependencyInjector(cache)
+    }
+    private val retainActivityDependencyInjector by lazy {
         getDependencyInjector().apply { injectActivityDependencies() }
     }
-    override val cache: Cache by lazy { DefaultCache(retainDependencyInjector.cache) }
-    private val dependencyLifecycleObserver by lazy {
-        ActivityDependencyInjector(cache).injectActivityMembers()
-        RetainedActivityDependencyLifecycleObserver(retainDependencyInjector, this)
+
+    private val retainDependencyLifecycleObserver by lazy {
+        RetainedActivityDependencyLifecycleObserver(retainActivityDependencyInjector, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(dependencyLifecycleObserver)
+        activityDependencyInjector.injectActivityMembers()
+        lifecycle.addObserver(retainDependencyLifecycleObserver)
     }
 
     private fun getDependencyInjector(): Injector {
@@ -52,6 +57,6 @@ abstract class InjectableActivity : AppCompatActivity(), Injectable {
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycle.removeObserver(dependencyLifecycleObserver)
+        lifecycle.removeObserver(retainDependencyLifecycleObserver)
     }
 }

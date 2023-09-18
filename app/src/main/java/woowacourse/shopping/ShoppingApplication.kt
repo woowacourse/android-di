@@ -12,7 +12,7 @@ class ShoppingApplication : InjectableApplication() {
     }
 
     private fun initModules() {
-        SingletonDependencyInjector(this).modules {
+        SingletonDependencyInjector(cache).modules {
             module(DaoModule(this@ShoppingApplication))
         }
     }

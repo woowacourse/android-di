@@ -5,8 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import com.mission.androiddi.component.viewModel.ViewModelDependencyInjector
-import com.woowacourse.bunadi.cache.Cache
 import com.woowacourse.bunadi.cache.DefaultCache
+import com.woowacourse.bunadi.injector.Injectable
 
 inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
     return ViewModelLazy(
@@ -19,9 +19,9 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> {
 inline fun <reified VM : ViewModel> createViewModel(
     activity: Activity,
 ): VM {
-    val parentCache = activity.application
-    if (parentCache is Cache) {
-        return ViewModelDependencyInjector(DefaultCache(parentCache)).inject(VM::class)
+    val parent = activity.application
+    if (parent is Injectable) {
+        return ViewModelDependencyInjector(DefaultCache(parent.cache)).inject(VM::class)
     }
     return ViewModelDependencyInjector().inject(VM::class)
 }

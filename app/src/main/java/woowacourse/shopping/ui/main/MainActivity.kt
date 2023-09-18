@@ -1,70 +1,33 @@
 package woowacourse.shopping.ui.main
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.widget.Toast
 import com.mission.androiddi.component.activity.InjectableActivity
+import com.mission.androiddi.scope.ActivityScope
 import com.mission.androiddi.util.viewModel.viewModel
-import woowacourse.shopping.R
+import com.woowacourse.bunadi.annotation.Inject
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : InjectableActivity() {
     override val activityClazz = MainActivity::class
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel: MainViewModel by viewModel()
 
+    @Inject
+    @ActivityScope
+    private lateinit var childShareResource: ChildShareResource
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         setupBinding()
-        setupToolbar()
-        setupView()
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.cart_menu, menu)
-        menu?.findItem(R.id.cart)?.actionView?.let { view ->
-            view.setOnClickListener { navigateToCart() }
-        }
-        return true
+        // Activity와 Fragment의 의존성 공유를 확인하기 위한 코드
+        childShareResource.print("MainActivity", this)
     }
 
     private fun setupBinding() {
         binding.lifecycleOwner = this
         binding.vm = viewModel
-    }
-
-    private fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
-    }
-
-    private fun setupView() {
-        setupProductData()
-        setupProductList()
-    }
-
-    private fun setupProductData() {
-        viewModel.fetchAllProducts()
-    }
-
-    private fun setupProductList() {
-        viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct,
-            )
-            binding.rvProducts.adapter = adapter
-        }
-        viewModel.onProductAdded.observe(this) {
-            if (!it) return@observe
-            Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun navigateToCart() {
-        startActivity(Intent(this, CartActivity::class.java))
     }
 }
