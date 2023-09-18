@@ -23,19 +23,19 @@ import org.robolectric.annotation.Config
  * 테스트용 Fake 클래스
  * */
 
-class RetainDependency {
+internal class RetainDependency {
     private var value = 0
 
     fun increase(): Int = ++value
 }
 
-class NotRetainDependency {
+internal class NotRetainDependency {
     private var value = 0
 
     fun increase(): Int = ++value
 }
 
-class TestActivity : InjectableActivity() {
+internal class TestActivity : InjectableActivity() {
     override val activityClazz = TestActivity::class
 
     @Inject
