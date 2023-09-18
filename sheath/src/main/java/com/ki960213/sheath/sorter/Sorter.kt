@@ -4,13 +4,6 @@ import com.ki960213.sheath.component.SheathComponent
 import java.util.LinkedList
 import java.util.Queue
 
-private fun Queue<Node>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node>) {
-    nodes.forEach {
-        it.minusInDegree()
-        if (it.inDegreeCount == 0) this.add(it)
-    }
-}
-
 internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
     val nodes: Set<Node> = this.map(::Node).toSet()
     val graph = Graph(nodes)
@@ -27,4 +20,11 @@ internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
     }
 
     return result.map(Node::sheathComponent)
+}
+
+private fun Queue<Node>.minusInDegreeAndAddNotDependentNodes(nodes: List<Node>) {
+    nodes.forEach {
+        it.minusInDegree()
+        if (it.inDegreeCount == 0) this.add(it)
+    }
 }
