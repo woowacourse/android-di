@@ -12,11 +12,12 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
     val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
-    private val lifecycleAwareDependencies: LifecycleAwareDependencies =
+    val lifecycleAwareDependencies: LifecycleAwareDependencies =
         LifecycleAwareDependencies()
 
     inline fun <reified T : Any> inject(lifecycle: KType? = null): T {
@@ -33,7 +34,6 @@ object DependencyInjector {
 
     fun createDependencies(lifecycle: KType?) {
         lifecycleAwareDependencies.value[lifecycle] = QualifiableDependencies()
-        println(lifecycleAwareDependencies)
     }
 
     fun deleteDependencies(lifecycle: KType?) {
@@ -57,11 +57,13 @@ object DependencyInjector {
                 provider?.jvmErasure?.primaryConstructor
                     ?: throw InjectError.ConstructorNoneAvailable(type)
                 )
+
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters, lifecycle)
         return constructor.call(*arguments).also {
+            if (type.jvmErasure.jvmName.contains("ViewModel")) return@also
             lifecycleAwareDependencies.value[lifecycle]?.value?.get(qualifier)?.value?.set(
-                type, this
+                type, it
             )
         }.apply {
             injectFields(lifecycle, this)
