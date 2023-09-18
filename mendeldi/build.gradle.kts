@@ -60,15 +60,15 @@ afterEvaluate {
                 from(components["release"])
 
                 groupId = "com.github.rhthrhrl0"
-                artifactId = "di"
-                version = "1.0.3"
+                artifactId = "mendeldi"
+                version = "1.0.4"
             }
             create<MavenPublication>("debug") {
                 from(components["debug"])
 
                 groupId = "com.github.rhthrhrl0"
-                artifactId = "di"
-                version = "1.0.3"
+                artifactId = "mendeldi"
+                version = "1.0.4"
             }
         }
     }
