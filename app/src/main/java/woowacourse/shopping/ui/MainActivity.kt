@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.util.autoDI.injectViewModel
+import com.angrypig.autodi.injectViewModel
 
 class MainActivity : AppCompatActivity() {
 
