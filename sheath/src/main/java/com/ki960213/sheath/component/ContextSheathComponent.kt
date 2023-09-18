@@ -3,7 +3,7 @@ package com.ki960213.sheath.component
 import android.content.Context
 import kotlin.reflect.KType
 
-class ContextSheathComponent(
+internal class ContextSheathComponent(
     type: KType,
     name: String,
     isSingleton: Boolean,

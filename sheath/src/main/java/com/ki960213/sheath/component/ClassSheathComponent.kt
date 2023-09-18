@@ -14,7 +14,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
-class ClassSheathComponent(
+internal class ClassSheathComponent(
     type: KType,
     name: String,
     isSingleton: Boolean,

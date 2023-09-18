@@ -10,7 +10,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
-object DependenciesExtractor {
+internal object DependenciesExtractor {
 
     fun extractFrom(clazz: KClass<*>): Map<KType, DependentCondition> =
         clazz.extractFromConstructor() + clazz.extractFromProperties() + clazz.extractFromFunctions()

@@ -6,7 +6,7 @@ import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.javaMethod
 
-class FunctionSheathComponent(
+internal class FunctionSheathComponent(
     type: KType,
     name: String,
     isSingleton: Boolean,
