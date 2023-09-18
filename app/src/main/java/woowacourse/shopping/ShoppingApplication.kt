@@ -25,7 +25,7 @@ class ShoppingApplication : Application() {
     private fun initContainer() {
         Container.apply {
             addInstance(CartProductDao::class, localDatabase.cartProductDao())
-            addInstance(ProductRepository::class, inject(DefaultProductRepository::class))
+            addInstance(ProductRepository::class, ::getProductRepository)
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InDisk::class.simpleName!!),
@@ -37,6 +37,10 @@ class ShoppingApplication : Application() {
                 inject(InMemoryCartRepository::class),
             )
         }
+    }
+
+    fun getProductRepository(): ProductRepository {
+        return DefaultProductRepository()
     }
 
     companion object {

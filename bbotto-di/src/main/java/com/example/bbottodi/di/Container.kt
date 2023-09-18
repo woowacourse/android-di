@@ -2,12 +2,18 @@ package com.example.bbottodi.di
 
 import com.example.bbottodi.di.model.InstanceIdentifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 object Container {
     private val instances = mutableMapOf<InstanceIdentifier, Any>()
 
     fun addInstance(type: KClass<*>, instance: Any) {
-        val annotations = instance::class.annotations.map { it::class.simpleName!! }
+        val annotations =
+            if (instance is KFunction<*>) {
+                listOf("Inject")
+            } else {
+                instance::class.annotations.map { it::class.simpleName!! }
+            }
         val key = InstanceIdentifier(type, annotations)
         instances[key] = instance
     }
@@ -22,6 +28,10 @@ object Container {
         val instanceKey = instances.keys.firstOrNull {
             key.type == it.type && key.qualifier.containsAll(it.qualifier)
         } ?: return null
-        return instances[instanceKey]
+        val instance = instances[instanceKey]
+        if (instance is KFunction<*>) {
+            return instance.call()
+        }
+        return instance
     }
 }
