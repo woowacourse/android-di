@@ -4,14 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.now.androdi.ActivityInjectable
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ActivityInjectable() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
