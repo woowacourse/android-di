@@ -20,7 +20,7 @@ class InjectorTest {
     @BeforeEach
     fun setup() {
         container = TestContainer()
-        injector = Injector(container)
+        injector = Injector(null, container)
     }
 
     @Test

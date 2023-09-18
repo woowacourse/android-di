@@ -17,7 +17,8 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
-    private val container: DiContainer,
+    private var parentContainer: DiContainer?,
+    val container: DiContainer,
 ) {
     fun addModuleInstances(module: Module) {
         module::class.declaredFunctions.forEach { function ->
@@ -67,10 +68,13 @@ class Injector(
                 module
             } else if (parameter.hasAnnotation<Qualifier>()) {
                 val qualifier = parameter.findAnnotation<Qualifier>()!!.type
-                requireNotNull(container.getInstance(qualifier)) { "$qualifier $ERROR_NO_FIELD" }
+                val instance: Any? =
+                    container.getInstance(qualifier) ?: parentContainer?.getInstance(qualifier)
+                requireNotNull(instance) { "$qualifier $ERROR_NO_FIELD" }
             } else {
                 val type = parameter.type.jvmErasure
-                requireNotNull(container.getInstance(type)) { "${type.simpleName} $ERROR_NO_FIELD" }
+                val instance = container.getInstance(type) ?: parentContainer?.getInstance(type)
+                requireNotNull(instance) { "${type.simpleName} $ERROR_NO_FIELD" }
             }
         }
     }
@@ -84,12 +88,20 @@ class Injector(
             property.isAccessible = true
             val newInstance = if (property.hasAnnotation<Qualifier>()) {
                 val qualifier = property.findAnnotation<Qualifier>()!!.type
-                requireNotNull(container.getInstance(qualifier)) { "${clazz.simpleName} $ERROR_NO_FIELD" }
+                val instance: Any? =
+                    container.getInstance(qualifier) ?: parentContainer?.getInstance(qualifier)
+                requireNotNull(instance) { "${clazz.simpleName} $ERROR_NO_FIELD" }
             } else {
-                requireNotNull(container.getInstance(property.returnType.jvmErasure)) { "${clazz.simpleName} $ERROR_NO_FIELD" }
+                val type = property.returnType.jvmErasure
+                val instance = container.getInstance(type) ?: parentContainer?.getInstance(type)
+                requireNotNull(instance) { "${clazz.simpleName} $ERROR_NO_FIELD" }
             }
             property.setter.call(instance, newInstance)
         }
+    }
+
+    fun removeDependency() {
+        parentContainer = null
     }
 
     companion object {
