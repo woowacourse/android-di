@@ -11,8 +11,8 @@ import com.example.di.module.ViewModelModule
 class ModuleFactory(
     private val applicationModuleClazz: Class<out ApplicationModule>,
     activityRetainedModuleClazz: Class<out ActivityRetainedModule>,
-    private val activityModuleClazz: Class<out ActivityModule>,
     private val viewModelModuleClazz: Class<out ViewModelModule>,
+    private val activityModuleClazz: Class<out ActivityModule>,
 ) {
     private val diActivityRetainedContainer =
         DiActivityRetainedModuleContainer(activityRetainedModuleClazz)

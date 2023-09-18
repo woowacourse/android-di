@@ -9,6 +9,6 @@ import woowacourse.shopping.di.module.DefaultViewModelModule
 class ShoppingApplication : DiApplication(
     DefaultApplicationModule::class.java,
     DefaultActivityRetainedModule::class.java,
-    DefaultActivityModule::class.java,
     DefaultViewModelModule::class.java,
+    DefaultActivityModule::class.java,
 )

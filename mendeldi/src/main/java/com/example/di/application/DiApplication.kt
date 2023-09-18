@@ -11,14 +11,14 @@ import com.example.di.moduleFactory.ModuleFactory
 open class DiApplication(
     applicationModuleClazz: Class<out ApplicationModule>,
     activityRetainedModuleClazz: Class<out ActivityRetainedModule>,
-    activityModuleClazz: Class<out ActivityModule>,
     viewModelModuleClazz: Class<out ViewModelModule>,
+    activityModuleClazz: Class<out ActivityModule>,
 ) : Application() {
     private val moduleFactory = ModuleFactory(
         applicationModuleClazz,
         activityRetainedModuleClazz,
-        activityModuleClazz,
         viewModelModuleClazz,
+        activityModuleClazz,
     )
     private lateinit var applicationModule: ApplicationModule
 
