@@ -30,7 +30,7 @@ object DIContainer {
 
         if (result.size > 1) {
             result.find {
-                it.findAnnotation<Qualifier>()?.type == it.findAnnotation<Qualifier>()?.type
+                it.findAnnotation<Qualifier>()?.type == clazz.findAnnotation<Qualifier>()?.type
             } ?: throw IllegalStateException(ERROR_QUALIFIER_MUST_BE_ONE)
         }
         return result.firstOrNull()
