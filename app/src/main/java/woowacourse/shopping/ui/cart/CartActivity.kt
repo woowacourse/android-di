@@ -6,13 +6,16 @@ import com.example.di.activity.DiEntryPointActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.module.DefaultActivityModule
+import woowacourse.shopping.di.module.DefaultActivityRetainedModule
+import woowacourse.shopping.di.module.DefaultViewModelModule
 
-class CartActivity :
-    DiEntryPointActivity(DefaultActivityModule::class.java) {
-
+class CartActivity : DiEntryPointActivity(
+    DefaultActivityModule::class.java,
+    DefaultActivityRetainedModule::class.java,
+) {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel<CartViewModel>()
+    private val viewModel by viewModel<CartViewModel>(DefaultViewModelModule::class.java)
 
     private lateinit var dateFormatter: DateFormatter
 

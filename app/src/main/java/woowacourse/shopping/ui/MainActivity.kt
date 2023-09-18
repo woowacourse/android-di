@@ -8,14 +8,18 @@ import com.example.di.activity.DiEntryPointActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.module.DefaultActivityModule
+import woowacourse.shopping.di.module.DefaultActivityRetainedModule
+import woowacourse.shopping.di.module.DefaultViewModelModule
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity :
-    DiEntryPointActivity(DefaultActivityModule::class.java) {
+class MainActivity : DiEntryPointActivity(
+    DefaultActivityModule::class.java,
+    DefaultActivityRetainedModule::class.java,
+) {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel<MainViewModel>()
+    private val viewModel by viewModel<MainViewModel>(DefaultViewModelModule::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
