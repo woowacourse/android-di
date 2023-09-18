@@ -1,6 +1,7 @@
 package com.ki960213.sheath.component
 
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.valueParameters
@@ -24,28 +25,35 @@ internal class FunctionSheathComponent(
         val dependingComponents = components.filter { this.isDependingOn(it) }
 
         val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
-        instance = function.call(obj, *function.getArguments(dependingComponents).toTypedArray())
+        val arguments = function.getArgumentsAndSaveInCache(dependingComponents)
+        instance = function.call(obj, *arguments.toTypedArray())
             ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 
     override fun getNewInstance(): Any {
         val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
-        val arguments = function.valueParameters.map { param ->
-            if (dependentConditions[param.type]!!.isNewInstance) {
-                cache[param.type]?.getNewInstance()
-            } else {
-                if (cache[param.type]!!.isSingleton) {
-                    cache[param.type]!!.instance
-                } else {
-                    cache[param.type]!!.getNewInstance()
-                }
-            }
-        }
-        return function.call(obj, *arguments.toTypedArray())!!
+
+        val arguments = function.valueParameters.map { it.getOrCreateInstance() }
+
+        return function.call(obj, *arguments.toTypedArray())
+            ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
     }
 
-    private fun KFunction<*>.getArguments(components: List<SheathComponent>): List<Any> {
-        return valueParameters.map { param ->
+    private fun KParameter.getOrCreateInstance(): Any {
+        val dependentCondition = dependentConditions[type]
+            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. SheathComponentValidator 로직을 다시 살펴보세요.")
+        val component = cache[type]
+            ?: throw IllegalArgumentException("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
+
+        return if (dependentCondition.isNewInstance || !component.isSingleton) {
+            component.getNewInstance()
+        } else {
+            component.instance
+        }
+    }
+
+    private fun KFunction<*>.getArgumentsAndSaveInCache(components: List<SheathComponent>): List<Any> =
+        valueParameters.map { param ->
             val component = components.find { param.type.isSupertypeOf(it.type) }
                 ?: throw IllegalArgumentException("$name 함수의 종속 항목이 존재하지 않아 인스턴스화 할 수 없습니다.")
 
@@ -53,5 +61,4 @@ internal class FunctionSheathComponent(
 
             component.instance
         }
-    }
 }
