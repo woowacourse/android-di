@@ -12,7 +12,7 @@ import org.junit.Test
 class NonConfigurationActivityInjectorManagerTest {
 
     @Test
-    fun 인젝터를_액티비티_인젝터_매니저에_저장한다() {
+    fun `인젝터를 액티비티 인젝터 매니저에 저장한다`() {
         // given: Injector와 매니저가 주어졌을 때
         val injectors = HashMap<String, Injector>()
         val injector = mockk<Injector>()
@@ -26,7 +26,7 @@ class NonConfigurationActivityInjectorManagerTest {
     }
 
     @Test
-    fun 인젝터를_액티비티_인젝터_매니저에서_제거한다() {
+    fun `인젝터를 액티비티 인젝터 매니저에서 제거한다`() {
         // given: 인젝터와 매니저가 주어졌을 때
         val injectorKey = "KEY"
         val injector = mockk<Injector>()
@@ -44,7 +44,7 @@ class NonConfigurationActivityInjectorManagerTest {
     }
 
     @Test
-    fun 잘못된_키로_인젝터를_제거하면_액티비티_인젝터_매니저에서_인젝터가_제거되지_않는다() {
+    fun `잘못된 키로 인젝터를 제거하면 액티비티 인젝터 매니저에서 인젝터가 제거되지 않는다`() {
         // given: 인젝터와 매니저가 주어졌을 때
         val injectorKey = "KEY"
         val injector = mockk<Injector>()
@@ -63,7 +63,7 @@ class NonConfigurationActivityInjectorManagerTest {
     }
 
     @Test
-    fun 저장된_인젝터_키가_없으면_액티비티_인젝터_매니저에_새로운_인젝터를_반환한다() {
+    fun `저장된 인젝터 키가 없으면 액티비티 인젝터 매니저에 새로운 인젝터를 반환한다`() {
         // given: 인젝터와 매니저가 주어졌을 때
         val injectorKey = "KEY"
         val injector = mockk<Injector>()
@@ -84,7 +84,7 @@ class NonConfigurationActivityInjectorManagerTest {
     }
 
     @Test
-    fun 저장된_인젝터_키가_있으면_액티비티_인젝터_매니저에_저장된_인젝터를_반환한다() {
+    fun `저장된 인젝터 키가 있으면 액티비티 인젝터 매니저에 저장된 인젝터를 반환한다`() {
         // given: 인젝터와 매니저가 주어졌을 때
         val injectorKey = "KEY"
         val injector = mockk<Injector>()
