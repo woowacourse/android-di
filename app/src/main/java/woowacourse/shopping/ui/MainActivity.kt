@@ -9,6 +9,7 @@ import com.now.androdi.activity.ActivityInjectable
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.di.module.ActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : ActivityInjectable() {
@@ -23,6 +24,7 @@ class MainActivity : ActivityInjectable() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        injectModule(ActivityModule())
         setupBinding()
         setupToolbar()
         setupView()
