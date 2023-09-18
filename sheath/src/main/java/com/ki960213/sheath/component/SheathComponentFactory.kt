@@ -16,11 +16,12 @@ internal object SheathComponentFactory {
         val name = clazz.qualifiedName
             ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
-        return SheathComponent1(
+        return ClassSheathComponent(
             type = clazz.createType(),
             name = name,
             isSingleton = !clazz.hasAnnotationOrHasAttachedAnnotation<Prototype>(),
             dependentConditions = DependenciesExtractor.extractFrom(clazz),
+            clazz = clazz,
         )
     }
 
@@ -30,19 +31,20 @@ internal object SheathComponentFactory {
         val name = function.returnType.jvmErasure.qualifiedName
             ?: throw IllegalArgumentException("전역적인 클래스로만 SheathComponent를 생성할 수 있습니다.")
 
-        return SheathComponent1(
+        return FunctionSheathComponent(
             type = function.returnType,
             name = name,
             isSingleton = !function.hasAnnotationOrHasAttachedAnnotation<Prototype>(),
             dependentConditions = DependenciesExtractor.extractFrom(function),
+            function = function,
         )
     }
 
-    fun create(context: Context): SheathComponent1 = SheathComponent1(
+    fun create(context: Context): SheathComponent1 = ContextSheathComponent(
         type = Context::class.createType(),
         name = Context::class.qualifiedName!!,
         isSingleton = true,
         dependentConditions = emptyMap(),
-        absoluteInstance = context,
+        context = context,
     )
 }
