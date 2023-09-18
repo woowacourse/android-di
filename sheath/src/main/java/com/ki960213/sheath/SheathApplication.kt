@@ -15,12 +15,15 @@ object SheathApplication {
         val components: List<SheathComponent> =
             scanner.findAll() + SheathComponentFactory.create(context)
 
-        val sortedComponents = components.sorted()
-        sortedComponents.fold(mutableListOf<SheathComponent>()) { acc, component ->
-            component.instantiate(acc)
-            acc.add(component)
-            acc
-        }
-        sheathComponentContainer = sortedComponents.toSet()
+        initContainer(components)
+    }
+
+    private fun initContainer(components: List<SheathComponent>) {
+        sheathComponentContainer = components.sorted()
+            .fold(mutableListOf<SheathComponent>()) { acc, component ->
+                component.instantiate(acc)
+                acc.add(component)
+                acc
+            }.toSet()
     }
 }
