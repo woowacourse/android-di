@@ -43,10 +43,6 @@ sealed class LifeCycleType<T : Any> {
         }
     }
 
-//    class Activity<T : Any> : LifeCycleType<T>
-//
-//    class Fragment<T : Any> : LifeCycleType<T>
-
     companion object {
         private const val KTYPE_NULL_ERROR = "인스턴스의 타입값이 Null 로 입력되었습니다."
     }

@@ -9,8 +9,6 @@ import kotlin.reflect.KType
 internal class LifeCycleTypeContainer {
     private val singletons: Singletons = Singletons(mutableListOf())
     private val disposables: Disposables = Disposables(mutableListOf())
-//    private val activities: MutableList<LifeCycleType.Activity<*>> = mutableListOf()
-//    private val fragments: MutableList<LifeCycleType.Fragment<*>> = mutableListOf()
 
     private val totalLifeCycleTypes: List<LifeCycleTypes> = listOf(singletons, disposables)
 
