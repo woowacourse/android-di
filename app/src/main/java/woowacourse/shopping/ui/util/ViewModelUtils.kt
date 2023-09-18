@@ -4,18 +4,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ssu.androidi.application.DiApplication
 
-inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(factory: ViewModelProvider.Factory = ShoppingViewModelFactory): ViewModelLazy<T> {
+inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): ViewModelLazy<T> {
     return ViewModelLazy(
         T::class,
         { viewModelStore },
-        { factory },
+        { viewModelFactory {
+            initializer {
+                (application as DiApplication).injector.create(T::class)
+            }
+        } },
     )
-}
-
-val ShoppingViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return DiApplication.injector.create(modelClass.kotlin)
-    }
 }

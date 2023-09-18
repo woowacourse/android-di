@@ -2,12 +2,13 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.ssu.androidi.activity.DiActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.module.CartActivityModule
 import woowacourse.shopping.ui.util.createViewModel
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : DiActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
@@ -22,6 +23,8 @@ class CartActivity : AppCompatActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+
+        injector.addModuleInstances(CartActivityModule(this))
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.ssu.androidi.activity.DiActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.module.MainActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.createViewModel
 
@@ -23,6 +24,8 @@ class MainActivity : DiActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+
+        injector.addModuleInstances(MainActivityModule())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
