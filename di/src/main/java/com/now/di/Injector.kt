@@ -4,12 +4,16 @@ import com.now.annotation.Inject
 import com.now.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
@@ -63,13 +67,23 @@ class Injector(
         val annotation = kParameter.findAnnotation<Qualifier>()
         val dependencyType = DependencyType(klass, annotation)
 
-        // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테트이너에 추가로 저장
+        // 파라미터가 컨테이너에 없는 경우 재귀적 호출을 통해 컨테이너에 추가로 저장
         if (container.getInstance(dependencyType) == null) {
             createOrAdd(receiver, kFunction)
         }
 
         // 재귀적 호출을 통해 컨테이너에 저장했기 때문에 무조건 있음
         return container.getInstance(dependencyType)!!
+    }
+
+    private fun getPropertyInstance(
+        kProperty1: KProperty1<*, *>,
+    ): Any {
+        val klass = kProperty1.returnType.jvmErasure
+        val annotation = kProperty1.findAnnotation<Qualifier>()
+        val dependencyType = DependencyType(klass, annotation)
+
+        return container.getInstance(dependencyType) ?: NullPointerException()
     }
 
     // klass의 인스턴스를 생성하여 반환한다
@@ -89,10 +103,22 @@ class Injector(
                 _annotation.annotationClass.hasAnnotation<Qualifier>()
             }
             container.getInstance(DependencyType(type, annotation))
-                ?: parentContainer?.getInstance(DependencyType(type, annotation)) ?: throw IllegalArgumentException()
+                ?: parentContainer?.getInstance(DependencyType(type, annotation))
+                ?: throw IllegalArgumentException()
         }
 
-        return primaryConstructor.callBy(insertedParameters) as T
+        val instance = primaryConstructor.callBy(insertedParameters) as T
+
+        // 주입이 필요하지만 생성자에 위치하지 않은 프로퍼티
+        val properties =
+            klass.declaredMemberProperties.filterIsInstance<KMutableProperty1<*, *>>()
+                .filter { it.hasAnnotation<Inject>() }
+        properties.forEach {
+            println(it.isAccessible)
+            it.setter.call(instance, getPropertyInstance(it))
+        }
+
+        return instance
     }
 
     fun getCurrentContainer(): Container {
