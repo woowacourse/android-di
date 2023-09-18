@@ -16,10 +16,9 @@ class MainActivity : DiEntryPointActivity(
     DefaultActivityModule::class.java,
     DefaultActivityRetainedModule::class.java,
 ) {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel<MainViewModel>(DefaultViewModelModule::class.java)
+    private val viewModel by viewModel<MainViewModel>(DefaultViewModelModule::class)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

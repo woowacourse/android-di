@@ -16,7 +16,7 @@ class CartActivity : DiEntryPointActivity(
 ) {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModel(DefaultViewModelModule::class.java)
+    private val viewModel: CartViewModel by viewModel(DefaultViewModelModule::class)
 
     @FieldInject
     lateinit var dateFormatter: DateFormatter

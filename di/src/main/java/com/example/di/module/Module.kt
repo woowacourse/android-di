@@ -17,7 +17,10 @@ import kotlin.reflect.jvm.jvmErasure
 abstract class Module(private val parentModule: Module? = null) {
     private val cache = mutableMapOf<String, Any>()
 
-    protected fun <T : Any> provideInstance(clazz: Class<T>, qualifier: KClass<out Annotation>? = null): T {
+    protected fun <T : Any> provideInstance(
+        clazz: Class<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
         if (qualifier != null && qualifier.hasAnnotation<Qualifier>().not()) {
             throw IllegalArgumentException("qualifier 인자는 Qualifier를 메타 애노테이션으로 가져야 합니다")
         }
