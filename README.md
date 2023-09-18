@@ -33,13 +33,13 @@ Qualifier
 ## 4단계
 
 기능 요구 사항
-- [ ] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
-  - [ ] ApplicationComponent를 정의한다
-- [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
-  - [ ] ViewModelComponent를 정의한다
-- [ ] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
-  - [ ] ActivityComponent를 정의한다
+- [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+  - [x] ApplicationModule를 정의한다
+- [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+  - [ x ViewModelModule를 정의한다
+- [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+  - [x] ActivityModule를 정의한다
 
 선택 요구 사항
-- [ ] DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
+- [x] DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
 - [ ] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.
