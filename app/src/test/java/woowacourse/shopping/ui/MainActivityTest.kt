@@ -1,13 +1,15 @@
 package woowacourse.shopping.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
+import com.now.androdi.activity.ActivityInjectable
 import com.now.annotation.Inject
-import com.now.di.Container
+import com.now.di.DependencyType
+import com.now.di.Module
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.After
@@ -27,13 +29,30 @@ interface FakeRepository
 
 class DefaultFakeRepository : FakeRepository
 
+class FakeModule : Module {
+    fun provideFakeRepository(): FakeRepository {
+        return DefaultFakeRepository()
+    }
+}
+
 class FakeViewModel(
     @Inject val fakeRepository: FakeRepository,
 ) : ViewModel()
 
-class FakeActivity : AppCompatActivity() {
+class FakeActivityWithDependency : ActivityInjectable() {
     val viewModel by lazy {
-        ViewModelProvider(this, ViewModelFactory)[FakeViewModel::class.java]
+        ViewModelProvider(this, ViewModelFactory(this))[FakeViewModel::class.java]
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        injector.addModule(FakeModule())
+    }
+}
+
+class FakeActivityWithoutDependency : ActivityInjectable() {
+    val viewModel by lazy {
+        ViewModelProvider(this, ViewModelFactory(this))[FakeViewModel::class.java]
     }
 }
 
@@ -45,7 +64,6 @@ class MainActivityTest {
 
     @After
     fun tearDown() {
-        Container.clear()
     }
 
     @Test
@@ -115,40 +133,19 @@ class MainActivityTest {
         assertEquals(recyclerView.adapter?.itemCount, actual)
     }
 
-//    @Test
-//    fun `리사이클러뷰 아이템을 클릭하면 onProductAdded가 true로 변경된다`() {
-//        // given
-//        val activityController = Robolectric
-//            .buildActivity(MainActivity::class.java)
-//            .create()
-//            .start()
-//            .visible()
-//
-//        val activity = activityController.get()
-//        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
-//        val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
-//
-//        // when
-//        recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.performClick()
-//
-//        println(recyclerView.findViewHolderForAdapterPosition(0)?.itemView)
-//
-//        // then
-//        assertTrue(viewModel.onProductAdded.value!!)
-//    }
-
     @Test
     fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
-        val fakeRepository = DefaultFakeRepository()
-        Container.addInstance(FakeRepository::class, fakeRepository, null)
-
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(FakeActivityWithDependency::class.java)
             .create()
             .get()
 
         val viewModel = activity.viewModel
+
+        val container = activity.injector.getCurrentContainer()
+        val dependencyType = DependencyType(FakeRepository::class, null)
+        val fakeRepository = container.getInstance(dependencyType)
 
         assertNotNull(viewModel)
         assertEquals(viewModel.fakeRepository, fakeRepository)
@@ -157,7 +154,7 @@ class MainActivityTest {
     @Test(expected = IllegalArgumentException::class)
     fun `적절한 객체 인스턴가 존재하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         val activity = Robolectric
-            .buildActivity(FakeActivity::class.java)
+            .buildActivity(FakeActivityWithoutDependency::class.java)
             .create()
             .get()
 
