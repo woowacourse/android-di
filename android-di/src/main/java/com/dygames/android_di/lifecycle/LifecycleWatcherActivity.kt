@@ -4,18 +4,13 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dygames.android_di.AndroidDependencyInjector
 import com.dygames.di.DependencyInjector
-import com.dygames.di.lifecycle.LifecycleWatcher
 import kotlin.reflect.KType
 
 abstract class LifecycleWatcherActivity(val lifecycle: KType) : AppCompatActivity() {
-    private val lifecycleWatcher: LifecycleWatcher = object : LifecycleWatcher {
+    private val lifecycleWatcher: LifecycleWatcher = object : LifecycleWatcher(lifecycle) {
         override fun createDependencies() {
-            DependencyInjector.createDependencies(lifecycle)
+            super.createDependencies()
             AndroidDependencyInjector.provideContext(this@LifecycleWatcherActivity, lifecycle)
-        }
-
-        override fun destroyDependencies() {
-            DependencyInjector.deleteDependencies(lifecycle)
         }
     }
 

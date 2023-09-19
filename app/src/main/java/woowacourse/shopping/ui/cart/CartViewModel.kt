@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dygames.di.annotation.NotCaching
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.model.CartProduct
 
+@NotCaching
 class CartViewModel(
     @Room
     private val cartRepository: CartRepository,
