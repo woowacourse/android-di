@@ -5,3 +5,5 @@ annotation class KoalaFieldInject
 
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY)
 annotation class KoalaQualifier
+
+annotation class KoalaSingleton

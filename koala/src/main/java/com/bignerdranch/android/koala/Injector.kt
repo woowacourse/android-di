@@ -33,6 +33,11 @@ class Injector(
     }
 
     private fun getParameterInstance(parameter: KParameter): Any {
+        val singletonInstance = Container.instances[parameter::class]
+        if (singletonInstance != null) {
+            return singletonInstance
+        }
+
         val qualifier =
             parameter.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
@@ -41,7 +46,11 @@ class Injector(
         return getInstanceWithType(parameter.type)
     }
 
-    private fun getPropertyInstance(property: KProperty1<*, *>): Any {
+    fun getPropertyInstance(property: KProperty1<*, *>): Any {
+        val singletonInstance = Container.instances[property::class]
+        if (singletonInstance != null) {
+            return singletonInstance
+        }
         val qualifier =
             property.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
@@ -51,7 +60,7 @@ class Injector(
     }
 
     private fun getInstanceWithQualifier(qualifier: Annotation): Any {
-        val function = container::class.declaredMemberFunctions.find { func ->
+        val function = module::class.declaredMemberFunctions.find { func ->
             func.annotations.any { it == qualifier }
         } ?: throw IllegalStateException("찾을 수 없습니다.")
 
@@ -59,9 +68,10 @@ class Injector(
     }
 
     private fun getInstanceWithType(type: KType): Any {
-        val functions = container::class.declaredMemberFunctions.filter { func ->
+        val functions = module::class.declaredMemberFunctions.filter { func ->
             func.returnType == type
         }
+
         when (functions.size) {
             1 -> return callFunction(functions.first())
             0 -> throw IllegalStateException("찾을 수 없습니다.")
@@ -69,12 +79,12 @@ class Injector(
         }
     }
 
-    private fun callFunction(function: KFunction<*>): Any {
+    fun callFunction(function: KFunction<*>): Any {
         val args = arrayListOf<Any>()
         function.valueParameters.forEach { parameter ->
             args.add(getParameterInstance(parameter))
         }
-        return function.call(container, *args.toTypedArray())
+        return function.call(module, *args.toTypedArray())
             ?: throw IllegalStateException("instance를 생성할 수 없습니다.")
     }
 }
