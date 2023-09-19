@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.bignerdranch.android.koala.DiActivity
+import com.bignerdranch.android.koala.KoalaFieldInject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.module.CartActivityDiModule
@@ -13,6 +14,7 @@ class CartActivity : DiActivity(CartActivityDiModule()) {
 
     private val viewModel: CartViewModel by viewmodel()
 
+    @KoalaFieldInject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
