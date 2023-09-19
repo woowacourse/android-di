@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import android.widget.Toast
+import com.angrypig.autodi.Injector
 import com.angrypig.autodi.injectViewModel
-import com.angrypig.autodi.lifeCycleScopeHandler.annotation.activity.ActivityLifeCycleScope.*
 import com.angrypig.autodi.lifeCycleScopeHandler.AutoDIScopedActivity
 import com.angrypig.autodi.lifeCycleScopeHandler.ScopedProperty
+import com.angrypig.autodi.lifeCycleScopeHandler.annotation.activity.ActivityLifeCycleScope.*
 import com.angrypig.autodi.lifeCycleScopeHandler.annotation.activity.ActivityScope
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -19,10 +20,11 @@ class CartActivity() : AutoDIScopedActivity<CartActivity>(), Parcelable {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    @ScopedProperty()
+    @ScopedProperty
     private val viewModel: CartViewModel by injectViewModel()
 
-    private lateinit var dateFormatter: DateFormatter
+    @ScopedProperty
+    private val dateFormatter: DateFormatter by Injector("disposable")
 
     constructor(parcel: Parcel) : this() {
     }
@@ -30,7 +32,6 @@ class CartActivity() : AutoDIScopedActivity<CartActivity>(), Parcelable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -39,10 +40,6 @@ class CartActivity() : AutoDIScopedActivity<CartActivity>(), Parcelable {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
