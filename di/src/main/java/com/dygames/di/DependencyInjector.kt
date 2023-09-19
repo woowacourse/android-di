@@ -6,7 +6,6 @@ import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
 import com.dygames.di.model.LifecycleAwareDependencies
 import com.dygames.di.model.LifecycleAwareProviders
-import com.dygames.di.model.QualifiableDependencies
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -19,7 +18,8 @@ import kotlin.reflect.typeOf
 object DependencyInjector {
     val providers: LifecycleAwareProviders = LifecycleAwareProviders()
     private val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
-    val lifecycleAwareDependencies: LifecycleAwareDependencies = LifecycleAwareDependencies()
+    private val lifecycleAwareDependencies: LifecycleAwareDependencies =
+        LifecycleAwareDependencies()
 
     inline fun <reified T : Any> inject(lifecycle: KType? = null): T {
         return inject(typeOf<T>(), lifecycle = lifecycle) as T
@@ -34,20 +34,17 @@ object DependencyInjector {
     }
 
     fun createDependencies(lifecycle: KType?) {
-        lifecycleAwareDependencies.value[lifecycle] = QualifiableDependencies()
-        lifecycleAwareProviders.value[lifecycle] = providers.value[lifecycle] ?: return
+        lifecycleAwareDependencies.put(lifecycle)
+        lifecycleAwareProviders.put(lifecycle, providers.value[lifecycle])
     }
 
     fun addDependencies(type: KType, lifecycle: KType?, qualifier: Annotation?, dependency: Any) {
-        lifecycleAwareDependencies.value[lifecycle]?.value?.get(qualifier)?.value?.set(
-            type,
-            dependency
-        )
+        lifecycleAwareDependencies.put(type, lifecycle, qualifier, dependency)
     }
 
     fun deleteDependencies(lifecycle: KType?) {
-        lifecycleAwareProviders.value.remove(lifecycle)
-        lifecycleAwareDependencies.value.remove(lifecycle)
+        lifecycleAwareProviders.remove(lifecycle)
+        lifecycleAwareDependencies.remove(lifecycle)
     }
 
     private fun instantiate(
@@ -70,24 +67,25 @@ object DependencyInjector {
 
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters, lifecycle)
-        return constructor.call(*arguments).also {
-            if (type.jvmErasure.hasAnnotation<NotCaching>()) return@also
-            lifecycleAwareDependencies.value[lifecycle]?.value?.get(qualifier)?.value?.set(
-                type, it
-            )
-        }.apply {
-            injectFields(lifecycle, this)
-        }
+        val instance = constructor.call(*arguments)
+        cacheInstance(type, lifecycle, qualifier, instance)
+        injectFields(lifecycle, instance)
+        return instance
+    }
+
+    private fun cacheInstance(
+        type: KType,
+        lifecycle: KType?,
+        qualifier: Annotation?,
+        instance: Any
+    ) {
+        if (type.jvmErasure.hasAnnotation<NotCaching>()) return
+        lifecycleAwareDependencies.put(type, lifecycle, qualifier, instance)
     }
 
     private fun findDependency(type: KType, qualifier: Annotation?): Any? {
-        val qualifiableDependencies =
-            lifecycleAwareDependencies.value.values.firstOrNull { qualifiableDependencies ->
-                qualifiableDependencies.value.values.firstOrNull { dependencies ->
-                    dependencies.value[type] != null
-                } != null
-            }
-        val dependencies = qualifiableDependencies?.value?.get(qualifier) ?: return null
+        val qualifiableDependencies = lifecycleAwareDependencies.find(type) ?: return null
+        val dependencies = qualifiableDependencies.find(qualifier) ?: return null
         return dependencies.value[type]
     }
 
