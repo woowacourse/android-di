@@ -6,6 +6,8 @@ import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
 import com.dygames.di.model.LifecycleAwareDependencies
 import com.dygames.di.model.LifecycleAwareProviders
+import com.dygames.di.model.Providers
+import com.dygames.di.model.QualifiableProviders
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -16,7 +18,7 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
-    val providers: LifecycleAwareProviders = LifecycleAwareProviders()
+    private val providers: LifecycleAwareProviders = LifecycleAwareProviders()
     private val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
     private val lifecycleAwareDependencies: LifecycleAwareDependencies =
         LifecycleAwareDependencies()
@@ -31,6 +33,14 @@ object DependencyInjector {
         lifecycle: KType? = null,
     ): Any {
         return findDependency(type, qualifier) ?: instantiate(type, qualifier, lifecycle)
+    }
+
+    fun initDependencyInjector(init: LifecycleAwareProviders.() -> Unit) {
+        providers.value.clear()
+        lifecycleAwareDependencies.value.clear()
+        lifecycleAwareProviders.value.clear()
+        providers.apply(init)
+        createDependencies(null)
     }
 
     fun createDependencies(lifecycle: KType?) {
@@ -61,9 +71,9 @@ object DependencyInjector {
 
         val constructor =
             type.jvmErasure.primaryConstructor ?: (
-                provider?.jvmErasure?.primaryConstructor
-                    ?: throw InjectError.ConstructorNoneAvailable(type)
-                )
+                    provider?.jvmErasure?.primaryConstructor
+                        ?: throw InjectError.ConstructorNoneAvailable(type)
+                    )
 
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters, lifecycle)

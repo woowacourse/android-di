@@ -5,6 +5,7 @@ import com.dygames.di.annotation.Injectable
 import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
 import junit.framework.Assert.assertNull
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test

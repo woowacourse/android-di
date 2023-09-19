@@ -15,34 +15,63 @@ inline fun <reified T : Any> Providers.provider(type: KType) {
 }
 
 inline fun <reified T : Any> QualifiableProviders.provider(noinline init: () -> T) {
-    value[null]?.provider(init)
-}
-
-inline fun <reified T : Any> QualifiableProviders.provider(type: KType) {
-    value[null]?.provider<T>(type)
-}
-
-inline fun <reified T : Any> LifecycleAwareProviders.provider(noinline init: () -> T) {
-    value[null]?.value?.get(null)?.provider(init)
-}
-
-inline fun <reified T : Any> LifecycleAwareProviders.provider(type: KType) {
-    value[null]?.value?.get(null)?.provider<T>(type)
-}
-
-fun QualifiableProviders.qualifier(annotation: Annotation? = null, init: Providers.() -> Unit) {
-    value[annotation] = Providers().apply {
-        init()
+    value.getOrPut(null) {
+        Providers()
+    }.apply {
+        provider(init)
     }
 }
 
+inline fun <reified T : Any> QualifiableProviders.provider(type: KType) {
+    value.getOrPut(null) {
+        Providers()
+    }.apply {
+        provider<T>(type)
+    }
+}
+
+inline fun <reified T : Any> LifecycleAwareProviders.provider(noinline init: () -> T) {
+    value.getOrPut(null) {
+        QualifiableProviders()
+    }.value.getOrPut(null) {
+        Providers()
+    }.apply {
+        provider(init)
+    }
+}
+
+inline fun <reified T : Any> LifecycleAwareProviders.provider(type: KType) {
+    value.getOrPut(null) {
+        QualifiableProviders()
+    }.value.getOrPut(null) {
+        Providers()
+    }.apply {
+        provider<T>(type)
+    }
+}
+
+fun QualifiableProviders.qualifier(annotation: Annotation? = null, init: Providers.() -> Unit) {
+    value.getOrPut(annotation) {
+        Providers()
+    }.apply(init)
+}
+
+fun LifecycleAwareProviders.qualifier(annotation: Annotation? = null, init: Providers.() -> Unit) {
+    value.getOrPut(null) {
+        QualifiableProviders()
+    }.value.getOrPut(annotation) {
+        Providers()
+    }.apply(init)
+}
+
 inline fun <reified T> LifecycleAwareProviders.lifecycle(init: QualifiableProviders.() -> Unit) {
-    value[typeOf<T>()] = QualifiableProviders().apply(init)
+    value.getOrPut(typeOf<T>()) {
+        QualifiableProviders()
+    }.apply(init)
 }
 
 fun dependencies(
     init: LifecycleAwareProviders.() -> Unit
 ) {
-    DependencyInjector.providers.apply(init)
-    DependencyInjector.createDependencies(null)
+    DependencyInjector.initDependencyInjector(init)
 }

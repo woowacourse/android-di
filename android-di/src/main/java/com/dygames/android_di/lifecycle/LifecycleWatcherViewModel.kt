@@ -13,7 +13,6 @@ abstract class LifecycleWatcherViewModel(val lifecycle: KType) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        println(lifecycle.toString() + "onCleared")
         lifecycleWatcher.destroyDependencies()
     }
 }
