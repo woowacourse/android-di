@@ -16,3 +16,4 @@ rootProject.name = "android-di"
 include(":app")
 include(":domain")
 include(":scott-di")
+include(":scott-di-android")
