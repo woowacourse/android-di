@@ -1,20 +1,18 @@
 package woowacourse.shopping.di
 
-import android.content.Context
 import woowacourse.shopping.Qualifier
 import woowacourse.shopping.Singleton
 import woowacourse.shopping.data.local.CartProductDao
-import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.PersistentCartRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class DependencyProvider {
-    @Singleton
+    /*@Singleton
     fun provideCartProductDao(context: Context): CartProductDao {
         return ShoppingDatabase.getDatabase(context).cartProductDao()
-    }
+    }*/
 
     fun provideProductRepository(): ProductRepository {
         return DefaultProductRepository()

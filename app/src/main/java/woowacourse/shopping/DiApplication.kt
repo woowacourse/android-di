@@ -12,7 +12,7 @@ class DiApplication : Application() {
         val dependencyContainer = DependencyContainer.getSingletonInstance()
         val injector = Injector.getSingletonInstance()
         dependencyContainer.addInstance(Context::class, emptyList(), applicationContext)
-        dependencyContainer.addInstance(CartProductDao::class, emptyList(), ShoppingDatabase.getDatabase(applicationContext))
-        injector.factoryContainer.addProvideFactory(DependencyProvider())
+        dependencyContainer.addInstance(CartProductDao::class, emptyList(), ShoppingDatabase.getDatabase(applicationContext).cartProductDao())
+        injector.providerContainer.addProvider(DependencyProvider())
     }
 }
