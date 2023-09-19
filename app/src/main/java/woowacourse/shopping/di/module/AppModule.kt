@@ -12,7 +12,7 @@ import woowacourse.shopping.otterdi.annotation.Qualifier
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class RepositoryModule(context: Context) : Module {
+class AppModule(context: Context) : Module {
 
     private val context = context.applicationContext
 

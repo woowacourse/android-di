@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.module.RepositoryModule
+import woowacourse.shopping.di.module.AppModule
 import woowacourse.shopping.otterdi.Injector
 import woowacourse.shopping.otterdi.Module
 
@@ -12,7 +12,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun initDependencies() {
-        module = RepositoryModule(this)
+        module = AppModule(this)
         injector = Injector(module)
     }
 
