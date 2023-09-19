@@ -8,7 +8,7 @@ import com.example.di.module.ApplicationModule
 import com.example.di.module.ViewModelModule
 import com.example.di.moduleFactory.ModuleFactory
 
-open class DiApplication(
+abstract class DiApplication(
     applicationModuleClazz: Class<out ApplicationModule>,
     activityRetainedModuleClazz: Class<out ActivityRetainedModule>,
     viewModelModuleClazz: Class<out ViewModelModule>,
