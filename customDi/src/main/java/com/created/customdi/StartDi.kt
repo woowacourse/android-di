@@ -1,6 +1,6 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
-import javax.naming.Context
+import android.content.Context
 
 object StartDi {
 
@@ -13,6 +13,6 @@ object StartDi {
     }
 
     fun registerModule(module: Any) {
-
+        DiContainer.setModule(module)
     }
 }

@@ -1,14 +1,14 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
+import com.created.customdi.fake.Normal
+import com.created.customdi.fake.Normal2
+import com.created.customdi.fake.QualifiedClass3
+import com.created.customdi.fake.RealSingle
+import com.created.customdi.fake.TestModule
+import com.created.customdi.fake.TestQualifier3
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.sangoondi.fake.Normal
-import woowacourse.shopping.sangoondi.fake.Normal2
-import woowacourse.shopping.sangoondi.fake.QualifiedClass3
-import woowacourse.shopping.sangoondi.fake.RealSingle
-import woowacourse.shopping.sangoondi.fake.TestModule
-import woowacourse.shopping.sangoondi.fake.TestQualifier3
 import kotlin.reflect.full.primaryConstructor
 
 class InjectorTest {

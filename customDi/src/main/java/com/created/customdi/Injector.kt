@@ -1,9 +1,9 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
-import woowacourse.shopping.sangoondi.DiContainer.modules
-import woowacourse.shopping.sangoondi.annotation.Field
-import woowacourse.shopping.sangoondi.annotation.Qualifier
-import woowacourse.shopping.sangoondi.annotation.Singleton
+import com.created.customdi.DiContainer.modules
+import com.created.customdi.annotation.Field
+import com.created.customdi.annotation.Qualifier
+import com.created.customdi.annotation.Singleton
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredFunctions
@@ -80,6 +80,3 @@ object Injector {
         if (func.hasAnnotation<Singleton>()) DiContainer.setSingleton(this, this::class)
     }
 }
-
-// 앱 컨텍스트
-// 나머지 요구사항

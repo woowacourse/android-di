@@ -1,4 +1,4 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test

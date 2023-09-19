@@ -1,7 +1,7 @@
-package woowacourse.shopping.sangoondi.fake
+package com.created.customdi.fake
 
-import woowacourse.shopping.sangoondi.annotation.Qualifier
-import woowacourse.shopping.sangoondi.annotation.Singleton
+import com.created.customdi.annotation.Qualifier
+import com.created.customdi.annotation.Singleton
 
 interface Qualify
 class QualifiedClass1 : Qualify

@@ -1,7 +1,7 @@
 package woowacourse.shopping.di.sgDi
 
-import woowacourse.shopping.di.sgDi.annotation.WooWaField
-import woowacourse.shopping.di.sgDi.annotation.WooWaQualifier
+import woowacourse.shopping.di.annotation.WooWaField
+import woowacourse.shopping.di.annotation.WooWaQualifier
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties

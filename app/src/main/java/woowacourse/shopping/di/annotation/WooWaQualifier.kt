@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.sgDi.annotation
+package woowacourse.shopping.di.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(

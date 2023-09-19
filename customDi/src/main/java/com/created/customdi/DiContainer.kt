@@ -1,6 +1,7 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
-import woowacourse.shopping.sangoondi.annotation.Qualifier
+import android.content.Context
+import com.created.customdi.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
@@ -21,7 +22,7 @@ object DiContainer {
     private val _qualifiedInstance: MutableMap<Any, KFunction<*>> = mutableMapOf()
     val qualifiedInstance: Map<Any, KFunction<*>> get() = _qualifiedInstance.toMap()
 
-    fun setContext(applicationContext: Any) {
+    fun setContext(applicationContext: Context) {
         context = applicationContext
     }
 

@@ -1,10 +1,10 @@
-package woowacourse.shopping.sangoondi
+package com.created.customdi
 
+import com.created.customdi.fake.RealSingle
+import com.created.customdi.fake.TestModule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.sangoondi.fake.RealSingle
-import woowacourse.shopping.sangoondi.fake.TestModule
 
 class DiContainerTest {
 

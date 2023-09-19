@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.sgDi.annotation
+package woowacourse.shopping.di.annotation
 
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class WooWaField
