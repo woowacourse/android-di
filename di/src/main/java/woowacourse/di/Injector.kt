@@ -38,7 +38,7 @@ class Injector(private val container: Container) {
         return argument
     }
 
-    private fun <T : Any> injectField(instance: T) {
+    fun <T : Any> injectField(instance: T) {
         val properties =
             instance::class.declaredMemberProperties.filter { it.hasAnnotation<InjectField>() }
         properties.forEach { property ->

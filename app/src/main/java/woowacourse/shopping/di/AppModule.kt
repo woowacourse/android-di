@@ -12,7 +12,13 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
-class AppModule(private val context: Context) : Module {
+class AppModule : Module {
+
+    override lateinit var context: Context
+
+    override fun setModuleContext(context: Context) {
+        this.context = context
+    }
 
     fun provideInMemoryProductRepository(): ProductRepository = InMemoryProductRepository()
 
@@ -24,5 +30,5 @@ class AppModule(private val context: Context) : Module {
         InDiskCartRepository(cartDao)
 
     fun provideCartProductDao(): CartProductDao =
-        ShoppingDatabase.getDatabase(context).cartProductDao()
+        ShoppingDatabase.getDatabase(context.applicationContext).cartProductDao()
 }

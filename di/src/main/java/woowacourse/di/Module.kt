@@ -1,3 +1,8 @@
 package woowacourse.di
 
-interface Module
+import android.content.Context
+
+interface Module {
+    var context: Context
+    fun setModuleContext(context: Context)
+}

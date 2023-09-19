@@ -10,7 +10,9 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        injector = Injector(Container(AppModule(applicationContext)))
+        val module = AppModule().apply { setModuleContext(applicationContext) }
+        val container = Container(module)
+        injector = Injector(container)
     }
 
     companion object {

@@ -1,9 +1,16 @@
 package woowacourse.di
 
+import android.content.Context
 import woowacourse.di.annotation.InjectField
 import woowacourse.di.annotation.Singleton
 
 class FakeModule : Module {
+
+    override lateinit var context: Context
+
+    override fun setModuleContext(context: Context) {
+        this.context = context
+    }
 
     fun provideFakeProductRepository(): FakeProductRepository = DefaultFakeProductRepository()
 

@@ -1,16 +1,16 @@
 package woowacourse.di
 
+import woowacourse.di.SingletonContainer.instances
 import woowacourse.di.annotation.InjectField
 import woowacourse.di.annotation.Singleton
 import kotlin.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
 class Container(private val module: Module) {
-
-    private val instances = mutableMapOf<KClass<*>, Any?>()
 
     init {
         createSingleTon()
@@ -28,10 +28,10 @@ class Container(private val module: Module) {
 
     fun getInstance(clazz: KClass<*>): Any? {
         if (instances[clazz] != null) return instances[clazz]
-        val a = module::class.declaredMemberFunctions.filter {
-            clazz.supertypes.any { type -> type == it.returnType }
-        }.firstOrNull() ?: return null
-        return createInstance(a)
+        val function = module::class.declaredMemberFunctions.firstOrNull {
+            clazz.createType() == it.returnType
+        } ?: return null
+        return createInstance(function)
     }
 
     private fun createInstance(provider: KFunction<*>): Any? {

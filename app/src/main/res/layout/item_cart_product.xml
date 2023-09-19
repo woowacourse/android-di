@@ -23,7 +23,6 @@
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:setDateText="@{item.createdAt}"
             tools:text="2023.12.12" />
 
         <ImageView
