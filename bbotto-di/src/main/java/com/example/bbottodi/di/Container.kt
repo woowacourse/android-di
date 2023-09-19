@@ -4,7 +4,7 @@ import com.example.bbottodi.di.model.InstanceIdentifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-object Container {
+class Container {
     private val instances = mutableMapOf<InstanceIdentifier, Any>()
 
     fun addInstance(type: KClass<*>, instance: Any) {

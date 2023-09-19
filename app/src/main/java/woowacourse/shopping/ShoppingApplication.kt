@@ -1,10 +1,10 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.bbottodi.di.Container
 import com.example.bbottodi.di.annotation.InDisk
 import com.example.bbottodi.di.annotation.InMemory
 import com.example.bbottodi.di.annotation.Inject
+import com.example.bbottodi.di.inject.AutoDependencyInjector
 import com.example.bbottodi.di.inject.AutoDependencyInjector.inject
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.di.DefaultModule.provideCartProductDao
@@ -22,7 +22,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun initContainer() {
-        Container.apply {
+        AutoDependencyInjector.container.apply {
             addInstance(CartProductDao::class, provideCartProductDao(applicationContext))
             addInstance(ProductRepository::class, provideProductRepository())
             addInstance(
