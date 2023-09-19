@@ -45,7 +45,6 @@ android {
 dependencies {
     // project
     implementation(project(":domain"))
-    implementation(project(":scott-di"))
     implementation(project(":scott-di-android"))
 
     implementation("androidx.core:core-ktx:1.10.1")
