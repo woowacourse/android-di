@@ -2,15 +2,19 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.angrypig.autodi.injectViewModel
+import com.angrypig.autodi.lifeCycleScopeHandler.AutoDIScopedActivity
+import com.angrypig.autodi.lifeCycleScopeHandler.Scoped
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import com.angrypig.autodi.injectViewModel
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : AutoDIScopedActivity<CartActivity>() {
+
+    override val registerScope: CartActivity = this
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
+    @Scoped
     private val viewModel: CartViewModel by injectViewModel()
 
     private lateinit var dateFormatter: DateFormatter
