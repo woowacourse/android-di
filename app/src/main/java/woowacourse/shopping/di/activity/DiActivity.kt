@@ -2,15 +2,10 @@ package woowacourse.shopping.di.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.boogiwoogi.di.DiComponent
-import com.boogiwoogi.di.InstanceContainer
 import woowacourse.shopping.ShoppingApplication
+import woowacourse.shopping.di.module.ShoppingApplicationModules
 
-open class DiActivity : AppCompatActivity(), DiComponent {
-
-    override val instanceContainer: InstanceContainer = ActivityInstanceContainer().apply {
-        lifecycle.addObserver(this)
-    }
+open class DiActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,10 +14,12 @@ open class DiActivity : AppCompatActivity(), DiComponent {
     }
 
     private fun setupInjector() {
-        ShoppingApplication.injector.inject(
-            container = instanceContainer,
-            modules = ActivityModules(this),
-            target = this
-        )
+        with(ShoppingApplication) {
+            injector.inject(
+                modules = ShoppingApplicationModules(this@DiActivity),
+                container = container,
+                target = this
+            )
+        }
     }
 }

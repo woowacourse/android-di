@@ -5,14 +5,14 @@ import com.boogiwoogi.di.DefaultInstanceContainer
 import com.boogiwoogi.di.DiInjector
 import com.boogiwoogi.di.InstanceContainer
 import com.boogiwoogi.di.Modules
-import woowacourse.shopping.di.application.ApplicationModule
+import woowacourse.shopping.di.module.ShoppingApplicationModules
 
 class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        modules = ApplicationModule(this)
+        modules = ShoppingApplicationModules(this)
         container = DefaultInstanceContainer()
         injector = DiInjector()
     }
