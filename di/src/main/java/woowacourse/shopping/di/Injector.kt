@@ -21,7 +21,7 @@ class Injector(
 
         val instances = getInstances(primaryConstructor)
         val instance = primaryConstructor.call(*instances.toTypedArray()).apply {
-            injectAnnotationFields(clazz.kotlin)
+            injectAnnotationFields(this)
         }
 
         return instance
@@ -70,12 +70,13 @@ class Injector(
         return kFunction.call(module, *arguments.toTypedArray()) as T
     }
 
-    fun <T : Any> T.injectAnnotationFields(clazz: KClass<T>) {
+    fun <T : Any> injectAnnotationFields(instance: T) {
+        val clazz = instance::class
         val fields = clazz.filterHasAnnotationFields<Inject>()
         when (fields.isEmpty()) {
             true -> return
             false -> {
-                injectFields(fields)
+                instance.injectFields(fields)
             }
         }
     }
