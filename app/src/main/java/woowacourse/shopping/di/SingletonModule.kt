@@ -28,8 +28,6 @@ class SingletonModule(
         return getInstance { DefaultProductRepository() }
     }
 
-    fun provideCartProductDao(): CartProductDao = cartProductDao
-
     private inline fun <reified T : Any> getInstance(create: () -> T): T {
         val qualifiedName = T::class.qualifiedName ?: throw IllegalArgumentException()
         return cacheData[qualifiedName] as T? ?: run {

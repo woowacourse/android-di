@@ -70,7 +70,7 @@ class Injector(
         return kFunction.call(module, *arguments.toTypedArray()) as T
     }
 
-    private fun <T : Any> T.injectAnnotationFields(clazz: KClass<T>) {
+    fun <T : Any> T.injectAnnotationFields(clazz: KClass<T>) {
         val fields = clazz.filterHasAnnotationFields<Inject>()
         when (fields.isEmpty()) {
             true -> return
