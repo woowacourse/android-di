@@ -1,8 +1,11 @@
 package woowacourse.shopping.ui.cart
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.ActivityInjectManager.ActivityLifecycle
+import woowacourse.shopping.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.base.BaseActivity
@@ -15,6 +18,7 @@ class CartActivity : BaseActivity() {
         ViewModelProvider(this, Factory)[CartViewModel::class.java]
     }
 
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +28,8 @@ class CartActivity : BaseActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+        registerActivity(this)
+        addFactory(Provider())
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -72,6 +78,13 @@ class CartActivity : BaseActivity() {
             if (!it) return@observe
             viewModel.getAllCartProducts()
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    class Provider() {
+        @ActivityLifecycle
+        fun provideDateFormatter(context: Context): DateFormatter {
+            return DateFormatter(context)
         }
     }
 }
