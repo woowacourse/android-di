@@ -18,15 +18,15 @@ abstract class AutoDIScopedActivity<T : AppCompatActivity> : AppCompatActivity()
 
         when (activityLifeCycleScope.lifeCycleScope) {
             ACTIVITY_RETAINED -> {
-                if (registerScope.isFinishing) disconnectReference()
+                if (registerScope.isFinishing) disconnectPropertyInjectionReference()
             }
             ACTIVITY -> {
-                disconnectReference()
+                disconnectPropertyInjectionReference()
             }
         }
     }
 
-    private fun disconnectReference() {
+    private fun disconnectPropertyInjectionReference() {
         for (property in registerScope::class.declaredMemberProperties) {
             val scopedAnnotation = property.findAnnotation<ScopedProperty>()
             val clazz: Class<out T> = registerScope::class.java

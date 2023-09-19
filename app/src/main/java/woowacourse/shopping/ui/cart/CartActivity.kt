@@ -6,9 +6,9 @@ import android.os.Parcelable
 import android.widget.Toast
 import com.angrypig.autodi.injectViewModel
 import com.angrypig.autodi.lifeCycleScopeHandler.annotation.activity.ActivityLifeCycleScope.*
-import com.angrypig.autodi.lifeCycleScopeHandler.ActivityScope
 import com.angrypig.autodi.lifeCycleScopeHandler.AutoDIScopedActivity
 import com.angrypig.autodi.lifeCycleScopeHandler.ScopedProperty
+import com.angrypig.autodi.lifeCycleScopeHandler.annotation.activity.ActivityScope
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
