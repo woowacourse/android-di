@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bignerdranch.android.koala.KoalaFieldInject
 import kotlinx.coroutines.launch
-import woowacourse.shopping.annotation.DataBaseCartRepository
+import woowacourse.shopping.di.annotation.DataBaseCartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
