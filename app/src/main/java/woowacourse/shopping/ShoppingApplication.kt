@@ -5,7 +5,6 @@ import com.example.bbottodi.di.DiApplication
 import com.example.bbottodi.di.annotation.InDisk
 import com.example.bbottodi.di.annotation.InMemory
 import com.example.bbottodi.di.annotation.Inject
-import com.example.bbottodi.di.inject.AutoDependencyInjector
 import com.example.bbottodi.di.inject.AutoDependencyInjector.inject
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.di.DefaultModule.provideCartProductDao
@@ -24,19 +23,18 @@ class ShoppingApplication : DiApplication() {
     }
 
     private fun initContainer() {
-        AutoDependencyInjector.container = container
         container.apply {
             addInstance(CartProductDao::class, provideCartProductDao(applicationContext))
             addInstance(ProductRepository::class, provideProductRepository())
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InDisk::class.simpleName!!),
-                inject(provideInDiskCartRepository()),
+                inject(container, provideInDiskCartRepository()),
             )
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InMemory::class.simpleName!!),
-                inject(provideInMemoryCartRepository()),
+                inject(container, provideInMemoryCartRepository()),
             )
         }
     }
