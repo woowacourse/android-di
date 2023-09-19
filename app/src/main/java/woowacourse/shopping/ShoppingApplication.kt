@@ -1,24 +1,26 @@
 package woowacourse.shopping
 
 import android.app.Application
-import android.content.Context
+import androidx.lifecycle.ProcessLifecycleOwner
 import woowacourse.shopping.container.DiContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.lifecycleobserver.ApplicationLifecycleObserver
+import woowacourse.shopping.lifecycleobserver.DefaultApplicationLifecycleObserver
 import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.cart.createDateFormatter
 
-class ShoppingApplication : Application() {
+class ShoppingApplication :
+    Application(),
+    ApplicationLifecycleObserver by DefaultApplicationLifecycleObserver() {
     private lateinit var diContainer: DiContainer
     lateinit var injector: Injector
         private set
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
         setupContainer()
         setupInjector()
-
-        injector.addDependency("ApplicationContainer", Context::class, this)
+        setupLifecycleObserver()
     }
 
     private fun setupContainer() {
@@ -32,5 +34,10 @@ class ShoppingApplication : Application() {
 
     private fun setupInjector() {
         injector = Injector(diContainer)
+    }
+
+    private fun setupLifecycleObserver() {
+        val lifecycle = ProcessLifecycleOwner.get().lifecycle
+        setupLifecycleObserver(lifecycle, this, injector)
     }
 }

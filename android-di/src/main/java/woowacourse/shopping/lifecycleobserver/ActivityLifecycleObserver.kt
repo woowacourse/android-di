@@ -28,7 +28,7 @@ class DefaultActivityLifecycleObserver : DefaultLifecycleObserver, ActivityLifec
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         injector.addDependency(
-            dependency = "Released" + activity::class.simpleName + "Container",
+            dependency = RELEASED_DEPENDENCY.format(activity::class.simpleName),
             clazz = Context::class,
             instance = activity,
         )
@@ -39,13 +39,18 @@ class DefaultActivityLifecycleObserver : DefaultLifecycleObserver, ActivityLifec
         super.onDestroy(owner)
         if (this::activity.isInitialized && this::injector.isInitialized) {
             if (activity.isFinishing) {
-                releaseDependency("Retained" + activity::class.simpleName + "Container")
+                releaseDependency(RETAINED_DEPENDENCY.format(activity::class.simpleName))
             }
-            releaseDependency("Released" + activity::class.simpleName + "Container")
+            releaseDependency(RELEASED_DEPENDENCY.format(activity::class.simpleName))
         }
     }
 
     private fun releaseDependency(dependency: String) {
         injector.releaseDependency(dependency)
+    }
+
+    companion object {
+        private const val RETAINED_DEPENDENCY = "Retained%sContainer"
+        private const val RELEASED_DEPENDENCY = "Released%sContainer"
     }
 }
