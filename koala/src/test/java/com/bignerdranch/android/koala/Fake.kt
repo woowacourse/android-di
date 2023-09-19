@@ -1,6 +1,35 @@
 package com.bignerdranch.android.koala
 
 import android.content.Context
+import androidx.lifecycle.ViewModel
+
+class FakeApplicationDiModule() : DiModule {
+
+    override var context: Context? = null
+
+    fun getFakeRepository(): FakeRepository {
+        return FakeRepository()
+    }
+}
+
+class FakeDiApplication : DiApplication(FakeApplicationDiModule())
+
+class FakeViewModel(
+    val repository: FakeRepository,
+) : ViewModel()
+
+class FakeRepository
+
+class FakeActivityModule() : DiModule {
+
+    override var context: Context? = null
+
+    fun getFakeFieldObject(): FakeFieldObject {
+        return FakeFieldObject()
+    }
+}
+
+class FakeFieldObject
 
 class FakeModule() : DiModule {
 
