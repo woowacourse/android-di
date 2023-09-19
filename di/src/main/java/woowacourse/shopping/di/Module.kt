@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class Module(private val parentModule: Module? = null) {
+open class Module(private val parentModule: Module? = null) {
 
     fun <T : Any> inject(clazz: Class<T>): T {
         val primaryConstructor =
