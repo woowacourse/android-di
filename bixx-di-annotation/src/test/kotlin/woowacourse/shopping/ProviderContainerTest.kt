@@ -4,9 +4,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class FactoryContainerTest {
+class ProviderContainerTest {
     private val dependencyContainer = DependencyContainer.getSingletonInstance()
-    private val factoryContainer = Injector.getSingletonInstance().factoryContainer
+    private val factoryContainer = Injector.getSingletonInstance().providerContainer
 
     interface Person {
         val name: String
@@ -52,7 +52,7 @@ class FactoryContainerTest {
     fun `싱글톤 어노테이션을 붙인 생성 함수에 의해 생성된 인스턴스는 DependencyContainer에 보관된다`() {
         // given
         dependencyContainer.addInstance(String::class, emptyList(), "bixx")
-        factoryContainer.addProvideFactory(FakeFactory())
+        factoryContainer.addProvider(FakeFactory())
 
         // when
         val createdInstance = factoryContainer.getInstance(Person::class, "Android Part")
@@ -67,7 +67,7 @@ class FactoryContainerTest {
         // given
         val name = "matPig"
         dependencyContainer.addInstance(String::class, emptyList(), name)
-        factoryContainer.addProvideFactory(FakeFactory())
+        factoryContainer.addProvider(FakeFactory())
 
         // when
         val createdInstance = factoryContainer.getInstance(Person::class, "SoptMvp") as Person
@@ -81,7 +81,7 @@ class FactoryContainerTest {
     @Test
     fun `Inject 어노테이션이 붙은 프로퍼티는 주입 된다`() {
         // given
-        factoryContainer.addProvideFactory(FakeFactory())
+        factoryContainer.addProvider(FakeFactory())
         dependencyContainer.addInstance(String::class, emptyList(), "matPig")
 
         // when
