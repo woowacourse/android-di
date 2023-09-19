@@ -6,8 +6,6 @@ import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
 import com.dygames.di.model.LifecycleAwareDependencies
 import com.dygames.di.model.LifecycleAwareProviders
-import com.dygames.di.model.Providers
-import com.dygames.di.model.QualifiableProviders
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -71,9 +69,9 @@ object DependencyInjector {
 
         val constructor =
             type.jvmErasure.primaryConstructor ?: (
-                    provider?.jvmErasure?.primaryConstructor
-                        ?: throw InjectError.ConstructorNoneAvailable(type)
-                    )
+                provider?.jvmErasure?.primaryConstructor
+                    ?: throw InjectError.ConstructorNoneAvailable(type)
+                )
 
         val parameters = constructor.parameters
         val arguments = gatherArguments(parameters, lifecycle)
