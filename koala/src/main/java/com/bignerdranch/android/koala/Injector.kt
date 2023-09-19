@@ -13,7 +13,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 
 class Injector(
-    private val container: Container,
+    private val module: DiModule,
 ) {
 
     fun <T : Any> inject(clazz: KClass<T>): T {

@@ -1,23 +1,31 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.di.module
 
 import android.content.Context
-import com.bignerdranch.android.koala.Container
-import woowacourse.shopping.annotation.DataBaseCartRepository
-import woowacourse.shopping.annotation.DataBaseDataSource
-import woowacourse.shopping.annotation.InMemoryCartRepository
-import woowacourse.shopping.annotation.InMemoryDataSource
+import com.bignerdranch.android.koala.DiModule
+import com.bignerdranch.android.koala.KoalaSingleton
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.datasource.CartDataSource
 import woowacourse.shopping.data.datasource.DefaultCartDataSource
 import woowacourse.shopping.data.datasource.InMemoryCartDataSource
+import woowacourse.shopping.di.annotation.DataBaseCartRepository
+import woowacourse.shopping.di.annotation.DataBaseDataSource
+import woowacourse.shopping.di.annotation.InMemoryCartRepository
+import woowacourse.shopping.di.annotation.InMemoryDataSource
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
-class ShoppingContainer(private val context: Context) : Container {
+class ApplicationDiModule : DiModule {
+
+    override var context: Context? = null
 
     fun getProductRepository(): ProductRepository {
         return DefaultProductRepository()
     }
 
+    @KoalaSingleton
     @InMemoryCartRepository
     fun getInMemoryCartRepository(
         @InMemoryDataSource cartDataSource: CartDataSource,
@@ -25,6 +33,7 @@ class ShoppingContainer(private val context: Context) : Container {
         return DefaultCartRepository(cartDataSource)
     }
 
+    @KoalaSingleton
     @DataBaseCartRepository
     fun getRoomDBCartRepository(
         @DataBaseDataSource cartDataSource: CartDataSource,
@@ -32,11 +41,13 @@ class ShoppingContainer(private val context: Context) : Container {
         return DefaultCartRepository(cartDataSource)
     }
 
+    @KoalaSingleton
     @InMemoryDataSource
     fun getInMemoryCartDataSource(): CartDataSource {
         return InMemoryCartDataSource()
     }
 
+    @KoalaSingleton
     @DataBaseDataSource
     fun getRoomDBCartDataSource(
         cartProductDao: CartProductDao,
@@ -44,7 +55,10 @@ class ShoppingContainer(private val context: Context) : Container {
         return DefaultCartDataSource(cartProductDao)
     }
 
+    @KoalaSingleton
     fun getCartDao(): CartProductDao {
-        return ShoppingDatabase.getInstance(context).cartProductDao()
+        return context?.let {
+            ShoppingDatabase.getInstance(it).cartProductDao()
+        } ?: throw NullPointerException("context가 초기화되지 않았습니다")
     }
 }
