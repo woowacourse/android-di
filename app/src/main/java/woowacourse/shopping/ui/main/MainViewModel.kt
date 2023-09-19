@@ -12,7 +12,7 @@ import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel(
     private val productRepository: ProductRepository,
-    @Qualifier("PersistentCartRepository")
+    @Qualifier("persistence")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

@@ -19,26 +19,21 @@ class CartActivity : BaseActivity() {
     }
 
     @Inject
+    @ActivityLifecycle
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setupDateFormatter()
+        registerActivity(this)
+        addProvider(Provider())
         setupBinding()
         setupToolbar()
         setupView()
-        registerActivity(this)
-        addFactory(Provider())
     }
 
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -82,7 +77,6 @@ class CartActivity : BaseActivity() {
     }
 
     class Provider() {
-        @ActivityLifecycle
         fun provideDateFormatter(context: Context): DateFormatter {
             return DateFormatter(context)
         }
