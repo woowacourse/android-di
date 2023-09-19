@@ -1,9 +1,9 @@
 package woowacourse.shopping.repository
 
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Test
 import woowacourse.shopping.provider.Dummy
 import woowacourse.shopping.provider.Fake
 
@@ -11,13 +11,13 @@ class CartRepositoryTest {
 
     private lateinit var cartRepository: CartRepository
 
-    @BeforeEach
+    @Before
     internal fun setUp() {
         cartRepository = Fake.CartRepository()
     }
 
     @Test
-    fun 장바구니에_상품을_추가한다() {
+    fun 장바구니에_상품을_추가한다() = runTest {
         // given
         val addProduct = Dummy.Product()
 
@@ -25,11 +25,11 @@ class CartRepositoryTest {
         cartRepository.addCartProduct(addProduct)
 
         // then
-        assertTrue(cartRepository.getAllCartProducts().contains(addProduct))
+        assertTrue(cartRepository.getAllCartProducts()[0].product == addProduct)
     }
 
     @Test
-    fun 장바구니에_담긴_상품을_제거한다() {
+    fun 장바구니에_담긴_상품을_제거한다() = runTest {
         // given
         val addProduct = Dummy.Product()
         cartRepository.addCartProduct(addProduct)
@@ -38,6 +38,6 @@ class CartRepositoryTest {
         cartRepository.deleteCartProduct(0)
 
         // then
-        assertFalse(cartRepository.getAllCartProducts().contains(addProduct))
+        assertTrue(cartRepository.getAllCartProducts().size == 0)
     }
 }
