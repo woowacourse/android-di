@@ -1,84 +1,66 @@
 package woowacourse.shopping
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
-import org.junit.jupiter.api.assertThrows
+import kotlin.reflect.full.declaredMemberProperties
 
 class DependencyContainerTest {
+    private val dependencyContainer: DependencyContainer =
+        DependencyContainer.getSingletonInstance()
+
     interface Person {
         val name: String
+    }
+
+    class AnnotationContainer {
+        @Qualifier("SoptMvp")
+        val soptMvp: String = ""
     }
 
     class Bixx(override val name: String = "bixx") : Person
     class Sangun(override val name: String = "sangun") : Person
     class MatPig(override val name: String = "matPig") : Person
-    class Sopt(
-        @Qualifier("MatPig")
-        val person: Person,
-    )
 
-    class Jason {
-        @Inject
-        lateinit var role: String
-        lateinit var github: String
+    @BeforeEach
+    fun clear() {
+        dependencyContainer.clear()
     }
 
     @Test
-    fun `컨테이너에 넣은 인스턴스가 제대로 반환되는지 테스트`() {
+    fun `Bixx 인스턴스를 addInstance하면 getInstance로 나온다`() {
         // given
-        val expected = Bixx()
+        val bixx = Bixx()
 
         // when
-        DependencyContainer.addInstance(Bixx::class, expected)
-        val actual = DependencyContainer.getInstance(Bixx::class)
+        dependencyContainer.addInstance(Person::class, emptyList(), bixx)
+        val actual = dependencyContainer.getInstance(Person::class)
 
         // then
-        assertThat(actual).isEqualTo(expected)
+        assertThat(actual).isEqualTo(bixx)
     }
 
     @Test
-    fun `여러 구현체가 있을 때 지정한 구현체로 주입되는지 테스트`() {
+    fun `저장된 여러 구현체 중 지정한 Qualifier에 해당하는 구현체를 가져온다`() {
+        // 빅스, 산군, 멧돼지 중 Qualifier("SoptMvp")로 지정된 구현체를 가져온다
         // given
-        DependencyContainer.addInstance(Person::class, Bixx())
-        DependencyContainer.addInstance(Person::class, Sangun())
-        DependencyContainer.addInstance(Person::class, MatPig())
+        val bixx: Person = Bixx()
+        val sangun: Person = Sangun()
+        val matPig: Person = MatPig()
+        val soptMvpQualifier: List<Annotation> = AnnotationContainer::class
+            .declaredMemberProperties
+            .first()
+            .annotations
 
         // when
-        val sopt = Injector.inject<Sopt>(Sopt::class)
-        val actual = sopt.person.name
+        dependencyContainer.run {
+            addInstance(Person::class, emptyList(), bixx)
+            addInstance(Person::class, emptyList(), sangun)
+            addInstance(Person::class, soptMvpQualifier, matPig)
+        }
+        val actual = dependencyContainer.getInstance(Person::class, "SoptMvp")
 
         // then
-        assertThat(actual).isEqualTo("matPig")
-    }
-
-    @Test
-    fun `생성자가 아닌 프로퍼티에 값이 제대로 주입됐는지 테스트(싱글톤)`() {
-        // given
-        DependencyContainer.addInstance(String::class, "Captain")
-
-        // when
-        val jason = Injector.injectSingleton<Jason>(Jason::class)
-
-        // then
-        assertAll(
-            { assertThat(jason.role).isEqualTo("Captain") },
-            { assertThrows<UninitializedPropertyAccessException> { jason.github } },
-        )
-    }
-
-    @Test
-    fun `생성자가 아닌 프로퍼티에 값이 제대로 주입됐는지 테스트`() {
-        // given
-        DependencyContainer.addInstance(String::class, "Captain")
-
-        // when
-        val jason = Injector.inject<Jason>(Jason::class)
-
-        // then
-        assertAll(
-            { assertThat(jason.role).isEqualTo("Captain") },
-            { assertThrows<UninitializedPropertyAccessException> { jason.github } },
-        )
+        assertThat(actual).isEqualTo(matPig)
     }
 }
