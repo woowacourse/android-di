@@ -9,6 +9,7 @@ import kotlin.reflect.full.findAnnotation
 object DIContainer {
     private val moduleInstances = mutableMapOf<KClass<*>, MutableList<KClass<*>>>()
     private val providerInstances = mutableMapOf<KClass<*>, Any>()
+    private val singletonInstances = mutableMapOf<KClass<*>, Any>()
 
     private const val ERROR_PROVIDER_NOT_CONTAINED = "Provider is not contained in DIContainer"
     private const val ERROR_QUALIFIER_MUST_BE_ONE = "Qualifier must be one in implemenation"
@@ -36,9 +37,15 @@ object DIContainer {
         return result.firstOrNull()
     }
 
-    fun getProviderInstance(clazz: KClass<*>): Any {
-        return providerInstances[clazz] ?: throw IllegalArgumentException(
-            ERROR_PROVIDER_NOT_CONTAINED
-        )
+    fun getProviderInstance(clazz: KClass<*>): Any? {
+        return providerInstances[clazz]
+    }
+
+    fun getSingleton(clazz: KClass<*>): Any? {
+        return singletonInstances[clazz]
+    }
+
+    fun updateSingleton(clazz: KClass<*>, instance: Any) {
+        singletonInstances[clazz] = instance
     }
 }

@@ -10,6 +10,7 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
+
 @Qualifier(type = QualifierType.DB)
 class CartRepositoryImpl @Inject constructor(private val cartProduct: CartProductDao) :
     CartRepository {
