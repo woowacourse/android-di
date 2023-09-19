@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 
 open class ViewModelModule(
-    val applicationContext: Context,
-) : Module {
+    applicationContext: Context,
+    activityModule: ActivityModule,
+) : Module(activityModule) {
     fun <VM : ViewModel> createViewModel(modelClass: Class<VM>): VM {
-        return Injector(this).inject(modelClass)
+        return inject(modelClass)
     }
 }

@@ -5,6 +5,7 @@ import woowacourse.shopping.ui.cart.DateFormatter
 
 class DefaultActivityModule(
     activityContext: Context,
-) : ActivityModule(activityContext) {
+    applicationModule: ApplicationModule,
+) : ActivityModule(activityContext, applicationModule) {
     fun provideDateFormatter(): DateFormatter = DateFormatter(activityContext)
 }

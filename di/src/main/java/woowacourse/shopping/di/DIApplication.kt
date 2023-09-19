@@ -5,8 +5,11 @@ import kotlin.reflect.full.primaryConstructor
 
 open class DIApplication(
     private val applicationModuleClazz: Class<out ApplicationModule>,
+    private val activityModuleClazz: Class<out ActivityModule>,
+    private val viewModelModuleClazz: Class<out ViewModelModule>,
 ) : Application() {
-    private lateinit var applicationModule: ApplicationModule
+
+    lateinit var applicationModule: ApplicationModule
 
     override fun onCreate() {
         super.onCreate()
@@ -16,5 +19,17 @@ open class DIApplication(
 
         applicationModule = primaryConstructor.call(this)
         applicationModule.inject(this)
+    }
+
+    fun getActivityModule(): ActivityModule {
+        val primaryConstructor =
+            activityModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
+        return primaryConstructor.call(this, applicationModule)
+    }
+
+    fun getViewModelModule(): ViewModelModule {
+        val primaryConstructor =
+            viewModelModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
+        return primaryConstructor.call(this, getActivityModule())
     }
 }

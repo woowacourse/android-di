@@ -5,11 +5,9 @@ import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.DIActivity
-import woowacourse.shopping.di.DefaultActivityModule
 import woowacourse.shopping.di.Inject
-import woowacourse.shopping.util.injectViewModel
 
-class CartActivity : DIActivity(DefaultActivityModule::class.java) {
+class CartActivity : DIActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

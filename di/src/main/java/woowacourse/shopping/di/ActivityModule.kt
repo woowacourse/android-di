@@ -4,8 +4,9 @@ import android.content.Context
 
 open class ActivityModule(
     val activityContext: Context,
-) : Module {
+    applicationModule: Module,
+) : Module(applicationModule) {
     fun inject(diActivity: DIActivity) {
-        Injector(this).injectAnnotationFields(diActivity)
+        injectAnnotationFields(diActivity)
     }
 }

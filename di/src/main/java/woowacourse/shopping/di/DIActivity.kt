@@ -1,25 +1,35 @@
 package woowacourse.shopping.di
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.reflect.full.primaryConstructor
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelLazy
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 
-open class DIActivity(
-    private val activityModuleClazz: Class<out ActivityModule>,
-) : AppCompatActivity() {
+open class DIActivity() : AppCompatActivity() {
     private lateinit var activityModule: ActivityModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val primaryConstructor =
-            activityModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
-
-        activityModule = primaryConstructor.call(this)
+        activityModule = (application as DIApplication).getActivityModule()
         activityModule.inject(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM> {
+        return ViewModelLazy(
+            VM::class,
+            { viewModelStore },
+            {
+                viewModelFactory {
+                    initializer {
+                        (application as DIApplication).getViewModelModule()
+                            .createViewModel(VM::class.java)
+                    }
+                }
+            },
+        )
     }
 }
