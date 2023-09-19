@@ -11,7 +11,7 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDependencyInjector {
-    val container = Container()
+    lateinit var container: Container
 
     private const val INJECT_ERROR_MESSAGE = "주입 할 생성자가 존재 하지 않습니다."
     private const val NONE_INSTANCE_ERROR_MESSAGE = "해당 인스턴스가 존재하지 않습니다."
