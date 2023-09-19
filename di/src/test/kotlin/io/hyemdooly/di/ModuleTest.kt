@@ -2,6 +2,7 @@ package io.hyemdooly.di
 
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
@@ -19,6 +20,18 @@ class ModuleTest {
 
         // then
         assertEquals(firstInstance, secondInstance)
+    }
+
+    @Test
+    fun `모듈에서 정의한 provider가 싱글톤이 아니면 컬렉션에 저장하지 않는다`() {
+        // given
+
+        // when
+        val firstInstance = fakeParentModule.getInstance(FakeFamily::class)
+        val secondInstance = fakeParentModule.getInstance(FakeFamily::class)
+
+        // then
+        assertNotEquals(firstInstance, secondInstance)
     }
 
     @Test

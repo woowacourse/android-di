@@ -48,11 +48,14 @@ open class Module(private val parentModule: Module? = null) {
     }
 
     private fun getFromDeclaredFunctions(type: KClass<*>): Any? {
-        this::class.declaredMemberFunctions.firstOrNull { it.hasAnnotation<Singleton>() && it.returnType.jvmErasure == type }
+        this::class.declaredMemberFunctions.firstOrNull { it.returnType.jvmErasure == type }
             ?.let { provider ->
                 val instance = provider.callBy(getParamInstances(provider.parameters))
                     ?: throw NoSuchElementException("declared member functions should not be null")
-                instances[provider.returnType.jvmErasure] = instance
+                if (provider.hasAnnotation<Singleton>()) {
+                    instances[provider.returnType.jvmErasure] =
+                        instance
+                }
                 return instance
             }
         return null
