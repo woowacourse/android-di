@@ -21,4 +21,18 @@ class DefaultViewModelModule(
 
     fun getCartProductDao(): CartProductDao =
         ShoppingDatabase.getShoppingDatabase(applicationContext).cartProductDao()
+
+    companion object {
+        private var instance: DefaultViewModelModule? = null
+
+        fun getViewModelModule(
+            context: Context,
+        ): DefaultViewModelModule {
+            synchronized(this) {
+                return instance ?: run {
+                    DefaultViewModelModule(context).also { instance = it }
+                }
+            }
+        }
+    }
 }

@@ -52,19 +52,17 @@ class CartActivity : DIActivity(DefaultActivityModule::class.java) {
     }
 
     private fun setupCartProductList() {
-        if (::dateFormatter.isInitialized) {
-            val adapter = CartProductAdapter(
-                dateFormatter = dateFormatter,
-                viewModel::deleteCartProduct,
-            )
-            binding.rvCartProducts.adapter = adapter
-            viewModel.cartProducts.observe(this) { cartProducts ->
-                adapter.submitList(cartProducts)
-            }
-            viewModel.onCartProductDeleted.observe(this) {
-                if (!it) return@observe
-                Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
-            }
+        val adapter = CartProductAdapter(
+            dateFormatter = dateFormatter,
+            viewModel::deleteCartProduct,
+        )
+        binding.rvCartProducts.adapter = adapter
+        viewModel.cartProducts.observe(this) { cartProducts ->
+            adapter.submitList(cartProducts)
+        }
+        viewModel.onCartProductDeleted.observe(this) {
+            if (!it) return@observe
+            Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
     }
 }
