@@ -16,3 +16,4 @@ rootProject.name = "android-di"
 include(":app")
 include(":domain")
 include(":bixx-di-annotation")
+include(":bixx-android-di")
