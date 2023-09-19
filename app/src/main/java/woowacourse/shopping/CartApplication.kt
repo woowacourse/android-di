@@ -25,12 +25,11 @@ class CartApplication : LifecycleWatcherApplication(typeOf<CartApplication>()) {
         dependencies {
             lifecycle<CartApplication> {
                 qualifier(Room()) {
-                    val shoppingDatabase: ShoppingDatabase by lazy {
-                        ShoppingDatabase.getDatabase(
-                            this@CartApplication
-                        )
+                    provider {
+                        val shoppingDatabase: ShoppingDatabase =
+                            ShoppingDatabase.getDatabase(inject())
+                        shoppingDatabase.cartProductDao()
                     }
-                    provider { shoppingDatabase.cartProductDao() }
                     provider<CartRepository>(typeOf<DefaultCartRepository>())
                 }
                 provider<ProductRepository> { DefaultProductRepository() }

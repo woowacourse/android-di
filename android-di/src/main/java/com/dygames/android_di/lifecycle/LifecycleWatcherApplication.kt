@@ -19,7 +19,7 @@ abstract class LifecycleWatcherApplication(val lifecycle: KType) : Application()
     }
 
     inline fun <reified T : Any> inject(): T {
-        return DependencyInjector.inject(lifecycle) as T
+        return DependencyInjector.inject<T>(lifecycle)
     }
 
     override fun onCreate() {
