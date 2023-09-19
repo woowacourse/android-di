@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.viewModels
+import woowacourse.shopping.otterdi.annotation.Inject
 
 class CartActivity : AppCompatActivity() {
 
@@ -13,6 +14,7 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel: CartViewModel by viewModels()
 
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
