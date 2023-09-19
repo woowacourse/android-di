@@ -2,6 +2,7 @@ package woowacourse.shopping.otterdi
 
 import woowacourse.shopping.otterdi.annotation.Inject
 import woowacourse.shopping.otterdi.annotation.Qualifier
+import woowacourse.shopping.otterdi.annotation.Singleton
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -22,15 +23,37 @@ class Dependencies(private val modules: List<Module>) {
 
     fun getInstances(params: List<KParameter>): List<Any> = params.map { getInstance(it) }
 
-    fun getInstance(kParam: KParameter): Any = createInstance(
-        providers[kParam.identifyKey()] ?: throwError(),
-        kParam.getProvideModule() ?: throwError(),
-    ) ?: throwError()
+    fun getInstance(kParam: KParameter): Any {
+        val key = kParam.identifyKey()
+        val provider = providers[key] ?: throwError()
+        val provideModule = kParam.getProvideModule() ?: throwError()
+        var instance: Any? = createInstance(provider, provideModule) ?: throwError()
 
-    fun getInstance(kCallable: KCallable<*>): Any = createInstance(
-        providers[kCallable.identifyKey()] ?: throwError(),
-        kCallable.getProvideModule() ?: throwError(),
-    ) ?: throwError()
+        if (kParam.hasAnnotation<Singleton>()) {
+            if (instances[key] == null) {
+                instances[key] = instance
+            } else {
+                instance = instances[key]
+            }
+        }
+        return instance ?: throwError()
+    }
+
+    fun getInstance(kCallable: KCallable<*>): Any {
+        val key = kCallable.identifyKey()
+        val provider = providers[key] ?: throwError()
+        val provideModule = kCallable.getProvideModule() ?: throwError()
+        var instance: Any? = createInstance(provider, provideModule) ?: throwError()
+
+        if (kCallable.hasAnnotation<Singleton>()) {
+            if (instances[key] == null) {
+                instances[key] = instance
+            } else {
+                instance = instances[key]
+            }
+        }
+        return instance ?: throwError()
+    }
 
     private fun createInstance(provideFunc: KFunction<*>, receiver: Module): Any? {
         val instances: MutableMap<String, Any?> = mutableMapOf() // 매번 필요한 인스턴스를 만들어 사용하도록 함
@@ -75,4 +98,8 @@ class Dependencies(private val modules: List<Module>) {
         }
 
     private fun throwError(): Nothing = throw IllegalArgumentException("의존성을 제공할 수 없습니다.")
+
+    companion object {
+        val instances: MutableMap<String, Any?> = mutableMapOf()
+    }
 }

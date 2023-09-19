@@ -1,9 +1,11 @@
 package woowacourse.shopping.otterdi
 
 import junit.framework.TestCase.assertNotNull
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import woowacourse.shopping.otterdi.annotation.Inject
+import woowacourse.shopping.otterdi.annotation.Singleton
 
 internal class DependenciesTest {
 
@@ -42,6 +44,29 @@ internal class DependenciesTest {
         val viewModel2 = injector.inject<InstanceTestViewModel2>()
 
         // then
-        assertNotEquals(viewModel1.hashCode(), viewModel2.hashCode())
+        assertNotEquals(viewModel1.dependency, viewModel2.dependency)
+    }
+
+    class SingletonInstanceTestViewModel1(
+        @Singleton @Inject
+        val dependency: Dependency,
+    )
+
+    class SingletonInstanceTestViewModel2(
+        @Singleton @Inject
+        val dependency: Dependency,
+    )
+
+    @Test
+    fun `Singleton 어노테이션이 있는 객체에 주입하는 의존성은 하나의 인스턴스만 가진다`() {
+        // given
+        val injector = Injector(InstanceTestModule)
+
+        // when
+        val viewModel1 = injector.inject<SingletonInstanceTestViewModel1>()
+        val viewModel2 = injector.inject<SingletonInstanceTestViewModel2>()
+
+        // then
+        assertEquals(viewModel1.dependency, viewModel2.dependency)
     }
 }
