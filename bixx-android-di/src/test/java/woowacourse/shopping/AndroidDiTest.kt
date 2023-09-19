@@ -24,7 +24,7 @@ class AndroidDiTest {
             super.onCreate()
             val injector = Injector.getSingletonInstance()
             injector.dependencyContainer.addInstance(Context::class, emptyList(), applicationContext)
-            injector.factoryContainer.addProvideFactory(SingletonProvider())
+            injector.providerContainer.addProvider(SingletonProvider())
         }
     }
 
@@ -50,7 +50,7 @@ class AndroidDiTest {
             super.onCreate(savedInstanceState)
             setTheme(com.google.android.material.R.style.Theme_AppCompat_DayNight_NoActionBar)
             registerActivity(this)
-            addFactory(Provider())
+            addProvider(Provider())
         }
 
         class Provider() {

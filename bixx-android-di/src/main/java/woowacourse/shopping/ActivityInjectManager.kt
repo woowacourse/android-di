@@ -5,6 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 interface ActivityInjectManager {
     val activity: AppCompatActivity
     fun registerActivity(activity: AppCompatActivity)
-    fun addFactory(vararg factory: Any)
+    fun addProvider(vararg provider: Any)
     annotation class ActivityLifecycle
 }
