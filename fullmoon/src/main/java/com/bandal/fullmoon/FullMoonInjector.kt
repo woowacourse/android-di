@@ -27,10 +27,18 @@ class FullMoonInjector(private val appContainer: AppContainer) {
         return appContainer.getSavedInstance(InjectType.from(kClass), kClass)
     }
 
+    private fun getInstance(kProperty: KProperty1<*, *>): Any? {
+        return appContainer.getSavedInstance(InjectType.from(kProperty), kProperty)
+    }
+
+    private fun getInstance(kParameter: KParameter): Any? {
+        return appContainer.getSavedInstance(InjectType.from(kParameter), kParameter)
+    }
+
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val constructor = kClass.primaryConstructor ?: throw NotFoundPrimaryConstructor()
         val parameters = constructor.parameters.map { kParameter ->
-            createParameterInstance(kParameter)
+            getInstance(kParameter) ?: createParameterInstance(kParameter)
         }
         val instance = constructor.call(*parameters.toTypedArray())
         return instance.apply { injectFields(this) }
@@ -45,9 +53,8 @@ class FullMoonInjector(private val appContainer: AppContainer) {
                 property.isAccessible = true
                 (property as KMutableProperty<*>).setter.call(
                     instance,
-                    createPropertyInstance(property),
+                    getInstance(property) ?: createPropertyInstance(property),
                 )
-                property.setter.call(instance, createPropertyInstance(property))
             }
     }
 
@@ -92,8 +99,20 @@ class FullMoonInjector(private val appContainer: AppContainer) {
             createParameterInstance(parameter)
         }
 
-        return function.call(appContainer, *parameterInstances.toTypedArray())
+        val instance: Any = function.call(appContainer, *parameterInstances.toTypedArray())
             ?: throw DIError.NotFoundCreateFunction()
+
+        if (function.hasAnnotation<SingleTone>()) {
+            val kClass: KClass<*> = function.returnType.jvmErasure
+            appContainer.addInstance(
+                injectType = InjectType.from(function),
+                type = kClass,
+                instance = instance,
+                qualifierKey = function.findAnnotation<Qualifier>()?.key,
+            )
+        }
+
+        return instance
     }
 
     private fun KParameter.getQualifierKey(): String {

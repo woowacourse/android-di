@@ -2,6 +2,7 @@ package com.bandal.fullmoon
 
 object TestAppContainer : AppContainer() {
 
+    @SingleTone
     @Qualifier("database")
     fun createDatabaseInstance(
         @Qualifier("localDataSource")
@@ -43,4 +44,7 @@ class FakeClass(
 ) {
     @FullMoonInject
     lateinit var fakeDateFormatter: DateFormatter
+
+    @Qualifier("database")
+    lateinit var fakeDataBaseRepository2: FakeRepository
 }

@@ -1,6 +1,6 @@
 package com.bandal.fullmoon
 
-import kotlin.reflect.KClass
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.hasAnnotation
 
 enum class InjectType {
@@ -9,9 +9,11 @@ enum class InjectType {
     ;
 
     companion object {
-        fun from(kClass: KClass<*>): InjectType = when (kClass.hasAnnotation<Qualifier>()) {
-            true -> NEED_QUALIFY
-            false -> NO_DISTINCTION
+        inline fun <reified T : KAnnotatedElement> from(element: T): InjectType {
+            return when (element.hasAnnotation<Qualifier>()) {
+                true -> NEED_QUALIFY
+                false -> NO_DISTINCTION
+            }
         }
     }
 }

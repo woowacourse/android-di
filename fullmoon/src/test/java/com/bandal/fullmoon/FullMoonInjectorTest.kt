@@ -1,5 +1,6 @@
 package com.bandal.fullmoon
 
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Test
 
@@ -31,5 +32,8 @@ class FullMoonInjectorTest {
         assertNotNull(injectedClass.fakeDataBaseRepository)
         assertNotNull(injectedClass.fakeInMemoryRepository)
         assertNotNull(injectedClass.fakeDateFormatter)
+        assertNotNull(injectedClass.fakeDataBaseRepository2)
+
+        assertEquals(injectedClass.fakeDataBaseRepository2, injectedClass.fakeDataBaseRepository)
     }
 }
