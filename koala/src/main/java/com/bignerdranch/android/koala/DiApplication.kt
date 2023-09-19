@@ -20,8 +20,7 @@ open class DiApplication(
         val singletons =
             module::class.declaredMemberFunctions.filter { it.hasAnnotation<KoalaSingleton>() }
         singletons.forEach { func ->
-            val instance = injector.callFunction(func)
-            Container.instances[instance::class] = instance
+            injector.callFunction(func)
         }
     }
 

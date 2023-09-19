@@ -18,7 +18,7 @@ class Injector(
 
     fun <T : Any> inject(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalStateException("찾을 수 없습니다.")
-        val args = constructor.parameters.map {
+        val args = constructor.valueParameters.map {
             getParameterInstance(it)
         }
         val instance = constructor.call(*args.toTypedArray())
@@ -33,7 +33,7 @@ class Injector(
     }
 
     private fun getParameterInstance(parameter: KParameter): Any {
-        val singletonInstance = Container.instances[parameter::class]
+        val singletonInstance = Container.instances[parameter.type]
         if (singletonInstance != null) {
             return singletonInstance
         }
@@ -47,10 +47,11 @@ class Injector(
     }
 
     fun getPropertyInstance(property: KProperty1<*, *>): Any {
-        val singletonInstance = Container.instances[property::class]
-        if (singletonInstance != null) {
-            return singletonInstance
+        val instance = Container.instances[property.returnType]
+        if (instance != null) {
+            return instance
         }
+
         val qualifier =
             property.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
@@ -80,11 +81,20 @@ class Injector(
     }
 
     fun callFunction(function: KFunction<*>): Any {
+        var instance = Container.instances[function.returnType]
+        if (instance != null) {
+            return instance
+        }
         val args = arrayListOf<Any>()
         function.valueParameters.forEach { parameter ->
             args.add(getParameterInstance(parameter))
         }
-        return function.call(module, *args.toTypedArray())
+
+        instance = function.call(module, *args.toTypedArray())
             ?: throw IllegalStateException("instance를 생성할 수 없습니다.")
+        if (function.hasAnnotation<KoalaSingleton>()) {
+            Container.instances[function.returnType] = instance
+        }
+        return instance
     }
 }

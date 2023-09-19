@@ -13,7 +13,7 @@ class InjectorTest {
 
     @Before
     fun setUp() {
-        injector = Injector(FakeContainer())
+        injector = Injector(FakeModule())
     }
 
     @Test
@@ -121,5 +121,35 @@ class InjectorTest {
         assertFailsWith<UninitializedPropertyAccessException> {
             instance.fakeProductRepository
         }
+    }
+
+    @Test
+    fun `singleton 어노테이션이 붙은 경우 인스턴스를 생성하지 않는다`() {
+        // given
+        class FakeViewModel(
+            val repository: FakeSingletonRepository,
+        )
+
+        // when
+        val firstCall = injector.inject(FakeViewModel::class)
+        val secondCall = injector.inject(FakeViewModel::class)
+
+        // then
+        assertThat(firstCall.repository).isEqualTo(secondCall.repository)
+    }
+
+    @Test
+    fun `singleton 어노테이션이 붙지 않은 경우 인스턴스를 매번 새로 생성한다`() {
+        // given
+        class FakeViewModel(
+            val repository: FakeProductRepository,
+        )
+
+        // when
+        val firstCall = injector.inject(FakeViewModel::class)
+        val secondCall = injector.inject(FakeViewModel::class)
+
+        // then
+        assertThat(firstCall.repository).isNotEqualTo(secondCall.repository)
     }
 }
