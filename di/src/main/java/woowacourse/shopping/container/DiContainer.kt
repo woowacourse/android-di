@@ -66,9 +66,6 @@ class DiContainer {
     }
 
     internal fun <T : Any> addDependency(dependency: String, clazz: KClass<out T>, instance: T) {
-        println("add dependency")
-        println(dependency)
-        println(instance)
         val container = containers.getOrPut(dependency) { LifecycleContainer() } as LifecycleContainer
         container.saveInstance(clazz, instance)
     }
