@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.di"
+    namespace = "com.example.mendeldi"
     compileSdk = 33
 
     defaultConfig {

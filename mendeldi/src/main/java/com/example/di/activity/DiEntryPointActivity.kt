@@ -1,6 +1,7 @@
 package com.example.di.activity
 
 import android.os.Bundle
+import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
@@ -36,6 +37,7 @@ abstract class DiEntryPointActivity : AppCompatActivity() {
         outState.putInt(ACTIVITY_RETAINED_MODULE_KEY, this.hashCode())
     }
 
+    @MainThread
     inline fun <reified VM : ViewModel> viewModel(): Lazy<VM> {
         return ViewModelLazy(
             VM::class,
