@@ -1,26 +1,29 @@
 package woowacourse.shopping.di.injector
 
+import com.ssu.di.annotation.Injected
+import com.ssu.di.annotation.Qualifier
+import com.ssu.di.container.DiContainer
+import com.ssu.di.injector.Injector
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import com.ssu.di.annotation.Injected
-import com.ssu.di.annotation.Qualifier
-import com.ssu.di.container.DiContainer
-import com.ssu.di.injector.Injector
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 class InjectorTest {
     private lateinit var container: TestContainer
+    private lateinit var parentContainer: TestContainer
     private lateinit var injector: Injector
 
     @BeforeEach
     fun setup() {
         container = TestContainer()
-        injector = Injector(null, container)
+        parentContainer = TestContainer()
+
+        injector = Injector(parentContainer, container)
     }
 
     @Test
@@ -104,6 +107,37 @@ class InjectorTest {
             "B",
             injector.create(DatabaseFakeRepository::class)
         )
+
+        // when
+        val viewModel = injector.create(FakeQualifierViewModel::class)
+
+        // then
+        assertNotNull(viewModel.inMemoryRepository)
+        assert(viewModel.inMemoryRepository is InMemoryFakeRepository)
+        viewModel::class.java.getDeclaredField("databaseRepository").run {
+            isAccessible = true
+            assertNotNull(this.get(viewModel))
+            assert(this.get(viewModel) is DatabaseFakeRepository)
+        }
+    }
+
+    @Test
+    fun `container에 존재하지 않는 인스턴스는 parentContainer에서 찾아 ViewModel 의존성을 주입한다`() {
+        // given
+        container.apply {
+            createInstance(FakeDao::class, DefaultFakeDao())
+            createInstance(
+                "A",
+                injector.create(InMemoryFakeRepository::class)
+            )
+
+        }
+        parentContainer.apply {
+            createInstance(
+                "B",
+                injector.create(DatabaseFakeRepository::class)
+            )
+        }
 
         // when
         val viewModel = injector.create(FakeQualifierViewModel::class)

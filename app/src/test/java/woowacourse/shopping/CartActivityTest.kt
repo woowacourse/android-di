@@ -1,15 +1,20 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth.assertThat
+import androidx.test.core.app.launchActivity
 import org.junit.Rule
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.cart.DateFormatter
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -26,7 +31,7 @@ class CartActivityTest {
             .get()
 
         // then
-        assertThat(activity).isNotNull()
+        assertNotNull(activity)
     }
 
     @Test
@@ -39,6 +44,38 @@ class CartActivityTest {
         val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        assertNotNull(viewModel)
+    }
+
+    @Test
+    fun `Activity를 재생성했을 때, 액티비티 lifecycle을 따르는 필드 객체에 새로운 인스턴스가 주입된다`() {
+        // GIVEN
+        val scenario = launchActivity<CartActivity>()
+        var firstDateFormatter: DateFormatter? = null
+        var secondDateFormatter: DateFormatter? = null
+
+        // WHEN
+        scenario.moveToState(Lifecycle.State.CREATED)
+
+        // THEN
+        scenario.onActivity { activity ->
+            firstDateFormatter =
+                activity::class.declaredMemberProperties.first { it.name == "dateFormatter" }
+                    .apply { this.isAccessible = true }.getter.call(activity) as DateFormatter
+            assertNotNull(firstDateFormatter)
+        }
+
+        // WHEN
+        scenario.recreate()
+
+        // THEN
+        scenario.onActivity { activity ->
+            secondDateFormatter =
+                activity::class.declaredMemberProperties.first { it.name == "dateFormatter" }
+                    .apply { this.isAccessible = true }.getter.call(activity) as DateFormatter
+            assertNotNull(secondDateFormatter)
+        }
+
+        assert(firstDateFormatter !== secondDateFormatter)
     }
 }
