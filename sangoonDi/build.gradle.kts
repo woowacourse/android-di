@@ -11,5 +11,6 @@ dependencies {
     testImplementation("org.testng:testng:6.9.6")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.hamcrest:hamcrest-all:1.3")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
 }

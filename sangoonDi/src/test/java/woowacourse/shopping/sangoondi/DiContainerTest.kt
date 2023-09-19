@@ -3,8 +3,8 @@ package woowacourse.shopping.sangoondi
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.sangoondi.annotation.Qualifier
-import woowacourse.shopping.sangoondi.annotation.Singleton
+import woowacourse.shopping.sangoondi.fake.RealSingle
+import woowacourse.shopping.sangoondi.fake.TestModule
 
 class DiContainerTest {
 
@@ -13,66 +13,40 @@ class DiContainerTest {
         `tempModule을 컨테이너에 등록한다`()
     }
 
+    @Test
+    fun qualifiedInstanceTest() {
+        // given : 모듈이 등록 되면
+        // when : 모듈을 순회하며, @Qualifier의 어노테이션들을 찾아 qualifiedInstance에 추가한다
+        val actual = DiContainer.qualifiedInstance
+
+        // then :
+        assertEquals(3, actual.size)
+    }
+
+    @Test
+    fun instanceTest() {
+        // given : 모듈이 등록 되면
+        // when : 모듈을 순회하며, @Qualifier의 어노테이션이 없으면 instance에 추가한다
+        val actual = DiContainer.instance
+
+        // then :
+        assertEquals(4, actual.size)
+    }
+
+    @Test
+    fun singletonInstanceTest() {
+        // given : RealSingle의 생성자인 Single은 싱글톤이다.
+        class A(realSingle: RealSingle)
+
+        // when : inject를 호출하면
+        Injector.inject<A>()
+        val actual = DiContainer.singletonInstance
+
+        // then : 해당 타입에 대한 인스턴스가 생성된다.
+        assertEquals(1, actual.size)
+    }
+
     private fun `tempModule을 컨테이너에 등록한다`() {
         DiContainer.setModule(TestModule)
-    }
-
-    @Test
-    fun `모듈이 등록되면, modules에 모듈이 추가된다`() {
-        // given :
-        // when :
-        val actual = DiContainer.modules
-
-        // then :
-        assertEquals(1, actual.size)
-    }
-
-    @Test
-    fun `같은 모듈은 등록되지 않는다`() {
-        // given :
-        // when :
-
-        DiContainer.setModule(TestModule)
-        val actual = DiContainer.modules
-
-        // then :
-        assertEquals(true, actual.size == 1)
-    }
-
-    @Test
-    fun `모듈이 등록되면, @Singleton 어노테이션만 붙은 인스턴스를 추가한다`() {
-        // given :
-        // when :
-        val actual = DiContainer.singletons
-        // then :
-        assertEquals(1, actual.size)
-    }
-
-    @Test
-    fun `모듈이 등록되면, @Singleton, @Qualifier 어노테이션이 붙은 인스턴스를 추가한다`() {
-        // given :
-        // when :
-        val actual = DiContainer.qualifiedSingletons
-        // then :
-        assertEquals(2, actual.size)
-    }
-
-    class Temp
-    companion object TestModule {
-        fun provide(): Temp = Temp()
-
-        @Singleton
-        fun provideSingletonInstance(): Temp = Temp()
-
-        @Qualifier
-        fun provideQualifiedInstance(): Temp = Temp()
-
-        @Singleton
-        @Qualifier
-        fun provideQualifiedSingletonInstance1(): Temp = Temp()
-
-        @Qualifier
-        @Singleton
-        fun provideQualifiedSingletonInstance2(): Temp = Temp()
     }
 }

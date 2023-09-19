@@ -52,6 +52,16 @@ class AnnotationTest {
         assertEquals(true, actual)
     }
 
+    @Test
+    fun `Fake2클래스의 어노테이션을 통해 부모 어노테이션을 인지한다`() {
+        // given :
+        val actual = Fake2::class.annotations.any { it.annotationClass.hasAnnotation<Sample1>() }
+
+        // when :
+        // then :
+        assertEquals(true, actual)
+    }
+
     @Sample1
     class Fake @Sample2 constructor(
         private val temp: String,
@@ -64,6 +74,9 @@ class AnnotationTest {
         }
     }
 
+    @Sample5
+    class Fake2
+
     @Target(AnnotationTarget.CLASS)
     annotation class Sample1
 
@@ -75,4 +88,7 @@ class AnnotationTest {
 
     @Target(AnnotationTarget.FUNCTION)
     annotation class Sample4
+
+    @Sample1
+    annotation class Sample5
 }
