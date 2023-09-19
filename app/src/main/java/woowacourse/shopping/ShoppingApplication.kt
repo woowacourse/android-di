@@ -24,7 +24,7 @@ class ShoppingApplication : Application() {
     private fun initContainer() {
         Container.apply {
             addInstance(CartProductDao::class, provideCartProductDao(applicationContext))
-            addInstance(ProductRepository::class, ::provideProductRepository)
+            addInstance(ProductRepository::class, provideProductRepository())
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InDisk::class.simpleName!!),

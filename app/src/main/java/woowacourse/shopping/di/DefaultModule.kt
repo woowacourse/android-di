@@ -9,6 +9,7 @@ import woowacourse.shopping.data.repository.InDiskCartRepository
 import woowacourse.shopping.data.repository.InMemoryCartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 object DefaultModule : Module {
     fun provideCartProductDao(context: Context): CartProductDao {
@@ -16,7 +17,11 @@ object DefaultModule : Module {
         return localDatabase.cartProductDao()
     }
 
-    fun provideProductRepository(): ProductRepository {
+    fun provideProductRepository(): KFunction<ProductRepository> {
+        return ::createProductRepository
+    }
+
+    fun createProductRepository(): ProductRepository {
         return DefaultProductRepository()
     }
 
