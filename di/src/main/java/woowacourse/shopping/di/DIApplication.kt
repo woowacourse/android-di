@@ -8,8 +8,8 @@ open class DIApplication(
     private val activityModuleClazz: Class<out ActivityModule>,
     private val viewModelModuleClazz: Class<out ViewModelModule>,
 ) : Application() {
-
     lateinit var applicationModule: ApplicationModule
+    private val modules: MutableMap<String, Any> = mutableMapOf()
 
     override fun onCreate() {
         super.onCreate()
@@ -22,14 +22,22 @@ open class DIApplication(
     }
 
     fun getActivityModule(): ActivityModule {
-        val primaryConstructor =
-            activityModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
-        return primaryConstructor.call(this, applicationModule)
+        val qualifiedName = requireNotNull(ActivityModule::class.qualifiedName)
+        val module = modules[qualifiedName] ?: run {
+            val primaryConstructor =
+                activityModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
+            primaryConstructor.call(this, applicationModule).also { modules[qualifiedName] = it }
+        }
+        return module as ActivityModule
     }
 
     fun getViewModelModule(): ViewModelModule {
-        val primaryConstructor =
-            viewModelModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
-        return primaryConstructor.call(this, getActivityModule())
+        val qualifiedName = requireNotNull(ViewModelModule::class.qualifiedName)
+        val module = modules[qualifiedName] ?: run {
+            val primaryConstructor =
+                viewModelModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
+            primaryConstructor.call(this, getActivityModule()).also { modules[qualifiedName] = it }
+        }
+        return module as ViewModelModule
     }
 }
