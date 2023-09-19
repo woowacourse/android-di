@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.dygames.android_di.ViewModelDependencyInjector.injectViewModel
-import com.dygames.android_di.lifecycle.LifecycleWatcherActivity
+import com.dygames.android_di.lifecycle.LifecycleWatcherActivityRetained
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import kotlin.reflect.typeOf
 
-class CartActivity : LifecycleWatcherActivity(typeOf<CartActivity>()) {
+class CartActivity : LifecycleWatcherActivityRetained(typeOf<CartActivity>()) {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

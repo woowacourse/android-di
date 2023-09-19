@@ -2,6 +2,7 @@ package com.dygames.android_di.lifecycle
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import com.dygames.android_di.AndroidDependencyInjector
 import com.dygames.di.DependencyInjector
 import kotlin.reflect.KType
@@ -16,6 +17,8 @@ abstract class LifecycleWatcherActivityRetained(val lifecycle: KType) : AppCompa
         }
     }
 
+    private val viewModel: ViewModel = ActivityRetainedViewModel(lifecycleWatcher)
+
     inline fun <reified T : Any> inject(): T {
         return DependencyInjector.inject<T>(lifecycle)
     }
@@ -23,10 +26,5 @@ abstract class LifecycleWatcherActivityRetained(val lifecycle: KType) : AppCompa
     override fun onCreate(savedInstanceState: Bundle?) {
         lifecycleWatcher.createDependencies()
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lifecycleWatcher.destroyDependencies()
     }
 }
