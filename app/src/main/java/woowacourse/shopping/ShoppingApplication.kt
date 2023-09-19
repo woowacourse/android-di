@@ -1,6 +1,5 @@
 package woowacourse.shopping
 
-import com.example.bbottodi.di.Container
 import com.example.bbottodi.di.DiApplication
 import com.example.bbottodi.di.annotation.InDisk
 import com.example.bbottodi.di.annotation.InMemory
@@ -15,7 +14,6 @@ import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
 class ShoppingApplication : DiApplication() {
-    override val container: Container = Container()
 
     override fun onCreate() {
         super.onCreate()
