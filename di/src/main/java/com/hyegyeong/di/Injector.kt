@@ -2,21 +2,17 @@ package com.hyegyeong.di
 
 import com.hyegyeong.di.annotations.Inject
 import com.hyegyeong.di.annotations.Qualifier
-import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
-    lateinit var container: DependencyContainer
+    lateinit var container: DiContainer
 
     inline fun <reified T : Any> inject(): T {
         val constructor = requireNotNull(T::class.primaryConstructor)
@@ -60,13 +56,13 @@ object Injector {
             }
         }
         nonQualifierParameters.forEach {
-            val instance = findContainerInstances(it)
+            val instance = container.provideInstance(it, it.annotations)
             dependencies[it] = instance
         }
         qualifierInstanceParameters.forEach {
-            val annotation =
-                it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
-            val instance = findContainerInstances(annotation = annotation)
+            val instance = container.provideInstance(
+                it,
+                it.annotations.filter { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() })
             dependencies[it] = instance
         }
         return dependencies
@@ -83,35 +79,6 @@ object Injector {
             property.setter.call(instance, dependency)
         }
         return instance
-    }
-
-    fun findContainerInstances(kClass: KClass<*>? = null, annotation: Annotation? = null): Any {
-        val containerFunctions: Collection<KFunction<*>> = container::class.declaredFunctions
-        lateinit var function: KFunction<*>
-        if (kClass == null) {
-            function = containerFunctions.first { it.annotations.contains(annotation) }
-        }
-        if (annotation == null) {
-            function = containerFunctions.first { it.returnType.jvmErasure == kClass }
-        }
-        if (kClass != null && annotation != null) {
-            function = containerFunctions.first {
-                (it.returnType.jvmErasure == kClass) && it.annotations.contains(annotation)
-            }
-        }
-        val instances = mutableListOf<Any>()
-        if (function.valueParameters.isNotEmpty()) {
-            function.valueParameters.forEach {
-                instances.add(
-                    findContainerInstances(
-                        it.type.jvmErasure,
-                        it.annotations.firstOrNull { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
-                    )
-                )
-            }
-        }
-        return function.call(container, * instances.toTypedArray())
-            ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
     }
 
 }
