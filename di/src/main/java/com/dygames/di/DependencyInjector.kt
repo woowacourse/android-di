@@ -17,7 +17,8 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
 object DependencyInjector {
-    val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
+    val providers: LifecycleAwareProviders = LifecycleAwareProviders()
+    private val lifecycleAwareProviders: LifecycleAwareProviders = LifecycleAwareProviders()
     val lifecycleAwareDependencies: LifecycleAwareDependencies = LifecycleAwareDependencies()
 
     inline fun <reified T : Any> inject(lifecycle: KType? = null): T {
@@ -34,6 +35,7 @@ object DependencyInjector {
 
     fun createDependencies(lifecycle: KType?) {
         lifecycleAwareDependencies.value[lifecycle] = QualifiableDependencies()
+        lifecycleAwareProviders.value[lifecycle] = providers.value[lifecycle] ?: return
     }
 
     fun addDependencies(type: KType, lifecycle: KType?, qualifier: Annotation?, dependency: Any) {
@@ -44,6 +46,7 @@ object DependencyInjector {
     }
 
     fun deleteDependencies(lifecycle: KType?) {
+        lifecycleAwareProviders.value.remove(lifecycle)
         lifecycleAwareDependencies.value.remove(lifecycle)
     }
 

@@ -11,6 +11,7 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.typeOf
@@ -26,12 +27,12 @@ class CartApplication : LifecycleWatcherApplication(typeOf<CartApplication>()) {
             lifecycle<CartApplication> {
                 qualifier(Room()) {
                     provider {
-                        val shoppingDatabase: ShoppingDatabase =
-                            ShoppingDatabase.getDatabase(inject())
-                        shoppingDatabase.cartProductDao()
+                        ShoppingDatabase.getDatabase(inject()).cartProductDao()
                     }
                     provider<CartRepository>(typeOf<DefaultCartRepository>())
                 }
+            }
+            lifecycle<MainViewModel> {
                 provider<ProductRepository> { DefaultProductRepository() }
             }
             lifecycle<CartActivity> {

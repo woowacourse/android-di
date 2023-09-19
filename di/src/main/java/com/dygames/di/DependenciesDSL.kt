@@ -43,6 +43,6 @@ inline fun <reified T> LifecycleAwareProviders.lifecycle(init: QualifiableProvid
 fun dependencies(
     init: LifecycleAwareProviders.() -> Unit
 ) {
-    DependencyInjector.lifecycleAwareProviders.apply(init)
+    DependencyInjector.providers.apply(init)
     DependencyInjector.createDependencies(null)
 }

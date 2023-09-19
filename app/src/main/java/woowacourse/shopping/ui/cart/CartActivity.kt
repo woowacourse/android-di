@@ -3,10 +3,10 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.dygames.android_di.ViewModelDependencyInjector.injectViewModel
 import com.dygames.android_di.lifecycle.LifecycleWatcherActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.ViewModelDependencyInjector.injectViewModel
 import kotlin.reflect.typeOf
 
 class CartActivity : LifecycleWatcherActivity(typeOf<CartActivity>()) {
