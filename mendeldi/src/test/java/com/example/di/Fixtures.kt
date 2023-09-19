@@ -83,7 +83,11 @@ class FakeViewModelModule(activityRetainedModule: ActivityRetainedModule) :
 }
 
 class FakeActivityModule(activityContext: Context, activityRetainedModule: ActivityRetainedModule) :
-    ActivityModule(activityContext, activityRetainedModule)
+    ActivityModule(activityContext, activityRetainedModule) {
+    fun getNumberCounter(): NumberCounter {
+        return NumberCounter()
+    }
+}
 
 // Fake 레포지토리 및 모델 클래스 선언
 interface FakeCartRepository
@@ -107,6 +111,11 @@ class DateFormatter(context: Context) {
     fun formatDate(timestamp: Long): String {
         return formatter.format(Date(timestamp))
     }
+}
+
+class NumberCounter() {
+    var n: Int = 1
+        private set
 }
 
 // Qualifier 어노테이션 선언
