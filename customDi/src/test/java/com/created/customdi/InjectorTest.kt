@@ -1,5 +1,6 @@
 package com.created.customdi
 
+import com.created.customdi.Injector.getSingletonIfInstantiated
 import com.created.customdi.fake.Normal
 import com.created.customdi.fake.Normal2
 import com.created.customdi.fake.QualifiedClass3
@@ -76,8 +77,7 @@ class InjectorTest {
 
         // when : inject를 호출하면
         Injector.inject<RealSingle>()
-        val singleParameter = params[0]
-        val actual = Injector.getSingletonIfInstantiate(singleParameter)
+        val actual = params[0].getSingletonIfInstantiated()
 
         // then : 싱글톤 컨테이너의 벨류를 가져온다
         assertEquals(true, actual != null)

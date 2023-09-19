@@ -8,7 +8,7 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.hasAnnotation
 
 object DiContainer {
-    private lateinit var context: Any
+    lateinit var context: Any
 
     private val _modules: MutableList<Any> = mutableListOf()
     val modules: List<Any> get() = _modules.toList()

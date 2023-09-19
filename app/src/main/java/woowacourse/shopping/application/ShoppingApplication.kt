@@ -3,6 +3,7 @@ package woowacourse.shopping.application
 import android.app.Application
 import com.created.customdi.StartDi
 import woowacourse.shopping.di.DatabaseModule
+import woowacourse.shopping.di.GuiltyModule
 import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {
@@ -13,6 +14,7 @@ class ShoppingApplication : Application() {
             registerContext(this@ShoppingApplication.applicationContext)
             registerModule(DatabaseModule)
             registerModule(RepositoryModule)
+            registerModule(GuiltyModule)
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.created.customdi
 
+import android.util.Log
 import com.created.customdi.DiContainer.modules
 import com.created.customdi.annotation.Field
 import com.created.customdi.annotation.Qualifier
 import com.created.customdi.annotation.Singleton
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
@@ -26,7 +28,7 @@ object Injector {
             clazz.primaryConstructor ?: throw IllegalStateException(INVALID_CLASS_TYPE)
 
         val instances = constructors.parameters.map { kParameter ->
-            getSingletonIfInstantiate(kParameter) ?: kParameter.toInstance()
+            kParameter.getSingletonIfInstantiated() ?: kParameter.instantiate()
         }
 
         return constructors.call(*instances.toTypedArray()).apply {
@@ -42,18 +44,52 @@ object Injector {
         if (properties.isEmpty()) return
 
         properties.forEach { property ->
-            val instance = getSingletonIfInstantiate(property as KParameter)
-                ?: (property as KParameter).toInstance()
-
+            Log.d("12312311", property.toString())
+            Log.d("12312322", property.parameters.toString())
+            val instance = property.getSingletonIfInstantiated()
+                ?: property.instantiate()
+            Log.d("12312344", property.toString())
             property.isAccessible = true
             property.javaField?.set(clazz, instance)
         }
     }
 
-    fun getSingletonIfInstantiate(kParameter: KParameter): Any? =
-        DiContainer.singletonInstance[kParameter.type.jvmErasure]
+    fun Any.getSingletonIfInstantiated(): Any? {
+        val type = when (this) {
+            is KProperty1<*, *> -> returnType.jvmErasure
+            is KParameter -> type.jvmErasure
+            else -> throw IllegalArgumentException()
+        }
 
-    fun KParameter.toInstance(): Any {
+        return DiContainer.singletonInstance[type]
+    }
+
+    fun KProperty1<*, *>.instantiate(): Any {
+        val func = when (annotations.any { it.hasQualifier() }) {
+            true -> DiContainer.qualifiedInstance[annotations.filter { it.hasQualifier() }]
+            false -> DiContainer.instance[returnType]
+        } ?: throw IllegalArgumentException(INVALID_KEY)
+
+        val module = modules.find { module ->
+            module::class.declaredFunctions.any {
+                if (func.annotations.any { it.hasQualifier() }) {
+                    it.annotations.filter { it.hasQualifier() } == func.annotations.filter { it.hasQualifier() }
+                } else {
+                    it.returnType.jvmErasure == func.returnType.jvmErasure
+                }
+            }
+        } ?: throw IllegalArgumentException(INVALID_FUNCTION)
+
+        val arg = func.valueParameters.takeIf { it.isNotEmpty() }?.map {
+            it.instantiate()
+        }?.toTypedArray() ?: emptyArray()
+
+        return (func.call(module, *arg) ?: throw IllegalArgumentException()).also {
+            it.toSingletonIfSingleton(func)
+        }
+    }
+
+    fun KParameter.instantiate(): Any {
         val func = when (annotations.any { it.hasQualifier() }) {
             true -> DiContainer.qualifiedInstance[annotations.filter { it.hasQualifier() }]
             false -> DiContainer.instance[type]
@@ -61,12 +97,16 @@ object Injector {
 
         val module = modules.find { module ->
             module::class.declaredFunctions.any {
-                it.annotations.any { it.hasQualifier() } == func.annotations.any { it.hasQualifier() }
+                if (func.annotations.any { it.hasQualifier() }) {
+                    it.annotations.filter { it.hasQualifier() } == func.annotations.filter { it.hasQualifier() }
+                } else {
+                    it.returnType.jvmErasure == func.returnType.jvmErasure
+                }
             }
         } ?: throw IllegalArgumentException(INVALID_FUNCTION)
 
         val arg = func.valueParameters.takeIf { it.isNotEmpty() }?.map {
-            it.toInstance()
+            it.instantiate()
         }?.toTypedArray() ?: emptyArray()
 
         return (func.call(module, *arg) ?: throw IllegalArgumentException()).also {
