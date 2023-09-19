@@ -69,8 +69,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
-    // reflection
-    implementation(kotlin("reflect"))
     // mockk
     testImplementation("io.mockk:mockk-android:1.13.5")
     // assertJ
