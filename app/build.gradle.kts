@@ -44,7 +44,6 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":di"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -55,6 +54,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.assertj:assertj-core:3.22.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // Coroutines
@@ -69,7 +69,10 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
+    // Kotlin Reflection
     implementation(kotlin("reflect"))
-
-    implementation("androidx.activity:activity-ktx:{activity version}")
+    // di
+    implementation(project(":di"))
+    implementation(project(":android-di"))
+    // implementation("com.github.ippnsj:android-di:1.0.0")
 }

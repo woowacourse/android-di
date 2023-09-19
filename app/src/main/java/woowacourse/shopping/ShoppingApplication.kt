@@ -1,17 +1,22 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.lope.di.inject.CustomInjector
-import woowacourse.shopping.di.ApplicationModule
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.DiApplication
+import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.createDateFormatter
 
-class ShoppingApplication : Application() {
-
-    lateinit var injector: CustomInjector
-        private set
-
+class ShoppingApplication : DiApplication() {
     override fun onCreate() {
         super.onCreate()
-        injector = CustomInjector()
-        ApplicationModule(this, injector)
+        setupProviders()
+    }
+
+    private fun setupProviders() {
+        registerProviders {
+            provider(ShoppingDatabase::class to ShoppingDatabase::getInstance)
+            provider(CartProductDao::class to ShoppingDatabase::cartProductDao)
+            provider(DateFormatter::class to ::createDateFormatter)
+        }
     }
 }
