@@ -8,7 +8,6 @@ import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowActivity
 import woowacourse.shopping.fake.activity.FakeActivity
 import woowacourse.shopping.fake.application.FakeApplication
 
@@ -25,13 +24,27 @@ class DiLifecycleTest {
     }
 
     @Test
-    fun `CartRepository는_액티비티가_재생성되었을_때_이전과_동일한_인스턴스를_가진다`() {
+    fun `CartRepository는_액티비티가_finish_되지_않고_destroy_되었을_때_이전과_동일한_인스턴스를_가진다`() {
         // given & when
         val previousCartRepository = controller.get().cartViewModel.cartRepository
-        controller.recreate()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
 
         // then
         assertThat(controller.get().cartViewModel.cartRepository).isEqualTo(previousCartRepository)
+    }
+
+    @Test
+    fun `CartRepository는_액티비티가_finish_되고_destroy_되었을_때_이전과_동일한_인스턴스를_가진다`() {
+        // given & when
+        val previousCartRepository = controller.get().cartViewModel.cartRepository
+        controller.get().finish()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
+
+        // then
+        assertThat(controller.get().cartViewModel.cartRepository)
+            .isEqualTo(previousCartRepository)
     }
 
     @Test
@@ -39,35 +52,76 @@ class DiLifecycleTest {
         // given & when
 
         // then
-        assertThat(controller.get().mainViewModel.cartRepository).isEqualTo(controller.get().cartViewModel.cartRepository)
+        assertThat(controller.get().mainViewModel.cartRepository)
+            .isEqualTo(controller.get().cartViewModel.cartRepository)
     }
 
     @Test
-    fun `ProductRepository는_액티비티가_재생성되었을_때_이전과_동일한_인스턴스를_가진다`() {
+    fun `ProductRepository는_액티비티가_finish_되지_않고_destroy_되었을_때_이전과_동일한_인스턴스를_가진다`() {
         // given & when
         val previousProductRepository = controller.get().mainViewModel.productRepository
-        controller.recreate()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
 
         // then
-        assertThat(controller.get().mainViewModel.productRepository).isEqualTo(previousProductRepository)
+        assertThat(controller.get().mainViewModel.productRepository)
+            .isEqualTo(previousProductRepository)
     }
 
     @Test
-    fun `DateFormatter1은_액티비티가_재생성되었을_때_이전과_동일한_인스턴스를_가진다`() {
+    fun `ProductRepository는_액티비티가_finish_되고_destroy_되었을_때_이전과_동일한_인스턴스를_가지지_않는다`() {
+        // given & when
+        val previousProductRepository = controller.get().mainViewModel.productRepository
+        controller.get().finish()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
+
+        // then
+        assertThat(controller.get().mainViewModel.productRepository)
+            .isNotEqualTo(previousProductRepository)
+    }
+
+    @Test
+    fun `DateFormatter1은_액티비티가_finish_되지_않고_destroy_되었을_때_이전과_동일한_인스턴스를_가진다`() {
         // given & when
         val previousDateFormatter = controller.get().dateFormatter1
-        controller.recreate()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
 
-        ShadowActivity()
         // then
         assertThat(controller.get().dateFormatter1).isEqualTo(previousDateFormatter)
     }
 
     @Test
-    fun `DateFormatter2는_액티비티가_재생성되었을_때_이전과_동일한_인스턴스를_가지지_않는다`() {
+    fun `DateFormatter1은_액티비티가_finish_되고_destroy_되었을_때_이전과_동일한_인스턴스를_가지지_않는다`() {
+        // given & when
+        val previousDateFormatter = controller.get().dateFormatter1
+        controller.get().finish()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
+
+        // then
+        assertThat(controller.get().dateFormatter1).isNotEqualTo(previousDateFormatter)
+    }
+
+    @Test
+    fun `DateFormatter2는_액티비티가_finish_되지_않고_destroy_되었을_때_이전과_동일한_인스턴스를_가지지_않는다`() {
         // given & when
         val previousDateFormatter = controller.get().dateFormatter2
-        controller.recreate()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
+
+        // then
+        assertThat(controller.get().dateFormatter2).isNotEqualTo(previousDateFormatter)
+    }
+
+    @Test
+    fun `DateFormatter2는_액티비티가_finish_되고_destroy_되었을_때_이전과_동일한_인스턴스를_가지지_않는다`() {
+        // given & when
+        val previousDateFormatter = controller.get().dateFormatter2
+        controller.get().finish()
+        controller.destroy()
+        controller = buildActivity(FakeActivity::class.java).setup()
 
         // then
         assertThat(controller.get().dateFormatter2).isNotEqualTo(previousDateFormatter)
