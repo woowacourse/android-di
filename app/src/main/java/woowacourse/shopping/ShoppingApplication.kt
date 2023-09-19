@@ -7,10 +7,10 @@ import com.example.bbottodi.di.annotation.InMemory
 import com.example.bbottodi.di.annotation.Inject
 import com.example.bbottodi.di.inject.AutoDependencyInjector.inject
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.data.repository.InDiskCartRepository
-import woowacourse.shopping.data.repository.InMemoryCartRepository
+import woowacourse.shopping.di.DefaultModule.provideCartProductDao
+import woowacourse.shopping.di.DefaultModule.provideInDiskCartRepository
+import woowacourse.shopping.di.DefaultModule.provideInMemoryCartRepository
+import woowacourse.shopping.di.DefaultModule.provideProductRepository
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
@@ -18,32 +18,23 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        localDatabase = ShoppingDatabase.getInstance(this)
         initContainer()
     }
 
     private fun initContainer() {
         Container.apply {
-            addInstance(CartProductDao::class, localDatabase.cartProductDao())
-            addInstance(ProductRepository::class, ::getProductRepository)
+            addInstance(CartProductDao::class, provideCartProductDao(applicationContext))
+            addInstance(ProductRepository::class, ::provideProductRepository)
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InDisk::class.simpleName!!),
-                inject(InDiskCartRepository::class),
+                inject(provideInDiskCartRepository()),
             )
             addInstance(
                 CartRepository::class,
                 listOf(Inject::class.simpleName!!, InMemory::class.simpleName!!),
-                inject(InMemoryCartRepository::class),
+                inject(provideInMemoryCartRepository()),
             )
         }
-    }
-
-    fun getProductRepository(): ProductRepository {
-        return DefaultProductRepository()
-    }
-
-    companion object {
-        lateinit var localDatabase: ShoppingDatabase
     }
 }
