@@ -2,20 +2,37 @@ package woowacourse.shopping
 
 import kotlin.reflect.KClass
 
-object DependencyContainer {
-    private val container = mutableMapOf<KClass<*>, MutableList<Any>>()
-    fun addInstance(clazz: KClass<*>, instance: Any) {
+class DependencyContainer {
+    private val container = mutableMapOf<KClass<*>, MutableList<DependencyValue>>()
+
+    fun addInstance(clazz: KClass<*>, annotations: List<Annotation>, instance: Any) {
         if (container[clazz] == null) {
-            container[clazz] = mutableListOf(instance)
+            container[clazz] = mutableListOf(DependencyValue(instance, annotations))
             return
         }
-        container[clazz]!!.add(instance)
+        container[clazz]!!.add(DependencyValue(instance, annotations))
     }
 
-    fun getInstance(clazz: KClass<*>, nameTag: String? = null): Any? {
-        if (nameTag != null) {
-            return container[clazz]?.find { it::class.simpleName == nameTag }
+    fun getInstance(clazz: KClass<*>, qualifierTag: String? = null): Any? {
+        if (qualifierTag != null) {
+            return container[clazz]?.find {
+                val qualifier = it.annotations.filterIsInstance<Qualifier>().firstOrNull()
+                qualifier?.className == qualifierTag
+            }?.instance
         }
-        return container[clazz]?.first()
+        return container[clazz]?.first()?.instance
+    }
+
+    fun clear() {
+        container.clear()
+    }
+
+    companion object {
+        private var Instance: DependencyContainer? = null
+        fun getSingletonInstance(): DependencyContainer {
+            return Instance ?: synchronized(this) {
+                return Instance ?: DependencyContainer().also { Instance = it }
+            }
+        }
     }
 }
