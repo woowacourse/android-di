@@ -15,7 +15,9 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
+@Suppress("UNCHECKED_CAST")
 open class Module(private val parentModule: Module? = null) {
+    private val cache: MutableMap<String, Any> = mutableMapOf()
 
     fun <T : Any> inject(clazz: Class<T>): T {
         val primaryConstructor =
@@ -25,7 +27,6 @@ open class Module(private val parentModule: Module? = null) {
         val instance = primaryConstructor.call(*instances.toTypedArray()).apply {
             injectAnnotationFields(this)
         }
-
         return instance
     }
 
@@ -33,7 +34,7 @@ open class Module(private val parentModule: Module? = null) {
         kFunction.valueParameters.map { kParameter ->
             val instance =
                 kParameter.findAnnotation<Qualifier>()?.let {
-                    findInstance(it.clazz, it)
+                    it.clazz.getInstance { findInstance(it.clazz, it) }
                 } ?: run {
                     findInstance(kParameter.type.jvmErasure)
                 }
@@ -91,7 +92,6 @@ open class Module(private val parentModule: Module? = null) {
         return primaryConstructor.call(*arguments.toTypedArray())
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun <T : Any> createInstanceForFunction(kFunction: KFunction<*>, module: Module): T {
         val arguments = getInstances(kFunction)
         return kFunction.call(module, *arguments.toTypedArray()) as T
@@ -125,6 +125,12 @@ open class Module(private val parentModule: Module? = null) {
                 }.javaField,
             )
         }
+
+    private fun <T : Any> KClass<*>.getInstance(create: () -> T): T {
+        val qualifiedName = requireNotNull(qualifiedName)
+        val instance = cache[qualifiedName] ?: create().also { cache[qualifiedName] = it }
+        return instance as T
+    }
 
     companion object {
         private const val ERROR_PRIMARY_CONSTRUCTOR = "[ERROR] 주 생성자가 없습니다."
