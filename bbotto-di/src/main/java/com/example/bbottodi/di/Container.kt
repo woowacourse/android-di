@@ -4,7 +4,7 @@ import com.example.bbottodi.di.model.InstanceIdentifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-class Container {
+open class Container(private val parentContainer: Container? = null) {
     private val instances = mutableMapOf<InstanceIdentifier, Any>()
 
     fun addInstance(type: KClass<*>, instance: Any) {
@@ -27,7 +27,7 @@ class Container {
         val key = InstanceIdentifier(clazz, annotations.map { it.annotationClass.simpleName ?: "" })
         val instanceKey = instances.keys.firstOrNull {
             key.type == it.type && key.qualifier.containsAll(it.qualifier)
-        } ?: return null
+        } ?: return parentContainer?.getInstance(clazz, annotations)
         val instance = instances[instanceKey]
         if (instance is KFunction<*>) {
             return instance.call()
