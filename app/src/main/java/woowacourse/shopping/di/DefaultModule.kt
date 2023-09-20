@@ -8,6 +8,7 @@ import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.InDiskCartRepository
 import woowacourse.shopping.data.repository.InMemoryCartRepository
 import woowacourse.shopping.model.repository.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
@@ -15,6 +16,10 @@ object DefaultModule : Module {
     fun provideCartProductDao(context: Context): CartProductDao {
         val localDatabase = ShoppingDatabase.getInstance(context)
         return localDatabase.cartProductDao()
+    }
+
+    fun provideDateFormatter(context: Context): DateFormatter {
+        return DateFormatter(context)
     }
 
     fun provideProductRepository(): KFunction<ProductRepository> {
