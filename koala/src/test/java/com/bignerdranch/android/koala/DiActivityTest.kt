@@ -15,7 +15,7 @@ class DiActivityTest {
     @Test
     fun `viewmodel() 을 통해 viewmodel을 주입한다`() {
         // given
-        class FakeDiActivity : DiActivity(FakeActivityModule()) {
+        class FakeDiActivity : DiActivity(FakeActivityModule(), FakeViewModelModule()) {
             val viewModel: FakeViewModel by viewmodel()
         }
 
@@ -33,7 +33,7 @@ class DiActivityTest {
     @Test
     fun `필드 주입이 필요한 경우 인스턴스를 생성하여 주입한다`() {
         // given
-        class FakeDiActivity : DiActivity(FakeActivityModule()) {
+        class FakeDiActivity : DiActivity(FakeActivityModule(), FakeViewModelModule()) {
             @KoalaFieldInject
             lateinit var fieldObject: FakeFieldObject
         }
@@ -52,7 +52,7 @@ class DiActivityTest {
     @Test
     fun `필드 주입이 필요하지 않은 경우 인스턴스를 주입하지 않는다`() {
         // given
-        class FakeDiActivity : DiActivity(FakeActivityModule()) {
+        class FakeDiActivity : DiActivity(FakeActivityModule(), FakeViewModelModule()) {
             @KoalaFieldInject
             lateinit var fieldObject: FakeFieldObject
 

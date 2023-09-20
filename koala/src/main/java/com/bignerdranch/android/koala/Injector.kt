@@ -1,5 +1,6 @@
 package com.bignerdranch.android.koala
 
+import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -33,7 +34,7 @@ class Injector(
     }
 
     private fun getParameterInstance(parameter: KParameter): Any {
-        val singletonInstance = Container.instances[parameter.type]
+        val singletonInstance = Container.instances[parameter.type::class]
         if (singletonInstance != null) {
             return singletonInstance
         }
@@ -41,13 +42,15 @@ class Injector(
         val qualifier =
             parameter.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
+            val qualifiedSingleton = Container.instances[Container.annotations[qualifier]]
+            if (qualifiedSingleton != null) return qualifiedSingleton
             return getInstanceWithQualifier(qualifier)
         }
         return getInstanceWithType(parameter.type)
     }
 
     fun getPropertyInstance(property: KProperty1<*, *>): Any {
-        val instance = Container.instances[property.returnType]
+        val instance = Container.instances[property.returnType::class]
         if (instance != null) {
             return instance
         }
@@ -55,6 +58,8 @@ class Injector(
         val qualifier =
             property.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
+            val qualifiedSingleton = Container.instances[Container.annotations[qualifier]]
+            if (qualifiedSingleton != null) return qualifiedSingleton
             return getInstanceWithQualifier(qualifier)
         }
         return getInstanceWithType(property.returnType)
@@ -81,7 +86,8 @@ class Injector(
     }
 
     fun callFunction(function: KFunction<*>): Any {
-        var instance = Container.instances[function.returnType]
+        var instance = Container.instances[function.returnType::class]
+        Log.d("sunny", Container.instances.toString())
         if (instance != null) {
             return instance
         }
@@ -93,7 +99,15 @@ class Injector(
         instance = function.call(module, *args.toTypedArray())
             ?: throw IllegalStateException("instance를 생성할 수 없습니다.")
         if (function.hasAnnotation<KoalaSingleton>()) {
-            Container.instances[function.returnType] = instance
+            val qualifier = function.annotations.find { annotation ->
+                annotation.annotationClass.annotations.any { sub ->
+                    sub.annotationClass == KoalaQualifier::class
+                }
+            }
+            if (qualifier != null) {
+                Container.annotations[qualifier] = instance::class
+            }
+            Container.instances[instance::class] = instance
         }
         return instance
     }

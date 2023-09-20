@@ -6,10 +6,6 @@ import androidx.lifecycle.ViewModel
 class FakeApplicationDiModule() : DiModule {
 
     override var context: Context? = null
-
-    fun getFakeRepository(): FakeRepository {
-        return FakeRepository()
-    }
 }
 
 class FakeDiApplication : DiApplication(FakeApplicationDiModule())
@@ -26,6 +22,15 @@ class FakeActivityModule() : DiModule {
 
     fun getFakeFieldObject(): FakeFieldObject {
         return FakeFieldObject()
+    }
+}
+
+class FakeViewModelModule() : DiModule {
+
+    override var context: Context? = null
+
+    fun getFakeRepository(): FakeRepository {
+        return FakeRepository()
     }
 }
 
