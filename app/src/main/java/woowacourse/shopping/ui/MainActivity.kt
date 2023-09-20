@@ -7,9 +7,11 @@ import android.widget.Toast
 import com.bignerdranch.android.koala.DiActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.module.ActivityDiModule
+import woowacourse.shopping.di.module.ViewModelDiModule
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : DiActivity() {
+class MainActivity : DiActivity(ActivityDiModule(), ViewModelDiModule()) {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 

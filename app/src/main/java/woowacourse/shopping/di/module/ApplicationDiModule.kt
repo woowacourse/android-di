@@ -5,7 +5,6 @@ import com.bignerdranch.android.koala.DiModule
 import com.bignerdranch.android.koala.KoalaSingleton
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.datasource.CartDataSource
 import woowacourse.shopping.data.datasource.DefaultCartDataSource
@@ -15,15 +14,10 @@ import woowacourse.shopping.di.annotation.DataBaseDataSource
 import woowacourse.shopping.di.annotation.InMemoryCartRepository
 import woowacourse.shopping.di.annotation.InMemoryDataSource
 import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
 
 class ApplicationDiModule : DiModule {
 
     override var context: Context? = null
-
-    fun getProductRepository(): ProductRepository {
-        return DefaultProductRepository()
-    }
 
     @KoalaSingleton
     @InMemoryCartRepository

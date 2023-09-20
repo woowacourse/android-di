@@ -12,16 +12,17 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
 open class DiActivity(
-    private val module: DiModule = DefaultDiModule(),
+    private val activityModule: DiModule,
+    val viewModelModule: DiModule,
 ) : AppCompatActivity() {
 
-    private lateinit var injector: Injector
+    lateinit var injector: Injector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        module.context = this
-        injector = Injector(module)
+        activityModule.context = this
+        injector = Injector(activityModule)
         setupParameters()
     }
 
@@ -42,7 +43,7 @@ open class DiActivity(
             {
                 viewModelFactory {
                     initializer {
-                        DiApplication.injector.inject(VM::class.java.kotlin)
+                        Injector(viewModelModule).inject(VM::class.java.kotlin)
                     }
                 }
             },
