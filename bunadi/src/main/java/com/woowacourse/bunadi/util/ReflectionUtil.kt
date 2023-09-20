@@ -12,7 +12,9 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 fun <T : Any> KClass<T>.validateHasPrimaryConstructor(): KFunction<T> {
-    return requireNotNull(primaryConstructor) { "[ERROR] 주생성자가 존재하지 않습니다." }
+    return requireNotNull(primaryConstructor) {
+        "[ERROR] ${this.simpleName} : 주생성자가 존재하지 않습니다."
+    }
 }
 
 fun <T> KFunction<T>.createInstance(injector: Injector): T {
