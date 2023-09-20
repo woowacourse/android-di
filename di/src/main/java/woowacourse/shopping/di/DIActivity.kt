@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
-open class DIActivity() : AppCompatActivity() {
+open class DIActivity : AppCompatActivity() {
     private lateinit var activityModule: ActivityModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
