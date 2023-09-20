@@ -24,7 +24,7 @@ private annotation class FakeNoQualifier(val type: Type) {
     }
 }
 
-class DiContainerTest {
+class ArkModuleTest {
     interface FakeDiRepository {
         fun get(): String
     }
@@ -61,7 +61,7 @@ class DiContainerTest {
         }
     }
 
-    private class FakeDiContainer : DiContainer() {
+    private class FakeArkModule : ArkModule() {
         fun provideFakeDiDataSource(): FakeDiDataSource =
             this.createInstance(FakeDiProtoTypeDataSource::class)
 
@@ -69,21 +69,21 @@ class DiContainerTest {
             this.createInstance(FakeDiProtoTypeRepository::class)
     }
 
-    private val fakeDiContainer = FakeDiContainer()
+    private val fakeArkModule = FakeArkModule()
 
     @Test
-    fun `DiContainer안에 있는 객체를 반환한다`() {
+    fun `ArkModule안에 있는 객체를 반환한다`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.getInstance(FakeDiRepository::class)
+        val fakeDiRepository = fakeArkModule.getInstance(FakeDiRepository::class)
 
         // then
         assertTrue(fakeDiRepository is FakeDiProtoTypeRepository)
     }
 
     @Test
-    fun `DiContainer안에 있는 객체를 반환한다 2`() {
+    fun `ArkModule안에 있는 객체를 반환한다 2`() {
         // given & when
-        val fakeDiDataSource = fakeDiContainer.getInstance(FakeDiDataSource::class)
+        val fakeDiDataSource = fakeArkModule.getInstance(FakeDiDataSource::class)
 
         // then
         assertTrue(fakeDiDataSource is FakeDiProtoTypeDataSource)
@@ -92,7 +92,7 @@ class DiContainerTest {
     @Test
     fun `첫번째 생성자 파라미터가 있으면 자동으로 주입하고 객체를 반환한다`() {
         // given & when
-        val fakeDiRepository = fakeDiContainer.createInstance(FakeViewModel::class)
+        val fakeDiRepository = fakeArkModule.createInstance(FakeViewModel::class)
 
         // then
         assertTrue(fakeDiRepository is FakeViewModel)
@@ -101,7 +101,7 @@ class DiContainerTest {
     @Test
     fun `의존성 부여 순서는 상관 없다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             fun provideFakeDiRepository(): FakeDiRepository =
                 this.createInstance(FakeDiProtoTypeRepository::class)
 
@@ -117,12 +117,12 @@ class DiContainerTest {
     }
 
     @Test
-    fun `DiContainer에서 없는 리포지터리 객체를 요청하면 예외를 발생시킨다`() {
+    fun `ArkModule에서 없는 리포지터리 객체를 요청하면 예외를 발생시킨다`() {
         // given
         class MockRepository
 
         // when
-        runCatching { fakeDiContainer.getInstance(MockRepository::class) }
+        runCatching { fakeArkModule.getInstance(MockRepository::class) }
             // then
             .onSuccess { assertEquals(it, null) }
             .onFailure { assertTrue(it is IllegalArgumentException) }
@@ -140,7 +140,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeDiInjectRepository::class) }
 
         // then
         assertThat(result.isSuccess).isTrue
@@ -163,7 +163,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeViewModel::class) }
 
         // then
         assertThat(result.isSuccess).isTrue
@@ -181,7 +181,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeDiInjectRepository::class) }
 
         // then
         assertThat(result.isFailure).isTrue
@@ -195,7 +195,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeDiInjectRepository::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeDiInjectRepository::class) }
 
         // then
         assertThat(result.isSuccess).isTrue
@@ -218,7 +218,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeViewModel::class) }
 
         // then
         assertThat(result.isFailure).isTrue
@@ -228,7 +228,7 @@ class DiContainerTest {
     fun `어노테이션을 통해 의존성을 주입할 수 있다`() {
         // given
 
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
         }
@@ -252,7 +252,7 @@ class DiContainerTest {
     @Test
     fun `어노테이션을 통해 의존성을 주입할 때 Qualifier 어노테이션의 이름이 다르면 예외를 발생시킨다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(): FakeDiRepository = FakeDiSingletonRepository()
         }
@@ -266,7 +266,7 @@ class DiContainerTest {
         }
 
         // when
-        val result = runCatching { fakeDiContainer.createInstance(FakeViewModel::class) }
+        val result = runCatching { fakeArkModule.createInstance(FakeViewModel::class) }
 
         // then
         assertThat(result.isFailure).isTrue
@@ -275,7 +275,7 @@ class DiContainerTest {
     @Test
     fun `같은 타입이면 Qualifier 어노테이션으로 구분한다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @FakeStorageType(DATABASE)
             fun provideFakeDiRepository(
                 fakeDiDataSource: FakeDiDataSource,
@@ -314,7 +314,7 @@ class DiContainerTest {
     @Test
     fun `@Qualifier 어노테이션이 아니면 확인하지 않는다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @FakeNoQualifier(FIRST)
             fun provideFakeDiRepository(
                 fakeDiDataSource: FakeDiDataSource,
@@ -353,7 +353,7 @@ class DiContainerTest {
     @Test
     fun `@Singlone을 붙이면 메소드로 생성하면 캐싱된다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -370,7 +370,7 @@ class DiContainerTest {
     @Test
     fun `@Singlone을 붙이지 않으면 매번 새로운 객체를 생성한다`() {
         // given
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
         }
@@ -396,7 +396,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -421,7 +421,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
                 FakeDiSingletonRepository()
@@ -448,7 +448,7 @@ class DiContainerTest {
         }
 
         // when
-        val fakeDiObject = object : DiContainer() {
+        val fakeDiObject = object : ArkModule() {
             @FakeStorageType(DATABASE)
             @Singleton
             fun provideFakeDiRepository(): FakeDiRepository =
