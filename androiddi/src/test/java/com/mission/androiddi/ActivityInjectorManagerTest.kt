@@ -1,7 +1,7 @@
 package com.mission.androiddi
 
 import com.mission.androiddi.component.activity.InjectableActivity
-import com.mission.androiddi.component.activity.retain.NonConfigurationActivityInjectorManager
+import com.mission.androiddi.component.activity.retain.ActivityInjectorManager
 import com.mission.androiddi.component.application.InjectableApplication
 import com.woowacourse.bunadi.injector.Injector
 import io.mockk.every
@@ -9,14 +9,14 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertFalse
 import org.junit.Test
 
-class NonConfigurationActivityInjectorManagerTest {
+class ActivityInjectorManagerTest {
 
     @Test
     fun `인젝터를 액티비티 인젝터 매니저에 저장한다`() {
         // given: Injector와 매니저가 주어졌을 때
         val injectors = HashMap<String, Injector>()
         val injector = mockk<Injector>()
-        val sut = NonConfigurationActivityInjectorManager(injectors)
+        val sut = ActivityInjectorManager(injectors)
 
         // when: Injector를 매니저에 저장하면
         sut.saveInjector("KEY", injector)
@@ -34,7 +34,7 @@ class NonConfigurationActivityInjectorManagerTest {
         val injectors = HashMap<String, Injector>().apply {
             put(injectorKey, injector)
         }
-        val sut = NonConfigurationActivityInjectorManager(injectors)
+        val sut = ActivityInjectorManager(injectors)
 
         // when: Injector를 매니저에서 제거하면
         sut.removeInjector(injectorKey)
@@ -52,7 +52,7 @@ class NonConfigurationActivityInjectorManagerTest {
         val injectors = HashMap<String, Injector>().apply {
             put(injectorKey, injector)
         }
-        val sut = NonConfigurationActivityInjectorManager(injectors)
+        val sut = ActivityInjectorManager(injectors)
 
         // when: 잘못된 키로 인젝터를 제거하면
         val invalidKey = "INVALID_KEY"
@@ -70,7 +70,7 @@ class NonConfigurationActivityInjectorManagerTest {
         val injectors = HashMap<String, Injector>().apply {
             put(injectorKey, injector)
         }
-        val sut = NonConfigurationActivityInjectorManager(injectors)
+        val sut = ActivityInjectorManager(injectors)
         // given:
         val injectableActivity = mockk<InjectableActivity>()
         every { injectableActivity.application } returns InjectableApplication()
@@ -91,7 +91,7 @@ class NonConfigurationActivityInjectorManagerTest {
         val injectors = HashMap<String, Injector>().apply {
             put(injectorKey, injector)
         }
-        val sut = NonConfigurationActivityInjectorManager(injectors)
+        val sut = ActivityInjectorManager(injectors)
 
         // given: 저장된 키로 인젝터를 가져오면
         val injectableActivity = mockk<InjectableActivity>()
