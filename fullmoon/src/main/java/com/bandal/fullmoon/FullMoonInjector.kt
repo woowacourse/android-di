@@ -102,7 +102,7 @@ class FullMoonInjector(private val appContainer: AppContainer) {
         val instance: Any = function.call(appContainer, *parameterInstances.toTypedArray())
             ?: throw DIError.NotFoundCreateFunction()
 
-        if (function.hasAnnotation<SingleTone>()) {
+        if (function.hasAnnotation<Singleton>()) {
             val kClass: KClass<*> = function.returnType.jvmErasure
             appContainer.addInstance(
                 injectType = InjectType.from(function),

@@ -2,7 +2,7 @@ package com.bandal.fullmoon
 
 object TestAppContainer : AppContainer() {
 
-    @SingleTone
+    @Singleton
     @Qualifier("database")
     fun createDatabaseInstance(
         @Qualifier("localDataSource")

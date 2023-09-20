@@ -14,4 +14,4 @@ annotation class Qualifier(val key: String)
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class SingleTone
+annotation class Singleton

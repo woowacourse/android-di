@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.bandal.fullmoon.AppContainer
 import com.bandal.fullmoon.Qualifier
-import com.bandal.fullmoon.SingleTone
+import com.bandal.fullmoon.Singleton
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.DatabaseCartRepository
@@ -14,7 +14,7 @@ import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingAppContainer(private val context: Context) : AppContainer() {
 
-    @SingleTone
+    @Singleton
     fun createDateFormatter(context: Context): DateFormatter {
         return DateFormatter(context)
     }
@@ -24,7 +24,7 @@ class ShoppingAppContainer(private val context: Context) : AppContainer() {
         return InMemoryProductRepository()
     }
 
-    @SingleTone
+    @Singleton
     @Qualifier("databaseCartRepository")
     fun createDatabaseCartRepository(cartProductDao: CartProductDao): DatabaseCartRepository {
         return DatabaseCartRepository(
