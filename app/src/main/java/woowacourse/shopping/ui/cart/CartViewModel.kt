@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.RoomCartRepository
-import woowacourse.shopping.di.Qualifier
+import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel(
-    @Qualifier(RoomCartRepository::class)
+    @InMemory
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

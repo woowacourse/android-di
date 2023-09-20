@@ -10,9 +10,11 @@ import woowacourse.shopping.data.ShoppingDatabase
 class DefaultApplicationModule(
     applicationContext: Context,
 ) : ApplicationModule(applicationContext) {
+    @RoomDB
     fun provideRoomCartRepository(cartProductDao: CartProductDao): CartRepository =
         RoomCartRepository(cartProductDao)
 
+    @InMemory
     fun provideInMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 
     fun getCartProductDao(): CartProductDao =

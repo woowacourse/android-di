@@ -6,7 +6,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -33,15 +32,20 @@ open class Module(private val parentModule: Module? = null) {
     private fun getInstances(kFunction: KFunction<*>): List<Any?> =
         kFunction.valueParameters.map { kParameter ->
             val instance =
-                kParameter.findAnnotation<Qualifier>()?.let {
-                    it.clazz.getInstance { findInstance(it.clazz, it) }
+                kParameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }?.let {
+                    getInstance {
+                        findInstance(
+                            kParameter.type.jvmErasure,
+                            it.annotationClass,
+                        )
+                    }
                 } ?: run {
                     findInstance(kParameter.type.jvmErasure)
                 }
             instance
         }
 
-    private fun findInstance(kClass: KClass<*>, qualifier: Qualifier? = null): Any {
+    private fun findInstance(kClass: KClass<*>, qualifier: KClass<out Annotation>? = null): Any {
         val instances = searchFunctions(kClass, qualifier)
         return when (instances.size) {
             0 -> {
@@ -61,7 +65,7 @@ open class Module(private val parentModule: Module? = null) {
 
     private fun searchFunctions(
         kClass: KClass<*>,
-        qualifier: Qualifier? = null,
+        qualifier: KClass<out Annotation>? = null,
     ): Map<KFunction<*>, Module> {
         return this::class.declaredFunctions
             .filter { it.visibility == KVisibility.PUBLIC }
@@ -69,7 +73,7 @@ open class Module(private val parentModule: Module? = null) {
             .filter { (func, _) -> kClass.isSubclassOf(func.returnType.jvmErasure) }
             .filter { (func, _) ->
                 qualifier?.let {
-                    hasQualifierAtFunc(func, it.annotationClass)
+                    hasQualifierAtFunc(func, it)
                 } ?: true
             }.takeUnless { it.isEmpty() }
             ?: parentModule?.searchFunctions(kClass, qualifier) ?: mapOf()
@@ -79,7 +83,6 @@ open class Module(private val parentModule: Module? = null) {
         val funcQualifiers = func.annotations
             .filter { it.annotationClass.hasAnnotation<Qualifier>() }
             .map { it.annotationClass }
-
         if (funcQualifiers.contains(qualifier)) return true
         return false
     }
@@ -92,7 +95,10 @@ open class Module(private val parentModule: Module? = null) {
         return primaryConstructor.call(*arguments.toTypedArray())
     }
 
-    private fun <T : Any> createInstanceForFunction(kFunction: KFunction<*>, module: Module): T {
+    private fun <T : Any> createInstanceForFunction(
+        kFunction: KFunction<*>,
+        module: Module,
+    ): T {
         val arguments = getInstances(kFunction)
         return kFunction.call(module, *arguments.toTypedArray()) as T
     }
@@ -126,9 +132,11 @@ open class Module(private val parentModule: Module? = null) {
             )
         }
 
-    private fun <T : Any> KClass<*>.getInstance(create: () -> T): T {
-        val qualifiedName = requireNotNull(qualifiedName)
-        val instance = cache[qualifiedName] ?: create().also { cache[qualifiedName] = it }
+    private inline fun <reified T : Any> getInstance(create: () -> T): T {
+        val qualifiedName = requireNotNull(T::class.qualifiedName)
+        val instance = cache[qualifiedName] ?: create().also {
+            cache[qualifiedName] = it
+        }
         return instance as T
     }
 
