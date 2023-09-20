@@ -18,12 +18,7 @@ open class InjectableApplication(
 
     fun requireActivityInjectManager(): NonConfigurationActivityInjectorManager {
         return requireNotNull(activityInjectManager) {
-            ACTIVITY_INJECT_MANAGER_NOT_INITIALIZED
-        }
-    }
-
-    companion object {
-        private const val ACTIVITY_INJECT_MANAGER_NOT_INITIALIZED =
             "[ERROR] ActivityInjectManager가 초기화되지 않았습니다."
+        }
     }
 }
