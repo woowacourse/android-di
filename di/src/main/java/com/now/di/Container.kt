@@ -9,10 +9,16 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
-class Container {
+class Container(private val parentContainer: Container?) {
     private val dependency = mutableMapOf<DependencyType, Any>()
 
-    fun getInstance(dependencyType: DependencyType): Any? {
+    fun getInstanceRecursive(dependencyType: DependencyType): Any {
+        return dependency[dependencyType]
+            ?: parentContainer?.getInstanceRecursive(dependencyType)
+            ?: NullPointerException("존재하지 않습니다.")
+    }
+
+    private fun getInstance(dependencyType: DependencyType): Any? {
         return dependency[dependencyType]
     }
 

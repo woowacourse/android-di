@@ -13,7 +13,6 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
-    private val parentContainer: Container?,
     private val container: Container,
 ) {
     // 인자로 받은 모듈에 있는 메서드를 인스턴스화 하여 Container에 저장한다
@@ -43,7 +42,7 @@ class Injector(
             val annotation = kParameter.annotations.firstOrNull { _annotation ->
                 _annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-            getInstanceRecursive(DependencyType(type, annotation))
+            container.getInstanceRecursive(DependencyType(type, annotation))
         }
 
         val instance = primaryConstructor.callBy(insertedParameters)
@@ -59,13 +58,7 @@ class Injector(
         properties.forEach {
             it.isAccessible = true
             val dependencyType = DependencyType(it.returnType.jvmErasure, it.findAnnotation<Qualifier>())
-            it.setter.call(instance, getInstanceRecursive(dependencyType))
+            it.setter.call(instance, container.getInstanceRecursive(dependencyType))
         }
-    }
-
-    private fun getInstanceRecursive(dependencyType: DependencyType): Any {
-        return container.getInstance(dependencyType)
-            ?: parentContainer?.getInstance(dependencyType)
-            ?: NullPointerException("컨테이너에 저장되어 있지 않습니다.")
     }
 }

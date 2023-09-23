@@ -13,7 +13,7 @@ class InjectorTest {
 
     @BeforeEach
     fun setup() {
-        injector = Injector(null, Container())
+        injector = Injector(Container(null))
     }
 
     @Test
@@ -32,7 +32,7 @@ class InjectorTest {
             }
             val dependencyType = DependencyType(klass, annotation)
 
-            val instance = injector.getCurrentContainer().getInstance(dependencyType) ?: throw NullPointerException()
+            val instance = injector.getCurrentContainer().getInstanceRecursive(dependencyType) ?: throw NullPointerException()
             assertThat(instance).isNotNull
         }
     }

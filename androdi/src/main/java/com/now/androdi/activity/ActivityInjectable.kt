@@ -14,7 +14,7 @@ abstract class ActivityInjectable : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val parent = application as ApplicationInjectable
-        injector = Injector(parent.injector.getCurrentContainer(), Container())
+        injector = Injector(Container(parent.injector.getCurrentContainer()))
     }
 
     fun injectModule(module: Module) {

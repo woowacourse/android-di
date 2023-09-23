@@ -10,7 +10,7 @@ abstract class ApplicationInjectable : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        injector = Injector(null, Container())
+        injector = Injector(Container(null))
     }
 
     fun injectModule(module: Module) {

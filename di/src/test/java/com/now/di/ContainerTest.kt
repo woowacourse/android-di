@@ -11,7 +11,7 @@ class ContainerTest {
 
     @BeforeEach
     fun setup() {
-        container = Container()
+        container = Container(null)
     }
 
     @Test
@@ -26,7 +26,7 @@ class ContainerTest {
         // when & then
         val klass = module::class.declaredFunctions.first().returnType.jvmErasure
         val dependencyType = DependencyType(klass, null)
-        assertThat(container.getInstance(dependencyType)).isNotNull
+        assertThat(container.getInstanceRecursive(dependencyType)).isNotNull
     }
 
     @Test
@@ -42,7 +42,25 @@ class ContainerTest {
         module::class.declaredFunctions.forEach { kFunction ->
             val klass = kFunction.returnType.jvmErasure
             val dependencyType = DependencyType(klass, null)
-            assertThat(container.getInstance(dependencyType)).isNotNull
+            assertThat(container.getInstanceRecursive(dependencyType)).isNotNull
+        }
+    }
+
+    @Test
+    fun `자식 컨테이너에 없는 경우 부모 컨테이너에서 값을 가져온다`() {
+        // given
+        val module = 재귀적_호출이_필요한_모듈()
+        val childContainer = Container(parentContainer = container)
+
+        module::class.declaredFunctions.forEach {
+            container.addInstance(module, it)
+        }
+
+        // when & then
+        module::class.declaredFunctions.forEach { kFunction ->
+            val klass = kFunction.returnType.jvmErasure
+            val dependencyType = DependencyType(klass, null)
+            assertThat(childContainer.getInstanceRecursive(dependencyType)).isNotNull
         }
     }
 }
