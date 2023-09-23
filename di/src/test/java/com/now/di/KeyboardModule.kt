@@ -29,87 +29,87 @@ class RedSwitch : Switch
 
 class KeyboardModule : Module {
     @Aluminum
-    fun aluminumHousing(): Housing {
+    fun provideAluminumHousing(): Housing {
         return AluminumHousing()
     }
 
     @Plastic
-    fun plasticHousing(): Housing {
+    fun providePlasticHousing(): Housing {
         return PlasticHousing()
     }
 
     @Blue
-    fun blueSwitch(): Switch {
+    fun provideBlueSwitch(): Switch {
         return BlueSwitch()
     }
 
     @Red
-    fun redSwitch(): Switch {
+    fun provideRedSwitch(): Switch {
         return RedSwitch()
     }
 }
 
-class KeyboardModuleOneInterfaceOneImplement : Module {
-    fun aluminumHousing(): Housing {
+class 하나의_인터페이스에_대해_하나의_구현체가_있는_모듈 : Module {
+    fun provideAluminumHousing(): Housing {
         return AluminumHousing()
     }
 }
 
-class KeyboardModuleOneInterfaceTwoImplementWithOutQualifier : Module {
-    fun aluminumHousing(): Housing {
+class 하나의_인터페이스에_대해_두_개의_구현체가_Qualifier로_구분되지_않는_모듈 : Module {
+    fun provideAluminumHousing(): Housing {
         return AluminumHousing()
     }
 
-    fun plasticHousing(): Housing {
+    fun providePlasticHousing(): Housing {
         return PlasticHousing()
     }
 }
 
-class KeyboardModuleOneInterfaceTwoImplementWithQualifier : Module {
+class 하나의_인터페이스에_대해_두_개의_구현체가_Qualifier로_구분되는_모듈 : Module {
     @Aluminum
-    fun aluminumHousing(): Housing {
+    fun provideAluminumHousing(): Housing {
         return AluminumHousing()
     }
 
     @Plastic
-    fun plasticHousing(): Housing {
+    fun providePlasticHousing(): Housing {
         return PlasticHousing()
     }
 }
 
-class KeyboardModuleTwoInterfaceTwoImplementWithQualifier : Module {
+class 두_개의_인터페이스에_대해_두_개의_구현체가_Qualifier로_구분되는_모듈 : Module {
     @Aluminum
-    fun aluminumHousing(): Housing {
+    fun provideAluminumHousing(): Housing {
         return AluminumHousing()
     }
 
     @Plastic
-    fun plasticHousing(): Housing {
+    fun providePlasticHousing(): Housing {
         return PlasticHousing()
     }
 
     @Blue
-    fun blueSwitch(): Switch {
+    fun provideBlueSwitch(): Switch {
         return BlueSwitch()
     }
 
     @Red
-    fun redSwitch(): Switch {
+    fun provideRedSwitch(): Switch {
         return RedSwitch()
     }
 }
 
-class Keyboard(
+class 주입받을_인자가_한_개_있는_키보드_클래스(
     @Inject val housing: Housing,
 )
 
-class KeyboardWithQualifier1(
+class Qualifier가_한_개_있는_키보드_클래스(
     @Aluminum
     @Inject
     val housing: Housing,
 )
 
-class KeyboardWithQualifier2(
+class Qualifier가_두_개_있는_키보드_클래스(
     @Aluminum
     @Inject
     val housing: Housing,
@@ -118,3 +118,19 @@ class KeyboardWithQualifier2(
     @Inject
     val switch: Switch,
 )
+
+class KeyCap
+
+class Keyboard(
+    val keyCap: KeyCap,
+)
+
+class 재귀적_호출이_필요한_모듈 : Module {
+    fun provideKeyCap(): KeyCap {
+        return KeyCap()
+    }
+
+    fun provideKeyboard(keyCap: KeyCap): Keyboard {
+        return Keyboard(keyCap)
+    }
+}
