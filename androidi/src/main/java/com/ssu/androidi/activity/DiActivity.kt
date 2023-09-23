@@ -16,7 +16,7 @@ abstract class DiActivity(private val moduleClass: KClass<*>) : AppCompatActivit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        injector = Injector((application as DiApplication).injector.container, DefaultContainer())
+        injector = Injector(DefaultContainer((application as DiApplication).injector.container))
         addModuleInstances()
         injectFields()
     }
@@ -27,10 +27,4 @@ abstract class DiActivity(private val moduleClass: KClass<*>) : AppCompatActivit
     }
 
     abstract fun injectFields()
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        injector.removeDependency()
-    }
 }

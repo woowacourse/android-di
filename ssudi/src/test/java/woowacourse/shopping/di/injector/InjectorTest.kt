@@ -20,10 +20,10 @@ class InjectorTest {
 
     @BeforeEach
     fun setup() {
-        container = TestContainer()
-        parentContainer = TestContainer()
+        parentContainer = TestContainer(null)
+        container = TestContainer(parentContainer)
 
-        injector = Injector(parentContainer, container)
+        injector = Injector(container)
     }
 
     @Test
@@ -153,7 +153,7 @@ class InjectorTest {
     }
 }
 
-class TestContainer : DiContainer {
+class TestContainer(override val parentContainer: DiContainer?) : DiContainer {
     private val instances = mutableMapOf<String, Any>()
 
     override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {

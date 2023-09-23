@@ -4,7 +4,7 @@ import com.ssu.di.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-class DefaultContainer : DiContainer {
+class DefaultContainer(override val parentContainer: DiContainer? = null) : DiContainer {
     private val instances = mutableMapOf<String, Any?>()
 
     override fun <T : Any> createInstance(clazz: KClass<*>, instance: T) {
