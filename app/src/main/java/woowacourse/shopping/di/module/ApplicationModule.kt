@@ -15,7 +15,7 @@ class ApplicationModule(private val context: Context) : Module {
 
     fun provideCartProductDao(): CartProductDao {
         val database = Room
-            .databaseBuilder(context, CartDatabase::class.java, "kkrong-database")
+            .databaseBuilder(context, CartDatabase::class.java, "krrong-database")
             .build()
         return database.cartProductDao()
     }
