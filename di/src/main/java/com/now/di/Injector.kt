@@ -4,7 +4,6 @@ import com.now.annotation.Inject
 import com.now.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -25,14 +24,8 @@ class Injector(
         }
     }
 
-    private fun getPropertyInstance(
-        kProperty1: KProperty1<*, *>,
-    ): Any {
-        val klass = kProperty1.returnType.jvmErasure
-        val annotation = kProperty1.findAnnotation<Qualifier>()
-        val dependencyType = DependencyType(klass, annotation)
-
-        return container.getInstance(dependencyType) ?: NullPointerException("컨테이너에 저장되어 있지 않습니다.")
+    fun getCurrentContainer(): Container {
+        return container
     }
 
     // klass의 인스턴스를 생성하여 반환한다
@@ -50,9 +43,7 @@ class Injector(
             val annotation = kParameter.annotations.firstOrNull { _annotation ->
                 _annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-            container.getInstance(DependencyType(type, annotation))
-                ?: parentContainer?.getInstance(DependencyType(type, annotation))
-                ?: throw IllegalArgumentException()
+            getInstanceRecursive(DependencyType(type, annotation))
         }
 
         val instance = primaryConstructor.callBy(insertedParameters)
@@ -67,11 +58,14 @@ class Injector(
                 .filter { it.hasAnnotation<Inject>() }
         properties.forEach {
             it.isAccessible = true
-            it.setter.call(instance, getPropertyInstance(it))
+            val dependencyType = DependencyType(it.returnType.jvmErasure, it.findAnnotation<Qualifier>())
+            it.setter.call(instance, getInstanceRecursive(dependencyType))
         }
     }
 
-    fun getCurrentContainer(): Container {
-        return container
+    private fun getInstanceRecursive(dependencyType: DependencyType): Any {
+        return container.getInstance(dependencyType)
+            ?: parentContainer?.getInstance(dependencyType)
+            ?: NullPointerException("컨테이너에 저장되어 있지 않습니다.")
     }
 }
