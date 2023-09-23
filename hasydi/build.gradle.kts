@@ -30,6 +30,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -43,4 +46,5 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.22.0")
     testImplementation("org.robolectric:robolectric:4.9")
     implementation(kotlin("reflect"))
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }
