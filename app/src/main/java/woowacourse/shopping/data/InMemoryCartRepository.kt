@@ -1,12 +1,10 @@
 package woowacourse.shopping.data
 
-import com.now.annotation.Qualifier
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@Qualifier
 class InMemoryCartRepository() : CartRepository {
     private var id: Long = 0
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
