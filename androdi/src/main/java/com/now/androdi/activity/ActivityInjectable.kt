@@ -29,7 +29,12 @@ abstract class ActivityInjectable : AppCompatActivity() {
             isChangingConfigurations -> {
                 parent.activityInjectorManager.saveInjector(this::class.java.name, injector)
             }
+        }
+    }
 
+    override fun onPause() {
+        super.onPause()
+        when {
             isFinishing -> {
                 parent.activityInjectorManager.removeInjector(this::class.java.name)
             }

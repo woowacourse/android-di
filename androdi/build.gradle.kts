@@ -30,6 +30,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -41,4 +46,6 @@ dependencies {
     implementation(project(mapOf("path" to ":di")))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Robolectric
+    testImplementation("org.robolectric:robolectric:4.9")
 }
