@@ -36,8 +36,7 @@ class Injector(
     }
 
     // klass의 인스턴스를 생성하여 반환한다
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> inject(klass: KClass<*>): T {
+    fun <T : Any> inject(klass: KClass<T>): T {
         //  주생성자를 가져온다
         val primaryConstructor =
             klass.primaryConstructor ?: throw NullPointerException("주 생성자가 없습니다.")
@@ -56,7 +55,7 @@ class Injector(
                 ?: throw IllegalArgumentException()
         }
 
-        val instance = primaryConstructor.callBy(insertedParameters) as T
+        val instance = primaryConstructor.callBy(insertedParameters)
         injectParams(klass, instance)
         return instance
     }
