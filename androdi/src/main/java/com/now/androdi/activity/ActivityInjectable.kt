@@ -8,16 +8,31 @@ import com.now.di.Injector
 import com.now.di.Module
 
 abstract class ActivityInjectable : AppCompatActivity() {
+    lateinit var parent: ApplicationInjectable
     lateinit var injector: Injector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val parent = application as ApplicationInjectable
-        injector = Injector(Container(parent.injector.getCurrentContainer()))
+        parent = application as ApplicationInjectable
+        injector = parent.activityInjectorManager.getInjector(this::class.java.name)
+            ?: Injector(Container(parent.injector.getCurrentContainer()))
     }
 
     fun injectModule(module: Module) {
         injector.addModule(module)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        when {
+            isChangingConfigurations -> {
+                parent.activityInjectorManager.saveInjector(this::class.java.name, injector)
+            }
+
+            isFinishing -> {
+                parent.activityInjectorManager.removeInjector(this::class.java.name)
+            }
+        }
     }
 }
