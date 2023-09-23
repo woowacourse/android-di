@@ -21,9 +21,6 @@ class MainActivity : DiActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        addModuleInstances()
-        injectFields()
-
         setupBinding()
         setupToolbar()
         setupView()
@@ -41,7 +38,7 @@ class MainActivity : DiActivity() {
         injector.addModuleInstances(MainActivityModule())
     }
 
-    override fun injectFields() {}
+    override fun injectFields() = Unit
 
     private fun setupBinding() {
         binding.lifecycleOwner = this

@@ -14,6 +14,9 @@ abstract class DiActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         injector = Injector((application as DiApplication).injector.container, DefaultContainer())
+
+        addModuleInstances()
+        injectFields()
     }
 
     abstract fun addModuleInstances()

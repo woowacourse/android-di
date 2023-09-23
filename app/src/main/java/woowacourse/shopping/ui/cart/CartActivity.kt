@@ -21,9 +21,6 @@ class CartActivity : DiActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addModuleInstances()
-        injectFields()
-
         setupBinding()
         setupToolbar()
         setupView()
