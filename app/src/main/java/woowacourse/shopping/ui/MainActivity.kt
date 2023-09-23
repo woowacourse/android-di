@@ -11,7 +11,7 @@ import woowacourse.shopping.di.module.MainActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.createViewModel
 
-class MainActivity : DiActivity() {
+class MainActivity : DiActivity(MainActivityModule::class) {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
@@ -32,10 +32,6 @@ class MainActivity : DiActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
-    }
-
-    override fun addModuleInstances() {
-        injector.addModuleInstances(MainActivityModule())
     }
 
     override fun injectFields() = Unit

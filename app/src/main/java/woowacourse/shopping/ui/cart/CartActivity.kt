@@ -9,7 +9,7 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.module.CartActivityModule
 import woowacourse.shopping.ui.util.createViewModel
 
-class CartActivity : DiActivity() {
+class CartActivity : DiActivity(CartActivityModule::class) {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
@@ -29,10 +29,6 @@ class CartActivity : DiActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    override fun addModuleInstances() {
-        injector.addModuleInstances(CartActivityModule(this))
     }
 
     override fun injectFields() {
