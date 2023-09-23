@@ -5,10 +5,10 @@ import android.widget.Toast
 import com.woowacourse.shopping.OtterDiActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.viewModels
+import woowacourse.shopping.di.module.AppModule
 import woowacourse.shopping.otterdi.annotation.Inject
 
-class CartActivity : OtterDiActivity() {
+class CartActivity : OtterDiActivity(AppModule()) {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
@@ -20,7 +20,6 @@ class CartActivity : OtterDiActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -29,10 +28,6 @@ class CartActivity : OtterDiActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

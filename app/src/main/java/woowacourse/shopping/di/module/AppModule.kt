@@ -11,10 +11,13 @@ import woowacourse.shopping.otterdi.annotation.Inject
 import woowacourse.shopping.otterdi.annotation.Qualifier
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class AppModule : AndroidModule {
 
     override var context: Context? = null
+
+    fun provideDateFormatter(): DateFormatter = DateFormatter(context!!)
 
     fun provideProductRepository(): ProductRepository = DefaultProductRepository()
 
