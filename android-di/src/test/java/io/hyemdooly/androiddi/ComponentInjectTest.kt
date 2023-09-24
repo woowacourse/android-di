@@ -2,9 +2,6 @@ package io.hyemdooly.androiddi
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
-import io.hyemdooly.androiddi.component.FakeActivity
-import io.hyemdooly.androiddi.component.FakeApplication
-import io.hyemdooly.androiddi.component.FakeViewModel
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
