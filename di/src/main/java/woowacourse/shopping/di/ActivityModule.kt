@@ -4,7 +4,7 @@ import android.content.Context
 
 open class ActivityModule(
     val activityContext: Context,
-    applicationModule: Module,
+    applicationModule: ApplicationModule,
 ) : Module(applicationModule) {
     fun inject(diActivity: DIActivity) {
         injectAnnotationFields(diActivity)
