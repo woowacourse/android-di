@@ -76,21 +76,22 @@ abstract class Module(private val parentModule: Module? = null) {
 
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
         @Suppress("UNCHECKED_CAST")
-        return func.call(module, *getArguments(module, func).toTypedArray()) as T
+        return func.call(module, *module.getArguments(func).toTypedArray()) as T
     }
 
     private fun <T : Any> createWithPrimaryConstructor(clazz: Class<T>): T {
         val primaryConstructor = clazz.kotlin.primaryConstructor
             ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
-        val args = getArguments(this, primaryConstructor)
+        val args = this.getArguments(primaryConstructor)
         return primaryConstructor.call(*args.toTypedArray()).apply { provideInjectField(this) }
     }
 
-    private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
+    private fun Module.getArguments(func: KFunction<*>): List<Any> {
         return func.valueParameters.map { param ->
             val qualifier =
                 param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-            baseModule.provideInstance(param.type.jvmErasure.java, qualifier?.annotationClass)
+            @Suppress("LABEL_RESOLVE_WILL_CHANGE")
+            this@Module.provideInstance(param.type.jvmErasure.java, qualifier?.annotationClass)
         }
     }
 
