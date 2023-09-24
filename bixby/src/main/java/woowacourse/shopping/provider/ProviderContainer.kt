@@ -22,14 +22,14 @@ class ProviderContainer(
 ) {
     private val providerContainer = mutableMapOf<KClass<*>, MutableList<ProvideSupply>>()
 
-    fun addProvider(factory: Any) {
-        factory::class.declaredMemberFunctions.forEach {
+    fun addProvider(provider: Any) {
+        provider::class.declaredMemberFunctions.forEach {
             val returnClassType = it.returnType.jvmErasure
             if (providerContainer[returnClassType] == null) {
-                providerContainer[returnClassType] = mutableListOf(ProvideSupply(it, factory))
+                providerContainer[returnClassType] = mutableListOf(ProvideSupply(it, provider))
                 return@forEach
             }
-            providerContainer[returnClassType]!!.add(ProvideSupply(it, factory))
+            providerContainer[returnClassType]!!.add(ProvideSupply(it, provider))
         }
     }
 
