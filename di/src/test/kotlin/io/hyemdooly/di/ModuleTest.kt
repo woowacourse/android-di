@@ -55,7 +55,7 @@ class ModuleTest {
         val instance = fakeChildModule.getInstance(FakeDao::class)
 
         // then
-        assertNotNull(instance)
+        assertInstanceOf(FakeDao::class.java, instance)
     }
 
     @Test
