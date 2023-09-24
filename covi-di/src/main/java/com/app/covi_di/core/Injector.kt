@@ -1,9 +1,9 @@
 package com.app.covi_di.core
 
 import android.content.Context
-import com.app.covi_di.annotation.SingletonObject
 import com.app.covi_di.annotation.Inject
 import com.app.covi_di.annotation.InjectField
+import com.app.covi_di.annotation.SingletonObject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.hasAnnotation
@@ -39,28 +39,35 @@ object Injector {
         kClass.primaryConstructor?.valueParameters?.forEach { param ->
             val parameterType = param.type.jvmErasure
             if (parameterType.isAbstract) {
-                if (DIContainer.getModuleKClass(parameterType) == null) {
-                    parameterTypes.add(
-                        getInstanceByProvider(parameterType) ?: context
-                        ?: throw IllegalStateException()
-                    )
-                } else {
-                    val instance = DIContainer.getModuleKClass(parameterType)
-                        ?: throw IllegalArgumentException()
-
-                    val recursiveInstance =
-                        DIContainer.getSingleton(parameterType) ?: injectRecursive(instance)
-                    parameterTypes.add(recursiveInstance)
-                    if (instance.hasAnnotation<SingletonObject>()) {
-                        DIContainer.updateSingleton(instance, recursiveInstance)
-                    }
-                }
+                processAbstractInstance(parameterType, parameterTypes, context)
             } else {
                 parameterTypes.add(parameterType.createInstance())
             }
         }
 
         return parameterTypes
+    }
+
+    private fun processAbstractInstance(
+        parameterType: KClass<*>,
+        parameterTypes: MutableList<Any>,
+        context: Context?
+    ) {
+        val containerInstance = DIContainer.getModuleKClass(parameterType)
+        if (containerInstance == null) {
+            parameterTypes.add(
+                getInstanceByProvider(parameterType) ?: context
+                ?: throw IllegalStateException()
+            )
+        } else {
+
+            val recursiveInstance =
+                DIContainer.getSingleton(parameterType) ?: injectRecursive(containerInstance)
+            parameterTypes.add(recursiveInstance)
+            if (containerInstance.hasAnnotation<SingletonObject>()) {
+                DIContainer.updateSingleton(containerInstance, recursiveInstance)
+            }
+        }
     }
 
     private fun getInstanceByProvider(parameterType: KClass<*>): Any? {
