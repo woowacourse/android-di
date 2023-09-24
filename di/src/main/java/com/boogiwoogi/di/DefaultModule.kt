@@ -6,6 +6,9 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
+/**
+ * todo: module에 특정 인스턴스를 생성하는 함수(방법)를 추가할 수 있는 방향으로 개선이 필요하다.
+ */
 open class DefaultModule : Module {
 
     override fun provideInstanceOf(clazz: KClass<*>): Any? {

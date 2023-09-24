@@ -4,15 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
+import com.boogiwoogi.di.Module
+import com.di.woogidi.activity.DiActivity
+import com.di.woogidi.viewmodel.diViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.activity.DiActivity
-import woowacourse.shopping.di.viewmodel.diViewModels
+import woowacourse.shopping.di.module.ShoppingActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    override val module: Module by lazy { ShoppingActivityModule(this) }
 
     private val viewModel by diViewModels<MainViewModel>()
 

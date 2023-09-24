@@ -1,8 +1,7 @@
-package woowacourse.shopping.di
+package com.di.woogidi.application
 
 import android.app.Application
-import woowacourse.shopping.di.activity.ApplicationInstanceContainer
-import woowacourse.shopping.di.module.ShoppingApplicationModule
+import com.di.woogidi.AndroidDiInjector
 
 open class DiApplication : Application() {
 
@@ -11,7 +10,6 @@ open class DiApplication : Application() {
 
         injector = AndroidDiInjector(
             applicationInstanceContainer = ApplicationInstanceContainer(),
-            applicationModule = ShoppingApplicationModule(this)
         )
     }
 

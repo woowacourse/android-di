@@ -1,15 +1,15 @@
-package woowacourse.shopping.di.activity
+package com.di.woogidi.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.boogiwoogi.di.InstanceContainer
-import woowacourse.shopping.di.DiApplication
-import woowacourse.shopping.di.module.ShoppingActivityModule
+import com.boogiwoogi.di.Module
+import com.di.woogidi.application.DiApplication
 
-open class DiActivity : AppCompatActivity() {
+abstract class DiActivity : AppCompatActivity() {
 
     val instanceContainer: InstanceContainer = ActivityInstanceContainer()
-    val module by lazy { ShoppingActivityModule(this@DiActivity) }
+    abstract val module: Module
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

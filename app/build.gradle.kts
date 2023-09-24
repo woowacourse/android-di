@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":woogidi"))
     implementation(project(":di"))
 
     implementation("androidx.core:core-ktx:1.10.1")

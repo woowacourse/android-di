@@ -1,6 +1,7 @@
-package woowacourse.shopping.di.activity
+package com.di.woogidi.activity
 
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.boogiwoogi.di.Instance
 import com.boogiwoogi.di.InstanceContainer
 import com.boogiwoogi.di.Qualifier
@@ -10,7 +11,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ApplicationInstanceContainer(
+class ActivityInstanceContainer(
     value: List<Instance<out Any>>? = listOf()
 ) : InstanceContainer, DefaultLifecycleObserver {
 
@@ -30,6 +31,18 @@ class ApplicationInstanceContainer(
 
     override fun clear() {
         value = null
+    }
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+
+        value = mutableListOf()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        clear()
+
+        super.onDestroy(owner)
     }
 
     override fun find(parameter: KParameter): Any? {

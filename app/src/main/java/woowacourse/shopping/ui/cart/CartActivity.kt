@@ -3,12 +3,16 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.boogiwoogi.di.Inject
+import com.boogiwoogi.di.Module
+import com.di.woogidi.activity.DiActivity
+import com.di.woogidi.viewmodel.diViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.activity.DiActivity
-import woowacourse.shopping.di.viewmodel.diViewModels
+import woowacourse.shopping.di.module.ShoppingActivityModule
 
 class CartActivity : DiActivity() {
+
+    override val module: Module by lazy { ShoppingActivityModule(this) }
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

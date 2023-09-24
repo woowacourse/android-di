@@ -1,6 +1,7 @@
-package woowacourse.shopping.di
+package com.di.woogidi
 
 import com.boogiwoogi.di.ClazzInfoExtractor
+import com.boogiwoogi.di.DefaultModule
 import com.boogiwoogi.di.Instance
 import com.boogiwoogi.di.InstanceContainer
 import com.boogiwoogi.di.Instantiator
@@ -13,10 +14,11 @@ import kotlin.reflect.jvm.jvmErasure
 
 class AndroidDiInjector(
     val applicationInstanceContainer: InstanceContainer,
-    val applicationModule: Module
+    module: Module = DefaultModule()
 ) {
 
     val instantiator = Instantiator()
+    var applicationModule = module
 
     inline fun <reified T : Any> inject(
         activityInstanceContainer: InstanceContainer,
