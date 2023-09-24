@@ -80,11 +80,10 @@ open class Module(private val parentModule: Module? = null) {
     }
 
     private fun hasQualifierAtFunc(func: KFunction<*>, qualifier: KClass<out Annotation>): Boolean {
-        val funcQualifiers = func.annotations
-            .filter { it.annotationClass.hasAnnotation<Qualifier>() }
-            .map { it.annotationClass }
-        if (funcQualifiers.contains(qualifier)) return true
-        return false
+        return qualifier ==
+            func.annotations.firstOrNull {
+                it.annotationClass.hasAnnotation<Qualifier>()
+            }?.annotationClass
     }
 
     private fun createInstanceForPrimaryConstructor(kClass: KClass<*>): Any {
