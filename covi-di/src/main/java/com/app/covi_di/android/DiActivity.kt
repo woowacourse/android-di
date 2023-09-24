@@ -21,11 +21,4 @@ abstract class DiActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        clazz.java.declaredFields.forEach {
-        }
-
-    }
 }
