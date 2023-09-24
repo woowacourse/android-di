@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DIActivity
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.activity.DIActivity
+import woowacourse.shopping.di.annotation.Inject
 
 class CartActivity : DIActivity() {
 

@@ -1,5 +1,9 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.module
 
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.di.container.DefaultInstanceContainer
+import woowacourse.shopping.di.container.InstanceContainer
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

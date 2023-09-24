@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.RoomDB
+import woowacourse.shopping.di.annotation.RoomDB
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel(

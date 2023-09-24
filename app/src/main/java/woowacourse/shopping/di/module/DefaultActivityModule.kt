@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.module
 
 import android.content.Context
 import woowacourse.shopping.ui.cart.DateFormatter

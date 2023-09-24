@@ -1,6 +1,9 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.application
 
 import android.app.Application
+import woowacourse.shopping.di.module.ActivityModule
+import woowacourse.shopping.di.module.ApplicationModule
+import woowacourse.shopping.di.module.ViewModelModule
 import kotlin.reflect.full.primaryConstructor
 
 open class DIApplication(

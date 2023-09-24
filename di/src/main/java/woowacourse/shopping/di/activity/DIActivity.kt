@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.di.application.DIApplication
+import woowacourse.shopping.di.module.ActivityModule
 
 open class DIActivity : AppCompatActivity() {
     private lateinit var activityModule: ActivityModule

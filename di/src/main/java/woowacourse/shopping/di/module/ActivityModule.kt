@@ -1,6 +1,7 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.module
 
 import android.content.Context
+import woowacourse.shopping.di.activity.DIActivity
 
 open class ActivityModule(
     val activityContext: Context,

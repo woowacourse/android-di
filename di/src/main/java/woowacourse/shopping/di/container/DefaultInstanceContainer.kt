@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.container
 
 import android.util.Log
 import kotlin.reflect.KClass

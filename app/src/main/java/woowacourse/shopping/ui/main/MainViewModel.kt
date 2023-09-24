@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.Inject
-import woowacourse.shopping.di.RoomDB
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.RoomDB
 import woowacourse.shopping.model.Product
 
 class MainViewModel(

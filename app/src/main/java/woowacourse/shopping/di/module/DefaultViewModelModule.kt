@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.module
 
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
