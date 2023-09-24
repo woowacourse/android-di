@@ -16,7 +16,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
 open class Module(private val parentModule: Module? = null) {
-    private val cache: MutableMap<String, Any> = mutableMapOf()
+    private val container: InstanceContainer = DefaultInstanceContainer(listOf())
 
     fun <T : Any> inject(clazz: Class<T>): T {
         val primaryConstructor =
@@ -33,7 +33,7 @@ open class Module(private val parentModule: Module? = null) {
         kFunction.valueParameters.map { kParameter ->
             val instance =
                 kParameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }?.let {
-                    getInstance {
+                    kParameter.type.jvmErasure.getInstance {
                         findInstance(
                             kParameter.type.jvmErasure,
                             it.annotationClass,
@@ -131,10 +131,10 @@ open class Module(private val parentModule: Module? = null) {
             )
         }
 
-    private inline fun <reified T : Any> getInstance(create: () -> T): T {
-        val qualifiedName = requireNotNull(T::class.qualifiedName)
-        val instance = cache[qualifiedName] ?: create().also {
-            cache[qualifiedName] = it
+    private fun <T : Any> T.getInstance(create: () -> T): T {
+        val clazz = requireNotNull(this)
+        val instance = container.find(clazz) ?: create().also {
+            container.add(it)
         }
         return instance as T
     }
