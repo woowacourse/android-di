@@ -6,6 +6,7 @@ import woowacourse.shopping.DIModule
 import woowacourse.shopping.annotation.Binds
 import woowacourse.shopping.annotation.Provides
 import woowacourse.shopping.annotation.Qualifier2
+import woowacourse.shopping.annotation.Singleton
 
 @Qualifier2
 annotation class CatQualifier
@@ -34,6 +35,7 @@ class FakeActivityModule(parentModule: DIModule?) : DIModule(parentModule)
 class FakeApplicationModule(parentModule: DIModule?) : DIModule(parentModule) {
     @Binds
     @CatQualifier
+    @Singleton
     private lateinit var bindCat: Cat
 
     @Binds
@@ -91,5 +93,25 @@ class DIModuleTest {
 
         // then
         assertThat(crew.person.name).isEqualTo("글루")
+    }
+
+    @Test
+    fun `Singleton 어노테이션이 붙은 Cat은 싱글 인스턴스를 가진다`() {
+        // given && when
+        val cat1 = activityModule.inject(Cat::class)
+        val cat2 = activityModule.inject(Cat::class)
+
+        // then
+        assertThat(cat1).isEqualTo(cat2)
+    }
+
+    @Test
+    fun `Singleton 어노테이션이 붙지 않은 Dog는 서로 다른 인스턴스를 가진다`() {
+        // given && when
+        val dog1 = activityModule.inject(Dog::class)
+        val dog2 = activityModule.inject(Dog::class)
+
+        // then
+        assertThat(dog1).isNotEqualTo(dog2)
     }
 }

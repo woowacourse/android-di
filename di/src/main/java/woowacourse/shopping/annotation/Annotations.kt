@@ -3,6 +3,9 @@ package woowacourse.shopping.annotation
 @Target(AnnotationTarget.CLASS)
 annotation class SingleInstance
 
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+annotation class Singleton
+
 @Target(AnnotationTarget.PROPERTY)
 annotation class Inject
 

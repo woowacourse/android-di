@@ -4,6 +4,7 @@ import woowacourse.shopping.annotation.Binds
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Provides
 import woowacourse.shopping.annotation.Qualifier2
+import woowacourse.shopping.annotation.Singleton
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -19,13 +20,16 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 open class DIModule(private val parentModule: DIModule?) {
-    fun <T : Any> inject(clazz: KClass<T>, qualifier: Annotation? = null): T {
+    private val instances: MutableMap<Pair<KClass<*>, Annotation?>, Any> = mutableMapOf()
+
+    fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        val qualifier = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
         val how = getHowToImplement(clazz, qualifier)
 
         var instance: T? = if (how == null) {
-            parentModule?.inject(clazz, qualifier)
+            parentModule?.inject(clazz, annotations)
         } else {
-            createInstanceBy(how, clazz)
+            getInstanceBy(how)
         }
 
         if (instance == null) instance = createInstance(clazz)
@@ -71,7 +75,7 @@ open class DIModule(private val parentModule: DIModule?) {
             } else {
                 inject(
                     parameter.type.jvmErasure,
-                    parameter.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() },
+                    parameter.annotations,
                 )
             }
         }.toTypedArray()
@@ -79,15 +83,23 @@ open class DIModule(private val parentModule: DIModule?) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> createInstanceBy(
-        how: KCallable<T>,
-        clazz: KClass<T>,
-    ): T? {
+    private fun <T : Any> getInstanceBy(how: KCallable<T>): T? {
+        if (how.hasAnnotation<Singleton>()) {
+            val clazz = how.returnType.jvmErasure
+            val qualifier =
+                how.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
+            val key = clazz to qualifier
+            return instances.getOrPut(key) { createInstanceBy(how) as T } as T
+        }
+        return createInstanceBy(how)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> createInstanceBy(how: KCallable<T>): T? {
         var instance: T? = null
         if (how.hasAnnotation<Binds>()) {
-            val implementationClazz = how.returnType.jvmErasure
-            check(implementationClazz.isSubclassOf(clazz)) { "Binds의 반환 타입은 주입하고자 하는 타입의 하위 타입이어야 합니다." }
-            instance = createInstance(implementationClazz) as T
+            val clazz = how.returnType.jvmErasure
+            instance = createInstance(clazz) as T
         } else if (how.hasAnnotation<Provides>()) {
             how.isAccessible = true
             val args = getArguments(how as KFunction<T>)
@@ -104,7 +116,7 @@ open class DIModule(private val parentModule: DIModule?) {
                     instance,
                     inject(
                         property.returnType.jvmErasure,
-                        property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() },
+                        property.annotations,
                     ),
                 )
             }
