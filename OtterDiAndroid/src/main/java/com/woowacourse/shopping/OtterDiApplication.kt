@@ -6,12 +6,11 @@ open class OtterDiApplication(
     private val module: AndroidModule = DefaultAndroidModule(),
 ) : Application() {
 
-    private lateinit var androidInjector: AndroidInjector
+    private val androidInjector: AndroidInjector by lazy { AndroidInjector(this, module) }
 
     override fun onCreate() {
         super.onCreate()
 
-        androidInjector = AndroidInjector(this, module)
         androidInjector.injectProperty()
     }
 }
