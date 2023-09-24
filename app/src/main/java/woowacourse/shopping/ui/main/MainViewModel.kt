@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bandal.fullmoon.FullMoonInject
 import com.bandal.fullmoon.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
@@ -11,7 +12,7 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
-    @Qualifier("inMemoryProductRepository")
+    @FullMoonInject
     private lateinit var productRepository: ProductRepository
 
     @Qualifier("databaseCartRepository")

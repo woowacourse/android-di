@@ -23,7 +23,7 @@ class FullMoonInjector(private val appContainer: AppContainer) {
         return instance.apply { injectFields(kClass, this) }
     }
 
-    private fun <T : Any> injectFields(kClass: KClass<T>, instance: T) {
+    fun <T : Any> injectFields(kClass: KClass<out T>, instance: T) {
         instance::class.declaredMemberProperties
             .filter { it.hasAnnotation<FullMoonInject>() || it.hasAnnotation<Qualifier>() }
             .forEach { property ->
@@ -34,6 +34,8 @@ class FullMoonInjector(private val appContainer: AppContainer) {
                 (property as KMutableProperty<*>).setter.call(instance, injectValue)
             }
     }
+
+    fun hasContainer(tag: String): Boolean = containers[tag] != null
 
     fun setContainer(tag: String, container: AppContainer) {
         containers[tag] = container
