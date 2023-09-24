@@ -83,4 +83,18 @@ class ModuleTest {
             { assertEquals((instance as FakeRepositoryImpl).dao, dao) },
         )
     }
+
+    @Test
+    fun `인스턴스의 Inject 어노테이션이 붙은 field에 주입 가능하다`() {
+        // given
+        val instance = FakeViewModel(FakeRepositoryImpl(FakeDaoImpl()))
+        val module = FakeParentModule()
+
+        // when
+        module.injectFields(instance)
+
+        // then
+        val expected = module.getInstance(FakeDao::class)
+        assertEquals(expected, instance.dao)
+    }
 }
