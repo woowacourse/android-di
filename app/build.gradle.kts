@@ -76,6 +76,10 @@ dependencies {
     implementation(project(":bunadi"))
     // Reflection
     implementation(kotlin("reflect"))
+    // Android Di Library
+    implementation(project(":androiddi"))
+    // Fragment KTX
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
 }
 
 kapt {
