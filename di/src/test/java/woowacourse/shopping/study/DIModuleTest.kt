@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import woowacourse.shopping.DIModule
 import woowacourse.shopping.annotation.Binds
+import woowacourse.shopping.annotation.Provides
 import woowacourse.shopping.annotation.Qualifier2
 
 @Qualifier2
@@ -12,17 +13,21 @@ annotation class CatQualifier
 @Qualifier2
 annotation class DogQualifier
 
+@Qualifier2
+annotation class GloQualifier
+
+@Qualifier2
+annotation class GluQualifier
+
 interface Animal
-
 class Cat : Animal
-
 class Dog : Animal
-
 class Zoo1(@CatQualifier val animal: Animal)
-
 class Zoo2(@DogQualifier val animal: Animal)
 
-class Person
+class Person(val name: String)
+class Crew1(@GloQualifier val person: Person)
+class Crew2(@GluQualifier val person: Person)
 
 class FakeModule : DIModule() {
     @Binds
@@ -32,6 +37,18 @@ class FakeModule : DIModule() {
     @Binds
     @DogQualifier
     private lateinit var bindDog: Dog
+
+    @Provides
+    @GloQualifier
+    private fun provideGlo(): Person {
+        return Person("글로")
+    }
+
+    @Provides
+    @GluQualifier
+    private fun provideGlu(): Person {
+        return Person("글루")
+    }
 }
 
 class DIModuleTest {
@@ -56,11 +73,20 @@ class DIModuleTest {
     }
 
     @Test
-    fun `Person을 주입할 수 있다`() {
+    fun `Crew1에 글로라는 이름을 가진 Person을 주입할 수 있다`() {
         // given && when
-        val person = module.inject(Person::class)
+        val crew = module.inject(Crew1::class)
 
         // then
-        assertThat(person).isInstanceOf(Person::class.java)
+        assertThat(crew.person.name).isEqualTo("글로")
+    }
+
+    @Test
+    fun `Crew2에 글루라는 이름을 가진 Person을 주입할 수 있다`() {
+        // given && when
+        val crew = module.inject(Crew2::class)
+
+        // then
+        assertThat(crew.person.name).isEqualTo("글루")
     }
 }

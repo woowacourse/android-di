@@ -14,3 +14,6 @@ annotation class Qualifier2
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Binds
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class Provides
