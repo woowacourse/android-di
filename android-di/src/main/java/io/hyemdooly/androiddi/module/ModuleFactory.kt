@@ -7,7 +7,7 @@ import io.hyemdooly.androiddi.base.HyemdoolyViewModel
 import io.hyemdooly.di.Module
 
 class ModuleFactory(private val modules: Modules) {
-    fun createApplicationModule(applicationContext: Context) =
+    fun createApplicationModuleOf(applicationContext: Context) =
         modules.applicationModule(applicationContext)
 
     fun createViewModelWithApplicationModule(

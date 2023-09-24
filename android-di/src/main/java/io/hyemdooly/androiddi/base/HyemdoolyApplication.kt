@@ -9,7 +9,7 @@ import io.hyemdooly.di.Module
 abstract class HyemdoolyApplication(modules: Modules) : Application() {
     private val moduleFactory by lazy { ModuleFactory(modules) }
     private val applicationModule: Module by lazy {
-        moduleFactory.createApplicationModule(
+        moduleFactory.createApplicationModuleOf(
             applicationContext,
         )
     }
