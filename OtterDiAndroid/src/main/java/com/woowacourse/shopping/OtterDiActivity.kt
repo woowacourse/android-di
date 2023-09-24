@@ -7,25 +7,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.otterdi.Injector
 
-abstract class OtterDiActivity(private val module: AndroidModule? = null) : AppCompatActivity() {
+abstract class OtterDiActivity(
+    private val module: AndroidModule = DefaultAndroidModule(),
+) : AppCompatActivity() {
 
-    lateinit var injector: Injector
+    lateinit var androidInjector: AndroidInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        module?.context = this
-        injector = if (module != null) Injector(module) else Injector()
-        injector.injectProperties(this)
+        androidInjector = AndroidInjector(this, module)
+        androidInjector.injectProperty()
     }
 
     @MainThread
     inline fun <reified VM : ViewModel> viewModels(): Lazy<VM> {
         val viewModelFactory = viewModelFactory {
             initializer {
-                injector.inject<VM>()
+                androidInjector.inject<VM>()
             }
         }
         return ViewModelLazy(
