@@ -11,7 +11,7 @@ class ModuleTest {
     private val fakeChildModule = FakeChildModule(fakeParentModule)
 
     @Test
-    fun `모듈에서 처음 사용하는 싱글톤 인스턴스는 생성 후 모듈이 가지고 있는 컬렉션에 저장한다`() {
+    fun `싱글톤 어노테이션이 지정된 provider가 생성하는 객체는 싱글톤으로 관리한다`() {
         // given
 
         // when
@@ -23,7 +23,7 @@ class ModuleTest {
     }
 
     @Test
-    fun `모듈에서 정의한 provider가 싱글톤이 아니면 컬렉션에 저장하지 않는다`() {
+    fun `싱글톤 어노테이션이 지정되지 않은 provider가 생성하는 객체는 싱글톤이 아니다`() {
         // given
 
         // when
