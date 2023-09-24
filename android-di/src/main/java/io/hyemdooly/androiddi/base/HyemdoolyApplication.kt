@@ -1,6 +1,7 @@
 package io.hyemdooly.androiddi.base
 
 import android.app.Application
+import android.content.Context
 import androidx.activity.ComponentActivity
 import io.hyemdooly.androiddi.module.ModuleFactory
 import io.hyemdooly.androiddi.module.Modules
@@ -21,5 +22,9 @@ abstract class HyemdoolyApplication(modules: Modules) : Application() {
 
     fun getHyemdoolyViewModel(activity: ComponentActivity): HyemdoolyViewModel {
         return moduleFactory.createViewModelOf(applicationModule, activity)
+    }
+
+    fun getActivityModule(context: Context): Module {
+        return moduleFactory.createActivityModuleOf(applicationModule, context)
     }
 }

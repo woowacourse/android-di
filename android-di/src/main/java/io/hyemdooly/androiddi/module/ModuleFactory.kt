@@ -15,8 +15,10 @@ class ModuleFactory(private val modules: Modules) {
         activity: ComponentActivity,
     ): HyemdoolyViewModel {
         return ViewModelProvider(activity)[HyemdoolyViewModel::class.java].apply {
-            activityModule = modules.activityModule(applicationModule, activity)
-            viewModelModule = modules.activityModule(applicationModule, activity)
+//            activityModule = modules.activityModule(applicationModule, activity)
+            viewModelModule = modules.viewModelModule(applicationModule)
         }
     }
+
+    fun createActivityModuleOf(applicationModule: Module, activityContext: Context) = modules.activityModule(applicationModule, activityContext)
 }

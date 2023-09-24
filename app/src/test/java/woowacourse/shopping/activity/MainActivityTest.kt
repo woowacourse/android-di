@@ -1,8 +1,8 @@
 package woowacourse.shopping.activity
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import io.hyemdooly.androiddi.util.viewModels
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -10,7 +10,6 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.viewModelFactory
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -37,7 +36,8 @@ class MainActivityTest {
             .buildActivity(MainActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity, viewModelFactory)[MainViewModel::class.java]
+
+        val viewModel = activity.viewModels<MainViewModel>()
 
         // then
         assertThat(viewModel).isNotNull()
