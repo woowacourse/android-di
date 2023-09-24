@@ -8,7 +8,7 @@ class ActivityLifecycleTracker : DefaultLifecycleObserver {
     override fun onDestroy(owner: LifecycleOwner) {
         if (!(owner as ComponentActivity).isChangingConfigurations) {
             val injector = (owner.application as DiApplication).injector
-            injector.removeActivityContainer(owner::class.simpleName.toString())
+            injector.removeActivityRetainedContainer(owner::class)
         }
         super.onDestroy(owner)
     }

@@ -43,7 +43,9 @@ class LifecycleTest {
     }
 }
 
-class FakeApplication : DiApplication()
+class FakeApplication : DiApplication(
+    activityRetainedModule = listOf(FakeActivityWithDateFormatter::class to FakeLifecycleModule()),
+)
 
 class FakeLifecycleModule : Module {
     override var context: Context? = null
@@ -51,7 +53,7 @@ class FakeLifecycleModule : Module {
     fun provideDateFormatter() = FakeDateFormatter()
 }
 
-class FakeActivityWithDateFormatter() : DiActivity(FakeLifecycleModule()) {
+class FakeActivityWithDateFormatter : DiActivity() {
     @Inject
     lateinit var dateFormatter: FakeDateFormatter
 }

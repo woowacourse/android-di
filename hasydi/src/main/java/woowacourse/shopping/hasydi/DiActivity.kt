@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 
-abstract class DiActivity(private val module: Module = DefaultModule()) : AppCompatActivity() {
-
-    private val tag = this::class.simpleName.toString()
+abstract class DiActivity : AppCompatActivity() {
 
     private lateinit var injector: Injector
 
@@ -40,10 +38,8 @@ abstract class DiActivity(private val module: Module = DefaultModule()) : AppCom
     }
 
     private fun setupActivityContainer() {
-        if (!injector.hasContainer(tag)) {
-            module.context = this
-            val activityContainer = DiContainer(module)
-            injector.setActivityContainer(tag, activityContainer)
+        if (!injector.hasContainer(this::class)) {
+            injector.setActivityRetainedContainer(this::class, this)
         }
     }
 

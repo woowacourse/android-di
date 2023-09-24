@@ -1,5 +1,6 @@
 package woowacourse.shopping.hasydi
 
+import android.content.Context
 import woowacourse.shopping.hasydi.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -11,7 +12,9 @@ import kotlin.reflect.jvm.isAccessible
 
 class Injector(private val diContainer: DiContainer) {
 
-    private val activityContainerMap: MutableMap<String, DiContainer?> = mutableMapOf()
+    private val activityRetainedModuleMap: MutableMap<KClass<*>, Module> = mutableMapOf()
+
+    private val activityRetainedContainerMap: MutableMap<KClass<*>, DiContainer?> = mutableMapOf()
 
     fun <T : Any> inject(clazz: KClass<T>): T {
         val primaryConstructor =
@@ -32,24 +35,35 @@ class Injector(private val diContainer: DiContainer) {
     fun <T : Any> fieldInjection(clazz: KClass<out T>, target: T) {
         clazz.declaredMemberProperties.forEach { property ->
             if (property.hasAnnotation<Inject>()) {
-                val activityContainer = activityContainerMap[clazz.simpleName.toString()]
+                val activityRetainedContainer = activityRetainedContainerMap[clazz]
                 val injectValue =
-                    diContainer.getInstance(property) ?: activityContainer?.getInstance(property)
+                    diContainer.getInstance(property) ?: activityRetainedContainer?.getInstance(
+                        property,
+                    )
                 property.isAccessible = true
                 (property as KMutableProperty<*>).setter.call(target, injectValue)
             }
         }
     }
 
-    fun setActivityContainer(tag: String, container: DiContainer) {
-        activityContainerMap[tag] = container
+    fun addActivityRetainedModule(clazz: KClass<*>, module: Module) {
+        activityRetainedModuleMap[clazz] = module
     }
 
-    fun removeActivityContainer(tag: String) {
-        activityContainerMap[tag] = null
+    fun setActivityRetainedContainer(clazz: KClass<*>, context: Context) {
+        val module = activityRetainedModuleMap[clazz]
+        module?.let {
+            module.context = context
+            val container = DiContainer(module)
+            activityRetainedContainerMap[clazz] = container
+        }
     }
 
-    fun hasContainer(tag: String): Boolean = activityContainerMap[tag] != null
+    fun removeActivityRetainedContainer(clazz: KClass<*>) {
+        activityRetainedContainerMap[clazz] = null
+    }
+
+    fun hasContainer(clazz: KClass<*>): Boolean = activityRetainedContainerMap[clazz] != null
 
     private fun getArgumentsMapping(parameters: List<KParameter>): Map<KParameter, Any> {
         return parameters.associateWith { param ->
