@@ -16,3 +16,4 @@ rootProject.name = "android-di"
 include(":app")
 include(":domain")
 include(":fullmoon")
+include(":halfmoon")
