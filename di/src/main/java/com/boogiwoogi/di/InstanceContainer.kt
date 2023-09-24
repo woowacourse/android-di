@@ -17,4 +17,6 @@ interface InstanceContainer {
     fun find(clazz: KClass<*>): Any?
 
     fun find(simpleName: String?): Any?
+
+    fun clear()
 }
