@@ -11,3 +11,6 @@ annotation class Provides
 
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
 annotation class Scoped
+
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+annotation class Singleton

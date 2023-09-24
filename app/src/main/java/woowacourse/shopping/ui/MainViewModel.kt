@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boogiwoogi.di.Inject
 import com.boogiwoogi.di.Qualifier
-import com.boogiwoogi.di.Scoped
+import com.boogiwoogi.di.Singleton
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
 class MainViewModel(
-    @Scoped
     @Inject
     private val productRepository: ProductRepository,
+    @Singleton
     @Qualifier("InMemoryCartRepository")
     private val cartRepository: CartRepository,
 ) : ViewModel() {

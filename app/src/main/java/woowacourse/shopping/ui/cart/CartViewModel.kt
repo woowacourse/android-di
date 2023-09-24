@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boogiwoogi.di.Qualifier
+import com.boogiwoogi.di.Singleton
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartRepository
 
 class CartViewModel(
+    @Singleton
     @Qualifier("InMemoryCartRepository")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
