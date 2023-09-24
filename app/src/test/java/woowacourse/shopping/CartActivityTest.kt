@@ -10,6 +10,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.cart.DateFormatter
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -44,5 +45,42 @@ class CartActivityTest {
 
         // then
         Truth.assertThat(viewModel).isNotNull()
+    }
+
+    @Test
+    fun `onCreate상태가 되면 dateFormatter는 instanceContainer에 존재한다`() {
+        // given
+        val activity = Robolectric
+            .buildActivity(CartActivity::class.java)
+            .setup()
+            .get()
+
+        // when
+        val actual = activity.instanceContainer.value?.any {
+            it.clazz.contains(DateFormatter::class)
+        }
+
+        // then
+        Truth.assertThat(actual).isNotNull()
+    }
+
+    @Test
+    fun `onDestroy상태가 되면 dateFormatter는 삭제된다`() {
+        // given
+        val activity = Robolectric
+            .buildActivity(CartActivity::class.java)
+            .create()
+            .destroy()
+            .get()
+
+        // when
+        val actual = activity.instanceContainer.value?.find {
+            it.clazz.any { clazz ->
+                clazz == DateFormatter::class
+            }
+        }
+
+        // then
+        Truth.assertThat(actual).isNull()
     }
 }
