@@ -15,6 +15,9 @@ import woowacourse.shopping.model.ProductRepository
 class MainViewModel(
     @Inject
     private val productRepository: ProductRepository,
+    /**
+     * todo: 현재는 주입 받는 곳에서 Singleton으로 객체를 만들고 주입받을지 정하고 있다. 이것을 module 딴에서 하면 더 좋을듯 하다.
+     */
     @Singleton
     @Qualifier("InMemoryCartRepository")
     private val cartRepository: CartRepository,
