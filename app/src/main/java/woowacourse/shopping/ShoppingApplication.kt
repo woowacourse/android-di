@@ -1,39 +1,12 @@
 package woowacourse.shopping
 
 import com.example.bbottodi.di.DiApplication
-import com.example.bbottodi.di.annotation.InDisk
-import com.example.bbottodi.di.annotation.InMemory
-import com.example.bbottodi.di.annotation.Inject
-import com.example.bbottodi.di.inject.AutoDependencyInjector.inject
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.di.DefaultModule.provideCartProductDao
-import woowacourse.shopping.di.DefaultModule.provideInDiskCartRepository
-import woowacourse.shopping.di.DefaultModule.provideInMemoryCartRepository
-import woowacourse.shopping.di.DefaultModule.provideProductRepository
-import woowacourse.shopping.model.repository.CartRepository
-import woowacourse.shopping.model.repository.ProductRepository
+import woowacourse.shopping.di.ApplicationModule
 
 class ShoppingApplication : DiApplication() {
 
     override fun onCreate() {
+        module = { context -> ApplicationModule(context) }
         super.onCreate()
-        initContainer()
-    }
-
-    private fun initContainer() {
-        container.apply {
-            addInstance(CartProductDao::class, provideCartProductDao(applicationContext))
-            addInstance(ProductRepository::class, provideProductRepository())
-            addInstance(
-                CartRepository::class,
-                listOf(Inject::class.simpleName!!, InDisk::class.simpleName!!),
-                inject(container, provideInDiskCartRepository()),
-            )
-            addInstance(
-                CartRepository::class,
-                listOf(Inject::class.simpleName!!, InMemory::class.simpleName!!),
-                inject(container, provideInMemoryCartRepository()),
-            )
-        }
     }
 }
