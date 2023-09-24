@@ -38,20 +38,11 @@ abstract class Module(private val parentModule: Module? = null) {
         }
     }
 
-    protected fun <T : Any> provideInjectField(instance: T): T {
+    protected fun <T : Any> provideInjectField(instance: T) {
         instance::class.declaredMemberProperties
             .filterIsInstance<KMutableProperty<*>>()
             .filter { it.hasAnnotation<FieldInject>() }
-            .forEach { field ->
-                if (field.visibility != KVisibility.PUBLIC) throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
-                val qualifier =
-                    field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-                field.setter.call(
-                    instance,
-                    provideInstance(field.returnType.jvmErasure.java, qualifier?.annotationClass),
-                )
-            }
-        return instance
+            .forEach { field -> instance.injectField(field) }
     }
 
     private fun <T : Any> searchInjectableFunctions(
@@ -73,6 +64,16 @@ abstract class Module(private val parentModule: Module? = null) {
         return false
     }
 
+    private fun <T : Any> T.injectField(field: KMutableProperty<*>) {
+        if (field.visibility != KVisibility.PUBLIC) throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
+        val qualifier =
+            field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+        field.setter.call(
+            this,
+            provideInstance(field.returnType.jvmErasure.java, qualifier?.annotationClass),
+        )
+    }
+
     private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
         @Suppress("UNCHECKED_CAST")
         return func.call(module, *getArguments(module, func).toTypedArray()) as T
@@ -82,7 +83,7 @@ abstract class Module(private val parentModule: Module? = null) {
         val primaryConstructor = clazz.kotlin.primaryConstructor
             ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
         val args = getArguments(this, primaryConstructor)
-        return provideInjectField(primaryConstructor.call(*args.toTypedArray()))
+        return primaryConstructor.call(*args.toTypedArray()).apply { provideInjectField(this) }
     }
 
     private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
