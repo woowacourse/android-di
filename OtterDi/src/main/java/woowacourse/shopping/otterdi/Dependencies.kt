@@ -25,9 +25,10 @@ class Dependencies(private val modules: List<Module>) {
 
     fun getInstance(kParam: KParameter): Any {
         val key = kParam.identifyKey()
-        val provider = providers[key] ?: throwError()
-        val provideModule = kParam.getProvideModule() ?: throwError()
-        var instance: Any? = createInstance(provider, provideModule) ?: throwError()
+        val provider = providers[key] ?: throwDependencyProviderNotFoundError()
+        val provideModule = kParam.getProvideModule() ?: throwDependencyProviderNotFoundError()
+        var instance: Any? =
+            createInstance(provider, provideModule) ?: throwDependencyProviderNotFoundError()
 
         if (kParam.hasAnnotation<Singleton>()) {
             if (instances[key] == null) {
@@ -36,14 +37,15 @@ class Dependencies(private val modules: List<Module>) {
                 instance = instances[key]
             }
         }
-        return instance ?: throwError()
+        return instance ?: throwDependencyProviderNotFoundError()
     }
 
     fun getInstance(kCallable: KCallable<*>): Any {
         val key = kCallable.identifyKey()
-        val provider = providers[key] ?: throwError()
-        val provideModule = kCallable.getProvideModule() ?: throwError()
-        var instance: Any? = createInstance(provider, provideModule) ?: throwError()
+        val provider = providers[key] ?: throwDependencyProviderNotFoundError()
+        val provideModule = kCallable.getProvideModule() ?: throwDependencyProviderNotFoundError()
+        var instance: Any? =
+            createInstance(provider, provideModule) ?: throwDependencyProviderNotFoundError()
 
         if (kCallable.hasAnnotation<Singleton>()) {
             if (instances[key] == null) {
@@ -52,17 +54,17 @@ class Dependencies(private val modules: List<Module>) {
                 instance = instances[key]
             }
         }
-        return instance ?: throwError()
+        return instance ?: throwDependencyProviderNotFoundError()
     }
 
     private fun createInstance(provideFunc: KFunction<*>, receiver: Module): Any? {
-        val instances: MutableMap<String, Any?> = mutableMapOf() // 매번 필요한 인스턴스를 만들어 사용하도록 함
+        val instances: MutableMap<String, Any?> = mutableMapOf()
         val injectParams = provideFunc.parameters.filter { it.hasAnnotation<Inject>() }
         if (injectParams.isEmpty()) return provideFunc.call(receiver)
 
         injectParams.forEach { param ->
             val key = param.identifyKey()
-            val provider: KFunction<*> = providers[key] ?: throwError()
+            val provider: KFunction<*> = providers[key] ?: throwDependencyProviderNotFoundError()
 
             if (instances[key] == null) instances[key] = createInstance(provider, receiver)
         }
@@ -97,7 +99,8 @@ class Dependencies(private val modules: List<Module>) {
             } != null
         }
 
-    private fun throwError(): Nothing = throw IllegalArgumentException("의존성을 제공할 수 없습니다.")
+    private fun throwDependencyProviderNotFoundError(): Nothing =
+        throw IllegalArgumentException("의존성을 제공할 수 없습니다.")
 
     companion object {
         val instances: MutableMap<String, Any?> = mutableMapOf()
