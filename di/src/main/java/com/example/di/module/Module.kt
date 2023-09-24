@@ -29,9 +29,7 @@ abstract class Module(private val parentModule: Module? = null) {
             0 -> createWithPrimaryConstructor(clazz)
             1 -> {
                 val (function, module) = injectableFunctionWithModuleMap.entries.first()
-                module.getOrCreateInstance(function.name) {
-                    createWithModuleFunc(module, function)
-                }
+                module.getOrCreateInstance(function)
             }
 
             else -> throw IllegalStateException("실행할 함수를 선택할 수 없습니다.")
@@ -74,9 +72,9 @@ abstract class Module(private val parentModule: Module? = null) {
         )
     }
 
-    private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
-        @Suppress("UNCHECKED_CAST")
-        return func.call(module, *module.getArguments(func).toTypedArray()) as T
+    private fun <T : Any> Module.createWithModuleFunc(func: KFunction<*>): T {
+        @Suppress("UNCHECKED_CAST", "LABEL_RESOLVE_WILL_CHANGE")
+        return func.call(this@Module, *this@Module.getArguments(func).toTypedArray()) as T
     }
 
     private fun <T : Any> createWithPrimaryConstructor(clazz: Class<T>): T {
@@ -95,11 +93,9 @@ abstract class Module(private val parentModule: Module? = null) {
         }
     }
 
-    private fun <T : Any> getOrCreateInstance(
-        key: String,
-        create: () -> T,
-    ): T {
-        if (cache[key] == null) cache[key] = create()
+    private fun <T : Any> getOrCreateInstance(func: KFunction<*>): T {
+        val key = func.name
+        if (cache[key] == null) cache[key] = this.createWithModuleFunc(func)
         @Suppress("UNCHECKED_CAST")
         return cache[key] as T
     }
