@@ -3,6 +3,7 @@ package woowacourse.shopping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import woowacourse.shopping.dependency.DependencyContainer
 import kotlin.reflect.full.declaredMemberProperties
 
 class DependencyContainerTest {

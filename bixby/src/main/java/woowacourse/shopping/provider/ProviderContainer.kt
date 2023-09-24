@@ -1,5 +1,10 @@
-package woowacourse.shopping
+package woowacourse.shopping.provider
 
+import woowacourse.shopping.Inject
+import woowacourse.shopping.Injector
+import woowacourse.shopping.Qualifier
+import woowacourse.shopping.Singleton
+import woowacourse.shopping.dependency.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter

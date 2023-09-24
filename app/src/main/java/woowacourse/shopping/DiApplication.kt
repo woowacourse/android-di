@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
+import woowacourse.shopping.dependency.DependencyContainer
 import woowacourse.shopping.di.DependencyProvider
 
 class DiApplication : Application() {

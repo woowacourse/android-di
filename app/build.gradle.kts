@@ -44,8 +44,8 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":bixx-di-annotation"))
-    implementation(project(":bixx-android-di"))
+    implementation(project(":bixby"))
+    implementation(project(":bixby-android"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")

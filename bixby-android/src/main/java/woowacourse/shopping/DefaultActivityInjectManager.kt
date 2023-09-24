@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import woowacourse.shopping.ActivityInjectManager.ActivityLifecycle
+import woowacourse.shopping.dependency.DependencyContainer
+import woowacourse.shopping.provider.ProviderContainer
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation

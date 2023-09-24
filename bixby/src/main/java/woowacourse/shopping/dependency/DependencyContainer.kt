@@ -1,5 +1,6 @@
-package woowacourse.shopping
+package woowacourse.shopping.dependency
 
+import woowacourse.shopping.Qualifier
 import kotlin.reflect.KClass
 
 class DependencyContainer {
