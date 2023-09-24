@@ -1,9 +1,9 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import woowacourse.di.Module
 import woowacourse.di.annotation.InjectField
 import woowacourse.di.annotation.Singleton
+import woowacourse.di.module.AndroidModule
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.InDiskCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
@@ -12,7 +12,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
-class AppModule : Module {
+class AppModule : AndroidModule {
 
     override lateinit var context: Context
 
@@ -30,5 +30,5 @@ class AppModule : Module {
         InDiskCartRepository(cartDao)
 
     fun provideCartProductDao(): CartProductDao =
-        ShoppingDatabase.getDatabase(context.applicationContext).cartProductDao()
+        ShoppingDatabase.getDatabase(context).cartProductDao()
 }

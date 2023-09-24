@@ -4,5 +4,5 @@ import kotlin.reflect.KClass
 
 object SingletonContainer {
 
-    val instances = mutableMapOf<KClass<*>, Any?>()
+    val instances = mutableMapOf<KClass<*>, Any>()
 }

@@ -69,7 +69,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.9")
-    implementation("androidx.test:core-ktx:1.5.0")
+    // test
+    testImplementation("androidx.test:core-ktx:1.5.0")
 
     // Reflection
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")

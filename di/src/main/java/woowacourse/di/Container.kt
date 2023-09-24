@@ -3,6 +3,7 @@ package woowacourse.di
 import woowacourse.di.SingletonContainer.instances
 import woowacourse.di.annotation.InjectField
 import woowacourse.di.annotation.Singleton
+import woowacourse.di.module.Module
 import kotlin.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -13,14 +14,15 @@ import kotlin.reflect.full.hasAnnotation
 class Container(private val module: Module) {
 
     init {
-        createSingleTon()
+        createSingleton()
     }
 
-    private fun createSingleTon() {
+    private fun createSingleton() {
         module::class.declaredMemberFunctions.forEach { provider ->
             if (provider.hasAnnotation<Singleton>()) {
                 val instance =
-                    createInstance(provider) ?: throw IllegalStateException("잘못된 인스턴스 값 입니다")
+                    createInstance(provider)
+                        ?: throw IllegalStateException("${provider.returnType} 인스턴스 생성에 실패했습니다")
                 instances[instance::class] = instance
             }
         }
@@ -42,7 +44,7 @@ class Container(private val module: Module) {
             injectParams.forEach { param ->
                 val func = module::class.declaredMemberFunctions.firstOrNull {
                     it.returnType == param.type
-                } ?: throw IllegalStateException()
+                } ?: throw IllegalStateException("${param.type}을 생성하는 함수가 없습니다")
                 instance.add(createInstance(func))
             }
             createParameterInstance(instance, provider)
