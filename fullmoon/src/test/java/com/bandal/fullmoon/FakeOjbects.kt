@@ -34,8 +34,6 @@ object FakeModule : Module {
 }
 
 interface FakeRepository
-interface FakeDataSource
-class DateFormatter
 
 class FakeDatabaseRepository(
     @Qualifier("localDataSource")
@@ -44,11 +42,15 @@ class FakeDatabaseRepository(
 
 class FakeInMemoryRepository : FakeRepository
 
+interface FakeDataSource
+
 class FakeLocalDataSource(
     val fakeDao: FakeDao,
 ) : FakeDataSource
 
 class FakeDao
+
+class DateFormatter
 
 class FakeClass(
     @Qualifier("database") val fakeDataBaseRepository: FakeRepository,

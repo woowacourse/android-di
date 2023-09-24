@@ -8,7 +8,7 @@ import kotlin.reflect.full.valueParameters
 class AppContainer(private val module: Module) {
     private val instances: HashMap<String, Any> = HashMap()
 
-    private val functionsForCreate: Map<String, KFunction<*>> =
+    private val functionsForCreateInstance: Map<String, KFunction<*>> =
         module::class.declaredMemberFunctions.associateBy { it.getKey() }
 
     internal fun getSavedInstance(key: String): Any? {
@@ -16,22 +16,21 @@ class AppContainer(private val module: Module) {
     }
 
     private fun createInstance(key: String): Any? {
-        val function: KFunction<*> =
-            functionsForCreate[key] ?: return null
+        val function: KFunction<*> = functionsForCreateInstance[key] ?: return null
         return callCreateFunction(function)
     }
 
     private fun callCreateFunction(function: KFunction<*>): Any {
-        val parameterInstances = function.valueParameters.map { parameter ->
+        val argumentsForInject = function.valueParameters.map { parameter ->
             getSavedInstance(parameter.getKey())
         }
 
-        val instance: Any = function.call(module, *parameterInstances.toTypedArray())
+        val createdInstance: Any = function.call(module, *argumentsForInject.toTypedArray())
             ?: throw DIError.NotFoundCreateFunction(function.getKey())
 
         if (function.hasAnnotation<Singleton>()) {
-            instances[function.getKey()] = instance
+            instances[function.getKey()] = createdInstance
         }
-        return instance
+        return createdInstance
     }
 }

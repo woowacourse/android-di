@@ -6,7 +6,7 @@ import org.junit.Test
 class FullMoonInjectorTest {
 
     @Test
-    fun `통합테스트로 퉁쳐서 죄송합니다`() {
+    fun `FullMoonInjector를 통해 FakeClass에 인스턴스를 주입시킬 수 있다`() {
         // given
         val injector = FullMoonInjector(AppContainer(FakeModule))
 
