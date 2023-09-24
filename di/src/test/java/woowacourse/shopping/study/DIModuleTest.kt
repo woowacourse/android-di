@@ -3,6 +3,8 @@ package woowacourse.shopping.study
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import woowacourse.shopping.DIModule
+import woowacourse.shopping.annotation.ActivityContext
+import woowacourse.shopping.annotation.ApplicationContext
 import woowacourse.shopping.annotation.Binds
 import woowacourse.shopping.annotation.Provides
 import woowacourse.shopping.annotation.Qualifier2
@@ -20,19 +22,33 @@ annotation class GloQualifier
 @Qualifier2
 annotation class GluQualifier
 
-interface Animal
-class Cat : Animal
-class Dog : Animal
-class Zoo1(@CatQualifier val animal: Animal)
-class Zoo2(@DogQualifier val animal: Animal)
+internal interface Animal
+internal class Cat : Animal
+internal class Dog : Animal
+internal class Zoo1(@CatQualifier val animal: Animal)
+internal class Zoo2(@DogQualifier val animal: Animal)
 
-class Person(val name: String)
-class Crew1(@GloQualifier val person: Person)
-class Crew2(@GluQualifier val person: Person)
+internal class Person(val name: String)
+internal class Crew1(@GloQualifier val person: Person)
+internal class Crew2(@GluQualifier val person: Person)
 
-class FakeActivityModule(parentModule: DIModule?) : DIModule(parentModule)
+internal interface FakeContext
+internal class FakeApplicationContext : FakeContext
+internal class FakeActivityContext : FakeContext
+internal class FakeDatabaseWithApplicationContext(val context: FakeContext)
+internal class FakeDatabaseWithActivityContext(val context: FakeContext)
 
-class FakeApplicationModule(parentModule: DIModule?) : DIModule(parentModule) {
+internal class FakeActivityModule(parentModule: DIModule?) : DIModule(parentModule) {
+    @Provides
+    private fun provideFakeDatabaseWithApplicationContext(@ApplicationContext context: FakeContext) =
+        FakeDatabaseWithApplicationContext(context)
+
+    @Provides
+    private fun provideFakeDatabaseWithActivityContext(@ActivityContext context: FakeContext) =
+        FakeDatabaseWithActivityContext(context)
+}
+
+internal class FakeApplicationModule(parentModule: DIModule?) : DIModule(parentModule) {
     @Binds
     @CatQualifier
     @Singleton
@@ -55,7 +71,7 @@ class FakeApplicationModule(parentModule: DIModule?) : DIModule(parentModule) {
     }
 }
 
-class DIModuleTest {
+internal class DIModuleTest {
     private val applicationModule = FakeApplicationModule(null)
     private val activityModule = FakeActivityModule(applicationModule)
 
@@ -113,5 +129,31 @@ class DIModuleTest {
 
         // then
         assertThat(dog1).isNotEqualTo(dog2)
+    }
+
+    @Test
+    fun `ContextType이 ApplicationContext면 FakeApplicationContext를 주입받는다`() {
+        // given
+        applicationModule.addInstance((FakeContext::class to ApplicationContext()), FakeApplicationContext())
+        activityModule.addInstance((FakeContext::class to ActivityContext()), FakeActivityContext())
+
+        // when
+        val database = activityModule.inject(FakeDatabaseWithApplicationContext::class)
+
+        // then
+        assertThat(database.context).isInstanceOf(FakeApplicationContext::class.java)
+    }
+
+    @Test
+    fun `ContextType이 ActivityContext면 FakeActivityContext를 주입받는다`() {
+        // given
+        applicationModule.addInstance((FakeContext::class to ApplicationContext()), FakeApplicationContext())
+        activityModule.addInstance((FakeContext::class to ActivityContext()), FakeActivityContext())
+
+        // when
+        val database = activityModule.inject(FakeDatabaseWithActivityContext::class)
+
+        // then
+        assertThat(database.context).isInstanceOf(FakeActivityContext::class.java)
     }
 }

@@ -20,3 +20,14 @@ annotation class Binds
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class Provides
+
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+annotation class ContextType
+
+@ContextType
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+annotation class ApplicationContext
+
+@ContextType
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+annotation class ActivityContext

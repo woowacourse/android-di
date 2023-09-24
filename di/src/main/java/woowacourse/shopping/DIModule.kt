@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import woowacourse.shopping.annotation.Binds
+import woowacourse.shopping.annotation.ContextType
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Provides
 import woowacourse.shopping.annotation.Qualifier2
@@ -22,7 +23,14 @@ import kotlin.reflect.jvm.jvmErasure
 open class DIModule(private val parentModule: DIModule?) {
     private val instances: MutableMap<Pair<KClass<*>, Annotation?>, Any> = mutableMapOf()
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        val contextType = annotations.firstOrNull { it.annotationClass.hasAnnotation<ContextType>() }
+        if (contextType != null) {
+            val context = instances[(clazz to contextType)] ?: parentModule?.inject(clazz, annotations)
+            return context as? T ?: throw IllegalStateException("${contextType}를 찾을 수 없습니다.")
+        }
+
         val qualifier = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
         val how = getHowToImplement(clazz, qualifier)
 
@@ -121,5 +129,13 @@ open class DIModule(private val parentModule: DIModule?) {
                 )
             }
         }
+    }
+
+    fun <T : Any> addInstance(key: Pair<KClass<T>, Annotation?>, value: T) {
+        instances[key] = value
+    }
+
+    fun releaseInstance(key: Pair<KClass<*>, Annotation?>) {
+        instances.remove(key)
     }
 }
