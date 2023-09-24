@@ -26,16 +26,20 @@ abstract class ViewModelModule(activityRetainedModule: ActivityRetainedModule) :
                 VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES.joinToString(separator = ",") { it.jvmName }
             } 을 가져야 합니다."
 
-        fun <T : ViewModelModule> validatePrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
+        fun <T : ViewModelModule> getPrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
             val primaryConstructor = moduleClassType.kotlin.primaryConstructor
                 ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
+            validatePrimaryConstructor(primaryConstructor)
+            return primaryConstructor
+        }
+
+        private fun <T : ViewModelModule> validatePrimaryConstructor(primaryConstructor: KFunction<T>) {
             check(primaryConstructor.valueParameters.size == VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES.size) {
                 ERROR_VIEW_MODEL_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
             check(primaryConstructor.valueParameters.map { it.type.jvmErasure } == VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES) {
                 ERROR_VIEW_MODEL_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
-            return primaryConstructor
         }
     }
 }

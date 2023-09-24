@@ -21,16 +21,20 @@ abstract class ActivityRetainedModule(applicationModule: ApplicationModule) :
                 ACTIVITY_RETAINED_MODULE_VALUE_PARAMETER_TYPES.joinToString(",") { it.jvmName }
             }이어야 합니다."
 
-        fun <T : ActivityRetainedModule> validatePrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
+        fun <T : ActivityRetainedModule> getPrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
             val primaryConstructor = moduleClassType.kotlin.primaryConstructor
                 ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
+            validatePrimaryConstructor(primaryConstructor)
+            return primaryConstructor
+        }
+
+        private fun <T : ActivityRetainedModule> validatePrimaryConstructor(primaryConstructor: KFunction<T>) {
             check(primaryConstructor.valueParameters.size == ACTIVITY_RETAINED_MODULE_VALUE_PARAMETER_TYPES.size) {
                 ERROR_ACTIVITY_RETAINED_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
             check(primaryConstructor.valueParameters.map { it.type.jvmErasure } == ACTIVITY_RETAINED_MODULE_VALUE_PARAMETER_TYPES) {
                 ERROR_ACTIVITY_RETAINED_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
-            return primaryConstructor
         }
     }
 }

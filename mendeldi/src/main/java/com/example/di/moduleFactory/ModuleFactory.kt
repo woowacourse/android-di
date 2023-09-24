@@ -21,8 +21,7 @@ class ModuleFactory(
     fun <T : ApplicationModule> getApplicationModule(
         applicationContext: Context,
     ): T {
-        val primaryConstructor =
-            ApplicationModule.validatePrimaryConstructor(applicationModuleClazz)
+        val primaryConstructor = ApplicationModule.getPrimaryConstructor(applicationModuleClazz)
         return primaryConstructor.call(applicationContext) as T
     }
 
@@ -43,8 +42,7 @@ class ModuleFactory(
         activity: DiEntryPointActivity,
         activityRetainedModule: ActivityRetainedModule,
     ): T {
-        val primaryConstructor =
-            ActivityModule.validatePrimaryConstructor(activityModuleClazz)
+        val primaryConstructor = ActivityModule.getPrimaryConstructor(activityModuleClazz)
         return primaryConstructor.call(activity, activityRetainedModule) as T
     }
 
@@ -52,8 +50,7 @@ class ModuleFactory(
     fun <T : ViewModelModule> getViewModelModule(
         activityRetainedModule: ActivityRetainedModule,
     ): T {
-        val primaryConstructor =
-            ViewModelModule.validatePrimaryConstructor(viewModelModuleClazz)
+        val primaryConstructor = ViewModelModule.getPrimaryConstructor(viewModelModuleClazz)
         return primaryConstructor.call(activityRetainedModule) as T
     }
 }

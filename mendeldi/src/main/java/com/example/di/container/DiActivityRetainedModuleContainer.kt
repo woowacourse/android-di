@@ -30,7 +30,7 @@ class DiActivityRetainedModuleContainer(
         clazz: Class<T>,
         applicationModule: ApplicationModule,
     ): T {
-        val primaryConstructor = ActivityRetainedModule.validatePrimaryConstructor(clazz)
+        val primaryConstructor = ActivityRetainedModule.getPrimaryConstructor(clazz)
         return primaryConstructor.call(applicationModule)
     }
 

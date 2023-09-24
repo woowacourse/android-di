@@ -30,16 +30,20 @@ abstract class ActivityModule(
                 ACTIVITY_MODULE_VALUE_PARAMETER_TYPES.joinToString(separator = ",") { it.jvmName }
             } 을 가져야 합니다."
 
-        fun <T : ActivityModule> validatePrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
+        fun <T : ActivityModule> getPrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
             val primaryConstructor = moduleClassType.kotlin.primaryConstructor
                 ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
+            validatePrimaryConstructor(primaryConstructor)
+            return primaryConstructor
+        }
+
+        private fun <T : ActivityModule> validatePrimaryConstructor(primaryConstructor: KFunction<T>) {
             check(primaryConstructor.valueParameters.size == ACTIVITY_MODULE_VALUE_PARAMETER_TYPES.size) {
                 ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
             check(primaryConstructor.valueParameters.map { it.type.jvmErasure } == ACTIVITY_MODULE_VALUE_PARAMETER_TYPES) {
                 ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }
-            return primaryConstructor
         }
     }
 }
