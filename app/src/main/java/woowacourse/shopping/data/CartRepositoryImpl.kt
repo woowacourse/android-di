@@ -3,6 +3,7 @@ package woowacourse.shopping.data
 import com.app.covi_di.annotation.Inject
 import com.app.covi_di.annotation.Qualifier
 import com.app.covi_di.annotation.QualifierType
+import com.app.covi_di.annotation.SingletonObject
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
@@ -11,6 +12,7 @@ import woowacourse.shopping.repository.CartRepository
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
 
+@SingletonObject
 @Qualifier(type = QualifierType.DB)
 class CartRepositoryImpl @Inject constructor(private val cartProduct: CartProductDao) :
     CartRepository {
