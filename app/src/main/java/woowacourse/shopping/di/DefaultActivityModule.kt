@@ -7,5 +7,7 @@ class DefaultActivityModule(
     activityContext: Context,
     applicationModule: ApplicationModule,
 ) : ActivityModule(activityContext, applicationModule) {
-    fun provideDateFormatter(): DateFormatter = DateFormatter(activityContext)
+    fun provideContext(): Context = activityContext
+
+    fun provideDateFormatter(context: Context): DateFormatter = DateFormatter(context)
 }
