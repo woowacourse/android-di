@@ -1,6 +1,5 @@
 package com.example.di.module
 
-import android.content.Context
 import com.example.di.annotation.FieldInject
 import com.example.di.annotation.Qualifier
 import kotlin.reflect.KClass
@@ -15,10 +14,13 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class Module(var context: Context, private val parentModule: Module? = null) {
+abstract class Module(private val parentModule: Module? = null) {
     private val cache = mutableMapOf<String, Any>()
 
-    fun <T : Any> provideInstance(clazz: Class<T>, qualifier: KClass<out Annotation>? = null): T {
+    protected fun <T : Any> provideInstance(
+        clazz: Class<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
         if (qualifier != null && qualifier.hasAnnotation<Qualifier>().not()) {
             throw IllegalArgumentException("qualifier 인자는 Qualifier를 메타 애노테이션으로 가져야 합니다")
         }
@@ -27,13 +29,18 @@ abstract class Module(var context: Context, private val parentModule: Module? = 
             0 -> createWithPrimaryConstructor(clazz)
             1 -> {
                 val (function, module) = injectableFunctionWithModuleMap.entries.first()
-                module.getOrCreateInstance(function.name) {
-                    createWithModuleFunc(module, function)
-                }
+                module.getOrCreateInstance(function)
             }
 
             else -> throw IllegalStateException("실행할 함수를 선택할 수 없습니다.")
         }
+    }
+
+    protected fun <T : Any> provideInjectField(instance: T) {
+        instance::class.declaredMemberProperties
+            .filterIsInstance<KMutableProperty<*>>()
+            .filter { it.hasAnnotation<FieldInject>() }
+            .forEach { field -> instance.injectField(field) }
     }
 
     private fun <T : Any> searchInjectableFunctions(
@@ -55,47 +62,40 @@ abstract class Module(var context: Context, private val parentModule: Module? = 
         return false
     }
 
-    private fun <T : Any> createWithModuleFunc(module: Module, func: KFunction<*>): T {
-        @Suppress("UNCHECKED_CAST")
-        return func.call(module, *getArguments(module, func).toTypedArray()) as T
+    private fun <T : Any> T.injectField(field: KMutableProperty<*>) {
+        if (field.visibility != KVisibility.PUBLIC) throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
+        val qualifier =
+            field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+        field.setter.call(
+            this,
+            provideInstance(field.returnType.jvmErasure.java, qualifier?.annotationClass),
+        )
+    }
+
+    private fun <T : Any> Module.createWithModuleFunc(func: KFunction<*>): T {
+        @Suppress("UNCHECKED_CAST", "LABEL_RESOLVE_WILL_CHANGE")
+        return func.call(this@Module, *this@Module.getArguments(func).toTypedArray()) as T
     }
 
     private fun <T : Any> createWithPrimaryConstructor(clazz: Class<T>): T {
         val primaryConstructor = clazz.kotlin.primaryConstructor
             ?: throw NullPointerException("모듈에 특정 클래스를 주 생성자로 인스턴스화 하는데 필요한 인자를 제공하는 함수를 정의하지 않았습니다")
-        val args = getArguments(this, primaryConstructor)
-        return provideInjectField(primaryConstructor.call(*args.toTypedArray()))
+        val args = this.getArguments(primaryConstructor)
+        return primaryConstructor.call(*args.toTypedArray()).apply { provideInjectField(this) }
     }
 
-    private fun getArguments(baseModule: Module, func: KFunction<*>): List<Any> {
+    private fun Module.getArguments(func: KFunction<*>): List<Any> {
         return func.valueParameters.map { param ->
             val qualifier =
                 param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-            baseModule.provideInstance(param.type.jvmErasure.java, qualifier?.annotationClass)
+            @Suppress("LABEL_RESOLVE_WILL_CHANGE")
+            this@Module.provideInstance(param.type.jvmErasure.java, qualifier?.annotationClass)
         }
     }
 
-    private fun <T : Any> provideInjectField(instance: T): T {
-        instance::class.declaredMemberProperties
-            .filterIsInstance<KMutableProperty<*>>()
-            .filter { it.hasAnnotation<FieldInject>() }
-            .forEach { field ->
-                if (field.visibility != KVisibility.PUBLIC) throw IllegalStateException("필드 주입을 받으려는 ${field.name}의 가시성이 공개되어 있지 않습니다.")
-                val qualifier =
-                    field.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-                field.setter.call(
-                    instance,
-                    provideInstance(field.returnType.jvmErasure.java, qualifier?.annotationClass),
-                )
-            }
-        return instance
-    }
-
-    private fun <T : Any> getOrCreateInstance(
-        key: String,
-        create: () -> T,
-    ): T {
-        if (cache[key] == null) cache[key] = create()
+    private fun <T : Any> getOrCreateInstance(func: KFunction<*>): T {
+        val key = func.name
+        if (cache[key] == null) cache[key] = this.createWithModuleFunc(func)
         @Suppress("UNCHECKED_CAST")
         return cache[key] as T
     }

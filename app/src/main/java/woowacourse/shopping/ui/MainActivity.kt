@@ -7,12 +7,9 @@ import android.widget.Toast
 import com.example.di.activity.DiEntryPointActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.module.DefaultActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity :
-    DiEntryPointActivity(DefaultActivityModule::class.java) {
-
+class MainActivity : DiEntryPointActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModel<MainViewModel>()
