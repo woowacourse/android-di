@@ -2,11 +2,11 @@ package com.woowacourse.shopping
 
 import android.content.Context
 import android.os.Bundle
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.woowacourse.shopping.annotation.Retain
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -30,6 +30,13 @@ class OtterDiActivityTest {
         @Inject
         lateinit var fakeDependency: FakeDependency
 
+        @Inject
+        @Retain
+        lateinit var retainDependency: FakeDependency
+
+        @Inject
+        lateinit var notRetainDependency: FakeDependency
+
         var notInitializeDependency: FakeDependency? = null
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +48,6 @@ class OtterDiActivityTest {
     class FakeOtterDiApplication() : OtterDiApplication(FakeModule())
 
     // ----------------------------------------------------------------------------
-
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var activity: ActivityController<FakeActivity>
 
@@ -95,5 +99,31 @@ class OtterDiActivityTest {
         // then
         val dependency = activity.get().notInitializeDependency
         assertNull(dependency)
+    }
+
+    @Test
+    fun `Retain 어노테이션이 있는 변수는 구성 변경에도 살아남는다`() {
+        // when
+        activity.setup()
+        val firstDependency = activity.get().retainDependency
+
+        activity.configurationChange()
+        val secondDependency = activity.get().retainDependency
+
+        // then
+        assertEquals(firstDependency, secondDependency)
+    }
+
+    @Test
+    fun `Retain 어노테이션이 없는 변수는 구성 변경 이후 새롭게 초기화된다`() {
+        // when
+        activity.setup()
+        val firstDependency = activity.get().notRetainDependency
+
+        activity.configurationChange()
+        val secondDependency = activity.get().notRetainDependency
+
+        // then
+        assertEquals(firstDependency, secondDependency)
     }
 }

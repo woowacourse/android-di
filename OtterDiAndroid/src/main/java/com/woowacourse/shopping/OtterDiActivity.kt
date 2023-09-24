@@ -14,13 +14,6 @@ abstract class OtterDiActivity(
 
     lateinit var androidInjector: AndroidInjector
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        androidInjector = AndroidInjector(this, module)
-        androidInjector.injectProperty()
-    }
-
     @MainThread
     inline fun <reified VM : ViewModel> viewModels(): Lazy<VM> {
         val viewModelFactory = viewModelFactory {
@@ -33,5 +26,29 @@ abstract class OtterDiActivity(
             { viewModelStore },
             { viewModelFactory },
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        androidInjector = AndroidInjector(this, module)
+        initProperties()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (this.isChangingConfigurations) {
+            InstancesContainer.saveInstances(this)
+        } else {
+            InstancesContainer.clear()
+        }
+    }
+
+    private fun initProperties() {
+        if (InstancesContainer.isEmpty()) {
+            androidInjector.injectProperty()
+        } else {
+            InstancesContainer.setInstances(this)
+        }
     }
 }

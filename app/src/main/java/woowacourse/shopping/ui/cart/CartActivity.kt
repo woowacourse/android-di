@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import com.woowacourse.shopping.OtterDiActivity
+import com.woowacourse.shopping.annotation.Retain
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.module.AppModule
@@ -15,6 +16,7 @@ class CartActivity : OtterDiActivity(AppModule()) {
     private val viewModel: CartViewModel by viewModels()
 
     @Inject
+    @Retain
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
