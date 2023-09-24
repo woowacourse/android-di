@@ -19,7 +19,8 @@ class DefaultInstanceContainer(
 
     override fun find(clazz: Any): Any? {
         Log.d("123123", "find : $clazz")
-        return value.find { it == clazz }
+
+        return value.find { it::class.isSubclassOf(clazz as KClass<out Any>) }
     }
 
     override fun remove(clazz: KClass<*>) {

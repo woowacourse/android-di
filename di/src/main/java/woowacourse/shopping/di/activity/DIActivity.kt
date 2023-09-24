@@ -8,9 +8,12 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.di.application.DIApplication
+import woowacourse.shopping.di.container.DefaultInstanceContainer
+import woowacourse.shopping.di.container.InstanceContainer
 import woowacourse.shopping.di.module.ActivityModule
 
 open class DIActivity : AppCompatActivity() {
+    private val instanceContainer: InstanceContainer = DefaultInstanceContainer(listOf())
     private lateinit var activityModule: ActivityModule
 
     override fun onCreate(savedInstanceState: Bundle?) {

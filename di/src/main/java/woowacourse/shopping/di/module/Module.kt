@@ -2,7 +2,6 @@ package woowacourse.shopping.di.module
 
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.di.container.DefaultInstanceContainer
 import woowacourse.shopping.di.container.InstanceContainer
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
@@ -19,8 +18,10 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
-open class Module(private val parentModule: Module? = null) {
-    private val container: InstanceContainer = DefaultInstanceContainer(listOf())
+open class Module(
+    private val parentModule: Module? = null,
+    private val container: InstanceContainer,
+) {
 
     fun <T : Any> inject(clazz: Class<T>): T {
         val primaryConstructor =

@@ -8,10 +8,12 @@ import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.annotation.InMemory
 import woowacourse.shopping.di.annotation.RoomDB
+import woowacourse.shopping.di.container.InstanceContainer
 
 class DefaultApplicationModule(
     applicationContext: Context,
-) : ApplicationModule(applicationContext) {
+    instanceContainer: InstanceContainer,
+) : ApplicationModule(applicationContext, instanceContainer) {
     @RoomDB
     fun provideRoomCartRepository(cartProductDao: CartProductDao): CartRepository =
         RoomCartRepository(cartProductDao)
