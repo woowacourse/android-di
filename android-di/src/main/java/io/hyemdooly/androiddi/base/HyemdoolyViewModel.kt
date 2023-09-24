@@ -6,7 +6,4 @@ import io.hyemdooly.di.Module
 open class HyemdoolyViewModel : ViewModel() {
     lateinit var activityModule: Module
     lateinit var viewModelModule: Module
-
-    val isInitailzeModule: Boolean
-        get() = ::activityModule.isInitialized && ::viewModelModule.isInitialized
 }

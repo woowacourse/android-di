@@ -19,10 +19,6 @@ import kotlin.reflect.jvm.jvmErasure
 open class Module(private val parentModule: Module? = null) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    private fun addInstance(instance: Any) {
-        instances[instance::class] = instance
-    }
-
     fun <T : Any> getInstance(type: KClass<T>): T {
         // 싱글톤에서 찾기
         val fromSingleton = getFromSingleton(type)

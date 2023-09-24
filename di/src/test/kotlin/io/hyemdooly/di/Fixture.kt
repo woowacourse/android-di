@@ -5,7 +5,7 @@ import io.hyemdooly.di.annotation.Singleton
 
 interface FakeDao
 class FakeDaoImpl : FakeDao
-class FakeFamily()
+class FakeFamily
 class FakeName
 class FakePerson(val name: FakeName)
 interface FakeRepository
