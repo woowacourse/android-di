@@ -11,46 +11,41 @@ import kotlin.reflect.jvm.jvmErasure
 
 class Instantiator {
 
-    private fun instantiateParameters(modules: Modules, parameters: List<KParameter>): Array<Any?> =
-        parameters.map { instantiate(modules, it) }.toTypedArray()
+    private fun instantiateParameters(module: Module, parameters: List<KParameter>): Array<Any?> =
+        parameters.map { instantiate(module, it) }.toTypedArray()
 
-    fun instantiate(modules: Modules, parameter: KParameter): Any = when {
+    fun instantiate(module: Module, parameter: KParameter): Any? = when {
         parameter.hasAnnotation<Qualifier>() -> parameter.findAnnotation<Qualifier>()?.run {
-            modules.provideInstanceOf(simpleName)
-        } ?: throw NoSuchElementException()
+            module.provideInstanceOf(simpleName)
+        }
 
-        parameter.hasAnnotation<Inject>() -> modules.provideInstanceOf(parameter.type.jvmErasure)
-            ?: throw NoSuchElementException()
+        parameter.hasAnnotation<Inject>() -> module.provideInstanceOf(parameter.type.jvmErasure)
 
-        else -> parameter.type.jvmErasure.instantiateRecursively(modules)
+        else -> parameter.type.jvmErasure.instantiateRecursively(module)
     }
 
-    private fun <T> KProperty<T>.instantiate(modules: Modules): Any = when {
+    private fun <T> KProperty<T>.instantiate(module: Module): Any? = when {
         hasAnnotation<Qualifier>() -> findAnnotation<Qualifier>()?.run {
-            modules.provideInstanceOf(simpleName)
-        } ?: throw NoSuchElementException()
+            module.provideInstanceOf(simpleName)
+        }
 
-        hasAnnotation<Inject>() -> modules.provideInstanceOf(this.returnType.jvmErasure)
-            ?: returnType.jvmErasure.instantiateRecursively(modules)
+        hasAnnotation<Inject>() -> module.provideInstanceOf(this.returnType.jvmErasure)
+            ?: returnType.jvmErasure.instantiateRecursively(module)
 
         else -> {}
     }
 
-    private fun KClass<*>.instantiateRecursively(modules: Modules): Any {
-        val constructor = primaryConstructor ?: throw Throwable(NO_SUCH_CONSTRUCTOR)
+    private fun KClass<*>.instantiateRecursively(module: Module): Any? {
+        val constructor = primaryConstructor ?: return null
         if (constructor.parameters.isEmpty()) return constructor.call()
 
-        val arguments = instantiateParameters(modules, constructor.parameters)
+        val arguments = instantiateParameters(module, constructor.parameters)
+        if (arguments.any { it == null }) return null
 
         return constructor.call(*arguments)
     }
 
-    fun instantiateProperty(modules: Modules, property: KMutableProperty<*>): Any {
-        return property.instantiate(modules)
-    }
-
-    companion object {
-
-        private const val NO_SUCH_CONSTRUCTOR = "생성자 없음"
+    fun instantiateProperty(module: Module, property: KMutableProperty<*>): Any? {
+        return property.instantiate(module)
     }
 }

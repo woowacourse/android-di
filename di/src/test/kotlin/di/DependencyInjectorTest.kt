@@ -1,11 +1,11 @@
 package di
 
 import com.boogiwoogi.di.DefaultInstanceContainer
-import com.boogiwoogi.di.DefaultModules
+import com.boogiwoogi.di.DefaultModule
 import com.boogiwoogi.di.DiInjector
 import com.boogiwoogi.di.Inject
 import com.boogiwoogi.di.InstanceContainer
-import com.boogiwoogi.di.Modules
+import com.boogiwoogi.di.Module
 import com.boogiwoogi.di.Qualifier
 import io.mockk.every
 import io.mockk.mockk
@@ -16,10 +16,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalArgumentException
 
 class DependencyInjectorTest {
 
-    private lateinit var modules: Modules
+    private lateinit var module: Module
     private lateinit var container: InstanceContainer
     private lateinit var injector: DiInjector
 
@@ -27,7 +28,7 @@ class DependencyInjectorTest {
 
     @BeforeEach
     fun setup() {
-        modules = DefaultModules()
+        module = DefaultModule()
         container = DefaultInstanceContainer()
         injector = DiInjector()
     }
@@ -40,7 +41,7 @@ class DependencyInjectorTest {
 
         // when
         val instanceA = injector.inject<ClassA>(
-            modules = DefaultModules(),
+            module = DefaultModule(),
             container = DefaultInstanceContainer()
         )
         val actual = instanceA.arg1
@@ -59,7 +60,7 @@ class DependencyInjectorTest {
 
         // when
         val instanceD = injector.inject<ClassD>(
-            modules = DefaultModules(),
+            module = DefaultModule(),
             container = DefaultInstanceContainer()
         )
         val actual = instanceD.arg1
@@ -84,7 +85,7 @@ class DependencyInjectorTest {
 
         // when
         val instanceA = injector.inject<ClassA>(
-            modules,
+            module,
             container
         )
         val actual = instanceA.arg1
@@ -105,19 +106,19 @@ class DependencyInjectorTest {
         class ClassA(@Inject val arg1: ClassB)
 
         val container: InstanceContainer = mockk(relaxed = true)
-        val modules: Modules = mockk(relaxed = true)
+        val module: Module = mockk(relaxed = true)
 
         every {
             container.find(parameter = any())
         } returns null
 
         every {
-            modules.provideInstanceOf(clazz = ClassB::class)
+            module.provideInstanceOf(clazz = ClassB::class)
         } returns ClassB()
 
         // when
         val instanceA = injector.inject<ClassA>(
-            modules = modules,
+            module = module,
             container = container
         )
         val actual = instanceA.arg1
@@ -127,7 +128,7 @@ class DependencyInjectorTest {
 
         assertThat(actual).isEqualTo(expected)
         verify {
-            modules.provideInstanceOf(clazz = ClassB::class)
+            module.provideInstanceOf(clazz = ClassB::class)
         }
     }
 
@@ -138,20 +139,20 @@ class DependencyInjectorTest {
         class ClassA(@Inject val arg1: ClassB)
 
         val container: InstanceContainer = mockk(relaxed = true)
-        val modules: Modules = mockk(relaxed = true)
+        val module: Module = mockk(relaxed = true)
 
         every {
             container.find(parameter = any())
         } returns null
 
         every {
-            modules.provideInstanceOf(clazz = ClassB::class)
+            module.provideInstanceOf(clazz = ClassB::class)
         } returns null
 
         // then
-        assertThrows<NoSuchElementException> {
+        assertThrows<IllegalArgumentException> {
             injector.inject<ClassA>(
-                modules = modules,
+                module = module,
                 container = container
             )
         }
@@ -170,7 +171,7 @@ class DependencyInjectorTest {
 
         // when
         injector.inject(
-            modules = modules,
+            module = module,
             container = container,
             target = instanceA
         )
@@ -195,19 +196,19 @@ class DependencyInjectorTest {
             val fake2: FakeInterface
         )
 
-        val modules: Modules = mockk(relaxed = true)
+        val module: Module = mockk(relaxed = true)
 
         every {
-            modules.provideInstanceOf("FakeImpl1")
+            module.provideInstanceOf("FakeImpl1")
         } returns FakeImpl1()
 
         every {
-            modules.provideInstanceOf("FakeImpl2")
+            module.provideInstanceOf("FakeImpl2")
         } returns FakeImpl2()
 
         // when
         val instanceA = injector.inject<ClassA>(
-            modules = modules,
+            module = module,
             container = container
         )
         val actual1 = instanceA.fake1
@@ -235,20 +236,20 @@ class DependencyInjectorTest {
             val fake2: FakeInterface
         )
 
-        val modules: Modules = mockk(relaxed = true)
+        val module: Module = mockk(relaxed = true)
 
         every {
-            modules.provideInstanceOf("FakeImpl1")
+            module.provideInstanceOf("FakeImpl1")
         } returns null
 
         every {
-            modules.provideInstanceOf("FakeImpl2")
+            module.provideInstanceOf("FakeImpl2")
         } returns null
 
         // then
-        assertThrows<NoSuchElementException> {
+        assertThrows<IllegalArgumentException> {
             injector.inject<ClassA>(
-                modules = modules,
+                module = module,
                 container = container
             )
         }
