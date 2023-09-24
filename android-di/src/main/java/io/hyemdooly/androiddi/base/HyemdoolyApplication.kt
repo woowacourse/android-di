@@ -20,6 +20,6 @@ abstract class HyemdoolyApplication(modules: Modules) : Application() {
     }
 
     fun getHyemdoolyViewModel(activity: ComponentActivity): HyemdoolyViewModel {
-        return moduleFactory.createViewModelWithApplicationModule(applicationModule, activity)
+        return moduleFactory.createViewModelOf(applicationModule, activity)
     }
 }

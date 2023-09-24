@@ -10,7 +10,7 @@ class ModuleFactory(private val modules: Modules) {
     fun createApplicationModuleOf(applicationContext: Context) =
         modules.applicationModule(applicationContext)
 
-    fun createViewModelWithApplicationModule(
+    fun createViewModelOf(
         applicationModule: Module,
         activity: ComponentActivity,
     ): HyemdoolyViewModel {
