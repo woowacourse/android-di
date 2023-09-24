@@ -2,6 +2,7 @@ package io.hyemdooly.di
 
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -32,6 +33,18 @@ class ModuleTest {
 
         // then
         assertNotEquals(firstInstance, secondInstance)
+    }
+
+    @Test
+    fun `type과 일치하는 인스턴스가 없을 경우 type의 자식 클래스 객체를 리턴할 수 있다`() {
+        // given
+        fakeParentModule.getInstance(FakeDaoImpl::class) // 생성
+
+        // when
+        val secondInstance = fakeParentModule.getInstance(FakeDao::class)
+
+        // then
+        assertInstanceOf(FakeDaoImpl::class.java, secondInstance)
     }
 
     @Test
