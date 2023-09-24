@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import com.created.customdi.annotation.Singleton
 import woowacourse.shopping.data.entity.CartProductDao
 import woowacourse.shopping.data.repository.DatabaseCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
@@ -14,10 +15,12 @@ object RepositoryModule {
     fun provideProductRepository(): ProductRepository =
         DefaultProductRepository()
 
+    @Singleton
     @InMemory
     fun provideCartRepository(): CartRepository =
         InMemoryCartRepository()
 
+    @Singleton
     @Database
     fun provideCartRepository(cartProductDao: CartProductDao): CartRepository =
         DatabaseCartRepository(cartProductDao)
