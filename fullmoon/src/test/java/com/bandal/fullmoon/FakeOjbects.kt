@@ -1,24 +1,31 @@
 package com.bandal.fullmoon
 
-object TestAppContainer : AppContainer() {
+object FakeModule : Module {
 
     @Singleton
     @Qualifier("database")
     fun createDatabaseInstance(
         @Qualifier("localDataSource")
         localDataSource: FakeDataSource,
-    ): FakeImplementWithQualifierDatabase {
-        return FakeImplementWithQualifierDatabase(localDataSource)
+    ): FakeRepository {
+        return FakeDatabaseRepository(localDataSource)
     }
 
     @Qualifier("inMemory")
-    fun createInMemoryInstance(): FakeImplementWithQualifierInMemory {
-        return FakeImplementWithQualifierInMemory()
+    fun createInMemoryInstance(): FakeRepository {
+        return FakeInMemoryRepository()
     }
 
     @Qualifier("localDataSource")
-    fun createLocalDataSource(): FakeLocalDataSource {
-        return FakeLocalDataSource()
+    fun createLocalDataSource(
+        @FullMoonInject
+        fakeDao: FakeDao,
+    ): FakeDataSource {
+        return FakeLocalDataSource(fakeDao)
+    }
+
+    fun createFakeDao(): FakeDao {
+        return FakeDao()
     }
 
     fun createDateFormatter(): DateFormatter {
@@ -30,13 +37,18 @@ interface FakeRepository
 interface FakeDataSource
 class DateFormatter
 
-class FakeImplementWithQualifierDatabase(
-    @Qualifier("localDataSource") val fakeLocalDataSource: FakeDataSource,
+class FakeDatabaseRepository(
+    @Qualifier("localDataSource")
+    val fakeLocalDataSource: FakeDataSource,
 ) : FakeRepository
 
-class FakeImplementWithQualifierInMemory : FakeRepository
+class FakeInMemoryRepository : FakeRepository
 
-class FakeLocalDataSource : FakeDataSource
+class FakeLocalDataSource(
+    val fakeDao: FakeDao,
+) : FakeDataSource
+
+class FakeDao
 
 class FakeClass(
     @Qualifier("database") val fakeDataBaseRepository: FakeRepository,

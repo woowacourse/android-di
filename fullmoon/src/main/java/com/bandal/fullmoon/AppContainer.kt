@@ -1,55 +1,37 @@
 package com.bandal.fullmoon
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.findAnnotations
-import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.valueParameters
 
-abstract class AppContainer {
-    private val needQualifyInstances: HashMap<String, Any> = HashMap()
-    private val noDistinctionInstances: HashMap<KClass<*>, Any> = HashMap()
+class AppContainer(private val module: Module) {
+    private val instances: HashMap<String, Any> = HashMap()
 
-    fun getSavedInstance(injectType: InjectType, type: KClass<*>): Any? = when (injectType) {
-        InjectType.NEED_QUALIFY -> needQualifyInstances[
-            type.findAnnotations<Qualifier>()
-                .first().key,
-        ]
+    private val functionsForCreate: Map<String, KFunction<*>> =
+        module::class.declaredMemberFunctions.associateBy { it.getKey() }
 
-        InjectType.NO_DISTINCTION -> noDistinctionInstances[type]
+    internal fun getSavedInstance(key: String): Any? {
+        return instances[key] ?: createInstance(key)
     }
 
-    fun getSavedInstance(injectType: InjectType, type: KProperty1<*, *>): Any? = when (injectType) {
-        InjectType.NEED_QUALIFY -> needQualifyInstances[
-            type.findAnnotations<Qualifier>()
-                .first().key,
-        ]
-
-        InjectType.NO_DISTINCTION -> noDistinctionInstances[type.returnType.jvmErasure]
+    private fun createInstance(key: String): Any? {
+        val function: KFunction<*> =
+            functionsForCreate[key] ?: return null
+        return callCreateFunction(function)
     }
 
-    fun getSavedInstance(injectType: InjectType, type: KParameter): Any? = when (injectType) {
-        InjectType.NEED_QUALIFY -> needQualifyInstances[
-            type.findAnnotations<Qualifier>()
-                .first().key,
-        ]
+    private fun callCreateFunction(function: KFunction<*>): Any {
+        val parameterInstances = function.valueParameters.map { parameter ->
+            getSavedInstance(parameter.getKey())
+        }
 
-        InjectType.NO_DISTINCTION -> noDistinctionInstances[type.type.jvmErasure]
-    }
+        val instance: Any = function.call(module, *parameterInstances.toTypedArray())
+            ?: throw DIError.NotFoundCreateFunction(function.getKey())
 
-    fun <T> addInstance(
-        injectType: InjectType,
-        type: KClass<*>,
-        instance: T,
-        qualifierKey: String? = null,
-    ) = when (injectType) {
-        InjectType.NEED_QUALIFY -> needQualifyInstances[qualifierKey!!] = instance as Any
-        InjectType.NO_DISTINCTION -> noDistinctionInstances[type] = instance as Any
-    }
-
-    private fun KClass<*>.getQualifierKey(): String {
-        return this.findAnnotation<Qualifier>()?.key
-            ?: throw DIError.NotFoundQualifierOrInstance(this)
+        if (function.hasAnnotation<Singleton>()) {
+            instances[function.getKey()] = instance
+        }
+        return instance
     }
 }
