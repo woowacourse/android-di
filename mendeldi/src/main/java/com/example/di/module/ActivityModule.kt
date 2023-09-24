@@ -21,9 +21,10 @@ abstract class ActivityModule(
     }
 
     companion object {
-        private const val ERROR_PRIMARY_CONSTRUCTOR_NOT_EXIST: String = "[ERROR] 주생성자가 존재하지 않습니다"
         private val ACTIVITY_MODULE_VALUE_PARAMETER_TYPES =
-            listOf(Context::class, ActivityRetainedModule::class)
+            ActivityModule::class.primaryConstructor?.valueParameters?.map { it.type.jvmErasure }
+                ?: emptyList()
+
         private val ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION =
             "[ERROR] ActivityModule을 상속받은 클래스의 생성자는 ${ACTIVITY_MODULE_VALUE_PARAMETER_TYPES.size}개의 인자로 ${
                 ACTIVITY_MODULE_VALUE_PARAMETER_TYPES.joinToString(separator = ",") { it.jvmName }
@@ -31,7 +32,7 @@ abstract class ActivityModule(
 
         fun <T : ActivityModule> validatePrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
             val primaryConstructor = moduleClassType.kotlin.primaryConstructor
-                ?: throw NullPointerException(ERROR_PRIMARY_CONSTRUCTOR_NOT_EXIST)
+                ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
             check(primaryConstructor.valueParameters.size == ACTIVITY_MODULE_VALUE_PARAMETER_TYPES.size) {
                 ERROR_ACTIVITY_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }

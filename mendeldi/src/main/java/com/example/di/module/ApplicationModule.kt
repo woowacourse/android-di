@@ -14,15 +14,16 @@ abstract class ApplicationModule(val applicationContext: Context) : Module() {
     }
 
     companion object {
-        private const val ERROR_PRIMARY_CONSTRUCTOR_NOT_EXIST: String = "[ERROR] 주생성자가 존재하지 않습니다"
-        private val VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES = listOf(Context::class)
+        private val VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES =
+            ApplicationModule::class.primaryConstructor?.valueParameters?.map { it.type.jvmErasure }
+                ?: emptyList()
         private val ERROR_APPLICATION_MODULE_PRIMARY_CONSTRUCTOR_CONDITION =
             "[ERROR] ApplicationModule를 상속한 클래스의 생성자의 매개변수는 ${VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES.size}개여야 하고, " +
                 "그 타입은 ${VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES.joinToString { it.jvmName }}여야 합니다."
 
         fun <T : ApplicationModule> validatePrimaryConstructor(moduleClassType: Class<T>): KFunction<T> {
             val primaryConstructor = moduleClassType.kotlin.primaryConstructor
-                ?: throw NullPointerException(ERROR_PRIMARY_CONSTRUCTOR_NOT_EXIST)
+                ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
             check(primaryConstructor.valueParameters.size == VIEW_MODEL_MODULE_VALUE_PARAMETER_TYPES.size) {
                 ERROR_APPLICATION_MODULE_PRIMARY_CONSTRUCTOR_CONDITION
             }

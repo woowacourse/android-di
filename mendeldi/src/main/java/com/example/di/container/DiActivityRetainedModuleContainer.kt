@@ -34,14 +34,10 @@ class DiActivityRetainedModuleContainer(
         return primaryConstructor.call(applicationModule)
     }
 
-    private fun removeModule(ownerHashCode: Int) {
-        moduleMap.remove(ownerHashCode)
-    }
-
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         if (owner is DiEntryPointActivity) {
-            if (owner.isFinishing) removeModule(owner.hashCode())
+            if (owner.isFinishing) moduleMap.remove(owner.hashCode())
         }
     }
 }
