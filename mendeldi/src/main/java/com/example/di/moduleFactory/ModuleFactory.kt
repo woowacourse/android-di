@@ -7,6 +7,7 @@ import com.example.di.module.ActivityModule
 import com.example.di.module.ActivityRetainedModule
 import com.example.di.module.ApplicationModule
 import com.example.di.module.ViewModelModule
+import kotlin.reflect.full.primaryConstructor
 
 class ModuleFactory(
     private val applicationModuleClazz: Class<out ApplicationModule>,
@@ -17,11 +18,27 @@ class ModuleFactory(
     private val diActivityRetainedContainer =
         DiActivityRetainedModuleContainer(activityRetainedModuleClazz)
 
+    init {
+        require(ApplicationModule.validatePrimaryConstructor(applicationModuleClazz)) {
+            "[ERROR] ApplicationModule를 상속한 클래스의 생성자의 매개변수가 조건에 일치하지 않습니다."
+        }
+        require(ActivityRetainedModule.validatePrimaryConstructor(activityRetainedModuleClazz)) {
+            "[ERROR] ActivityRetainedModule을 상속한 클래스의 생성자의 매개변수가 조건에 일치하지 않습니다."
+        }
+        require(ViewModelModule.validatePrimaryConstructor(viewModelModuleClazz)) {
+            "[ERROR] ViewModelModule을 상속한 클래스의 생성자의 매개변수가 조건에 일치하지 않습니다."
+        }
+        require(ActivityModule.validatePrimaryConstructor(activityModuleClazz)) {
+            "[ERROR] ActivityModule을 상속한 클래스의 생성자의 매개변수가 조건에 일치하지 않습니다."
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun <T : ApplicationModule> getApplicationModule(
         applicationContext: Context,
     ): T {
-        val primaryConstructor = ApplicationModule.getPrimaryConstructor(applicationModuleClazz)
+        val primaryConstructor = applicationModuleClazz.kotlin.primaryConstructor
+            ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
         return primaryConstructor.call(applicationContext) as T
     }
 
@@ -42,7 +59,8 @@ class ModuleFactory(
         activity: DiEntryPointActivity,
         activityRetainedModule: ActivityRetainedModule,
     ): T {
-        val primaryConstructor = ActivityModule.getPrimaryConstructor(activityModuleClazz)
+        val primaryConstructor = activityModuleClazz.kotlin.primaryConstructor
+            ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
         return primaryConstructor.call(activity, activityRetainedModule) as T
     }
 
@@ -50,7 +68,8 @@ class ModuleFactory(
     fun <T : ViewModelModule> getViewModelModule(
         activityRetainedModule: ActivityRetainedModule,
     ): T {
-        val primaryConstructor = ViewModelModule.getPrimaryConstructor(viewModelModuleClazz)
+        val primaryConstructor = viewModelModuleClazz.kotlin.primaryConstructor
+            ?: throw NullPointerException("[ERROR] 주생성자가 존재하지 않습니다")
         return primaryConstructor.call(activityRetainedModule) as T
     }
 }
