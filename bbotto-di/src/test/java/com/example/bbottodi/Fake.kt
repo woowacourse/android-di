@@ -1,5 +1,6 @@
 package com.example.bbottodi
 
+import com.example.bbottodi.di.Module
 import com.example.bbottodi.di.annotation.InDisk
 import com.example.bbottodi.di.annotation.InMemory
 import com.example.bbottodi.di.annotation.Inject
@@ -51,17 +52,42 @@ class FakeViewModelWithInDiskAndInMemory(
     cartInMemoryRepository: FakeCartRepository,
 )
 
-class FakeProductRepository()
+class FakeProductRepository
 interface FakeCartRepository
-class FakeDefaultCartRepository() : FakeCartRepository
-
-@InMemory
-class FakeInMemoryCartRepository() : FakeCartRepository
-
-@InDisk
+class FakeDefaultCartRepository : FakeCartRepository
+class FakeInMemoryCartRepository : FakeCartRepository
 class FakeInDiskCartRepository(
     @Inject
     private val cartDao: FakeCartDao,
 ) : FakeCartRepository
 
 class FakeCartDao
+class FakeDateFormatter
+
+class FakeApplicationModule : Module {
+    fun provideCartDao(): FakeCartDao {
+        return FakeCartDao()
+    }
+    fun provideDefaultCartRepository(): FakeCartRepository {
+        return FakeDefaultCartRepository()
+    }
+
+    @InMemory
+    fun provideInMemoryCartRepository(): FakeCartRepository {
+        return FakeInMemoryCartRepository()
+    }
+
+    @InDisk
+    fun provideInDiskCartRepository(fakeCartDao: FakeCartDao): FakeCartRepository {
+        return FakeInDiskCartRepository(fakeCartDao)
+    }
+}
+
+class FakeActivityModule : Module {
+    fun provideDateFormatter(): FakeDateFormatter {
+        return FakeDateFormatter()
+    }
+    fun provideProductRepository(): FakeProductRepository {
+        return FakeProductRepository()
+    }
+}
