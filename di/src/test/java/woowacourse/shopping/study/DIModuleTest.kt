@@ -29,7 +29,9 @@ class Person(val name: String)
 class Crew1(@GloQualifier val person: Person)
 class Crew2(@GluQualifier val person: Person)
 
-class FakeModule : DIModule() {
+class FakeActivityModule(parentModule: DIModule?) : DIModule(parentModule)
+
+class FakeApplicationModule(parentModule: DIModule?) : DIModule(parentModule) {
     @Binds
     @CatQualifier
     private lateinit var bindCat: Cat
@@ -52,12 +54,13 @@ class FakeModule : DIModule() {
 }
 
 class DIModuleTest {
-    private val module = FakeModule()
+    private val applicationModule = FakeApplicationModule(null)
+    private val activityModule = FakeActivityModule(applicationModule)
 
     @Test
     fun `Zoo1에 Cat을 주입할 수 있다`() {
         // given && when
-        val zoo = module.inject(Zoo1::class)
+        val zoo = activityModule.inject(Zoo1::class)
 
         // then
         assertThat(zoo.animal).isInstanceOf(Cat::class.java)
@@ -66,7 +69,7 @@ class DIModuleTest {
     @Test
     fun `Zoo2에 Dog를 주입할 수 있다`() {
         // given && when
-        val zoo = module.inject(Zoo2::class)
+        val zoo = activityModule.inject(Zoo2::class)
 
         // then
         assertThat(zoo.animal).isInstanceOf(Dog::class.java)
@@ -75,7 +78,7 @@ class DIModuleTest {
     @Test
     fun `Crew1에 글로라는 이름을 가진 Person을 주입할 수 있다`() {
         // given && when
-        val crew = module.inject(Crew1::class)
+        val crew = activityModule.inject(Crew1::class)
 
         // then
         assertThat(crew.person.name).isEqualTo("글로")
@@ -84,7 +87,7 @@ class DIModuleTest {
     @Test
     fun `Crew2에 글루라는 이름을 가진 Person을 주입할 수 있다`() {
         // given && when
-        val crew = module.inject(Crew2::class)
+        val crew = activityModule.inject(Crew2::class)
 
         // then
         assertThat(crew.person.name).isEqualTo("글루")
