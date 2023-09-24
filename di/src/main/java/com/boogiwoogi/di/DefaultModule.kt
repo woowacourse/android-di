@@ -6,7 +6,7 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-open class DefaultModules : Modules {
+open class DefaultModule : Module {
 
     override fun provideInstanceOf(clazz: KClass<*>): Any? {
         val functions = this::class
