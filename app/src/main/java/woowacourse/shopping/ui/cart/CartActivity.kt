@@ -4,28 +4,23 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.bbottodi.di.DiActivity
 import com.example.bbottodi.di.annotation.Inject
-import com.example.bbottodi.di.common.viewModel
+import com.example.bbottodi.di.common.viewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DefaultModule
+import woowacourse.shopping.di.module.ActivityModule
 
 class CartActivity : DiActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel<CartViewModel>()
+    private val viewModel by viewModels<CartViewModel>()
 
     @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        module = { context -> ActivityModule(context) }
         super.onCreate(savedInstanceState)
 
-        container.apply {
-            addInstance(
-                DateFormatter::class,
-                DefaultModule.provideDateFormatter(this@CartActivity),
-            )
-        }
         setupBinding()
         setupToolbar()
         setupView()
