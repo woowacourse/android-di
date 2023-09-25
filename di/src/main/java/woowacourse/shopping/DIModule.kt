@@ -4,7 +4,7 @@ import woowacourse.shopping.annotation.Binds
 import woowacourse.shopping.annotation.ContextType
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Provides
-import woowacourse.shopping.annotation.Qualifier2
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.Singleton
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -40,7 +40,7 @@ open class DIModule(private val parentModule: DIModule?) {
             }
 
             val qualifier =
-                annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
+                annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
             val how = getHowToImplement(clazz, qualifier)
 
             instance = if (how == null) {
@@ -108,7 +108,7 @@ open class DIModule(private val parentModule: DIModule?) {
         if (how.hasAnnotation<Singleton>()) {
             val clazz = how.returnType.jvmErasure
             val qualifier =
-                how.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
+                how.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
             val key = clazz to qualifier
             return instances.getOrPut(key) { createInstanceBy(how) as T } as T
         }

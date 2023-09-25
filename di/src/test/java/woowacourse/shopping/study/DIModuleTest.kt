@@ -7,19 +7,19 @@ import woowacourse.shopping.annotation.ActivityContext
 import woowacourse.shopping.annotation.ApplicationContext
 import woowacourse.shopping.annotation.Binds
 import woowacourse.shopping.annotation.Provides
-import woowacourse.shopping.annotation.Qualifier2
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.Singleton
 
-@Qualifier2
+@Qualifier
 annotation class CatQualifier
 
-@Qualifier2
+@Qualifier
 annotation class DogQualifier
 
-@Qualifier2
+@Qualifier
 annotation class GloQualifier
 
-@Qualifier2
+@Qualifier
 annotation class GluQualifier
 
 internal interface Animal

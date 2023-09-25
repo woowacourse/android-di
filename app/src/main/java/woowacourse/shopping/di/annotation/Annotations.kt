@@ -1,9 +1,9 @@
 package woowacourse.shopping.di.annotation
 
-import woowacourse.shopping.annotation.Qualifier2
+import woowacourse.shopping.annotation.Qualifier
 
-@Qualifier2
+@Qualifier
 annotation class DisposableCartRepositoryQualifier
 
-@Qualifier2
+@Qualifier
 annotation class UnDisposableCartRepositoryQualifier

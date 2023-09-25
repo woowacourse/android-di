@@ -1,19 +1,13 @@
 package woowacourse.shopping.annotation
 
-@Target(AnnotationTarget.CLASS)
-annotation class SingleInstance
-
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 annotation class Singleton
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
 annotation class Inject
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-annotation class Qualifier(val name: String)
-
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-annotation class Qualifier2
+annotation class Qualifier
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Binds
