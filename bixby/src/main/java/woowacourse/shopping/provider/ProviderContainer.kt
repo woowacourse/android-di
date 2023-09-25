@@ -39,8 +39,8 @@ class ProviderContainer(
     // 4. 파라미터 인스턴스들을 넣어 함수를 실행시킨다.
     // 5. Singleton 어노테이션이 provide 함수에 붙어있다면 DependencyContainer에 저장한다.
     // 6. 인스턴스를 반환한다.
-    fun getInstance(target: KClass<*>, qualifierTag: String? = null): Any {
-        val provideSupply = getProvideSupply(target, qualifierTag)
+    fun getInstance(target: KClass<*>, qualifierTag: String? = null): Any? {
+        val provideSupply = getProvideSupply(target, qualifierTag).getOrElse { return null }
         val params = provideSupply.function.valueParameters.map { it.getInstance() }
         val instance = requireNotNull(
             provideSupply.function.call(provideSupply.factory, *params.toTypedArray()),
@@ -50,11 +50,13 @@ class ProviderContainer(
         return instance
     }
 
-    private fun getProvideSupply(target: KClass<*>, qualifierTag: String?): ProvideSupply {
-        val provideSupplies =
-            requireNotNull(providerContainer[target]) { "$ERROR_PREFIX $UNREGISTERED_RETURN_TYPE: $target" }
+    private fun getProvideSupply(target: KClass<*>, qualifierTag: String?): Result<ProvideSupply> {
+        val provideSupplies = providerContainer[target]
+            ?: return Result.failure(NullPointerException())
         provideSupplies.forEach { provideSupply ->
-            if (provideSupply.function.isSameType(target, qualifierTag)) return provideSupply
+            if (provideSupply.function.isSameType(target, qualifierTag)) {
+                return Result.success(provideSupply)
+            }
         }
         throw NoSuchElementException("$ERROR_PREFIX $NO_FUNCTION : $target, $qualifierTag")
     }
