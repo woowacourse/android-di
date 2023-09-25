@@ -1,18 +1,22 @@
 package woowacourse.shopping.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
-import com.woosuk.scott_di.Module
-import com.woosuk.scott_di.Singleton
+import com.woosuk.scott_di_android.ActivityContext
+import com.woosuk.scott_di_android.ActivityScope
+import com.woosuk.scott_di_android.Module
+import com.woosuk.scott_di_android.Singleton
+import com.woosuk.scott_di_android.ViewModelScope
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DataBaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 
 object DefaultModule : Module {
     @Singleton
@@ -25,8 +29,9 @@ object DefaultModule : Module {
         application: Application
     ): ShoppingDatabase {
         return Room.databaseBuilder(
-            application.applicationContext,
-            ShoppingDatabase::class.java, "cart_product"
+            application,
+            ShoppingDatabase::class.java,
+            "cart_product"
         ).build()
     }
 
@@ -37,28 +42,14 @@ object DefaultModule : Module {
         return shoppingDatabase.cartProductDao()
     }
 
-    @Singleton
-    fun provideSampleProducts(): List<Product> {
-        return listOf(
-            Product(
-                name = "우테코 과자",
-                price = 10_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/api/main/df6d76fb-925b-40f8-9d1c-f0920c3c697a.jpg?h=700&w=700",
-            ),
-            Product(
-                name = "우테코 쥬스",
-                price = 8_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/52dca718-31c5-4f80-bafa-7e300d8c876a.jpg?h=700&w=700",
-            ),
-            Product(
-                name = "우테코 아이스크림",
-                price = 20_000,
-                imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
-            ),
-        )
+    @ActivityScope
+    fun provideDateFormatter(
+        @ActivityContext context: Context
+    ): DateFormatter {
+        return DateFormatter(context)
     }
 
-    @Singleton
+    @ViewModelScope
     fun provideProductRepository(): ProductRepository {
         return DefaultProductRepository()
     }
@@ -69,6 +60,7 @@ object DefaultModule : Module {
         return InMemoryCartRepository()
     }
 
+    @Singleton
     @DatabaseCartRepo
     fun provideDatabaseCartRepository(
         cartProductDao: CartProductDao

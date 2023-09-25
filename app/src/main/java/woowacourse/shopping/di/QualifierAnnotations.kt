@@ -1,6 +1,6 @@
 package woowacourse.shopping.di
 
-import com.woosuk.scott_di.Qualifier
+import com.woosuk.scott_di_android.Qualifier
 
 
 @Qualifier

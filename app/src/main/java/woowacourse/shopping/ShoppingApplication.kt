@@ -1,16 +1,12 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.woosuk.scott_di.startDI
+import com.woosuk.scott_di_android.DiApplication
 import woowacourse.shopping.di.DefaultModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : DiApplication(DefaultModule) {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        startDI {
-            loadModule(DefaultModule)
-        }
     }
 
     companion object {
