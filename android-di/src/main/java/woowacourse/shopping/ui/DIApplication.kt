@@ -1,7 +1,9 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import android.content.Context
 import woowacourse.shopping.DIModule
+import woowacourse.shopping.annotation.ApplicationContext
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -17,6 +19,9 @@ open class DIApplication : Application() {
         applicationModule = applicationModuleClazz?.let {
             it.primaryConstructor?.call(null)
         } ?: DIModule(null)
+
+        val key = (Context::class to ApplicationContext())
+        applicationModule?.addInstance(key, this)
     }
 
     fun setModules(

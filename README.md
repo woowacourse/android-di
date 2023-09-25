@@ -14,6 +14,7 @@
 - [x] DIApplication
   - [x] 사용자가 정의한 DIModule 클래스를 관리한다.
     - ApplicationModule, ActivityRetainedModule, ActivityModule, ViewModelModule
+    - [x] ApplicationContext를 ApplicationModule에 저장한다.
 - [ ] DIActivity
   - [x] ActivityRetainedModule, ActivityModule 객체를 관리한다.
   - [x] ActivityContext를 ActivityModule에 저장한다.
