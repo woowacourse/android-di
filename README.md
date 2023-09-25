@@ -9,3 +9,13 @@
   - [x] 자식 모듈에 생성 방식이 정의되지 않은 경우 부모 모듈에서 탐색하여 생성한다.
   - [x] Singleton 어노테이션을 가진 경우에는 모듈에 정의된 단일 인스턴스를 가져올 수 있다.
   - [x] Application과 Activity context를 구분하여 주입받을 수 있다.
+
+### Android DI
+- [ ] DIApplication
+  - [ ] 사용자가 정의한 DIModule 클래스를 관리한다.
+    - ApplicationModule, ActivityRetainedModule, ActivityModule, ViewModelModule
+- [ ] DIActivity
+  - [ ] ActivityRetainedModule, ActivityModule 객체를 관리한다.
+  - [ ] Activity가 isFinishing이 아니라면 ActivityRetainedModule을 savedInstanceState에 저장한다.
+- [ ] DIViewModelLazy
+  - [ ] ViewModelModule 객체를 생성하여 해당 객체로 ViewModel을 주입한다.
