@@ -1,41 +1,16 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.boogiwoogi.di.Dependency
-import com.boogiwoogi.di.WoogiInjector
-import com.boogiwoogi.di.woogiInitializer
-import woowacourse.shopping.data.DatabaseCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.model.CartRepository
-import woowacourse.shopping.model.ProductRepository
+import com.di.woogidi.application.DiApplication
+import woowacourse.shopping.di.module.ShoppingApplicationModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : DiApplication() {
 
     override fun onCreate() {
         super.onCreate()
 
-        setupDependencyInjector()
-    }
-
-    private fun setupDependencyInjector() {
-        val context = this
-        injector = woogiInitializer {
-            declareDependency(
-                Dependency<CartRepository>(
-                    DatabaseCartRepository(
-                        ShoppingDatabase.getDatabase(context).cartProductDao()
-                    )
-                )
-            )
-            declareDependency(Dependency<CartRepository>(InMemoryCartRepository()))
-            declareDependency(Dependency<ProductRepository>(DefaultProductRepository()))
-        }
-    }
-
-    companion object {
-
-        lateinit var injector: WoogiInjector
+        /**
+         * todo: module에 특정 인스턴스를 생성하는 함수(방법)를 추가할 수 있는 방향으로 개선 및 dsl을 적용하면 더욱 좋은 di 라이브러리가 될 듯하다.
+         */
+        injector.applicationModule = ShoppingApplicationModule(this)
     }
 }
