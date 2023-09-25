@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -14,8 +15,8 @@ import kotlin.reflect.jvm.jvmErasure
 class DefaultViewModelFactoryDelegate : ViewModelFactoryDelegate {
     private val injector = Injector.getSingletonInstance()
 
-    fun <T : ViewModel> injectViewModel(clazz: Class<T>): T {
-        val constructor = requireNotNull(clazz.kotlin.primaryConstructor) { "[ERROR] 주 생성자가 없습니다" }
+    fun <T : ViewModel> injectViewModel(target: KClass<T>): T {
+        val constructor = requireNotNull(target.primaryConstructor) { "[ERROR] 주 생성자가 없습니다" }
         val params = constructor.parameters.map {
             Injector.getSingletonInstance().inject(it.type.jvmErasure)
         }
@@ -36,7 +37,7 @@ class DefaultViewModelFactoryDelegate : ViewModelFactoryDelegate {
 
     override val Factory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return injectViewModel(modelClass)
+            return injectViewModel(modelClass.kotlin)
         }
     }
 }
