@@ -1,8 +1,8 @@
 package woowacourse.shopping.activity
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import io.hyemdooly.androiddi.util.viewModels
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,7 +11,6 @@ import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.activity.viewmodel.InMemoryCartViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
-import woowacourse.shopping.ui.viewModelFactory
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -38,7 +37,7 @@ class CartActivityTest {
             .buildActivity(CartActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity, viewModelFactory)[CartViewModel::class.java]
+        val viewModel = activity.viewModels<CartViewModel>()
 
         // then
         assertThat(viewModel).isNotNull()
@@ -51,7 +50,7 @@ class CartActivityTest {
             .buildActivity(CartActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity, viewModelFactory)[InMemoryCartViewModel::class.java]
+        val viewModel = activity.viewModels<InMemoryCartViewModel>()
 
         // then
         assertThat(viewModel).isNotNull()
