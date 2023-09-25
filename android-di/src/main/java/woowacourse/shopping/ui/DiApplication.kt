@@ -1,10 +1,11 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import android.content.Context
 import woowacourse.shopping.Injector
+import woowacourse.shopping.Module
 import woowacourse.shopping.container.DiContainer
-import woowacourse.shopping.dslbuilder.ProviderBuilder
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 open class DiApplication : Application() {
     private val container: DiContainer by lazy { DiContainer() }
@@ -12,18 +13,9 @@ open class DiApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        injector.addDependency(
-            dependency = DEPENDENCY,
-            clazz = Context::class,
-            instance = this,
-        )
     }
 
-    fun registerProviders(block: ProviderBuilder.() -> Unit) {
-        container.registerProviders(block)
-    }
-
-    companion object {
-        private const val DEPENDENCY = "ApplicationContainer"
+    fun <T : Any> registerModule(module: KClass<out T>) {
+        injector.addModule(module.primaryConstructor?.call(this) as Module)
     }
 }
