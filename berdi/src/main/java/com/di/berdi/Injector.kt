@@ -47,43 +47,42 @@ class Injector(private val container: Container, private val module: Module) {
 
     private fun createInstance(context: Context, type: KType, qualifiedName: String?): Any {
         // 모듈에서 파람과 맞는 타입을 찾는다
-        val targetModule = requireNotNull(
-            module::class.declaredFunctions.find { moduleFunc ->
-                isTargetModule(moduleFunc, type, qualifiedName)
+        val targetProvider = requireNotNull(
+            module::class.declaredFunctions.find { providers ->
+                isTargetProvider(providers, type, qualifiedName)
             },
         ) { ERROR_NOT_FOUND_MATCHED_MODULE }
 
         // 파라미터가 없다면 만든다
-        if (targetModule.valueParameters.isEmpty()) {
-            return requireNotNull(targetModule.call(module)).also {
-                storeInstance(targetModule, it)
+        if (targetProvider.valueParameters.isEmpty()) {
+            return requireNotNull(targetProvider.call(module)).also {
+                storeInstance(targetProvider, it)
             }
         }
 
         // 파라미터를 하나씩 채운다
-        val params = targetModule.valueParameters.map { param ->
+        val params = targetProvider.valueParameters.map { param ->
             when {
-                param.type.jvmErasure == Context::class && targetModule.hasAnnotation<Singleton>() -> context.applicationContext
+                param.type.jvmErasure == Context::class && targetProvider.hasAnnotation<Singleton>() -> context.applicationContext
                 param.type.jvmErasure == Context::class -> context
                 else -> getInstanceOf(context, param.type, param.qualifiedName)
             }
         }
 
         // 새 값 생성
-        return requireNotNull(targetModule.call(module, *params.toTypedArray())).also {
-            storeInstance(targetModule, it)
-        }
+        val instance = requireNotNull(targetProvider.call(module, *params.toTypedArray()))
+        return instance.also { storeInstance(targetProvider, it) }
     }
 
-    private fun isTargetModule(
-        moduleFunc: KFunction<*>,
+    private fun isTargetProvider(
+        provider: KFunction<*>,
         type: KType,
         qualifiedName: String?,
     ): Boolean {
         if (qualifiedName != null) {
-            return moduleFunc.returnType == type && moduleFunc.qualifiedName == qualifiedName
+            return provider.returnType == type && provider.qualifiedName == qualifiedName
         }
-        return moduleFunc.returnType == type
+        return provider.returnType == type
     }
 
     private fun storeInstance(param: KFunction<*>, instance: Any) {
