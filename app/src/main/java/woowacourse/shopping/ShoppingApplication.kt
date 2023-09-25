@@ -1,11 +1,7 @@
 package woowacourse.shopping
 
-import com.now.androdi.application.ApplicationInjectable
-import woowacourse.shopping.di.module.ApplicationModule
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class ShoppingApplication : ApplicationInjectable() {
-    override fun onCreate() {
-        super.onCreate()
-        injectModule(ApplicationModule(applicationContext))
-    }
-}
+@HiltAndroidApp
+class ShoppingApplication : Application()
