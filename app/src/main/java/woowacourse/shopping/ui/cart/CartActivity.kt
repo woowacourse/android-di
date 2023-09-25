@@ -19,7 +19,7 @@ class CartActivity : BaseActivity() {
 
     @Inject
     @ActivityLifecycle
-    private lateinit var dateFormatter: DateFormatter
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
