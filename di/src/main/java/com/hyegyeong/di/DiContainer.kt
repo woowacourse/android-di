@@ -37,13 +37,14 @@ object DiContainer {
         val instances = mutableListOf<Any>()
         if (function.valueParameters.isNotEmpty()) {
             function.valueParameters.forEach {
-                if (it.hasAnnotation<Inject>())
+                if (it.hasAnnotation<Inject>()) {
                     instances.add(
                         provideInstance(
                             it.type.jvmErasure,
                             it.annotations.filter { annotation -> annotation.annotationClass.hasAnnotation<Qualifier>() }
                         )
                     )
+                }
             }
         }
         println("")

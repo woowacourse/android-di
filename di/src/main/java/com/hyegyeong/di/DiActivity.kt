@@ -8,5 +8,6 @@ abstract class DiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DiContainer.dependencyModule = module
+        Injector.injectField(this)
     }
 }

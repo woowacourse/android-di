@@ -8,6 +8,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
@@ -19,10 +20,8 @@ object Injector {
         } else {
             constructor.call()
         }
-        val properties: List<KProperty<*>> =
-            T::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
-        if (properties.isEmpty()) return instance
-        return injectField(instance, properties)
+        injectField(instance)
+        return instance
     }
 
     inline fun <reified T : Any> injectConstructor(): T {
@@ -83,15 +82,21 @@ object Injector {
         return dependencies
     }
 
-    inline fun <reified T : Any> injectField(instance: T, properties: List<KProperty<*>>): T {
+    inline fun <reified T : Any> injectField(instance: T) {
+        val properties: List<KProperty<*>> =
+            instance::class.declaredMemberProperties.filter {
+                it.hasAnnotation<Inject>()
+            }
+        if (properties.isEmpty()) return
+        properties.forEach { it.isAccessible = true }
         // Inject 어노테이션 붙은 파라미터들만 들어옴
         val dependencies: Map<KProperty<*>, Any> =
             findPropertyInstances(properties)
+
         for (property in properties) {
             val dependency = dependencies[property]
             property as KMutableProperty
             property.setter.call(instance, dependency)
         }
-        return instance
     }
 }

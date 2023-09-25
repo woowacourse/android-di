@@ -14,6 +14,7 @@ import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiActivity() {
+    override val module: DiModule = MainActivityModule()
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel: MainViewModel by lazy {
@@ -21,7 +22,6 @@ class MainActivity : DiActivity() {
             this, ViewModelFactory.provide<MainViewModel>()
         )[MainViewModel::class.java]
     }
-    override val module: DiModule = MainActivityModule()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
