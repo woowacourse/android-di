@@ -4,14 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.qualifire.DataBase
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.otterdi.annotation.Inject
-import woowacourse.shopping.otterdi.annotation.Qualifier
 import woowacourse.shopping.repository.CartRepository
+import javax.inject.Inject
 
+@HiltViewModel
 class CartViewModel @Inject constructor(
-    @Qualifier("DefaultCartRepository")
+    @DataBase
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
