@@ -31,10 +31,6 @@ class CartActivity : DiActivity(CartActivityModule::class) {
         return true
     }
 
-    override fun injectFields() {
-        injector.injectOnFields(CartActivity::class, this)
-    }
-
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

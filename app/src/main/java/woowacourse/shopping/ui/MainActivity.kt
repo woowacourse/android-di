@@ -34,8 +34,6 @@ class MainActivity : DiActivity(MainActivityModule::class) {
         return true
     }
 
-    override fun injectFields() = Unit
-
     private fun setupBinding() {
         binding.lifecycleOwner = this
         binding.vm = viewModel

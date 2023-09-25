@@ -18,13 +18,11 @@ abstract class DiActivity(private val moduleClass: KClass<*>) : AppCompatActivit
 
         injector = Injector(DefaultContainer((application as DiApplication).injector.container))
         addModuleInstances()
-        injectFields()
+        injector.injectOnFields(this::class, this)
     }
 
     private fun addModuleInstances() {
         val module = moduleClass.primaryConstructor!!.call(this) as Module
         injector.addModuleInstances(module)
     }
-
-    abstract fun injectFields()
 }
