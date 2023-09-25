@@ -25,22 +25,35 @@ open class DIModule(private val parentModule: DIModule?) {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
-        val contextType = annotations.firstOrNull { it.annotationClass.hasAnnotation<ContextType>() }
-        if (contextType != null) {
-            val context = instances[(clazz to contextType)] ?: parentModule?.inject(clazz, annotations)
-            return context as? T ?: throw IllegalStateException("${contextType}를 찾을 수 없습니다.")
-        }
+        var instance: T?
 
-        val qualifier = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
-        val how = getHowToImplement(clazz, qualifier)
-
-        var instance: T? = if (how == null) {
-            parentModule?.inject(clazz, annotations)
+        val constructor = clazz.primaryConstructor
+        if (constructor != null && constructor.hasAnnotation<Inject>()) {
+            instance = createInstance(clazz)
         } else {
-            getInstanceBy(how)
+            val contextType =
+                annotations.firstOrNull { it.annotationClass.hasAnnotation<ContextType>() }
+            if (contextType != null) {
+                val context =
+                    instances[(clazz to contextType)] ?: parentModule?.inject(clazz, annotations)
+                return context as? T ?: throw IllegalStateException("${contextType}를 찾을 수 없습니다.")
+            }
+
+            val qualifier =
+                annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier2>() }
+            val how = getHowToImplement(clazz, qualifier)
+
+            instance = if (how == null) {
+                parentModule?.inject(clazz, annotations)
+            } else {
+                getInstanceBy(how)
+            }
+
+            if (instance == null) {
+                instance = createInstance(clazz)
+            }
         }
 
-        if (instance == null) instance = createInstance(clazz)
         injectFields(clazz, instance)
 
         return instance
