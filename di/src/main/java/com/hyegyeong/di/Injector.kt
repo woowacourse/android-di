@@ -63,13 +63,11 @@ object Injector {
 
     fun findPropertyInstances(properties: List<KProperty<*>>): Map<KProperty<*>, Any> {
         val dependencies: MutableMap<KProperty<*>, Any> = mutableMapOf()
-        val nonQualifierParameters = properties.filter {
-            it.annotations.none { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
+        val nonQualifierParameters = properties.filterNot { property ->
+            checkQualifierAnnotation(property.annotations)
         }
-        val qualifierInstanceParameters = properties.filter {
-            it.hasAnnotation<Qualifier>()
+        val qualifierInstanceParameters = properties.filter { property ->
+            checkQualifierAnnotation(property.annotations)
         }
         nonQualifierParameters.forEach {
             val instance = DiContainer.provideInstance(it.returnType.jvmErasure, it.annotations)
