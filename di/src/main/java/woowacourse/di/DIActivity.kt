@@ -12,6 +12,6 @@ abstract class DIActivity(private val module: AndroidModule) : AppCompatActivity
         module.setModuleContext(this)
         val container = Container(module)
 
-        injectProperties(container)
+        Injector(container).injectField(this)
     }
 }
