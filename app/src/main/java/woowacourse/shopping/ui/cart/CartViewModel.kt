@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.module.Database
 import woowacourse.shopping.model.CartRepository
 import javax.inject.Inject
 
+@HiltViewModel
 class CartViewModel @Inject constructor(
     @Database
     private val cartRepository: CartRepository,
