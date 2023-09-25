@@ -5,7 +5,6 @@ annotation class Inject
 
 @Target(
     AnnotationTarget.PROPERTY,
-    AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FUNCTION,
 )
 annotation class Qualifier(val className: String)
