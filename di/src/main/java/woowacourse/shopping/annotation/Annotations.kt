@@ -18,5 +18,23 @@ annotation class ReleasedActivityLifecycle(val activityClassName: String)
 @Target(AnnotationTarget.PROPERTY)
 annotation class Inject
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-annotation class Qualifier(val name: String)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+annotation class Qualifier
+
+@Qualifier
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+annotation class InMemory
+
+@Qualifier
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+annotation class Database
+
+@Qualifier
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
+annotation class ApplicationContext
+
+@Qualifier
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
+annotation class ActivityContext
+
+annotation class Singleton
