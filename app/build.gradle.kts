@@ -72,6 +72,7 @@ dependencies {
     // Kotlin Reflection
     implementation(kotlin("reflect"))
     // di
+    implementation(project(":android-di"))
     implementation(project(":di"))
     // implementation("com.github.ippnsj:android-di:1.0.0")
 }
