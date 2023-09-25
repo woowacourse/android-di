@@ -54,7 +54,6 @@ class MainActivity : BaseActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            println("메인: products: $it")
             val adapter = ProductAdapter(
                 items = it,
                 onClickProduct = viewModel::addCartProduct,

@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 rootProject.name = "android-di"
 include(":app")
 include(":domain")
-include(":bixx-di-annotation")
+include(":bixby")
+include(":bixby-android")
