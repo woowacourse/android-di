@@ -19,5 +19,8 @@ open class DIAppCompatActivity : AppCompatActivity() {
         // activity context 저장
         val key = (Context::class to ActivityContext())
         activityModule.addInstance(key, this)
+
+        // activity 필드 주입
+        activityModule.injectFields(this::class, this)
     }
 }
