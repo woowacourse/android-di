@@ -1,6 +1,8 @@
 package woowacourse.shopping.di.application
 
+import android.app.Activity
 import android.app.Application
+import woowacourse.shopping.di.container.ActivityRetainedContainer
 import woowacourse.shopping.di.container.DefaultInstanceContainer
 import woowacourse.shopping.di.container.InstanceContainer
 import woowacourse.shopping.di.module.ActivityModule
@@ -14,7 +16,7 @@ open class DIApplication(
     private val viewModelModuleClazz: Class<out ViewModelModule>,
 ) : Application() {
     private lateinit var applicationModule: ApplicationModule
-    private val instanceContainer: InstanceContainer = DefaultInstanceContainer(listOf())
+    private val activityRetainedContainer: InstanceContainer = ActivityRetainedContainer()
 
     override fun onCreate() {
         super.onCreate()
@@ -22,19 +24,22 @@ open class DIApplication(
         val primaryConstructor =
             applicationModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
 
-        applicationModule = primaryConstructor.call(this, instanceContainer)
+        applicationModule = primaryConstructor.call(this, DefaultInstanceContainer())
         applicationModule.inject(this)
     }
 
-    fun getActivityModule(): ActivityModule {
+    fun getActivityModule(
+        activity: Activity,
+        activityRetainedContainer: ActivityRetainedContainer,
+    ): ActivityModule {
         val primaryConstructor =
             activityModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
-        return primaryConstructor.call(this, applicationModule, instanceContainer)
+        return primaryConstructor.call(activity, applicationModule, activityRetainedContainer)
     }
 
     fun getViewModelModule(): ViewModelModule {
         val primaryConstructor =
             viewModelModuleClazz.kotlin.primaryConstructor ?: throw NullPointerException()
-        return primaryConstructor.call(applicationModule, instanceContainer)
+        return primaryConstructor.call(applicationModule, activityRetainedContainer)
     }
 }

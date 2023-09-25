@@ -1,12 +1,13 @@
 package woowacourse.shopping.di.container
 
 import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-class DefaultInstanceContainer : InstanceContainer {
+class ActivityRetainedContainer : InstanceContainer, DefaultLifecycleObserver {
     private val _instances: MutableList<Any> = mutableListOf()
-
     override val value: List<Any>
         get() = _instances.toList()
 
@@ -27,5 +28,10 @@ class DefaultInstanceContainer : InstanceContainer {
 
     override fun clear() {
         _instances.clear()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        clear()
+        super.onDestroy(owner)
     }
 }
