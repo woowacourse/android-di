@@ -120,7 +120,6 @@ class ProviderContainer(
         private const val ERROR_PREFIX = "[ERROR]"
         private const val NO_FUNCTION = "찾으려는 생성 함수가 없습니다."
         private const val PROVIDE_CALL_FAILED = "생성 함수 호출에 실패했습니다."
-        private const val UNREGISTERED_RETURN_TYPE = "등록되지 않은 반환 타입입니다."
 
         private var Instance: ProviderContainer? = null
         fun getSingletonInstance(
