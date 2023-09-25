@@ -2,11 +2,14 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toModel
+import woowacourse.shopping.di.module.Database
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
+import javax.inject.Inject
 
-class DatabaseCartRepository(
+@Database
+class DatabaseCartRepository @Inject constructor(
     private val cartProductDao: CartProductDao
 ) : CartRepository {
 

@@ -1,21 +1,16 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import android.util.Log
-import com.boogiwoogi.di.Qualifier
+import dagger.hilt.android.qualifiers.ActivityContext
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-class DateFormatter(
-    @Qualifier("ActivityContext")
-    context: Context
+class DateFormatter @Inject constructor(
+    @ActivityContext context: Context
 ) {
-
-    init {
-        Log.d("dataformatter", "created")
-    }
 
     private val formatter = SimpleDateFormat(
         context.getString(R.string.date_format), Locale.KOREA
