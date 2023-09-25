@@ -134,8 +134,4 @@ open class DIModule(private val parentModule: DIModule?) {
     fun <T : Any> addInstance(key: Pair<KClass<T>, Annotation?>, value: T) {
         instances[key] = value
     }
-
-    fun releaseInstance(key: Pair<KClass<*>, Annotation?>) {
-        instances.remove(key)
-    }
 }

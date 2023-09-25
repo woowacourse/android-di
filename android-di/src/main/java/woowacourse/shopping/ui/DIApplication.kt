@@ -30,4 +30,16 @@ open class DIApplication : Application() {
         activityModuleClazz = activityModule
         viewModelModuleClazz = viewModelModule
     }
+
+    internal fun getActivityRetainedModule(): DIModule {
+        return activityRetainedModuleClazz?.let {
+            it.primaryConstructor?.call(applicationModule)
+        } ?: DIModule(applicationModule)
+    }
+
+    internal fun getActivityModule(activityRetainedModule: DIModule): DIModule {
+        return activityModuleClazz?.let {
+            it.primaryConstructor?.call(activityRetainedModule)
+        } ?: DIModule(activityRetainedModule)
+    }
 }
