@@ -6,15 +6,15 @@ import woowacourse.shopping.repository.CartRepository
 class FakeCartRepository(initialCart: List<Product>) : CartRepository {
     private val cart = mutableListOf<Product>().apply { addAll(initialCart) }
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         cart.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<Product> {
         return cart.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
-        cart.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cart.removeAt(id.toInt())
     }
 }
