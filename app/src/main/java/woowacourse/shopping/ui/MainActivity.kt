@@ -6,6 +6,7 @@ import android.view.Menu
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.module.ActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiAppCompatActivity() {
@@ -18,6 +19,7 @@ class MainActivity : DiAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        registerModule(ActivityModule::class)
         setupBinding()
         setupToolbar()
         setupView()
