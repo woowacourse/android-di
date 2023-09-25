@@ -121,10 +121,15 @@ class MainActivity : AppCompatActivity() {
 
    private val viewModel: MainViewModel by viewModels()
 
+   private val dateFormatter: DateFormatter by inject()
+
    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 }
+
+@Component
+class DateFormatter(context: Context)
 
 @SheathViewModel
 class MainViewModel(
@@ -156,6 +161,8 @@ object AppModule {
 class CartProductDao(context: Context)
 ```
 위와 같이 코드를 작성하면 `MainActivity`는 viewModels 확장 함수를 이용해 `MainViewModel` 클래스의 인스턴스를 주입 받습니다.
+
+`MainActivity`는 `inject` 메서드를 이용해 `DateFormatter` 클래스의 인스턴스를 주입 받을 수 있습니다.
 
 `MainViewModel` 클래스는 생성될 때마다 새로운 `DefaultProductRepository` 클래스의 인스턴스를 주입 받습니다. `DefaultProductRepository` 클래스에 `@Prototype`이 붙어있기 때문입니다.
 

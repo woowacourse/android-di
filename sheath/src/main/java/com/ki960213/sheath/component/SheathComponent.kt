@@ -4,13 +4,17 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class SheathComponent(
-    val type: KType,
-    val name: String,
-    val isSingleton: Boolean,
-    protected val dependentConditions: Map<KType, DependentCondition>,
-) {
-    val dependentCount: Int = dependentConditions.size
+abstract class SheathComponent {
+    abstract val type: KType
+
+    abstract val name: String
+
+    abstract val isSingleton: Boolean
+
+    protected abstract val dependentConditions: Map<KType, DependentCondition>
+
+    val dependentCount: Int
+        get() = dependentConditions.size
 
     lateinit var instance: Any
         protected set

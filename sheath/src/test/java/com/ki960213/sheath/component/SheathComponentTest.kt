@@ -17,8 +17,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 타입이 같으면 같다고 판단한다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test1::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test1::class)
+        val sheathComponent1 = ClassSheathComponent(Test1::class)
+        val sheathComponent2 = ClassSheathComponent(Test1::class)
 
         assertThat(sheathComponent1).isEqualTo(sheathComponent2)
     }
@@ -28,8 +28,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 타입이 다르면 다르다고 판단한다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test1::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test2::class)
+        val sheathComponent1 = ClassSheathComponent(Test1::class)
+        val sheathComponent2 = ClassSheathComponent(Test2::class)
 
         assertThat(sheathComponent1).isNotEqualTo(sheathComponent2)
     }
@@ -39,7 +39,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 해시 코드는 SheathComponent의 타입의 해시 코드와 같다`() {
-        val sheathComponent = SheathComponentFactory.create(Test1::class)
+        val sheathComponent = ClassSheathComponent(Test1::class)
 
         val actual = sheathComponent.hashCode()
 
@@ -48,7 +48,7 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 문자열은 타입을 담은 문자열이다`() {
-        val sheathComponent = SheathComponentFactory.create(Test1::class)
+        val sheathComponent = ClassSheathComponent(Test1::class)
 
         val actual = sheathComponent.toString()
 
@@ -57,8 +57,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 종속 항목 중 다른 SheathComponent의 타입의 슈퍼 타입인 종속 항목이 없다면 의존하지 않는 것이다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test3::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test7::class)
+        val sheathComponent1 = ClassSheathComponent(Test3::class)
+        val sheathComponent2 = ClassSheathComponent(Test7::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -88,10 +88,10 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 종속 항목 중 다른 SheathComponent의 타입과 같은 타입의 종속 항목이 있고 한정자가 없다면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test3::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test4::class)
-        val sheathComponent3 = SheathComponentFactory.create(Test5::class)
-        val sheathComponent4 = SheathComponentFactory.create(Test6::class)
+        val sheathComponent1 = ClassSheathComponent(Test3::class)
+        val sheathComponent2 = ClassSheathComponent(Test4::class)
+        val sheathComponent3 = ClassSheathComponent(Test5::class)
+        val sheathComponent4 = ClassSheathComponent(Test6::class)
 
         expect.that(sheathComponent1.isDependingOn(sheathComponent2)).isTrue()
         expect.that(sheathComponent1.isDependingOn(sheathComponent3)).isTrue()
@@ -100,9 +100,9 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 종속 항목 중 다른 SheathComponent의 타입의 슈퍼 타입의 종속 항목이 있고 한정자가 없다면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test8::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test10::class)
-        val sheathComponent3 = SheathComponentFactory.create(Test12::class)
+        val sheathComponent1 = ClassSheathComponent(Test8::class)
+        val sheathComponent2 = ClassSheathComponent(Test10::class)
+        val sheathComponent3 = ClassSheathComponent(Test12::class)
 
         expect.that(sheathComponent1.isDependingOn(sheathComponent2)).isTrue()
         expect.that(sheathComponent1.isDependingOn(sheathComponent3)).isTrue()
@@ -126,8 +126,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 종속 항목 중 다른 SheathComponent의 타입의 슈퍼 타입의 종속 항목이 있어도 한정자에 설정된 클래스가 다른 SheathComponent의 타입의 클래스와 다르다면 의존하지 않는 것이다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test13::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test16::class)
+        val sheathComponent1 = ClassSheathComponent(Test13::class)
+        val sheathComponent2 = ClassSheathComponent(Test16::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
@@ -150,8 +150,8 @@ internal class SheathComponentTest {
 
     @Test
     fun `SheathComponent의 종속 항목 중 다른 SheathComponent의 타입의 슈퍼 타입의 종속 항목이 있을 때 한정자에 설정된 클래스가 다른 SheathComponent의 타입의 클래스와 같다면 의존하는 것이다`() {
-        val sheathComponent1 = SheathComponentFactory.create(Test13::class)
-        val sheathComponent2 = SheathComponentFactory.create(Test15::class)
+        val sheathComponent1 = ClassSheathComponent(Test13::class)
+        val sheathComponent2 = ClassSheathComponent(Test15::class)
 
         val actual = sheathComponent1.isDependingOn(sheathComponent2)
 
