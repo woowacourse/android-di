@@ -18,4 +18,9 @@ open class DiActivity : AppCompatActivity() {
         )
         injectField(container, this)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        container = Container(null, module(this))
+    }
 }
