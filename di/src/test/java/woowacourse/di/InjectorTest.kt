@@ -1,6 +1,7 @@
 package woowacourse.di
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -116,4 +117,29 @@ class InjectorTest {
     class NeedInjectFieldViewModel {
         lateinit var productRepository: FakeProductRepository
     }
+
+    @Test
+    fun `Singleton 어노테이션이 붙은 경우 한 번만 생성해준다`() {
+        // when
+        val firstCall = injector.inject(SingletonViewModel::class)
+        val secondCall = injector.inject(SingletonViewModel::class)
+
+        // then
+        assertEquals(SingleRepository::class, firstCall.repository::class)
+        assertEquals(firstCall.repository, secondCall.repository)
+    }
+
+    class SingletonViewModel(@Qualifier(SingleRepository::class) val repository: FakeSingleRepository)
+
+    @Test
+    fun `Singleton 어노테이션이 붙지 않은 경우 매번 생성해준다`() {
+        // when
+        val firstCall = injector.inject(NotSingletonViewModel::class)
+        val secondCall = injector.inject(NotSingletonViewModel::class)
+
+        // then
+        assertNotEquals(firstCall.repository, secondCall.repository)
+    }
+
+    class NotSingletonViewModel(@Qualifier(DefaultFakeProductRepository::class) val repository: FakeProductRepository)
 }

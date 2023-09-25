@@ -12,14 +12,14 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(private val container: Container) {
+class Injector(val container: Container) {
 
-    fun <T : Any> inject(modelClass: KClass<T>): T {
-        val result = container.getInstance(modelClass) ?: createInstance(modelClass)
+    inline fun <reified T : Any> inject(): T {
+        val result = container.getInstance(T::class) ?: createInstance(T::class)
         return result as T
     }
 
-    private fun <T : Any> createInstance(modelClass: KClass<*>): T {
+    inline fun <reified T : Any> createInstance(modelClass: KClass<*>): T {
         val constructor =
             modelClass.primaryConstructor ?: throw IllegalStateException("주생성자를 가져올 수 없습니다")
 
@@ -29,7 +29,7 @@ class Injector(private val container: Container) {
         return instance
     }
 
-    private fun getArgument(constructor: KFunction<Any>): List<Any> {
+    fun getArgument(constructor: KFunction<Any>): List<Any> {
         val argument = constructor.parameters.map { parameter ->
             val annotation = parameter.findAnnotation<Qualifier>()
             val type = annotation?.clazz ?: parameter.type.jvmErasure
@@ -38,7 +38,7 @@ class Injector(private val container: Container) {
         return argument
     }
 
-    private fun <T : Any> injectField(instance: T) {
+    fun <T : Any> injectField(instance: T) {
         val properties =
             instance::class.declaredMemberProperties.filter { it.hasAnnotation<InjectField>() }
         properties.forEach { property ->
