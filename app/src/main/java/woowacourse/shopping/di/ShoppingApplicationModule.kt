@@ -12,7 +12,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
-class AppModule : AndroidModule {
+class ShoppingApplicationModule : AndroidModule {
 
     override lateinit var context: Context
 

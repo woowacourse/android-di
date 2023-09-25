@@ -2,9 +2,9 @@ package woowacourse.shopping
 
 import woowacourse.di.DIApplication
 import woowacourse.di.Injector
-import woowacourse.shopping.di.AppModule
+import woowacourse.shopping.di.ShoppingApplicationModule
 
-class ShoppingApplication : DIApplication(AppModule()) {
+class ShoppingApplication : DIApplication(ShoppingApplicationModule()) {
 
     override fun onCreate() {
         super.onCreate()

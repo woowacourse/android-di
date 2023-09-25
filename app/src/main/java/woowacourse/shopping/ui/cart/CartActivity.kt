@@ -6,10 +6,10 @@ import woowacourse.di.DIActivity
 import woowacourse.di.annotation.InjectField
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.ActivityModule
+import woowacourse.shopping.di.CartActivityModule
 import woowacourse.shopping.ui.common.getViewModel
 
-class CartActivity : DIActivity(ActivityModule()) {
+class CartActivity : DIActivity(CartActivityModule()) {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

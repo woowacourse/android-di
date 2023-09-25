@@ -4,7 +4,7 @@ import android.content.Context
 import woowacourse.di.module.AndroidModule
 import woowacourse.shopping.ui.cart.DateFormatter
 
-class ActivityModule : AndroidModule {
+class CartActivityModule : AndroidModule {
 
     override lateinit var context: Context
 
