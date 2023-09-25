@@ -1,26 +1,26 @@
 package com.di.woogidi.application
 
 import android.app.Application
-import com.di.woogidi.AndroidDiInjector
+import com.boogiwoogi.di.DiInjector
 
 open class DiApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        injector = AndroidDiInjector(
-            applicationInstanceContainer = ApplicationInstanceContainer(),
+        injector = DiInjector(
+            applicationContainer = ApplicationInstanceContainer(),
         )
     }
 
     override fun onTerminate() {
-        injector.applicationInstanceContainer.clear()
+        injector.applicationContainer.clear()
 
         super.onTerminate()
     }
 
     companion object {
 
-        lateinit var injector: AndroidDiInjector
+        lateinit var injector: DiInjector
     }
 }

@@ -13,25 +13,12 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 
 class DependencyInjectorTest {
 
-    private lateinit var module: Module
-    private lateinit var container: InstanceContainer
-    private lateinit var injector: DiInjector
-
     interface FakeInterface
-
-    @BeforeEach
-    fun setup() {
-        module = DefaultModule()
-        container = DefaultInstanceContainer()
-        injector = DiInjector()
-    }
 
     @Test
     fun `생성자에 인자가 있는 경우 자동으로 의존성 주입을 수행한다`() {
@@ -39,11 +26,13 @@ class DependencyInjectorTest {
         data class ClassB(val data: String = "")
         class ClassA(val arg1: ClassB)
 
-        // when
-        val instanceA = injector.inject<ClassA>(
-            module = DefaultModule(),
-            container = DefaultInstanceContainer()
+        val injector = DiInjector(
+            applicationContainer = DefaultInstanceContainer(),
+            module = DefaultModule()
         )
+
+        // when
+        val instanceA = injector.inject<ClassA>()
         val actual = instanceA.arg1
 
         // then
@@ -58,11 +47,13 @@ class DependencyInjectorTest {
         data class ClassE(val arg1: ClassF)
         data class ClassD(val arg1: ClassE)
 
-        // when
-        val instanceD = injector.inject<ClassD>(
-            module = DefaultModule(),
-            container = DefaultInstanceContainer()
+        val injector = DiInjector(
+            applicationContainer = DefaultInstanceContainer(),
+            module = DefaultModule()
         )
+
+        // when
+        val instanceD = injector.inject<ClassD>()
         val actual = instanceD.arg1
 
         // then
@@ -83,11 +74,13 @@ class DependencyInjectorTest {
             container.find(parameter = any())
         } returns ClassB()
 
-        // when
-        val instanceA = injector.inject<ClassA>(
-            module,
-            container
+        val injector = DiInjector(
+            applicationContainer = container,
+            module = DefaultModule()
         )
+
+        // when
+        val instanceA = injector.inject<ClassA>()
         val actual = instanceA.arg1
 
         // then
@@ -116,11 +109,13 @@ class DependencyInjectorTest {
             module.provideInstanceOf(clazz = ClassB::class)
         } returns ClassB()
 
-        // when
-        val instanceA = injector.inject<ClassA>(
-            module = module,
-            container = container
+        val injector = DiInjector(
+            applicationContainer = container,
+            module = module
         )
+
+        // when
+        val instanceA = injector.inject<ClassA>()
         val actual = instanceA.arg1
 
         // then
@@ -149,12 +144,14 @@ class DependencyInjectorTest {
             module.provideInstanceOf(clazz = ClassB::class)
         } returns null
 
+        val injector = DiInjector(
+            applicationContainer = container,
+            module = module
+        )
+
         // then
         assertThrows<IllegalArgumentException> {
-            injector.inject<ClassA>(
-                module = module,
-                container = container
-            )
+            injector.inject<ClassA>()
         }
     }
 
@@ -169,12 +166,13 @@ class DependencyInjectorTest {
 
         val instanceA = ClassA()
 
-        // when
-        injector.inject(
-            module = module,
-            container = container,
-            target = instanceA
+        val injector = DiInjector(
+            applicationContainer = DefaultInstanceContainer(),
+            module = DefaultModule(),
         )
+
+        // when
+        injector.inject(instanceA)
         val actual = instanceA.property
 
         // then
@@ -206,11 +204,13 @@ class DependencyInjectorTest {
             module.provideInstanceOf("FakeImpl2")
         } returns FakeImpl2()
 
-        // when
-        val instanceA = injector.inject<ClassA>(
-            module = module,
-            container = container
+        val injector = DiInjector(
+            applicationContainer = DefaultInstanceContainer(),
+            module = module
         )
+
+        // when
+        val instanceA = injector.inject<ClassA>()
         val actual1 = instanceA.fake1
         val actual2 = instanceA.fake2
 
@@ -246,12 +246,14 @@ class DependencyInjectorTest {
             module.provideInstanceOf("FakeImpl2")
         } returns null
 
+        val injector = DiInjector(
+            applicationContainer = DefaultInstanceContainer(),
+            module = module
+        )
+
         // then
         assertThrows<IllegalArgumentException> {
-            injector.inject<ClassA>(
-                module = module,
-                container = container
-            )
+            injector.inject<ClassA>()
         }
     }
 }

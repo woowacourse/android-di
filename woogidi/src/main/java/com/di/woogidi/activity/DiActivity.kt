@@ -25,10 +25,10 @@ abstract class DiActivity : AppCompatActivity() {
     }
 
     private fun setupInjector() {
-        DiApplication.injector.injectMemberProperty(
-            activityInstanceContainer = instanceContainer,
-            activityModule = module,
-            target = this
+        DiApplication.injector.inject(
+            target = this,
+            container = instanceContainer,
+            module = module,
         )
     }
 }

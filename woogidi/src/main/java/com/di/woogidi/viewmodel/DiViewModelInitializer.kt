@@ -24,7 +24,10 @@ inline fun <reified VM : ViewModel> diViewModelFactory(
 ): ViewModelProvider.Factory = viewModelFactory {
     initializer {
         DiApplication.run {
-            injector.inject<VM>(container, module)
+            injector.inject<VM>(
+                module = module,
+                container = container
+            )
         }
     }
 }
