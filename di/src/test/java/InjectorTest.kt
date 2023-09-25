@@ -7,6 +7,7 @@ import com.hyegyeong.di.annotations.Inject
 import com.hyegyeong.di.annotations.Singleton
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -53,20 +54,26 @@ class InjectorTest {
         class FakeViewModel @Inject constructor(val fakeRepository: FakeRepository)
 
         // when
-        Injector.inject<FakeViewModel>()
+        val instance = Injector.inject<FakeViewModel>()
+
+        // then
+        assertTrue(instance is FakeViewModel)
     }
 
     @Test
-    fun `인터페이스를 생성자로 주입받는 경우, 구현체가 2개 이상인 경우, 생성자에 @Inject 어노테이션을 붙이고, 파라미터 앞에 원하는 어노테이션을 붙이면 된다`() {
+    fun `인터페이스를 생성자로 주입받고 구현체가 2개 이상인 경우 생성자에 @Inject 어노테이션을 붙이고 파라미터 앞에 원하는 구현체의 어노테이션을 붙이면 된다`() {
         // given
         class FakeViewModel @Inject constructor(@Singleton @InMemoryFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
 
         // when
-        Injector.inject<FakeViewModel>()
+        val instance = Injector.inject<FakeViewModel>()
+
+        // then
+        assertTrue(instance is FakeViewModel)
     }
 
     @Test
-    fun `인터페이스를 생성자로 주입받는 경우, 구현체가 하나인 경우, @Inject 어노테이션만 붙이면 된다`() {
+    fun `인터페이스를 생성자로 주입받고 구현체가 하나인 경우 생성자에 @Inject 어노테이션만 붙이면 된다`() {
         // given
         class FakeFieldInjectViewModel {
             @Inject
@@ -74,7 +81,10 @@ class InjectorTest {
         }
 
         // when
-        Injector.inject<FakeFieldInjectViewModel>()
+        val instance = Injector.inject<FakeFieldInjectViewModel>()
+
+        // then
+        assertTrue(instance is FakeFieldInjectViewModel)
     }
 
     @Test
@@ -83,7 +93,10 @@ class InjectorTest {
         class FakeViewModel @Inject constructor(@Singleton @DatabaseFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
 
         // when
-        Injector.inject<FakeViewModel>()
+        val instance = Injector.inject<FakeViewModel>()
+
+        // then
+        assertTrue(instance is FakeViewModel)
     }
 
     @Test
@@ -95,7 +108,10 @@ class InjectorTest {
         }
 
         // when
-        Injector.inject<FakeFieldInjectViewModel>()
+        val instance = Injector.inject<FakeFieldInjectViewModel>()
+
+        // then
+        assertTrue(instance is FakeFieldInjectViewModel)
     }
 
     @Test
@@ -109,7 +125,10 @@ class InjectorTest {
         }
 
         // when
-        Injector.inject<FakeFieldInjectViewModel>()
+        val instance = Injector.inject<FakeFieldInjectViewModel>()
+
+        // then
+        assertTrue(instance is FakeFieldInjectViewModel)
     }
 
     @Test
@@ -123,11 +142,14 @@ class InjectorTest {
         }
 
         // when
-        Injector.inject<FakeFieldInjectViewModel>()
+        val instance = Injector.inject<FakeFieldInjectViewModel>()
+
+        // then
+        assertTrue(instance is FakeFieldInjectViewModel)
     }
 
     @Test
-    fun `@Singleton 어노테이션이 붙은 의존성은, 그 의존성을 주입받는 여러 객체가 만들어져도 인스턴스를 공유한다`() {
+    fun `@Singleton 어노테이션이 붙은 의존성은 그 의존성을 주입받는 여러 객체가 만들어져도 인스턴스를 공유한다`() {
         // given
         class FakeFieldInjectViewModel {
             @Inject
@@ -152,7 +174,7 @@ class InjectorTest {
     }
 
     @Test
-    fun `@Singleton 어노테이션이 붙지 않은 의존성은, 그 의존성을 주입받는 여러 객체가 만들어지면 다른 인스턴스가 생성된다`() {
+    fun `@Singleton 어노테이션이 붙지 않은 의존성은 그 의존성을 주입받는 여러 객체가 만들어지면 다른 인스턴스가 생성된다`() {
         // given
         class FakeFieldInjectViewModel {
             @Inject
