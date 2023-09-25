@@ -23,7 +23,7 @@ abstract class DIActivity : AppCompatActivity() {
 
     private fun injectProperties() {
         val injector = (application as DIApplication).injector
-        injector.injectProperties(context = this, target = this::class)
+        injector.injectProperties(context = this, target = this)
     }
 
     @Suppress("UNCHECKED_CAST")

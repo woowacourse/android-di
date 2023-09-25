@@ -69,7 +69,7 @@ class Injector(private val container: Container, private val module: Module) {
             }
         }
 
-        // 새 값 생성
+        // 새 인스턴스 생성
         val instance = requireNotNull(targetProvider.call(module, *params.toTypedArray()))
         return instance.also { storeInstance(targetProvider, it) }
     }
