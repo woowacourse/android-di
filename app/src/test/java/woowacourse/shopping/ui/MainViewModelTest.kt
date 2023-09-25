@@ -7,6 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.MainDispatcherRule
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.main.MainViewModel
 
 class MainViewModelTest {
 

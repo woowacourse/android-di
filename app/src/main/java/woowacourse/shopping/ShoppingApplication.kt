@@ -1,17 +1,11 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.now.di.Injector
-import woowacourse.shopping.di.module.DefaultModule
+import com.now.androdi.application.ApplicationInjectable
+import woowacourse.shopping.di.module.ApplicationModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : ApplicationInjectable() {
     override fun onCreate() {
         super.onCreate()
-
-        injectModule()
-    }
-
-    private fun injectModule() {
-        Injector.addModule(DefaultModule(applicationContext))
+        injectModule(ApplicationModule(applicationContext))
     }
 }

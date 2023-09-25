@@ -17,6 +17,7 @@ import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartProductAdapter
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.main.MainActivity
 
 @RunWith(RobolectricTestRunner::class)
 class RobolectricStudy {
