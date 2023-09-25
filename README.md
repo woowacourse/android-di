@@ -20,5 +20,5 @@
   - [x] ActivityContext를 ActivityModule에 저장한다.
   - [x] ActivityModule을 이용하여 Activity 필드 주입을 진행한다.
   - [x] Activity가 isFinishing이 아니라면 ActivityRetainedModule을 savedInstanceState에 저장한다.
-- [ ] DIViewModelLazy
-  - [ ] ViewModelModule 객체를 생성하여 해당 객체로 ViewModel을 주입한다.
+- [x] DIViewModelLazy
+  - [x] ViewModelModule 객체를 생성하여 해당 객체로 ViewModel을 주입한다.

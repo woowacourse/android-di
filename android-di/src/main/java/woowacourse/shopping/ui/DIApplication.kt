@@ -50,4 +50,10 @@ open class DIApplication : Application() {
             it.primaryConstructor?.call(activityRetainedModule)
         } ?: DIActivityModule(activityRetainedModule)
     }
+
+    internal fun getViewModelModule(activityRetainedModule: DIActivityRetainedModule): DIVIewModelModule {
+        return viewModelModuleClazz?.let {
+            it.primaryConstructor?.call(activityRetainedModule)
+        } ?: DIVIewModelModule(activityRetainedModule)
+    }
 }

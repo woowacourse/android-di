@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.annotation.ActivityContext
 import woowacourse.shopping.module.DIActivityModule
 import woowacourse.shopping.module.DIActivityRetainedModule
+import woowacourse.shopping.module.DIVIewModelModule
 import woowacourse.shopping.util.getParcelableCompat
 
 open class DIAppCompatActivity : AppCompatActivity() {
@@ -33,6 +34,10 @@ open class DIAppCompatActivity : AppCompatActivity() {
         if (!isFinishing) {
             outState.putParcelable(KEY_ACTIVITY_RETAINED_MODULE, activityRetainedModule)
         }
+    }
+
+    fun getViewModelModule(): DIVIewModelModule {
+        return (application as DIApplication).getViewModelModule(activityRetainedModule)
     }
 
     companion object {
