@@ -25,8 +25,12 @@ class InjectorTest {
         lateinit var cartRepository: FakeCartRepository
     }
 
+    class InjectConstructorTest @Inject constructor(
+        val fakeDependency: FakeProductRepository,
+    )
+
     @Test
-    fun `Inject annotation이 있는 프로퍼티에만 의존성을 주입한다`() {
+    fun `Inject annotation이 있는 프로퍼티에 의존성을 주입한다`() {
         // given & when
         val injector = Injector(FakeModule)
         val vm = injector.inject<InjectTestViewModel>()
@@ -47,14 +51,21 @@ class InjectorTest {
     }
 
     @Test
+    fun `Inject annotation이 생성자에 있다면 생성자의 모든 프로퍼티를 초기화한다`() {
+        // given
+        val injector = Injector(FakeModule)
+        val clazz = injector.inject<InjectConstructorTest>()
+
+        // then
+        assertNotNull(clazz.fakeDependency)
+    }
+
+    @Test
     fun `하나의 인터페이스에 대해 구현체가 여러개인 경우에는 Qualifier로 구현체를 구분한다`() {
         // given
         val injector = Injector(FakeModule)
         val vm = injector.inject<InjectTestViewModel>()
 
-        println("otter, ${vm.multiImplCartRepositoryDefault}")
-        println("otter, ${vm.multiImplCartRepositoryDefault::class.simpleName}")
-        println("otter, ${vm.multiImplCartRepository2::class.simpleName}")
         // then
         assertTrue(vm.multiImplCartRepositoryDefault is FakeDefaultCartRepository)
     }

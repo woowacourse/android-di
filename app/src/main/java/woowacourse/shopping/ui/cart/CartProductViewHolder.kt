@@ -20,6 +20,7 @@ class CartProductViewHolder(
     }
 
     fun bind(cartProduct: CartProduct) {
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.createdAt)
         binding.item = cartProduct
     }
 

@@ -10,8 +10,7 @@ import woowacourse.shopping.otterdi.annotation.Inject
 import woowacourse.shopping.otterdi.annotation.Qualifier
 import woowacourse.shopping.repository.CartRepository
 
-class CartViewModel(
-    @Inject
+class CartViewModel @Inject constructor(
     @Qualifier("DefaultCartRepository")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
