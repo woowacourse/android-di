@@ -1,9 +1,10 @@
 package com.di.berdi
 
 import android.content.Context
-import com.di.berdi.annotation.Inject
 import com.di.berdi.annotation.Singleton
+import com.di.berdi.util.filterInjectsProperties
 import com.di.berdi.util.qualifiedName
+import com.di.berdi.util.setInstance
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
@@ -88,19 +89,13 @@ class Injector(private val container: Container, private val module: Module) {
     }
 
     private fun injectProperties(context: Context, target: Any) {
-        val properties = target::class.declaredMemberProperties.filter {
-            it.hasAnnotation<Inject>()
-        }
+        val properties = target::class.declaredMemberProperties.filterInjectsProperties()
         properties.forEach { property -> property.inject(context, target) }
     }
 
     private fun KProperty<*>.inject(context: Context, target: Any) {
         val paramInstances = createInstance(context, returnType, qualifiedName)
-
-        javaField?.apply {
-            isAccessible = true
-            set(target, paramInstances)
-        }
+        javaField?.setInstance(target, paramInstances)
     }
 
     companion object {

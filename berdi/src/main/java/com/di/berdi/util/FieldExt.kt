@@ -11,3 +11,8 @@ internal fun <T : KProperty<*>> Collection<T>.findViewModelField(): Field? {
         ViewModel::class.java.isAssignableFrom(fieldType)
     }?.javaField
 }
+
+internal fun <T> Field.setInstance(target: Any, instance: T) {
+    isAccessible = true
+    set(target, instance)
+}

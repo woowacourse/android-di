@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.di.berdi.util.filterInjectsProperties
 import com.di.berdi.util.findViewModelField
 import com.di.berdi.util.qualifiedName
+import com.di.berdi.util.setInstance
 import java.lang.reflect.Field
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -26,14 +27,12 @@ abstract class DIActivity : AppCompatActivity() {
     }
 
     private fun setViewModelInstance(viewModelField: Field) {
-        viewModelField.setInstance(getNewViewModelByType(viewModelField))
+        viewModelField.setInstance(this, getNewViewModelByType(viewModelField))
     }
 
     private fun setInjectFieldInstance(fieldsToInject: List<KProperty<*>>) {
         val application = application as DIApplication
-        fieldsToInject.forEach { property ->
-            injectField(application, property)
-        }
+        fieldsToInject.forEach { property -> injectField(application, property) }
     }
 
     private fun injectField(application: DIApplication, property: KProperty<*>) {
@@ -42,12 +41,7 @@ abstract class DIActivity : AppCompatActivity() {
             type = property.returnType,
             qualifiedName = property.qualifiedName,
         )
-        property.javaField?.setInstance(instance)
-    }
-
-    private fun Field.setInstance(instance: Any) {
-        isAccessible = true
-        set(this@DIActivity, instance)
+        property.javaField?.setInstance(target = this, instance = instance)
     }
 
     @Suppress("UNCHECKED_CAST")
