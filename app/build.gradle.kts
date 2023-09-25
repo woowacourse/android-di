@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -73,4 +74,13 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // Reflection
     implementation(kotlin("reflect"))
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.activity:activity-ktx:1.7.2")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
