@@ -25,7 +25,6 @@ object Injector {
     }
 
     inline fun <reified T : Any> injectConstructor(): T {
-        println("test 들어옴")
         val constructor = requireNotNull(T::class.primaryConstructor)
         val parameters = constructor.parameters
         val dependencies: Map<KParameter, Any> = findParametersInstances(parameters)

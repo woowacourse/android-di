@@ -12,7 +12,6 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
 object DiContainer {
-    // TODO: DiContainer 의 모듈이 액티비티마다의 모듈로 갈아끼워지도록 수정
     lateinit var appModule: DiModule
     lateinit var dependencyModule: DiModule
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -47,7 +46,6 @@ object DiContainer {
                 }
             }
         }
-        println("")
         return function.call(module, * instances.toTypedArray())
             ?: throw IllegalArgumentException("해당 함수를 찾을 수 없습니다.")
     }
