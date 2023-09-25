@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.di.berdi.annotation.Inject
 import com.di.berdi.util.qualifiedName
 import java.lang.reflect.Field
-import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.javaField
@@ -25,14 +25,14 @@ abstract class DIActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    private fun Collection<KProperty1<out DIActivity, *>>.findViewModelField(): Field? {
+    private fun Collection<KProperty<*>>.findViewModelField(): Field? {
         return firstOrNull {
             val fieldType = requireNotNull(it.javaField?.type)
             ViewModel::class.java.isAssignableFrom(fieldType)
         }?.javaField
     }
 
-    private fun Collection<KProperty1<out DIActivity, *>>.filterInjectsProperties(): List<KProperty1<out DIActivity, *>> {
+    private fun Collection<KProperty<*>>.filterInjectsProperties(): List<KProperty<*>> {
         return filter { it.hasAnnotation<Inject>() }
     }
 
@@ -40,14 +40,14 @@ abstract class DIActivity : AppCompatActivity() {
         viewModelField.setInstance(getNewViewModelByType(viewModelField))
     }
 
-    private fun setInjectFieldInstance(fieldsToInject: List<KProperty1<out DIActivity, *>>) {
+    private fun setInjectFieldInstance(fieldsToInject: List<KProperty<*>>) {
         val application = application as DIApplication
         fieldsToInject.forEach { property ->
             injectField(application, property)
         }
     }
 
-    private fun injectField(application: DIApplication, property: KProperty1<out DIActivity, *>) {
+    private fun injectField(application: DIApplication, property: KProperty<*>) {
         val instance = application.injector.getInstanceOf(
             context = this,
             type = property.returnType,
