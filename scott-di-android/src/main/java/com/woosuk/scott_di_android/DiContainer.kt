@@ -9,7 +9,7 @@ import kotlin.reflect.full.hasAnnotation
 object DiContainer {
     private val savedDependencies: MutableList<Dependency> = mutableListOf()
 
-    val values: List<Dependency>
+    private val values: List<Dependency>
         get() = savedDependencies.toList()
 
     fun addDependency(dependency: Dependency) {
@@ -20,11 +20,10 @@ object DiContainer {
         savedDependencies.remove(dependency)
     }
 
-    fun getDependency(
+    private fun getDependency(
         kClazz: KClass<*>,
         annotation: Annotation?,
     ): Dependency {
-        values.forEach { println("Scott ${it.typeClass} ${kClazz} ${it.qualifierAnnotation} ${annotation}") }
         return values.find { it.typeClass == kClazz && it.qualifierAnnotation == annotation }
             ?: throw IllegalStateException("${kClazz.simpleName}해당하는 의존성을 찾을 수 없습니다")
     }
