@@ -1,21 +1,21 @@
 package woowacourse.shopping.ui.util
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
-import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.application.ShoppingApplication
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.ssu.androidi.activity.DiActivity
 
-inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(factory: ViewModelProvider.Factory = ShoppingViewModelFactory): ViewModelLazy<T> {
+inline fun <reified T : ViewModel> DiActivity.createViewModel(): ViewModelLazy<T> {
     return ViewModelLazy(
         T::class,
         { viewModelStore },
-        { factory },
+        {
+            viewModelFactory {
+                initializer {
+                    injector.create(T::class)
+                }
+            }
+        },
     )
-}
-
-val ShoppingViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ShoppingApplication.injector.create(modelClass.kotlin)
-    }
 }

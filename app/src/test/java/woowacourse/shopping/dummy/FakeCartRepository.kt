@@ -16,7 +16,6 @@ class FakeCartRepository : CartRepository {
     }
 
     override suspend fun deleteCartProduct(id: Long) {
-        val position = cartProducts.indexOfFirst { it.id == id }
-        cartProducts.removeAt(position)
+        cartProducts.removeIf { it.id == id }
     }
 }
