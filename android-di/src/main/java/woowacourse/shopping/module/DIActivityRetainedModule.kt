@@ -1,8 +1,6 @@
 package woowacourse.shopping.module
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import woowacourse.shopping.DIModule
+import java.io.Serializable
 
-@Parcelize
-open class DIActivityRetainedModule(private val parentModule: DIApplicationModule) : DIModule(parentModule), Parcelable
+open class DIActivityRetainedModule(private val parentModule: DIApplicationModule) : DIModule(parentModule), Serializable

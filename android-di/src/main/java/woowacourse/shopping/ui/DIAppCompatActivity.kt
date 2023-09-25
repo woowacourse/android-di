@@ -7,7 +7,7 @@ import woowacourse.shopping.annotation.ActivityContext
 import woowacourse.shopping.module.DIActivityModule
 import woowacourse.shopping.module.DIActivityRetainedModule
 import woowacourse.shopping.module.DIVIewModelModule
-import woowacourse.shopping.util.getParcelableCompat
+import woowacourse.shopping.util.getSerializableCompat
 
 open class DIAppCompatActivity : AppCompatActivity() {
     private lateinit var activityRetainedModule: DIActivityRetainedModule
@@ -16,7 +16,7 @@ open class DIAppCompatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val diApplication = application as DIApplication
-        activityRetainedModule = savedInstanceState?.getParcelableCompat(
+        activityRetainedModule = savedInstanceState?.getSerializableCompat(
             KEY_ACTIVITY_RETAINED_MODULE,
         ) ?: diApplication.getActivityRetainedModule()
         activityModule = diApplication.getActivityModule(activityRetainedModule)
@@ -32,7 +32,7 @@ open class DIAppCompatActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (!isFinishing) {
-            outState.putParcelable(KEY_ACTIVITY_RETAINED_MODULE, activityRetainedModule)
+            outState.putSerializable(KEY_ACTIVITY_RETAINED_MODULE, activityRetainedModule)
         }
     }
 
