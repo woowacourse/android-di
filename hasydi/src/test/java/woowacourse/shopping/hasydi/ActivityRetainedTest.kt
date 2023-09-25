@@ -20,24 +20,29 @@ class LifecycleTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Test
-    fun `FakeActivity를 생성하면 dataformatter가 주입된다`() {
+    fun `FakeActivity를 생성하면 dateformatter가 주입된다`() {
+        // when
         val activity = Robolectric
             .buildActivity(FakeActivityWithDateFormatter::class.java)
             .create()
             .get()
 
+        // then
         assertNotNull(activity.dateFormatter)
     }
 
     @Test
-    fun `구성 변경 시 dataformatter가 유지된다`() {
+    fun `구성 변경 시 dateformatter가 유지된다`() {
+        // given
         val activity = Robolectric
             .buildActivity(FakeActivityWithDateFormatter::class.java)
             .create()
-
         val before = activity.get().dateFormatter
+
+        // when
         activity.configurationChange()
 
+        // then
         val after = activity.get().dateFormatter
         assertThat(after).isSameAs(before)
     }
