@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.ViewModelInitializer
 import woowacourse.di.Injector
 import woowacourse.shopping.ShoppingApplication
 
@@ -14,11 +15,11 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.getViewModel(injector: I
         VM::class,
         { viewModelStore },
         {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return injector.inject(modelClass.kotlin)
-                }
-            }
+            ViewModelProvider.Factory.from(ViewModelInitializer(
+                VM::class.java
+            ) {
+                injector.inject()
+            })
         },
     )
 }
