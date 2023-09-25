@@ -2,7 +2,7 @@ package com.di.berdi
 
 import android.content.Context
 import com.di.berdi.annotation.Singleton
-import com.di.berdi.util.filterInjectsProperties
+import com.di.berdi.util.declaredInjectProperties
 import com.di.berdi.util.qualifiedName
 import com.di.berdi.util.setInstance
 import kotlin.reflect.KCallable
@@ -10,7 +10,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.javaField
@@ -18,11 +17,16 @@ import kotlin.reflect.jvm.jvmErasure
 
 class Injector(private val container: Container, private val module: Module) {
 
-    // 생성자를 받는다
+    // 생성자를 받아서 생성한다
     fun <T : Any> createBy(context: Context, constructor: KFunction<T>): T {
         val paramInstances = getInstancesParamsOf(context, constructor)
         return constructor.call(*paramInstances.toTypedArray())
             .apply { injectProperties(context, this) }
+    }
+
+    fun injectProperties(context: Context, target: Any) {
+        val properties = target::class.declaredInjectProperties
+        properties.forEach { property -> inject(context, property, target) }
     }
 
     // 파라미터의 인스턴스를 다 가져온다
@@ -33,7 +37,7 @@ class Injector(private val container: Container, private val module: Module) {
     }
 
     // 인스턴스를 가져온다
-    fun getInstanceOf(context: Context, type: KType, qualifiedName: String?): Any {
+    private fun getInstanceOf(context: Context, type: KType, qualifiedName: String?): Any {
         // 해당 param 타입의 인스턴스를 Container 에서 가져온다
         container.getInstance(type.jvmErasure, qualifiedName)?.let { return it }
 
@@ -88,14 +92,10 @@ class Injector(private val container: Container, private val module: Module) {
         }
     }
 
-    private fun injectProperties(context: Context, target: Any) {
-        val properties = target::class.declaredMemberProperties.filterInjectsProperties()
-        properties.forEach { property -> property.inject(context, target) }
-    }
-
-    private fun KProperty<*>.inject(context: Context, target: Any) {
-        val paramInstances = createInstance(context, returnType, qualifiedName)
-        javaField?.setInstance(target, paramInstances)
+    // 프로퍼티에 맞는 타입을 찾아 주입한다
+    private fun inject(context: Context, property: KProperty<*>, target: Any) {
+        val paramInstances = getInstanceOf(context, property.returnType, property.qualifiedName)
+        property.javaField?.setInstance(target, paramInstances)
     }
 
     companion object {

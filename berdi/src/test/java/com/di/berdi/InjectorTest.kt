@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.di.berdi.annotation.Inject
 import com.di.berdi.annotation.Qualifier
 import com.di.berdi.annotation.Singleton
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Test
@@ -11,7 +12,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.full.starProjectedType
 
 @RunWith(RobolectricTestRunner::class)
 class InjectorTest {
@@ -22,7 +22,6 @@ class InjectorTest {
     class FakeConstructorParam : FakeParam
     class FakeDefaultProperty : FakeProperty
     class FakeTestQualifierParam : FakeParam
-    class FakeSingletonProperty : FakeProperty
 
     object FakeModule : Module {
 
@@ -33,10 +32,6 @@ class InjectorTest {
         fun provideFakeTestQualifierProperty(): FakeParam = FakeTestQualifierParam()
 
         fun provideFakeDefaultProperty(): FakeProperty = FakeDefaultProperty()
-
-        @Qualifier(qualifiedName = "SingletonProperty")
-        @Singleton
-        fun provideFakeInjectSingletonProperty(): FakeProperty = FakeSingletonProperty()
     }
 
     private lateinit var injector: Injector
@@ -106,8 +101,8 @@ class InjectorTest {
         // then
         assertSoftly {
             // and
-            it.assertThat(first).isInstanceOf(FakeFirstViewModel::class.java)
-            it.assertThat(second).isInstanceOf(FakeSecondViewModel::class.java)
+            it.assertThat(first).isExactlyInstanceOf(FakeFirstViewModel::class.java)
+            it.assertThat(second).isExactlyInstanceOf(FakeSecondViewModel::class.java)
             // and
             it.assertThat(first.fakeParam).isExactlyInstanceOf(FakeConstructorParam::class.java)
             it.assertThat(second.fakeParam).isExactlyInstanceOf(FakeConstructorParam::class.java)
@@ -117,53 +112,19 @@ class InjectorTest {
     }
 
     @Test
-    fun `Singleton 어노테이션을 지정해주면 새로 생성하지 않고 저장된 인스턴스를 반환한다`() {
+    fun `이미 생성된 객체의 프로퍼티에 타입이 일치하는 인스턴스를 주입한다`() {
         // given
-        val type = FakeProperty::class.starProjectedType
+        class FakeSomething {
+            @Inject
+            lateinit var fakeProperty: FakeProperty
+        }
+
+        val fakeSomething = FakeSomething()
 
         // when
-        val first = injector.getInstanceOf(
-            context = activity,
-            type = type,
-            qualifiedName = "SingletonProperty",
-        )
-        val second = injector.getInstanceOf(
-            context = activity,
-            type = type,
-            qualifiedName = "SingletonProperty",
-        )
+        injector.injectProperties(context = activity, fakeSomething)
 
         // then
-        assertSoftly {
-            it.assertThat(first).isInstanceOf(FakeSingletonProperty::class.java)
-            // and
-            it.assertThat(first).isSameAs(second)
-        }
-    }
-
-    @Test
-    fun `Singleton 어노테이션을 지정해주지 않으면 매번 새로 생성한 객체를 반환한다`() {
-        // given
-        val type = FakeProperty::class.starProjectedType
-
-        // when
-        val first = injector.getInstanceOf(
-            context = activity,
-            type = type,
-            qualifiedName = null,
-        )
-        val second = injector.getInstanceOf(
-            context = activity,
-            type = type,
-            qualifiedName = null,
-        )
-
-        // then
-        assertSoftly {
-            it.assertThat(first).isInstanceOf(FakeDefaultProperty::class.java)
-            it.assertThat(second).isInstanceOf(FakeDefaultProperty::class.java)
-            // and
-            it.assertThat(first).isNotSameAs(second)
-        }
+        assertThat(fakeSomething.fakeProperty).isInstanceOf(FakeProperty::class.java)
     }
 }

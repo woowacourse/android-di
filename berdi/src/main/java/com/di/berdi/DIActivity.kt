@@ -4,44 +4,26 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.di.berdi.util.filterInjectsProperties
-import com.di.berdi.util.findViewModelField
-import com.di.berdi.util.qualifiedName
+import com.di.berdi.util.declaredViewModelFields
 import com.di.berdi.util.setInstance
 import java.lang.reflect.Field
-import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.javaField
 
 abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val properties = this::class.declaredMemberProperties
-
-        val propertiesToInject = properties.filterInjectsProperties()
-        setInjectFieldInstance(propertiesToInject)
-
-        val viewModelField = properties.findViewModelField()
-        viewModelField?.let { setViewModelInstance(it) }
-
+        injectProperties()
+        injectViewModel()
         super.onCreate(savedInstanceState)
     }
 
-    private fun setViewModelInstance(viewModelField: Field) {
-        viewModelField.setInstance(this, getNewViewModelByType(viewModelField))
+    private fun injectViewModel() {
+        this::class.declaredViewModelFields.forEach { field ->
+            field.setInstance(this, getNewViewModelByType(field))
+        }
     }
 
-    private fun setInjectFieldInstance(fieldsToInject: List<KProperty<*>>) {
-        val application = application as DIApplication
-        fieldsToInject.forEach { property -> injectField(application, property) }
-    }
-
-    private fun injectField(application: DIApplication, property: KProperty<*>) {
-        val instance = application.injector.getInstanceOf(
-            context = this,
-            type = property.returnType,
-            qualifiedName = property.qualifiedName,
-        )
-        property.javaField?.setInstance(target = this, instance = instance)
+    private fun injectProperties() {
+        val injector = (application as DIApplication).injector
+        injector.injectProperties(context = this, target = this::class)
     }
 
     @Suppress("UNCHECKED_CAST")
