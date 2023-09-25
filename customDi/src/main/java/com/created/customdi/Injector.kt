@@ -1,6 +1,5 @@
 package com.created.customdi
 
-import android.util.Log
 import com.created.customdi.DiContainer.modules
 import com.created.customdi.annotation.Field
 import com.created.customdi.annotation.Qualifier
@@ -44,11 +43,7 @@ object Injector {
         if (properties.isEmpty()) return
 
         properties.forEach { property ->
-            Log.d("12312311", property.toString())
-            Log.d("12312322", property.parameters.toString())
-            val instance = property.getSingletonIfInstantiated()
-                ?: property.instantiate()
-            Log.d("12312344", property.toString())
+            val instance = property.getSingletonIfInstantiated() ?: property.instantiate()
             property.isAccessible = true
             property.javaField?.set(clazz, instance)
         }
@@ -66,23 +61,21 @@ object Injector {
 
     fun KProperty1<*, *>.instantiate(): Any {
         val func = when (annotations.any { it.hasQualifier() }) {
-            true -> DiContainer.qualifiedInstance[annotations.filter { it.hasQualifier() }]
+            true -> DiContainer.qualifiedInstance[annotations.getQualifier()]
             false -> DiContainer.instance[returnType]
         } ?: throw IllegalArgumentException(INVALID_KEY)
 
         val module = modules.find { module ->
-            module::class.declaredFunctions.any {
-                if (func.annotations.any { it.hasQualifier() }) {
-                    it.annotations.filter { it.hasQualifier() } == func.annotations.filter { it.hasQualifier() }
-                } else {
-                    it.returnType.jvmErasure == func.returnType.jvmErasure
+            module::class.declaredFunctions.any { declaredFuncInModule ->
+                when (func.annotations.any { it.hasQualifier() }) {
+                    true -> declaredFuncInModule.annotations.getQualifier() == func.annotations.getQualifier()
+                    false -> declaredFuncInModule.returnType.jvmErasure == func.returnType.jvmErasure
                 }
             }
         } ?: throw IllegalArgumentException(INVALID_FUNCTION)
 
-        val arg = func.valueParameters.takeIf { it.isNotEmpty() }?.map {
-            it.instantiate()
-        }?.toTypedArray() ?: emptyArray()
+        val arg = func.valueParameters.takeIf { it.isNotEmpty() }
+            ?.map { kParameter -> kParameter.instantiate() }?.toTypedArray() ?: emptyArray()
 
         return (func.call(module, *arg) ?: throw IllegalArgumentException()).also {
             it.toSingletonIfSingleton(func)
@@ -91,23 +84,21 @@ object Injector {
 
     fun KParameter.instantiate(): Any {
         val func = when (annotations.any { it.hasQualifier() }) {
-            true -> DiContainer.qualifiedInstance[annotations.filter { it.hasQualifier() }]
+            true -> DiContainer.qualifiedInstance[annotations.getQualifier()]
             false -> DiContainer.instance[type]
         } ?: throw IllegalArgumentException(INVALID_KEY)
 
         val module = modules.find { module ->
-            module::class.declaredFunctions.any {
-                if (func.annotations.any { it.hasQualifier() }) {
-                    it.annotations.filter { it.hasQualifier() } == func.annotations.filter { it.hasQualifier() }
-                } else {
-                    it.returnType.jvmErasure == func.returnType.jvmErasure
+            module::class.declaredFunctions.any { declaredFuncInModule ->
+                when (func.annotations.any { it.hasQualifier() }) {
+                    true -> declaredFuncInModule.annotations.getQualifier() == func.annotations.getQualifier()
+                    false -> declaredFuncInModule.returnType.jvmErasure == func.returnType.jvmErasure
                 }
             }
         } ?: throw IllegalArgumentException(INVALID_FUNCTION)
 
-        val arg = func.valueParameters.takeIf { it.isNotEmpty() }?.map {
-            it.instantiate()
-        }?.toTypedArray() ?: emptyArray()
+        val arg = func.valueParameters.takeIf { it.isNotEmpty() }
+            ?.map { it.instantiate() }?.toTypedArray() ?: emptyArray()
 
         return (func.call(module, *arg) ?: throw IllegalArgumentException()).also {
             it.toSingletonIfSingleton(func)
@@ -115,6 +106,9 @@ object Injector {
     }
 
     private fun Annotation.hasQualifier() = this.annotationClass.hasAnnotation<Qualifier>()
+
+    private fun List<Annotation>.getQualifier() = filter { it.hasQualifier() }
+
 
     private fun Any.toSingletonIfSingleton(func: KFunction<*>) {
         if (func.hasAnnotation<Singleton>()) DiContainer.setSingleton(this, this::class)
