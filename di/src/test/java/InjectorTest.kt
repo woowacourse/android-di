@@ -15,7 +15,7 @@ class InjectorTest {
 
     interface MultiImplFakeRepositoryInterface
     interface SingleImplFakeRepositoryInterface
-    class FakeDiModule(override var context: Context? = null) : DiModule {
+    class FakeAppModule : DiModule {
         fun provideCartProductDao(): FakeDaoInterface = FakeDaoImpl()
 
         @Singleton
@@ -25,11 +25,14 @@ class InjectorTest {
 
         @Singleton
         @DatabaseFakeRepository
-        fun provideDataBaseCartRepository(dao: FakeDaoInterface): MultiImplFakeRepositoryInterface =
+        fun provideDataBaseCartRepository(@Inject dao: FakeDaoInterface): MultiImplFakeRepositoryInterface =
             FakeDatabaseRepository(dao)
+    }
 
+    class FakeActivityModule : DiModule {
+        fun provideCartProductDao(): FakeDaoInterface = FakeDaoImpl()
         fun provideFakeRepository() = FakeRepository()
-        fun provideSingleImplFakeRepositoryImpl(dao: FakeDaoInterface): SingleImplFakeRepositoryInterface =
+        fun provideSingleImplFakeRepositoryImpl(@Inject dao: FakeDaoInterface): SingleImplFakeRepositoryInterface =
             SingleImplFakeRepositoryImpl(dao)
     }
 
@@ -39,10 +42,10 @@ class InjectorTest {
     class FakeDatabaseRepository(dao: FakeDaoInterface) : MultiImplFakeRepositoryInterface
     class SingleImplFakeRepositoryImpl(dao: FakeDaoInterface) : SingleImplFakeRepositoryInterface
 
-
     @Before
     fun setUp() {
-        Injector.container = DiContainer(FakeDiModule())
+        DiContainer.appModule = FakeAppModule()
+        DiContainer.dependencyModule = FakeActivityModule()
     }
 
     @Test
@@ -57,15 +60,15 @@ class InjectorTest {
     @Test
     fun `인터페이스를 생성자로 주입받는 경우, 구현체가 2개 이상인 경우, 생성자에 @Inject 어노테이션을 붙이고, 파라미터 앞에 원하는 어노테이션을 붙이면 된다`() {
         // given
-        class FakeViewModel @Inject constructor(@InMemoryFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
+        class FakeViewModel @Inject constructor(@Singleton @InMemoryFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
 
         // when
         Injector.inject<FakeViewModel>()
     }
 
     @Test
-    fun `인터페이스를 생성자로 주입받는 경우, 구현체가 하나인 경우,  @Inject 어노테이션만 붙이면 된다`() {
-        //given
+    fun `인터페이스를 생성자로 주입받는 경우, 구현체가 하나인 경우, @Inject 어노테이션만 붙이면 된다`() {
+        // given
         class FakeFieldInjectViewModel {
             @Inject
             lateinit var fakeRepository: SingleImplFakeRepositoryInterface
@@ -78,7 +81,7 @@ class InjectorTest {
     @Test
     fun `인터페이스를 생성자로 주입받는 경우, 원하는 구현체가 또 다른 생성자를 주입받을 수 있다`() {
         // given
-        class FakeViewModel @Inject constructor(@DatabaseFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
+        class FakeViewModel @Inject constructor(@Singleton @DatabaseFakeRepository val fakeRepository: MultiImplFakeRepositoryInterface)
 
         // when
         Injector.inject<FakeViewModel>()
@@ -86,11 +89,10 @@ class InjectorTest {
 
     @Test
     fun `인터페이스가 아닌 클래스를 필드로 주입받는 경우 필드에 @Inject 키워드만 붙이면 된다`() {
-        //given
+        // given
         class FakeFieldInjectViewModel {
             @Inject
             lateinit var fakeRepository: FakeRepository
-
         }
 
         // when
@@ -99,10 +101,11 @@ class InjectorTest {
 
     @Test
     fun `인터페이스를 필드로 주입받는 경우, 필드에 @Inject 어노테이션을 붙이고, 필드 앞에 원하는 어노테이션을 붙이면 된다`() {
-        //given
+        // given
         class FakeFieldInjectViewModel {
             @Inject
             @InMemoryFakeRepository
+            @Singleton
             lateinit var fakeRepository: MultiImplFakeRepositoryInterface
         }
 
@@ -116,6 +119,7 @@ class InjectorTest {
         class FakeFieldInjectViewModel {
             @Inject
             @DatabaseFakeRepository
+            @Singleton
             lateinit var fakeRepository: MultiImplFakeRepositoryInterface
         }
 
@@ -129,12 +133,14 @@ class InjectorTest {
         class FakeFieldInjectViewModel {
             @Inject
             @DatabaseFakeRepository
+            @Singleton
             lateinit var fakeRepository: MultiImplFakeRepositoryInterface
         }
 
         class FakeFieldInjectViewModel2 {
             @Inject
             @DatabaseFakeRepository
+            @Singleton
             lateinit var fakeRepository: MultiImplFakeRepositoryInterface
         }
 
