@@ -16,7 +16,8 @@ class DefaultViewModelFactoryDelegate : ViewModelFactoryDelegate {
     private val injector = Injector.getSingletonInstance()
 
     fun <T : ViewModel> injectViewModel(target: KClass<T>): T {
-        val constructor = requireNotNull(target.primaryConstructor) { "[ERROR] 주 생성자가 없습니다" }
+        val constructor =
+            requireNotNull(target.primaryConstructor) { "[ERROR] ${target.simpleName}의 주 생성자가 없습니다" }
         val params = constructor.parameters.map {
             Injector.getSingletonInstance().inject(it.type.jvmErasure)
         }
