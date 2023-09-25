@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.cart
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -25,7 +24,6 @@ class CartActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerActivity(this)
-        addProvider(Provider())
         setupBinding()
         setupToolbar()
         setupView()
@@ -73,12 +71,6 @@ class CartActivity : BaseActivity() {
             if (!it) return@observe
             viewModel.getAllCartProducts()
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    class Provider() {
-        fun provideDateFormatter(context: Context): DateFormatter {
-            return DateFormatter(context)
         }
     }
 }
