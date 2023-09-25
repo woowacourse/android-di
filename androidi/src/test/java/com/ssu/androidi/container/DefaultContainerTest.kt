@@ -42,15 +42,14 @@ class DefaultContainerTest {
 }
 
 
-class FakeApplication : DiApplication() {
+class FakeApplication : DiApplication(FakeApplicationModule::class) {
     override fun onCreate() {
         super.onCreate()
         setTheme(androidx.appcompat.R.style.Theme_AppCompat)
-        injector.addModuleInstances(FakeApplicationModule())
     }
 }
 
-class FakeApplicationModule : Module {
+class FakeApplicationModule(context: Context) : Module {
     @Qualifier("APPLE")
     fun provideAppleRepository() = FakeAppleRepository()
 }
@@ -69,10 +68,6 @@ class FakeActivity : DiActivity(FakeActivityModule::class) {
     @Injected
     @Qualifier("PEACH")
     lateinit var peachRepository: FakeRepository
-
-    override fun injectFields() {
-        injector.injectOnFields(FakeActivity::class, this)
-    }
 }
 
 interface FakeRepository
