@@ -7,7 +7,6 @@ import com.ki960213.sheath.extention.hasAnnotationOrHasAttachedAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -56,7 +55,7 @@ internal class ClassSheathComponent(
     override fun getNewInstance(): Any {
         val constructor = clazz.getInjectConstructor()
 
-        val arguments = constructor.valueParameters.map { it.getOrCreateInstance() }
+        val arguments = constructor.valueParameters.map { getOrCreateInstanceOf(it.type) }
 
         val newInstance = constructor.call(*arguments.toTypedArray())!!
 
@@ -126,35 +125,22 @@ internal class ClassSheathComponent(
             }
             .toMap()
 
-    private fun KParameter.getOrCreateInstance(): Any {
-        val dependentCondition = dependentConditions[type]
-            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. 의존 조건 초기화 로직을 다시 살펴보세요.")
-        val component = cache[type]
-            ?: throw IllegalArgumentException("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
-
-        return if (dependentCondition.isNewInstance || !component.isSingleton) {
-            component.getNewInstance()
-        } else {
-            component.instance
-        }
-    }
-
     private fun Any.injectNewInstanceAtProperties() {
         val properties = findAnnotatedProperties<Inject>()
         properties.forEach { property ->
             if (property !is KMutableProperty1) return@forEach
 
-            val instance = property.getOrCreateInstance()
+            val instance = getOrCreateInstanceOf(property.returnType)
             property.setter.isAccessible = true
             property.setter.call(this, instance)
         }
     }
 
-    private fun KProperty1<*, *>.getOrCreateInstance(): Any {
-        val dependentCondition = dependentConditions[returnType]
-            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. SheathComponentValidator 로직을 다시 살펴보세요.")
-        val component = cache[returnType]
-            ?: throw IllegalArgumentException("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
+    private fun getOrCreateInstanceOf(type: KType): Any {
+        val dependentCondition = dependentConditions[type]
+            ?: throw AssertionError("$type 타입의 의존 조건이 없을 수 없습니다. 의존 조건 초기화 로직을 다시 살펴보세요.")
+        val component = cache[type]
+            ?: throw AssertionError("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
 
         return if (dependentCondition.isNewInstance || !component.isSingleton) {
             component.getNewInstance()
@@ -166,7 +152,7 @@ internal class ClassSheathComponent(
     private fun Any.injectNewInstanceAtFunctions() {
         val functions = findAnnotatedFunctions<Inject>()
         functions.forEach { function ->
-            val arguments = function.valueParameters.map { it.getOrCreateInstance() }
+            val arguments = function.valueParameters.map { getOrCreateInstanceOf(it.type) }
             function.isAccessible = true
             function.call(this, *arguments.toTypedArray())
         }
@@ -175,7 +161,7 @@ internal class ClassSheathComponent(
     private fun KClass<*>.getInjectConstructor(): KFunction<*> =
         constructors.find { it.hasAnnotation<Inject>() }
             ?: primaryConstructor
-            ?: throw IllegalStateException("생성자에 @Inject이 붙지 않고 주 생성자가 없는 클래스는 인스턴스화 할 수 없습니다.")
+            ?: throw IllegalArgumentException("생성자에 @Inject이 붙지 않고 주 생성자가 없는 클래스는 인스턴스화 할 수 없습니다.")
 
     private fun KFunction<*>.getArgumentsAndSaveInCache(components: List<SheathComponent>): List<Any> {
         return valueParameters.map { param ->
@@ -198,7 +184,7 @@ internal class ClassSheathComponent(
         components: List<SheathComponent>,
     ) {
         val component = components.find { property.returnType.isSupertypeOf(it.type) }
-            ?: throw java.lang.IllegalArgumentException("$clazz 클래스의 ${property.name}에 할당할 수 있는 종속 항목이 존재하지 않습니다.")
+            ?: throw IllegalArgumentException("$clazz 클래스의 ${property.name}에 할당할 수 있는 종속 항목이 존재하지 않습니다.")
         if (property is KMutableProperty1) {
             property.setter.isAccessible = true
             property.setter.call(this, component.instance)

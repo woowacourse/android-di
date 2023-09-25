@@ -39,19 +39,21 @@ internal class FunctionSheathComponent(
     override fun instantiate(components: List<SheathComponent>) {
         val dependingComponents = components.filter { this.isDependingOn(it) }
 
-        val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
         val arguments = function.getArgumentsAndSaveInCache(dependingComponents)
-        instance = function.call(obj, *arguments.toTypedArray())
-            ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
+        instance = createInstance(arguments)
     }
 
     override fun getNewInstance(): Any {
-        val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
-
         val arguments = function.valueParameters.map { it.getOrCreateInstance() }
 
+        return createInstance(arguments)
+    }
+
+    private fun createInstance(arguments: List<Any>): Any {
+        val obj = function.javaMethod?.declaringClass?.kotlin?.objectInstance
+
         return function.call(obj, *arguments.toTypedArray())
-            ?: throw IllegalArgumentException("null을 생성하는 함수는 SheathComponent가 될 수 없습니다.")
+            ?: throw AssertionError("nullable 타입을 반환하는 함수로 FunctionSheathComponent 객체를 생성할 수 없게 했습니다.")
     }
 
     private fun KFunction<*>.validateComponentAnnotation() {
@@ -88,9 +90,9 @@ internal class FunctionSheathComponent(
 
     private fun KParameter.getOrCreateInstance(): Any {
         val dependentCondition = dependentConditions[type]
-            ?: throw IllegalArgumentException("$type 타입의 의존 조건이 없을 수 없습니다. 의존 조건 초기화 로직을 다시 살펴보세요.")
+            ?: throw AssertionError("$type 타입의 의존 조건이 없을 수 없습니다. 의존 조건 초기화 로직을 다시 살펴보세요.")
         val component = cache[type]
-            ?: throw IllegalArgumentException("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
+            ?: throw AssertionError("$type 타입의 컴포넌트가 없을 수 없습니다. 컴포넌트 정렬 및 인스턴스화 로직을 다시 살펴보세요.")
 
         return if (dependentCondition.isNewInstance || !component.isSingleton) {
             component.getNewInstance()

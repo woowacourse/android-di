@@ -13,7 +13,7 @@ internal fun List<SheathComponent>.sorted(): List<SheathComponent> {
     queue.addAll(nodes.filter { it.inDegreeCount == 0 })
 
     repeat(nodes.size) {
-        val node = queue.poll() ?: throw IllegalStateException("SheathComponent 간 의존 사이클이 존재합니다.")
+        val node = checkNotNull(queue.poll()) { "SheathComponent 간 의존 사이클이 존재합니다." }
         result.add(node)
         val dependNodes = graph.getNodesThatDependOn(node)
         queue.minusInDegreeAndAddNotDependentNodes(dependNodes)
