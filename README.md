@@ -11,8 +11,8 @@
   - [x] Application과 Activity context를 구분하여 주입받을 수 있다.
 
 ### Android DI
-- [ ] DIApplication
-  - [ ] 사용자가 정의한 DIModule 클래스를 관리한다.
+- [x] DIApplication
+  - [x] 사용자가 정의한 DIModule 클래스를 관리한다.
     - ApplicationModule, ActivityRetainedModule, ActivityModule, ViewModelModule
 - [ ] DIActivity
   - [ ] ActivityRetainedModule, ActivityModule 객체를 관리한다.
