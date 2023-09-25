@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-val KClass<*>.declaredViewModelFields
+internal val KClass<*>.declaredViewModelFields
     get() = this.declaredMemberProperties
         .asSequence()
         .filter {
