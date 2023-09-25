@@ -20,7 +20,7 @@ class Person(var firstName: String, val lastName: String, private var age: Int) 
     fun greeting() {}
     private fun fullName() {}
     private fun Int.isAdult() {}
-    fun aa(){}
+    fun aa() {}
 
     companion object {
         fun noname(age: Int): Person = Person("", "", age)
@@ -121,9 +121,9 @@ class ReflectionTest {
     }
 
     @Test
-    fun `함수의 매개변수 타입 가져오기`(){
+    fun `함수의 매개변수 타입 가져오기`() {
         val declaredFunctions = Person::class.declaredFunctions
-        val function:KFunction<*> = declaredFunctions.first{it.name == "aa"}
+        val function: KFunction<*> = declaredFunctions.first { it.name == "aa" }
         println(function.parameters)
         function.call(Person::class)
     }

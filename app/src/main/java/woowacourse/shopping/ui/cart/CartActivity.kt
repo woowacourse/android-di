@@ -3,14 +3,16 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.hyegyeong.di.DIActivity
+import com.hyegyeong.di.DiActivity
+import com.hyegyeong.di.DiModule
 import com.hyegyeong.di.annotations.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.data.ViewModelFactory
 import woowacourse.shopping.data.di.CartActivityDiModule
 import woowacourse.shopping.databinding.ActivityCartBinding
 
-class CartActivity : DIActivity(CartActivityDiModule()) {
+class CartActivity : DiActivity() {
+    override val module: DiModule = CartActivityDiModule(this)
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 

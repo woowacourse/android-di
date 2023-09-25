@@ -2,6 +2,7 @@ package woowacourse.shopping.data.di
 
 import android.content.Context
 import com.hyegyeong.di.DiModule
+import com.hyegyeong.di.annotations.Inject
 import com.hyegyeong.di.annotations.Singleton
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.RoomDBCartRepository
@@ -9,10 +10,13 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
-class AppDiModule(override var context: Context?) : DiModule {
+class AppModule(private val context: Context) : DiModule {
+    fun provideInMemoryProductRepository(): ProductRepository =
+        woowacourse.shopping.data.InMemoryProductRepository()
+    fun provideContext(): Context = context
 
-    fun provideCartProductDao(): CartProductDao =
-        ShoppingDatabase.getDatabase(context!!).cartProductDao()
+    fun provideCartProductDao(@Inject context: Context): CartProductDao =
+        ShoppingDatabase.getDatabase(context).cartProductDao()
 
     @Singleton
     @InMemoryCartRepository
@@ -21,9 +25,6 @@ class AppDiModule(override var context: Context?) : DiModule {
 
     @Singleton
     @DatabaseCartRepository
-    fun provideDataBaseCartRepository(dao: CartProductDao): CartRepository =
+    fun provideDataBaseCartRepository(@Inject dao: CartProductDao): CartRepository =
         RoomDBCartRepository(dao)
-
-    fun provideInMemoryProductRepository(): ProductRepository =
-        woowacourse.shopping.data.InMemoryProductRepository()
 }

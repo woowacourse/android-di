@@ -7,8 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.hyegyeong.di.Injector
 
 object ViewModelFactory {
-    inline fun <reified T : ViewModel> provide(
-    ): ViewModelProvider.Factory {
+    inline fun <reified T : ViewModel> provide(): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
                 Injector.inject<T>()
