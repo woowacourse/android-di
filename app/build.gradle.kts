@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -42,11 +43,18 @@ android {
     }
 }
 
+// Hilt Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":OtterDi"))
-    implementation(project(":OtterDiAndroid"))
+//    implementation(project(":OtterDi"))
+//    implementation(project(":OtterDiAndroid"))
 
+    implementation("androidx.activity:activity-ktx:1.1.0")
+    implementation("androidx.fragment:fragment-ktx:1.2.5")
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
@@ -72,4 +80,7 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.10.3")
     // reflection
     implementation(kotlin("reflect"))
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
 }
