@@ -25,6 +25,11 @@ class DefaultActivityInjectManager : ActivityInjectManager, DefaultLifecycleObse
     }
     private val injectorInActivity get() = requireNotNull(_injectorInActivity)
 
+    override fun addProvider(vararg provider: Any) {
+        provider.forEach { injectorInActivity.providerContainer.addProvider(it) }
+        injectProperties()
+    }
+
     override fun registerActivity(activity: AppCompatActivity) {
         this._activity = activity
         this.activity.lifecycle.addObserver(this)
