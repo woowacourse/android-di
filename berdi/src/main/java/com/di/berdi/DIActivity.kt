@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.di.berdi.annotation.Inject
+import com.di.berdi.util.filterInjectsProperties
+import com.di.berdi.util.findViewModelField
 import com.di.berdi.util.qualifiedName
 import java.lang.reflect.Field
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.javaField
 
 abstract class DIActivity : AppCompatActivity() {
@@ -23,17 +23,6 @@ abstract class DIActivity : AppCompatActivity() {
         viewModelField?.let { setViewModelInstance(it) }
 
         super.onCreate(savedInstanceState)
-    }
-
-    private fun Collection<KProperty<*>>.findViewModelField(): Field? {
-        return firstOrNull {
-            val fieldType = requireNotNull(it.javaField?.type)
-            ViewModel::class.java.isAssignableFrom(fieldType)
-        }?.javaField
-    }
-
-    private fun Collection<KProperty<*>>.filterInjectsProperties(): List<KProperty<*>> {
-        return filter { it.hasAnnotation<Inject>() }
     }
 
     private fun setViewModelInstance(viewModelField: Field) {
