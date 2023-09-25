@@ -3,7 +3,7 @@ package com.example.bbottodi.di
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.bbottodi.di.inject.AutoDependencyInjector
+import com.example.bbottodi.di.inject.AutoDependencyInjector.injectField
 
 open class DiActivity : AppCompatActivity() {
     lateinit var container: Container
@@ -16,6 +16,6 @@ open class DiActivity : AppCompatActivity() {
             module(this),
             this,
         )
-        AutoDependencyInjector.injectField(container, this)
+        injectField(container, this)
     }
 }
