@@ -15,7 +15,9 @@ abstract class ShoppingDatabase : RoomDatabase() {
         fun getDatabase(context: Context): ShoppingDatabase {
             return instance ?: synchronized(this) {
                 Room.databaseBuilder(
-                    context, ShoppingDatabase::class.java, databaseName
+                    context.applicationContext,
+                    ShoppingDatabase::class.java,
+                    databaseName
                 ).build().let {
                     instance = it
                     it

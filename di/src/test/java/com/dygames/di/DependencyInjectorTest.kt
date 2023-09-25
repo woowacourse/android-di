@@ -1,22 +1,8 @@
 package com.dygames.di
 
-import com.dygames.DefaultTestCartRepository
-import com.dygames.DefaultTestProductRepository
-import com.dygames.LocalTestProductDao
-import com.dygames.RemoteTestProductDao
-import com.dygames.TestCartRepository
-import com.dygames.TestID
-import com.dygames.TestLocal
-import com.dygames.TestName
-import com.dygames.TestPerson
-import com.dygames.TestProduct
-import com.dygames.TestProductDao
-import com.dygames.TestProductRepository
-import com.dygames.TestQualifierViewModel
-import com.dygames.TestQualifierWithFieldViewModel
-import com.dygames.TestRemote
-import com.dygames.TestViewModel
 import com.dygames.di.DependencyInjector.inject
+import com.dygames.di.annotation.Injectable
+import com.dygames.di.annotation.Qualifier
 import com.dygames.di.error.InjectError
 import junit.framework.Assert.assertNull
 import org.junit.Assert.assertEquals
@@ -24,7 +10,61 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import kotlin.reflect.typeOf
 
-class DependenciesInjectorTest {
+class DependencyInjectorTest {
+    interface TestCartRepository
+    interface TestProductRepository
+
+    class TestName
+    class TestID
+    class TestProduct(
+        private val testName: TestName,
+        private val testID: TestID
+    )
+
+    class TestPerson(
+        private val testName: TestName,
+    )
+
+    class DefaultTestCartRepository : TestCartRepository
+    class DefaultTestProductRepository : TestProductRepository
+
+    interface TestProductDao
+    class RemoteTestProductDao : TestProductDao
+    class LocalTestProductDao : TestProductDao
+
+    class TestViewModel(
+        private val testCartRepository: TestCartRepository,
+        private val testProductRepository: TestProductRepository,
+        private val testProduct: TestProduct
+    ) {
+        @Injectable
+        var testFieldPerson: TestPerson? = null
+        var testFieldProduct: TestProduct? = null
+    }
+
+    @Qualifier
+    annotation class TestLocal
+
+    @Qualifier
+    annotation class TestRemote
+
+    class TestQualifierViewModel(
+        @TestRemote val remoteTestProductDao: TestProductDao,
+        @TestLocal val localTestProductDao: TestProductDao,
+    )
+
+    class TestQualifierWithFieldViewModel(
+        @TestRemote val remoteTestProductDao: TestProductDao,
+        @TestLocal val localTestProductDao: TestProductDao,
+    ) {
+        @Injectable
+        var testFieldPerson: TestPerson? = null
+
+        @TestLocal
+        @Injectable
+        lateinit var testFieldLocalProductDao: TestProductDao
+    }
+
     @Test(expected = InjectError.ConstructorNoneAvailable::class)
     fun `설정한 의존에 의존이 모두 존재하지 않으면 객체 생성에 실패한다`() {
         // given

@@ -2,19 +2,18 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dygames.android_di.lifecycle.LifecycleWatcherViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Room
 import woowacourse.shopping.model.Product
-import kotlin.reflect.typeOf
 
 class MainViewModel(
     private val productRepository: ProductRepository,
     @Room private val cartRepository: CartRepository,
-) : LifecycleWatcherViewModel(typeOf<MainViewModel>()) {
+) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
