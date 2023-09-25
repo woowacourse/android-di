@@ -15,6 +15,8 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = DiTest.TestApplication::class)
@@ -159,6 +161,23 @@ class DiTest {
     }
 
     @Test
+    fun `Activity에서 @Inject 가 붙은 객체는 onDestroy 일 때 해제한다`() {
+        // when
+        activity = activityController
+            .create()
+            .destroy()
+            .get()
+        val destroyed = activity::class
+            .memberProperties
+            .first { it.name == "activityScopeDateTimeFormatter" }
+            .javaField
+            ?.get(activity)
+        // then
+        assertThat(destroyed).isNull()
+    }
+
+
+    @Test
     fun `@ActivityScope가 붙은 의존성 객체는 Acitivity가 회전하면 다른 객체를 주입한다`() {
         // when
         val notRotatedActivity = activityController
@@ -170,6 +189,10 @@ class DiTest {
         // then
         assertNotEquals(notRotationObject, rotatedObject)
     }
+
+    /**
+     * ================================ViewModel 테스트 구간입니다=====================================
+     * */
 
     @Test
     fun `ViewModel을 생성할 때, Singleton으로 정의된 의존성 객체 주입이 가능하다`() {

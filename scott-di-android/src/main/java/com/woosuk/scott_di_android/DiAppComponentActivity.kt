@@ -1,7 +1,6 @@
 package com.woosuk.scott_di_android
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
@@ -42,13 +41,13 @@ open class DiAppComponentActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        destroyFields()
         dependencies.forEach { DiContainer.destroyDependency(it) }
     }
 
     private fun injectFields() {
         val properties = this::class
             .declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
-        Log.d("wooseok", properties.toString())
         properties.forEach { property ->
             property.isAccessible = true
             property.javaField?.set(
@@ -58,6 +57,15 @@ open class DiAppComponentActivity : AppCompatActivity() {
                     property.getQualifierAnnotation(),
                 )
             )
+        }
+    }
+
+    private fun destroyFields() {
+        val properties = this::class
+            .declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
+        properties.forEach { property ->
+            property.isAccessible = true
+            property.javaField?.set(this, null)
         }
     }
 
