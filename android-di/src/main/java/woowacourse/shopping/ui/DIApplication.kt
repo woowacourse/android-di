@@ -20,7 +20,7 @@ open class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         applicationModule = applicationModuleClazz?.let {
-            it.primaryConstructor?.call(null)
+            it.primaryConstructor?.call()
         } ?: DIApplicationModule()
 
         val key = (Context::class to ApplicationContext())
