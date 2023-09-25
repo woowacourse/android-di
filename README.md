@@ -16,7 +16,7 @@
     - ApplicationModule, ActivityRetainedModule, ActivityModule, ViewModelModule
 - [ ] DIActivity
   - [x] ActivityRetainedModule, ActivityModule 객체를 관리한다.
-  - [ ] ActivityContext를 ActivityModule에 저장한다.
+  - [x] ActivityContext를 ActivityModule에 저장한다.
   - [ ] ActivityModule을 이용하여 Activity 필드 주입을 진행한다.
   - [ ] Activity가 isFinishing이 아니라면 ActivityRetainedModule을 savedInstanceState에 저장한다.
 - [ ] DIViewModelLazy
