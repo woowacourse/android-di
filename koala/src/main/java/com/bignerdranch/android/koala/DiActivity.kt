@@ -11,7 +11,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
-open class DiActivity(
+abstract class DiActivity(
     private val activityModule: DiModule,
     val viewModelModule: DiModule,
 ) : AppCompatActivity() {

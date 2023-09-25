@@ -1,6 +1,5 @@
 package com.bignerdranch.android.koala
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -12,6 +11,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
     private val module: DiModule,
@@ -86,8 +86,7 @@ class Injector(
     }
 
     fun callFunction(function: KFunction<*>): Any {
-        var instance = Container.instances[function.returnType::class]
-        Log.d("sunny", Container.instances.toString())
+        var instance = Container.instances[function.returnType.jvmErasure]
         if (instance != null) {
             return instance
         }

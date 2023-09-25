@@ -4,7 +4,7 @@ import android.app.Application
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
-open class DiApplication(
+abstract class DiApplication(
     private val module: DiModule,
 ) : Application() {
 

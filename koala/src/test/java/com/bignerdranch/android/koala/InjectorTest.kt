@@ -108,7 +108,7 @@ class InjectorTest {
     }
 
     @Test
-    fun `필드 주입 시 어노테이션을 붙이지 않으면 실패한다`() {
+    fun `필드 주입 시 어노테이션을 붙이지 않으면 필드 주입에실패한다`() {
         // given
         class FakeViewModel {
             lateinit var fakeProductRepository: FakeProductRepository
@@ -124,7 +124,7 @@ class InjectorTest {
     }
 
     @Test
-    fun `singleton 어노테이션이 붙은 경우 인스턴스를 생성하지 않는다`() {
+    fun `singleton 어노테이션이 붙은 경우 해당 클래스의 인스턴스를 매번 새로 생성하지 않는다`() {
         // given
         class FakeViewModel(
             val repository: FakeSingletonRepository,
@@ -139,10 +139,10 @@ class InjectorTest {
     }
 
     @Test
-    fun `singleton 어노테이션이 붙지 않은 경우 인스턴스를 매번 새로 생성한다`() {
+    fun `singleton 어노테이션이 붙지 않은 경우 해당 클래스의 인스턴스를 매번 새로 생성한다`() {
         // given
         class FakeViewModel(
-            val repository: FakeProductRepository,
+            val repository: FakeNonSingletonRepository,
         )
 
         // when
