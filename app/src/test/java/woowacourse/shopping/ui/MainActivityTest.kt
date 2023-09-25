@@ -147,7 +147,7 @@ class MainActivityTest {
 
         val container = activity.injector.getCurrentContainer()
         val dependencyType = DependencyType(FakeRepository::class, null)
-        val fakeRepository = container.getInstance(dependencyType)
+        val fakeRepository = container.getInstanceRecursive(dependencyType)
 
         assertNotNull(viewModel)
         assertEquals(viewModel.fakeRepository, fakeRepository)
