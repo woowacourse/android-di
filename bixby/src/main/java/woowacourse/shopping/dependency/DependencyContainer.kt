@@ -15,13 +15,13 @@ class DependencyContainer {
     }
 
     fun getInstance(clazz: KClass<*>, qualifierTag: String? = null): Any? {
-        if (qualifierTag != null) {
-            return container[clazz]?.find {
-                val qualifier = it.annotations.filterIsInstance<Qualifier>().firstOrNull()
-                qualifier?.className == qualifierTag
-            }?.instance
+        if (qualifierTag == null) {
+            return container[clazz]?.first()?.instance
         }
-        return container[clazz]?.first()?.instance
+        return container[clazz]?.find {
+            val qualifier = it.annotations.filterIsInstance<Qualifier>().firstOrNull()
+            qualifier?.className == qualifierTag
+        }?.instance
     }
 
     fun clear() {
