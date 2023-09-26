@@ -1,7 +1,5 @@
 package com.bandal.fullmoon
 
-import com.bandal.fullmoon.DIError.NotFoundCreateFunction
-import com.bandal.fullmoon.DIError.NotFoundPrimaryConstructor
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -14,10 +12,10 @@ class FullMoonInjector(private val appContainer: AppContainer) {
     private val containers: HashMap<String, AppContainer?> = HashMap()
 
     fun <T : Any> inject(kClass: KClass<T>): T {
-        val constructor = kClass.primaryConstructor ?: throw NotFoundPrimaryConstructor()
+        val constructor = kClass.primaryConstructor ?: throw DIError.NotFoundPrimaryConstructor()
         val parameters: List<Any> = constructor.parameters.map { kParameter ->
             appContainer.getSavedInstance(kParameter.getKey())
-                ?: throw NotFoundCreateFunction(kParameter.getKey())
+                ?: throw DIError.NotFoundCreateFunction(kParameter.getKey())
         }
         val instance = constructor.call(*parameters.toTypedArray())
         return instance.apply { injectFields(kClass, this) }
