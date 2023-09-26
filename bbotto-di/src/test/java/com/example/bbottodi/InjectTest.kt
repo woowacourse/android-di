@@ -1,26 +1,28 @@
 package com.example.bbottodi
 
 import com.example.bbottodi.di.Container
-import com.example.bbottodi.di.inject.AutoDependencyInjector.inject
+import com.example.bbottodi.di.inject.AutoDependencyInjector
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class InjectTest {
+    private lateinit var applicationContainer: Container
+    private lateinit var activityContainer: Container
 
     @Before
     fun setUp() {
-        Container.addInstance(FakeCartDao::class, FakeCartDao())
-        Container.addInstance(FakeProductRepository::class, inject(FakeProductRepository::class))
-        Container.addInstance(FakeCartRepository::class, inject(FakeDefaultCartRepository::class))
-        Container.addInstance(FakeCartRepository::class, inject(FakeInMemoryCartRepository::class))
-        Container.addInstance(FakeCartRepository::class, inject(FakeInDiskCartRepository::class))
+        applicationContainer = Container(null, FakeApplicationModule())
+        activityContainer = Container(applicationContainer, FakeActivityModule())
     }
 
     @Test
     fun `inject 어노테이션 있을 때 의존성 주입 후 인스턴스 생성 성공`() {
         // when
-        val viewModel = inject<FakeViewModelWithInjectOnSuccess>(FakeViewModelWithInjectOnSuccess::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithInjectOnSuccess>(
+            activityContainer,
+            FakeViewModelWithInjectOnSuccess::class,
+        )
 
         // then
         val expect = FakeViewModelWithInjectOnSuccess::class
@@ -31,7 +33,10 @@ class InjectTest {
     @Test(expected = IllegalArgumentException::class)
     fun `inject 어노테이션 없을 때 의존성 주입 후 인스턴스 생성 실패`() {
         // when
-        val viewModel = inject<FakeViewModelWithInjectOnFailure>(FakeViewModelWithInjectOnFailure::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithInjectOnFailure>(
+            activityContainer,
+            FakeViewModelWithInjectOnFailure::class,
+        )
 
         // then
         val expect = FakeViewModelWithInjectOnFailure::class
@@ -42,7 +47,10 @@ class InjectTest {
     @Test
     fun `@inject 가 붙은 필드의 의존성 주입 성공`() {
         // when
-        val viewModel = inject<FakeViewModelWithFieldInjectOnSuccess>(FakeViewModelWithFieldInjectOnSuccess::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithFieldInjectOnSuccess>(
+            activityContainer,
+            FakeViewModelWithFieldInjectOnSuccess::class,
+        )
 
         // then
         val expect = FakeViewModelWithFieldInjectOnSuccess::class
@@ -53,7 +61,10 @@ class InjectTest {
     @Test
     fun `재귀 의존성 주입 성공`() {
         // when
-        val viewModel = inject<FakeViewModelWithRecursiveInject>(FakeViewModelWithRecursiveInject::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithRecursiveInject>(
+            activityContainer,
+            FakeViewModelWithRecursiveInject::class,
+        )
 
         // then
         val expect = FakeViewModelWithRecursiveInject::class
@@ -64,7 +75,10 @@ class InjectTest {
     @Test
     fun `Qualifier로 @InDisk 구분하여 의존성 주입 성공`() {
         // when
-        val viewModel = inject<FakeViewModelWithQualifier>(FakeViewModelWithQualifier::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithQualifier>(
+            activityContainer,
+            FakeViewModelWithQualifier::class,
+        )
 
         // then
         val expect = FakeViewModelWithQualifier::class
@@ -75,8 +89,10 @@ class InjectTest {
     @Test
     fun `Qualifier로 @InDisk 구분하여 필드에 의존성 주입 성공`() {
         // when
-        val viewModel =
-            inject<FakeViewModelWithQualifierFieldInject>(FakeViewModelWithQualifierFieldInject::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithQualifierFieldInject>(
+            activityContainer,
+            FakeViewModelWithQualifierFieldInject::class,
+        )
 
         // then
         val expect = FakeViewModelWithQualifierFieldInject::class
@@ -87,8 +103,10 @@ class InjectTest {
     @Test
     fun `Qualifier로 @InDisk @InMemory 구분해 주입해주기`() {
         // when
-        val viewModel =
-            inject<FakeViewModelWithInDiskAndInMemory>(FakeViewModelWithInDiskAndInMemory::class)
+        val viewModel = AutoDependencyInjector.inject<FakeViewModelWithInDiskAndInMemory>(
+            activityContainer,
+            FakeViewModelWithInDiskAndInMemory::class,
+        )
 
         // then
         val expect = FakeViewModelWithInDiskAndInMemory::class
