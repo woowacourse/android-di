@@ -1,14 +1,14 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.annotation.SingleInstance
+import woowacourse.shopping.annotation.ApplicationLifecycle
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@SingleInstance
 class DatabaseCartRepository(
+    @ApplicationLifecycle
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

@@ -4,19 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DiAppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-    }
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +29,10 @@ class MainActivity : AppCompatActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
+    }
+
+    private fun navigateToCart() {
+        startActivity(Intent(this, CartActivity::class.java))
     }
 
     private fun setupBinding() {
@@ -65,9 +65,5 @@ class MainActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun navigateToCart() {
-        startActivity(Intent(this, CartActivity::class.java))
     }
 }

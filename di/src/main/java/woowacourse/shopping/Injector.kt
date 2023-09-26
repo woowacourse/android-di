@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.container.DiContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -14,15 +15,15 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(private val container: AppContainer) {
+class Injector(private val container: DiContainer) {
 
-    fun <T : Any> inject(clazz: KClass<T>): T {
-        container.getSavedInstanceOf(clazz)?.let { return it }
+    fun <T : Any> inject(clazz: KClass<T>, annotations: List<Annotation> = emptyList()): T {
+        container.getSavedInstanceOf(annotations, clazz)?.let { return it }
 
         val instance = getInstanceOf(clazz) ?: createInstanceOf(clazz)
         injectFields(clazz, instance)
 
-        container.saveInstance(clazz, instance)
+        container.saveInstance(annotations, clazz, instance)
         return instance
     }
 
@@ -36,7 +37,7 @@ class Injector(private val container: AppContainer) {
 
     private fun getArguments(func: KFunction<*>): Array<Any> {
         val args = func.parameters.map {
-            inject(it.getImplementationClass())
+            inject(it.getImplementationClass(), it.annotations)
         }.toTypedArray()
         return args
     }
@@ -65,11 +66,11 @@ class Injector(private val container: AppContainer) {
         return constructor.call(*args)
     }
 
-    private fun <T : Any> injectFields(clazz: KClass<out T>, instance: T) {
+    fun <T : Any> injectFields(clazz: KClass<out T>, instance: T) {
         clazz.declaredMemberProperties.forEach {
             if (it.hasAnnotation<Inject>() && it is KMutableProperty<*>) {
                 it.isAccessible = true
-                it.setter.call(instance, inject(it.getImplementationClass()))
+                it.setter.call(instance, inject(it.getImplementationClass(), it.annotations))
             }
         }
     }
@@ -77,5 +78,13 @@ class Injector(private val container: AppContainer) {
     private fun <T : Any> KProperty1<T, *>.getImplementationClass(): KClass<*> {
         val implementationClass = getImplementationClassFromAnnotations(annotations)
         return implementationClass ?: returnType.jvmErasure
+    }
+
+    fun <T : Any> addDependency(dependency: String, clazz: KClass<out T>, instance: T) {
+        container.addDependency(dependency, clazz, instance)
+    }
+
+    fun releaseDependency(dependency: String) {
+        container.releaseDependency(dependency)
     }
 }

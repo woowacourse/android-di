@@ -3,8 +3,10 @@ package woowacourse.shopping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.annotation.ApplicationLifecycle
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Qualifier
+import woowacourse.shopping.container.DiContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -15,7 +17,11 @@ import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
 import kotlin.reflect.full.createInstance
 
-class TargetClass(@Qualifier(PackageName.DATABASE_CART) val cartRepository: CartRepository) {
+class TargetClass(
+    @ApplicationLifecycle
+    @Qualifier(PackageName.DATABASE_CART)
+    val cartRepository: CartRepository,
+) {
     @Inject
     @Qualifier(PackageName.PRODUCT)
     lateinit var productRepository: ProductRepository
@@ -45,20 +51,20 @@ class NameTag private constructor(val name: String) {
     }
 }
 
-class AppContainerTest {
-    private lateinit var appContainer: AppContainer
+class DiContainerTest {
+    private lateinit var diContainer: DiContainer
     private lateinit var injector: Injector
 
     @Before
     fun setup() {
-        appContainer = AppContainer()
-        appContainer.registerProviders {
+        diContainer = DiContainer()
+        diContainer.registerProviders {
             provider(CartProductDao::class to FakeCartProductDao::class::createInstance)
             provider(TestProvider::class to TestProvider::createInstance)
             provider(NameTag::class to NameTag::createInstance)
         }
 
-        injector = Injector(appContainer)
+        injector = Injector(diContainer)
     }
 
     @Test

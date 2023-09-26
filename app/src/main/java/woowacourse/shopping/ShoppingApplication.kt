@@ -1,28 +1,22 @@
 package woowacourse.shopping
 
-import android.app.Application
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.DiApplication
+import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.createDateFormatter
 
-class ShoppingApplication : Application() {
-    private lateinit var appContainer: AppContainer
-    lateinit var injector: Injector
-        private set
-
+class ShoppingApplication : DiApplication() {
     override fun onCreate() {
         super.onCreate()
-        setupContainer()
-        setupInjector()
+        setupProviders()
     }
 
-    private fun setupContainer() {
-        appContainer = AppContainer()
-        appContainer.registerProviders {
-            provider(CartProductDao::class to ShoppingDatabase.getInstance(applicationContext)::cartProductDao)
+    private fun setupProviders() {
+        registerProviders {
+            provider(ShoppingDatabase::class to ShoppingDatabase::getInstance)
+            provider(CartProductDao::class to ShoppingDatabase::cartProductDao)
+            provider(DateFormatter::class to ::createDateFormatter)
         }
-    }
-
-    private fun setupInjector() {
-        injector = Injector(appContainer)
     }
 }
