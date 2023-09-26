@@ -1,3 +1,10 @@
 package com.bignerdranch.android.koala
 
-interface Container
+import kotlin.reflect.KClass
+
+object Container {
+
+    val instances = mutableMapOf<KClass<*>, Any?>()
+
+    val annotations = mutableMapOf<Annotation, KClass<*>>()
+}

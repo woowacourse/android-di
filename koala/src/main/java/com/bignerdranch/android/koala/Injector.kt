@@ -11,14 +11,15 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmErasure
 
 class Injector(
-    private val container: Container,
+    private val module: DiModule,
 ) {
 
     fun <T : Any> inject(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalStateException("찾을 수 없습니다.")
-        val args = constructor.parameters.map {
+        val args = constructor.valueParameters.map {
             getParameterInstance(it)
         }
         val instance = constructor.call(*args.toTypedArray())
@@ -33,25 +34,39 @@ class Injector(
     }
 
     private fun getParameterInstance(parameter: KParameter): Any {
+        val singletonInstance = Container.instances[parameter.type::class]
+        if (singletonInstance != null) {
+            return singletonInstance
+        }
+
         val qualifier =
             parameter.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
+            val qualifiedSingleton = Container.instances[Container.annotations[qualifier]]
+            if (qualifiedSingleton != null) return qualifiedSingleton
             return getInstanceWithQualifier(qualifier)
         }
         return getInstanceWithType(parameter.type)
     }
 
-    private fun getPropertyInstance(property: KProperty1<*, *>): Any {
+    fun getPropertyInstance(property: KProperty1<*, *>): Any {
+        val instance = Container.instances[property.returnType::class]
+        if (instance != null) {
+            return instance
+        }
+
         val qualifier =
             property.annotations.find { it.annotationClass.hasAnnotation<KoalaQualifier>() }
         if (qualifier != null) {
+            val qualifiedSingleton = Container.instances[Container.annotations[qualifier]]
+            if (qualifiedSingleton != null) return qualifiedSingleton
             return getInstanceWithQualifier(qualifier)
         }
         return getInstanceWithType(property.returnType)
     }
 
     private fun getInstanceWithQualifier(qualifier: Annotation): Any {
-        val function = container::class.declaredMemberFunctions.find { func ->
+        val function = module::class.declaredMemberFunctions.find { func ->
             func.annotations.any { it == qualifier }
         } ?: throw IllegalStateException("찾을 수 없습니다.")
 
@@ -59,9 +74,10 @@ class Injector(
     }
 
     private fun getInstanceWithType(type: KType): Any {
-        val functions = container::class.declaredMemberFunctions.filter { func ->
+        val functions = module::class.declaredMemberFunctions.filter { func ->
             func.returnType == type
         }
+
         when (functions.size) {
             1 -> return callFunction(functions.first())
             0 -> throw IllegalStateException("찾을 수 없습니다.")
@@ -69,12 +85,29 @@ class Injector(
         }
     }
 
-    private fun callFunction(function: KFunction<*>): Any {
+    fun callFunction(function: KFunction<*>): Any {
+        var instance = Container.instances[function.returnType.jvmErasure]
+        if (instance != null) {
+            return instance
+        }
         val args = arrayListOf<Any>()
         function.valueParameters.forEach { parameter ->
             args.add(getParameterInstance(parameter))
         }
-        return function.call(container, *args.toTypedArray())
+
+        instance = function.call(module, *args.toTypedArray())
             ?: throw IllegalStateException("instance를 생성할 수 없습니다.")
+        if (function.hasAnnotation<KoalaSingleton>()) {
+            val qualifier = function.annotations.find { annotation ->
+                annotation.annotationClass.annotations.any { sub ->
+                    sub.annotationClass == KoalaQualifier::class
+                }
+            }
+            if (qualifier != null) {
+                Container.annotations[qualifier] = instance::class
+            }
+            Container.instances[instance::class] = instance
+        }
+        return instance
     }
 }

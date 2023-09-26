@@ -1,6 +1,44 @@
 package com.bignerdranch.android.koala
 
-class FakeContainer : Container {
+import android.content.Context
+import androidx.lifecycle.ViewModel
+
+class FakeApplicationDiModule() : DiModule {
+
+    override var context: Context? = null
+}
+
+class FakeDiApplication : DiApplication(FakeApplicationDiModule())
+
+class FakeViewModel(
+    val repository: FakeRepository,
+) : ViewModel()
+
+class FakeRepository
+
+class FakeActivityModule() : DiModule {
+
+    override var context: Context? = null
+
+    fun getFakeFieldObject(): FakeFieldObject {
+        return FakeFieldObject()
+    }
+}
+
+class FakeViewModelModule() : DiModule {
+
+    override var context: Context? = null
+
+    fun getFakeRepository(): FakeRepository {
+        return FakeRepository()
+    }
+}
+
+class FakeFieldObject
+
+class FakeModule() : DiModule {
+
+    override var context: Context? = null
 
     fun getProductRepository(): FakeProductRepository {
         return FakeDefaultProductRepository()
@@ -30,6 +68,15 @@ class FakeContainer : Container {
         return FakeDefaultDataSource()
     }
 
+    @KoalaSingleton
+    fun getSingletonRepository(): FakeSingletonRepository {
+        return FakeSingletonRepository()
+    }
+
+    fun getNonSingletonRepository(): FakeNonSingletonRepository {
+        return FakeNonSingletonRepository()
+    }
+
     fun getFakeDao(): FakeDao {
         return FakeDao()
     }
@@ -47,6 +94,9 @@ class FakeDao
 
 interface FakeProductRepository
 class FakeDefaultProductRepository : FakeProductRepository
+
+class FakeSingletonRepository
+class FakeNonSingletonRepository
 
 @KoalaQualifier
 annotation class FakeRoomDBRepository

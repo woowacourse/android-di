@@ -1,4 +1,4 @@
-package woowacourse.shopping.annotation
+package woowacourse.shopping.di.annotation
 
 import com.bignerdranch.android.koala.KoalaQualifier
 
