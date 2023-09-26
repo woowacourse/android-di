@@ -2,24 +2,22 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import com.boogiwoogi.di.Inject
-import com.boogiwoogi.di.Module
-import com.di.woogidi.activity.DiActivity
-import com.di.woogidi.viewmodel.diViewModels
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.module.ShoppingActivityModule
+import javax.inject.Inject
 
-class CartActivity : DiActivity() {
-
-    override val module: Module by lazy { ShoppingActivityModule(this) }
+@AndroidEntryPoint
+class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by diViewModels<CartViewModel>()
+    private val viewModel: CartViewModel by viewModels()
 
     @Inject
-    private lateinit var dateFormatter: DateFormatter
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
