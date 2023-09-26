@@ -39,7 +39,7 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val viewModel = ViewModelFactory().create(MainViewModel::class.java)
+        val viewModel = ViewModelFactory.provide<MainViewModel>()
 
         // then
         assertThat(viewModel).isNotNull()

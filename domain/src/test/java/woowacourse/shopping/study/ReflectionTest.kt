@@ -100,4 +100,5 @@ class ReflectionTest {
     fun `클래스 내에서 선언된 정적 함수`() {
         assertThat(Person::class.staticFunctions.size).isEqualTo(0)
     }
+
 }

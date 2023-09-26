@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.app.covi_di.android.DiActivity
+import com.app.covi_di.annotation.InjectField
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.ViewModelFactory
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : DiActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
@@ -19,13 +21,12 @@ class CartActivity : AppCompatActivity() {
         )[CartViewModel::class.java]
 
     }
-
+    @InjectField
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -34,10 +35,6 @@ class CartActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

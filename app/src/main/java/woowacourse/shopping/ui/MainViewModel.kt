@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import com.app.covi_di.annotation.Inject
+import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
@@ -32,4 +32,11 @@ class MainViewModel @Inject constructor(
         _products.value = productRepository.getAllProducts()
     }
 }
+
+// 어플리케이션에서 일차적으로 선언 및 생성,
+// 액티비티가 생성될 때, 필드가 있는지 검사, 액티비티가 꺼질 때 해당 필드를 삭제해준다.
+    // Dao 같은 경우는?
+    //
+
+// 현재 ViewModel에서 주입함
 
