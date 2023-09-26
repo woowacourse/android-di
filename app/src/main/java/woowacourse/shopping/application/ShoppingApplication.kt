@@ -1,19 +1,12 @@
 package woowacourse.shopping.application
 
-import android.app.Application
-import woowacourse.shopping.di.Injector
-import woowacourse.shopping.di.SingletonModule
+import woowacourse.shopping.di.application.DIApplication
+import woowacourse.shopping.di.module.DefaultActivityModule
+import woowacourse.shopping.di.module.DefaultApplicationModule
+import woowacourse.shopping.di.module.DefaultViewModelModule
 
-class ShoppingApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-
-        injector = Injector(
-            SingletonModule.getSingletonModule(context = applicationContext),
-        )
-    }
-
-    companion object {
-        lateinit var injector: Injector
-    }
-}
+class ShoppingApplication : DIApplication(
+    DefaultApplicationModule::class.java,
+    DefaultActivityModule::class.java,
+    DefaultViewModelModule::class.java,
+)

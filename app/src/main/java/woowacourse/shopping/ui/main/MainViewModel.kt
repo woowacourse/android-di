@@ -7,13 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.RoomCartRepository
-import woowacourse.shopping.di.Inject
-import woowacourse.shopping.di.Qualifier
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.RoomDB
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    @Qualifier(RoomCartRepository::class)
+    @RoomDB
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     @Inject
