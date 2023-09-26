@@ -44,7 +44,7 @@ class CartViewModelTest {
         // given
         val cartProducts = Products().map { it.toEntity().toModel() }
 
-        coEvery  {
+        coEvery {
             cartRepository.getAllCartProducts()
         } answers { cartProducts }
 
@@ -68,7 +68,7 @@ class CartViewModelTest {
         // when
         cartViewModel.deleteCartProduct(productId)
 
-        //then
+        // then
         val actual = cartViewModel.onCartProductDeleted.value ?: false
         assertTrue(actual)
     }

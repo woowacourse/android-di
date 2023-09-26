@@ -56,5 +56,4 @@ class AnnotationReflectionTest {
         assertThat(chickenClass.hasAnnotation<Binary>()).isFalse
         assertThat(chickenClass.hasAnnotation<Runtime>()).isTrue
     }
-
 }

@@ -1,12 +1,13 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.data.di.AppDependencyContainer
-import com.hyegyeong.di.Injector
+import com.hyegyeong.di.DiContainer
+import woowacourse.shopping.data.di.AppModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Injector.container = AppDependencyContainer(this)
+        DiContainer.appModule = AppModule(this)
+        DiContainer.dependencyModule = AppModule(this)
     }
 }

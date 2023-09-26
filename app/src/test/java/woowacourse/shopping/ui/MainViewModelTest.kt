@@ -75,5 +75,4 @@ class MainViewModelTest {
         val actual = mainViewModel.products.value ?: listOf()
         assertEquals(products, actual)
     }
-
 }

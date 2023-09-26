@@ -5,6 +5,7 @@ package com.hyegyeong.di.annotations
     AnnotationTarget.CONSTRUCTOR,
     AnnotationTarget.FIELD,
     AnnotationTarget.PROPERTY,
-    AnnotationTarget.VALUE_PARAMETER
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.FUNCTION
 )
-annotation class Inject
+annotation class Singleton

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyegyeong.di.annotations.Inject
+import com.hyegyeong.di.annotations.Singleton
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.di.InMemoryCartRepository
 import woowacourse.shopping.data.repository.CartRepository
@@ -15,6 +16,7 @@ class MainViewModel
 @Inject constructor(
     private val productRepository: ProductRepository,
     @InMemoryCartRepository
+    @Singleton
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
@@ -23,7 +25,6 @@ class MainViewModel
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
-
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
