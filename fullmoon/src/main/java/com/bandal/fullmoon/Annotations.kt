@@ -14,7 +14,3 @@ annotation class FullMoonInject
     AnnotationTarget.PROPERTY,
 )
 annotation class Qualifier(val key: String)
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-annotation class Singleton

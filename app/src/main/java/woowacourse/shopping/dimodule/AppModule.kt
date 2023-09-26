@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.bandal.fullmoon.FullMoonInject
 import com.bandal.fullmoon.Qualifier
-import com.bandal.fullmoon.Singleton
 import com.bandal.halfmoon.AndroidDependencyModule
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
@@ -13,6 +12,7 @@ import woowacourse.shopping.data.repository.InMemoryCartRepository
 import woowacourse.shopping.data.repository.InMemoryProductRepository
 import woowacourse.shopping.repository.CartRepository
 import woowacourse.shopping.repository.ProductRepository
+import javax.inject.Singleton
 
 class AppModule : AndroidDependencyModule {
     override var context: Context? = null

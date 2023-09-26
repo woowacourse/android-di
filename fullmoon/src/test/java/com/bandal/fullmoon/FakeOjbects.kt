@@ -1,5 +1,7 @@
 package com.bandal.fullmoon
 
+import javax.inject.Singleton
+
 object FakeModule : Module {
 
     @Singleton

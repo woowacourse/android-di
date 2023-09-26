@@ -1,5 +1,6 @@
 package com.bandal.fullmoon
 
+import javax.inject.Singleton
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation

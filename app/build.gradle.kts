@@ -72,4 +72,5 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // kotlin-reflect
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    implementation("javax.inject:javax.inject:1")
 }

@@ -3,6 +3,7 @@ package com.bandal.fullmoon
 import junit.framework.TestCase.assertNotSame
 import junit.framework.TestCase.assertSame
 import org.junit.Test
+import javax.inject.Singleton
 
 class SingletonTest {
     @Test
