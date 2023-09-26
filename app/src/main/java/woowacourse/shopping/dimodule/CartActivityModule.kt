@@ -11,10 +11,11 @@ class CartActivityModule : AndroidDependencyModule {
     override var context: Context? = null
 
     @Singleton
-    fun provideDateFormatter(
+    fun createDateFormatter(
         @FullMoonInject
         context: Context,
     ) = DateFormatter(context)
 
-    fun provideContext(): Context = context!!
+    override fun getContext(): Context =
+        context ?: throw NullPointerException("context가 초기화 되지 않았습니다.")
 }

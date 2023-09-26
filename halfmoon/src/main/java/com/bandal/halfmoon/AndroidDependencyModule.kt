@@ -5,4 +5,6 @@ import com.bandal.fullmoon.Module
 
 interface AndroidDependencyModule : Module {
     var context: Context?
+
+    fun getContext(): Context
 }

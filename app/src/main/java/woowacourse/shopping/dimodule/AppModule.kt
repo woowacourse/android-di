@@ -41,5 +41,6 @@ class AppModule : AndroidDependencyModule {
         return database.cartProductDao()
     }
 
-    fun provideContext(): Context = context!!
+    override fun getContext(): Context =
+        context ?: throw NullPointerException("context가 초기화 되지 않았습니다.")
 }
