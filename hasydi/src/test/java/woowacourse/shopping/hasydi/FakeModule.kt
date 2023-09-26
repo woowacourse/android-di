@@ -1,10 +1,13 @@
-package di
+package woowacourse.shopping.hasydi
 
-import woowacourse.shopping.hashdi.Module
-import woowacourse.shopping.hashdi.annotation.Inject
-import woowacourse.shopping.hashdi.annotation.Qualifier
+import android.content.Context
+import woowacourse.shopping.hasydi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Qualifier
+import woowacourse.shopping.hasydi.annotation.Singleton
 
 object FakeModule : Module {
+
+    override var context: Context? = null
 
     fun provideProductRepository(): ProductFakeRepository = ProductFakeRepository
 
@@ -13,6 +16,7 @@ object FakeModule : Module {
     @InMemory
     fun provideInMemoryCartRepository(): FakeCartRepository = FakeCartInMemoryRepository
 
+    @Singleton
     fun provideRepositoryWithDataSource(
         @Inject
         @RoomDB
@@ -24,6 +28,15 @@ object FakeModule : Module {
 
     @InMemory
     fun provideInMemoryDataSource(): FakeDataSource = FakeInMemoryDataSource
+
+    @Singleton
+    fun provideSingletonRepository(): FakeSingletonRepository = FakeSingletonRepository()
+
+    fun provideDisposableRepository(): FakeDisposableRepository = FakeDisposableRepository()
+}
+
+object FakeDefaultModule : Module {
+    override var context: Context? = null
 }
 
 object ProductFakeRepository
@@ -39,6 +52,10 @@ class FakeRepositoryWithDataSource(
     @RoomDB
     val fakeDatasource: FakeDataSource,
 )
+
+class FakeSingletonRepository()
+
+class FakeDisposableRepository()
 
 interface FakeDataSource
 

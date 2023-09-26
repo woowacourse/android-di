@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.qualifier.RoomDB
-import woowacourse.shopping.hashdi.annotation.Inject
+import woowacourse.shopping.hasydi.annotation.Inject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 

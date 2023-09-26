@@ -1,19 +1,11 @@
 package woowacourse.shopping
 
-import android.app.Application
 import woowacourse.shopping.di.AppModule
-import woowacourse.shopping.hashdi.AppContainer
-import woowacourse.shopping.hashdi.Injector
-import woowacourse.shopping.hashdi.Module
+import woowacourse.shopping.di.CartActivityModule
+import woowacourse.shopping.hasydi.DiApplication
+import woowacourse.shopping.ui.cart.CartActivity
 
-class ShoppingApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        val modules: List<Module> = listOf(AppModule(applicationContext))
-        injector = Injector(AppContainer(modules))
-    }
-
-    companion object {
-        lateinit var injector: Injector
-    }
-}
+class ShoppingApplication : DiApplication(
+    appModule = AppModule(),
+    activityRetainedModule = listOf(CartActivity::class to CartActivityModule()),
+)
