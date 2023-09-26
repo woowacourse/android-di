@@ -4,19 +4,26 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.di.berdi.util.declaredViewModelFields
+import com.di.berdi.util.setInstance
 import java.lang.reflect.Field
 
 abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModelField =
-            this::class.java.declaredFields.firstOrNull { ViewModel::class.java.isAssignableFrom(it.type) }
-
-        viewModelField?.let {
-            val viewModel = getNewViewModelByType(viewModelField)
-            setViewModelInstance(it, viewModel)
-        }
-
+        injectProperties()
+        injectViewModel()
         super.onCreate(savedInstanceState)
+    }
+
+    private fun injectViewModel() {
+        this::class.declaredViewModelFields.forEach { field ->
+            field.setInstance(this, getNewViewModelByType(field))
+        }
+    }
+
+    private fun injectProperties() {
+        val injector = (application as DIApplication).injector
+        injector.injectProperties(context = this, target = this)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -30,12 +37,7 @@ abstract class DIActivity : AppCompatActivity() {
         val application = application as DIApplication
         return ViewModelProvider(
             owner = this@DIActivity,
-            factory = ViewModelFactory(application.injector),
+            factory = ViewModelFactory(this, application.injector),
         )[type]
-    }
-
-    private fun setViewModelInstance(viewModelField: Field, viewModel: ViewModel) {
-        viewModelField.isAccessible = true
-        viewModelField.set(this, viewModel)
     }
 }

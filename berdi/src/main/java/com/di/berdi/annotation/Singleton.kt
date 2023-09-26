@@ -1,5 +1,5 @@
 package com.di.berdi.annotation
 
-@Qualifier
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class OnDisk
+annotation class Singleton

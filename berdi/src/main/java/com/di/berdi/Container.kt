@@ -5,16 +5,16 @@ import kotlin.reflect.KClass
 class Container {
     private val store: HashMap<StoreKey, Any> = hashMapOf()
 
-    fun getInstance(type: KClass<*>, annotation: Annotation?): Any? {
-        return store[StoreKey(type, annotation)]
+    fun getInstance(type: KClass<*>, qualifiedName: String?): Any? {
+        return store[StoreKey(type, qualifiedName)]
     }
 
-    fun setInstance(instance: Any, type: KClass<*>, annotation: Annotation?) {
-        store[StoreKey(type, annotation)] = instance
+    fun setInstance(instance: Any, type: KClass<*>, qualifiedName: String?) {
+        store[StoreKey(type, qualifiedName)] = instance
     }
 
     data class StoreKey(
         val clazz: KClass<*>,
-        val qualifier: Annotation?,
+        val qualifiedName: String?,
     )
 }

@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.di.berdi.annotation.OnDisk
+import com.di.berdi.annotation.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel(
-    @OnDisk
+    @Qualifier(qualifiedName = "OnDisk")
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 

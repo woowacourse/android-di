@@ -1,102 +1,103 @@
 package com.di.berdi
 
 import android.content.Context
-import com.di.berdi.annotation.Inject
-import com.di.berdi.util.hasQualifier
+import com.di.berdi.annotation.Singleton
+import com.di.berdi.util.declaredInjectProperties
+import com.di.berdi.util.qualifiedName
+import com.di.berdi.util.setInstance
+import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(private val container: Container, private val context: Context) {
+class Injector(private val container: Container, private val module: Module) {
 
-    fun inject(module: Module) {
-        val functions = module::class.declaredFunctions
-        functions.forEach { func -> storeInstance(functions, func, module) }
+    // 생성자를 받아서 생성한다
+    fun <T : Any> createBy(context: Context, constructor: KFunction<T>): T {
+        val paramInstances = getInstancesParamsOf(context, constructor)
+        return constructor.call(*paramInstances.toTypedArray())
+            .apply { injectProperties(context, this) }
     }
 
-    private fun storeInstance(
-        functions: Collection<KFunction<*>>,
-        func: KFunction<*>,
-        module: Module,
-    ) {
-        val funcClazz = func.returnType.jvmErasure
-        val annotation = func.qualifierAnnotations
+    fun injectProperties(context: Context, target: Any) {
+        val properties = target::class.declaredInjectProperties
+        properties.forEach { property -> inject(context, property, target) }
+    }
 
-        // 이미 생성했다면 return
-        if (container.getInstance(funcClazz, annotation) != null) return
+    // 파라미터의 인스턴스를 다 가져온다
+    private fun getInstancesParamsOf(context: Context, callable: KCallable<*>): List<Any?> {
+        return callable.parameters.map { param ->
+            getInstanceOf(context, param.type, param.qualifiedName)
+        }
+    }
+
+    // 인스턴스를 가져온다
+    private fun getInstanceOf(context: Context, type: KType, qualifiedName: String?): Any {
+        // 해당 param 타입의 인스턴스를 Container 에서 가져온다
+        container.getInstance(type.jvmErasure, qualifiedName)?.let { return it }
+
+        // 없으면 생성한다
+        return createInstance(context, type, qualifiedName)
+    }
+
+    private fun createInstance(context: Context, type: KType, qualifiedName: String?): Any {
+        // 모듈에서 파람과 맞는 타입을 찾는다
+        val targetProvider = requireNotNull(
+            module::class.declaredFunctions.find { providers ->
+                isTargetProvider(providers, type, qualifiedName)
+            },
+        ) { ERROR_NOT_FOUND_MATCHED_MODULE }
 
         // 파라미터가 없다면 만든다
-        if (func.valueParameters.isEmpty()) {
-            func.call(module)?.let { container.setInstance(it, funcClazz, annotation) }
-            return
+        if (targetProvider.valueParameters.isEmpty()) {
+            return requireNotNull(targetProvider.call(module)).also {
+                storeInstance(targetProvider, it)
+            }
         }
 
         // 파라미터를 하나씩 채운다
-        val params = func.valueParameters.map { param ->
-            when (param.type.jvmErasure) {
-                Context::class -> context
-                else -> getParamInstance(param, functions, module)
+        val params = targetProvider.valueParameters.map { param ->
+            when {
+                param.type.jvmErasure == Context::class && targetProvider.hasAnnotation<Singleton>() -> context.applicationContext
+                param.type.jvmErasure == Context::class -> context
+                else -> getInstanceOf(context, param.type, param.qualifiedName)
             }
         }
 
-        // 생성하고 컨테이너 에 삽입
-        val newInstance = requireNotNull(func.call(module, *params.toTypedArray()))
-        container.setInstance(newInstance, funcClazz, annotation)
+        // 새 인스턴스 생성
+        val instance = requireNotNull(targetProvider.call(module, *params.toTypedArray()))
+        return instance.also { storeInstance(targetProvider, it) }
     }
 
-    private val KFunction<*>.qualifierAnnotations get() = annotations.firstOrNull { it.hasQualifier() }
-
-    private fun getParamInstance(
-        param: KParameter,
-        functions: Collection<KFunction<*>>,
-        module: Module,
-    ): Any {
-        val paramClazz = param.type.jvmErasure
-        val annotation =
-            param.annotations.firstOrNull { it.hasQualifier() }
-
-        // 없으면 재귀로 생성
-        if (container.getInstance(type = paramClazz, annotation = annotation) == null) {
-            storeInstance(functions, functions.first { it.returnType == param.type }, module)
+    private fun isTargetProvider(
+        provider: KFunction<*>,
+        type: KType,
+        qualifiedName: String?,
+    ): Boolean {
+        if (qualifiedName != null) {
+            return provider.returnType == type && provider.qualifiedName == qualifiedName
         }
-
-        // 있으면 그대로 반환
-        return container.getInstance(type = paramClazz, annotation = annotation)!!
+        return provider.returnType == type
     }
 
-    fun <T : Any> createBy(constructor: KFunction<T>): T {
-        val params = getInstancesParamsOf(constructor)
-        return constructor.call(*params.toTypedArray()).apply { injectProperties(this) }
-    }
-
-    private fun getInstancesParamsOf(constructor: KFunction<Any>): List<Any?> {
-        return constructor.parameters.map { param ->
-            val annotation = param.annotations.firstOrNull { it.hasQualifier() }
-            requireNotNull(container.getInstance(param.type.jvmErasure, annotation)) {
-                "No matching same type in param | type : ${param.type}"
-            }
+    private fun storeInstance(param: KFunction<*>, instance: Any) {
+        if (param.hasAnnotation<Singleton>()) {
+            container.setInstance(instance, param.returnType.jvmErasure, param.qualifiedName)
         }
     }
 
-    private fun <T : Any> injectProperties(target: T) {
-        val properties = target::class.declaredMemberProperties.filter {
-            it.hasAnnotation<Inject>()
-        }
-        properties.forEach { property -> property.inject(target) }
+    // 프로퍼티에 맞는 타입을 찾아 주입한다
+    private fun inject(context: Context, property: KProperty<*>, target: Any) {
+        val paramInstances = getInstanceOf(context, property.returnType, property.qualifiedName)
+        property.javaField?.setInstance(target, paramInstances)
     }
 
-    private fun <T : Any> KProperty<*>.inject(target: T) {
-        val annotation = annotations.firstOrNull { it.hasQualifier() }
-        val instance = container.getInstance(this.returnType.jvmErasure, annotation)
-        javaField?.apply {
-            isAccessible = true
-            set(target, instance)
-        }
+    companion object {
+        private const val ERROR_NOT_FOUND_MATCHED_MODULE = "모듈에 맞는 매치되는 인스턴스를 찾을 수 없습니다"
     }
 }
