@@ -1,6 +1,7 @@
 package woowacourse.shopping.di.annotation
 
-import com.now.annotation.Qualifier
+import javax.inject.Qualifier
 
 @Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class Database
