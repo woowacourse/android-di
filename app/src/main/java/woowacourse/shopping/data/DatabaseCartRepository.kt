@@ -1,17 +1,14 @@
 package woowacourse.shopping.data
 
-import com.lope.di.annotation.DatabaseMode
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.repository.CartRepository
 
-@DatabaseMode
 class DatabaseCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
-
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }
