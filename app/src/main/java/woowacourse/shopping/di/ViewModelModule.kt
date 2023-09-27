@@ -5,6 +5,6 @@ import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
 
 val viewModelModule = autoDIModule {
-    viewModel { MainViewModel(inject(), inject()) }
-    viewModel { CartViewModel(inject()) }
+    viewModel { MainViewModel(inject("disposable"), inject("singleton")) }
+    viewModel { CartViewModel(inject("singleton")) }
 }

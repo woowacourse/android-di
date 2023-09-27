@@ -27,6 +27,4 @@ sealed class LifeCycleTypes {
             value.add(LifeCycleType.Disposable(qualifier, initializeMethod))
         }
     }
-//    class Activities(override val values: MutableList<LifeCycleType<*>>) : LifeCycleTypes()
-//    class Fragments(override val values: MutableList<LifeCycleType<*>>) : LifeCycleTypes()
 }
