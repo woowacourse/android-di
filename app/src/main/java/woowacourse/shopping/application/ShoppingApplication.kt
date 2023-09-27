@@ -1,24 +1,20 @@
 package woowacourse.shopping.application
 
 import android.app.Application
-import woowacourse.shopping.data.database.ShoppingDatabase
-import woowacourse.shopping.data.repository.DatabaseCartRepository
-import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.data.repository.InMemoryCartRepository
-import woowacourse.shopping.di.sgDi.StartInjection
-import woowacourse.shopping.di.sgDi.annotation.WooWaQualifier
-import woowacourse.shopping.repository.CartRepository
-import woowacourse.shopping.repository.ProductRepository
+import com.created.customdi.StartDi
+import woowacourse.shopping.di.DatabaseModule
+import woowacourse.shopping.di.GuiltyModule
+import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        val dao = ShoppingDatabase.from(this).cartProductDao()
 
-        StartInjection {
-            single<CartRepository>(WooWaQualifier.DATABASE, DatabaseCartRepository(dao))
-            single<CartRepository>(WooWaQualifier.IN_MEMORY, InMemoryCartRepository())
-            single<ProductRepository>(DefaultProductRepository())
+        StartDi {
+            registerContext(this@ShoppingApplication.applicationContext)
+            registerModule(DatabaseModule)
+            registerModule(RepositoryModule)
+            registerModule(GuiltyModule)
         }
     }
 }

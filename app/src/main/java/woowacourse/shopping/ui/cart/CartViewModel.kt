@@ -4,16 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.created.customdi.annotation.Field
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.sgDi.annotation.WooWaField
-import woowacourse.shopping.di.sgDi.annotation.WooWaQualifier
+import woowacourse.shopping.di.annotation.InMemory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.repository.CartRepository
 
 class CartViewModel : ViewModel() {
 
-    @WooWaField
-    @WooWaQualifier(WooWaQualifier.IN_MEMORY)
+    @Field
+    @InMemory
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())
