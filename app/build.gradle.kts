@@ -45,6 +45,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":fullmoon"))
+    implementation(project(":halfmoon"))
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -71,4 +72,5 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.9")
     // kotlin-reflect
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.8.21")
+    implementation("javax.inject:javax.inject:1")
 }

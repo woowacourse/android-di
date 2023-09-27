@@ -1,7 +1,10 @@
 package com.bandal.fullmoon
 
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
+@Target(
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.VALUE_PARAMETER,
+)
 annotation class FullMoonInject
 
 @Retention(AnnotationRetention.RUNTIME)

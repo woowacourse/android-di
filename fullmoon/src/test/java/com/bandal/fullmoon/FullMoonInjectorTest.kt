@@ -1,35 +1,22 @@
 package com.bandal.fullmoon
 
-import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase
 import org.junit.Test
 
 class FullMoonInjectorTest {
 
-    private val fakeAppContainer: AppContainer = TestAppContainer
-    private val injector = FullMoonInjector(fakeAppContainer)
-
     @Test
-    fun `주생성자 안에 하나의 인터페이스와 구현체 하나가 있을 때 주입할 수 있다`() {
+    fun `FullMoonInjector를 통해 FakeClass에 인스턴스를 주입시킬 수 있다`() {
         // given
+        val injector = FullMoonInjector(AppContainer(FakeModule))
 
         // when
-        val injectedClass: FakeImplementWithQualifierDatabase =
-            injector.inject(FakeImplementWithQualifierDatabase::class)
+        val injectedClass: FakeClass = injector.inject(FakeClass::class)
 
         // then
-        assertNotNull(injectedClass.fakeLocalDataSource)
-    }
-
-    @Test
-    fun `같은 인터페이스를 구현하는 두 구현체를 주입시킬 수 있다`() {
-        // given
-
-        // when
-        val injectedClass = injector.inject(FakeClass::class)
-
-        // then
-        assertNotNull(injectedClass.fakeDataBaseRepository)
-        assertNotNull(injectedClass.fakeInMemoryRepository)
-        assertNotNull(injectedClass.fakeDateFormatter)
+        TestCase.assertNotNull(injectedClass.fakeDataBaseRepository)
+        TestCase.assertNotNull(injectedClass.fakeInMemoryRepository)
+        TestCase.assertNotNull(injectedClass.fakeDateFormatter)
+        TestCase.assertNotNull(injectedClass.fakeDataBaseRepository2)
     }
 }

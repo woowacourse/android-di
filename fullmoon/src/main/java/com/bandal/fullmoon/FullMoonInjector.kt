@@ -1,103 +1,45 @@
 package com.bandal.fullmoon
 
-import com.bandal.fullmoon.DIError.NotFoundPrimaryConstructor
-import com.bandal.fullmoon.DIError.NotFoundQualifierOrInstance
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KType
-import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.jvmErasure
 
 class FullMoonInjector(private val appContainer: AppContainer) {
 
+    private val containers: HashMap<String, AppContainer?> = HashMap()
+
     fun <T : Any> inject(kClass: KClass<T>): T {
-        return (getInstance(kClass) ?: createInstance(kClass)) as T
-    }
-
-    private fun getInstance(kClass: KClass<*>): Any? {
-        return appContainer.getSavedInstance(InjectType.from(kClass), kClass)
-    }
-
-    private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val constructor = kClass.primaryConstructor ?: throw NotFoundPrimaryConstructor()
-        val parameters = constructor.parameters.map { kParameter ->
-            createParameterInstance(kParameter)
+        val constructor = kClass.primaryConstructor ?: throw DIError.NotFoundPrimaryConstructor()
+        val parameters: List<Any> = constructor.parameters.map { kParameter ->
+            appContainer.getSavedInstance(kParameter.getKey())
+                ?: throw DIError.NotFoundCreateFunction(kParameter.getKey())
         }
         val instance = constructor.call(*parameters.toTypedArray())
-        return instance.apply { injectFields(this) }
+        return instance.apply { injectFields(kClass, this) }
     }
 
-    private fun <T : Any> injectFields(instance: T) {
+    fun <T : Any> injectFields(kClass: KClass<out T>, instance: T) {
         instance::class.declaredMemberProperties
-            .filter {
-                it.hasAnnotation<Qualifier>() || it.hasAnnotation<FullMoonInject>()
-            }
+            .filter { it.hasAnnotation<FullMoonInject>() || it.hasAnnotation<Qualifier>() }
             .forEach { property ->
+                val container = containers[kClass.simpleName.toString()]
+                val injectValue = appContainer.getSavedInstance(property.getKey())
+                    ?: container?.getSavedInstance(property.getKey())
                 property.isAccessible = true
-                (property as KMutableProperty<*>).setter.call(
-                    instance,
-                    createPropertyInstance(property),
-                )
-                property.setter.call(instance, createPropertyInstance(property))
+                (property as KMutableProperty<*>).setter.call(instance, injectValue)
             }
     }
 
-    private fun createParameterInstance(parameter: KParameter): Any {
-        if (parameter.hasAnnotation<Qualifier>()) {
-            return createInstanceWithQualifier(parameter.getQualifierKey())
-        }
-        return createInstanceWithType(parameter.type)
+    fun hasContainer(tag: String): Boolean = containers[tag] != null
+
+    fun setContainer(tag: String, container: AppContainer) {
+        containers[tag] = container
     }
 
-    private fun createPropertyInstance(property: KProperty1<*, *>): Any {
-        val qualifier: Annotation =
-            property.findAnnotation<Qualifier>()
-                ?: return createInstanceWithType(property.returnType)
-
-        return createInstanceWithQualifier((qualifier as Qualifier).key)
-    }
-
-    private fun createInstanceWithQualifier(qualifierKey: String): Any {
-        val function = appContainer::class.declaredMemberFunctions.find { func ->
-            func.annotations.contains(Qualifier(qualifierKey))
-        } ?: throw DIError.NotFoundCreateFunction()
-
-        return callCreateFunction(function)
-    }
-
-    private fun createInstanceWithType(type: KType): Any {
-        val functions: List<KFunction<*>> =
-            appContainer::class.declaredMemberFunctions.filter { func ->
-                !func.hasAnnotation<Qualifier>() && (func.returnType == type)
-            }
-
-        when (functions.size) {
-            1 -> return callCreateFunction(functions.first())
-            0 -> throw DIError.NotFoundCreateFunction()
-            else -> throw DIError.NotAllowedDuplicatedCreateFunction()
-        }
-    }
-
-    private fun callCreateFunction(function: KFunction<*>): Any {
-        val parameterInstances = function.valueParameters.map { parameter ->
-            createParameterInstance(parameter)
-        }
-
-        return function.call(appContainer, *parameterInstances.toTypedArray())
-            ?: throw DIError.NotFoundCreateFunction()
-    }
-
-    private fun KParameter.getQualifierKey(): String {
-        return this.findAnnotation<Qualifier>()?.key
-            ?: throw NotFoundQualifierOrInstance(this.type.jvmErasure)
+    fun removeContainer(tag: String) {
+        containers[tag] = null
     }
 }

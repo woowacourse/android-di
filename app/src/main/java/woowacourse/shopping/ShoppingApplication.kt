@@ -1,14 +1,6 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.bandal.fullmoon.FullMoonInjector
-import woowacourse.shopping.common.ShoppingAppContainer
+import com.bandal.halfmoon.HalfMoonApplication
+import woowacourse.shopping.dimodule.AppModule
 
-class ShoppingApplication : Application() {
-    lateinit var injector: FullMoonInjector
-
-    override fun onCreate() {
-        super.onCreate()
-        injector = FullMoonInjector(ShoppingAppContainer(this))
-    }
-}
+class ShoppingApplication : HalfMoonApplication(AppModule())

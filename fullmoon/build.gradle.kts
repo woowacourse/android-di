@@ -13,4 +13,5 @@ dependencies {
     testImplementation("org.assertj", "assertj-core", "3.22.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation(project(mapOf("path" to ":domain")))
+    implementation("javax.inject:javax.inject:1")
 }
