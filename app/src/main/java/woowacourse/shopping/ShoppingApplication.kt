@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
-import com.woowacourse.shopping.OtterDiApplication
-import woowacourse.shopping.di.module.AppModule
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class ShoppingApplication : OtterDiApplication(AppModule())
+@HiltAndroidApp
+class ShoppingApplication : Application()

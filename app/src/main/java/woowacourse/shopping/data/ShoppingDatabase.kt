@@ -12,20 +12,14 @@ abstract class ShoppingDatabase : RoomDatabase() {
     abstract fun cartProductDao(): CartProductDao
 
     companion object {
-        private const val databaseName = "ShoppingDatabase"
-        private var instance: ShoppingDatabase? = null
+        const val databaseName = "ShoppingDatabase"
 
         fun getDatabase(context: Context): ShoppingDatabase {
-            return instance ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context.applicationContext,
-                    ShoppingDatabase::class.java,
-                    databaseName,
-                ).build().let {
-                    instance = it
-                    it
-                }
-            }
+            return Room.databaseBuilder(
+                context.applicationContext,
+                ShoppingDatabase::class.java,
+                databaseName,
+            ).build()
         }
     }
 }
