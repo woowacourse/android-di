@@ -2,7 +2,7 @@
 
 ## 기능 요구 사항
 
-- [ ] ViewModel에서 참조하는 Repository가 정상적으로 주입되지 않는다.
+- [x] ViewModel에서 참조하는 Repository가 정상적으로 주입되지 않는다.
 - [ ] Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 만들어줘야 한다.
 - [ ] ViewModel에 수동으로 주입되고 있는 의존성들을 자동으로 주입되도록 바꿔본다.
 - [ ] 특정 ViewModel에서만이 아닌, 범용적으로 활용될 수 있는 자동 주입 로직을 작성한다. (MainViewModel, CartViewModel 모두 하나의 로직만 참조한다)
