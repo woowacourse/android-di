@@ -15,16 +15,19 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.util.viewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory(
-            productRepository = ProductRepositoryImpl(),
-            cartRepository = CartRepositoryImpl(),
-        )
+        viewModelFactory {
+            MainViewModel(
+                productRepository = ProductRepositoryImpl(),
+                cartRepository = CartRepositoryImpl(),
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
