@@ -13,7 +13,7 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<CartViewModel> {
         CartViewModel.factory(
-            cartRepository = CartRepositoryImpl(),
+            cartRepository = CartRepositoryImpl.getInstance(),
         )
     }
 

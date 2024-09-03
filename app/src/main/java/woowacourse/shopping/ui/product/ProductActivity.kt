@@ -17,8 +17,8 @@ class ProductActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<ProductViewModel> {
         ProductViewModel.factory(
-            productRepository = ProductRepositoryImpl(),
-            cartRepository = CartRepositoryImpl(),
+            productRepository = ProductRepositoryImpl.getInstance(),
+            cartRepository = CartRepositoryImpl.getInstance(),
         )
     }
 

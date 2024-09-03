@@ -26,4 +26,15 @@ class ProductRepositoryImpl : ProductRepository {
     override fun getAllProducts(): List<Product> {
         return products
     }
+
+    companion object {
+        private var instance: ProductRepositoryImpl? = null
+
+        fun getInstance(): ProductRepositoryImpl {
+            if (instance == null) {
+                instance = ProductRepositoryImpl()
+            }
+            return instance!!
+        }
+    }
 }
