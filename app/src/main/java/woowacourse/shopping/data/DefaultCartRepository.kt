@@ -10,7 +10,7 @@ class DefaultCartRepository : CartRepository {
         cartProducts.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> = cartProducts.toList()
+    override fun allCartProducts(): List<Product> = cartProducts.toList()
 
     override fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)

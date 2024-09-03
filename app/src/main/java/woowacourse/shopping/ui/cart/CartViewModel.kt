@@ -17,7 +17,7 @@ class CartViewModel(
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        _cartProducts.value = cartRepository.getAllCartProducts()
+        _cartProducts.value = cartRepository.allCartProducts()
     }
 
     fun deleteCartProduct(id: Int) {
