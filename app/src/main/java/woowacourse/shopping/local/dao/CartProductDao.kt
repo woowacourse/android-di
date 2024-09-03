@@ -7,7 +7,6 @@ import woowacourse.shopping.local.entity.CartProductEntity
 
 @Dao
 interface CartProductDao {
-
     @Query("SELECT * FROM cart_products")
     suspend fun getAll(): List<CartProductEntity>
 

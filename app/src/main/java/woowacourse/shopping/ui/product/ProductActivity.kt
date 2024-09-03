@@ -13,13 +13,12 @@ import woowacourse.shopping.databinding.ActivityProductBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class ProductActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<ProductViewModel> {
         ProductViewModel.factory(
             productRepository = ProductRepositoryImpl(),
-            cartRepository = CartRepositoryImpl()
+            cartRepository = CartRepositoryImpl(),
         )
     }
 
@@ -31,7 +30,6 @@ class ProductActivity : AppCompatActivity() {
         setupToolbar()
         setupView()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
@@ -61,10 +59,11 @@ class ProductActivity : AppCompatActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {
