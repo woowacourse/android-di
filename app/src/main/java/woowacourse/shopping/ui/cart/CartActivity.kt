@@ -10,6 +10,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.ui.ShoppingApplication
 import woowacourse.shopping.ui.util.viewModelFactory
 
 class CartActivity : AppCompatActivity() {
@@ -17,7 +18,8 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels {
-        viewModelFactory { CartViewModel(CartRepositoryImpl()) }
+        val appModule = ShoppingApplication.appModule
+        viewModelFactory { CartViewModel(cartRepository = appModule.cartRepository) }
     }
 
     private lateinit var dateFormatter: DateFormatter

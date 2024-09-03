@@ -23,9 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels {
         viewModelFactory {
+            val appModule = ShoppingApplication.appModule
             MainViewModel(
-                productRepository = ProductRepositoryImpl(),
-                cartRepository = CartRepositoryImpl(),
+                productRepository = appModule.productRepository,
+                cartRepository = appModule.cartRepository,
             )
         }
     }
