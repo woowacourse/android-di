@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.product
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
@@ -8,12 +8,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
 
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityTest {
+class ProductActivityTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -22,7 +20,7 @@ class MainActivityTest {
     fun `Activity 실행 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(ProductActivity::class.java)
             .create()
             .get()
 
@@ -34,10 +32,10 @@ class MainActivityTest {
     fun `ViewModel 주입 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(ProductActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity)[ProductViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()

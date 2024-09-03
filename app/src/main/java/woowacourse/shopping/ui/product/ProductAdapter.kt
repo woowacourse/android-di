@@ -1,8 +1,8 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.product
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
 
 class ProductAdapter(
     private val items: List<Product>,

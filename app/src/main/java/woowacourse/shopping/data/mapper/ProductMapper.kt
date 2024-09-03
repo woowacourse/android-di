@@ -1,7 +1,7 @@
 package woowacourse.shopping.data.mapper
 
-import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.local.entity.CartProductEntity
+import woowacourse.shopping.domain.model.Product
 
 fun Product.toEntity(): CartProductEntity {
     return CartProductEntity(
