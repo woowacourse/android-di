@@ -4,9 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.data.repository.CartRepositoryImpl
+import woowacourse.shopping.data.repository.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityProductBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -14,8 +16,11 @@ class ProductActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[ProductViewModel::class.java]
+    private val viewModel by viewModels<ProductViewModel> {
+        ProductViewModel.factory(
+            productRepository = ProductRepositoryImpl(),
+            cartRepository = CartRepositoryImpl()
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
