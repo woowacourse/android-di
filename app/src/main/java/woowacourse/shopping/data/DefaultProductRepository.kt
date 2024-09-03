@@ -22,5 +22,5 @@ class DefaultProductRepository : ProductRepository {
             ),
         )
 
-    override fun getAllProducts(): List<Product> = products
+    override fun allProducts(): List<Product> = products
 }

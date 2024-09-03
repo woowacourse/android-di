@@ -25,7 +25,7 @@ class MainViewModel(
     }
 
     fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
+        _products.value = productRepository.allProducts()
     }
 
     companion object {
