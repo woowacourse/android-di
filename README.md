@@ -2,10 +2,10 @@
 
 ## 구현 목록
 ### Step 1
-- [ ] 수동 의존성 주입
-  - [ ] ViewModel 생성 과정에서의 런타임 에러를 해결
-    - [ ] ViewModel 별 ViewModelFactory
-    - [ ] 화면 별 ViewModelFactory에 Repository 주입
+- [x] 수동 의존성 주입
+  - [x] ViewModel 생성 과정에서의 런타임 에러를 해결
+    - [x] ViewModel 별 ViewModelFactory
+    - [x] 화면 별 ViewModelFactory에 Repository 주입
 
 - [ ] 자동 의존성 주입
   - [ ] Repository 추상화
