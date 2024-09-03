@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -20,8 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory(
-            productRepository = ProductRepository(),
-            cartRepository = CartRepository(),
+            productRepository = ProductRepositoryImpl(),
+            cartRepository = CartRepositoryImpl(),
         )
     }
 
