@@ -3,7 +3,10 @@ package woowacourse.shopping
 object DIContainer {
     private val instances = mutableMapOf<Class<*>, Any>()
 
-    fun <T : Any> register(clazz: Class<T>, instance: T) {
+    fun <T : Any> register(
+        clazz: Class<T>,
+        instance: T,
+    ) {
         instances[clazz] = instance
     }
 
