@@ -1,21 +1,22 @@
 package woowacourse.shopping.ui.cart
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
-import org.junit.jupiter.api.extension.ExtendWith
-import woowacourse.shopping.InstantTaskExecutorExtension
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import woowacourse.shopping.model.Product
 
-@ExtendWith(InstantTaskExecutorExtension::class)
 class CartViewModelTest {
     private lateinit var viewModel: CartViewModel
     private lateinit var cartRepository: FakeCartRepository
 
-    @BeforeEach
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Before
     fun setUp() {
         cartRepository = FakeCartRepository()
         viewModel = CartViewModel(cartRepository)
@@ -54,17 +55,14 @@ class CartViewModelTest {
         val cartProducts = viewModel.cartProducts.getOrAwaitValue()
         val onCartProductDeleted = viewModel.onCartProductDeleted.getOrAwaitValue()
 
-        assertAll(
-            {
-                assertThat(cartProducts).isEqualTo(
-                    listOf(
-                        Product("Product1", 1000, "image1"),
-                        Product("Product3", 3000, "image3"),
-                    )
-                )
-            },
-            { assertThat(onCartProductDeleted).isTrue() },
+        assertThat(cartProducts).isEqualTo(
+            listOf(
+                Product("Product1", 1000, "image1"),
+                Product("Product3", 3000, "image3"),
+            )
         )
+
+        assertThat(onCartProductDeleted).isTrue()
     }
 
     private fun addCartProducts(size: Int) {

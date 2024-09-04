@@ -1,11 +1,10 @@
 package woowacourse.shopping.ui
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import woowacourse.shopping.InstantTaskExecutorExtension
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.google.common.truth.Truth.assertThat
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.FakeProductRepository
@@ -13,13 +12,15 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 
-@ExtendWith(InstantTaskExecutorExtension::class)
 class MainViewModelTest {
     private lateinit var viewModel: MainViewModel
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
 
-    @BeforeEach
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Before
     fun setUp() {
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
