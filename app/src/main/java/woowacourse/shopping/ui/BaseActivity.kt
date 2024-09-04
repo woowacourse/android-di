@@ -7,8 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import woowacourse.shopping.ui.util.Injector
 
-abstract class BaseActivity<T: ViewDataBinding>(
-    @LayoutRes private val layoutResId: Int
+abstract class BaseActivity<T : ViewDataBinding>(
+    @LayoutRes private val layoutResId: Int,
 ) : AppCompatActivity() {
     val binding: T by lazy {
         DataBindingUtil.setContentView(this, layoutResId)

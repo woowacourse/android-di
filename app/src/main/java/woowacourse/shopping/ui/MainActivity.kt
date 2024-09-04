@@ -13,7 +13,6 @@ import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.viewModelFactory
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
-
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
 
@@ -33,7 +32,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         setupToolbar()
         setupView()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
@@ -62,10 +60,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {
@@ -78,4 +77,3 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         startActivity(Intent(this, CartActivity::class.java))
     }
 }
-

@@ -5,7 +5,6 @@ import woowacourse.shopping.data.ProductRepository
 
 interface AppModule {
     val productRepository: ProductRepository
-    
+
     val cartRepository: CartRepository
 }
-

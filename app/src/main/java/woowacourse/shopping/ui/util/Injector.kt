@@ -1,22 +1,23 @@
 package woowacourse.shopping.ui.util
 
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.typeOf
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.AppModule
 import woowacourse.shopping.ui.ShoppingApplication
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.typeOf
 
 class Injector(
     private val appModule: AppModule = ShoppingApplication.appModule,
 ) {
     fun inject(activity: AppCompatActivity) {
-        val properties = activity::class.declaredMemberProperties
-            .filterIsInstance<KMutableProperty<*>>()
-            .filter { it.isLateinit }
+        val properties =
+            activity::class.declaredMemberProperties
+                .filterIsInstance<KMutableProperty<*>>()
+                .filter { it.isLateinit }
 
         properties.forEach { property ->
             injectProperty(property, activity)
@@ -25,7 +26,7 @@ class Injector(
 
     private fun injectProperty(
         property: KMutableProperty<*>,
-        activity: AppCompatActivity
+        activity: AppCompatActivity,
     ) {
         property.isAccessible = true
         findValueForProperty(property, appModule)?.let { value ->
@@ -33,7 +34,10 @@ class Injector(
         }
     }
 
-    private fun findValueForProperty(property: KMutableProperty<*>, appModule: AppModule): Any? {
+    private fun findValueForProperty(
+        property: KMutableProperty<*>,
+        appModule: AppModule,
+    ): Any? {
         return when (property.returnType) {
             typeOf<CartRepository>() -> appModule.cartRepository
             typeOf<ProductRepository>() -> appModule.productRepository

@@ -3,15 +3,10 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.BaseActivity
-import woowacourse.shopping.ui.util.Injector
 import woowacourse.shopping.ui.util.viewModelFactory
 
 class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
@@ -61,11 +56,12 @@ class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
+            val adapter =
+                CartProductAdapter(
+                    items = it,
+                    dateFormatter = dateFormatter,
+                    onClickDelete = viewModel::deleteCartProduct,
+                )
             binding.rvCartProducts.adapter = adapter
         }
         viewModel.onCartProductDeleted.observe(this) {

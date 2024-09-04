@@ -15,7 +15,7 @@ class MainViewModelFactory(
         }
         throw IllegalArgumentException(MESSAGE_UNKNOWN_VIEWMODEL_CLASS)
     }
-    
+
     companion object {
         private const val MESSAGE_UNKNOWN_VIEWMODEL_CLASS = "Unknown ViewModel class"
     }
