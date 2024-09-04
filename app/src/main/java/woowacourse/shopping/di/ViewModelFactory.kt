@@ -15,12 +15,16 @@ class ViewModelFactory(
     ): T {
         val constructor =
             modelClass.kotlin.primaryConstructor
-                ?: throw IllegalArgumentException("No primary constructor")
+                ?: throw IllegalArgumentException(ERROR_INVALID_PRIMARY_CONSTRUCTOR)
 
         val params =
             constructor.parameters.map { param ->
                 diContainer.getInstance(param.type.jvmErasure)
             }
         return constructor.call(*params.toTypedArray())
+    }
+
+    companion object {
+        private const val ERROR_INVALID_PRIMARY_CONSTRUCTOR = "No primary constructor"
     }
 }
