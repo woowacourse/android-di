@@ -3,6 +3,7 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import woowacourse.shopping.model.Product
