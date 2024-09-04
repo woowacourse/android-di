@@ -1,6 +1,7 @@
 # android-di
 
 ### 기능 목록표
+- [x] 테스트하기 어려운 문제 해결
 - [x] ViewModel에서 참조하는 Repository를 정상적으로 주입
 - [ ] Repository를 참조하는 다른 객체가 생겨도 주입 코드를 매번 생성하지 않게 변경.
   - [ ] ViewModel에 수동 주입 의존성 -> 자동 주입

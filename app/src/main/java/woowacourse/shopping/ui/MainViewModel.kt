@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
@@ -36,8 +38,8 @@ class MainViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 MainViewModel(
-                    productRepository = ProductRepository(),
-                    cartRepository = CartRepository(),
+                    productRepository = DefaultProductRepository(),
+                    cartRepository = DefaultCartRepository(),
                 )
             }
         }
