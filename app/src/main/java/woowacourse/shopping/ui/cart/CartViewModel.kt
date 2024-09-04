@@ -3,6 +3,8 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.data.repository.CartDefaultRepository
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
@@ -24,5 +26,13 @@ class CartViewModel(
     fun deleteCartProduct(id: Int) {
         cartDefaultRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
+    }
+
+    companion object {
+        fun factory(
+            cartRepository: CartRepository = CartDefaultRepository(),
+        ) : ViewModelProvider.Factory {
+            return CartViewModelFactory(cartRepository)
+        }
     }
 }

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels { MainViewModelFactory() }
+    private val viewModel: MainViewModel by viewModels { MainViewModel.factory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
