@@ -3,21 +3,19 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.Injector
-import woowacourse.shopping.ui.ShoppingApplication
+import woowacourse.shopping.ui.BaseActivity
+import woowacourse.shopping.ui.util.Injector
 import woowacourse.shopping.ui.util.viewModelFactory
 
-class CartActivity : AppCompatActivity() {
-
-    private val injector: Injector by lazy { Injector() }
-
-    lateinit var cartRepository: CartRepository
-
-    private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
+class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
+    private lateinit var cartRepository: CartRepository
 
     private val viewModel: CartViewModel by viewModels {
         viewModelFactory { CartViewModel(cartRepository = cartRepository) }
@@ -28,7 +26,6 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        injector.inject(this)
         setupDateFormatter()
         setupBinding()
         setupToolbar()
@@ -50,9 +47,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupBinding() {
-        binding.lifecycleOwner = this
         binding.vm = viewModel
-        setContentView(binding.root)
     }
 
     private fun setupView() {
