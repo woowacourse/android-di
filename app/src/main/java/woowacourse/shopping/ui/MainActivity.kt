@@ -13,8 +13,8 @@ import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.viewModelFactory
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
+    lateinit var productRepository: ProductRepository
+    lateinit var cartRepository: CartRepository
 
     private val viewModel: MainViewModel by viewModels {
         viewModelFactory {

@@ -1,10 +1,11 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -13,14 +14,15 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
 import org.robolectric.shadows.ShadowToast
+import woowacourse.shopping.R
+import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.ProductAdapter
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityTest {
-    private lateinit var activity: MainActivity
+class CartActivityTest {
+    private lateinit var activity: CartActivity
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -29,35 +31,50 @@ class MainActivityTest {
     fun setUp() {
         activity =
             Robolectric
-                .buildActivity(MainActivity::class.java)
+                .buildActivity(CartActivity::class.java)
                 .create()
                 .get()
+
+        val products = listOf(
+            Product("Product1", 1000, "image1"),
+            Product("Product2", 2000, "image2"),
+            Product("Product3", 3000, "image3"),
+        )
+
+        products.forEach {
+            activity.cartRepository.addCartProduct(it)
+        }
     }
 
     @Test
     fun `Activity 실행 테스트`() {
         // then
-        assertThat(activity).isNotNull()
+        Truth.assertThat(activity).isNotNull()
     }
 
     @Test
     fun `ViewModel 주입 테스트`() {
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        // given
+        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        Truth.assertThat(viewModel).isNotNull()
     }
 
     @Test
     fun `RecyclerView 아이템 개수 테스트`() {
         // given
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // when
-        viewModel.getAllProducts()
+        viewModel.getAllCartProducts()
         ShadowLooper.idleMainLooper()
-        val adapter = ProductAdapter(viewModel.products.getOrAwaitValue(), viewModel::addCartProduct)
-        val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
+        val adapter = CartProductAdapter(
+            items = viewModel.cartProducts.getOrAwaitValue(),
+            onClickDelete = viewModel::deleteCartProduct,
+            dateFormatter = DateFormatter(activity)
+        )
+        val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_cart_products)
         recyclerView.adapter = adapter
 
         // then
