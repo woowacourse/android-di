@@ -7,7 +7,10 @@ import kotlin.reflect.KParameter
 class DIContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    fun put(classType: KClass<*>, instance: Any) {
+    fun put(
+        classType: KClass<*>,
+        instance: Any,
+    ) {
         if (instances.containsKey(classType)) {
             throw IllegalArgumentException("이미 해당 클래스의 인스턴스가 존재합니다.")
         }
