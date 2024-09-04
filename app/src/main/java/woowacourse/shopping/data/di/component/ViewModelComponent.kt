@@ -6,14 +6,15 @@ import androidx.lifecycle.ViewModelProvider
 fun inject(): ViewModelProvider.Factory = ViewModelComponent()
 
 private class ViewModelComponent : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor = modelClass.constructors.firstOrNull()
-            ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR.format(modelClass))
+        val constructor =
+            modelClass.constructors.firstOrNull()
+                ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR.format(modelClass))
 
-        val parameters = constructor.parameterTypes.map { bindClassType ->
-            DiSingletonComponent.match(bindClassType)
-        }.toTypedArray()
+        val parameters =
+            constructor.parameterTypes.map { bindClassType ->
+                DiSingletonComponent.match(bindClassType)
+            }.toTypedArray()
 
         return constructor.newInstance(*parameters) as T
     }
@@ -21,5 +22,4 @@ private class ViewModelComponent : ViewModelProvider.Factory {
     companion object {
         private const val ERROR_CONSTRUCTOR = "No suitable constructor for %s"
     }
-
 }

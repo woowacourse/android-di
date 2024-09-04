@@ -4,16 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
-import woowacourse.shopping.data.di.component.inject
 import woowacourse.shopping.data.di.component.viewModelsWithAutoInject
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModelsWithAutoInject()
@@ -25,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupView()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
@@ -55,10 +51,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {

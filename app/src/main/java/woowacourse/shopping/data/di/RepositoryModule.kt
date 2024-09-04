@@ -7,7 +7,6 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
 object RepositoryModule {
-
     fun install() {
         bindCartRepository()
         bindProductRepository()
