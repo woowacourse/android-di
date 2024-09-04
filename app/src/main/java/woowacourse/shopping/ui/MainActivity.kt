@@ -10,6 +10,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.util.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private val application: ShoppingApplication by lazy { applicationContext as ShoppingApplication }
 
-    private val viewModel by viewModels<MainViewModel> { MainViewModelProvider(application.diContainer).factory() }
+    private val viewModel by viewModels<MainViewModel> { ViewModelFactory(MainViewModel::class, application.diContainer) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
