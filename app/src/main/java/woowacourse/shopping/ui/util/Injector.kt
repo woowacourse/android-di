@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.util
 
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.reflect.KMutableProperty
@@ -8,6 +8,7 @@ import kotlin.reflect.typeOf
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.AppModule
+import woowacourse.shopping.ui.ShoppingApplication
 
 class Injector(
     private val appModule: AppModule = ShoppingApplication.appModule,
@@ -27,7 +28,6 @@ class Injector(
         activity: AppCompatActivity
     ) {
         property.isAccessible = true
-
         findValueForProperty(property, appModule)?.let { value ->
             property.setter.call(activity, value)
         }
