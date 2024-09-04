@@ -22,7 +22,7 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `카트에_담긴_모든_상품을_가져올_수_있다`() {
+    fun `카트에 담긴 모든 상품을 가져올 수 있다`() {
         // given
         addCartProducts(3)
 
@@ -41,7 +41,7 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `카트에_담긴_상품을_삭제할_수_있다`() {
+    fun `카트에 담긴 상품을 삭제할 수 있다`() {
         // given
         addCartProducts(3)
 
