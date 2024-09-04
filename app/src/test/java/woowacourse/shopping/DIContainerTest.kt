@@ -1,16 +1,15 @@
 package woowacourse.shopping
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.Before
+import org.junit.Test
 import woowacourse.shopping.di.DIContainer
 import java.lang.IllegalArgumentException
 
 class DIContainerTest {
     private lateinit var diContainer: DIContainer
 
-    @BeforeEach
+    @Before
     fun setUp() {
         diContainer = DIContainer()
     }
