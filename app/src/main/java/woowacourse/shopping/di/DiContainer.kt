@@ -21,14 +21,16 @@ class DiContainer(private val diModule: DiModule) {
         functions.forEach { func ->
             val clazz = func.returnType.jvmErasure
             val instance = func.call(diModule)
-            addInstance(clazz, instance!!)
+            addInstance(clazz, instance)
         }
     }
 
     private fun addInstance(
         classType: KClass<*>,
-        instance: Any,
+        instance: Any?,
     ) {
-        dependencies[classType] = instance
+        instance?.let {
+            dependencies[classType] = it
+        }
     }
 }
