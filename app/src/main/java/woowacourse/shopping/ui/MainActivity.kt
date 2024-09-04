@@ -17,10 +17,12 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<MainViewModel> {
-        MainViewModel.factory(
-            DefaultProductRepository(),
-            DefaultCartRepository(),
-        )
+        ViewModelFactory {
+            MainViewModel(
+                DefaultProductRepository.instance(),
+                DefaultCartRepository.instance(),
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

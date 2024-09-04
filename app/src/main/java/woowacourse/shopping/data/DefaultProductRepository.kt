@@ -27,4 +27,13 @@ class DefaultProductRepository : ProductRepository {
     }
 
     override fun products(): List<Product> = products
+
+    companion object {
+        private var instance: ProductRepository? = null
+        fun instance(): ProductRepository {
+            return instance ?: DefaultProductRepository().also {
+                instance = it
+            }
+        }
+    }
 }
