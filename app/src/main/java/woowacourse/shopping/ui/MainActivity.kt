@@ -19,14 +19,18 @@ import woowacourse.shopping.ui.util.viewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private val injector: Injector by lazy { Injector() }
+
+    lateinit var productRepository: ProductRepository
+    lateinit var cartRepository: CartRepository
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels {
         viewModelFactory {
-            val appModule = ShoppingApplication.appModule
             MainViewModel(
-                productRepository = appModule.productRepository,
-                cartRepository = appModule.cartRepository,
+                productRepository = productRepository,
+                cartRepository = cartRepository,
             )
         }
     }
@@ -34,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        injector.inject(this)
 
         setupBinding()
         setupToolbar()
