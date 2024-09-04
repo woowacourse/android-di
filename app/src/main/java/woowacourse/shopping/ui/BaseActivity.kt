@@ -5,7 +5,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import woowacourse.shopping.ui.util.Injector
+import woowacourse.shopping.di.Injector
 
 abstract class BaseActivity<T : ViewDataBinding>(
     @LayoutRes private val layoutResId: Int,
