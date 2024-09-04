@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.viewModelInject(
+inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory) = { ViewModelFactory() },
 ): Lazy<VM> {

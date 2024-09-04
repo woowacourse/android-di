@@ -7,13 +7,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityProductBinding
-import woowacourse.shopping.di.viewModelInject
+import woowacourse.shopping.di.injectViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 
 class ProductActivity : AppCompatActivity() {
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }
 
-    private val viewModel: ProductViewModel by viewModelInject()
+    private val viewModel: ProductViewModel by injectViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
