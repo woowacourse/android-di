@@ -12,4 +12,4 @@
 - [ ] Robolectric으로 기능 테스트
 - [ ] ViewModel 테스트
 - [ ] 모든 도메인 로직, Repository 단위 테스트
-- [ ] Reflection 학습 테스트
+- [x] Reflection 학습 테스트
