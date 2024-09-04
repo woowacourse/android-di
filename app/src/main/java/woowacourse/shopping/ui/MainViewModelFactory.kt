@@ -2,10 +2,8 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.data.CartDefaultRepository
-import woowacourse.shopping.data.ProductDefaultRepository
-import kotlin.reflect.KClass
+import woowacourse.shopping.data.repository.CartDefaultRepository
+import woowacourse.shopping.data.repository.ProductDefaultRepository
 
 class MainViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
