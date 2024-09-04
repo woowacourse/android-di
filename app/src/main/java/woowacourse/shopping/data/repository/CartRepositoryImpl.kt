@@ -18,15 +18,4 @@ class CartRepositoryImpl : CartRepository {
     override fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)
     }
-
-    companion object {
-        private var instance: CartRepositoryImpl? = null
-
-        fun getInstance(): CartRepositoryImpl {
-            if (instance == null) {
-                instance = CartRepositoryImpl()
-            }
-            return instance!!
-        }
-    }
 }
