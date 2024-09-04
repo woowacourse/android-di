@@ -3,7 +3,10 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
@@ -25,6 +28,16 @@ class MainViewModel(
     }
 
     fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
+        _products.value = productRepository.products()
+    }
+
+    companion object {
+        fun factory(
+            defaultProductRepository: DefaultProductRepository,
+            defaultCartRepository: DefaultCartRepository,
+        ): ViewModelProvider.Factory =
+            ViewModelFactory {
+                MainViewModel(defaultProductRepository, defaultCartRepository)
+            }
     }
 }
