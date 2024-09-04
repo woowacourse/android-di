@@ -5,6 +5,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.ShoppingApplication
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.typeOf
@@ -17,6 +18,7 @@ class Injector(
             activity::class.declaredMemberProperties
                 .filterIsInstance<KMutableProperty<*>>()
                 .filter { it.isLateinit }
+                .filter { it.visibility == KVisibility.PUBLIC }
 
         properties.forEach { property ->
             injectProperty(property, activity)
