@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -16,10 +14,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<MainViewModel> {
-        MainViewModel.factory(
-            productRepository = DefaultProductRepository(),
-            cartRepository = DefaultCartRepository(),
-        )
+        MainViewModel.Factory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
