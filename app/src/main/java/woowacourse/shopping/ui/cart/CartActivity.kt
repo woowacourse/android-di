@@ -10,7 +10,7 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<CartViewModel> { CartViewModelFactory() }
+    private val viewModel by viewModels<CartViewModel> { CartViewModel.factory() }
 
     private lateinit var dateFormatter: DateFormatter
 
