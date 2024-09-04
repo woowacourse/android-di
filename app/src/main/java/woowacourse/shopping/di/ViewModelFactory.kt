@@ -3,20 +3,24 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmErasure
 
-@Suppress("UNCHECKED_CAST")
 class ViewModelFactory(
-    private val dependencies: MutableMap<Class<out Any>, Any>,
+    private val diContainer: DiContainer,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        val constructor = modelClass.constructors.firstOrNull()
-            ?: throw IllegalArgumentException("No primary constructor")
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
+        val constructor =
+            modelClass.kotlin.primaryConstructor
+                ?: throw IllegalArgumentException("No primary constructor")
 
-        val params = constructor.parameters.map { param ->
-            dependencies[param.type] ?: throw IllegalArgumentException(
-                "Dependency not found for parameter type"
-            )
-        }
-        return constructor.newInstance(*params.toTypedArray()) as T
+        val params =
+            constructor.parameters.map { param ->
+                diContainer.getInstance(param.type.jvmErasure)
+            }
+        return constructor.call(*params.toTypedArray())
     }
 }
