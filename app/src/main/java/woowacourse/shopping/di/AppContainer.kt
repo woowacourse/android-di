@@ -16,15 +16,4 @@ class AppContainer {
     ) {
         instances[type] = instance
     }
-
-    companion object {
-        private var instance: AppContainer? = null
-
-        fun getInstance(): AppContainer {
-            if (instance == null) {
-                instance = AppContainer()
-            }
-            return instance!!
-        }
-    }
 }

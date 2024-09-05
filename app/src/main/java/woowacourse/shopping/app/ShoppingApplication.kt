@@ -10,7 +10,7 @@ import woowacourse.shopping.domain.repository.ProductRepository
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        appContainer = AppContainer.getInstance()
+        appContainer = AppContainer()
         injectInstanceToContainer()
     }
 
