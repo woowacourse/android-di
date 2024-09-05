@@ -1,11 +1,12 @@
 package woowacourse.shopping
 
+import woowacourse.di.AppContainer
 import woowacourse.di.InjectedActivityContainer
 import woowacourse.di.InjectedComponent
 import woowacourse.di.InjectedSingletonContainer
 import kotlin.reflect.KClass
 
-class DefaultAppContainer : AppContainer() {
+class DefaultAppContainer : AppContainer {
     private val singletonComponentContainer: InjectedSingletonContainer = InjectedSingletonContainer
     private val activityComponentContainer: InjectedActivityContainer = InjectedActivityContainer
 
