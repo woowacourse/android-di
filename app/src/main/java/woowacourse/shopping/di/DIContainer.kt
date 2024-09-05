@@ -4,17 +4,20 @@ import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
-class DIContainer {
+class DIContainer(diModule: DIModule) {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    fun put(
-        classType: KClass<*>,
-        instance: Any,
-    ) {
-        if (instances.containsKey(classType)) {
+    init {
+        diModule.injectSingletonInstance()
+    }
+
+    private fun DIModule.injectSingletonInstance() = singletonInstance().forEach { it.putSingletonInstance() }
+
+    private fun Module.putSingletonInstance() {
+        if (instances.containsKey(type)) {
             throw IllegalArgumentException("이미 해당 클래스의 인스턴스가 존재합니다.")
         }
-        instances[classType] = instance
+        instances[type] = instance
     }
 
     fun <T : Any> instance(classType: KClass<T>): T {
@@ -30,7 +33,7 @@ class DIContainer {
         val parameters = classType.constructors.first().parameters
         val arguments = parameters.map(::argumentInstance)
         return classType.constructors.first().call(*arguments.toTypedArray()).also {
-            put(classType, it)
+            Module(classType, it).putSingletonInstance()
         }
     }
 
