@@ -24,32 +24,29 @@ object AutoDIManager {
 //        repositories[repository::class.typeParameters.toString()] = repository
 //    }
 
-    private fun <T : Any> createInstanceWithParameters(
-        clazz: KClass<T>,
-        types: Map<KClass<*>, Any?>,
-    ): T? {
+    // 어떤 생성자 파라미터의 타입에 어떤 인스턴스를 주입할지를 정해주는 부분입니다.
+    // 파라미터가 더 생길 경우 이곳에 추가하면 됩니다.
+    private val instances: Map<KClass<*>, Repository> =
+        mapOf(
+            ProductRepository::class to ProductRepositoryImpl,
+            CartRepository::class to CartRepositoryImpl,
+        )
+
+    fun <T : ViewModel> createViewModelFactory(viewModelClass: KClass<T>): GenericViewModelFactory<ViewModel> {
+        return GenericViewModelFactory(viewModelClass) {
+            createInstanceWithParameters(viewModelClass)
+                ?: error("Failed to create ViewModel instance")
+        }
+    }
+
+    private fun <T : Any> createInstanceWithParameters(clazz: KClass<T>): T? {
         val constructor = clazz.primaryConstructor ?: return null
         val args =
             constructor.parameters.associateWith { parameter ->
-                types[parameter.type.classifier as? KClass<*>]
+                instances[parameter.type.classifier as? KClass<*>]
             }
         constructor.isAccessible = true
 
         return constructor.callBy(args)
-    }
-
-    fun <T : ViewModel> createViewModelFactory(viewModelClass: KClass<T>): GenericViewModelFactory<ViewModel> {
-        // 어떤 생성자 파라미터의 타입에 어떤 인스턴스를 주입할지를 정해주는 부분입니다.
-        // 파라미터가 더 생길 경우 이곳에 추가하면 됩니다.
-        val args: Map<KClass<*>, Repository> =
-            mapOf(
-                ProductRepository::class to ProductRepositoryImpl,
-                CartRepository::class to CartRepositoryImpl,
-            )
-
-        return GenericViewModelFactory(viewModelClass) {
-            createInstanceWithParameters(viewModelClass, args)
-                ?: error("Failed to create ViewModel instance")
-        }
     }
 }
