@@ -9,7 +9,7 @@ class ViewModelFactory(private val dependencyInjector: DependencyInjector) :
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         return if (ViewModel::class.java.isAssignableFrom(modelClass)) {
-            dependencyInjector.createAndInject(kClass)
+            dependencyInjector.createWithAutoDI(kClass)
         } else {
             throw IllegalArgumentException("${modelClass}은 ViewModel 클래스가 아닙니다.")
         }
