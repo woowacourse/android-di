@@ -15,10 +15,12 @@ import kotlin.reflect.full.staticFunctions
 class Person(
     var firstName: String,
     val lastName: String,
-    private var age: Int
+    private var age: Int,
 ) {
     fun greeting() {}
+
     private fun fullName() {}
+
     private fun Int.isAdult() {}
 
     companion object {
@@ -27,7 +29,6 @@ class Person(
 }
 
 class ReflectionTest {
-
     @Test
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
         val person = Person("Jason", "Park", 20)
