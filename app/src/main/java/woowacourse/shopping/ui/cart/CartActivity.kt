@@ -14,11 +14,7 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<CartViewModel> {
-        ViewModelFactory {
-            CartViewModel(
-                DefaultCartRepository.instance(),
-            )
-        }
+        ViewModelFactory()
     }
     private lateinit var dateFormatter: DateFormatter
 
