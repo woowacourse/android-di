@@ -8,7 +8,6 @@ import kotlin.reflect.full.primaryConstructor
 class CommonViewModelFactory(
     private val application: ShoppingApplication,
 ) : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         val constructor =
@@ -18,8 +17,9 @@ class CommonViewModelFactory(
         val args =
             constructor.parameters.map { parameter ->
                 val containers = application.container
-                val find = containers.find(parameter.type.classifier as KClass<*>)
-                    ?: throw java.lang.IllegalArgumentException("Unresolved dependency for ${parameter.type}")
+                val find =
+                    containers.find(parameter.type.classifier as KClass<*>)
+                        ?: throw java.lang.IllegalArgumentException("Unresolved dependency for ${parameter.type}")
                 find
             }.toTypedArray()
 

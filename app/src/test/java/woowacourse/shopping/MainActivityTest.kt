@@ -54,26 +54,15 @@ class MainActivityTest {
 
         // when
 
-
         // then
-
     }
 
     @Test
     fun `메인 액티비티가 회전되어도 DateFormatter 객체에 대한 참조는 사라지면 안된다`() {
         // given
-        
 
         // when
 
-
         // then
-
     }
-
-
-
-
-
-
 }

@@ -10,7 +10,8 @@ object InjectedSingletonContainer {
         components.add(component)
     }
 
-    fun find(clazz: KClass<*>): Any? = components.find {
-        clazz.isSuperclassOf(it.injectedClass)
-    }?.instance
+    fun find(clazz: KClass<*>): Any? =
+        components.find {
+            clazz.isSuperclassOf(it.injectedClass)
+        }?.instance
 }

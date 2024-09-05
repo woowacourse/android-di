@@ -16,8 +16,7 @@ class DefaultAppContainer : AppContainer() {
         }
     }
 
-    override fun find(clazz: KClass<*>): Any? =
-        singletonComponentContainer.find(clazz) ?: activityComponentContainer.find(clazz)
+    override fun find(clazz: KClass<*>): Any? = singletonComponentContainer.find(clazz) ?: activityComponentContainer.find(clazz)
 
     override fun clearActivityScopedObjects() {
         activityComponentContainer.clear()
