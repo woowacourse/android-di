@@ -10,7 +10,6 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.cart.CartViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }

@@ -11,7 +11,10 @@ object DIContainer {
         module.register(this)
     }
 
-    fun <T : Any> registerMapping(interfaceClass: KClass<T>, implementationClass: KClass<out T>) {
+    fun <T : Any> registerMapping(
+        interfaceClass: KClass<T>,
+        implementationClass: KClass<out T>,
+    ) {
         interfaceMappings[interfaceClass] = implementationClass
     }
 
@@ -22,14 +25,17 @@ object DIContainer {
         }
 
         val actualClass = interfaceMappings[kClass] ?: kClass
-        val constructor = actualClass.primaryConstructor ?: actualClass.constructors.firstOrNull()
-        ?: throw IllegalArgumentException("${actualClass.simpleName}: 생성자를 찾을 수 없습니다")
+        val constructor =
+            actualClass.primaryConstructor ?: actualClass.constructors.firstOrNull()
+                ?: throw IllegalArgumentException("${actualClass.simpleName}: 생성자를 찾을 수 없습니다")
 
-        val parameters = constructor.parameters.map { parameter ->
-            val parameterClass = parameter.type.classifier as? KClass<*>
-                ?: throw IllegalArgumentException("${parameter.name}: 매개변수 타입이 잘못되었습니다")
-            getInstance(parameterClass)
-        }
+        val parameters =
+            constructor.parameters.map { parameter ->
+                val parameterClass =
+                    parameter.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException("${parameter.name}: 매개변수 타입이 잘못되었습니다")
+                getInstance(parameterClass)
+            }
 
         val instance = constructor.call(*parameters.toTypedArray()) as T
         singletonInstances[kClass] = instance
