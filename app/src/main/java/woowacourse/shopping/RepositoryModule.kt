@@ -2,7 +2,7 @@ package woowacourse.shopping
 
 import kotlin.reflect.KClass
 
-class AppContainer(vararg repositories: Pair<KClass<out Any>, Any>) {
+class RepositoryModule(vararg repositories: Pair<KClass<out Any>, Any>) {
     private val repositoryContainer = hashMapOf<KClass<out Any>, Any>()
 
     init {

@@ -7,13 +7,13 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 
 class ShoppingApplication : Application() {
-    lateinit var appContainer: AppContainer
+    lateinit var repositoryModule: RepositoryModule
         private set
 
     override fun onCreate() {
         super.onCreate()
-        appContainer =
-            AppContainer(
+        repositoryModule =
+            RepositoryModule(
                 CartRepository::class to CartRepositoryImpl(),
                 ProductRepository::class to ProductRepositoryImpl(),
             )
