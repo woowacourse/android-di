@@ -1,9 +1,9 @@
 package woowacourse.shopping
 
-import woowacourse.di.AppContainer
-import woowacourse.di.InjectedActivityContainer
-import woowacourse.di.InjectedComponent
-import woowacourse.di.InjectedSingletonContainer
+import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.InjectedActivityContainer
+import woowacourse.shopping.di.InjectedComponent
+import woowacourse.shopping.di.InjectedSingletonContainer
 import kotlin.reflect.KClass
 
 class DefaultAppContainer : AppContainer {

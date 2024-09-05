@@ -1,4 +1,4 @@
-package woowacourse.di
+package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSuperclassOf

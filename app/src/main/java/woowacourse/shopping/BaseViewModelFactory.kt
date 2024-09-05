@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class CommonViewModelFactory(
+class BaseViewModelFactory(
     private val application: ShoppingApplication,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
