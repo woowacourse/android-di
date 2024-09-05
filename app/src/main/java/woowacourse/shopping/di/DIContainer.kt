@@ -17,7 +17,7 @@ class DIContainer {
         instances[classType] = instance
     }
 
-    fun <T : Any> get(classType: KClass<T>): T {
+    fun <T : Any> singletonInstance(classType: KClass<T>): T {
         val instance = instances[classType] ?: create(classType)
         return instance as T
     }
