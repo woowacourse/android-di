@@ -1,21 +1,22 @@
 package woowacourse.shopping.di
 
-import androidx.activity.ComponentActivity
-import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
+import woowacourse.shopping.app.ShoppingApplication.Companion.appContainer
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
-@MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(
-    noinline extrasProducer: (() -> CreationExtras)? = null,
-    noinline factoryProducer: (() -> ViewModelProvider.Factory) = { ViewModelFactory() },
-): Lazy<VM> {
-    return ViewModelLazy(
-        VM::class,
-        { viewModelStore },
-        factoryProducer,
-        { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
-    )
+class ViewModelInjector : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val constructor =
+            modelClass.kotlin.primaryConstructor
+                ?: throw IllegalArgumentException("ViewModel class must have a primary constructor: $modelClass")
+
+        val parameters =
+            constructor.parameters.map { parameter ->
+                appContainer.getInstance(parameter.type.classifier as KClass<*>)
+            }.toTypedArray()
+
+        return constructor.call(*parameters)
+    }
 }
