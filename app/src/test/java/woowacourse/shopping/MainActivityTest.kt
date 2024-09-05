@@ -42,4 +42,38 @@ class MainActivityTest {
         // then
         assertThat(viewModel).isNotNull()
     }
+
+    @Test
+    fun `메인 액티비티가 제거되면 주입되었던 DateFormatter 객체에 대한 참조도 사라진다`() {
+        // given
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
+
+        // when
+
+
+        // then
+
+    }
+
+    @Test
+    fun `메인 액티비티가 회전되어도 DateFormatter 객체에 대한 참조는 사라지면 안된다`() {
+        // given
+        
+
+        // when
+
+
+        // then
+
+    }
+
+
+
+
+
+
 }

@@ -1,20 +1,14 @@
 package woowacourse.shopping
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class CommonViewModelFactory(
-    application: ShoppingApplication,
+    val application: ShoppingApplication,
 ) : ViewModelProvider.Factory {
-    private val dependencyMap: Map<KClass<*>, Any> =
-        mapOf(
-            ProductRepository::class to application.container.productRepository,
-            CartRepository::class to application.container.cartRepository,
-        )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
@@ -24,8 +18,10 @@ class CommonViewModelFactory(
 
         val args =
             constructor.parameters.map { parameter ->
-                val dependency = dependencyMap[parameter.type.classifier as KClass<*>]
-                dependency ?: throw IllegalArgumentException("Unresolved dependency for ${parameter.type}")
+                val containers = application.container.injectedComponentContainer
+                val find = containers.find(parameter.type.classifier as KClass<*>)
+                    ?: throw java.lang.IllegalArgumentException("Unresolved dependency for ${parameter.type}")
+                find
             }.toTypedArray()
 
         return constructor.call(*args)

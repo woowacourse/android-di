@@ -1,10 +1,7 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.di.InjectedContainer
 
 abstract class AppContainer {
-    abstract val cartRepository: CartRepository
-
-    abstract val productRepository: ProductRepository
+    abstract val injectedComponentContainer: InjectedContainer
 }
