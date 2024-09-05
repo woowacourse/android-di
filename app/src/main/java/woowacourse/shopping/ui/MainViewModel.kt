@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.CommonViewModelFactory
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -36,10 +37,7 @@ class MainViewModel(
             viewModelFactory {
                 initializer {
                     val application = (this[APPLICATION_KEY] as ShoppingApplication)
-                    MainViewModel(
-                        application.container.productRepository,
-                        application.container.cartRepository,
-                    )
+                    CommonViewModelFactory(application).create(MainViewModel::class.java)
                 }
             }
     }
