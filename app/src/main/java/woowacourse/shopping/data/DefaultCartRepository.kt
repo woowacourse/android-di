@@ -7,10 +7,6 @@ import woowacourse.shopping.repository.CartRepository
 class DefaultCartRepository : CartRepository {
     private val cartProducts: MutableList<Product> = mutableListOf()
 
-    init {
-        println("CartRepository 생성")
-    }
-
     override fun addCartProduct(product: Product) {
         cartProducts.add(product)
     }
