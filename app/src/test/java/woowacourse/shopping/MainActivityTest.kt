@@ -47,14 +47,14 @@ class MainActivityTest {
         assertThat(viewModel).isNotNull()
     }
 
-
     @Test
     fun injected_productRepository_is_DefaultProductRepository() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
 
         // when
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
@@ -67,14 +67,14 @@ class MainActivityTest {
         assertThat(productRepository).isInstanceOf(DefaultProductRepository::class.java)
     }
 
-
     @Test
     fun injected_cartRepository_is_DefaultCartRepository() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
 
         // when
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
@@ -86,7 +86,4 @@ class MainActivityTest {
 
         assertThat(cartRepository).isInstanceOf(DefaultProductRepository::class.java)
     }
-
-
-
 }
