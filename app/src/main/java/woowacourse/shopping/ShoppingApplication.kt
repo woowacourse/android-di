@@ -1,12 +1,13 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.DIContainer
 
-class ShoppingApplication: Application() {
-    val cartRepository: CartRepository by lazy { DefaultCartRepository() }
-    val productRepository: ProductRepository by lazy { DefaultProductRepository() }
+class ShoppingApplication : Application() {
+    init {
+        DIContainer.putInstance(DefaultProductRepository())
+        DIContainer.putInstance(DefaultCartRepository())
+    }
 }

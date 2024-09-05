@@ -6,22 +6,19 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.R
-import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.injectViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val shoppingApplication by lazy { application as ShoppingApplication }
 
-    private val viewModel by viewModels<MainViewModel> {
-        MainViewModelFactory(
-            shoppingApplication.productRepository,
-            shoppingApplication.cartRepository,
-        )
+    private val viewModel: MainViewModel by viewModels {
+        viewModelFactory {
+            injectViewModel<MainViewModel>()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
