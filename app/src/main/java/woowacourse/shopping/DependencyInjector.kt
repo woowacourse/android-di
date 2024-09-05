@@ -34,9 +34,10 @@ object DependencyInjector {
 
         constructor.isAccessible = true
 
-        val dependencies = constructor.parameterTypes.map { paramClass ->
-            getInstance(paramClass)
-        }
+        val dependencies =
+            constructor.parameterTypes.map { paramClass ->
+                getInstance(paramClass)
+            }
 
         return constructor.newInstance(*dependencies.toTypedArray()) as T
     }
