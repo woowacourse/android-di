@@ -11,7 +11,7 @@ class ViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(viewModelClass.java)) {
-            diContainer.singletonInstance(viewModelClass) as T
+            diContainer.instance(viewModelClass) as T
         } else {
             throw IllegalArgumentException("잘못된 ViewModel 클래스입니다.")
         }
