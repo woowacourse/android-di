@@ -16,8 +16,6 @@ class ShoppingApplication : Application() {
 
         container.add(
             InjectedComponent.InjectedSingletonComponent(ProductRepository::class, DefaultProductRepository()),
-        )
-        container.add(
             InjectedComponent.InjectedSingletonComponent(CartRepository::class, DefaultCartRepository()),
         )
     }
