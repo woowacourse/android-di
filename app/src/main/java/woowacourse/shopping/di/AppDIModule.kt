@@ -5,7 +5,7 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
-class AppDiModule : DIModule {
+class AppDIModule : DIModule {
     override fun singletonInstance(): List<Module> {
         return listOf(
             Module(CartRepository::class, DefaultCartRepository()),
