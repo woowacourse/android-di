@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.data.repository.CartDefaultRepository
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.ui.util.ReflectiveViewModelFactory
 
 class CartViewModel(
     private val cartDefaultRepository: CartRepository,
@@ -33,6 +34,10 @@ class CartViewModel(
             cartRepository: CartRepository = CartDefaultRepository(),
         ) : ViewModelProvider.Factory {
             return CartViewModelFactory(cartRepository)
+        }
+
+        fun reflectionFactory() : ViewModelProvider.Factory {
+            return ReflectiveViewModelFactory()
         }
     }
 }

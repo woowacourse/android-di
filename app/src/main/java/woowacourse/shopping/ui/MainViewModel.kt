@@ -9,6 +9,7 @@ import woowacourse.shopping.data.repository.ProductDefaultRepository
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.ui.util.ReflectiveViewModelFactory
 
 class MainViewModel(
     private val productDefaultRepository: ProductRepository,
@@ -37,6 +38,10 @@ class MainViewModel(
             cartRepository: CartRepository = CartDefaultRepository(),
         ): ViewModelProvider.Factory {
             return MainViewModelFactory(productRepository, cartRepository)
+        }
+
+        fun reflectionFactory(): ViewModelProvider.Factory {
+            return ReflectiveViewModelFactory()
         }
     }
 }
