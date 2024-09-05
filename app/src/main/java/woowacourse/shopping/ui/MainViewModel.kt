@@ -17,7 +17,6 @@ class MainViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -32,16 +31,5 @@ class MainViewModel(
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MainViewModel(
-                    productRepository = DefaultProductRepository,
-                    cartRepository = DefaultCartRepository,
-                )
-            }
-        }
     }
 }

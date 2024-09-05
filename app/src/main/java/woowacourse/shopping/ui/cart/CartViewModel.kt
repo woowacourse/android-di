@@ -31,14 +31,4 @@ class CartViewModel(
         cartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
     }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                CartViewModel(
-                    cartRepository = DefaultCartRepository,
-                )
-            }
-        }
-    }
 }
