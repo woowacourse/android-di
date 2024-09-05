@@ -1,8 +1,11 @@
 package woowacourse.shopping.ui.di
 
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.Repository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -21,25 +24,26 @@ object AutoDIManager {
 
     private fun <T : Any> createInstanceWithParameters(
         clazz: KClass<T>,
-        argInputs: Map<String, Any?>
+        typeInputs: Map<KClass<*>, Any?>
     ): T? {
         val constructor = clazz.primaryConstructor ?: return null
 
-        val args = constructor.parameters.associateWith {
-            args -> argInputs[args.name]
+        // 파라미터 타입에 맞는 값을 매핑합니다.
+        val args = constructor.parameters.associateWith { parameter ->
+            typeInputs[parameter.type.classifier as? KClass<*>]
         }
         constructor.isAccessible = true
         return constructor.callBy(args)
     }
 
     fun <T : ViewModel> createViewModelFactory(viewModelClass: KClass<T>): GenericViewModelFactory<ViewModel> {
-        val args = mapOf(
-            "productRepository" to ProductRepositoryImpl,
-            "cartRepository" to CartRepositoryImpl,
+        val args: Map<KClass<*>, Repository> = mapOf(
+            ProductRepository::class to ProductRepositoryImpl,
+            CartRepository::class to CartRepositoryImpl,
         )
 
         return GenericViewModelFactory(viewModelClass) {
-            createInstanceWithParameters(viewModelClass, args) ?: error("")
+            createInstanceWithParameters(viewModelClass, args) ?: error("Failed to create ViewModel instance")
         }
     }
 }
