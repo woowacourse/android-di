@@ -15,13 +15,4 @@ class DefaultCartRepository : CartRepository {
     override fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)
     }
-
-    companion object {
-        private var instance: CartRepository? = null
-        fun instance(): CartRepository {
-            return instance ?: DefaultCartRepository().also {
-                instance = it
-            }
-        }
-    }
 }
