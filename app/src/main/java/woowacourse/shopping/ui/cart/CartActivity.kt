@@ -5,15 +5,15 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels {
-        CartViewModelFactory(cartRepository = DefaultCartRepository())
-    }
+    private val dependencyInjector: DependencyInjector by lazy { DependencyInjector() }
+    private val viewModel: CartViewModel by viewModels { ViewModelFactory(dependencyInjector) }
 
     private lateinit var dateFormatter: DateFormatter
 

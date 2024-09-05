@@ -7,20 +7,15 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory(
-            productRepository = DefaultProductRepository(),
-            cartRepository = DefaultCartRepository(),
-        )
-    }
+    private val dependencyInjector: DependencyInjector by lazy { DependencyInjector() }
+    private val viewModel: MainViewModel by viewModels { ViewModelFactory(dependencyInjector) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
