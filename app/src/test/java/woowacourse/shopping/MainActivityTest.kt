@@ -10,15 +10,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.android.controller.ActivityController
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.injection.RepositoryModule
 
-
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
-
     private lateinit var activity: MainActivity
 
     @get:Rule
@@ -31,7 +28,6 @@ class MainActivityTest {
         RepositoryModule.getInstance().onCreate(controller.get() as LifecycleOwner)
         activity = controller.create().get()
     }
-
 
     @Test
     fun `Activity 실행 테스트`() {
