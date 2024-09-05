@@ -3,8 +3,8 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.DependencyInjector
 import woowacourse.shopping.GlobalViewModelFactory
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -31,9 +31,7 @@ class CartViewModel(
     companion object {
         fun factory(): GlobalViewModelFactory =
             GlobalViewModelFactory {
-                CartViewModel(
-                    cartRepository = ShoppingApplication.cartRepository,
-                )
+                DependencyInjector.getInstance(CartViewModel::class.java)
             }
     }
 }
