@@ -41,7 +41,7 @@
 ## 선택 요구 사항
 
 - [ ] TDD로 DI 구현
-- [ ] Robolectric으로 기능 테스트
+- [x] Robolectric 으로 기능 테스트
 - [ ] ViewModel 테스트
 - [ ] 모든 도메인 로직, Repository 단위 테스트
 

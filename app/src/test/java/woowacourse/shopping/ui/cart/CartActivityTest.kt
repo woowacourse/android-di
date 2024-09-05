@@ -1,5 +1,6 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.cart
 
+import android.widget.ImageView
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import org.robolectric.shadows.ShadowToast
 import woowacourse.shopping.R
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityTest {
+class CartActivityTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -28,7 +29,7 @@ class MainActivityTest {
     fun `Activity 실행 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(CartActivity::class.java)
             .create()
             .get()
 
@@ -40,34 +41,12 @@ class MainActivityTest {
     fun `ViewModel 주입 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(CartActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
-    }
-
-    @Test
-    fun `Product 클릭 시 토스트 메시지 출력 테스트`() {
-        // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .start()
-            .resume()
-            .get()
-
-        // when
-        val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
-        recyclerView.measure(0, 0)
-        recyclerView.layout(0, 0, 100, 100)
-        recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.performClick()
-
-        // then
-        val expectedMessage = activity.getString(R.string.cart_added)
-        val actualMessage = ShadowToast.getTextOfLatestToast()
-        assertThat(actualMessage).isEqualTo(expectedMessage)
     }
 }
