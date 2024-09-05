@@ -21,12 +21,12 @@ object AutoDIManager {
 
     private fun <T : Any> createInstanceWithParameters(
         clazz: KClass<T>,
-        parameters: Map<String, Any?>
+        argInputs: Map<String, Any?>
     ): T? {
         val constructor = clazz.primaryConstructor ?: return null
 
-        val args = constructor.parameters.associateWith { parameter ->
-            parameters[parameter.name]
+        val args = constructor.parameters.associateWith {
+            args -> argInputs[args.name]
         }
         constructor.isAccessible = true
         return constructor.callBy(args)
