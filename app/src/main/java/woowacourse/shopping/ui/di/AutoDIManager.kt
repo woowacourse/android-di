@@ -26,15 +26,15 @@ object AutoDIManager {
 
     private fun <T : Any> createInstanceWithParameters(
         clazz: KClass<T>,
-        typeInputs: Map<KClass<*>, Any?>,
+        types: Map<KClass<*>, Any?>,
     ): T? {
         val constructor = clazz.primaryConstructor ?: return null
-
         val args =
             constructor.parameters.associateWith { parameter ->
-                typeInputs[parameter.type.classifier as? KClass<*>]
+                types[parameter.type.classifier as? KClass<*>]
             }
         constructor.isAccessible = true
+
         return constructor.callBy(args)
     }
 
@@ -48,7 +48,8 @@ object AutoDIManager {
             )
 
         return GenericViewModelFactory(viewModelClass) {
-            createInstanceWithParameters(viewModelClass, args) ?: error("Failed to create ViewModel instance")
+            createInstanceWithParameters(viewModelClass, args)
+                ?: error("Failed to create ViewModel instance")
         }
     }
 }
