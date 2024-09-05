@@ -1,14 +1,12 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.AppContainer
-import woowacourse.shopping.data.DefaultAppContainer
+import woowacourse.shopping.di.DIContainer
+import woowacourse.shopping.di.AppModule
 
 class ShoppingApp : Application() {
-    lateinit var container: AppContainer
-
     override fun onCreate() {
         super.onCreate()
-        container = DefaultAppContainer()
+        DIContainer.loadModule(AppModule())
     }
 }
