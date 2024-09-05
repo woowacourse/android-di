@@ -1,7 +1,12 @@
 package woowacourse.shopping
 
-import woowacourse.di.InjectedContainer
+import woowacourse.di.InjectedComponent
+import kotlin.reflect.KClass
 
 abstract class AppContainer {
-    abstract val injectedComponentContainer: InjectedContainer
+    abstract fun add(component: InjectedComponent)
+
+    abstract fun find(clazz: KClass<*>): Any?
+
+    abstract fun clearActivityScopedObjects()
 }

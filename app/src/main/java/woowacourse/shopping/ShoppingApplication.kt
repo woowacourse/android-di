@@ -14,11 +14,10 @@ class ShoppingApplication : Application() {
         super.onCreate()
         container = DefaultAppContainer()
 
-        container.injectedComponentContainer.add(
+        container.add(
             InjectedComponent.InjectedSingletonComponent(ProductRepository::class, DefaultProductRepository()),
         )
-
-        container.injectedComponentContainer.add(
+        container.add(
             InjectedComponent.InjectedSingletonComponent(CartRepository::class, DefaultCartRepository()),
         )
     }
