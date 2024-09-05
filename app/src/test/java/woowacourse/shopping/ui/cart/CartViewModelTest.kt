@@ -11,7 +11,6 @@ import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
 
 class CartViewModelTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -20,10 +19,11 @@ class CartViewModelTest {
 
     @Before
     fun setUp() {
-        cartRepository = FakeCartRepository(
-            ProductFixture(1),
-            ProductFixture(2),
-        )
+        cartRepository =
+            FakeCartRepository(
+                ProductFixture(1),
+                ProductFixture(2),
+            )
         vm = CartViewModel(cartRepository)
     }
 
@@ -34,8 +34,16 @@ class CartViewModelTest {
 
         // then
         assertThat(vm.onCartProductDeleted.getOrAwaitValue()).isEqualTo(true)
-
     }
 
+    @Test
+    fun `두 개의 상품이 있는 장바구니에 있는 하나의 상품 삭제`() {
+        // when
+        vm.deleteCartProduct(1)
 
+        // then
+        assertThat(vm.cartProducts.getOrAwaitValue()).contains(
+            ProductFixture(1),
+        )
+    }
 }

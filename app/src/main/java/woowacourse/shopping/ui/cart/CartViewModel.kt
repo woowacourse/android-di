@@ -29,6 +29,7 @@ class CartViewModel(
     fun deleteCartProduct(id: Int) {
         cartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
+        getAllCartProducts()
     }
 
     companion object {
