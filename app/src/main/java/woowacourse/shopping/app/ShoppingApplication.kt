@@ -3,24 +3,18 @@ package woowacourse.shopping.app
 import android.app.Application
 import woowacourse.shopping.data.repository.CartRepositoryImpl
 import woowacourse.shopping.data.repository.ProductRepositoryImpl
-import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        appContainer = AppContainer()
-        injectInstanceToContainer()
+        addInstanceToContainer()
     }
 
-    private fun injectInstanceToContainer() {
-        appContainer.addInstance(ProductRepository::class, ProductRepositoryImpl())
-        appContainer.addInstance(CartRepository::class, CartRepositoryImpl())
-    }
-
-    companion object {
-        lateinit var appContainer: AppContainer
-            private set
+    private fun addInstanceToContainer() {
+        DIContainer.addInstance(ProductRepository::class, ProductRepositoryImpl())
+        DIContainer.addInstance(CartRepository::class, CartRepositoryImpl())
     }
 }

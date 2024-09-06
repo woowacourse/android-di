@@ -14,7 +14,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.provideViewModel(
 ): Lazy<VM> {
     val factoryPromise =
         factoryProducer ?: {
-            ViewModelInjector()
+            ViewModelFactory()
         }
 
     return ViewModelLazy(

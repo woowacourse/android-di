@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
-class AppContainer {
+object DIContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
