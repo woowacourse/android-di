@@ -5,6 +5,6 @@
         android:id="@+id/cart"
         android:enabled="true"
         android:title="@string/menu_cart_title"
-        app:actionLayout="@layout/toolbar_main_cart"
+        app:actionLayout="@layout/toolbar_product_cart"
         app:showAsAction="always" />
 </menu>

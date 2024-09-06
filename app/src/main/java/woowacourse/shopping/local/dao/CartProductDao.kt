@@ -1,12 +1,12 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import woowacourse.shopping.local.entity.CartProductEntity
 
 @Dao
 interface CartProductDao {
-
     @Query("SELECT * FROM cart_products")
     suspend fun getAll(): List<CartProductEntity>
 
