@@ -36,11 +36,12 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
     private fun createRepositoryMap(repositoryBinder: RepositoryBinder): Map<String, RepositoryDI> {
         return RepositoryBinder::class.declaredMemberFunctions
             .filter { it.returnType.jvmErasure.isSubclassOf(RepositoryDI::class) }
-            .mapNotNull { kFunction ->
+            .associate { kFunction ->
                 val result = kFunction.call(repositoryBinder) as RepositoryDI
-                val key = kFunction.returnType.jvmErasure.simpleName ?: error("$result 의 key값을 지정할 수 없습니다.")
+                val key = kFunction.returnType.jvmErasure.simpleName
+                    ?: error("$result 의 key값을 지정할 수 없습니다.")
                 key to result
-            }.toMap()
+            }
     }
 
     companion object {
