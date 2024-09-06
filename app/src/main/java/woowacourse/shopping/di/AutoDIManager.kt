@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.di
+package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.CartRepository
