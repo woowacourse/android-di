@@ -39,7 +39,6 @@ class DIContainer(diModule: DIModule) {
 
     private fun argumentInstance(parameter: KParameter): Any {
         val parameterType = parameter.type.classifier as KClass<*>
-        val argument = instances[parameterType] ?: throw IllegalArgumentException("생성자 파라미터의 인스턴스가 정의되지 않았습니다.")
-        return argument
+        return instances[parameterType] ?: throw IllegalArgumentException("생성자 파라미터의 인스턴스가 정의되지 않았습니다.")
     }
 }
