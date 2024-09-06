@@ -4,7 +4,7 @@ import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
-class DefaultCartRepository : CartRepository {
+class CartRepositoryImpl : CartRepository {
     private val cartProducts: MutableList<Product> = mutableListOf()
 
     override fun addCartProduct(product: Product) {
