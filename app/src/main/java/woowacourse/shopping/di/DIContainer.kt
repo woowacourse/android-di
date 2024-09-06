@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.di
 
 object DIContainer {
     private val instances = mutableMapOf<Class<*>, Any>()
@@ -19,7 +19,21 @@ object DIContainer {
         val constructor = clazz.constructors.first()
         val params = constructor.parameterTypes.map { resolve(it) }.toTypedArray()
         val instance = constructor.newInstance(*params) as T
+
+        injectFields(instance)
+
         register(clazz, instance)
         return instance
+    }
+
+    private fun <T : Any> injectFields(instance: T) {
+        val clazz = instance::class.java
+        clazz.declaredFields.forEach { field ->
+            if (field.isAnnotationPresent(Inject::class.java)) {
+                field.isAccessible = true
+                val fieldInstance = resolve(field.type)
+                field.set(instance, fieldInstance)
+            }
+        }
     }
 }
