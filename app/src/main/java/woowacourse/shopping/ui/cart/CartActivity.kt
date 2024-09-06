@@ -12,7 +12,7 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<CartViewModel> {
-        AutoDIManager.createViewModelFactory(CartViewModel::class)
+        AutoDIManager.createViewModelFactory<CartViewModel>()
     }
 
     private lateinit var dateFormatter: DateFormatter
