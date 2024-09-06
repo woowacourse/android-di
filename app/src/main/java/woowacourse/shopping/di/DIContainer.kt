@@ -11,12 +11,17 @@ object DIContainer {
     }
 
     inline fun <reified T : Any> inject(): T {
-        val constructor = T::class.primaryConstructor ?: throw Exception()
+        if (instances.containsKey(T::class)) {
+            return instances[T::class] as T
+        }
+        val constructor = T::class.primaryConstructor ?: throw IllegalArgumentException("${T::class} has no primary constructor")
         val parameters =
             constructor.parameters.map {
                 val clazz = it.type.classifier as KClass<*>
-                instances[clazz]
+                instances[clazz] ?: throw IllegalArgumentException("$clazz is not initialized")
             }.toTypedArray()
-        return constructor.call(*parameters)
+        val instance = constructor.call(*parameters)
+        putInstance(instance)
+        return instance
     }
 }
