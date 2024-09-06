@@ -2,7 +2,7 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.model.Product
 
-interface CartRepository : Repository {
+interface CartRepository {
     fun addCartProduct(product: Product)
 
     fun getAllCartProducts(): List<Product>

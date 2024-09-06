@@ -5,7 +5,6 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.data.Repository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -26,7 +25,7 @@ object AutoDIManager {
 
     // 어떤 생성자 파라미터의 타입에 어떤 인스턴스를 주입할지를 정해주는 부분입니다.
     // 파라미터가 더 생길 경우 이곳에 추가하면 됩니다.
-    private val instances: Map<KClass<*>, Repository> =
+    private val instances: Map<KClass<*>, Any> =
         mapOf(
             ProductRepository::class to ProductRepositoryImpl,
             CartRepository::class to CartRepositoryImpl,
