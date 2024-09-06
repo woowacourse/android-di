@@ -17,12 +17,12 @@ object AutoDIManager {
 
     fun <T : ViewModel> createViewModelFactory(viewModelClass: KClass<T>): GenericViewModelFactory<ViewModel> {
         return GenericViewModelFactory(viewModelClass) {
-            createInstanceWithParameters(viewModelClass)
+            createDependenciesWithParameters(viewModelClass)
                 ?: error("Failed to create ViewModel instance")
         }
     }
 
-    private fun <T : Any> createInstanceWithParameters(clazz: KClass<T>): T? {
+    private fun <T : Any> createDependenciesWithParameters(clazz: KClass<T>): T? {
         val constructor = clazz.primaryConstructor ?: return null
         val args =
             constructor.parameters.associateWith { parameter ->
