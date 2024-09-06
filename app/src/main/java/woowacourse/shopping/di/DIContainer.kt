@@ -11,13 +11,13 @@ class DIContainer(diModule: DIModule) {
         diModule.injectSingletonInstance()
     }
 
-    private fun DIModule.injectSingletonInstance() = singletonInstance().forEach { it.putSingletonInstance() }
+    private fun DIModule.injectSingletonInstance() = singletonInstance().forEach { it.instance.putSingletonInstance(it.type) }
 
-    private fun Module.putSingletonInstance() {
+    private fun Any.putSingletonInstance(type: KClass<*>) {
         if (instances.containsKey(type)) {
             throw IllegalArgumentException("이미 해당 클래스의 인스턴스가 존재합니다.")
         }
-        instances[type] = instance
+        instances[type] = this
     }
 
     fun <T : Any> instance(classType: KClass<T>): T {
@@ -32,9 +32,8 @@ class DIContainer(diModule: DIModule) {
     private fun <T : Any> create(classType: KClass<T>): T {
         val parameters = classType.constructors.first().parameters
         val arguments = parameters.map(::argumentInstance)
-        return classType.constructors.first().call(*arguments.toTypedArray()).also {
-            Module(classType, it).putSingletonInstance()
-        }
+        return classType.constructors.first().call(*arguments.toTypedArray())
+            .also { it.putSingletonInstance(classType) }
     }
 
     private fun argumentInstance(parameter: KParameter): Any {
