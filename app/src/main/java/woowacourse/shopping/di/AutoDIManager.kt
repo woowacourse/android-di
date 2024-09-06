@@ -8,6 +8,7 @@ import woowacourse.shopping.data.ProductRepositoryImpl
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
     // 이 주석 부분은 다음 스텝에서 사용할 예정입니다. 처음에는 리포지토리를 싱글톤으로 만들지 않고 구현하려 했는데
@@ -42,7 +43,7 @@ object AutoDIManager {
         val constructor = clazz.primaryConstructor ?: return null
         val args =
             constructor.parameters.associateWith { parameter ->
-                instances[parameter.type.classifier as? KClass<*>]
+                instances[parameter.type.jvmErasure]
             }
         constructor.isAccessible = true
 
