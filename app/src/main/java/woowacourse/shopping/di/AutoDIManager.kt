@@ -45,7 +45,6 @@ object AutoDIManager {
             constructor.parameters.associateWith { parameter ->
                 instances[parameter.type.jvmErasure]
             }
-        constructor.isAccessible = true
 
         return constructor.callBy(args)
     }
