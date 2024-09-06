@@ -6,6 +6,6 @@ import woowacourse.shopping.di.DIContainer
 
 class ViewModelFactory(private val diContainer: DIContainer) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return diContainer.instance(modelClass::class) as T
+        return diContainer.instance(modelClass.kotlin)
     }
 }
