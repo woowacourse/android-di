@@ -14,7 +14,7 @@ class CartActivity : AppCompatActivity() {
 
     private val application: ShoppingApplication by lazy { applicationContext as ShoppingApplication }
 
-    private val viewModel by viewModels<CartViewModel> { ViewModelFactory(CartViewModel::class, application.diContainer) }
+    private val viewModel by viewModels<CartViewModel> { ViewModelFactory(application.diContainer) }
 
     private lateinit var dateFormatter: DateFormatter
 

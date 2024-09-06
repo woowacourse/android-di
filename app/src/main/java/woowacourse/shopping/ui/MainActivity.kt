@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private val application: ShoppingApplication by lazy { applicationContext as ShoppingApplication }
 
-    private val viewModel by viewModels<MainViewModel> { ViewModelFactory(MainViewModel::class, application.diContainer) }
+    private val viewModel by viewModels<MainViewModel> { ViewModelFactory(application.diContainer) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
