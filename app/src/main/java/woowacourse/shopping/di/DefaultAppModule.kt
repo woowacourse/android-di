@@ -7,7 +7,7 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 
 class DefaultAppModule(private val appContext: Context) : AppModule {
-    override val productRepository: ProductRepository = ProductRepositoryImpl()
+    override fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
-    override val cartRepository: CartRepository = CartRepositoryImpl()
+    override fun provideCartRepository(): CartRepository = CartRepositoryImpl()
 }

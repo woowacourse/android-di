@@ -40,8 +40,8 @@ class Injector(
         appModule: AppModule,
     ): Any? {
         return when (property.returnType) {
-            typeOf<CartRepository>() -> appModule.cartRepository
-            typeOf<ProductRepository>() -> appModule.productRepository
+            typeOf<CartRepository>() -> appModule.provideCartRepository()
+            typeOf<ProductRepository>() -> appModule.provideProductRepository()
             else -> null
         }
     }

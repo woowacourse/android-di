@@ -3,8 +3,8 @@ package woowacourse.shopping.di
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 
-interface AppModule {
-    val productRepository: ProductRepository
+interface AppModule : InjectionModule {
+    fun provideProductRepository(): ProductRepository
 
-    val cartRepository: CartRepository
+    fun provideCartRepository(): CartRepository
 }
