@@ -1,10 +1,9 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.TimeUnit
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -12,11 +11,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
-import org.robolectric.shadows.ShadowToast
-import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.ProductAdapter
+import woowacourse.shopping.R
+import woowacourse.shopping.getOrAwaitValue
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {

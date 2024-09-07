@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.isAccessible
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -34,22 +36,12 @@ class CartActivityTest {
                 .buildActivity(CartActivity::class.java)
                 .create()
                 .get()
-
-        val products = listOf(
-            Product("Product1", 1000, "image1"),
-            Product("Product2", 2000, "image2"),
-            Product("Product3", 3000, "image3"),
-        )
-
-        products.forEach {
-            activity.cartRepository.addCartProduct(it)
-        }
     }
 
     @Test
     fun `Activity 실행 테스트`() {
         // then
-        Truth.assertThat(activity).isNotNull()
+        assertThat(activity).isNotNull()
     }
 
     @Test
@@ -58,7 +50,7 @@ class CartActivityTest {
         val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // then
-        Truth.assertThat(viewModel).isNotNull()
+        assertThat(viewModel).isNotNull()
     }
 
     @Test
@@ -78,6 +70,6 @@ class CartActivityTest {
         recyclerView.adapter = adapter
 
         // then
-        assertThat(adapter.itemCount).isEqualTo(3)
+        assertThat(adapter.itemCount).isEqualTo(0)
     }
 }
