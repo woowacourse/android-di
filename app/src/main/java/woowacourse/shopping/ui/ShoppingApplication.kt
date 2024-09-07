@@ -2,8 +2,8 @@ package woowacourse.shopping.ui
 
 import android.app.Application
 import woowacourse.shopping.di.AppModule
-import woowacourse.shopping.di.InstanceContainer
 import woowacourse.shopping.di.DefaultAppModule
+import woowacourse.shopping.di.InstanceContainer
 
 class ShoppingApplication : Application() {
     private val appModule: AppModule by lazy {

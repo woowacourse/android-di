@@ -52,7 +52,7 @@ class MainViewModelTest {
                 Product("Product1", 1000, "image1"),
                 Product("Product2", 2000, "image2"),
                 Product("Product3", 3000, "image3"),
-            )
+            ),
         )
     }
 }

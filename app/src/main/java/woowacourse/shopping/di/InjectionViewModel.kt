@@ -10,7 +10,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.injectionViewModel(): VM {
     val viewModel: VM by viewModels {
         ViewModelFactory(
             viewModelClass = VM::class,
-            instanceContainer = ShoppingApplication.instanceContainer
+            instanceContainer = ShoppingApplication.instanceContainer,
         )
     }
     return viewModel

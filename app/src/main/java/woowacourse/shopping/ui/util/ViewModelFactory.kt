@@ -2,9 +2,9 @@ package woowacourse.shopping.ui.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.di.InstanceContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
-import woowacourse.shopping.di.InstanceContainer
 
 class ViewModelFactory(
     private val viewModelClass: KClass<out ViewModel>,
@@ -17,11 +17,12 @@ class ViewModelFactory(
         requireNotNull(primaryConstructor) { EXCEPTION_NO_PRIMARY_CONSTRUCTOR.format(viewModelClass.simpleName) }
 
         val primaryConstructorParameters = primaryConstructor.parameters
-        val instance = primaryConstructor.callBy(
-            primaryConstructorParameters.associateWith { parameter ->
-                instanceContainer.instanceOf(parameter.type)
-            }
-        )
+        val instance =
+            primaryConstructor.callBy(
+                primaryConstructorParameters.associateWith { parameter ->
+                    instanceContainer.instanceOf(parameter.type)
+                },
+            )
 
         return instance as T
     }

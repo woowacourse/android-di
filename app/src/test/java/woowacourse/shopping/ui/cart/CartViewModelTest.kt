@@ -1,12 +1,12 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import woowacourse.shopping.data.FakeCartRepository
-import woowacourse.shopping.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.data.FakeCartRepository
+import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 
 class CartViewModelTest {
@@ -37,7 +37,7 @@ class CartViewModelTest {
                 Product("Product1", 1000, "image1"),
                 Product("Product2", 2000, "image2"),
                 Product("Product3", 3000, "image3"),
-            )
+            ),
         )
     }
 
@@ -59,7 +59,7 @@ class CartViewModelTest {
             listOf(
                 Product("Product1", 1000, "image1"),
                 Product("Product3", 3000, "image3"),
-            )
+            ),
         )
 
         assertThat(onCartProductDeleted).isTrue()
@@ -73,7 +73,7 @@ class CartViewModelTest {
 
     private fun generateCartProduct(it: Int) {
         cartRepository.addCartProduct(
-            Product("Product$it", it * 1000, "image$it")
+            Product("Product$it", it * 1000, "image$it"),
         )
     }
 }

@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.BaseActivity
 import woowacourse.shopping.di.injectionViewModel
+import woowacourse.shopping.ui.BaseActivity
 
 class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
     private val viewModel: CartViewModel by lazy(::injectionViewModel)

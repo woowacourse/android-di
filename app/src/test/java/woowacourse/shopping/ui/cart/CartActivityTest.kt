@@ -3,11 +3,7 @@ package woowacourse.shopping.ui.cart
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,12 +11,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
-import org.robolectric.shadows.ShadowToast
 import woowacourse.shopping.R
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.ProductAdapter
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -61,11 +53,12 @@ class CartActivityTest {
         // when
         viewModel.getAllCartProducts()
         ShadowLooper.idleMainLooper()
-        val adapter = CartProductAdapter(
-            items = viewModel.cartProducts.getOrAwaitValue(),
-            onClickDelete = viewModel::deleteCartProduct,
-            dateFormatter = DateFormatter(activity)
-        )
+        val adapter =
+            CartProductAdapter(
+                items = viewModel.cartProducts.getOrAwaitValue(),
+                onClickDelete = viewModel::deleteCartProduct,
+                dateFormatter = DateFormatter(activity),
+            )
         val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_cart_products)
         recyclerView.adapter = adapter
 
