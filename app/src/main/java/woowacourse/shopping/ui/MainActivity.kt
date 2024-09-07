@@ -4,26 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.activity.viewModels
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.util.viewModelFactory
+import woowacourse.shopping.di.injectionViewModel
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
-    lateinit var productRepository: ProductRepository
-    lateinit var cartRepository: CartRepository
-
-    private val viewModel: MainViewModel by viewModels {
-        viewModelFactory {
-            MainViewModel(
-                productRepository = productRepository,
-                cartRepository = cartRepository,
-            )
-        }
-    }
+    private val viewModel: MainViewModel by lazy(::injectionViewModel)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

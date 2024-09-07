@@ -5,7 +5,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import woowacourse.shopping.di.Injector
 
 abstract class BaseActivity<T : ViewDataBinding>(
     @LayoutRes private val layoutResId: Int,
@@ -14,12 +13,9 @@ abstract class BaseActivity<T : ViewDataBinding>(
         DataBindingUtil.setContentView(this, layoutResId)
     }
 
-    private val injector: Injector by lazy { Injector() }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        injector.inject(this)
         binding.lifecycleOwner = this
     }
 }
