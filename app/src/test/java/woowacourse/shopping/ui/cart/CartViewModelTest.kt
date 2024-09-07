@@ -67,13 +67,11 @@ class CartViewModelTest {
 
     private fun addCartProducts(size: Int) {
         repeat(size) { index ->
-            generateCartProduct(index + 1)
+            addCartProduct(index + 1)
         }
     }
 
-    private fun generateCartProduct(it: Int) {
-        cartRepository.addCartProduct(
-            Product("Product$it", it * 1000, "image$it"),
-        )
+    private fun addCartProduct(index: Int) {
+        cartRepository.addCartProduct(generateSingleProduct(index))
     }
 }
