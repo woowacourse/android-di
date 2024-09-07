@@ -11,7 +11,7 @@ import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.di.ViewModelInjector
 
 @MainThread
-public inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(
+inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
         ViewModelFactory(
