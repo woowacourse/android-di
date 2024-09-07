@@ -8,16 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.di.ViewModelFactory
-import woowacourse.shopping.di.ViewModelInjector
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
         ViewModelFactory(
-            ViewModelInjector(
-                (application as ShoppingApplication).repositoryModule,
-            ),
+            (application as ShoppingApplication).repositoryModule,
         )
     },
 ): Lazy<VM> {

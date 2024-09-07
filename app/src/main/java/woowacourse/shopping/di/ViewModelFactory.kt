@@ -10,6 +10,6 @@ class ViewModelFactory(private val dependencyProvider: DependencyProvider) : Vie
         modelClass: KClass<T>,
         extras: CreationExtras,
     ): T {
-        return injector.inject(modelClass)
+        return inject(modelClass, dependencyProvider)
     }
 }
