@@ -6,7 +6,7 @@ import android.view.Menu
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.injectionViewModel
+import woowacourse.shopping.ui.util.injectionViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {

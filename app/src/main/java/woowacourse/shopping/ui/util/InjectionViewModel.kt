@@ -1,10 +1,9 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.ui.util
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.ui.ShoppingApplication
-import woowacourse.shopping.ui.util.ViewModelFactory
 
 inline fun <reified VM : ViewModel> ComponentActivity.injectionViewModel(): VM {
     val viewModel: VM by viewModels {
