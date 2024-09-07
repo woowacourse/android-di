@@ -32,11 +32,3 @@ class ViewModelFactory(
         private const val EXCEPTION_NO_PRIMARY_CONSTRUCTOR = "No primary constructor found for %s"
     }
 }
-
-fun <VM : ViewModel> viewModelFactory(creator: () -> VM): ViewModelProvider.Factory {
-    return object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return creator() as T
-        }
-    }
-}
