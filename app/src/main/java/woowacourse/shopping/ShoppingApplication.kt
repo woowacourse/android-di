@@ -6,7 +6,8 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.DIContainer
 
 class ShoppingApplication : Application() {
-    init {
+    override fun onCreate() {
+        super.onCreate()
         DIContainer.putInstance(ProductRepository())
         DIContainer.putInstance(CartRepository())
     }
