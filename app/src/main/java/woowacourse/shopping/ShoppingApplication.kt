@@ -10,15 +10,15 @@ import woowacourse.shopping.di.DIContainer
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        injectRepository()
+        setUpInstances()
     }
 
-    private fun injectRepository() {
-        RepositoryContainer.setInstance(
+    private fun setUpInstances() {
+        DIContainer.setInstance(
             ProductRepository::class,
             DefaultProductRepository(),
         )
-        RepositoryContainer.setInstance(
+        DIContainer.setInstance(
             CartRepository::class,
             DefaultCartRepository(),
         )
