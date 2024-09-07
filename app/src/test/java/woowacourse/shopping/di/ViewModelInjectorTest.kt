@@ -10,16 +10,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.RepositoryModule
 import woowacourse.shopping.util.injectedViewModels
 
 interface FakeRepository
 
-class FakeRepositoryImpl private constructor() : FakeRepository {
-    companion object {
-        val instance: FakeRepositoryImpl by lazy { FakeRepositoryImpl() }
-    }
-}
+class FakeRepositoryImpl : FakeRepository
+
+class FakeRepositoryImplNotInjected : FakeRepository
 
 class FakeViewModel(
     val fakeRepository: FakeRepository,
@@ -28,9 +25,7 @@ class FakeViewModel(
 class FakeActivity : AppCompatActivity() {
     val viewModel: FakeViewModel by injectedViewModels {
         ViewModelFactory(
-            ViewModelInjector(
-                RepositoryModule(FakeRepository::class to FakeRepositoryImpl.instance),
-            ),
+            RepositoryModule(FakeRepository::class to FakeRepositoryImpl::class),
         )
     }
 }
@@ -50,8 +45,10 @@ class ViewModelInjectorTest {
     @Test
     fun `알맞은 instance를 주입 한다`() {
         val actual = activity.viewModel.fakeRepository
-        val expected = FakeRepositoryImpl.instance
+        val expected = FakeRepositoryImpl::class.java
+        val incorrect = FakeRepositoryImplNotInjected::class.java
 
-        assertThat(actual).isEqualTo(expected)
+        assertThat(actual).isInstanceOf(expected)
+        assertThat(actual).isNotInstanceOf(incorrect)
     }
 }
