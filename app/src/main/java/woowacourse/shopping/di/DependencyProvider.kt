@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
-import kotlin.reflect.KClassifier
+import kotlin.reflect.KClass
 
 interface DependencyProvider {
-    fun <T : Any> getInstance(key: KClassifier): T
+    fun <T : Any> getInstance(key: KClass<*>): T
 }
