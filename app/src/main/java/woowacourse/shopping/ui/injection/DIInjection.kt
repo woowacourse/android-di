@@ -6,7 +6,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 interface DIInjection {
-    fun checkConstructor()  {
+    fun checkConstructor() {
         this::class.primaryConstructor?.parameters?.all {
             it.type.jvmErasure.isSubclassOf(RepositoryDI::class)
         }
