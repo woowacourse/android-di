@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
-import woowacourse.shopping.di.component.viewModelsWithAutoInject
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.component.viewModelsWithAutoInject
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
