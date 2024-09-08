@@ -48,7 +48,11 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
     companion object {
         private var instance: RepositoryModule? = null
 
-        fun setLifeCycle(context: Context) {
+        fun initLifeCycle(context: Context) {
+            require(instance == null) {
+                "Module은 한번만 초기화가 가능합니다."
+            }
+
             val newInstance = RepositoryModule()
             when (context) {
                 is Application -> ProcessLifecycleOwner.get().lifecycle.addObserver(newInstance)

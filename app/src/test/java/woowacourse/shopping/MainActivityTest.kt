@@ -24,7 +24,7 @@ class MainActivityTest {
     @Before
     fun setUp() {
         val controller = Robolectric.buildActivity(MainActivity::class.java)
-        RepositoryModule.setLifeCycle(controller.get())
+        RepositoryModule.initLifeCycle(controller.get())
         RepositoryModule.getInstance().onCreate(controller.get() as LifecycleOwner)
         activity = controller.create().get()
     }

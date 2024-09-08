@@ -6,6 +6,6 @@ import woowacourse.shopping.ui.injection.repository.RepositoryModule
 class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        RepositoryModule.setLifeCycle(this)
+        RepositoryModule.initLifeCycle(this)
     }
 }
