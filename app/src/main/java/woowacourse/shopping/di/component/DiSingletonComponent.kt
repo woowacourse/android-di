@@ -1,4 +1,4 @@
-package woowacourse.shopping.data.di.component
+package woowacourse.shopping.di.component
 
 object DiSingletonComponent {
     private val binds: MutableMap<Class<*>, Any> = mutableMapOf()

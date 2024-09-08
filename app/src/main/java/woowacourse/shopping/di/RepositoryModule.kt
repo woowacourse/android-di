@@ -1,8 +1,8 @@
-package woowacourse.shopping.data.di
+package woowacourse.shopping.di
 
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.data.di.component.DiSingletonComponent
+import woowacourse.shopping.di.component.DiSingletonComponent
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 

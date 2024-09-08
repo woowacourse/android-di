@@ -1,4 +1,4 @@
-package woowacourse.shopping.data.di.component
+package woowacourse.shopping.di.component
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels

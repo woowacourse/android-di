@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.di.RepositoryModule
+import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
