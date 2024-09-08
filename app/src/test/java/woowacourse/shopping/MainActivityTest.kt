@@ -10,11 +10,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import woowacourse.shopping.fixture.TestApplication
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.injection.repository.RepositoryModule
 
 @RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class)
 class MainActivityTest {
     private lateinit var activity: MainActivity
 
@@ -24,8 +27,10 @@ class MainActivityTest {
     @Before
     fun setUp() {
         val controller = Robolectric.buildActivity(MainActivity::class.java)
-        RepositoryModule.initLifeCycle(controller.get())
-        RepositoryModule.getInstance().onCreate(controller.get() as LifecycleOwner)
+        if (RepositoryModule.getInstanceOrNull() == null) {
+            RepositoryModule.initLifeCycle(controller.get())
+            RepositoryModule.getInstance().onCreate(controller.get() as LifecycleOwner)
+        }
         activity = controller.create().get()
     }
 

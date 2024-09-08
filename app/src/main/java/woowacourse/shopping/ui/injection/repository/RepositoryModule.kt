@@ -64,5 +64,7 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
         }
 
         fun getInstance(): RepositoryModule = instance ?: error("Module에 대한 lifecycle이 지정되지 않았습니다.")
+
+        fun getInstanceOrNull(): RepositoryModule? = instance
     }
 }
