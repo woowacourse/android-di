@@ -10,7 +10,6 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.injection.getInjectedViewModelFactory
-import woowacourse.shopping.ui.injection.repository.RepositoryModule
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
@@ -22,8 +21,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        RepositoryModule.initLifeCycle(this)
-
         setupBinding()
         setupToolbar()
         setupView()
