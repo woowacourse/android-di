@@ -12,7 +12,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.injection.RepositoryModule
+import woowacourse.shopping.ui.injection.repository.RepositoryModule
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {

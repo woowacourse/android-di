@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection
+package woowacourse.shopping.ui.injection.repository
 
 import android.app.Application
 import android.content.Context
@@ -38,8 +38,9 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
             .filter { it.returnType.jvmErasure.isSubclassOf(RepositoryDI::class) }
             .associate { kFunction ->
                 val result = kFunction.call(repositoryBinder) as RepositoryDI
-                val key = kFunction.returnType.jvmErasure.simpleName
-                    ?: error("$result 의 key값을 지정할 수 없습니다.")
+                val key =
+                    kFunction.returnType.jvmErasure.simpleName
+                        ?: error("$result 의 key값을 지정할 수 없습니다.")
                 key to result
             }
     }
