@@ -6,7 +6,7 @@ object DiSingletonComponent {
 
     fun <T : Any> bind(
         bindClassType: Class<T>,
-        bindClass: Any,
+        bindClass: T,
     ) {
         binds[bindClassType] = bindClass
     }
