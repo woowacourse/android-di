@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.jvm.jvmErasure
 
@@ -10,7 +11,7 @@ class DiContainer(private val diModule: DiModule) {
     private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     init {
-        addDependencies(diModule::class.declaredFunctions)
+        addDependencies(diModule::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC })
     }
 
     fun <T : Any> getInstance(clazz: KClass<T>): T {
