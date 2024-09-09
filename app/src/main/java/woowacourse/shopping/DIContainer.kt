@@ -22,7 +22,7 @@ class DIContainer(
         viewModelFactory {
             val primaryConstructor =
                 modelClass.kotlin.primaryConstructor
-                    ?: return@viewModelFactory initializer { modelClass.newInstance() as T }
+                    ?: return@viewModelFactory initializer { modelClass.getDeclaredConstructor().newInstance() as T }
 
             val constructorArgs =
                 primaryConstructor.parameters.map { parameter ->
