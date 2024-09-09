@@ -5,7 +5,5 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.ShoppingApplication
 
-open class DiActivity : AppCompatActivity() {
-    inline fun <reified T : ViewModel> DiActivity.viewModel() =
-        viewModels<T> { ViewModelFactory(ShoppingApplication.diContainer) }
-}
+inline fun <reified T : ViewModel> AppCompatActivity.viewModel() =
+    viewModels<T> { ViewModelFactory(ShoppingApplication.diContainer) }
