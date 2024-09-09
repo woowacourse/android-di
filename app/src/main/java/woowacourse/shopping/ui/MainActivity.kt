@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<MainViewModel> {
-        (application as DIApplication).createViewModelByDI(MainViewModel::class.java)
+        (application as DIApplication).diContainer.createViewModel(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
