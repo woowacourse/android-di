@@ -30,14 +30,7 @@ class AppModule {
         }
     }
 
-    private fun <T : Any> createInstance(
-        kClass: KClass<T>,
-        savedStateHandle: SavedStateHandle? = null,
-    ): T {
-        if (savedStateHandle != null) {
-            instances[savedStateHandle::class] = savedStateHandle
-        }
-
+    fun <T : Any> createInstance(kClass: KClass<T>): T {
         val constructor = kClass.constructors.first()
         val params =
             constructor.parameters.map { parameter ->
@@ -48,6 +41,17 @@ class AppModule {
         instances[kClass] = instance
 
         return instance
+    }
+
+    private fun <T : Any> createInstance(
+        kClass: KClass<T>,
+        savedStateHandle: SavedStateHandle? = null,
+    ): T {
+        if (savedStateHandle != null) {
+            instances[savedStateHandle::class] = savedStateHandle
+        }
+
+        return createInstance(kClass = kClass)
     }
 
     companion object {
