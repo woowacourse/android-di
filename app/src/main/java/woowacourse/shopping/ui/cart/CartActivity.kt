@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import woowacourse.shopping.GlobalViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<CartViewModel> { CartViewModel.factory() }
+    private val viewModel by viewModels<CartViewModel> { GlobalViewModelFactory() }
 
     private lateinit var dateFormatter: DateFormatter
 

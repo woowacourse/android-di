@@ -3,8 +3,6 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.DependencyInjector
-import woowacourse.shopping.GlobalViewModelFactory
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -25,12 +23,5 @@ class CartViewModel(
     fun deleteCartProduct(id: Int) {
         cartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
-    }
-
-    companion object {
-        fun factory(): GlobalViewModelFactory =
-            GlobalViewModelFactory {
-                DependencyInjector.getInstance(CartViewModel::class.java)
-            }
     }
 }
