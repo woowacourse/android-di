@@ -8,6 +8,7 @@ import org.junit.Test
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.fakeProducts
 
 class CartViewModelTest {
     @get:Rule
@@ -18,7 +19,7 @@ class CartViewModelTest {
 
     @Before
     fun setUp() {
-        cartRepository = FakeCartRepository()
+        cartRepository = FakeCartRepository(fakeProducts)
         cartViewModel = CartViewModel(cartRepository)
     }
 
