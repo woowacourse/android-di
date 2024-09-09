@@ -6,6 +6,8 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.DIApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -15,7 +17,11 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<MainViewModel> {
-        (application as DIApplication).diContainer.createViewModel(MainViewModel::class)
+        viewModelFactory {
+            initializer {
+                (application as DIApplication).diContainer.createViewModel(MainViewModel::class)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
