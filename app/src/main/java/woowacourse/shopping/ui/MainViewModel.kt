@@ -36,8 +36,8 @@ class MainViewModel(
         val Factory: ViewModelProvider.Factory =
             viewModelFactory {
                 initializer {
-                    val application = (this[APPLICATION_KEY] as ShoppingApplication)
-                    BaseViewModelFactory(application).create(MainViewModel::class.java)
+                    val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
+                    BaseViewModelFactory(appContainer).create(MainViewModel::class.java)
                 }
             }
     }

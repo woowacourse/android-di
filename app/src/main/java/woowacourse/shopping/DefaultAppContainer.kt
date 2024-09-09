@@ -6,9 +6,11 @@ import woowacourse.shopping.di.InjectedComponent
 import woowacourse.shopping.di.InjectedSingletonContainer
 import kotlin.reflect.KClass
 
-class DefaultAppContainer : AppContainer {
-    private val singletonComponentContainer: InjectedSingletonContainer = InjectedSingletonContainer
-    private val activityComponentContainer: InjectedActivityContainer = InjectedActivityContainer
+class DefaultAppContainer(
+    private val singletonComponentContainer: InjectedSingletonContainer = InjectedSingletonContainer,
+    private val activityComponentContainer: InjectedActivityContainer = InjectedActivityContainer,
+) : AppContainer {
+
 
     override fun add(component: InjectedComponent) {
         when (component) {
@@ -23,7 +25,10 @@ class DefaultAppContainer : AppContainer {
         }
     }
 
-    override fun find(clazz: KClass<*>): Any? = singletonComponentContainer.find(clazz) ?: activityComponentContainer.find(clazz)
+    override fun find(clazz: KClass<*>): Any =
+        singletonComponentContainer.find(clazz)
+            ?: activityComponentContainer.find(clazz)
+            ?: throw IllegalStateException("There is no component for ${clazz.simpleName}")
 
     override fun clearActivityScopedObjects() {
         activityComponentContainer.clear()

@@ -2,11 +2,12 @@ package woowacourse.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.di.AppContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class BaseViewModelFactory(
-    private val application: ShoppingApplication,
+    private val appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
@@ -16,11 +17,7 @@ class BaseViewModelFactory(
 
         val args =
             constructor.parameters.map { parameter ->
-                val containers = application.container
-                val find =
-                    containers.find(parameter.type.classifier as KClass<*>)
-                        ?: throw java.lang.IllegalArgumentException("Unresolved dependency for ${parameter.type}")
-                find
+                appContainer.find(parameter.type.classifier as KClass<*>)
             }.toTypedArray()
 
         return constructor.call(*args)
