@@ -22,14 +22,16 @@ class DIApplication : Application() {
     inline fun <reified T : ViewModel> createViewModelByDI(modelClass: Class<T>): ViewModelProvider.Factory =
         viewModelFactory {
             val primaryConstructor = modelClass.kotlin.primaryConstructor
+                ?: return@viewModelFactory initializer { modelClass as T }
+
             val constructorArgs =
-                primaryConstructor?.parameters?.map { parameter ->
+                primaryConstructor.parameters.map { parameter ->
                     val dependencyClass = parameter.type.classifier as? KClass<*>
                     repositories[dependencyClass]
-                }?.toTypedArray()
+                }.toTypedArray()
 
             initializer {
-                primaryConstructor?.call(*constructorArgs ?: throw IllegalArgumentException()) as T
+                primaryConstructor.call(*constructorArgs)
             }
         }
 }
