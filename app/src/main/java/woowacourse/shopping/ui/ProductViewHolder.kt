@@ -10,7 +10,6 @@ class ProductViewHolder(
     private val binding: ItemProductBinding,
     onClickProduct: (Product) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-
     init {
         binding.root.setOnClickListener {
             onClickProduct(binding.item ?: return@setOnClickListener)
@@ -22,7 +21,10 @@ class ProductViewHolder(
     }
 
     companion object {
-        fun from(parent: ViewGroup, onClickProduct: (Product) -> Unit): ProductViewHolder {
+        fun from(
+            parent: ViewGroup,
+            onClickProduct: (Product) -> Unit,
+        ): ProductViewHolder {
             val binding =
                 ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return ProductViewHolder(binding, onClickProduct)
