@@ -9,6 +9,7 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
 
 class DIContainer(
@@ -18,11 +19,11 @@ class DIContainer(
             CartRepository::class to DefaultCartRepository,
         )
 ) {
-    inline fun <reified T : ViewModel> createViewModel(modelClass: Class<T>): ViewModelProvider.Factory =
+    inline fun <reified T : ViewModel> createViewModel(modelClass: KClass<T>): ViewModelProvider.Factory =
         viewModelFactory {
             val primaryConstructor =
-                modelClass.kotlin.primaryConstructor
-                    ?: return@viewModelFactory initializer { modelClass.getDeclaredConstructor().newInstance() as T }
+                modelClass.primaryConstructor
+                    ?: return@viewModelFactory initializer { modelClass.createInstance() }
 
             val constructorArgs =
                 primaryConstructor.parameters.map { parameter ->
