@@ -31,17 +31,4 @@ class MainViewModel(
     fun getAllProducts() {
         _products.value = productDefaultRepository.getAllProducts()
     }
-
-    companion object {
-        fun factory(
-            productRepository: ProductRepository = ProductDefaultRepository(),
-            cartRepository: CartRepository = CartDefaultRepository(),
-        ): ViewModelProvider.Factory {
-            return MainViewModelFactory(productRepository, cartRepository)
-        }
-
-        fun reflectionFactory(): ViewModelProvider.Factory {
-            return ReflectiveViewModelFactory()
-        }
-    }
 }

@@ -28,16 +28,4 @@ class CartViewModel(
         cartDefaultRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
     }
-
-    companion object {
-        fun factory(
-            cartRepository: CartRepository = CartDefaultRepository(),
-        ) : ViewModelProvider.Factory {
-            return CartViewModelFactory(cartRepository)
-        }
-
-        fun reflectionFactory() : ViewModelProvider.Factory {
-            return ReflectiveViewModelFactory()
-        }
-    }
 }
