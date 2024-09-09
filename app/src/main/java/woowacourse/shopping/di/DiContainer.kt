@@ -15,7 +15,8 @@ class DiContainer(private val diModule: DiModule) {
     }
 
     fun <T : Any> getInstance(clazz: KClass<T>): T {
-        return dependencies[clazz] as T
+        return dependencies[clazz] as? T
+            ?: throw IllegalArgumentException("No instance found for class ${clazz.simpleName}")
     }
 
     private fun addDependencies(functions: Collection<KFunction<*>>) {
