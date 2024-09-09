@@ -13,6 +13,5 @@ object DependencyContainer {
         instances[classType] = instance
     }
 
-    fun <T : Any> instance(classType: KClass<*>): Any =
-        instances[classType] as? T ?: throw IllegalArgumentException("Unknown Instance")
+    fun <T : Any> instance(classType: KClass<*>): Any = instances[classType] as? T ?: throw IllegalArgumentException("Unknown Instance")
 }

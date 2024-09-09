@@ -12,13 +12,14 @@ class ViewModelFactory : ViewModelProvider.Factory {
             modelClass.kotlin.primaryConstructor
                 ?: throw IllegalArgumentException("Unknown ViewModel")
 
-        val params = constructor.parameters.map { parameter ->
-            val parameterType = parameter.type.classifier
-            when (parameterType) {
-                is KClass<*> -> DependencyContainer.instance<T>(parameterType)
-                else -> throw IllegalArgumentException("Unknown parameter type: $parameterType")
+        val params =
+            constructor.parameters.map { parameter ->
+                val parameterType = parameter.type.classifier
+                when (parameterType) {
+                    is KClass<*> -> DependencyContainer.instance<T>(parameterType)
+                    else -> throw IllegalArgumentException("Unknown parameter type: $parameterType")
+                }
             }
-        }
         return constructor.call(*params.toTypedArray())
     }
 }
