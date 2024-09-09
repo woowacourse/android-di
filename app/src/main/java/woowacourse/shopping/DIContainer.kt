@@ -11,13 +11,13 @@ import woowacourse.shopping.data.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class DIContainer {
-    val dependencies =
-        mapOf<KClass<*>, Any>(
+class DIContainer(
+    val dependencies: Map<KClass<*>, Any> =
+        mapOf(
             ProductRepository::class to DefaultProductRepository,
             CartRepository::class to DefaultCartRepository,
         )
-
+) {
     inline fun <reified T : ViewModel> createViewModel(modelClass: Class<T>): ViewModelProvider.Factory =
         viewModelFactory {
             val primaryConstructor =
