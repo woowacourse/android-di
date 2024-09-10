@@ -22,12 +22,12 @@
   - [ ] 모든 도메인 로직, Repository 단위 테스트 
 
 ### Step 2
-- [ ] ViewModel 내 필드 주입을 구현한다.
-- [ ] 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분한다.
-  - [ ] Annotation을 붙여서 필요한 요소에만 의존성을 주입한다.
+- [x] ViewModel 내 필드 주입을 구현한다.
+- [x] 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분한다.
+  - [x] Annotation을 붙여서 필요한 요소에만 의존성을 주입한다.
 - [ ] Recursive DI
   - [ ] CartRepository가 DAO 객체를 참조하도록 변경한다.
-- [ ] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+- [ ] CartProduct 아이템에서 날짜 정보를 확인할 수 있도록 한다.
 - [ ] 테스트 코드를 작성한다.
 
 - 선택 요구 사항
