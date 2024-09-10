@@ -4,22 +4,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import woowacourse.shopping.AndroidDiApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.DependencyRegistry
 import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-
-    private val dependencyInjector: DependencyInjector by lazy {
-        DependencyInjector(
-            DependencyRegistry,
-        )
-    }
-    private val viewModel: CartViewModel by viewModels { ViewModelFactory(dependencyInjector) }
-
+    private val viewModel: CartViewModel by viewModels { ViewModelFactory(AndroidDiApplication.injector) }
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
