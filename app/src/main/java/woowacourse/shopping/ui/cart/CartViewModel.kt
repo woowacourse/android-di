@@ -30,6 +30,8 @@ class CartViewModel : ViewModel() {
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
+            _cartProducts.value =
+                _cartProducts.value?.filter { it.id != id } ?: emptyList()
             _onCartProductDeleted.value = true
         }
     }
