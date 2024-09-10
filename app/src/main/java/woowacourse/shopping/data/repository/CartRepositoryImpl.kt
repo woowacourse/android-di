@@ -6,9 +6,10 @@ import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.local.dao.CartProductDao
+import javax.inject.Inject
 
 class CartRepositoryImpl(
-    private val dao: CartProductDao,
+    @Inject private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())

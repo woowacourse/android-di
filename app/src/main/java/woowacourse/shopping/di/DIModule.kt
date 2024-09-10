@@ -17,7 +17,7 @@ class DIModule(private val context: Context) {
         return ProductRepositoryImpl()
     }
 
-    fun provideCartRepository(cartProductDao: CartProductDao): CartRepository {
-        return CartRepositoryImpl(cartProductDao)
+    fun provideCartRepository(): CartRepository {
+        return CartRepositoryImpl(ShoppingDatabase.getInstance(context).cartProductDao())
     }
 }
