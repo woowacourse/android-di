@@ -18,11 +18,12 @@ class DependencyInjector(private val registry: DependencyRegistry) {
         return classType.primaryConstructor ?: throw IllegalArgumentException("주생성자가 존재하지 않습니다.")
     }
 
-    private fun resolveDependencies(parameters: List<KParameter>): Map<KParameter, Any> {
+    private fun resolveDependencies(parameters: List<KParameter>): Map<KParameter, Any?> {
         return parameters.associateWith { parameter ->
-            val parameterType = parameter.type.classifier as KClass<*>
-            registry.getInstanceOrNull(parameterType)
-                ?: throw IllegalArgumentException("해당 파라미터 타입에 해당하는 인스턴스를 찾을 수 없습니다: $parameterType")
+            (parameter.type.classifier as? KClass<*>)?.let { classifier ->
+                registry.getInstanceOrNull(classifier)
+                    ?: throw IllegalArgumentException("해당 파라미터 타입에 해당하는 인스턴스를 찾을 수 없습니다: $classifier")
+            }
         }
     }
 }
