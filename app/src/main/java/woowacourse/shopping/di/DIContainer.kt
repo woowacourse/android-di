@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.ImplementationInject
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -9,7 +10,10 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
-class DIContainer(diModule: DIModule) {
+class DIContainer(
+    diModule: DIModule,
+    private val classLoader: ClassLoader,
+) {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     init {
@@ -36,6 +40,18 @@ class DIContainer(diModule: DIModule) {
     }
 
     private fun <T : Any> create(classType: KClass<T>): T {
+        if (classType.isAbstract) {
+            val subclasses = classLoader.getSubclasses(classType)
+            val instanceType =
+                subclasses.find { it.hasAnnotation<ImplementationInject>() }
+                    ?: throw IllegalArgumentException("")
+            return createImplementation(instanceType) as T
+        }
+        return createImplementation(classType)
+    }
+
+    private fun <T : Any> createImplementation(classType: KClass<T>): T {
+        if (instances[classType] != null) return instances[classType] as T
         val parameters = classType.constructors.first().parameters
         val arguments = parameters.map(::argumentInstance)
         val instance = classType.constructors.first().call(*arguments.toTypedArray())
@@ -46,7 +62,7 @@ class DIContainer(diModule: DIModule) {
 
     private fun argumentInstance(parameter: KParameter): Any {
         val parameterType = parameter.type.classifier as KClass<*>
-        return instances[parameterType] ?: throw IllegalArgumentException("생성자 파라미터 ${parameterType.simpleName}의 인스턴스가 정의되지 않았습니다.")
+        return instances[parameterType] ?: create(parameterType)
     }
 
     private fun Any.injectFieldDependency() {
@@ -59,7 +75,7 @@ class DIContainer(diModule: DIModule) {
             val p = property as KMutableProperty1
             p.isAccessible = true
             val type = p.returnType.classifier as KClass<*>
-            val instance = instances[type] ?: throw IllegalArgumentException("필드 ${type.simpleName}의 인스턴스가 정의되지 않았습니다.")
+            val instance = instances[type] ?: create(type)
             property.setter.call(this, instance)
         }
     }

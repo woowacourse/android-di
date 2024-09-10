@@ -121,4 +121,16 @@ class ReflectionTest {
 
         assertThat(personSuperReflections).hasSize(0)
     }
+
+    @Test
+    fun `인터페이스인지 판단한다1`() {
+        val engineReflection = Engine::class
+        assertThat(engineReflection.isAbstract).isTrue()
+    }
+
+    @Test
+    fun `인터페이스인지 판단한다2`() {
+        val carReflection = Car::class
+        assertThat(carReflection.isAbstract).isFalse()
+    }
 }
