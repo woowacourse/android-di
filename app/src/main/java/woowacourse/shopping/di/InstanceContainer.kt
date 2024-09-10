@@ -8,13 +8,12 @@ class InstanceContainer(
 ) {
     private val instances: Map<KType, Any> =
         modules
-            .map(::propertyInstance)
-            .flatten()
+            .flatMap(::propertyInstance)
             .associateBy { it::class.supertypes.first() }
 
     fun <T : Any> instanceOf(kType: KType): T {
         val instance = instances[kType]
-        requireNotNull(instance) { EXCEPTION_NO_MATCHING_PROPERTY.format(kType) }
+        checkNotNull(instance) { EXCEPTION_NO_MATCHING_PROPERTY.format(kType) }
         return instance as T
     }
 
