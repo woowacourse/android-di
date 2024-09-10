@@ -19,8 +19,8 @@ class ShoppingApplication : Application() {
     }
 
     private fun registerDependencies() {
-        registerDependency(CartProductDao::class, shoppingDatabase.cartProductDao())
-        registerDependency(ProductRepository::class, ProductRepositoryImpl())
-        registerDependency(CartRepository::class, createAutoDIInstance<CartRepositoryImpl>())
+        registerDependency<CartProductDao>(shoppingDatabase.cartProductDao())
+        registerDependency<ProductRepository>(ProductRepositoryImpl())
+        registerDependency<CartRepository>(createAutoDIInstance<CartRepositoryImpl>())
     }
 }

@@ -11,11 +11,9 @@ import kotlin.reflect.jvm.jvmErasure
 object AutoDIManager {
     val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
 
-    fun registerDependency(
-        type: KClass<*>,
-        dependency: Any,
-    ) {
-        dependencies[type] = dependency
+    inline fun <reified T : Any> registerDependency(dependency: Any) {
+        val clazz = T::class
+        dependencies[clazz] = dependency
     }
 
     inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
