@@ -15,7 +15,7 @@ class DependencyInjector(private val registry: DependencyRegistry) {
     }
 
     private fun <T : Any> getPrimaryConstructor(classType: KClass<T>): KFunction<T> {
-        return classType.primaryConstructor ?: throw IllegalArgumentException("주생성자가 존재하지 않습니다.")
+        return classType.primaryConstructor ?: throw IllegalArgumentException("${classType.qualifiedName}의 주생성자가 존재하지 않습니다.")
     }
 
     private fun resolveDependencies(parameters: List<KParameter>): Map<KParameter, Any?> {
