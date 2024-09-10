@@ -31,8 +31,8 @@
 - [ ] 테스트 코드를 작성한다.
 
 - 선택 요구 사항
-  - [ ] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
-  - [ ] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+  - [x] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
+  - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
 
 ### Step 3
 - [ ] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 판단한다.
