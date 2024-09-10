@@ -12,12 +12,9 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel: CartViewModel by provideViewModel()
 
-    private lateinit var dateFormatter: DateFormatter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -26,10 +23,6 @@ class CartActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -57,7 +50,6 @@ class CartActivity : AppCompatActivity() {
             val adapter =
                 CartProductAdapter(
                     items = it,
-                    dateFormatter = dateFormatter,
                     onClickDelete = viewModel::deleteCartProduct,
                 )
             binding.rvCartProducts.adapter = adapter

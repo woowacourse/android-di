@@ -2,6 +2,7 @@ package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.local.dao.CartProductDao
@@ -13,7 +14,7 @@ class CartRepositoryImpl(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return dao.getAll().map { it.toDomain() }
     }
 

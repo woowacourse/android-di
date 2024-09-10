@@ -15,7 +15,7 @@ object DIContainer {
 
     fun <T : Any> addInstance(
         type: KClass<T>,
-        instance: T,
+        instance: Any,
     ) {
         if (instances.containsKey(type)) {
             throw IllegalArgumentException("Instance of type $type is already registered.")

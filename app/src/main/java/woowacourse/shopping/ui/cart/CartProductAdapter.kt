@@ -2,17 +2,16 @@ package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
-    private val dateFormatter: DateFormatter,
+    items: List<CartProduct>,
+    onClickDelete: (position: Long) -> Unit,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
+    private val items: MutableList<CartProduct> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
-        onClickDelete(position)
+        onClickDelete(items[position].id)
         removeItem(position)
     }
 
@@ -20,7 +19,7 @@ class CartProductAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
+        return CartProductViewHolder.from(parent, onClickDelete)
     }
 
     override fun onBindViewHolder(
