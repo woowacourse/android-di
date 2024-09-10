@@ -1,7 +1,9 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.data.mapper.toCartedProduct
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toProduct
+import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
 class CartRepositoryImpl(
@@ -11,8 +13,8 @@ class CartRepositoryImpl(
         cartProductDao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
-        return cartProductDao.getAll().map(CartProductEntity::toProduct)
+    override suspend fun getAllCartProducts(): List<CartedProduct> {
+        return cartProductDao.getAll().map(CartProductEntity::toCartedProduct)
     }
 
     override suspend fun deleteCartProduct(id: Long) {
