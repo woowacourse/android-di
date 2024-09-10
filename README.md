@@ -31,7 +31,7 @@
 - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
 
 ### Recursive DI
-- [ ] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
+- [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
 ```kotlin
 class DefaultCartRepository(
     private val dao: CartProductDao,
