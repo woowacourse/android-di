@@ -24,7 +24,7 @@
 
 ## 2단계 (Annotation)
 ### 필드 주입
-- [ ] ViewModel 내 필드 주입을 구현한다.
+- [x] ViewModel 내 필드 주입을 구현한다.
 
 ### Annotation
 - [ ] Annotation을 붙여서 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분한다.
