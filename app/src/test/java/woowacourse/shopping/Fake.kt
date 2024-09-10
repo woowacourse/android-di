@@ -37,8 +37,8 @@ class FakeProductRepository(
     }
 }
 
-val fakeProducts: MutableList<Product> =
-    mutableListOf(
+val fakeProducts: List<Product> =
+    listOf(
         Product(
             name = "우테코 김치",
             price = 5_900,

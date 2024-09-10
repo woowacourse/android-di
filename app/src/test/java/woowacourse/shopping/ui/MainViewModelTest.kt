@@ -24,7 +24,7 @@ class MainViewModelTest {
     @Before
     fun setUp() {
         productsRepository = FakeProductRepository(fakeProducts)
-        cartRepository = FakeCartRepository(fakeProducts)
+        cartRepository = FakeCartRepository(fakeProducts.toMutableList())
         mainViewModel = MainViewModel(productsRepository, cartRepository)
     }
 

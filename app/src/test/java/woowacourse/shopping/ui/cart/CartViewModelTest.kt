@@ -19,7 +19,7 @@ class CartViewModelTest {
 
     @Before
     fun setUp() {
-        cartRepository = FakeCartRepository(fakeProducts)
+        cartRepository = FakeCartRepository(fakeProducts.toMutableList())
         cartViewModel = CartViewModel(cartRepository)
     }
 
