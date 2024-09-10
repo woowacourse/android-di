@@ -6,6 +6,7 @@ import androidx.room.Query
 
 @Dao
 interface CartProductDao {
+
     @Query("SELECT * FROM cart_products")
     suspend fun getAll(): List<CartProductEntity>
 
