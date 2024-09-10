@@ -10,8 +10,6 @@ class DefaultAppContainer(
     private val singletonComponentContainer: InjectedSingletonContainer = InjectedSingletonContainer,
     private val activityComponentContainer: InjectedActivityContainer = InjectedActivityContainer,
 ) : AppContainer {
-
-
     override fun add(component: InjectedComponent) {
         when (component) {
             is InjectedComponent.InjectedSingletonComponent -> singletonComponentContainer.add(component)
