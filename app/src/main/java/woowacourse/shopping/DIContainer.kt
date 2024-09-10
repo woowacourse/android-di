@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
@@ -12,19 +13,21 @@ class DIContainer {
     ): T {
         var index = 0
         val primaryConstructor = modelClass.primaryConstructor ?: return modelClass.createInstance()
-        val constructorArgs = primaryConstructor.parameters.map { parameter ->
-            if (parameter.hasAnnotation<Inject>()) {
-                val dependencyClass = parameter.type.classifier as? KClass<*>
+        val constructorArgs =
+            primaryConstructor.parameters.map { parameter ->
+                if (parameter.hasAnnotation<Inject>()) {
+                    val dependencyClass = parameter.type.classifier as? KClass<*>
 
-                val getMethod =
-                    Module::class.java.declaredMethods.find {
-                        it.returnType == dependencyClass?.java
-                    }
-                getMethod?.invoke(Module)
-            } else {
-                any[index++]
-            }
-        }.toTypedArray()
+                    val getMethod =
+                        Module::class.functions.find {
+                            it.returnType.classifier == dependencyClass
+                        }
+
+                    getMethod?.call(Module)
+                } else {
+                    any[index++]
+                }
+            }.toTypedArray()
 
         return primaryConstructor.call(*constructorArgs)
     }

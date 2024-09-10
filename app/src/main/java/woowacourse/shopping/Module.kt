@@ -7,7 +7,7 @@ import woowacourse.shopping.data.ProductRepository
 
 object Module {
     fun provideCartRepository(): CartRepository {
-        return DefaultCartRepository
+        return DefaultCartRepository()
     }
 
     fun provideProductRepository(): ProductRepository {
