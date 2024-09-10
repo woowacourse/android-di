@@ -37,18 +37,18 @@ class InstanceContainer(
     }
 
     private fun resolveInstance(kType: KType): Any {
-        instances[kType]?.let { return it }
+        val existingInstance = instances[kType]
+        if (existingInstance != null) return existingInstance
 
-        // kType에 맞는 함수를 찾음
         val function = functionsByReturnType[kType]
-            ?: throw IllegalArgumentException("No function found for return type: $kType")
+        requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kType) }
 
         // 재귀 주입
         val parameterValues = function.parameters.associateWith { parameter ->
             resolveInstance(parameter.type)
         }
         val instance = function.callBy(parameterValues)
-            ?: throw IllegalStateException("Failed to create instance for type: $kType")
+        checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
 
         instances[kType] = instance
         return instance
@@ -57,5 +57,9 @@ class InstanceContainer(
     companion object {
         private const val EXCEPTION_NO_MATCHING_PROPERTY =
             "No matching property found for parameter %s"
+        private const val EXCEPTION_NO_MATCHING_FUNCTION =
+            "No function found for return type: %s"
+        private const val EXCEPTION_NULL_INSTANCE =
+            "Failed to create instance for the function: %s"
     }
 }
