@@ -1,17 +1,36 @@
 package woowacourse.shopping.ui
 
+import androidx.activity.ComponentActivity
+import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.DependencyInjector
+import androidx.lifecycle.viewmodel.CreationExtras
+import woowacourse.shopping.AndroidDiApplication
 
-class ViewModelFactory(private val dependencyInjector: DependencyInjector) :
+class ViewModelFactory :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         return if (ViewModel::class.java.isAssignableFrom(modelClass)) {
-            dependencyInjector.createWithAutoDI(kClass)
+            AndroidDiApplication.injector.createWithAutoDI(kClass)
         } else {
             throw IllegalArgumentException("${modelClass}은 ViewModel 클래스가 아닙니다.")
         }
     }
+}
+
+@MainThread
+inline fun <reified VM : ViewModel> ComponentActivity.provideViewModel(
+    noinline extrasProducer: (() -> CreationExtras)? = null,
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null,
+): Lazy<VM> {
+    val factoryPromise = factoryProducer ?: { ViewModelFactory() }
+
+    return ViewModelLazy(
+        VM::class,
+        { viewModelStore },
+        factoryPromise,
+        { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
+    )
 }
