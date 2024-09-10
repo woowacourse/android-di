@@ -29,4 +29,12 @@ class CartViewModelTest {
         val value = cartViewModel.cartProducts.getOrAwaitValue()
         assertThat(value[2].name).isEqualTo("우테코 삼겹살")
     }
+
+    @Test
+    fun `장바구니에_담긴_물품을_제거한다`() {
+        val firstProduct = fakeProducts.first()
+        cartViewModel.deleteCartProduct(0)
+        val value = cartViewModel.cartProducts.getOrAwaitValue()
+        assertThat(value).doesNotContain(firstProduct)
+    }
 }
