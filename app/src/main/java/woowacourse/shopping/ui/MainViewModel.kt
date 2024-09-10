@@ -7,16 +7,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.BaseViewModelFactory
+import woowacourse.shopping.BaseViewModelFactory2
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.Inject
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
     private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
 ) : ViewModel() {
+    @Inject
+    lateinit var cartRepository: CartRepository
+
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -37,7 +40,8 @@ class MainViewModel(
             viewModelFactory {
                 initializer {
                     val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
-                    BaseViewModelFactory(appContainer).create(MainViewModel::class.java)
+//                    BaseViewModelFactory(appContainer).create(MainViewModel::class.java)
+                    BaseViewModelFactory2(appContainer).create(MainViewModel::class.java)
                 }
             }
     }
