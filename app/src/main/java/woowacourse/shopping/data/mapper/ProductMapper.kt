@@ -5,8 +5,16 @@ import woowacourse.shopping.model.Product
 
 fun Product.toEntity(): CartProductEntity {
     return CartProductEntity(
-        name = name,
-        price = price,
-        imageUrl = imageUrl,
+        name = this.name,
+        price = this.price,
+        imageUrl = this.imageUrl,
+    )
+}
+
+fun CartProductEntity.toDomain(): Product {
+    return Product(
+        name = this.name,
+        price = this.price,
+        imageUrl = this.imageUrl,
     )
 }

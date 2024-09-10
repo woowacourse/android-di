@@ -9,7 +9,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
-    private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
+    val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     fun registerDependency(
         type: KClass<*>,
@@ -21,12 +21,13 @@ object AutoDIManager {
     inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
-                injectDependenciesWithParameters(VM::class)
+                createAutoDIInstance<VM>()
             }
         }
     }
 
-    fun <T : Any> injectDependenciesWithParameters(clazz: KClass<T>): T {
+    inline fun <reified T : Any> createAutoDIInstance(): T {
+        val clazz = T::class
         val constructor =
             clazz.primaryConstructor ?: throw NullPointerException("주생성자에 파라미터가 없습니다.")
 
