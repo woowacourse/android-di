@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.module.DIModule
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -16,6 +17,13 @@ object DIContainer {
         implementationClass: KClass<out T>,
     ) {
         interfaceMappings[interfaceClass] = implementationClass
+    }
+
+    fun <T : Any> registerInstance(
+        interfaceClass: KClass<T>,
+        instance: T,
+    ) {
+        singletonInstances[interfaceClass] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
