@@ -1,10 +1,12 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.FieldInject
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(diModule: DIModule) {
@@ -48,11 +50,15 @@ class DIContainer(diModule: DIModule) {
     }
 
     private fun Any.injectFieldDependency() {
-        val properties = this::class.declaredMemberProperties.filter { it.isLateinit }
+        val properties =
+            this::class.declaredMemberProperties
+                .filter { it.isLateinit }
+                .filter { it.hasAnnotation<FieldInject>() }
+
         properties.forEach { property ->
             val p = property as KMutableProperty1
-            val type = p.returnType.classifier as KClass<*>
             p.isAccessible = true
+            val type = p.returnType.classifier as KClass<*>
             val instance = instances[type] ?: throw IllegalArgumentException("필드 ${type.simpleName}의 인스턴스가 정의되지 않았습니다.")
             property.setter.call(this, instance)
         }
