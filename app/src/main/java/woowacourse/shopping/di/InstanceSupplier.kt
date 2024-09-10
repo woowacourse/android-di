@@ -38,7 +38,7 @@ object InstanceSupplier {
 
     // TODO 3단계 구현 시 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
     fun <T : Any> injectedInstance(
-        clazz: Class<T>
+        clazz: Class<T>,
     ): T {
         val targetConstructor = targetConstructor(clazz)
         val constructorParameters = targetConstructor.parameters
