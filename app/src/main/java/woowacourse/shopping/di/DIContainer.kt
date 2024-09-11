@@ -3,10 +3,7 @@ package woowacourse.shopping.di
 object DIContainer {
     private val instances = mutableMapOf<Class<*>, Any>()
 
-    fun <T : Any> register(
-        clazz: Class<T>,
-        instance: T,
-    ) {
+    fun <T : Any> register(clazz: Class<T>, instance: T) {
         instances[clazz] = instance
     }
 
@@ -16,12 +13,12 @@ object DIContainer {
     }
 
     private fun <T : Any> createInstance(clazz: Class<T>): T {
-        val constructor = clazz.constructors.first()
+        val constructor = clazz.constructors.firstOrNull()
+            ?: throw IllegalArgumentException("No constructors found for class: ${clazz.name}")
+
         val params = constructor.parameterTypes.map { resolve(it) }.toTypedArray()
         val instance = constructor.newInstance(*params) as T
-
         injectFields(instance)
-
         register(clazz, instance)
         return instance
     }
