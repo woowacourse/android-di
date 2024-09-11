@@ -1,14 +1,16 @@
 package woowacourse.shopping
 
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.DefaultInjectedActivityContainer
+import woowacourse.shopping.di.DefaultInjectedSingletonContainer
 import woowacourse.shopping.di.InjectedActivityContainer
 import woowacourse.shopping.di.InjectedComponent
 import woowacourse.shopping.di.InjectedSingletonContainer
 import kotlin.reflect.KClass
 
 class DefaultAppContainer(
-    private val singletonComponentContainer: InjectedSingletonContainer = InjectedSingletonContainer,
-    private val activityComponentContainer: InjectedActivityContainer = InjectedActivityContainer,
+    private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer,
+    private val activityComponentContainer: InjectedActivityContainer = DefaultInjectedActivityContainer,
 ) : AppContainer {
     override fun add(component: InjectedComponent) {
         when (component) {
