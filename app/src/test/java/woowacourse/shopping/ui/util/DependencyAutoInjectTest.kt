@@ -12,7 +12,7 @@ import woowacourse.shopping.FakeActivity
 import woowacourse.shopping.FakeRepositoryImpl
 
 @RunWith(RobolectricTestRunner::class)
-class DependencyInjectorTest {
+class DependencyAutoInjectTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
