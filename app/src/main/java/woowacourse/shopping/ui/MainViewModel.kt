@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.launch
 import woowacourse.shopping.BaseViewModelFactory2
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
@@ -27,8 +29,10 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        _onProductAdded.value = true
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.value = true
+        }
     }
 
     fun getAllProducts() {

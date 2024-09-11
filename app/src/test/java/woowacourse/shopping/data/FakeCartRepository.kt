@@ -7,13 +7,13 @@ class FakeCartRepository(
 ) : CartRepository {
     constructor(vararg products: Product) : this(products.toMutableList())
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         cartProducts.add(product)
     }
 
-    override fun allCartProducts(): List<Product> = cartProducts.toList()
+    override suspend fun allCartProducts(): List<Product> = cartProducts.toList()
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProducts.removeAt(id.toInt())
     }
 }
