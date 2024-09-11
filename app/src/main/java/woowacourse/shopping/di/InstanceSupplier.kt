@@ -31,29 +31,30 @@ object InstanceSupplier {
         property.set(
             instance,
             ShoppingApplication.instanceContainer.instanceOf(
-                property.kotlinProperty?.returnType ?: error(EXCEPTION_PROPERTY_NOT_FOUND)
+                property.kotlinProperty ?: error(EXCEPTION_PROPERTY_NOT_FOUND)
+//                property.kotlinProperty?.returnType ?: error(EXCEPTION_PROPERTY_NOT_FOUND)
             )
         )
     }
 
-    // TODO 3단계 구현 시 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
-    fun <T : Any> injectedInstance(
-        clazz: Class<T>,
-    ): T {
-        val targetConstructor = targetConstructor(clazz)
-        val constructorParameters = targetConstructor.parameters
-        val parameterValues =
-            constructorParameters.map { parameter ->
-                val parameterClass = parameter.type.kotlin
-                val parameterType = parameterClass.createType()
-                ShoppingApplication.instanceContainer.instanceOf<T>(parameterType)
-            }.toTypedArray<Any>()
-
-        val instance = targetConstructor.newInstance(*parameterValues)
-        injectFields(clazz, instance)
-
-        return instance as T
-    }
+//    // TODO 3단계 구현 시 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
+//    fun <T : Any> injectedInstance(
+//        clazz: Class<T>,
+//    ): T {
+//        val targetConstructor = targetConstructor(clazz)
+//        val constructorParameters = targetConstructor.parameters
+//        val parameterValues =
+//            constructorParameters.map { parameter ->
+//                val parameterClass = parameter.type.kotlin
+//                val parameterType = parameterClass.createType()
+//                ShoppingApplication.instanceContainer.instanceOf<T>(parameterType)
+//            }.toTypedArray<Any>()
+//
+//        val instance = targetConstructor.newInstance(*parameterValues)
+//        injectFields(clazz, instance)
+//
+//        return instance as T
+//    }
 
     // TODO 3단계 구현 시 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
     private fun <T : Any> targetConstructor(clazz: Class<T>): Constructor<*> {

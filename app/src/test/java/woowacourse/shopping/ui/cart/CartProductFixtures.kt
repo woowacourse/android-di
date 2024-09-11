@@ -6,4 +6,4 @@ fun generateProducts(size: Int): List<Product> =
     List(size) { index -> generateSingleProduct(index + 1) }
 
 fun generateSingleProduct(index: Int): Product =
-    Product("Product$index", index * 1000, "image$index")
+    Product(index.toLong(), "Product$index", index * 1000, "image$index")

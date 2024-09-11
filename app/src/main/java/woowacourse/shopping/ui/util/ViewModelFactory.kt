@@ -21,7 +21,7 @@ class ViewModelFactory(
         val instance =
             primaryConstructor.callBy(
                 primaryConstructorParameters.associateWith { parameter ->
-                    instanceContainer.instanceOf(parameter.type)
+                    instanceContainer.instanceOf(parameter)
                 },
             )
 

@@ -3,7 +3,7 @@ package woowacourse.shopping.data
 import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository : CartRepository {
+class InMemoryCartRepository : CartRepository {
     private var products: List<CartedProduct> = emptyList()
 
     override suspend fun addCartProduct(product: Product) {

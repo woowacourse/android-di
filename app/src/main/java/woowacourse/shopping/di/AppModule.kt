@@ -10,4 +10,6 @@ interface AppModule : InjectionModule {
     fun provideProductRepository(): ProductRepository
 
     fun provideCartRepository(shoppingDatabase: ShoppingDatabase): CartRepository
+
+    fun provideInMemoryCartRepository(): CartRepository
 }

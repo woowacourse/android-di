@@ -2,7 +2,8 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.DBCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
@@ -13,8 +14,13 @@ class DefaultAppModule(private val appContext: Context) : AppModule {
 
     override fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
+    @DatabaseRepository
     override fun provideCartRepository(
         shoppingDatabase: ShoppingDatabase,
     ): CartRepository =
-        CartRepositoryImpl(shoppingDatabase.cartProductDao())
+        DBCartRepository(shoppingDatabase.cartProductDao())
+
+    @InMemoryRepository
+    override fun provideInMemoryCartRepository(): CartRepository =
+        InMemoryCartRepository()
 }

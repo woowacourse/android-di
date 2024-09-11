@@ -2,11 +2,10 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toCartedProduct
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.data.mapper.toProduct
 import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
-class CartRepositoryImpl(
+class DBCartRepository(
     private val cartProductDao: CartProductDao
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
