@@ -53,9 +53,9 @@ Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 �
   - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성
 
 >**Recursive DI**
-  - [ ] CartRepository가 `DAO` 객체를 참조하도록 변경
+  - [x] CartRepository가 `DAO` 객체를 참조하도록 변경
   - [ ] 장바구니 뷰에서 상품이 담긴 날짜 정보를 확인할 수 있도록 변경
 
 ### 선택
   - [ ] 상품의 `position`과 `CartRepository::deleteCartProduct`의 id가 동일한 값임을 보장할 수 없다는 문제를 해결
-  - [ ] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+  - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
