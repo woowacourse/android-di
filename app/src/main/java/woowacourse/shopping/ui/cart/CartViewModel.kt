@@ -35,7 +35,6 @@ class CartViewModel(
             cartRepository.deleteCartProduct(id.toLong())
             _onCartProductDeleted.value = true
         }
-        getAllCartProducts()
     }
 
     companion object {

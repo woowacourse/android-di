@@ -1,5 +1,7 @@
 package woowacourse.shopping.ui.cart
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.model.Product
@@ -12,7 +14,8 @@ class CartProductAdapter(
     private val items: MutableList<Product> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
-        onClickDelete(position)
+        val item = items[position]
+        onClickDelete(item.id.toInt())
         removeItem(position)
     }
 
@@ -32,8 +35,11 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun removeItem(position: Int) {
         items.removeAt(position)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 }
+
+private const val TAG = "CartProductAdapter"
