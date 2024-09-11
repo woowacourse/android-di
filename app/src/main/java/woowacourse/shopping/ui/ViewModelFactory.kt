@@ -16,10 +16,13 @@ class ViewModelFactory : ViewModelProvider.Factory {
             constructor.parameters.map { parameter ->
                 val parameterType = parameter.type.classifier
                 when (parameterType) {
-                    is KClass<*> -> DependencyContainer.instance<T>(parameterType)
+                    is KClass<*> -> DependencyContainer.instance<T>(parameterType) as Any
                     else -> throw IllegalArgumentException("Unknown parameter type: $parameterType")
                 }
-            }
-        return constructor.call(*params.toTypedArray())
+            }.toTypedArray()
+
+        val viewModel = constructor.call(*params)
+        DependencyContainer.injectProperty(viewModel)
+        return viewModel
     }
 }
