@@ -27,8 +27,8 @@ class MainViewModelTest {
         vm =
             MainViewModel(
                 productRepository,
-                cartRepository,
             )
+        vm.cartRepository = cartRepository
     }
 
     @Test

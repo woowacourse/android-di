@@ -1,6 +1,5 @@
 package woowacourse.shopping
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.di.AppContainer
@@ -24,19 +23,15 @@ class BaseViewModelFactory2(
 
         val injectedFields = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
 
-        val constructorArgs = constructor.parameters.map { parameter ->
-            appContainer.find(parameter.type.classifier as KClass<*>)
-        }.toTypedArray()
-        constructorArgs.forEach { arg ->
-            Log.d(TAG, "constructor Arg: $arg")
-        }
+        val constructorArgs =
+            constructor.parameters.map { parameter ->
+                appContainer.find(parameter.type.classifier as KClass<*>)
+            }.toTypedArray()
 
         val viewModel = constructor.call(*constructorArgs)
         injectedFields.forEach { field ->
             val dependency = appContainer.find(field.returnType.classifier as KClass<*>)
             field.isAccessible = true
-            Log.d(TAG, "injected field: $field")
-            Log.d(TAG, "dependency for field: $dependency")
 
             (field as KMutableProperty<*>).setter.call(viewModel, dependency)
         }
@@ -44,5 +39,3 @@ class BaseViewModelFactory2(
         return constructor.call(*constructorArgs)
     }
 }
-
-private const val TAG = "BaseViewModelFactory2"
