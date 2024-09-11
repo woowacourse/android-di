@@ -58,3 +58,12 @@ fun bind(product: ...) {
     binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt)
 }
 ```
+
+<br>
+
+## 3단계 (Qualifier)
+### Qualifier
+- [ ] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어노테이션을 통해 어떤 의존성을 가져와야 할지 구분한다.
+
+### 모듈 분리
+- [ ] 내가 만든 DI 라이브러리를 모듈로 분리한다.
