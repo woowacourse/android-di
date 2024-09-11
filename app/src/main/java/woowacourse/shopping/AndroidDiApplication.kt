@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.DependencyRegistry
 import woowacourse.shopping.di.RepositoryModule
@@ -8,13 +9,18 @@ import woowacourse.shopping.di.RepositoryModule
 class AndroidDiApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        initializeDatabase()
         initializeDependencies()
-        injector = DependencyInjector(DependencyRegistry)
+    }
+
+    private fun initializeDatabase() {
+        ShoppingDatabase.init(this)
     }
 
     private fun initializeDependencies() {
         val repositoryModule = RepositoryModule()
         DependencyRegistry.initModule(repositoryModule)
+        injector = DependencyInjector(DependencyRegistry)
     }
 
     companion object {
