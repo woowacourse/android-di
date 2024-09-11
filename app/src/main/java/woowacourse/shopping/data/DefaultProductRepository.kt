@@ -1,10 +1,8 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.annotation.ImplementationInject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
-@ImplementationInject
 class DefaultProductRepository : ProductRepository {
     private val products: List<Product> =
         listOf(
