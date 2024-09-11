@@ -3,7 +3,7 @@ package woowacourse.shopping.data
 import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository : CartRepository {
+class FakeCartRepository(private val creationTime: Long) : CartRepository {
     private var products: List<CartedProduct> = emptyList()
 
     override suspend fun addCartProduct(product: Product) {
@@ -13,7 +13,7 @@ class FakeCartRepository : CartRepository {
                 product.name,
                 product.price,
                 product.imageUrl,
-                System.currentTimeMillis(),
+                creationTime,
             )
     }
 

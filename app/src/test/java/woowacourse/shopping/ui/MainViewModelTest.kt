@@ -5,15 +5,17 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.FakeProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
@@ -21,9 +23,6 @@ import woowacourse.shopping.model.Product
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private lateinit var viewModel: MainViewModel
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
-
     private val testDispatcher = StandardTestDispatcher()
 
     @get:Rule
@@ -32,9 +31,9 @@ class MainViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        productRepository = FakeProductRepository()
-        cartRepository = InMemoryCartRepository()
         viewModel = MainViewModel()
+        viewModel.productRepository = FakeProductRepository()
+        viewModel.cartRepository = FakeCartRepository(System.currentTimeMillis())
     }
 
     @After
@@ -43,17 +42,19 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `카트에 상품을 추가할 수 있다`() {
-        // given
-        val product = Product(1L, "Product1", 1000, "image1")
+    fun `카트에 상품을 추가할 수 있다`() =
+        runTest {
+            // given
+            val product = Product(1L, "Product1", 1000, "image1")
 
-        // when
-        viewModel.addCartProduct(product)
+            // when
+            viewModel.addCartProduct(product)
+            advanceUntilIdle()
 
-        // then
-        val productAdded = viewModel.onProductAdded.getOrAwaitValue()
-        assertThat(productAdded).isTrue()
-    }
+            // then
+            val productAdded = viewModel.onProductAdded.getOrAwaitValue()
+            assertThat(productAdded).isTrue()
+        }
 
     @Test
     fun `모든 상품을 가져올 수 있다`() {
