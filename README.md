@@ -12,8 +12,8 @@
   - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
 
 ## Recursive DI
-- [ ] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
-- [ ] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+- [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
+- [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
 
 
 # 선택 요구 사항
