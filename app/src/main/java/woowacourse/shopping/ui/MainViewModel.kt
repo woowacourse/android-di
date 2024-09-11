@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,10 +10,7 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.FieldInject
 import woowacourse.shopping.model.Product
 
-class MainViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -22,10 +18,12 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     @FieldInject
-    private var alsong: String = ""
+    private lateinit var productRepository: ProductRepository
+
+    @FieldInject
+    private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
-        Log.d("alsong", alsong)
         viewModelScope.launch {
             cartRepository.addCartProduct(product)
             _onProductAdded.value = true

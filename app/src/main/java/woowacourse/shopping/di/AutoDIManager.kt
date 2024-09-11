@@ -37,7 +37,7 @@ object AutoDIManager {
         for (mutableProperty in mutableProperties) {
             if (mutableProperty.findAnnotation<FieldInject>() != null) {
                 mutableProperty.isAccessible = true
-                mutableProperty.setter.call(viewModelInstance, "New Value")
+                mutableProperty.setter.call(viewModelInstance, dependencies[mutableProperty.returnType.jvmErasure])
             }
         }
     }
