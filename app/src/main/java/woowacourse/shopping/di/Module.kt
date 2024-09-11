@@ -26,7 +26,7 @@ class Module : DependencyProvider {
     }
 
     private fun <T : Any> createCachedInstance(key: KClass<*>): T? {
-        val typeToInstantiate = requireNotNull(deferredTypes[key]) { "No such class: $key" }
+        val typeToInstantiate = deferredTypes[key] ?: return null
         val constructor = requireNotNull(typeToInstantiate.primaryConstructor) { "No suitable constructor found for $typeToInstantiate" }
 
         val parameters =
@@ -34,7 +34,7 @@ class Module : DependencyProvider {
                 .filter { it.hasAnnotation<Inject>() }
                 .associateWith { kParameter ->
                     val paramType = kParameter.type.jvmErasure
-                    cachedInstances[paramType]?.let { it as? T } ?: createCachedInstance(key)
+                    cachedInstances[paramType]?.let { it as? T } ?: createCachedInstance(paramType)
                 }
 
         val instance = constructor.callBy(parameters)
