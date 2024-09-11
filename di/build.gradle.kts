@@ -1,19 +1,16 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "woowacourse.shopping"
+    namespace = "com.example.di"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "woowacourse.shopping"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,23 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
-    }
-    dataBinding {
-        enable = true
-    }
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
-    packaging {
-        resources {
-            excludes += "META-INF/**"
-            excludes += "win32-x86*/**"
-        }
+        jvmTarget = "1.8"
     }
 }
 
@@ -57,7 +42,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("javax.inject:javax.inject:1")
-    implementation(project(":di"))
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")

@@ -1,9 +1,12 @@
-package woowacourse.shopping.di
+package com.example.di
 
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -28,13 +31,17 @@ object DIInjector {
         module: Module,
         function: KFunction<*>,
     ) {
-        val parameters = (listOf(module) + function.parameters.drop(1).map {
-            val parameterInstance =
-                DIContainer.getInstance(it.type.jvmErasure)
-                    ?: createInstance(it.type.jvmErasure)
-            DIContainer.addInstance(parameterInstance::class, parameterInstance)
-            parameterInstance
-        }).toTypedArray()
+        val parameters =
+            (
+                listOf(module) +
+                    function.parameters.drop(1).map {
+                        val parameterInstance =
+                            DIContainer.getInstance(it.type.jvmErasure)
+                                ?: createInstance(it.type.jvmErasure)
+                        DIContainer.addInstance(parameterInstance::class, parameterInstance)
+                        parameterInstance
+                    }
+            ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
         DIContainer.addInstance(function.returnType.jvmErasure, instance)
@@ -43,7 +50,7 @@ object DIInjector {
     private fun handleConstructorFunction(returnType: KClass<*>) {
         val injectParameters =
             returnType.primaryConstructor?.parameters
-                ?.filter { it.hasAnnotation<DI>() }
+                ?.filter { it.hasAnnotation<Inject>() }
                 ?.map { it.type.jvmErasure }
                 ?: return
 
@@ -54,14 +61,14 @@ object DIInjector {
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
-        val constructor =
-            modelClass.primaryConstructor
-                ?: throw IllegalArgumentException("Class must have a primary constructor: $modelClass")
+        val constructor = modelClass.primaryConstructor
+        requireNotNull(constructor) { "Class must have a primary constructor: $modelClass" }
 
         val parameters =
             constructor.parameters.associateWith { parameter ->
-                DIContainer.getInstance(parameter.type.jvmErasure)
-                    ?: throw IllegalStateException("Dependency for ${parameter.type.jvmErasure} not found")
+                val annotation = parameter.findAnnotation<Qualifier>()
+                val type = annotation?.type ?: parameter.type.jvmErasure
+                DIContainer.getInstance(type) ?: createInstance(type)
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
@@ -69,7 +76,7 @@ object DIInjector {
 
     private fun <T : Any> injectFields(instance: T) {
         val properties =
-            instance::class.declaredMemberProperties.filter { it.hasAnnotation<DI>() }
+            instance::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
 
         properties.forEach { property ->
             property.isAccessible = true

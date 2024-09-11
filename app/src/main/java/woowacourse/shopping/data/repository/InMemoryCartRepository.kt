@@ -1,25 +1,23 @@
 package woowacourse.shopping.data.repository
 
-import woowacourse.shopping.data.mapper.toDomain
-import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.DI
+import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.local.dao.CartProductDao
 
-class CartRepositoryImpl(
-    @DI private val dao: CartProductDao,
-) : CartRepository {
+class InMemoryCartRepository : CartRepository {
+    private var id: Long = 0
+    private val cartProducts: MutableList<CartProduct> = mutableListOf()
+
     override suspend fun addCartProduct(product: Product) {
-        dao.insert(product.toEntity())
+        cartProducts.add(product.toCartProduct(id++))
     }
 
     override suspend fun getAllCartProducts(): List<CartProduct> {
-        return dao.getAll().map { it.toDomain() }
+        return cartProducts.toList()
     }
 
     override suspend fun deleteCartProduct(id: Long) {
-        dao.delete(id)
+        cartProducts.removeAt(id.toInt())
     }
 }

@@ -28,11 +28,6 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = currentList.size
 
-//    private fun removeItem(position: Int) {
-//        currentList.removeAt(position)
-//        notifyItemRemoved(position)
-//    }
-
     companion object {
         private val diffUtil: DiffUtil.ItemCallback<CartProduct> =
             object : DiffUtil.ItemCallback<CartProduct>() {

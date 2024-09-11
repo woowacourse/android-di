@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityProductBinding
-import woowacourse.shopping.di.provideViewModel
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.viewmodel.provideViewModel
 
 class ProductActivity : AppCompatActivity() {
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }

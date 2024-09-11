@@ -1,8 +1,9 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.di.DIInjector
 import kotlin.reflect.KClass
 
 class ViewModelFactory : ViewModelProvider.Factory {
@@ -10,6 +11,6 @@ class ViewModelFactory : ViewModelProvider.Factory {
         modelClass: KClass<T>,
         extras: CreationExtras,
     ): T {
-        return DIInjector.createInstance(modelClass)
+        return com.example.di.DIInjector.createInstance(modelClass)
     }
 }
