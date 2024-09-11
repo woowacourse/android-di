@@ -1,5 +1,7 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.data.mapper.toModel
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -7,15 +9,13 @@ import woowacourse.shopping.model.Product
 class DefaultCartRepository(
     private val cartProductDao: CartProductDao,
 ) : CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf()
-
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+    override suspend fun addCartProduct(product: Product) {
+        cartProductDao.insert(product.toEntity())
     }
 
-    override fun getAllCartProducts(): List<Product> = cartProducts.toList()
+    override suspend fun getAllCartProducts(): List<Product> = cartProductDao.getAll().map { it.toModel() }
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Int) {
+        cartProductDao.delete(id)
     }
 }
