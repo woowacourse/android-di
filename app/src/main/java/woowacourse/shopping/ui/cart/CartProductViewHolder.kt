@@ -3,10 +3,8 @@ package woowacourse.shopping.ui.cart
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import java.time.format.DateTimeFormatter
 import woowacourse.shopping.databinding.ItemCartProductBinding
 import woowacourse.shopping.model.CartedProduct
-import woowacourse.shopping.model.Product
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,

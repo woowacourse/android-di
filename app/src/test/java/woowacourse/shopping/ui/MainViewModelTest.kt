@@ -12,8 +12,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.FakeProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product

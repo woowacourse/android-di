@@ -13,19 +13,14 @@ import woowacourse.shopping.data.ShoppingDatabase
 @Module
 object DefaultAppModule {
     fun provideShoppingDatabase(
-        @ApplicationContext applicationContext: Context
-    ): ShoppingDatabase =
-        ShoppingDatabase.getInstance(applicationContext)
+        @ApplicationContext applicationContext: Context,
+    ): ShoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
 
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
     @DatabaseRepository
-    fun provideCartRepository(
-        shoppingDatabase: ShoppingDatabase,
-    ): CartRepository =
-        DBCartRepository(shoppingDatabase.cartProductDao())
+    fun provideCartRepository(shoppingDatabase: ShoppingDatabase): CartRepository = DBCartRepository(shoppingDatabase.cartProductDao())
 
     @InMemoryRepository
-    fun provideInMemoryCartRepository(): CartRepository =
-        InMemoryCartRepository()
+    fun provideInMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 }

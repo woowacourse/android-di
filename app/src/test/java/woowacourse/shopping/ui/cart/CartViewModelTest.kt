@@ -39,47 +39,49 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `카트에 담긴 모든 상품을 가져올 수 있다`() = runTest {
-        // given
-        addCartProducts(3)
+    fun `카트에 담긴 모든 상품을 가져올 수 있다`() =
+        runTest {
+            // given
+            addCartProducts(3)
 
-        // when
-        viewModel.getAllCartProducts()
+            // when
+            viewModel.getAllCartProducts()
 
-        // then
-        val cartProducts = viewModel.cartProducts.getOrAwaitValue()
-        assertThat(cartProducts).isEqualTo(
-            listOf(
-                Product(1, "Product1", 1000, "image1"),
-                Product(2, "Product2", 2000, "image2"),
-                Product(3, "Product3", 3000, "image3"),
-            ),
-        )
-    }
+            // then
+            val cartProducts = viewModel.cartProducts.getOrAwaitValue()
+            assertThat(cartProducts).isEqualTo(
+                listOf(
+                    Product(1, "Product1", 1000, "image1"),
+                    Product(2, "Product2", 2000, "image2"),
+                    Product(3, "Product3", 3000, "image3"),
+                ),
+            )
+        }
 
     @Test
-    fun `카트에 담긴 상품을 삭제할 수 있다`() = runTest {
-        // given
-        addCartProducts(3)
+    fun `카트에 담긴 상품을 삭제할 수 있다`() =
+        runTest {
+            // given
+            addCartProducts(3)
 
-        // when
-        viewModel.getAllCartProducts()
-        viewModel.deleteCartProduct(1)
-        viewModel.getAllCartProducts()
+            // when
+            viewModel.getAllCartProducts()
+            viewModel.deleteCartProduct(1)
+            viewModel.getAllCartProducts()
 
-        // then
-        val cartProducts = viewModel.cartProducts.getOrAwaitValue()
-        val onCartProductDeleted = viewModel.onCartProductDeleted.getOrAwaitValue()
+            // then
+            val cartProducts = viewModel.cartProducts.getOrAwaitValue()
+            val onCartProductDeleted = viewModel.onCartProductDeleted.getOrAwaitValue()
 
-        assertThat(cartProducts).isEqualTo(
-            listOf(
-                Product(1, "Product1", 1000, "image1"),
-                Product(3, "Product3", 3000, "image3"),
-            ),
-        )
+            assertThat(cartProducts).isEqualTo(
+                listOf(
+                    Product(1, "Product1", 1000, "image1"),
+                    Product(3, "Product3", 3000, "image3"),
+                ),
+            )
 
-        assertThat(onCartProductDeleted).isTrue()
-    }
+            assertThat(onCartProductDeleted).isTrue()
+        }
 
     private suspend fun addCartProducts(size: Int) {
         repeat(size) { index ->

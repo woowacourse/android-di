@@ -59,7 +59,10 @@ class InstanceContainer(
             annotation::class.findAnnotation<Qualifier>() != null
         }
 
-    private fun qualifiedTypeOf(kType: KType, qualifierAnnotation: Annotation?): QualifiedType {
+    private fun qualifiedTypeOf(
+        kType: KType,
+        qualifierAnnotation: Annotation?,
+    ): QualifiedType {
         val qualifier = qualifierAnnotation?.annotationClass?.simpleName
         return QualifiedType(kType, qualifier)
     }
@@ -70,18 +73,23 @@ class InstanceContainer(
         return instance as T
     }
 
-    private fun resolveInstance(kType: KType, annotations: List<Annotation>): Any {
-        val contextAnnotation = annotations.firstOrNull { annotation ->
-            annotation.annotationClass == ApplicationContext::class
-        }
+    private fun resolveInstance(
+        kType: KType,
+        annotations: List<Annotation>,
+    ): Any {
+        val contextAnnotation =
+            annotations.firstOrNull { annotation ->
+                annotation.annotationClass == ApplicationContext::class
+            }
 
         if (contextAnnotation != null && kType.classifier == Context::class) {
             return applicationContext
         }
 
-        val qualifierAnnotation = annotations.firstOrNull { annotation ->
-            annotation::class.findAnnotation<Qualifier>() != null
-        }
+        val qualifierAnnotation =
+            annotations.firstOrNull { annotation ->
+                annotation::class.findAnnotation<Qualifier>() != null
+            }
         val qualifiedType = QualifiedType(kType, qualifierAnnotation?.annotationClass?.simpleName)
         val existingInstance = instances[qualifiedType]
         if (existingInstance != null) return existingInstance
@@ -90,9 +98,10 @@ class InstanceContainer(
         requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kType) }
 
         // 재귀 주입
-        val parameterValues = function.parameters.associateWith { parameter ->
-            resolveInstance(parameter.type, parameter.annotations)
-        }
+        val parameterValues =
+            function.parameters.associateWith { parameter ->
+                resolveInstance(parameter.type, parameter.annotations)
+            }
         val instance = function.callBy(parameterValues)
         checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
 

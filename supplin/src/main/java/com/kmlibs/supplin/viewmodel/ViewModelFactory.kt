@@ -30,12 +30,8 @@ class ViewModelFactory(
         return instance as T
     }
 
-
-
     companion object {
         private const val EXCEPTION_VIEWMODEL_NOT_FOUND = "ViewModel class not found"
         private const val EXCEPTION_NO_PRIMARY_CONSTRUCTOR = "No primary constructor found for %s"
     }
 }
-
-

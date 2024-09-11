@@ -29,20 +29,21 @@ object InstanceSupplier {
             annotation.annotationClass == Supply::class
         }
 
-    private fun injectSingleField(field: Field, targetInstance: Any) {
+    private fun injectSingleField(
+        field: Field,
+        targetInstance: Any,
+    ) {
         field.isAccessible = true
         field.set(targetInstance, findInstanceOf(field))
     }
 
     private fun findInstanceOf(field: Field): Any =
         Injector.instanceContainer.instanceOf(
-            field.kotlinProperty ?: error(EXCEPTION_PROPERTY_NOT_FOUND)
+            field.kotlinProperty ?: error(EXCEPTION_PROPERTY_NOT_FOUND),
         )
 
     // TODO 추후 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
-    fun <T : Any> injectedInstance(
-        clazz: Class<T>,
-    ): T {
+    fun <T : Any> injectedInstance(clazz: Class<T>): T {
         val targetConstructor = targetConstructor(clazz)
         val constructorParameters = targetConstructor.parameters
         val parameterValues =
@@ -60,11 +61,12 @@ object InstanceSupplier {
     // TODO 추후 생성자 주입 + 필드 주입 혼합하여 사용할 수 있도록 수정
     private fun <T : Any> targetConstructor(clazz: Class<T>): Constructor<*> {
         val constructors = clazz.constructors
-        val targetConstructor = constructors.firstOrNull { constructor ->
-            constructor.annotations.any { annotation ->
-                annotation.annotationClass == Supply::class
+        val targetConstructor =
+            constructors.firstOrNull { constructor ->
+                constructor.annotations.any { annotation ->
+                    annotation.annotationClass == Supply::class
+                }
             }
-        }
 
         return checkNotNull(targetConstructor) {
             EXCEPTION_NO_TARGET_CONSTRUCTOR.format(clazz.simpleName)

@@ -6,7 +6,7 @@ import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
 class DBCartRepository(
-    private val cartProductDao: CartProductDao
+    private val cartProductDao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         cartProductDao.insert(product.toEntity())

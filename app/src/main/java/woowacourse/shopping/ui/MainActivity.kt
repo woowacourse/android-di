@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
+import com.kmlibs.supplin.viewmodel.injectionViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
-import com.kmlibs.supplin.viewmodel.injectionViewModel
 
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
     private val viewModel: MainViewModel by lazy(::injectionViewModel)
