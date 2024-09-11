@@ -13,6 +13,7 @@ import woowacourse.shopping.model.Product
 class MainViewModel() : ViewModel() {
     @Inject
     lateinit var productRepository: ProductRepository
+
     @Inject
     lateinit var cartRepository: CartRepository
 

@@ -2,18 +2,18 @@ package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    items: List<CartProduct>,
+    onClickDelete: (id: Long) -> Unit,
     private val dateFormatter: DateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
+    private val items: MutableList<CartProduct> = items.toMutableList()
 
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
+    private val onClickDelete = { id: Long ->
+        onClickDelete(id)
+        removeItem(id)
     }
 
     override fun onCreateViewHolder(
@@ -32,8 +32,17 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    fun updateItems(newItems: List<CartProduct>) { // 새로운 아이템 리스트로 어댑터 갱신
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    private fun removeItem(id: Long) {
+        val position = items.indexOfFirst { it.id == id }
+        if (position != -1) { // 해당 아이템이 리스트에 있는 경우만 삭제
+            items.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 }

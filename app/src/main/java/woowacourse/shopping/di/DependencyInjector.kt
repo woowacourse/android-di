@@ -26,8 +26,11 @@ object DependencyInjector {
             }
     }
 
-    private fun injectProperty(target: Any, property: KMutableProperty<*>) {
-        val instance = DIContainer.getInstance(property.returnType.classifier as KClass<*>)  // DIContainer에서 인스턴스를 가져옴
+    private fun injectProperty(
+        target: Any,
+        property: KMutableProperty<*>,
+    ) {
+        val instance = DIContainer.getInstance(property.returnType.classifier as KClass<*>)
         property.isAccessible = true
         property.setter.call(target, instance)
     }

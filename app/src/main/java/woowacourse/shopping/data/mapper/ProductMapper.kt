@@ -1,9 +1,10 @@
 package woowacourse.shopping.data.mapper
 
 import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-fun Product.toEntity(): CartProductEntity {
+fun Product.toCartProductEntity(): CartProductEntity {
     return CartProductEntity(
         name = name,
         price = price,
@@ -11,8 +12,9 @@ fun Product.toEntity(): CartProductEntity {
     )
 }
 
-fun CartProductEntity.toModel(): Product {
-    return Product(
+fun CartProductEntity.toModel(): CartProduct {
+    return CartProduct(
+        id = id,
         name = name,
         price = price,
         imageUrl = imageUrl,

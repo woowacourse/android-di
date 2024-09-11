@@ -7,16 +7,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.Inject
 import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
-class CartViewModel(
-) : ViewModel() {
+class CartViewModel : ViewModel() {
     @Inject
     lateinit var cartRepository: CartRepository
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
-        MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
@@ -27,10 +25,15 @@ class CartViewModel(
         }
     }
 
-    fun deleteCartProduct(id: Int) {
+    fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id.toLong())
-            _onCartProductDeleted.value = true
+            try {
+                cartRepository.deleteCartProduct(id)
+                _onCartProductDeleted.value = true
+                getAllCartProducts()
+            } catch (e: Exception) {
+                _onCartProductDeleted.value = false
+            }
         }
     }
 }

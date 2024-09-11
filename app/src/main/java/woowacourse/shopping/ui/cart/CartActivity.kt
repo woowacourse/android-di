@@ -1,6 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
@@ -13,6 +14,7 @@ class CartActivity : AppCompatActivity() {
     private val viewModel: CartViewModel by provideViewModel()
 
     private lateinit var dateFormatter: DateFormatter
+    private lateinit var adapter: CartProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +23,13 @@ class CartActivity : AppCompatActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+        viewModel.getAllCartProducts()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("CartViewModel", "onResume: " + viewModel.cartProducts.value?.size)
+        viewModel.getAllCartProducts()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -53,15 +62,18 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
-            val adapter =
-                CartProductAdapter(
-                    items = it,
-                    dateFormatter = dateFormatter,
-                    onClickDelete = viewModel::deleteCartProduct,
-                )
-            binding.rvCartProducts.adapter = adapter
+        adapter =
+            CartProductAdapter(
+                items = emptyList(),
+                dateFormatter = dateFormatter,
+                onClickDelete = viewModel::deleteCartProduct,
+            )
+        binding.rvCartProducts.adapter = adapter
+
+        viewModel.cartProducts.observe(this) { updatedList ->
+            adapter.updateItems(updatedList)
         }
+
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
