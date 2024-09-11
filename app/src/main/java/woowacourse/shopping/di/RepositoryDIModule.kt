@@ -1,12 +1,24 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
+@Qualifier
+annotation class InMemoryCart
+
+@Qualifier
+annotation class RoomCart
+
 abstract class RepositoryDIModule : DIModule {
-    abstract fun bindCartRepository(defaultCartRepository: DefaultCartRepository): CartRepository
+    @InMemoryCart
+    abstract fun bindInMemoryCartRepository(inMemoryCartRepository: InMemoryCartRepository): CartRepository
+
+    @RoomCart
+    abstract fun bindRoomCartRepository(roomCartRepository: RoomCartRepository): CartRepository
 
     abstract fun bindProductRepository(defaultProductRepository: DefaultProductRepository): ProductRepository
 }

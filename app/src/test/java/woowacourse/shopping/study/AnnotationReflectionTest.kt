@@ -2,6 +2,7 @@ package woowacourse.shopping.study
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 
 annotation class All
@@ -30,8 +31,12 @@ annotation class Runtime
 @Runtime
 class Chicken
 
-class AnnotationReflectionTest {
+annotation class InAnnotation
 
+@InAnnotation
+annotation class OutAnnotation
+
+class AnnotationReflectionTest {
     @Test
     fun `클래스의 어노테이션 존재 여부`() {
         val pizzaClass = Pizza::class
@@ -55,4 +60,18 @@ class AnnotationReflectionTest {
         assertThat(chickenClass.hasAnnotation<Binary>()).isFalse()
         assertThat(chickenClass.hasAnnotation<Runtime>()).isTrue()
     }
+
+    @Test
+    fun `어노테이션 내부의 어노테이션 탐색 접근 가능 여부`() {
+        val kFunction = AnnotationTest::class.declaredMemberFunctions.first()
+        val inAnnotation = kFunction.annotations.first { it.annotationClass == OutAnnotation::class }
+        val actual = inAnnotation.annotationClass.annotations.first { it.annotationClass == InAnnotation::class }
+
+        assertThat(actual.annotationClass).isEqualTo(InAnnotation::class)
+    }
+}
+
+class AnnotationTest {
+    @OutAnnotation
+    fun test() = 1
 }

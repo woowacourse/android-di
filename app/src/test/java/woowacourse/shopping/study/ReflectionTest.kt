@@ -133,4 +133,10 @@ class ReflectionTest {
         val carReflection = Car::class
         assertThat(carReflection.isAbstract).isFalse()
     }
+
+    @Test
+    fun `생성자가 없는 클래스의 경우 기본 생성자가 생성된다`() {
+        val carReflection = Car::class
+        assertThat(carReflection.constructors).hasSize(1)
+    }
 }
