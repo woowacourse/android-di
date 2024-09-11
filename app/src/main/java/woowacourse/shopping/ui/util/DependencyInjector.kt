@@ -1,6 +1,7 @@
 package woowacourse.shopping.ui.util
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -23,22 +24,28 @@ object DependencyInjector {
         val primaryConstructor = kClass.primaryConstructor
 
         if (primaryConstructor == null) {
-            val instanceFromContainer = dependencyContainer.getInstance<T>(kClass)
-            if (instanceFromContainer != null) {
-                targetInstance = instanceFromContainer
-            } else {
-                val implementKClass = requireNotNull(dependencyContainer.getImplement<T>(kClass))
-                targetInstance = createInstanceFromConstructor(implementKClass.java)
-            }
+            targetInstance = getInstanceFromDependencyContainer(kClass)
         } else {
-            val constructorParams = getDependencyOfParameters(primaryConstructor.parameters)
-            targetInstance = primaryConstructor.call(*constructorParams)
-
+            targetInstance = getInstanceFromConstructor(primaryConstructor)
             setDependencyOfProperties(kClass, targetInstance)
         }
-
         dependencyContainer.setInstance(kClass, targetInstance)
         return targetInstance
+    }
+
+    private fun <T : Any> getInstanceFromDependencyContainer(kClass: KClass<T>): T {
+        val instanceFromContainer = dependencyContainer.getInstance<T>(kClass)
+        if (instanceFromContainer != null) {
+            return instanceFromContainer
+        } else {
+            val implementKClass = requireNotNull(dependencyContainer.getImplement<T>(kClass))
+            return createInstanceFromConstructor(implementKClass.java)
+        }
+    }
+
+    private fun <T : Any> getInstanceFromConstructor(primaryConstructor: KFunction<T>): T {
+        val constructorParams = getDependencyOfParameters(primaryConstructor.parameters)
+        return primaryConstructor.call(*constructorParams)
     }
 
     private fun getDependencyOfParameters(parameters: List<KParameter>): Array<Any> {
