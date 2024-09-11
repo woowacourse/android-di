@@ -40,3 +40,9 @@
  - `CartRepository`가 DAO 객체를 참조하도록 변경한다.
  - `CartProductEntity`에는 createdAt 프로퍼티가 있어서 언제 장바구니에 상품이 담겼는지를 알 수 있다.
  - `CartProductViewHolder`의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+
+### 선택 요구 사항
+
+- 현재 장바구니 삭제 버튼을 누르면, RecyclerView의 position에 해당하는 상품이 지워진다.
+  - position과 상품의 id가 동일한 값임 확인하고 삭제한다.
+- 뷰에서 CartProductEntity를 직접 참조하지 않는다.
