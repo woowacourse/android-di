@@ -3,8 +3,7 @@ package woowacourse.shopping.data.repository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.domain.model.Product
 
-class ProductDefaultRepository : ProductRepository {
-
+class DefaultProductRepository : ProductRepository {
     private val products: List<Product> = listOf(
         Product(
             name = "우테코 과자",

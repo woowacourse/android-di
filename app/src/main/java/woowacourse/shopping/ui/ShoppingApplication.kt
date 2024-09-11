@@ -1,8 +1,8 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.data.repository.CartDefaultRepository
-import woowacourse.shopping.data.repository.ProductDefaultRepository
+import woowacourse.shopping.data.repository.DefaultCartRepository
+import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.ui.util.DependencyContainer
@@ -13,11 +13,11 @@ class ShoppingApplication : Application() {
         super.onCreate()
         viewModelDependencyContainer.setDependency(
             ProductRepository::class,
-            ProductDefaultRepository::class
+            DefaultProductRepository::class
         )
         viewModelDependencyContainer.setDependency(
             CartRepository::class,
-            CartDefaultRepository::class
+            DefaultCartRepository::class
         )
     }
 
