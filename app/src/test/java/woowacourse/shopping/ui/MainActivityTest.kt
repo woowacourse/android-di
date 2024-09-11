@@ -42,7 +42,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun `어노테이션을 붙인 필드에 값이 주입된다`()  {
+    fun `어노테이션을 붙인 필드에 값이 주입된다`() {
         // given
         val activity =
             Robolectric
