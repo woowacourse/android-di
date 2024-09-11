@@ -1,6 +1,8 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin
 
 import android.content.Context
+import com.kmlibs.supplin.annotations.Module
+import com.kmlibs.supplin.model.InjectionData
 import kotlin.reflect.KClass
 
 class InjectionBuilder {

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin.model
 
 import kotlin.reflect.KType
 

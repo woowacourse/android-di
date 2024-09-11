@@ -1,6 +1,8 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin
 
 import android.content.Context
+import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KCallable

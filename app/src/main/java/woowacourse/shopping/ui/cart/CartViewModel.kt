@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kmlibs.supplin.annotations.Supply
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.di.DatabaseRepository
-import woowacourse.shopping.di.Supply
 import woowacourse.shopping.model.CartedProduct
 
 class CartViewModel : ViewModel() {

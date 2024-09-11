@@ -1,8 +1,8 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import com.kmlibs.supplin.Injector
 import woowacourse.shopping.di.DefaultAppModule
-import woowacourse.shopping.di.Injector
 
 class ShoppingApplication : Application() {
     override fun onCreate() {

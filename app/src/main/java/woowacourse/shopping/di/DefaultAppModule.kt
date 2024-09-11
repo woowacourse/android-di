@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.annotations.Module
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DBCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository

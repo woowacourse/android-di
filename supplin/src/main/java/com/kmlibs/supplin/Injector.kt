@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin
 
 object Injector {
     lateinit var instanceContainer: InstanceContainer

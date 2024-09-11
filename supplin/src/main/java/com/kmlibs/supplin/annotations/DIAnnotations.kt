@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin.annotations
 
 /**
  * For supplying dependencies to classes.

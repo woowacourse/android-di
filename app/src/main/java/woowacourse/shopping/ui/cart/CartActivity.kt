@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.util.injectionViewModel
+import com.kmlibs.supplin.viewmodel.injectionViewModel
 import woowacourse.shopping.ui.BaseActivity
 
 class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {

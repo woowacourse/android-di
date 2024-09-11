@@ -1,11 +1,11 @@
-package woowacourse.shopping.ui.util
+package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.InstanceContainer
+import com.kmlibs.supplin.InstanceContainer
+import com.kmlibs.supplin.InstanceSupplier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
-import woowacourse.shopping.di.InstanceSupplier
 
 class ViewModelFactory(
     private val viewModelClass: KClass<out ViewModel>,

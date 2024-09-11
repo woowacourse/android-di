@@ -1,9 +1,9 @@
-package woowacourse.shopping.di
+package com.kmlibs.supplin
 
+import com.kmlibs.supplin.annotations.Supply
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import kotlin.reflect.jvm.kotlinProperty
-import woowacourse.shopping.ui.ShoppingApplication
 
 object InstanceSupplier {
     private const val EXCEPTION_PROPERTY_NOT_FOUND = "Property that needs to be injected not found"
