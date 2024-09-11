@@ -24,7 +24,6 @@ object DependencyInjector {
 
     fun <T : Any> getInstance(clazz: Class<T>): T {
         val kClass: KClass<T> = clazz.kotlin
-        instances[kClass]?.let { instance -> return instance as T }
 
         val instance: T = createInstance(kClass)
         instances[kClass] = instance
