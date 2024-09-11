@@ -24,34 +24,34 @@ object AutoDIManager {
     inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
-                val viewModelInstance = createAutoDIInstance<VM>()
-                injectField<VM>(viewModelInstance)
-                viewModelInstance
+                createAutoDIInstance<VM>()
             }
         }
     }
 
-    inline fun <reified VM : ViewModel> injectField(viewModelInstance: VM) {
-        val properties = VM::class.declaredMemberProperties
+    inline fun <reified T : Any> injectField(instance: T): T {
+        val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         for (mutableProperty in mutableProperties) {
             if (mutableProperty.findAnnotation<FieldInject>() != null) {
                 mutableProperty.isAccessible = true
-                mutableProperty.setter.call(viewModelInstance, dependencies[mutableProperty.returnType.jvmErasure])
+                mutableProperty.setter.call(
+                    instance,
+                    dependencies[mutableProperty.returnType.jvmErasure],
+                )
             }
         }
+        return instance
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
         val clazz = T::class
-        val constructor =
-            clazz.primaryConstructor ?: return clazz.createInstance()
-
+        val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
         val args =
             constructor.parameters.associateWith { parameter ->
                 dependencies[parameter.type.jvmErasure]
             }
-
-        return constructor.callBy(args)
+        val instance = constructor.callBy(args)
+        return injectField<T>(instance)
     }
 }
