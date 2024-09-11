@@ -1,4 +1,4 @@
 package woowacourse.shopping.di.annotation
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class FieldInject
+annotation class Inject

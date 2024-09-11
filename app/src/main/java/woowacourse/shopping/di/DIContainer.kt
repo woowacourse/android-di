@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import android.util.Log
 import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.Inject
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -87,7 +87,7 @@ class DIContainer(
         val properties =
             this::class.declaredMemberProperties
                 .filter { it.isLateinit }
-                .filter { it.hasAnnotation<FieldInject>() }
+                .filter { it.hasAnnotation<Inject>() }
 
         properties.forEach { property ->
             val p = property as KMutableProperty1
