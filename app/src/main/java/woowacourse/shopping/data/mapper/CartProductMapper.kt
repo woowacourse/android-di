@@ -5,6 +5,7 @@ import woowacourse.shopping.model.Product
 
 fun CartProductEntity.toProduct(): Product {
     return Product(
+        id = id,
         name = name,
         price = price,
         imageUrl = imageUrl,
