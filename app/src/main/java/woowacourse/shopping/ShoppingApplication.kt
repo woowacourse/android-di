@@ -6,6 +6,6 @@ import woowacourse.shopping.data.di.RepositoryModule
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        RepositoryModule.install()
+        RepositoryModule(this).install()
     }
 }

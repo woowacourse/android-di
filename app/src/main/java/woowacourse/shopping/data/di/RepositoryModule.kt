@@ -1,11 +1,13 @@
 package woowacourse.shopping.data.di
 
+import android.content.Context
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 
-object RepositoryModule {
+class RepositoryModule(private val context: Context) {
     fun install() {
         provideProductRepository()
         provideCartRepository()
@@ -21,7 +23,9 @@ object RepositoryModule {
     private fun provideCartRepository() {
         DependencyContainer.addInstance(
             CartRepository::class,
-            DefaultCartRepository()
+            DefaultCartRepository(
+                ShoppingDatabase.instance(context).cartProductDao()
+            )
         )
     }
 }
