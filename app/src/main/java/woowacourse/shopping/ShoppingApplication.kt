@@ -9,8 +9,7 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appDatabase = ShoppingDatabase.getInstance(this)
-        diContainer =
-            DiContainer(DiModule, this.packageName, this.packageCodePath, this.classLoader)
+        diContainer = DiContainer(DiModule)
     }
 
     companion object {
