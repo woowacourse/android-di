@@ -31,3 +31,12 @@
 ### Recursive DI
 - [ ] CartRepository가 DAO 객체를 참조하도록 변경한다.
 - [ ] CartProductViewHolder의 bind 함수에서 날짜 정보를 확인할 수 있도록 한다.
+
+## step 3
+
+### Qualifier
+- [ ] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 없다.
+- [ ] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
+
+### 모듈 분리
+- [ ] 내가 만든 DI 라이브러리를 모듈로 분리한다.
