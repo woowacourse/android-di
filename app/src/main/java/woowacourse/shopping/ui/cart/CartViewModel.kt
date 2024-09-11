@@ -11,21 +11,23 @@ import woowacourse.shopping.model.Product
 class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-    private val _cartProducts: MutableLiveData<List<Product>> =
-        MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    private val _cartProducts: MutableLiveData<MutableList<Product>> =
+        MutableLiveData(mutableListOf())
+    val cartProducts: LiveData<MutableList<Product>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
+            _cartProducts.value = cartRepository.getAllCartProducts().toMutableList()
         }
     }
 
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
+            val products = _cartProducts.value ?: emptyList()
+            _cartProducts.value?.remove(products.first { it.id == id })
             cartRepository.deleteCartProduct(id)
             _onCartProductDeleted.value = true
         }
