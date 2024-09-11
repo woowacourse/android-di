@@ -16,7 +16,7 @@ class CartProductViewHolder(
         binding.item = cartProduct
         binding.handler = cartHandler
         binding.position = adapterPosition
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+        binding.createdAt = dateFormatter.formatDate(cartProduct.createdAt)
     }
 
     companion object {

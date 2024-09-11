@@ -54,7 +54,7 @@ Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 �
 
 >**Recursive DI**
   - [x] CartRepository가 `DAO` 객체를 참조하도록 변경
-  - [ ] 장바구니 뷰에서 상품이 담긴 날짜 정보를 확인할 수 있도록 변경
+  - [x] 장바구니 뷰에서 상품이 담긴 날짜 정보를 확인할 수 있도록 변경
 
 ### 선택
   - [x] 상품의 `position`과 `CartRepository::deleteCartProduct`의 id가 동일한 값임을 보장할 수 없다는 문제를 해결

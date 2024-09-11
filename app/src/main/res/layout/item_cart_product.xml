@@ -16,6 +16,10 @@
         <variable
             name="handler"
             type="woowacourse.shopping.ui.CartHandler" />
+
+        <variable
+            name="createdAt"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,6 +32,7 @@
             android:id="@+id/tv_cart_product_created_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{createdAt}"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
