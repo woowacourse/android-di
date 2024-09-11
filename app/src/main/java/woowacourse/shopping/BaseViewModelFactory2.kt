@@ -32,10 +32,9 @@ class BaseViewModelFactory2(
         injectedFields.forEach { field ->
             val dependency = appContainer.find(field.returnType.classifier as KClass<*>)
             field.isAccessible = true
-
             (field as KMutableProperty<*>).setter.call(viewModel, dependency)
         }
 
-        return constructor.call(*constructorArgs)
+        return viewModel
     }
 }
