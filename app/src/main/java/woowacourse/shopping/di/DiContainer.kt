@@ -9,7 +9,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 @Suppress("UNCHECKED_CAST")
 class DiContainer(
-    private val diModule: DiModule,
+    private val diModule: Module,
 ) {
     private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val functions: Collection<KFunction<*>> by lazy { diModule::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC } }
@@ -18,16 +18,20 @@ class DiContainer(
         return (dependencies[clazz] ?: addDependency(functions, clazz)) as T
     }
 
-    private fun addDependency(functions: Collection<KFunction<*>>, clazz: KClass<*>): Any {
+    private fun addDependency(
+        functions: Collection<KFunction<*>>,
+        clazz: KClass<*>,
+    ): Any {
         val func = functions.first { it.returnType.jvmErasure == clazz }
         if (func.valueParameters.isEmpty()) {
             addInstance(clazz, func.call(diModule))
             return getInstance(clazz)
         }
-        val params = func.valueParameters.map { param ->
-            val paramInstance = param.type.jvmErasure
-            getInstance(paramInstance)
-        }
+        val params =
+            func.valueParameters.map { param ->
+                val paramInstance = param.type.jvmErasure
+                getInstance(paramInstance)
+            }
         addInstance(clazz, func.call(diModule, *params.toTypedArray()))
         return getInstance(clazz)
     }
