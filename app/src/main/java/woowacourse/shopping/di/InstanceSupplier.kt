@@ -10,6 +10,9 @@ object InstanceSupplier {
     private const val EXCEPTION_NO_TARGET_CONSTRUCTOR =
         "No constructor with @Supply annotation found for %s"
 
+    /**
+     * For injecting fields with @Supply annotation.
+     */
     fun <T : Any> injectFields(
         clazz: Class<T>,
         targetInstance: Any,
@@ -32,7 +35,7 @@ object InstanceSupplier {
     }
 
     private fun findInstanceOf(field: Field): Any =
-        ShoppingApplication.instanceContainer.instanceOf(
+        Injector.instanceContainer.instanceOf(
             field.kotlinProperty ?: error(EXCEPTION_PROPERTY_NOT_FOUND)
         )
 
@@ -45,7 +48,7 @@ object InstanceSupplier {
         val parameterValues =
             constructorParameters.map { parameter ->
                 val parameterClass = parameter.type.kotlin
-                ShoppingApplication.instanceContainer.instanceOf<T>(parameterClass)
+                Injector.instanceContainer.instanceOf<T>(parameterClass)
             }.toTypedArray<Any>()
 
         val instance = targetConstructor.newInstance(*parameterValues)

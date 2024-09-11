@@ -1,22 +1,19 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.di.AppModule
 import woowacourse.shopping.di.DefaultAppModule
-import woowacourse.shopping.di.InstanceContainer
+import woowacourse.shopping.di.Injector
 
 class ShoppingApplication : Application() {
-    private val appModule: AppModule by lazy {
-        DefaultAppModule(appContext = this)
-    }
-
     override fun onCreate() {
         super.onCreate()
-        instanceContainer = InstanceContainer(listOf(appModule))
+        initializeInjector()
     }
 
-    companion object {
-        lateinit var instanceContainer: InstanceContainer
-            private set
+    private fun initializeInjector() {
+        Injector.init {
+            context(this@ShoppingApplication)
+            module(DefaultAppModule::class)
+        }
     }
 }

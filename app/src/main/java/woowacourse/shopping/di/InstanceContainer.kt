@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import javax.inject.Qualifier
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KCallable
@@ -12,11 +13,12 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
 class InstanceContainer(
-    modules: List<InjectionModule>,
+    private val applicationContext: Context,
+    modules: List<Any>,
 ) {
     private val functionsByReturnType: Map<KType, KFunction<*>> =
         modules
-            .flatMap { module: InjectionModule ->
+            .flatMap { module ->
                 module::class.declaredMemberFunctions
             }
             .associateBy(KFunction<*>::returnType)
@@ -67,6 +69,14 @@ class InstanceContainer(
     }
 
     private fun resolveInstance(kType: KType, annotations: List<Annotation>): Any {
+        val contextAnnotation = annotations.firstOrNull { annotation ->
+            annotation.annotationClass == ApplicationContext::class
+        }
+
+        if (contextAnnotation != null && kType.classifier == Context::class) {
+            return applicationContext
+        }
+
         val qualifierAnnotation = annotations.firstOrNull { annotation ->
             annotation::class.findAnnotation<Qualifier>() != null
         }
@@ -88,7 +98,7 @@ class InstanceContainer(
         return instance
     }
 
-    private fun saveModuleInstances(modules: List<InjectionModule>) {
+    private fun saveModuleInstances(modules: List<Any>) {
         modules.forEach { module ->
             instances[QualifiedType(module::class.createType())] = module
         }

@@ -8,19 +8,22 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 
-class DefaultAppModule(private val appContext: Context) : AppModule {
-    override fun provideShoppingDatabase(): ShoppingDatabase =
-        ShoppingDatabase.getInstance(appContext)
+@Module
+object DefaultAppModule {
+    fun provideShoppingDatabase(
+        @ApplicationContext applicationContext: Context
+    ): ShoppingDatabase =
+        ShoppingDatabase.getInstance(applicationContext)
 
-    override fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
+    fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
     @DatabaseRepository
-    override fun provideCartRepository(
+    fun provideCartRepository(
         shoppingDatabase: ShoppingDatabase,
     ): CartRepository =
         DBCartRepository(shoppingDatabase.cartProductDao())
 
     @InMemoryRepository
-    override fun provideInMemoryCartRepository(): CartRepository =
+    fun provideInMemoryCartRepository(): CartRepository =
         InMemoryCartRepository()
 }
