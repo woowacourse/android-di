@@ -1,19 +1,19 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.di.Qualifier
 
-class CartRepository(private val cartProductDao: CartProductDao) {
 
-    // 장바구니에 제품 추가
+class CartRepository(@Qualifier("RoomDB") private val cartProductDao: CartProductDao) {
+
     suspend fun addCartProduct(product: CartProductEntity) {
-        cartProductDao.insert(product) // Dao를 통해 데이터베이스에 삽입
+        cartProductDao.insert(product)
     }
 
-    // 모든 장바구니 제품 조회
     suspend fun getAllCartProducts(): List<CartProductEntity> {
-        return cartProductDao.getAll() // Dao를 통해 데이터베이스에서 조회
+        return cartProductDao.getAll()
     }
 
     suspend fun deleteCartProduct(id: Long) {
-        cartProductDao.delete(id) // Dao를 통해 데이터베이스에서 삭제
+        cartProductDao.delete(id)
     }
 }

@@ -12,11 +12,9 @@ import woowacourse.shopping.di.DIContainer
 class DIContainerTest {
 
     private lateinit var mockCartProductDao: CartProductDao
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setUp() {
-        // Mockito 초기화
         MockitoAnnotations.openMocks(this)
 
         mockCartProductDao = mock(CartProductDao::class.java)
@@ -29,7 +27,6 @@ class DIContainerTest {
     fun `CartRepository가 CartProductDao를 주입받는지 확인`() {
         val repository = DIContainer.resolve(CartRepository::class.java)
 
-        // CartRepository가 null이 아닌지 확인
         assertNotNull(repository)
     }
 }

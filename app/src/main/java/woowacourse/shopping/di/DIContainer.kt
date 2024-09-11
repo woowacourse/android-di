@@ -1,15 +1,16 @@
 package woowacourse.shopping.di
 
 object DIContainer {
-    private val instances = mutableMapOf<Class<*>, Any>()
+    private val instances = mutableMapOf<Pair<Class<*>, String?>, Any>()
 
-    fun <T : Any> register(clazz: Class<T>, instance: T) {
-        instances[clazz] = instance
+    fun <T : Any> register(clazz: Class<T>, instance: T, qualifier: String? = null) {
+        instances[clazz to qualifier] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> resolve(clazz: Class<T>): T {
-        return instances[clazz] as? T ?: createInstance(clazz)
+    fun <T : Any> resolve(clazz: Class<T>, qualifier: String? = null): T {
+        return instances[clazz to qualifier] as? T
+            ?: createInstance(clazz)
     }
 
     private fun <T : Any> createInstance(clazz: Class<T>): T {

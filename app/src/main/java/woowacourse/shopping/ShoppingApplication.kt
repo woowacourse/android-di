@@ -5,6 +5,7 @@ import android.content.Context
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DatabaseProvider
+import woowacourse.shopping.data.InMemoryCartProductDao
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.DIContainer
 
@@ -16,7 +17,8 @@ class ShoppingApplication : Application() {
 
     private fun setupDI(context: Context) {
         val database = DatabaseProvider.getDatabase(context)
-        DIContainer.register(CartProductDao::class.java, database.cartProductDao())
+        DIContainer.register(CartProductDao::class.java, database.cartProductDao(), "RoomDB")
+        DIContainer.register(CartProductDao::class.java, InMemoryCartProductDao(), "InMemory")
 
         DIContainer.register(ProductRepository::class.java, ProductRepository())
         DIContainer.register(CartRepository::class.java, CartRepository(database.cartProductDao()))
