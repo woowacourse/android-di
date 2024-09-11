@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -9,10 +10,15 @@ import woowacourse.shopping.ProductFixture
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.ui.CoroutinesTestRule
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
     @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var cartRepository: CartRepository
     private lateinit var vm: CartViewModel
