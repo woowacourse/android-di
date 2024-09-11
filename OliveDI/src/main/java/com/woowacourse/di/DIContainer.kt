@@ -1,8 +1,7 @@
-package woowacourse.shopping.di
+package com.woowacourse.di
 
-import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
+import com.woowacourse.di.annotation.Inject
+import com.woowacourse.di.annotation.Qualifier
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -12,16 +11,12 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
-class DIContainer(
-    application: ShoppingApplication,
-    diModules: List<KClass<out DIModule>>,
-) {
+class DIContainer(diModules: List<KClass<out DIModule>>, ) {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val namedInstances: MutableMap<KClass<*>, MutableList<Pair<KClass<out Annotation>, Any>>> =
         mutableMapOf()
 
     init {
-        instances[ShoppingApplication::class] = application
         diModules.filter { !it.isAbstract }.forEach { it.injectModule() }
         diModules.filter { it.isAbstract }.forEach { it.injectAbstractModule() }
     }

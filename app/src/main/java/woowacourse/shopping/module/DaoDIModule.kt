@@ -1,5 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.module
 
+import com.woowacourse.di.DIModule
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 
