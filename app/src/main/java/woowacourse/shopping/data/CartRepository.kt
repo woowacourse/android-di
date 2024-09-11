@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.Qualifier
+import shopping.di.Qualifier
 
 
 class CartRepository(@Qualifier("RoomDB") private val cartProductDao: CartProductDao) {

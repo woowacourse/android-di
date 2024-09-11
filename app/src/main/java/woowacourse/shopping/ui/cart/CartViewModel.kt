@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.mapper.toProduct
-import woowacourse.shopping.di.Inject
+import shopping.di.Inject
 import woowacourse.shopping.model.Product
 
 class CartViewModel : ViewModel() {

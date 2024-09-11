@@ -7,7 +7,7 @@ import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.DIContainer
+import shopping.di.DIContainer
 
 class DIContainerTest {
 

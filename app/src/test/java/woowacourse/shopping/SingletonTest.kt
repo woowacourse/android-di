@@ -3,7 +3,7 @@ package woowacourse.shopping
 import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.DIContainer
+import shopping.di.DIContainer
 import woowacourse.shopping.data.ProductRepository
 
 class SingletonTest {

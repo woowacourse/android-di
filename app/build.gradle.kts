@@ -84,4 +84,6 @@ dependencies {
     testImplementation("org.mockito:mockito-core:3.9.0")
     androidTestImplementation("org.mockito:mockito-android:3.9.0")
 
+    // DILibrary
+    implementation(project(":di"))
 }

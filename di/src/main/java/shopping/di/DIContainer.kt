@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package shopping.di
 
 object DIContainer {
     private val instances = mutableMapOf<Pair<Class<*>, String?>, Any>()
