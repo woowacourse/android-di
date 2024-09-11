@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.util
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 
@@ -12,7 +11,6 @@ class DefaultDependencyContainer : DependencyContainer {
         mutableMapOf()
 
     override fun <T : Any> getInstance(kClassifier: KClassifier): T? {
-        Log.d("hodu", "try get Instance of $kClassifier")
         return cachedInstances[kClassifier] as T?
     }
 
@@ -28,9 +26,5 @@ class DefaultDependencyContainer : DependencyContainer {
         if (dependencies.contains(kClassifier)) {
             cachedInstances[kClassifier] = instance
         }
-    }
-
-    companion object {
-        private const val ERROR_MESSAGE_UNKNOWN_CLASSIFIER = "알 수 없는 클래스 지정자 입니다."
     }
 }
