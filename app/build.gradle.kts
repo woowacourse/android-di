@@ -79,4 +79,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
+
+    //Mockk
+    testImplementation("org.mockito:mockito-core:3.9.0")
+    androidTestImplementation("org.mockito:mockito-android:3.9.0")
+
 }
