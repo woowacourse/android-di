@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.di.DIContainer
+import woowacourse.shopping.di.FieldInject
 import woowacourse.shopping.model.Product
 
 class CartViewModel : ViewModel() {
-    private val cartRepository: CartRepository = DIContainer.inject()
+    @FieldInject
+    private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
@@ -16,6 +18,10 @@ class CartViewModel : ViewModel() {
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
+
+    init {
+        DIContainer.injectFieldDependencies(this)
+    }
 
     fun getAllCartProducts() {
         _cartProducts.value = cartRepository.getAllCartProducts()
