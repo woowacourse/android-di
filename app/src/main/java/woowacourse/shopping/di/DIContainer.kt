@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import android.util.Log
 import woowacourse.shopping.di.module.DIModule
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
