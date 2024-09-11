@@ -26,12 +26,6 @@ class CartActivity : AppCompatActivity() {
         viewModel.getAllCartProducts()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d("CartViewModel", "onResume: " + viewModel.cartProducts.value?.size)
-        viewModel.getAllCartProducts()
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true

@@ -8,7 +8,7 @@ import kotlin.reflect.jvm.javaField
 
 object DependencyInjector {
     fun <T : Any> inject(targetClass: KClass<T>): T {
-        val instance = DIContainer.getInstance(targetClass)
+        val instance = DIContainer.resolve(targetClass)
         injectDependencies(instance)
         return instance
     }
@@ -30,7 +30,7 @@ object DependencyInjector {
         target: Any,
         property: KMutableProperty<*>,
     ) {
-        val instance = DIContainer.getInstance(property.returnType.classifier as KClass<*>)
+        val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>)
         property.isAccessible = true
         property.setter.call(target, instance)
     }

@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import woowacourse.shopping.di.module.DIModule
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
     private val singletonInstances = mutableMapOf<KClass<*>, Any>()
@@ -27,26 +27,26 @@ object DIContainer {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getInstance(kClass: KClass<T>): T {
-        singletonInstances[kClass]?.let {
-            return it as T
-        }
+    fun <T : Any> resolve(type: KClass<T>): T {
+        singletonInstances[type]?.let { return it as T }
 
-        val actualClass = interfaceMappings[kClass] ?: kClass
+        val implementationType = interfaceMappings[type] ?: type
+
         val constructor =
-            actualClass.primaryConstructor ?: actualClass.constructors.firstOrNull()
-                ?: throw IllegalArgumentException("${actualClass.simpleName}: 생성자를 찾을 수 없습니다")
+            implementationType.constructors.firstOrNull {
+                it.annotations.any { annotation -> annotation is Inject }
+            } ?: implementationType.constructors.first()
 
         val parameters =
             constructor.parameters.map { parameter ->
-                val parameterClass =
+                val parameterType =
                     parameter.type.classifier as? KClass<*>
                         ?: throw IllegalArgumentException("${parameter.name}: 매개변수 타입이 잘못되었습니다")
-                getInstance(parameterClass)
+                resolve(parameterType)
             }
 
         val instance = constructor.call(*parameters.toTypedArray()) as T
-        singletonInstances[kClass] = instance
+        registerInstance(type, instance)
 
         return instance
     }

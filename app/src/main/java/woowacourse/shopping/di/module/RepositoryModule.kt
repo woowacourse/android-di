@@ -9,7 +9,7 @@ import woowacourse.shopping.domain.ProductRepository
 
 class RepositoryModule : DIModule {
     override fun register(container: DIContainer) {
-        val cartProductDao = DIContainer.getInstance(CartProductDao::class)
+        val cartProductDao = DIContainer.resolve(CartProductDao::class)
 
         DIContainer.registerInstance(
             CartRepository::class,
