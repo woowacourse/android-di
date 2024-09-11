@@ -12,12 +12,15 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel: CartViewModel by provideViewModel()
 
+    private lateinit var adapter: CartProductAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupBinding()
         setupToolbar()
         setupView()
+        setUpAdapter()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -41,18 +44,21 @@ class CartActivity : AppCompatActivity() {
         setupCartProductList()
     }
 
+    private fun setUpAdapter() {
+        adapter =
+            CartProductAdapter(
+                onClickDelete = viewModel::deleteCartProduct,
+            )
+        binding.rvCartProducts.adapter = adapter
+    }
+
     private fun setupCartProductData() {
         viewModel.getAllCartProducts()
     }
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter =
-                CartProductAdapter(
-                    items = it,
-                    onClickDelete = viewModel::deleteCartProduct,
-                )
-            binding.rvCartProducts.adapter = adapter
+            adapter.submitList(it)
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe

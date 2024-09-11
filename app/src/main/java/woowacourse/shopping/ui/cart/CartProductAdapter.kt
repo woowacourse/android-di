@@ -1,18 +1,15 @@
 package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductAdapter(
-    items: List<CartProduct>,
     onClickDelete: (position: Long) -> Unit,
-) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<CartProduct> = items.toMutableList()
-
+) : ListAdapter<CartProduct, CartProductViewHolder>(diffUtil) {
     private val onClickDelete = { position: Int ->
-        onClickDelete(items[position].id)
-        removeItem(position)
+        onClickDelete(currentList[position].id)
     }
 
     override fun onCreateViewHolder(
@@ -26,13 +23,32 @@ class CartProductAdapter(
         holder: CartProductViewHolder,
         position: Int,
     ) {
-        holder.bind(items[position])
+        holder.bind(currentList[position])
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = currentList.size
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+//    private fun removeItem(position: Int) {
+//        currentList.removeAt(position)
+//        notifyItemRemoved(position)
+//    }
+
+    companion object {
+        private val diffUtil: DiffUtil.ItemCallback<CartProduct> =
+            object : DiffUtil.ItemCallback<CartProduct>() {
+                override fun areItemsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
+
+                override fun areContentsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean {
+                    return oldItem == newItem
+                }
+            }
     }
 }

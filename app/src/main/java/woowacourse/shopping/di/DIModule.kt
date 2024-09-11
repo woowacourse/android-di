@@ -8,7 +8,7 @@ import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.local.dao.CartProductDao
 import woowacourse.shopping.local.db.ShoppingDatabase
 
-class DIModule(private val context: Context) {
+class DIModule(private val context: Context) : Module {
     fun provideCartProductDao(): CartProductDao {
         return ShoppingDatabase.getInstance(context).cartProductDao()
     }
@@ -17,7 +17,7 @@ class DIModule(private val context: Context) {
         return ProductRepositoryImpl()
     }
 
-    fun provideCartRepository(): CartRepository {
-        return CartRepositoryImpl(ShoppingDatabase.getInstance(context).cartProductDao())
+    fun provideCartRepository(cartProductDao: CartProductDao): CartRepository {
+        return CartRepositoryImpl(cartProductDao)
     }
 }

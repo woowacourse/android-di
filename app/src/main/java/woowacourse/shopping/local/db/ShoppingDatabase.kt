@@ -20,7 +20,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
                     context.applicationContext,
                     ShoppingDatabase::class.java,
                     "shopping_database",
-                ).fallbackToDestructiveMigration().build().also { instance = it }
+                ).build().also { instance = it }
             }
         }
     }

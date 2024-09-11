@@ -6,9 +6,9 @@ object DIContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getInstance(type: KClass<T>): T {
+    fun <T : Any> getInstance(type: KClass<T>): T? {
         if (!instances.containsKey(type)) {
-            throw IllegalStateException("Instance of type $type is not registered.")
+            return null
         }
         return instances[type] as T
     }
@@ -17,9 +17,12 @@ object DIContainer {
         type: KClass<T>,
         instance: Any,
     ) {
-        if (instances.containsKey(type)) {
-            throw IllegalArgumentException("Instance of type $type is already registered.")
+        if (!instances.containsKey(type)) {
+            instances[type] = instance
         }
-        instances[type] = instance
+    }
+
+    fun clear() {
+        instances.clear()
     }
 }
