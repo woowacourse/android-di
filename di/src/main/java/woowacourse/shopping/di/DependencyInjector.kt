@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.util
+package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

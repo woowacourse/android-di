@@ -9,12 +9,12 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.MainDispatcherRule
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fakeCartProducts
 import woowacourse.shopping.fakeDependencyContainer
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.fakeProducts
-import woowacourse.shopping.ui.util.DependencyInjector
 
 class CartViewModelTest {
     @get:Rule

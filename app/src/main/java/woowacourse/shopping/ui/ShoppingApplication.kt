@@ -5,11 +5,11 @@ import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
+import woowacourse.shopping.di.DefaultDependencyContainer
+import woowacourse.shopping.di.DependencyContainer
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.ui.util.DefaultDependencyContainer
-import woowacourse.shopping.ui.util.DependencyContainer
-import woowacourse.shopping.ui.util.DependencyInjector
 
 class ShoppingApplication : Application() {
     val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }

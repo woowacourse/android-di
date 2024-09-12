@@ -68,8 +68,9 @@ class FakeCartRepository(
     override suspend fun getAllCartProducts(): List<CartProduct> {
         return cartProducts.toList()
     }
+
     override suspend fun deleteCartProduct(id: Long) {
-        cartProducts.first {id == it.id}
+        cartProducts.first { id == it.id }
     }
 }
 

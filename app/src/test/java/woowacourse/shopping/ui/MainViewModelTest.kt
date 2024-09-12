@@ -6,18 +6,15 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.FakeProductRepository
 import woowacourse.shopping.MainDispatcherRule
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.fakeCartProducts
 import woowacourse.shopping.fakeDependencyContainer
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.fakeProducts
-import woowacourse.shopping.ui.cart.CartViewModel
-import woowacourse.shopping.ui.util.DependencyInjector
 
 class MainViewModelTest {
     @get:Rule
