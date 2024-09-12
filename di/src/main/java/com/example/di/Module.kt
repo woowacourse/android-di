@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
@@ -33,7 +33,6 @@ class Module : DependencyProvider {
 
     override fun <T : Any> getInstance(kClass: KClass<*>): T? {
         val key = Pair(kClass, null)
-        println("getInstance1: ${kClass.simpleName}")
         return cachedInstances[key]?.let { it as? T } ?: createCachedInstance(kClass, null)
     }
 
@@ -70,7 +69,6 @@ class Module : DependencyProvider {
 
         val instance = constructor.callBy(parameters)
         cachedInstances[Pair(kClass, type)] = instance
-        println("getInstance2: $instance")
         return instance as? T
     }
 }

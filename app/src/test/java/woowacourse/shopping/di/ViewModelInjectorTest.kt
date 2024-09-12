@@ -20,18 +20,19 @@ class FakeDataSource2
 interface FakeRepository
 
 class FakeRepositoryImpl(
-    @Inject val fakeDataSource: FakeDataSource1,
+    @com.example.di.Inject val fakeDataSource: FakeDataSource1,
     val fakeDataSourceImplWithNoAutoInject: FakeDataSource2? = null,
 ) : FakeRepository
 
 class FakeViewModel(
-    @Inject val fakeRepository: FakeRepository,
+    @com.example.di.Inject val fakeRepository: FakeRepository,
 ) : ViewModel() {
-    @Inject lateinit var fieldFakeRepository: FakeRepository
+    @com.example.di.Inject
+    lateinit var fieldFakeRepository: FakeRepository
 }
 
 private val testModule =
-    Module().apply {
+    com.example.di.Module().apply {
         addDeferredTypes(
             FakeRepository::class to FakeRepositoryImpl::class,
             FakeDataSource1::class to FakeDataSource1::class,

@@ -1,17 +1,17 @@
 package woowacourse.shopping.data
 
+import com.example.di.DependencyType
+import com.example.di.Inject
+import com.example.di.Qualifier
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.DependencyType
-import woowacourse.shopping.di.Inject
-import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.toCart
 
-@Qualifier(DependencyType.DATABASE)
+@com.example.di.Qualifier(com.example.di.DependencyType.DATABASE)
 class DataBaseCartRepository(
-    @Inject private val cartProductDao: CartProductDao,
+    @com.example.di.Inject private val cartProductDao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) = cartProductDao.insert(product.toEntity())
 
@@ -20,7 +20,7 @@ class DataBaseCartRepository(
     override suspend fun deleteCartProduct(id: Long) = cartProductDao.delete(id)
 }
 
-@Qualifier(DependencyType.IN_MEMORY)
+@com.example.di.Qualifier(com.example.di.DependencyType.IN_MEMORY)
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 

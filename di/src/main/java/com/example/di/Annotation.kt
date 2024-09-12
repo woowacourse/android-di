@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 annotation class Inject
 

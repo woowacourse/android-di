@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -27,9 +27,6 @@ fun <T : Any> inject(
                     dependencies.getInstance(paramsTypes) ?: inject(paramsTypes, dependencies)
                 }
             }
-
-    println("constructor's parameter:  ${constructor.parameters}")
-    println("injected : ${parameters.entries}")
     return constructor.callBy(parameters).also { injectFields(it, dependencies) }
 }
 
