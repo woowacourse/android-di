@@ -7,9 +7,9 @@ import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.ui.util.DefaultDependencyContainer
 import woowacourse.shopping.ui.util.DependencyContainer
 import woowacourse.shopping.ui.util.DependencyInjector
-import woowacourse.shopping.ui.util.DefaultDependencyContainer
 
 class ShoppingApplication : Application() {
     val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
@@ -19,18 +19,22 @@ class ShoppingApplication : Application() {
         defaultDependencyContainer.setDependency(
             ProductRepository::class,
             DefaultProductRepository::class,
+            "",
         )
         defaultDependencyContainer.setDependency(
             CartRepository::class,
             DefaultCartRepository::class,
+            "",
         )
         defaultDependencyContainer.setDependency(
             CartProductDao::class,
             database.cartProductDao()::class,
+            "",
         )
         defaultDependencyContainer.setInstance(
             CartProductDao::class,
-            database.cartProductDao()
+            database.cartProductDao(),
+            "",
         )
         DependencyInjector.initDependencyContainer(defaultDependencyContainer)
     }

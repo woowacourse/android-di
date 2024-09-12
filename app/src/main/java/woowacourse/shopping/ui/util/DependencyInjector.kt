@@ -6,6 +6,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -18,28 +19,36 @@ object DependencyInjector {
         dependencyContainer = container
     }
 
-    fun <T : Any> createInstanceFromConstructor(modelClass: Class<T>): T {
+    fun <T : Any> createInstanceFromConstructor(
+        modelClass: Class<T>,
+    ): T {
         val kClass: KClass<T> = modelClass.kotlin
         val targetInstance: T
         val primaryConstructor = kClass.primaryConstructor
+        val qualifier: String = kClass.findAnnotation<Qualifier>()?.name ?: ""
 
         if (primaryConstructor == null) {
-            targetInstance = getInstanceFromDependencyContainer(kClass)
+            targetInstance = getInstanceFromDependencyContainer(kClass, qualifier)
         } else {
+            primaryConstructor.isAccessible = true
             targetInstance = getInstanceFromConstructor(primaryConstructor)
             setDependencyOfProperties(kClass, targetInstance)
         }
-        dependencyContainer.setInstance(kClass, targetInstance)
+        dependencyContainer.setInstance(kClass, targetInstance, qualifier)
         return targetInstance
     }
 
-    private fun <T : Any> getInstanceFromDependencyContainer(kClass: KClass<T>): T {
-        val instanceFromContainer = dependencyContainer.getInstance<T>(kClass)
-        if (instanceFromContainer != null) {
-            return instanceFromContainer
+    private fun <T : Any> getInstanceFromDependencyContainer(
+        kClass: KClass<T>,
+        qualifier: String,
+    ): T {
+        val instanceFromContainer = dependencyContainer.getInstance<T>(kClass, qualifier)
+        return if (instanceFromContainer != null) {
+            instanceFromContainer
         } else {
-            val implementKClass = requireNotNull(dependencyContainer.getImplement<T>(kClass))
-            return createInstanceFromConstructor(implementKClass.java)
+            val implementKClass =
+                requireNotNull(dependencyContainer.getImplement<T>(kClass, qualifier))
+            createInstanceFromConstructor(implementKClass.java)
         }
     }
 

@@ -34,7 +34,7 @@ class MainViewModelTest {
     fun setUp() {
         DependencyInjector.initDependencyContainer(fakeDependencyContainer)
         productsRepository = FakeProductRepository(fakeProducts)
-        cartRepository = requireNotNull(fakeDependencyContainer.getInstance(CartRepository::class))
+        cartRepository = requireNotNull(fakeDependencyContainer.getInstance(CartRepository::class, ""))
         mainViewModel = DependencyInjector.createInstanceFromConstructor(MainViewModel::class.java)
     }
 
