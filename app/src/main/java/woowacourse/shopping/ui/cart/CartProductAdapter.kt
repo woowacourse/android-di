@@ -3,7 +3,6 @@ package woowacourse.shopping.ui.cart
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.ui.CartHandler
 
 class CartProductAdapter(
     private val cartHandler: CartHandler,

@@ -15,7 +15,7 @@
 
         <variable
             name="handler"
-            type="woowacourse.shopping.ui.CartHandler" />
+            type="woowacourse.shopping.ui.cart.CartHandler" />
 
         <variable
             name="createdAt"

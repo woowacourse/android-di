@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.Inject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
-import woowacourse.shopping.ui.CartHandler
 
 class CartViewModel : ViewModel(), CartHandler {
     @Inject

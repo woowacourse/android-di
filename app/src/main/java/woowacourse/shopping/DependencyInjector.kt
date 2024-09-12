@@ -1,7 +1,6 @@
 package woowacourse.shopping
 
-import android.content.Context
-import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KClass
@@ -19,8 +18,7 @@ object DependencyInjector {
     private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
     private const val DEPENDENCY_TYPE_IS_INVALID = "의존성 클래스 타입이 올바르지 않습니다."
 
-    fun initialize(context: Context) {
-        val cartProductDao = ShoppingDatabase.initialize(context).cartProductDao()
+    fun initialize(cartProductDao: CartProductDao) {
         addInstance(ProductRepository::class, RepositoryModule.provideProductRepository())
         addInstance(CartRepository::class, RepositoryModule.provideCartRepository(cartProductDao))
     }

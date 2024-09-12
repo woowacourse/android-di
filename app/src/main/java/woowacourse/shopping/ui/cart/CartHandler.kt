@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.cart
 
 interface CartHandler {
     fun onClickDelete(
