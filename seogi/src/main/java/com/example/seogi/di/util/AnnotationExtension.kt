@@ -1,6 +1,6 @@
-package woowacourse.shopping.di.util
+package com.example.seogi.di.util
 
-import woowacourse.shopping.di.Qualifier
+import com.example.seogi.di.Qualifier
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation

@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import com.example.seogi.di.Module
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.fixture.FakeCartProductDao
 import woowacourse.shopping.fixture.FakeCartRepository

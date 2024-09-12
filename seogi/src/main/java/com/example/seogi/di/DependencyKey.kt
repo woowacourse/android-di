@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.seogi.di
 
 import kotlin.reflect.KClass
 

@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import com.example.seogi.di.FieldInject
 import com.google.common.truth.Truth
 import org.junit.Test
 import woowacourse.shopping.ui.MainViewModel
