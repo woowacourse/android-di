@@ -12,8 +12,10 @@ import woowacourse.shopping.data.di.annotation.Qualifier
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    private val productRepository: ProductRepository,
 ) : ViewModel() {
+    @Inject
+    private lateinit var  productRepository: ProductRepository
+
     @Inject
     @Qualifier("InMemory")
     private lateinit var cartRepository: CartRepository
