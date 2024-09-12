@@ -17,4 +17,8 @@ class DefaultCartRepository(private val dao: CartProductDao) : CartRepository {
         // 여기서 id는 recyclerview의 position임
         Log.d("DefaultCartRepository", "deleteCartProduct: $id")
     }
+
+    companion object{
+        const val QUALIFIER_NAME = "RoomDB"
+    }
 }

@@ -8,12 +8,14 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.di.annotation.Inject
+import woowacourse.shopping.data.di.annotation.Qualifier
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
     private val productRepository: ProductRepository,
 ) : ViewModel() {
     @Inject
+    @Qualifier("InMemory")
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

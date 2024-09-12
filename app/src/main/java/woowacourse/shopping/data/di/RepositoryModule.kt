@@ -4,6 +4,7 @@ import android.content.Context
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
@@ -25,7 +26,14 @@ class RepositoryModule(private val context: Context) {
             CartRepository::class,
             DefaultCartRepository(
                 ShoppingDatabase.instance(context).cartProductDao()
-            )
+            ),
+            DefaultCartRepository.QUALIFIER_NAME
+        )
+
+        DependencyContainer.addInstance(
+            CartRepository::class,
+            InMemoryCartRepository(),
+            InMemoryCartRepository.QUALIFIER_NAME,
         )
     }
 }
