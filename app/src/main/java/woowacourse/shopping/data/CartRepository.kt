@@ -3,8 +3,8 @@ package woowacourse.shopping.data
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 
-class CartRepositoryImpl(
-    private val dao: CartProductDao
+class DefaultCartRepository(
+    private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
@@ -25,8 +25,26 @@ class CartRepositoryImpl(
     }
 }
 
+class InMemoryCartRepository : CartRepository {
+    private val products = mutableListOf<Product>()
+
+    override suspend fun addCartProduct(product: Product) {
+        products.add(product)
+    }
+
+    override suspend fun allCartProducts(): List<Product> {
+        return products
+    }
+
+    override suspend fun deleteCartProduct(id: Long) {
+        products.removeIf { it.id == id }
+    }
+}
+
 interface CartRepository {
     suspend fun addCartProduct(product: Product)
+
     suspend fun allCartProducts(): List<Product>
+
     suspend fun deleteCartProduct(id: Long)
 }

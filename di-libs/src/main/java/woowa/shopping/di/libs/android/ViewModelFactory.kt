@@ -10,20 +10,13 @@ import woowa.shopping.di.libs.container.Containers
 import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.factory.SingletonInstanceFactory
 import woowa.shopping.di.libs.qualify.qualifier
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmErasure
+import woowa.shopping.di.libs.scope.Scope
 
-class ViewModelFactory<VM : ViewModel>() : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor =
-            modelClass.kotlin.primaryConstructor
-                ?: error("ViewModel 에 주 생성자가 없습니다. ViewModel: $modelClass")
-        val params = constructor.parameters.map { param ->
-            val kClass = param.type.jvmErasure
-            Containers.resolve(kClass)
-        }.toTypedArray()
-        return constructor.call(*params)
-    }
+class ViewModelFactory<VM : ViewModel>(
+    private val creator: () -> VM,
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = creator() as T
 }
 
 inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM> {
@@ -31,16 +24,17 @@ inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM
         Containers.resolve<ViewModelFactory<*>>(
             ViewModelFactory::class,
             qualifier = qualifier<VM>(),
-            lifecycle = Lifecycle.SINGLETON
+            lifecycle = Lifecycle.SINGLETON,
         )
     }
 }
 
-inline fun <reified VM : ViewModel> Container.viewModel() {
+inline fun <reified VM : ViewModel> Container.viewModel(noinline factory: Scope.() -> VM) {
     val qualifier = qualifier<VM>()
+    val scope = Scope(qualifier, lifecycle = Lifecycle.SINGLETON)
     instanceRegistry[Key(ViewModelFactory::class, qualifier, Lifecycle.SINGLETON)] =
         SingletonInstanceFactory(
             qualifier,
-            factory = { ViewModelFactory<VM>() }
+            factory = { ViewModelFactory { factory(scope) } },
         )
 }

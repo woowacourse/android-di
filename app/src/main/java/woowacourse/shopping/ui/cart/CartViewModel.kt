@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.cart
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,6 @@ import woowacourse.shopping.model.Product
 class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _cartProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val cartProducts: StateFlow<List<Product>> = _cartProducts.asStateFlow()
 

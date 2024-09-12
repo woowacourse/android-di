@@ -19,11 +19,12 @@ class ContainersDSL {
     }
 
     private fun checkDuplicatedDependencies(newContainers: List<Container>) {
-        val duplicatedDependencies = newContainers
-            .flatMap { it.instanceRegistry.keys }
-            .groupBy { it }
-            .filter { it.value.size > 1 }
-            .keys
+        val duplicatedDependencies =
+            newContainers
+                .flatMap { it.instanceRegistry.keys }
+                .groupBy { it }
+                .filter { it.value.size > 1 }
+                .keys
 
         check(duplicatedDependencies.isEmpty()) {
             "의존성이 중복되었습니다. $duplicatedDependencies"

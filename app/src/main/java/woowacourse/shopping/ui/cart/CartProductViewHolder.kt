@@ -11,7 +11,6 @@ class CartProductViewHolder(
     private val dateFormatter: DateFormatter,
     onClickDelete: (id: Long) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-
     init {
         binding.ivCartProductDelete.setOnClickListener {
             onClickDelete(binding.item!!.id)
@@ -29,8 +28,9 @@ class CartProductViewHolder(
             dateFormatter: DateFormatter,
             onClickDelete: (id: Long) -> Unit,
         ): CartProductViewHolder {
-            val binding = ItemCartProductBinding
-                .inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding =
+                ItemCartProductBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false)
             return CartProductViewHolder(binding, dateFormatter, onClickDelete)
         }
     }

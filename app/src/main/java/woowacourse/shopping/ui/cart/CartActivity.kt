@@ -12,7 +12,6 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
     private val viewModel by injectViewModel<CartViewModel>()
 
@@ -57,10 +56,11 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        val adapter = CartProductAdapter(
-            onClickDelete = viewModel::deleteCartProduct,
-            dateFormatter = dateFormatter,
-        )
+        val adapter =
+            CartProductAdapter(
+                onClickDelete = viewModel::deleteCartProduct,
+                dateFormatter = dateFormatter,
+            )
         binding.rvCartProducts.adapter = adapter
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -15,6 +15,7 @@ class DIContainerTest {
     class Service
 
     interface Repository
+
     class RepositoryImpl(val service: Service) : Repository
 
     @AfterEach
@@ -24,22 +25,22 @@ class DIContainerTest {
 
     @Test
     fun `singleton 객체인지 테스트`() {
-        //given
+        // given
         startDI {
             container {
                 single { Service() }
             }
         }
-        //when
+        // when
         val service1 by inject<Service>()
         val service2 by inject<Service>()
-        //then
+        // then
         service1 shouldBe service2
     }
 
     @Test
     fun `프로토타입 객체인지 테스트`() {
-        //given
+        // given
         startDI {
             container {
                 proto { Service() }
@@ -48,13 +49,13 @@ class DIContainerTest {
         // when
         val service1 by inject<Service>(lifecycle = Lifecycle.PROTOTYPE)
         val service2 by inject<Service>(lifecycle = Lifecycle.PROTOTYPE)
-        //then
+        // then
         service1 shouldNotBe service2
     }
 
     @Test
     fun `Respository 싱글톤 구현체`() {
-        //given
+        // given
         startDI {
             container {
                 single { Service() }
@@ -64,7 +65,7 @@ class DIContainerTest {
         // when
         val repository1 by inject<Repository>()
         val repository2 by inject<Repository>()
-        //then
+        // then
         repository1 shouldBe repository2
     }
 

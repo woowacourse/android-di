@@ -8,7 +8,6 @@ data class Scope(
     val scopeQualifier: Qualifier? = null,
     val lifecycle: Lifecycle,
 ) {
-
     inline fun <reified T : Any> get(qualifier: Qualifier? = null): T {
         return Containers.resolve(T::class, qualifier, lifecycle)
     }
@@ -16,6 +15,5 @@ data class Scope(
     inline fun <reified T : Any> inject(
         qualifier: Qualifier? = null,
         mode: LazyThreadSafetyMode = LazyThreadSafetyMode.SYNCHRONIZED,
-    ): Lazy<T> =
-        lazy(mode) { get<T>(qualifier) }
+    ): Lazy<T> = lazy(mode) { get<T>(qualifier) }
 }

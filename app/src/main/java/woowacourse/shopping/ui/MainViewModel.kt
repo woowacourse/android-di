@@ -16,13 +16,11 @@ class MainViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _products: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
-
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {

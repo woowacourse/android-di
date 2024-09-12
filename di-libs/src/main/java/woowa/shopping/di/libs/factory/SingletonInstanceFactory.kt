@@ -7,5 +7,6 @@ class SingletonInstanceFactory<T : Any>(
     private val factory: () -> T,
 ) : InstanceFactory<T>() {
     private val instance: T by lazy { factory() }
+
     override fun instance(): T = instance
 }
