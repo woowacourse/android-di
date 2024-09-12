@@ -7,12 +7,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import woowacourse.shopping.ui.injection.DIModule
+import woowacourse.shopping.ui.injection.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
-class RepositoryModule private constructor() : DefaultLifecycleObserver {
+@DIModule(RepositoryDI::class)
+class RepositoryModule private constructor() : DefaultLifecycleObserver, Module<RepositoryModule, RepositoryDI> {
     private lateinit var repositoryMap: Map<String, RepositoryDI>
     private lateinit var repositoryBinder: RepositoryBinder
 
@@ -28,11 +31,6 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
         owner.lifecycle.removeObserver(this)
     }
 
-    fun getRepository(repository: KClass<out RepositoryDI>): RepositoryDI {
-        return repositoryMap[repository.simpleName]
-            ?: error("${repository.simpleName} 해당 interface에 대한 객체가 없습니다.")
-    }
-
     private fun createRepositoryMap(repositoryBinder: RepositoryBinder): Map<String, RepositoryDI> {
         return RepositoryBinder::class.declaredMemberFunctions
             .filter { it.returnType.jvmErasure.isSubclassOf(RepositoryDI::class) }
@@ -44,6 +42,15 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver {
                 key to result
             }
     }
+
+    override fun getDIInstance(type: KClass<out RepositoryDI>): RepositoryDI {
+        return instance?.repositoryMap?.get(type.simpleName)
+            ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
+    }
+
+    override fun getInstance(): RepositoryModule = instance ?: error("Module에 대한 lifecycle이 지정되지 않았습니다.")
+
+    override fun getInstanceOrNull(): RepositoryModule? = instance
 
     companion object {
         private var instance: RepositoryModule? = null
