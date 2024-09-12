@@ -1,14 +1,11 @@
 package woowacourse.shopping.ui.injection
 
-import woowacourse.shopping.ui.injection.repository.RepositoryDI
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.KClass
 
-interface DIInjection {
-    fun checkConstructor() {
-        this::class.primaryConstructor?.parameters?.all {
-            it.type.jvmErasure.isSubclassOf(RepositoryDI::class)
-        }
-    }
-}
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class DIInjection
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Binder(val returnType: KClass<out Any>)
