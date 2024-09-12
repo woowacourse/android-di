@@ -1,5 +1,18 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.android") // TODO: di-andorid-libs 모듈 분리해야할듯
+//    id("org.jetbrains.kotlin.jvm")
+    id("com.android.library") // TODO: di-andorid-libs 모듈 분리해야할듯
+}
+
+android {
+    namespace = "woowa.shopping.di.libs"
+
+    packaging {
+        resources {
+            excludes += "META-INF/**"
+            excludes += "win32-x86*/**"
+        }
+    }
 }
 
 java {
