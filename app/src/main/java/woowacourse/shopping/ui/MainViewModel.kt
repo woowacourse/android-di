@@ -17,10 +17,10 @@ class MainViewModel : ViewModel() {
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
-    @com.example.alsonglibrary2.di.FieldInject
+    @FieldInject
     private lateinit var productRepository: ProductRepository
 
-    @com.example.alsonglibrary2.di.FieldInject
+    @FieldInject
     private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
