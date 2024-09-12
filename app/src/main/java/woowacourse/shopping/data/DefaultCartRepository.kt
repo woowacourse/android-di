@@ -4,7 +4,7 @@ import android.util.Log
 import woowacourse.shopping.model.Product
 
 class DefaultCartRepository(
-    private val dao: CartProductDao,
+    private val dao: CartDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(CartProductEntity(product.name, product.price, product.imageUrl)).also {

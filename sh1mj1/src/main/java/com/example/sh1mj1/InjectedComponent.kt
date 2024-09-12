@@ -20,3 +20,13 @@ sealed class InjectedComponent {
         override val qualifier: Qualifier? = null,
     ) : InjectedComponent()
 }
+
+inline fun <reified T> singletonComponent(
+    instance: T,
+    qualifier: Qualifier? = null,
+): InjectedComponent.InjectedSingletonComponent =
+    InjectedComponent.InjectedSingletonComponent(
+        injectedClass = T::class,
+        instance = instance,
+        qualifier = qualifier,
+    )

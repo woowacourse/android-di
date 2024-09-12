@@ -16,3 +16,5 @@ interface AppContainer {
 
     fun clearActivityScopedObjects()
 }
+
+inline fun <reified T> AppContainer.find(qualifier: Qualifier): T = find(T::class, qualifier) as T

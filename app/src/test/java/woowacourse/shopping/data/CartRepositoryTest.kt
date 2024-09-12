@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.ProductFixture
 
-class InMemoryCartRepositoryTest {
+class CartRepositoryTest {
     private lateinit var repo: CartRepository
 
     @Before
