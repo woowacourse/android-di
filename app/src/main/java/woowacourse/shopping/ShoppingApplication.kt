@@ -21,8 +21,9 @@ class ShoppingApplication : Application() {
             Room.inMemoryDatabaseBuilder(this@ShoppingApplication, ShoppingDatabase::class.java)
                 .build()
         val diModule = module {
+            factory(named = "QDBInmemoryDao") { db.cartProductDao() }
             factory(named = "QProductRepository") { ProductRepository() }
-            factory(named = "QDefaultCartRepository") { DefaultCartRepository(db.cartProductDao()) }
+            factory(named = "QDefaultCartRepository") { DefaultCartRepository() }
         }
         diContainer {
             modules(diModule)

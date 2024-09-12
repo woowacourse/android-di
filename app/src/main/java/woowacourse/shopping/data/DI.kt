@@ -7,3 +7,6 @@ annotation class QDefaultCartRepository
 
 @Qualifier
 annotation class QProductRepository
+
+@Qualifier
+annotation class QDBInmemoryDao
