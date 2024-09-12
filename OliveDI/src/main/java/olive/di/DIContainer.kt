@@ -28,7 +28,7 @@ class DIContainer(
         diModules.filter { it.isAbstract }.forEach { it.injectAbstractModule() }
     }
 
-    private fun KClass<out DIModule>.injectModule() {
+    private fun KClass<out DIModule>.injectModule() { // 일반 class 모듈인 경우 함수를 직접 호출한 결과를 인스턴스로 저장
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val type = function.returnType.classifier as KClass<*>
@@ -41,12 +41,14 @@ class DIContainer(
     }
 
     private fun KClass<out DIModule>.injectAbstractModule() {
+        // abstact class 모듈인 경우 함수의 return 타입을 key로, 함수의 파라미터 타입을 value로 저장
+        // 파라미터 타입에 맞는 객체를 createSingleton로 직접 생성
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val instanceType = function.parameters().first { it != this }
             val cacheType = function.returnType.classifier as KClass<*>
 
-            if (function.annotations.isQualifierAnnotation()) {
+            if (function.annotations.isQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
                 val nameAnnotation = function.annotations.qualifierNameAnnotation()
                 namedInstances[cacheType] = NamedInstance(nameAnnotation, create(instanceType))
                 return@forEach
@@ -119,7 +121,7 @@ class DIContainer(
             val property = fieldToInject as KMutableProperty1
             property.isAccessible = true
             val type = property.returnType.classifier as KClass<*>
-            val instance =
+            val instance = // Qualifier가 붙은 경우 namedInstances에서 찾고, 안 붙은 경우 instances에서 찾음
                 if (property.annotations.isQualifierAnnotation()) {
                     namedInstance(type, property.annotations)
                 } else {
