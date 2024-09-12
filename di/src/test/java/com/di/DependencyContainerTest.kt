@@ -7,7 +7,6 @@ import woowacourse.shopping.data.di.DependencyContainer
 import woowacourse.shopping.data.di.annotation.Inject
 import woowacourse.shopping.data.di.annotation.Qualifier
 
-
 class FakeRepository(
     @Inject val fakeCartRepository: FakeCartRepository,
     val fakeProductRepository: FakeProductRepository,
@@ -24,7 +23,6 @@ class FakeProductRepository
 class FakeFieldRepository
 
 class DependencyContainerTest {
-
     @Test
     fun `Container에 instance가 없으면 에러를 던져야 한다`() {
         // when,then
