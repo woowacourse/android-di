@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.data.di
 
 import android.content.Context
 import woowacourse.shopping.data.CartProductDao
@@ -6,7 +6,7 @@ import woowacourse.shopping.data.ImMemoryShoppingDatabase
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.createInMemoryDatabase
 import woowacourse.shopping.data.createRoomDatabase
-import woowacourse.shopping.di.component.DiSingletonComponent
+import com.android.di.component.DiSingletonComponent
 
 object LocalModule {
 

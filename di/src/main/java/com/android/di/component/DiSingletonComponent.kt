@@ -1,7 +1,7 @@
-package woowacourse.shopping.di.component
+package com.android.di.component
 
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.Qualifier
+import com.android.di.annotation.Inject
+import com.android.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation

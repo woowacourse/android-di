@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.android.di.annotation
 
 @Target(
     AnnotationTarget.CONSTRUCTOR,
