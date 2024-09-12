@@ -30,9 +30,10 @@ class CartViewModelTest {
                 ProductFixture(1),
                 ProductFixture(2),
             )
-        vm = CartViewModel().apply {
-            cartRepository = cartRepo
-        }
+        vm =
+            CartViewModel().apply {
+                cartRepository = cartRepo
+            }
     }
 
     @Test

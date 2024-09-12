@@ -25,16 +25,16 @@ class BaseViewModelFactoryTest {
         injectedSingletonContainer =
             FakeInjectedSingletonContainer(
                 components =
-                mutableListOf(
-                    InjectedSingletonComponent(
-                        ProductRepository::class,
-                        InMemoryProductRepository(),
+                    mutableListOf(
+                        InjectedSingletonComponent(
+                            ProductRepository::class,
+                            InMemoryProductRepository(),
+                        ),
+                        InjectedSingletonComponent(
+                            CartRepository::class,
+                            FakeCartRepository(),
+                        ),
                     ),
-                    InjectedSingletonComponent(
-                        CartRepository::class,
-                        FakeCartRepository(),
-                    ),
-                ),
             )
         injectedActivityContainer = FakeInjectedActivityContainer()
         appContainer = DefaultAppContainer(injectedSingletonContainer, injectedActivityContainer)

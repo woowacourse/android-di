@@ -18,12 +18,16 @@ class FakeInjectedActivityContainer(
             clazz.isSuperclassOf(it.injectedClass)
         }?.instance
 
-    override fun find(clazz: KClass<*>, qualifier: Qualifier): Any? = components.find {
-        clazz.isSuperclassOf(it.injectedClass) &&
+    override fun find(
+        clazz: KClass<*>,
+        qualifier: Qualifier,
+    ): Any? =
+        components.find {
+            clazz.isSuperclassOf(it.injectedClass) &&
                 it::class.annotations.find { it.annotationClass == qualifier.annotationClass } != null
-    }?.instance?.let {
-        find(clazz)
-    }
+        }?.instance?.let {
+            find(clazz)
+        }
 
     override fun clear() {
         components.clear()

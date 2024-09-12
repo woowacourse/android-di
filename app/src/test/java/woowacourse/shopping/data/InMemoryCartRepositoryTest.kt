@@ -6,12 +6,12 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.ProductFixture
 
-class CartRepositoryTest {
+class InMemoryCartRepositoryTest {
     private lateinit var repo: CartRepository
 
     @Before
     fun setUp() {
-        repo = FakeCartRepository()
+        repo = InMemoryCartRepository()
     }
 
     @Test
@@ -35,9 +35,9 @@ class CartRepositoryTest {
                 )
 
             // when
-            repo.deleteCartProduct(0)
-            // then
+            repo.deleteCartProduct(1)
 
+            // then
             assertThat(repo.allCartProducts()).isEqualTo(
                 listOf(
                     ProductFixture(2),

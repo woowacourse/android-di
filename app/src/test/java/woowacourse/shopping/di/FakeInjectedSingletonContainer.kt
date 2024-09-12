@@ -18,7 +18,10 @@ class FakeInjectedSingletonContainer(
             clazz.isSuperclassOf(it.injectedClass)
         }?.instance
 
-    override fun find(clazz: KClass<*>, qualifier: Qualifier): Any? =
+    override fun find(
+        clazz: KClass<*>,
+        qualifier: Qualifier,
+    ): Any? =
         components.find {
             clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
         }?.instance
