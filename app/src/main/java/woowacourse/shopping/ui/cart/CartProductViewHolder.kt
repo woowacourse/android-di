@@ -11,7 +11,6 @@ class CartProductViewHolder(
     private val dateFormatter: DateFormatter,
     onClickDelete: (position: Int) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-
     init {
         binding.ivCartProductDelete.setOnClickListener {
             val position = adapterPosition
@@ -21,7 +20,8 @@ class CartProductViewHolder(
 
     fun bind(product: Product) {
         binding.item = product
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+        binding.tvCartProductCreatedAt.text =
+            dateFormatter.formatDate(product.createdAt)
     }
 
     companion object {
@@ -30,8 +30,9 @@ class CartProductViewHolder(
             dateFormatter: DateFormatter,
             onClickDelete: (position: Int) -> Unit,
         ): CartProductViewHolder {
-            val binding = ItemCartProductBinding
-                .inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding =
+                ItemCartProductBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false)
             return CartProductViewHolder(binding, dateFormatter, onClickDelete)
         }
     }
