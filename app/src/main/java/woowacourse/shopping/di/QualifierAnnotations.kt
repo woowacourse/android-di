@@ -14,9 +14,7 @@ import javax.inject.Qualifier
  */
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
 annotation class DatabaseRepository
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
 annotation class InMemoryRepository
