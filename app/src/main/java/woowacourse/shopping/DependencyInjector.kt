@@ -6,6 +6,9 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 typealias instance = Any
@@ -18,24 +21,27 @@ object DependencyInjector {
 
     fun initialize(context: Context) {
         val cartProductDao = ShoppingDatabase.initialize(context).cartProductDao()
-        instances[ProductRepository::class] = RepositoryModule.provideProductRepository()
-        instances[CartRepository::class] = RepositoryModule.provideCartRepository(cartProductDao)
+        addInstance(ProductRepository::class, RepositoryModule.provideProductRepository())
+        addInstance(CartRepository::class, RepositoryModule.provideCartRepository(cartProductDao))
     }
 
-    fun <T : Any> getInstance(clazz: Class<T>): T {
-        val kClass: KClass<T> = clazz.kotlin
+    fun <T : Any> findInstance(clazz: KClass<T>): T = instances[clazz] as? T ?: createInstance(clazz)
 
-        val instance: T = createInstance(kClass)
-        instances[kClass] = instance
-
-        return instance
+    private fun <T : Any> addInstance(
+        clazz: KClass<T>,
+        instance: T,
+    ) {
+        instances[clazz] = instance
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
         val constructor: KFunction<T> = getPrimaryConstructor(clazz)
         val dependencies: List<Any?> = constructor.extractDependencies()
+        val instance = constructor.call(*dependencies.toTypedArray())
 
-        return constructor.call(*dependencies.toTypedArray())
+        injectFields(clazz, instance)
+
+        return instance
     }
 
     private fun <T : Any> getPrimaryConstructor(clazz: KClass<T>): KFunction<T> =
@@ -44,8 +50,23 @@ object DependencyInjector {
     private fun <T : Any> KFunction<T>.extractDependencies(): List<Any?> =
         parameters.map { parameter ->
             when (val classifier = parameter.type.classifier) {
-                is KClass<*> -> instances[classifier]
+                is KClass<*> -> findInstance(classifier)
                 else -> throw IllegalArgumentException(DEPENDENCY_TYPE_IS_INVALID)
             }
         }
+
+    private fun <T : Any> injectFields(
+        clazz: KClass<T>,
+        instance: T,
+    ) {
+        clazz.declaredMemberProperties.forEach { kProperty ->
+            if (kProperty.hasAnnotation<Inject>()) {
+                val classifier: KClass<*> = kProperty.returnType.classifier as KClass<*>
+                val dependency = findInstance(classifier)
+
+                kProperty as KMutableProperty1
+                kProperty.setter.call(instance, dependency)
+            }
+        }
+    }
 }
