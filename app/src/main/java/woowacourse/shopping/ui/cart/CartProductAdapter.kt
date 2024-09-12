@@ -1,7 +1,6 @@
 package woowacourse.shopping.ui.cart
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.model.Product

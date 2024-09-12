@@ -7,5 +7,5 @@ fun ProductFixture(
     name: String = "product $id",
     price: Int = 1000 * id.toInt(),
     imageUrl: String = "image $id",
-    createdAt: Long = System.currentTimeMillis()
+    createdAt: Long = System.currentTimeMillis(),
 ) = Product(id, name, price, imageUrl, createdAt)

@@ -5,9 +5,11 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.InjectedComponent
+import woowacourse.shopping.di.Qualifier
 
 class ShoppingApplication : Application() {
     lateinit var container: AppContainer
@@ -20,7 +22,13 @@ class ShoppingApplication : Application() {
             InjectedComponent.InjectedSingletonComponent(ProductRepository::class, DefaultProductRepository()),
             InjectedComponent.InjectedSingletonComponent(
                 CartRepository::class,
+                InMemoryCartRepository(),
+                Qualifier("InMemory"),
+            ),
+            InjectedComponent.InjectedSingletonComponent(
+                CartRepository::class,
                 DefaultCartRepository(CartProductDao.instance(this)),
+                Qualifier("RoomDao"),
             ),
         )
     }

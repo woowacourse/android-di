@@ -14,12 +14,14 @@ import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
     private val productRepository: ProductRepository,
 ) : ViewModel() {
     @Inject
+    @Qualifier("RoomDao")
     lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -44,7 +46,6 @@ class MainViewModel(
             viewModelFactory {
                 initializer {
                     val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
-//                    BaseViewModelFactory(appContainer).create(MainViewModel::class.java)
                     BaseViewModelFactory2(appContainer).create(MainViewModel::class.java)
                 }
             }
