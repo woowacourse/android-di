@@ -9,14 +9,14 @@ object DependencyRegistry {
         module.provideDependencies(this)
     }
 
-    fun <T : Any> addInstance(
+    fun addInstance(
         classType: KClass<*>,
-        instance: T,
+        instance: Any,
     ) {
         instances[classType] = instance
     }
 
-    fun <T : Any> getInstanceOrNull(classType: KClass<T>): Any? {
+    fun getInstanceOrNull(classType: KClass<*>): Any? {
         return instances[classType]
     }
 }

@@ -1,5 +1,8 @@
 package woowacourse.shopping.model
 
+import javax.inject.Singleton
+
+@Singleton
 interface CartRepository {
     suspend fun addCartProduct(product: Product)
 
