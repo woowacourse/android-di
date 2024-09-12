@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.alsonglibrary2.di.FieldInject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import com.example.alsonglibrary2.di.FieldInject
 import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {

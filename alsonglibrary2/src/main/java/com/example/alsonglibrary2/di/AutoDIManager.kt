@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.ui.util.DependencyProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
@@ -18,6 +17,8 @@ import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
     val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
+
+    var provider: LibraryDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
         val clazz = T::class
@@ -88,8 +89,9 @@ object AutoDIManager {
      * Qualifier 어노테이션이 붙은 함수를 DependencyProvider에서 찾아서 호출합니다.
      **/
     inline fun <reified A : Annotation> fetchAnnotationParamsValue(annotation: A): Any? {
-        return DependencyProvider::class.memberFunctions
+        val dependencyProvider = provider ?: return null
+        return dependencyProvider::class.memberFunctions
             .first { it.findAnnotation<A>() != null }
-            .call(DependencyProvider)
+            .call(dependencyProvider)
     }
 }
