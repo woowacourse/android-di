@@ -4,6 +4,7 @@ import com.example.sh1mj1.AppContainer
 import com.example.sh1mj1.InjectedActivityContainer
 import com.example.sh1mj1.InjectedComponent.InjectedSingletonComponent
 import com.example.sh1mj1.InjectedSingletonContainer
+import com.example.sh1mj1.Qualifier
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository
@@ -27,12 +28,14 @@ class BaseViewModelFactoryTest {
                 components =
                     mutableListOf(
                         InjectedSingletonComponent(
-                            ProductRepository::class,
-                            InMemoryProductRepository(),
+                            injectedClass = ProductRepository::class,
+                            instance = InMemoryProductRepository(),
+                            qualifier = Qualifier("InMemory"),
                         ),
                         InjectedSingletonComponent(
-                            CartRepository::class,
-                            FakeCartRepository(),
+                            injectedClass = CartRepository::class,
+                            instance = FakeCartRepository(),
+                            qualifier = Qualifier("RoomDao"),
                         ),
                     ),
             )
