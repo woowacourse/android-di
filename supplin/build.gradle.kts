@@ -67,7 +67,6 @@ afterEvaluate {
                 groupId = "com.github.kmkim2689"
                 artifactId = "Supplin"
                 version = "1.0.0"
-
                 pom {
                     name.set("name")
                     description.set("description")
