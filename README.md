@@ -59,3 +59,9 @@ Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 �
 ### 선택
   - [x] 상품의 `position`과 `CartRepository::deleteCartProduct`의 id가 동일한 값임을 보장할 수 없다는 문제를 해결
   - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+
+<br>
+
+### 🚀 3단계 - Qualifier
+- [ ] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택 가능 -> 구현 중
+- [ ] DI 라이브러리 모듈 분리
