@@ -1,10 +1,10 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import com.example.di.DIContainer.inject
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
-import woowacourse.shopping.di.DIContainer.inject
 
 class DefaultAppModule(
     appContext: Context,
