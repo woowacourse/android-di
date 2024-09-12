@@ -1,5 +1,6 @@
-package woowacourse.shopping.data
+package woowacourse.shopping
 
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
 
 class FakeCartRepository : CartRepository {
