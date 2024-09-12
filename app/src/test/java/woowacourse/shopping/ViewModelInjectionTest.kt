@@ -48,6 +48,11 @@ class ViewModelInjectionTest {
         val viewModel = factory.create(CartViewModel::class.java)
 
         assertNotNull(viewModel)
+        try {
+            viewModel.getAllCartProducts()
+        } catch (e: UninitializedPropertyAccessException) {
+            throw AssertionError(e.message)
+        }
     }
 
     @Test
@@ -56,5 +61,10 @@ class ViewModelInjectionTest {
         val viewModel = factory.create(MainViewModel::class.java)
 
         assertNotNull(viewModel)
+        try {
+            viewModel.getAllProducts()
+        } catch (e: UninitializedPropertyAccessException) {
+            throw AssertionError(e.message)
+        }
     }
 }
