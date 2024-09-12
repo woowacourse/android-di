@@ -1,5 +1,7 @@
 package woowa.shopping.di.libs.container
 
+import woowa.shopping.di.libs.annotation.InternalApi
+
 class ContainersDSL {
     private val containers = mutableListOf<Container>()
 
@@ -13,11 +15,12 @@ class ContainersDSL {
         this.containers.addAll(containers)
     }
 
-    fun init() {
+    internal fun init() {
         checkDuplicatedDependencies(containers)
         Containers.init(containers)
     }
 
+    @OptIn(InternalApi::class)
     private fun checkDuplicatedDependencies(newContainers: List<Container>) {
         val duplicatedDependencies =
             newContainers

@@ -1,5 +1,6 @@
 package woowa.shopping.di.libs.container
 
+import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.factory.InstanceFactory
 import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.factory.PrototypeInstanceFactory
@@ -9,8 +10,10 @@ import woowa.shopping.di.libs.scope.Scope
 import kotlin.reflect.KClass
 
 class Container {
+    @InternalApi
     val instanceRegistry = mutableMapOf<Key, InstanceFactory<*>>()
 
+    @OptIn(InternalApi::class)
     inline fun <reified T : Any> single(
         qualifier: Qualifier? = null,
         noinline factory: Scope.() -> T,
@@ -23,6 +26,7 @@ class Container {
             )
     }
 
+    @OptIn(InternalApi::class)
     inline fun <reified T : Any> proto(
         qualifier: Qualifier? = null,
         noinline factory: Scope.() -> T,
@@ -33,13 +37,6 @@ class Container {
                 qualifier,
                 factory = { scope.factory() },
             )
-    }
-
-    fun contains(
-        clazz: KClass<*>,
-        qualifier: Qualifier? = null,
-    ): Boolean {
-        return instanceRegistry.containsKey(Key(clazz, qualifier))
     }
 
     data class Key(

@@ -1,7 +1,7 @@
 package woowa.shopping.di.libs.annotation
 
 @RequiresOptIn(
-    message = "Used to extend current API with Koin API. Shouldn't be used outside of DI API",
+    message = "이 어노테이션이 붙은 API는 내부에서만 사용되어야 합니다. 외부에서 사용하지 마세요!",
     level = RequiresOptIn.Level.ERROR,
 )
 @Retention(AnnotationRetention.BINARY)

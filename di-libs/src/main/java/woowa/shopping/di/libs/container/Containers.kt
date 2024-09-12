@@ -1,6 +1,7 @@
 package woowa.shopping.di.libs.container
 
 import org.jetbrains.annotations.VisibleForTesting
+import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.container.Container.Key
 import woowa.shopping.di.libs.factory.InstanceFactory
 import woowa.shopping.di.libs.factory.Lifecycle
@@ -11,6 +12,7 @@ object Containers {
     private val instanceRegistry = mutableMapOf<Key, InstanceFactory<*>>()
     private var isLocked: Boolean = false
 
+    @OptIn(InternalApi::class)
     internal fun init(containers: List<Container>) {
         check(!isLocked) {
             "Containers 가 이미 초기화 되었습니다."
@@ -22,6 +24,7 @@ object Containers {
         lockContainers()
     }
 
+    @InternalApi
     fun <T : Any> resolve(
         clazz: KClass<T>,
         qualifier: Qualifier? = null,

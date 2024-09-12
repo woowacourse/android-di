@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.container.Container
 import woowa.shopping.di.libs.container.Container.Key
 import woowa.shopping.di.libs.container.Containers
@@ -19,6 +20,7 @@ class ViewModelFactory<VM : ViewModel>(
     override fun <T : ViewModel> create(modelClass: Class<T>): T = creator() as T
 }
 
+@OptIn(InternalApi::class)
 inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM> {
     return viewModels {
         Containers.resolve<ViewModelFactory<*>>(
@@ -29,6 +31,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM
     }
 }
 
+@OptIn(InternalApi::class)
 inline fun <reified VM : ViewModel> Container.viewModel(noinline factory: Scope.() -> VM) {
     val qualifier = qualifier<VM>()
     val scope = Scope(qualifier, lifecycle = Lifecycle.SINGLETON)
