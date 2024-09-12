@@ -17,17 +17,39 @@ class DependencyInjector(
             kClass.primaryConstructor
                 ?: throw IllegalArgumentException("ViewModel must have a primary constructor: ${kClass.simpleName}")
 
-        val injectedFields = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
-
         val constructorArgs =
             constructor.parameters.map { parameter ->
                 appContainer.find(parameter.type.classifier as KClass<*>)
             }.toTypedArray()
 
-        val viewModel = constructor.call(*constructorArgs)
+        // inject 를 해야하는 생성자 인자 찾기
+        val constructorArgs2 = constructor.parameters.filter { kParameter ->
+            kParameter.hasAnnotation<Inject>()
+        }
+
+
+        val x = constructorArgs2.map { kParameter ->
+            val qualifier = kParameter.annotations.filterIsInstance<Qualifier>().firstOrNull().also {
+                println("qualifier1: $it")
+            }
+            val dependency = if (qualifier != null) {
+                appContainer.find(kParameter.type.classifier as KClass<*>, qualifier).also {
+                    println("Tag $it")
+                }
+            } else {
+                appContainer.find(kParameter.type.classifier as KClass<*>)
+            }
+            dependency ?: throw IllegalArgumentException("Unresolved dependency for parameter: ${kParameter.name}")
+        }.toTypedArray()
+
+//        val viewModel = constructor.call(*constructorArgs)
+        val viewModel = constructor.call(*x)
+
+        // inject 가 있는 필드 찾기
+        val injectedFields = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
 
         injectedFields.forEach { field ->
-            field.isAccessible = true // private 필드에 접근할 수 있도록 설정
+            field.isAccessible = true
 
             val qualifier =
                 field.annotations.filterIsInstance<Qualifier>().firstOrNull()
@@ -47,6 +69,10 @@ class DependencyInjector(
         }
 
         return viewModel
+    }
+
+    fun asdfasdf(qualifier: Qualifier) {
+
     }
 
     // 필드에 대한 의존성 주입
