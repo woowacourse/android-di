@@ -12,11 +12,17 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.BaseViewModelFactory
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.Product
 
 class CartViewModel(
-    private val cartRepository: CartRepository,
+
 ) : ViewModel() {
+    @Inject
+    @Qualifier("RoomDao")
+    lateinit var cartRepository: CartRepository
+
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
@@ -34,6 +40,7 @@ class CartViewModel(
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id.toLong())
             _onCartProductDeleted.value = true
+            _cartProducts.value = cartRepository.allCartProducts()
         }
     }
 
