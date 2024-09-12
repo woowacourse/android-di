@@ -12,6 +12,16 @@ fun Product.toCartProductEntity(): CartProductEntity {
     )
 }
 
+fun Product.toInMemoryCartProduct(id: Long): CartProduct {
+    return CartProduct(
+        id = id,
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+        createdAt = System.currentTimeMillis(),
+    )
+}
+
 fun CartProductEntity.toModel(): CartProduct {
     return CartProduct(
         id = id,

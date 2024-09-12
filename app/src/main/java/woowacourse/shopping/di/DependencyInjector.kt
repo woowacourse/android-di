@@ -1,5 +1,7 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -18,19 +20,19 @@ object DependencyInjector {
 
         kClass.declaredMemberProperties
             .filterIsInstance<KMutableProperty<*>>()
-            .filter { property ->
-                property.javaField?.isAnnotationPresent(Inject::class.java) == true
-            }
-            .forEach {
-                injectProperty(target, it)
+            .filter { property -> property.javaField?.isAnnotationPresent(Inject::class.java) == true }
+            .forEach { property ->
+                val qualifier = property.annotations.filterIsInstance<Qualifier>().firstOrNull()?.annotationClass
+                injectProperty(target, property, qualifier)
             }
     }
 
     private fun injectProperty(
         target: Any,
         property: KMutableProperty<*>,
+        qualifier: KClass<out Annotation>?,
     ) {
-        val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>)
+        val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>, qualifier)
         property.isAccessible = true
         property.setter.call(target, instance)
     }
