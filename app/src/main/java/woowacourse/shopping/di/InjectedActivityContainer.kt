@@ -7,5 +7,10 @@ interface InjectedActivityContainer {
 
     fun find(clazz: KClass<*>): Any?
 
+    fun find(
+        clazz: KClass<*>,
+        qualifier: Qualifier,
+    ): Any?
+
     fun clear()
 }
