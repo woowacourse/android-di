@@ -19,14 +19,14 @@ import kotlin.reflect.jvm.jvmErasure
 class DaoModule private constructor(private val context: Context) :
     Module<DaoModule, DaoDI>,
     DefaultLifecycleObserver {
-        private lateinit var daoMap: List<Pair<String, KFunction<*>>>
+        private lateinit var daoMap: List<Pair<String, KFunction<DaoDI>>>
         private lateinit var daoBinder: DaoBinder
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
             daoBinder = DaoBinder(context)
 
-            daoMap = createRepositoryMap(daoBinder)
+            daoMap = createRepositories()
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
@@ -35,14 +35,14 @@ class DaoModule private constructor(private val context: Context) :
             owner.lifecycle.removeObserver(this)
         }
 
-        private fun createRepositoryMap(daoBinder: DaoBinder): List<Pair<String, KFunction<*>>> {
+        private fun createRepositories(): List<Pair<String, KFunction<DaoDI>>> {
             return DaoBinder::class.declaredMemberFunctions
                 .filter { it.returnType.jvmErasure.isSubclassOf(DaoDI::class) }
                 .map { kFunction ->
                     val key =
                         kFunction.returnType.jvmErasure.simpleName
                             ?: error("$kFunction 의 key값을 지정할 수 없습니다.")
-                    key to kFunction
+                    key to (kFunction as KFunction<DaoDI>)
                 }
         }
 
@@ -50,7 +50,7 @@ class DaoModule private constructor(private val context: Context) :
             val kFunction =
                 instance?.daoMap?.find { it.first == type.simpleName }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
-            return kFunction.call(daoBinder) as DaoDI
+            return kFunction.call(daoBinder)
         }
 
         override fun getDIInstance(
@@ -58,7 +58,10 @@ class DaoModule private constructor(private val context: Context) :
             qualifier: KClass<out Annotation>,
         ): DaoDI {
             val kFunction =
-                instance?.daoMap?.find { it.first == type.simpleName && it.second.annotations.any { it.annotationClass.isSubclassOf(qualifier) } }?.second
+                instance?.daoMap?.find {
+                    it.first == type.simpleName &&
+                        it.second.annotations.any { it.annotationClass.isSubclassOf(qualifier) }
+                }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
             return kFunction.call(daoBinder) as DaoDI
         }

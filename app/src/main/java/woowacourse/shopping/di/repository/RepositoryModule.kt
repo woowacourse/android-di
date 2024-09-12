@@ -19,13 +19,13 @@ import kotlin.reflect.jvm.jvmErasure
 class RepositoryModule private constructor() :
     DefaultLifecycleObserver,
     Module<RepositoryModule, RepositoryDI> {
-        private lateinit var repositoryMap: List<Pair<String, KFunction<*>>>
+        private lateinit var repositories: List<Pair<String, KFunction<RepositoryDI>>>
         private lateinit var repositoryBinder: RepositoryBinder
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
             repositoryBinder = RepositoryBinder()
-            repositoryMap = createRepositoryMap()
+            repositories = createRepositories()
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
@@ -34,20 +34,20 @@ class RepositoryModule private constructor() :
             owner.lifecycle.removeObserver(this)
         }
 
-        private fun createRepositoryMap(): List<Pair<String, KFunction<*>>> {
+        private fun createRepositories(): List<Pair<String, KFunction<RepositoryDI>>> {
             return RepositoryBinder::class.declaredMemberFunctions
                 .filter { it.returnType.jvmErasure.isSubclassOf(RepositoryDI::class) }
                 .map { kFunction ->
                     val key =
                         kFunction.returnType.jvmErasure.simpleName
                             ?: error("$kFunction 의 key값을 지정할 수 없습니다.")
-                    key to kFunction
+                    key to (kFunction as KFunction<RepositoryDI>)
                 }
         }
 
         override fun getDIInstance(type: KClass<out RepositoryDI>): RepositoryDI {
             val kFunction =
-                instance?.repositoryMap?.find { it.first == type.simpleName }?.second
+                instance?.repositories?.find { it.first == type.simpleName }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
             return kFunction.call(repositoryBinder) as RepositoryDI
         }
@@ -57,7 +57,7 @@ class RepositoryModule private constructor() :
             qualifier: KClass<out Annotation>,
         ): RepositoryDI {
             val kFunction =
-                instance?.repositoryMap?.find { it.first == type.simpleName && it.second.annotations.any { it.annotationClass == qualifier } }?.second
+                instance?.repositories?.find { it.first == type.simpleName && it.second.annotations.any { it.annotationClass == qualifier } }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
             return kFunction.call(repositoryBinder) as RepositoryDI
         }
