@@ -7,7 +7,7 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
 class CartRepositoryImpl(
-    @com.android.di.annotation.RoomDatabase
+    @RoomDatabase
 //    @InMemoryDatabase :: can use
     private val dao: CartProductDao,
 ) : CartRepository {

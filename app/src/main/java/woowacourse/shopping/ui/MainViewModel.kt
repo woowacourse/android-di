@@ -11,13 +11,13 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
-@com.android.di.annotation.DiViewModel
+@DiViewModel
 class MainViewModel : ViewModel() {
 
-    @com.android.di.annotation.Inject
+    @Inject
     private lateinit var cartRepository: CartRepository
 
-    @com.android.di.annotation.Inject
+    @Inject
     private lateinit var productRepository: ProductRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

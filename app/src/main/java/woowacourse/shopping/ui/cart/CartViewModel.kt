@@ -10,9 +10,9 @@ import com.android.di.annotation.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
-@com.android.di.annotation.DiViewModel
+@DiViewModel
 class CartViewModel: ViewModel() {
-    @com.android.di.annotation.Inject
+    @Inject
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =
