@@ -77,4 +77,5 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
+    implementation(project(":haeum"))
 }

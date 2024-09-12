@@ -1,27 +1,22 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.home
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import woowacourse.shopping.DIApplication
+import org.library.haeum.createViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.common.BindingActivity
 
-class MainActivity : AppCompatActivity() {
-    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    private val viewModel by viewModels<MainViewModel> {
-        (application as DIApplication).diContainer.createViewModel(MainViewModel::class.java)
+class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    private val viewModel: MainViewModel by lazy {
+        createViewModel()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
         setupBinding()
         setupToolbar()
         setupView()
@@ -36,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBinding() {
-        binding.lifecycleOwner = this
         binding.vm = viewModel
     }
 

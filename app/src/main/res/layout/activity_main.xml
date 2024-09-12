@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="woowacourse.shopping.ui.MainViewModel" />
+            type="woowacourse.shopping.ui.home.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,12 +1,12 @@
 package woowacourse.shopping
 
 import android.app.Application
+import org.library.haeum.ModuleInjector
+import woowacourse.shopping.di.Module
 
 class DIApplication : Application() {
-    lateinit var diContainer: DIContainer
-
     override fun onCreate() {
         super.onCreate()
-        diContainer = DIContainer()
+        ModuleInjector.initializeModuleInjector(this, Module::class)
     }
 }
