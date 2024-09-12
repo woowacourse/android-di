@@ -1,9 +1,13 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
@@ -12,9 +16,8 @@ class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
-        MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    private val _cartProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
+    val cartProducts: StateFlow<List<Product>> = _cartProducts.asStateFlow()
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
@@ -25,9 +28,10 @@ class CartViewModel(
         }
     }
 
-    fun deleteCartProduct(id: Int) {
+    fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
+            _cartProducts.value = _cartProducts.value.filter { it.id != id }
             _onCartProductDeleted.value = true
         }
     }

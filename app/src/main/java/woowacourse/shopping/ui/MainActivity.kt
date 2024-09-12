@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import woowa.shopping.di.libs.android.injectViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -52,12 +56,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupProductList() {
-        viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
-            binding.rvProducts.adapter = adapter
+        val adapter = ProductAdapter(
+            onClickProduct = viewModel::addCartProduct
+        )
+        binding.rvProducts.adapter = adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.products.collect {
+                    adapter.submitList(it)
+                }
+            }
         }
         viewModel.onProductAdded.observe(this) {
             if (!it) return@observe

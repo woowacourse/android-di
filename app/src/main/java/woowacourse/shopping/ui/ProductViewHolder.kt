@@ -8,12 +8,12 @@ import woowacourse.shopping.model.Product
 
 class ProductViewHolder(
     private val binding: ItemProductBinding,
-    onClickProduct: (Product) -> Unit,
+    onClickProduct: (product: Product) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     init {
         binding.root.setOnClickListener {
-            onClickProduct(binding.item ?: return@setOnClickListener)
+            onClickProduct(binding.item!!)
         }
     }
 
@@ -22,7 +22,7 @@ class ProductViewHolder(
     }
 
     companion object {
-        fun from(parent: ViewGroup, onClickProduct: (Product) -> Unit): ProductViewHolder {
+        fun from(parent: ViewGroup, onClickProduct: (product: Product) -> Unit): ProductViewHolder {
             val binding =
                 ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return ProductViewHolder(binding, onClickProduct)

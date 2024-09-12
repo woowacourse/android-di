@@ -3,6 +3,10 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import woowa.shopping.di.libs.android.injectViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -53,13 +57,17 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
-            binding.rvCartProducts.adapter = adapter
+        val adapter = CartProductAdapter(
+            onClickDelete = viewModel::deleteCartProduct,
+            dateFormatter = dateFormatter,
+        )
+        binding.rvCartProducts.adapter = adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.cartProducts.collect {
+                    adapter.submitList(it)
+                }
+            }
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
