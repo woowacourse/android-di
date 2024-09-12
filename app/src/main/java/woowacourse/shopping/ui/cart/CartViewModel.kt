@@ -16,9 +16,7 @@ import woowacourse.shopping.di.Inject
 import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.Product
 
-class CartViewModel(
-
-) : ViewModel() {
+class CartViewModel() : ViewModel() {
     @Inject
     @Qualifier("RoomDao")
     lateinit var cartRepository: CartRepository

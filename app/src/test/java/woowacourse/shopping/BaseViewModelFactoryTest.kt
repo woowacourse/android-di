@@ -3,8 +3,8 @@ package woowacourse.shopping
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.FakeCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.FakeInjectedActivityContainer
@@ -28,7 +28,7 @@ class BaseViewModelFactoryTest {
                     mutableListOf(
                         InjectedComponent.InjectedSingletonComponent(
                             ProductRepository::class,
-                            DefaultProductRepository(),
+                            InMemoryProductRepository(),
                         ),
                         InjectedComponent.InjectedSingletonComponent(
                             CartRepository::class,

@@ -3,8 +3,8 @@ package woowacourse.di
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.FakeCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.DefaultInjectedSingletonContainer
 import woowacourse.shopping.di.InjectedComponent
@@ -16,13 +16,13 @@ class DefaultInjectedSingletonContainerTest {
         DefaultInjectedSingletonContainer.add(
             InjectedComponent.InjectedSingletonComponent(
                 ProductRepository::class,
-                DefaultProductRepository(),
+                InMemoryProductRepository(),
             ),
         )
 
         // then
         val productRepository = DefaultInjectedSingletonContainer.find(ProductRepository::class)
-        assertThat(productRepository).isInstanceOf(DefaultProductRepository::class.java)
+        assertThat(productRepository).isInstanceOf(InMemoryProductRepository::class.java)
     }
 
     @Test

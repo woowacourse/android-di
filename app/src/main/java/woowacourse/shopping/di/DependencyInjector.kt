@@ -9,7 +9,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DependencyInjector(
-    private val appContainer: AppContainer
+    private val appContainer: AppContainer,
 ) {
     // ViewModel 인스턴스 생성 및 주입
     fun <T : Any> createInstance(modelClass: Class<T>): T {
@@ -31,9 +31,10 @@ class DependencyInjector(
         injectedFields.forEach { field ->
             field.isAccessible = true // private 필드에 접근할 수 있도록 설정
 
-            val qualifier = field.annotations.filterIsInstance<Qualifier>().firstOrNull().also {
-                Log.d(TAG, "qualifier $it")
-            }
+            val qualifier =
+                field.annotations.filterIsInstance<Qualifier>().firstOrNull().also {
+                    Log.d(TAG, "qualifier $it")
+                }
 
             val dependency =
                 if (qualifier != null) {

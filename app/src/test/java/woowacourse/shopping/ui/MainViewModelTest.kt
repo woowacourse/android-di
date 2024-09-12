@@ -8,8 +8,8 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.ProductFixture
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.FakeCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 
@@ -27,7 +27,7 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
-        productRepository = DefaultProductRepository()
+        productRepository = InMemoryProductRepository()
         cartRepository = FakeCartRepository()
         vm =
             MainViewModel(

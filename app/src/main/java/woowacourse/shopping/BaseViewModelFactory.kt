@@ -9,6 +9,7 @@ class BaseViewModelFactory(
     private val appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
     val di = DependencyInjector(appContainer)
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return di.createInstance(modelClass)
 //        val kClass = modelClass.kotlin
@@ -50,6 +51,5 @@ class BaseViewModelFactory(
 //        return viewModel
     }
 }
-
 
 private const val TAG = "BaseViewModelFactory"

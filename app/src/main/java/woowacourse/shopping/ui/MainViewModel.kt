@@ -18,6 +18,8 @@ import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
+    @Inject
+    @Qualifier("InMemory")
     private val productRepository: ProductRepository,
 ) : ViewModel() {
     @Inject
