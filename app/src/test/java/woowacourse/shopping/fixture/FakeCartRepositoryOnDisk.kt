@@ -6,7 +6,7 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
-class FakeCartRepository(private val dao: CartProductDao) : CartRepository {
+class FakeCartRepositoryOnDisk(private val dao: CartProductDao) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }
@@ -21,11 +21,11 @@ class FakeCartRepository(private val dao: CartProductDao) : CartRepository {
 
     companion object {
         @Volatile
-        private var instance: FakeCartRepository? = null
+        private var instance: FakeCartRepositoryOnDisk? = null
 
-        fun getInstance(dao: CartProductDao): FakeCartRepository {
+        fun getInstance(dao: CartProductDao): FakeCartRepositoryOnDisk {
             return instance ?: synchronized(this) {
-                instance ?: FakeCartRepository(dao).also { instance = it }
+                instance ?: FakeCartRepositoryOnDisk(dao).also { instance = it }
             }
         }
     }
