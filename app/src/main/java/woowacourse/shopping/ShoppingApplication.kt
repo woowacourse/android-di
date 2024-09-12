@@ -16,6 +16,7 @@ import woowacourse.shopping.ui.cart.CartViewModel
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+
         val appModule = DefaultAppModule(this)
         val cartProductDao = appModule.database.cartProductDao()
         setInstance(CartProductDao::class, cartProductDao)

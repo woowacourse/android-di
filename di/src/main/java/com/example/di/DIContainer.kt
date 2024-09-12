@@ -8,7 +8,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 
 object DIContainer {
-    private val instances = mutableMapOf<Pair<KClass<*>, String?>, Any>()
+    val instances = mutableMapOf<Pair<KClass<*>, String?>, Any>()
 
     fun getInstance(
         type: KClass<*>,

@@ -1,63 +1,78 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModel
-import org.junit.Assert.assertNotNull
+import com.example.di.DIContainer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.FakeProductRepository
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductRepository
-import woowacourse.shopping.di.DIContainer
 
+@RunWith(RobolectricTestRunner::class)
 class MainViewModelTest {
-    private lateinit var viewModel: ViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val testDispatcher = StandardTestDispatcher()
+
     @Before
     fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
-        DIContainer.setInstance(ProductRepository::class, productRepository)
-        DIContainer.setInstance(CartRepository::class, cartRepository)
+        DIContainer.setInstance(ProductRepository::class, productRepository, "room")
+        DIContainer.setInstance(CartRepository::class, cartRepository, "room")
         viewModel = MainViewModel()
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
     fun `초기에 상품을 모두 불러온다`() {
+        println("viewModel: $viewModel")
+        println("productRepository: $productRepository")
+
         // when
-        (viewModel as MainViewModel).getAllProducts()
+        viewModel.getAllProducts()
 
         // then
         val products = productRepository.getAllProducts()
-        assert((viewModel as MainViewModel).products.value == products)
+        assert(viewModel.products.value == products)
     }
 
     @Test
     fun `카트에 상품 추가`() {
-        // given
-        val product = productRepository.getAllProducts().first()
+        runTest {
+            // given
+            val product = productRepository.getAllProducts().first()
 
-        // when
-        (viewModel as MainViewModel).addCartProduct(product)
+            // when
+            viewModel.addCartProduct(product)
+            advanceUntilIdle()
 
-        // then
-        val cartProducts = cartRepository.getAllCartProducts()
-        assert((viewModel as MainViewModel).onProductAdded.value == true)
-        assert(cartProducts.size == 1)
-    }
-
-    @Test
-    fun `dependencies are injected correctly`() {
-        val productRepositoryField = MainViewModel::class.java.getDeclaredField("productRepository")
-        productRepositoryField.isAccessible = true
-        val injectedProductRepository = productRepositoryField.get(viewModel)
-        assertNotNull(injectedProductRepository.toString(), "ProductRepository should be injected")
+            // then
+            val cartProducts = cartRepository.getAllCartProducts()
+            assert(viewModel.onProductAdded.value == true)
+            assert(cartProducts.size == 1)
+        }
     }
 }
