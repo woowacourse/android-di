@@ -5,10 +5,12 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LocalCartRepository(
+    @Inject
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

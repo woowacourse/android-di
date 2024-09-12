@@ -4,8 +4,9 @@ import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
+import javax.inject.Singleton
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
+@Singleton
 class DefaultCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 

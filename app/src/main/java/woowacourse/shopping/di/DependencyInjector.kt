@@ -5,8 +5,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -19,21 +21,12 @@ class DependencyInjector(private val registry: DependencyRegistry) {
     }
 
     private fun createInstance(classType: KClass<*>): Any {
-        val targetClassType = searchImplClassType(classType)
-        val constructor = getPrimaryConstructor(targetClassType)
+        val constructor = getPrimaryConstructor(classType)
         val parameterDependencies = resolveConstructorParameters(constructor.parameters)
         val instance = constructor.callBy(parameterDependencies)
         injectFields(instance)
-        registry.addInstance(targetClassType, instance)
+        registry.addInstance(classType, instance)
         return instance
-    }
-
-    private fun <T : Any> searchImplClassType(classType: KClass<T>): KClass<*> {
-        return if (classType.java.isInterface) {
-            registry.findImplClassType(classType)
-        } else {
-            classType
-        }
     }
 
     private fun <T : Any> getPrimaryConstructor(classType: KClass<T>): KFunction<Any> {
@@ -43,7 +36,10 @@ class DependencyInjector(private val registry: DependencyRegistry) {
 
     private fun resolveConstructorParameters(parameters: List<KParameter>): Map<KParameter, Any?> {
         return parameters.associateWith { parameter ->
-            (parameter.type.classifier as? KClass<*>)?.let { classifier ->
+            val targetClassType =
+                findQualifiedAnnotationOrNull(parameter)
+                    ?: (parameter.type.classifier as? KClass<*>)
+            targetClassType?.let { classifier ->
                 inject(classifier)
             }
         }
@@ -63,11 +59,27 @@ class DependencyInjector(private val registry: DependencyRegistry) {
         target: T,
         mutableProperty: KMutableProperty1<out T, *>,
     ) {
-        val classifier = mutableProperty.returnType.classifier as? KClass<*>
-        classifier?.let { kClass ->
+        val targetClassType =
+            findQualifiedAnnotationOrNull(mutableProperty)
+                ?: mutableProperty.returnType.classifier as? KClass<*>
+        targetClassType?.let { kClass ->
             val instance = inject(kClass)
             mutableProperty.isAccessible = true
             mutableProperty.setter.call(target, instance)
         }
+    }
+
+    private fun findQualifiedAnnotationOrNull(parameter: KParameter): KClass<*>? {
+        return parameter.annotations
+            .find { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }?.annotationClass?.findAnnotation<Qualifier>()?.injectedClassType
+    }
+
+    private fun findQualifiedAnnotationOrNull(property: KProperty<*>): KClass<*>? {
+        return property.annotations
+            .find { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }?.annotationClass?.findAnnotation<Qualifier>()?.injectedClassType
     }
 }

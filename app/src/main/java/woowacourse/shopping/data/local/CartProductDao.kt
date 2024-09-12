@@ -3,8 +3,10 @@ package woowacourse.shopping.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import javax.inject.Singleton
 
 @Dao
+@Singleton
 interface CartProductDao {
     @Query("SELECT * FROM cart_products")
     suspend fun getAll(): List<CartProductEntity>
