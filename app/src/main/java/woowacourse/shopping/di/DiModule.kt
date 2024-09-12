@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
-import com.example.seogi.di.InMemory
 import com.example.seogi.di.Module
-import com.example.seogi.di.OnDisk
+import com.example.seogi.di.annotation.InMemory
+import com.example.seogi.di.annotation.OnDisk
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryInMemory

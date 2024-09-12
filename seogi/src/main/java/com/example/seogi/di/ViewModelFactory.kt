@@ -1,9 +1,9 @@
 package com.example.seogi.di
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.seogi.di.annotation.FieldInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor

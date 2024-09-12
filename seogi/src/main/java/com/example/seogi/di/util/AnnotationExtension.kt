@@ -1,6 +1,6 @@
 package com.example.seogi.di.util
 
-import com.example.seogi.di.Qualifier
+import com.example.seogi.di.annotation.Qualifier
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
