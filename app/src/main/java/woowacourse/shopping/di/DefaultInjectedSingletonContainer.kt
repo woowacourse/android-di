@@ -1,6 +1,5 @@
 package woowacourse.shopping.di
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSuperclassOf
 
@@ -22,9 +21,7 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
     ): Any? {
         return components.find {
             clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
-        }?.instance.also {
-            Log.d(TAG, "find with kclass and qualifier: $it")
-        }
+        }?.instance
     }
 }
 

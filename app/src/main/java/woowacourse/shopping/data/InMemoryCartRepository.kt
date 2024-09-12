@@ -1,6 +1,5 @@
 package woowacourse.shopping.data
 
-import android.util.Log
 import woowacourse.shopping.model.Product
 
 class InMemoryCartRepository(
@@ -9,9 +8,7 @@ class InMemoryCartRepository(
     constructor(vararg products: Product) : this(products.toMutableList())
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(product).also {
-            Log.d(TAG, "addCartProduct: $product")
-        }
+        cartProducts.add(product)
     }
 
     override suspend fun allCartProducts(): List<Product> = cartProducts.toList()
@@ -20,5 +17,3 @@ class InMemoryCartRepository(
         cartProducts.removeAt(id.toInt())
     }
 }
-
-private const val TAG = "InMemoryCartRepository"

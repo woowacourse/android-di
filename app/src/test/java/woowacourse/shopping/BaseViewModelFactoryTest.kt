@@ -14,7 +14,7 @@ import woowacourse.shopping.di.InjectedComponent
 import woowacourse.shopping.di.InjectedSingletonContainer
 import woowacourse.shopping.ui.MainViewModel
 
-class BaseViewModelFactory2Test {
+class BaseViewModelFactoryTest {
     private lateinit var injectedSingletonContainer: InjectedSingletonContainer
     private lateinit var injectedActivityContainer: InjectedActivityContainer
     private lateinit var appContainer: AppContainer
@@ -38,7 +38,7 @@ class BaseViewModelFactory2Test {
             )
         injectedActivityContainer = FakeInjectedActivityContainer()
         appContainer = DefaultAppContainer(injectedSingletonContainer, injectedActivityContainer)
-        val baseViewModelFactory = BaseViewModelFactory2(appContainer)
+        val baseViewModelFactory = BaseViewModelFactory(appContainer)
 
         assertDoesNotThrow { (baseViewModelFactory.create(MainViewModel::class.java)) }
     }
