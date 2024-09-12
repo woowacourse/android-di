@@ -3,7 +3,7 @@ package woowacourse.shopping.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import woowacourse.shopping.di.DaoDI
+import woowacourse.shopping.di.dao.DaoDI
 
 @Dao
 interface CartProductDao : DaoDI {

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.dao
 
 import android.app.Application
 import android.content.Context

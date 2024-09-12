@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.repository
 
 import android.app.Application
 import android.content.Context
@@ -9,8 +9,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.woowa.di.injection.DIModule
 import com.woowa.di.injection.Module
-import woowacourse.shopping.di.repository.RepositoryBinder
-import woowacourse.shopping.di.repository.RepositoryDI
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf
