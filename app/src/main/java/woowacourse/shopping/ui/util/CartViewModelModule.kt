@@ -2,7 +2,7 @@ package woowacourse.shopping.ui.util
 
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
-import woowacourse.shopping.di.AutoDIManager.createNoQualifierInstance
+import com.example.alsonglibrary2.di.AutoDIManager.createNoQualifierInstance
 import javax.inject.Qualifier
 
 @Qualifier

@@ -7,8 +7,8 @@ import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.AutoDIManager.createAutoDIInstance
-import woowacourse.shopping.di.AutoDIManager.registerDependency
+import com.example.alsonglibrary2.di.AutoDIManager.createAutoDIInstance
+import com.example.alsonglibrary2.di.AutoDIManager.registerDependency
 
 class ShoppingApplication : Application() {
     private val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }

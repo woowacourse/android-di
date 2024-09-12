@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.alsonglibrary2.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

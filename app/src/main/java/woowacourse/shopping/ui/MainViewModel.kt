@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.FieldInject
+import com.example.alsonglibrary2.di.FieldInject
 import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {
@@ -17,10 +17,10 @@ class MainViewModel : ViewModel() {
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
-    @FieldInject
+    @com.example.alsonglibrary2.di.FieldInject
     private lateinit var productRepository: ProductRepository
 
-    @FieldInject
+    @com.example.alsonglibrary2.di.FieldInject
     private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
