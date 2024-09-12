@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    `maven-publish`
 }
 
 android {
@@ -56,4 +57,22 @@ dependencies {
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.kmkim2689"
+                artifactId = "Supplin"
+                version = "1.0.0"
+
+                pom {
+                    name.set("name")
+                    description.set("description")
+                }
+            }
+        }
+    }
 }
