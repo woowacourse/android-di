@@ -20,10 +20,10 @@
 
 - [x] Annotation을 이용해 다음 문제를 해결한다.
   - [x] 필요한 요소에만 의존성 주입
-  - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드 작성
+  - [x] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드 작성
 
-- [ ] Recursive DI
-  - [ ] 장바구니 저장을 mutableList가 아닌, dao 객체에 맡긴다
+- [x] Recursive DI
+  - [x] 장바구니 저장을 mutableList가 아닌, dao 객체에 맡긴다
   - [ ] `CartProductEntity`의 `createdAt`프로퍼티를 이용해, 뷰에 날짜 정보를 추가한다.
 
 ## 선택 요구사항
