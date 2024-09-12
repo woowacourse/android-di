@@ -1,5 +1,9 @@
 package woowacourse.shopping.di
 
+import kotlin.reflect.KClass
+
 interface Module {
-    fun provideDependencies(dependencyRegistry: DependencyRegistry)
+    fun provideInstance(dependencyRegistry: DependencyRegistry)
+
+    fun findQualifierOrNull(classType: KClass<*>): KClass<*>?
 }

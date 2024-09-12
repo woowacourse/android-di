@@ -11,8 +11,6 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DependencyInjector(private val registry: DependencyRegistry) {
-    // classType에 싱글톤 어노테이션이 있고, registry에 인스턴스가 존재하면 가져온다.
-    // 아니면 새로 만든다.
     fun inject(classType: KClass<*>): Any {
         val isSingleton = classType.findAnnotation<Singleton>() != null
         return registry.getInstanceOrNull(classType)?.takeIf { isSingleton } ?: createInstance(
@@ -21,17 +19,26 @@ class DependencyInjector(private val registry: DependencyRegistry) {
     }
 
     private fun createInstance(classType: KClass<*>): Any {
-        val constructor = getPrimaryConstructor(classType)
+        val targetClassType = searchImplClassType(classType)
+        val constructor = getPrimaryConstructor(targetClassType)
         val parameterDependencies = resolveConstructorParameters(constructor.parameters)
         val instance = constructor.callBy(parameterDependencies)
         injectFields(instance)
-        registry.addInstance(classType, instance)
+        registry.addInstance(targetClassType, instance)
         return instance
     }
 
-    private fun <T : Any> getPrimaryConstructor(classType: KClass<T>): KFunction<T> {
+    private fun <T : Any> searchImplClassType(classType: KClass<T>): KClass<*> {
+        return if (classType.java.isInterface) {
+            registry.findImplClassType(classType)
+        } else {
+            classType
+        }
+    }
+
+    private fun <T : Any> getPrimaryConstructor(classType: KClass<T>): KFunction<Any> {
         return classType.primaryConstructor
-            ?: throw IllegalArgumentException("${classType.qualifiedName}의 주생성자가 존재하지 않습니다.")
+            ?: throw IllegalArgumentException("주생성자를 찾을 수 없습니다: ${classType.simpleName}")
     }
 
     private fun resolveConstructorParameters(parameters: List<KParameter>): Map<KParameter, Any?> {
