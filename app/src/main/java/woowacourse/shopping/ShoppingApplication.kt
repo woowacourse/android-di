@@ -11,7 +11,11 @@ import woowacourse.shopping.di.AutoDIManager.createAutoDIInstance
 import woowacourse.shopping.di.AutoDIManager.registerDependency
 
 class ShoppingApplication : Application() {
-    private val shoppingDatabase: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+    private val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+
+    private val productRepositoryImpl by lazy { createAutoDIInstance<ProductRepositoryImpl>() }
+
+    private val cartRepositoryImpl by lazy { createAutoDIInstance<CartRepositoryImpl>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -20,7 +24,7 @@ class ShoppingApplication : Application() {
 
     private fun registerDependencies() {
         registerDependency<CartProductDao>(shoppingDatabase.cartProductDao())
-        registerDependency<ProductRepository>(ProductRepositoryImpl())
-        registerDependency<CartRepository>(createAutoDIInstance<CartRepositoryImpl>())
+        registerDependency<ProductRepository>(productRepositoryImpl)
+        registerDependency<CartRepository>(cartRepositoryImpl)
     }
 }
