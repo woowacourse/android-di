@@ -8,12 +8,9 @@ import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.ui.injection.DIInjection
 
 class CartViewModel(
+    @DIInjection
     private val cartRepository: CartRepository,
-) : ViewModel(), DIInjection {
-    init {
-        checkConstructor()
-    }
-
+) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
