@@ -64,9 +64,9 @@ afterEvaluate {
         publications {
             register<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "com.github.kmkim2689"
+                groupId = "com.kmlibs.supplin"
                 artifactId = "Supplin"
-                version = "1.0.0"
+                version = "1.0.1"
                 pom {
                     name.set("name")
                     description.set("description")
