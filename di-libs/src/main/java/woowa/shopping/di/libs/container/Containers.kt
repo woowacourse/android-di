@@ -1,40 +1,51 @@
 package woowa.shopping.di.libs.container
 
 import org.jetbrains.annotations.VisibleForTesting
+import woowa.shopping.di.libs.container.Container.Key
+import woowa.shopping.di.libs.factory.InstanceFactory
+import woowa.shopping.di.libs.factory.Lifecycle
+import woowa.shopping.di.libs.qualify.Qualifier
 import kotlin.reflect.KClass
 
 object Containers {
-    private val containers: MutableList<Container> = mutableListOf()
+    private val instanceRegistry = mutableMapOf<Key, InstanceFactory<*>>()
     private var isLocked: Boolean = false
 
-    fun <T : Any> get(clazz: KClass<T>): T {
+    internal fun init(containers: List<Container>) {
+        check(!isLocked) {
+            "Containers 가 이미 초기화 되었습니다."
+        }
+        containers.flatMap { it.instanceRegistry.entries }
+            .forEach { (key, factory) ->
+                instanceRegistry[key] = factory
+            }
+        lockContainers()
+    }
+
+    fun <T : Any> resolve(
+        clazz: KClass<T>,
+        qualifier: Qualifier? = null,
+        lifecycle: Lifecycle = Lifecycle.SINGLETON,
+    ): T {
         check(isLocked) {
             "Containers 가 초기화 되지 않았습니다. startDI()를 통해 초기화 해주세요."
         }
-        return containers.first { it.cached.containsKey(clazz) }.get(clazz)
-    }
-
-    fun add(container: Container) {
-        check(isLocked.not()) {
-            "Containers 가 이미 초기화 되었습니다."
+        val key = Key(clazz, qualifier, lifecycle)
+        val factory = instanceRegistry[key]
+        checkNotNull(factory) {
+            "해당하는 인스턴스를 찾을 수 없습니다. $key"
         }
-        containers.add(container)
+        return factory.instance() as T
     }
 
-    fun lockContainers() {
+    private fun lockContainers() {
         isLocked = true
     }
 
     @VisibleForTesting
     fun clearContainersForTest() {
-        containers.clear()
+        instanceRegistry.clear()
         isLocked = false
     }
 }
 
-inline fun startDI(block: Container.() -> Unit) {
-    val container = Container()
-    container.block()
-    Containers.add(container)
-    Containers.lockContainers()
-}

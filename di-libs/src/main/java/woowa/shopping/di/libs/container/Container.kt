@@ -1,37 +1,48 @@
 package woowa.shopping.di.libs.container
 
-import woowa.shopping.di.libs.scope.LifeCycleScope
-import woowa.shopping.di.libs.scope.PrototypeScope
-import woowa.shopping.di.libs.scope.SingletonScope
+import woowa.shopping.di.libs.factory.InstanceFactory
+import woowa.shopping.di.libs.factory.Lifecycle
+import woowa.shopping.di.libs.factory.PrototypeInstanceFactory
+import woowa.shopping.di.libs.factory.SingletonInstanceFactory
+import woowa.shopping.di.libs.qualify.Qualifier
+import woowa.shopping.di.libs.scope.Scope
 import kotlin.reflect.KClass
 
 class Container {
-    val cached = mutableMapOf<KClass<*>, LifeCycleScope<*>>()
 
-    fun <T : Any> get(clazz: KClass<T>): T {
-        val scope = cached[clazz] ?: error("Dependency not found")
-        return scope.instance() as T
+    val instanceRegistry = mutableMapOf<Key, InstanceFactory<*>>()
+
+    inline fun <reified T : Any> single(
+        qualifier: Qualifier? = null,
+        noinline factory: Scope.() -> T
+    ) {
+        val scope = Scope(qualifier, Lifecycle.SINGLETON)
+        instanceRegistry[Key(T::class, qualifier, Lifecycle.SINGLETON)] =
+            SingletonInstanceFactory(
+                qualifier,
+                factory = { scope.factory() }
+            )
     }
 
-    inline fun <reified T : Any> get(): T {
-        return get(T::class)
+    inline fun <reified T : Any> proto(
+        qualifier: Qualifier? = null,
+        noinline factory: Scope.() -> T
+    ) {
+        val scope = Scope(qualifier, Lifecycle.PROTOTYPE)
+        instanceRegistry[Key(T::class, qualifier, Lifecycle.PROTOTYPE)] =
+            PrototypeInstanceFactory(
+                qualifier,
+                factory = { scope.factory() }
+            )
     }
 
-    inline fun <reified T : Any> single(noinline factory: () -> T) {
-        put(SingletonScope(factory))
+    fun contains(clazz: KClass<*>, qualifier: Qualifier? = null): Boolean {
+        return instanceRegistry.containsKey(Key(clazz, qualifier))
     }
 
-    inline fun <reified T : Any> proto(noinline factory: () -> T) {
-        put(PrototypeScope(factory))
-    }
-
-    inline fun <reified T : Any> put(scope: LifeCycleScope<T>) {
-        cached[T::class] = scope
-    }
-}
-
-inline fun container(block: Container.() -> Unit) {
-    val container = Container()
-    container.block()
-    Containers.add(container)
+    data class Key(
+        val clazz: KClass<*>,
+        val qualifier: Qualifier? = null,
+        val lifecycle: Lifecycle = Lifecycle.SINGLETON
+    )
 }
