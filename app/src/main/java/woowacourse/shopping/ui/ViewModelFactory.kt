@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.di.InjectedViewModel
 import woowacourse.shopping.AndroidDiApplication
-import woowacourse.shopping.di.InjectedViewModel
 import kotlin.reflect.full.findAnnotation
 
 class ViewModelFactory :

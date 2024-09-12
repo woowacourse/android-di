@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 interface Module {
     fun provideInstance(dependencyRegistry: DiContainer)

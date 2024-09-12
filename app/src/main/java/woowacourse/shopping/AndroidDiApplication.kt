@@ -1,9 +1,9 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.example.di.DependencyInjector
+import com.example.di.DiContainer
 import woowacourse.shopping.data.local.ShoppingDatabase
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.DiContainer
 import woowacourse.shopping.di.RepositoryModule
 import woowacourse.shopping.di.RoomDBModule
 

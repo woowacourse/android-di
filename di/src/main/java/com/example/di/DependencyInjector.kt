@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import javax.inject.Singleton
 import kotlin.reflect.KClass
