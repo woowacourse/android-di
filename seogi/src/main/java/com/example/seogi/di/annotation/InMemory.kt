@@ -1,4 +1,4 @@
-package com.example.seogi.di
+package com.example.seogi.di.annotation
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
