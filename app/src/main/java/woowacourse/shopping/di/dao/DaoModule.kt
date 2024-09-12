@@ -19,14 +19,14 @@ import kotlin.reflect.jvm.jvmErasure
 class DaoModule private constructor(private val context: Context) :
     Module<DaoModule, DaoDI>,
     DefaultLifecycleObserver {
-        private lateinit var daoMap: List<Pair<String, KFunction<DaoDI>>>
+        private lateinit var daoes: List<Pair<String, KFunction<DaoDI>>>
         private lateinit var daoBinder: DaoBinder
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
             daoBinder = DaoBinder(context)
 
-            daoMap = createRepositories()
+            daoes = createRepositories()
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
@@ -48,7 +48,7 @@ class DaoModule private constructor(private val context: Context) :
 
         override fun getDIInstance(type: KClass<out DaoDI>): DaoDI {
             val kFunction =
-                instance?.daoMap?.find { it.first == type.simpleName }?.second
+                instance?.daoes?.find { it.first == type.simpleName }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
             return kFunction.call(daoBinder)
         }
@@ -58,19 +58,14 @@ class DaoModule private constructor(private val context: Context) :
             qualifier: KClass<out Annotation>,
         ): DaoDI {
             val kFunction =
-                instance?.daoMap?.find {
+                instance?.daoes?.find {
                     it.first == type.simpleName &&
                         it.second.annotations.any { it.annotationClass.isSubclassOf(qualifier) }
                 }?.second
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
-            return kFunction.call(daoBinder) as DaoDI
+            return kFunction.call(daoBinder)
         }
 
-        private fun KFunction<*>.hasQualifierAnnotation(): Boolean {
-            return this.annotations.any { annotation ->
-                annotation.annotationClass.findAnnotation<Qualifier>() != null
-            }
-        }
 
         companion object {
             private var instance: DaoModule? = null
