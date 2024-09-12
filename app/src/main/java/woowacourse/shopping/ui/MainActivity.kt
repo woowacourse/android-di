@@ -12,7 +12,6 @@ import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.ReflectiveViewModelFactory
 
 class MainActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels { ReflectiveViewModelFactory() }
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupView()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
@@ -55,10 +53,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {

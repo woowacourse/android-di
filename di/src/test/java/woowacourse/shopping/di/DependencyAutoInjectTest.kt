@@ -21,7 +21,6 @@ class InjectOwner {
 }
 
 class DependencyAutoInjectTest {
-
     lateinit var fakeDependencyContainer: FakeDependencyContainer
 
     @Before
@@ -34,14 +33,20 @@ class DependencyAutoInjectTest {
     fun `알맞은 인스턴스를 주입한다`() {
         // given
         fakeDependencyContainer.setDependency(
-            ToBeInjected::class, FirstDependency::class, "first"
+            ToBeInjected::class,
+            FirstDependency::class,
+            "first",
         )
+
         fakeDependencyContainer.setDependency(
-            ToBeInjected::class, SecondDependency::class, "second"
+            ToBeInjected::class,
+            SecondDependency::class,
+            "second",
         )
 
         // when
-        val actualInstance = DependencyInjector.createInstanceFromConstructor(InjectOwner::class.java)
+        val actualInstance =
+            DependencyInjector.createInstanceFromConstructor(InjectOwner::class.java)
 
         // then
         assertThat(actualInstance).isInstanceOf(InjectOwner::class.java)

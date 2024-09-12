@@ -19,9 +19,7 @@ object DependencyInjector {
         dependencyContainer = container
     }
 
-    fun <T : Any> createInstanceFromConstructor(
-        modelClass: Class<T>,
-    ): T {
+    fun <T : Any> createInstanceFromConstructor(modelClass: Class<T>): T {
         val kClass: KClass<T> = modelClass.kotlin
         val targetInstance: T
         val primaryConstructor = kClass.primaryConstructor
@@ -64,7 +62,10 @@ object DependencyInjector {
         }.toTypedArray()
     }
 
-    private fun <T : Any> setDependencyOfProperties(kClass: KClass<T>, targetInstance: T) {
+    private fun <T : Any> setDependencyOfProperties(
+        kClass: KClass<T>,
+        targetInstance: T,
+    ) {
         kClass.declaredMemberProperties.forEach { kProperty ->
             if (checkNeedsDependencyInject(kProperty)) {
                 val isAccessible = kProperty.isAccessible

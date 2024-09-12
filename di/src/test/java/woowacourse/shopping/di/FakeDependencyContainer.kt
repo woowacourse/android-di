@@ -10,12 +10,18 @@ class FakeDependencyContainer : DependencyContainer {
     private val cachedInstances: MutableMap<Pair<KClassifier, String>, Any> =
         mutableMapOf()
 
-    override fun <T : Any> getInstance(kClassifier: KClassifier, qualifier: String): T? {
+    override fun <T : Any> getInstance(
+        kClassifier: KClassifier,
+        qualifier: String,
+    ): T? {
         val qualifierKey = qualifier.ifEmpty { "" }
         return cachedInstances[kClassifier to qualifierKey] as T?
     }
 
-    override fun <T : Any> getImplement(kClassifier: KClassifier, qualifier: String): KClass<T>? {
+    override fun <T : Any> getImplement(
+        kClassifier: KClassifier,
+        qualifier: String,
+    ): KClass<T>? {
         val qualifierKey = qualifier.ifEmpty { "" }
         return dependencies[kClassifier to qualifierKey] as KClass<T>?
     }
@@ -29,7 +35,11 @@ class FakeDependencyContainer : DependencyContainer {
         dependencies[kClassifier to qualifierKey] = kClass
     }
 
-    override fun setInstance(kClassifier: KClassifier, instance: Any, qualifier: String) {
+    override fun setInstance(
+        kClassifier: KClassifier,
+        instance: Any,
+        qualifier: String,
+    ) {
         val qualifierKey = qualifier.ifEmpty { "" }
         cachedInstances[kClassifier to qualifierKey] = instance
     }

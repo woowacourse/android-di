@@ -6,7 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.DependencyInjector
 
 class ReflectiveViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return DependencyInjector.createInstanceFromConstructor(modelClass)
     }
 }
