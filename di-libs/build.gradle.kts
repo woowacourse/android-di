@@ -6,12 +6,23 @@ plugins {
 
 android {
     namespace = "woowa.shopping.di.libs"
+    compileSdk = 34
 
+    defaultConfig {
+        minSdk = 26
+    }
     packaging {
         resources {
             excludes += "META-INF/**"
             excludes += "win32-x86*/**"
         }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
