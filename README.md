@@ -24,11 +24,11 @@
 
 - [x] Recursive DI
   - [x] 장바구니 저장을 mutableList가 아닌, dao 객체에 맡긴다
-  - [ ] `CartProductEntity`의 `createdAt`프로퍼티를 이용해, 뷰에 날짜 정보를 추가한다.
+  - [x] `CartProductEntity`의 `createdAt`프로퍼티를 이용해, 뷰에 날짜 정보를 추가한다.
 
 ## 선택 요구사항
-- [ ] 장바구니의 삭제 버튼을 누르면, artRepository::deleteCartProduct의 id에 해당하는 상품이 지워진다.
-- [ ] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+- [ ] 장바구니의 삭제 버튼을 누르면, cartRepository::deleteCartProduct의 id에 해당하는 상품이 지워진다.
+- [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구사항
-- [ ] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
+- [x] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
