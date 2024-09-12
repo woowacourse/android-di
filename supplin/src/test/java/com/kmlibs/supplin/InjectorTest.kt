@@ -1,11 +1,11 @@
 package com.kmlibs.supplin
 
 import android.content.Context
+import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.fixtures.Module1
 import com.kmlibs.supplin.fixtures.Module2
 import io.mockk.mockk
 import org.junit.Test
-import com.google.common.truth.Truth.assertThat
 
 class InjectorTest {
     private lateinit var instanceContainer: InstanceContainer

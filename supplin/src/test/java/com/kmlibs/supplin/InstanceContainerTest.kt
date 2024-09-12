@@ -1,16 +1,15 @@
 package com.kmlibs.supplin
 
 import android.content.Context
+import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.fixtures.Foo
-import com.kmlibs.supplin.fixtures.FooQualifier1
+import com.kmlibs.supplin.fixtures.Foos
 import com.kmlibs.supplin.fixtures.Module1
 import com.kmlibs.supplin.fixtures.Module2
 import io.mockk.mockk
-import kotlin.reflect.full.primaryConstructor
-import com.google.common.truth.Truth.assertThat
-import com.kmlibs.supplin.fixtures.Foos
 import org.junit.Before
 import org.junit.Test
+import kotlin.reflect.full.primaryConstructor
 
 class InstanceContainerTest {
     private lateinit var instanceContainer: InstanceContainer

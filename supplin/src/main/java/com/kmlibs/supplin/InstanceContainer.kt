@@ -12,9 +12,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberFunctions
 
 class InstanceContainer(
     private val applicationContext: Context,
@@ -25,9 +23,12 @@ class InstanceContainer(
             .flatMap { module ->
                 module::class.declaredMemberFunctions
             }.associateBy { function ->
-                QualifiedType(function.returnType, function.annotations.firstOrNull { annotation ->
-                    annotation.annotationClass.hasAnnotation<Qualifier>()
-                }?.annotationClass?.simpleName)
+                QualifiedType(
+                    function.returnType,
+                    function.annotations.firstOrNull { annotation ->
+                        annotation.annotationClass.hasAnnotation<Qualifier>()
+                    }?.annotationClass?.simpleName,
+                )
             }
 
     private val instances: MutableMap<QualifiedType, Any> = mutableMapOf()
@@ -40,9 +41,10 @@ class InstanceContainer(
     }
 
     fun <T : Any> instanceOf(kParameter: KParameter): T {
-        val annotation = kParameter.annotations.firstOrNull { annotation ->
-            annotation::class.hasAnnotation<Qualifier>()
-        }
+        val annotation =
+            kParameter.annotations.firstOrNull { annotation ->
+                annotation::class.hasAnnotation<Qualifier>()
+            }
         return qualifiedInstanceOf(QualifiedType(kParameter.type, annotation?.annotationClass?.simpleName))
     }
 
@@ -51,9 +53,10 @@ class InstanceContainer(
     }
 
     fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
-        val annotation = kCallable.annotations.firstOrNull { annotation ->
-            annotation.annotationClass.hasAnnotation<Qualifier>()
-        }
+        val annotation =
+            kCallable.annotations.firstOrNull { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
         return qualifiedInstanceOf(QualifiedType(kCallable.returnType, annotation?.annotationClass?.simpleName))
     }
 

@@ -1,7 +1,6 @@
 package com.kmlibs.supplin.fixtures
 
 import com.kmlibs.supplin.annotations.Module
-import javax.inject.Qualifier
 
 @Module
 object Module1 {
