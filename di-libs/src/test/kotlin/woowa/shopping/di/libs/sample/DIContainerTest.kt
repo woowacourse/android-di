@@ -75,4 +75,18 @@ class DIContainerTest {
             }
         }
     }
+
+    @Test
+    fun `container 에 추가된 객체는 Lazy하게 생성되기에, 등록 순서가 바뀌어도 상관 없다`() {
+        // given
+        startDI {
+            container {
+                single<Repository> { RepositoryImpl(get()) }
+                single { Service() }
+            }
+        }
+        // then
+        val repository by inject<Repository>()
+        repository shouldNotBe null
+    }
 }
