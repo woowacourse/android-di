@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection
+package com.woowa.di.injection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

@@ -14,8 +14,8 @@ import org.robolectric.annotation.Config
 import woowacourse.shopping.fixture.TestApplication
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.injection.dao.DaoModule
-import woowacourse.shopping.ui.injection.repository.RepositoryModule
+import woowacourse.shopping.di.DaoModule
+import woowacourse.shopping.di.RepositoryModule
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)

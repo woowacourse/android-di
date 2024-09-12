@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection
+package com.woowa.di.injection
 
 import kotlin.reflect.KClass
 

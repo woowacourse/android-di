@@ -4,7 +4,7 @@ import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
-import woowacourse.shopping.ui.injection.DIInjection
+import com.woowa.di.injection.DIInjection
 
 class CartRepositoryImpl(
     @DIInjection

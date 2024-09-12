@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection.dao
+package woowacourse.shopping.di
 
 import android.app.Application
 import android.content.Context
@@ -9,7 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.room.Room
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.ui.injection.Module
+import com.woowa.di.injection.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf

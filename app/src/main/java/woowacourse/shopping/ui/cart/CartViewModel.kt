@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
-import woowacourse.shopping.ui.injection.DIInjection
+import com.woowa.di.injection.DIInjection
 
 class CartViewModel(
     @DIInjection

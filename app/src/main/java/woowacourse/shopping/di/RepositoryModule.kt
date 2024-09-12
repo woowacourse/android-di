@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection.repository
+package woowacourse.shopping.di
 
 import android.app.Application
 import android.content.Context
@@ -7,15 +7,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import woowacourse.shopping.ui.injection.DIModule
-import woowacourse.shopping.ui.injection.Module
+import com.woowa.di.injection.DIModule
+import com.woowa.di.injection.Module
+import woowacourse.shopping.di.repository.RepositoryBinder
+import woowacourse.shopping.di.repository.RepositoryDI
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
 @DIModule
-class RepositoryModule private constructor() : DefaultLifecycleObserver, Module<RepositoryModule, RepositoryDI> {
+class RepositoryModule private constructor() : DefaultLifecycleObserver,
+    Module<RepositoryModule, RepositoryDI> {
     private lateinit var repositoryMap: Map<String, RepositoryDI>
     private lateinit var repositoryBinder: RepositoryBinder
 

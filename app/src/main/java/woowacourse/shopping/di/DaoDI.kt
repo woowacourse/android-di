@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection.dao
+package woowacourse.shopping.di
 
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase

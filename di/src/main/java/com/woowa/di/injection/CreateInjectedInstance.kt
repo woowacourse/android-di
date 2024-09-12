@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui.injection
+package com.woowa.di.injection
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -24,7 +24,7 @@ fun <T : Any> createInjectedInstance(clazz: KClass<out T>): T {
                 val moduleType = moduleTypes.find { paramType.isSubclassOf(it) } as? KClass<out Any>
 
                 val module =
-                    ModuleRegistry.getModuleForType(moduleType as KClass)
+                    ModuleRegistry.getModuleForType(moduleType)
                         ?: error("${paramType.simpleName} 타입의 모듈이 없습니다.")
 
                 val companionInstance = module.companionObjectInstance
