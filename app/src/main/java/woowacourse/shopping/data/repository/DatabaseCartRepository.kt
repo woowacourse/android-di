@@ -9,7 +9,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.local.dao.CartProductDao
 
 class DatabaseCartRepository(
-    @com.example.di.annotation.Inject private val dao: CartProductDao,
+    @Inject private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())

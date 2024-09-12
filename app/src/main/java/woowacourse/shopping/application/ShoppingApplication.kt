@@ -1,10 +1,11 @@
 package woowacourse.shopping.application
 
 import android.app.Application
+import com.example.di.DIInjector
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        com.example.di.DIInjector.injectModule(AppModule(this))
+        DIInjector.injectModule(AppModule(this))
     }
 }

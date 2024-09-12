@@ -11,6 +11,6 @@ class ViewModelFactory : ViewModelProvider.Factory {
         modelClass: KClass<T>,
         extras: CreationExtras,
     ): T {
-        return com.example.di.DIInjector.createInstance(modelClass)
+        return DIInjector.createInstance(modelClass)
     }
 }
