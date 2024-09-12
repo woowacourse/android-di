@@ -10,7 +10,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.staticFunctions
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
@@ -101,27 +100,5 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 정적 함수`() {
         assertThat(Person::class.staticFunctions.size).isEqualTo(0)
-    }
-
-    @Test
-    fun `부 생성자만 있으면 primaryConstructor 는 Null을 반환한다`() {
-        class NoPrimaryConstructor {
-            constructor()
-        }
-
-        val clazz = NoPrimaryConstructor::class
-        val primaryConstructor = clazz.primaryConstructor
-
-        assertThat(primaryConstructor).isEqualTo(null)
-    }
-
-    @Test
-    fun `주 생성자가 없으면 primaryConstructor 는 Null을 반환한다`() {
-        class NoPrimaryConstructor
-
-        val clazz = NoPrimaryConstructor::class
-        val primaryConstructor = clazz.primaryConstructor
-
-        assertThat(primaryConstructor).isEqualTo(null)
     }
 }

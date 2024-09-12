@@ -3,7 +3,7 @@ package woowacourse.shopping
 import android.app.Application
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.DependencyRegistry
+import woowacourse.shopping.di.DiContainer
 import woowacourse.shopping.di.RepositoryModule
 import woowacourse.shopping.di.RoomDBModule
 
@@ -21,8 +21,8 @@ class AndroidDiApplication : Application() {
     private fun initializeDependencies() {
         val roomDBModule = RoomDBModule()
         val repositoryModule = RepositoryModule()
-        DependencyRegistry.initModule(repositoryModule, roomDBModule)
-        injector = DependencyInjector(DependencyRegistry)
+        DiContainer.initModule(repositoryModule, roomDBModule)
+        injector = DependencyInjector(DiContainer)
     }
 
     companion object {

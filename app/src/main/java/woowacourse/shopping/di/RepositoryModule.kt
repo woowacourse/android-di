@@ -6,7 +6,7 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
 class RepositoryModule : Module {
-    override fun provideInstance(registry: DependencyRegistry) {
+    override fun provideInstance(registry: DiContainer) {
         registry.addInstance(
             ProductRepository::class,
             DefaultProductRepository(),

@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
-object DependencyRegistry {
+object DiContainer {
     private val modules = mutableListOf<Module>()
     private val instances = mutableMapOf<KClass<*>, Any>()
 

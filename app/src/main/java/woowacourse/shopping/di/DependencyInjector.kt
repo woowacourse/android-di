@@ -12,7 +12,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class DependencyInjector(private val registry: DependencyRegistry) {
+class DependencyInjector(private val registry: DiContainer) {
     fun inject(classType: KClass<*>): Any {
         val isSingleton = classType.findAnnotation<Singleton>() != null
         return registry.getInstanceOrNull(classType)?.takeIf { isSingleton } ?: createInstance(
