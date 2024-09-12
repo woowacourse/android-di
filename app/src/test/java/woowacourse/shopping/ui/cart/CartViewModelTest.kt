@@ -20,17 +20,19 @@ class CartViewModelTest {
     @get:Rule
     val coroutinesTestRule = CoroutinesTestRule()
 
-    private lateinit var cartRepository: CartRepository
+    private lateinit var cartRepo: CartRepository
     private lateinit var vm: CartViewModel
 
     @Before
     fun setUp() {
-        cartRepository =
+        cartRepo =
             FakeCartRepository(
                 ProductFixture(1),
                 ProductFixture(2),
             )
-        vm = CartViewModel(cartRepository)
+        vm = CartViewModel().apply {
+            cartRepository = cartRepo
+        }
     }
 
     @Test
@@ -49,7 +51,7 @@ class CartViewModelTest {
 
         // then
         assertThat(vm.cartProducts.getOrAwaitValue()).contains(
-            ProductFixture(1),
+            ProductFixture(2),
         )
     }
 }

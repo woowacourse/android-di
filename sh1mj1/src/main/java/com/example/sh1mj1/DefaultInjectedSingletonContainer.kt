@@ -18,11 +18,9 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier,
-    ): Any? {
-        return components.find {
-            clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
-        }?.instance
-    }
+    ): Any? = components.find {
+        clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
+    }?.instance
 }
 
 private const val TAG = "DefaultInjectedSingleto"

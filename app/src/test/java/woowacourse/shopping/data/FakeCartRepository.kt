@@ -14,6 +14,7 @@ class FakeCartRepository(
     override suspend fun allCartProducts(): List<Product> = cartProducts.toList()
 
     override suspend fun deleteCartProduct(id: Long) {
-        cartProducts.removeAt(id.toInt())
+        val product = cartProducts.find { it.id == id }
+        cartProducts.remove(product)
     }
 }
