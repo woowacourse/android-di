@@ -1,4 +1,4 @@
-package woowacourse.shopping.shoppingapp.di
+package com.woowacourse.di
 
 import android.content.Context
 import kotlin.reflect.KClass
@@ -30,7 +30,11 @@ annotation class InMemoryDatabase
 @Qualifier
 annotation class RoomDatabase
 
-class AppModule(private val context: Context, modules: List<KClass<*>>) {
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Module
+
+class DiModule(private val context: Context, modules: List<KClass<*>>) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     init {
@@ -112,16 +116,16 @@ class AppModule(private val context: Context, modules: List<KClass<*>>) {
     }
 
     companion object {
-        private var instance: AppModule? = null
+        private var instance: DiModule? = null
 
         fun setInstance(
             context: Context,
             modules: List<KClass<*>>,
         ) {
-            instance = AppModule(context = context, modules = modules)
+            instance = DiModule(context = context, modules = modules)
         }
 
-        fun getInstance(): AppModule {
+        fun getInstance(): DiModule {
             return requireNotNull(instance) { "AppModule 인스턴스가 초기화되지 않았습니다" }
         }
     }
