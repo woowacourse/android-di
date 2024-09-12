@@ -16,7 +16,7 @@ class Container {
         qualifier: Qualifier? = null,
         noinline factory: Scope.() -> T
     ) {
-        val scope = Scope(qualifier, Lifecycle.SINGLETON)
+        val scope = Scope(lifecycle = Lifecycle.SINGLETON)
         instanceRegistry[Key(T::class, qualifier, Lifecycle.SINGLETON)] =
             SingletonInstanceFactory(
                 qualifier,
@@ -28,7 +28,7 @@ class Container {
         qualifier: Qualifier? = null,
         noinline factory: Scope.() -> T
     ) {
-        val scope = Scope(qualifier, Lifecycle.PROTOTYPE)
+        val scope = Scope(lifecycle = Lifecycle.PROTOTYPE)
         instanceRegistry[Key(T::class, qualifier, Lifecycle.PROTOTYPE)] =
             PrototypeInstanceFactory(
                 qualifier,

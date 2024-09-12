@@ -32,6 +32,10 @@ java {
 }
 
 dependencies {
+    // android //TODO : di-andorid-libs 모듈 분리해야할듯
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.activity:activity-ktx:1.9.1")
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
     // Coroutines
