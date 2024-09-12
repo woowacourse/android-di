@@ -21,7 +21,6 @@ class MainViewModel: ViewModel() {
     @QDefaultCartRepository
     @Inject
     lateinit var cartRepository: CartRepository
-
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 

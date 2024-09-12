@@ -15,13 +15,12 @@ import woowacourse.shopping.R
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.injectViewModels
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-
     private val viewModel: MainViewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +30,7 @@ class MainActivity : AppCompatActivity() {
         setupBinding()
         setupToolbar()
         setupView()
-
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
         menu?.findItem(R.id.cart)?.actionView?.let { view ->
