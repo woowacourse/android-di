@@ -3,6 +3,7 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -19,9 +20,16 @@ fun <T : Any> inject(
             .filter { it.hasAnnotation<Inject>() }
             .associateWith { kParameter ->
                 val paramsTypes = kParameter.type.jvmErasure
-                dependencies.getInstance(paramsTypes) ?: inject(paramsTypes, dependencies)
+                if (kParameter.hasAnnotation<Qualifier>()) {
+                    val type = requireNotNull(kParameter.findAnnotation<Qualifier>()?.type)
+                    dependencies.getInstance(paramsTypes, type) ?: inject(paramsTypes, dependencies)
+                } else {
+                    dependencies.getInstance(paramsTypes) ?: inject(paramsTypes, dependencies)
+                }
             }
 
+    println("constructor's parameter:  ${constructor.parameters}")
+    println("injected : ${parameters.entries}")
     return constructor.callBy(parameters).also { injectFields(it, dependencies) }
 }
 

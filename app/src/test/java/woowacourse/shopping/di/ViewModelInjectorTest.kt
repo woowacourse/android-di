@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.ui.ViewModelFactory
 import woowacourse.shopping.util.injectedViewModels
 
 class FakeDataSource1
@@ -23,13 +24,10 @@ class FakeRepositoryImpl(
     val fakeDataSourceImplWithNoAutoInject: FakeDataSource2? = null,
 ) : FakeRepository
 
-class FakeRepositoryImplNotInjected : FakeRepository
-
 class FakeViewModel(
     @Inject val fakeRepository: FakeRepository,
 ) : ViewModel() {
-    @Inject
-    lateinit var fieldFakeRepository: FakeRepository
+    @Inject lateinit var fieldFakeRepository: FakeRepository
 }
 
 private val testModule =
@@ -63,24 +61,20 @@ class ViewModelInjectorTest {
     fun `뷰모델 생성자 파라미터에 올바른 인스턴스를 주입한다`() {
         val actual = activity.viewModel.fakeRepository
         val expected = FakeRepositoryImpl::class.java
-        val incorrect = FakeRepositoryImplNotInjected::class.java
 
         assertThat(actual).isInstanceOf(expected)
-        assertThat(actual).isNotInstanceOf(incorrect)
     }
 
     @Test
     fun `뷰모델 필드에 올바른 인스턴스를 주입한다`() {
         val actual = activity.viewModel.fieldFakeRepository
         val expected = FakeRepositoryImpl::class.java
-        val incorrect = FakeRepositoryImplNotInjected::class.java
 
         assertThat(actual).isInstanceOf(expected)
-        assertThat(actual).isNotInstanceOf(incorrect)
     }
 
     @Test
-    fun `Annotation이 붙여지지 않은 요소에는 주입하지 않는다`() {
+    fun `Inject Annotation이 붙여지지 않은 요소에는 주입하지 않는다`() {
         val repository = (activity.viewModel.fakeRepository as FakeRepositoryImpl)
         val actual = repository.fakeDataSourceImplWithNoAutoInject
         assertThat(actual).isNull()

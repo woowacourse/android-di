@@ -3,7 +3,8 @@ package woowacourse.shopping
 import android.app.Application
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.DataBaseCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
@@ -21,7 +22,8 @@ class ShoppingApplication : Application() {
         repositoryModule =
             Module().apply {
                 addDeferredTypes(
-                    CartRepository::class to CartRepositoryImpl::class,
+                    CartRepository::class to DataBaseCartRepository::class,
+                    CartRepository::class to InMemoryCartRepository::class,
                     ProductRepository::class to ProductRepositoryImpl::class,
                 )
 

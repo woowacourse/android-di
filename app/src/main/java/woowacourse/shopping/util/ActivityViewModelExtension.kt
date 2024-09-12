@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.ui.ViewModelFactory
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(

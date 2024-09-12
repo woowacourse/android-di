@@ -1,17 +1,18 @@
 package woowacourse.shopping.ui.cart
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.di.DependencyType
 import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel(
-    @Inject private val cartRepository: CartRepository,
+    @Qualifier(DependencyType.DATABASE) @Inject private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
@@ -28,7 +29,6 @@ class CartViewModel(
 
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
-            Log.d("yenny", "deleteId: $id")
             cartRepository.deleteCartProduct(id)
             _onCartProductDeleted.value = true
         }
