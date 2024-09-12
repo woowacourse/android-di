@@ -8,11 +8,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.woowa.di.injection.Module
-import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
@@ -65,7 +63,6 @@ class DaoModule private constructor(private val context: Context) :
                     ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
             return kFunction.call(daoBinder)
         }
-
 
         companion object {
             private var instance: DaoModule? = null

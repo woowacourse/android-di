@@ -6,16 +6,15 @@ import com.woowa.di.fixture.FakeDI
 import com.woowa.di.fixture.FakeModule
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-
 
 class InjectedViewModelFactoryKtTest {
     @Before
     fun setUp() {
         ModuleRegistry.registerModule(
-            FakeDI::class, FakeModule::class
+            FakeDI::class,
+            FakeModule::class,
         )
     }
 
@@ -32,5 +31,4 @@ class InjectedViewModelFactoryKtTest {
             createInjectedInstance(DIFailTest::class)
         }
     }
-
 }

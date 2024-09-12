@@ -4,9 +4,9 @@ import com.woowa.di.injection.DIInjection
 
 class DITest(
     @DIInjection
-    private val test: Test
+    private val test: Test,
 )
 
 class DIFailTest(
-    private val test:Test
+    private val test: Test,
 )
