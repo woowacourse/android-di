@@ -3,9 +3,10 @@ package woowacourse.shopping.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import woowacourse.shopping.ui.injection.dao.DaoDI
 
 @Dao
-interface CartProductDao {
+interface CartProductDao : DaoDI {
     @Query("SELECT * FROM cart_products")
     suspend fun getAll(): List<CartProductEntity>
 

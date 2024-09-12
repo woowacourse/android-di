@@ -4,10 +4,10 @@ import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
+import woowacourse.shopping.ui.injection.createInjectedInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
 interface RepositoryDI
@@ -15,7 +15,7 @@ interface RepositoryDI
 class RepositoryBinder {
     init {
         require(
-            validateReturnTypes()
+            validateReturnTypes(),
         ) {
             "모든 함수의 반환 타입은 RepositoryDI여야 합니다."
         }
@@ -23,7 +23,7 @@ class RepositoryBinder {
 
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
-    fun provideCartRepository(): CartRepository = CartRepositoryImpl()
+    fun provideCartRepository(): CartRepository = createInjectedInstance(CartRepositoryImpl::class)
 
     private fun validateReturnTypes(): Boolean {
         return this::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC }
@@ -31,6 +31,5 @@ class RepositoryBinder {
                 val returnTypeClassifier = function.returnType.classifier as? KClass<*>
                 returnTypeClassifier != null && returnTypeClassifier.isSubclassOf(RepositoryDI::class)
             }
-
     }
 }
