@@ -5,15 +5,24 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import org.aprilgom.androiddi.DIContainer.modules
+import org.aprilgom.androiddi.diContainer
+import org.aprilgom.androiddi.module
+import org.aprilgom.androiddi.modules
+import org.aprilgom.androiddi.single
+import org.aprilgom.androiddi.viewModel
 import woowacourse.shopping.R
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.injectViewModels
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.CartViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by injectViewModels()
+
+    private val viewModel: MainViewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         setupBinding()
         setupToolbar()
         setupView()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
