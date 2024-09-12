@@ -1,7 +1,9 @@
-package com.woowacourse.di
+package olive.di
 
-import com.woowacourse.di.annotation.Inject
-import com.woowacourse.di.annotation.Qualifier
+import android.app.Application
+import android.util.Log
+import olive.di.annotation.Inject
+import olive.di.annotation.Qualifier
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -11,12 +13,17 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
-class DIContainer(diModules: List<KClass<out DIModule>>, ) {
+class DIContainer(
+    applicationInstance: Any,
+    applicationType: KClass<out Application>,
+    diModules: List<KClass<out DIModule>>,
+) {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val namedInstances: MutableMap<KClass<*>, MutableList<Pair<KClass<out Annotation>, Any>>> =
         mutableMapOf()
 
     init {
+        instances[applicationType] = applicationInstance
         diModules.filter { !it.isAbstract }.forEach { it.injectModule() }
         diModules.filter { it.isAbstract }.forEach { it.injectAbstractModule() }
     }
@@ -74,7 +81,10 @@ class DIContainer(diModules: List<KClass<out DIModule>>, ) {
         return instances[classType] as? T ?: createSingleton(classType)
     }
 
-    private fun <T : Any> createSingleton(instanceType: KClass<T>, cacheType: KClass<*> = instanceType): T {
+    private fun <T : Any> createSingleton(
+        instanceType: KClass<T>,
+        cacheType: KClass<*> = instanceType
+    ): T {
         return create(instanceType).apply {
             putSingletonInstance(cacheType)
         }
@@ -92,7 +102,8 @@ class DIContainer(diModules: List<KClass<out DIModule>>, ) {
     private fun argumentInstance(parameter: KParameter): Any {
         val parameterType = parameter.type.classifier as KClass<*>
         if (parameter.annotations.isQualifierAnnotation()) {
-            val nameAnnotation: KClass<out Annotation> = parameter.annotations.qualifierNameAnnotation()
+            val nameAnnotation: KClass<out Annotation> =
+                parameter.annotations.qualifierNameAnnotation()
             val instance = namedInstances[parameterType]?.firstOrNull { it.first == nameAnnotation }
             return instance
                 ?: throw IllegalArgumentException("${nameAnnotation.simpleName}로 지정된 인스턴스가 존재하지 않습니다.")
@@ -101,6 +112,7 @@ class DIContainer(diModules: List<KClass<out DIModule>>, ) {
     }
 
     private fun Any.putSingletonInstance(type: KClass<*>) {
+        Log.e("TEST","putSingletonInstance ${type.simpleName}" )
         if (instances.containsKey(type)) {
             throw IllegalArgumentException("이미 해당 클래스의 인스턴스가 존재합니다.")
         }
@@ -119,8 +131,9 @@ class DIContainer(diModules: List<KClass<out DIModule>>, ) {
             val type = p.returnType.classifier as KClass<*>
             if (p.annotations.isQualifierAnnotation()) {
                 val nameAnnotation: KClass<out Annotation> = p.annotations.qualifierNameAnnotation()
-                val instance = namedInstances[type]?.firstOrNull { it.first == nameAnnotation }?.second
-                    ?: throw IllegalArgumentException("${nameAnnotation.simpleName}로 지정된 인스턴스가 존재하지 않습니다.")
+                val instance =
+                    namedInstances[type]?.firstOrNull { it.first == nameAnnotation }?.second
+                        ?: throw IllegalArgumentException("${nameAnnotation.simpleName}로 지정된 인스턴스가 존재하지 않습니다.")
                 property.setter.call(this, instance)
                 return@forEach
             }

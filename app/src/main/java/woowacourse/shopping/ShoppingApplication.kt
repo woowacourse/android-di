@@ -2,13 +2,12 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
-import com.woowacourse.di.DIContainer
-import com.woowacourse.di.DIModule
+import olive.di.DIContainer
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.module.DaoDIModule
 import woowacourse.shopping.module.RepositoryDIModule
 
-class ShoppingApplication : Application(), DIModule {
+class ShoppingApplication : Application() {
     val shoppingDatabase: ShoppingDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -16,8 +15,12 @@ class ShoppingApplication : Application(), DIModule {
             "shopping-database"
         ).build()
     }
-    private val diModules = listOf(this::class, DaoDIModule::class, RepositoryDIModule::class)
-    val diContainer: DIContainer by lazy { DIContainer(diModules) }
-
-    fun bindApplication(): ShoppingApplication = this
+    private val diModules = listOf(DaoDIModule::class, RepositoryDIModule::class)
+    val diContainer: DIContainer by lazy {
+        DIContainer(
+            this,
+            ShoppingApplication::class,
+            diModules,
+        )
+    }
 }

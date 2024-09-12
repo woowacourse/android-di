@@ -1,4 +1,4 @@
-package com.woowacourse.di.annotation
+package olive.di.annotation
 
 @Target(AnnotationTarget.CLASS)
 annotation class Qualifier

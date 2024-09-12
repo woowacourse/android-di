@@ -1,6 +1,6 @@
 package woowacourse.shopping.module
 
-import com.woowacourse.di.DIModule
+import olive.di.DIModule
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 

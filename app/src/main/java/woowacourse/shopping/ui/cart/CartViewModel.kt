@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import olive.di.annotation.Inject
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.module.RoomCart
-import woowacourse.shopping.module.annotation.Inject
 import woowacourse.shopping.model.CartRepository
 
 class CartViewModel : ViewModel() {

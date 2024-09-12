@@ -1,12 +1,12 @@
 package woowacourse.shopping.module
 
-import com.woowacourse.di.DIModule
+import olive.di.DIModule
+import olive.di.annotation.Qualifier
 import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
-import javax.inject.Qualifier
 
 @Qualifier
 annotation class InMemoryCart
