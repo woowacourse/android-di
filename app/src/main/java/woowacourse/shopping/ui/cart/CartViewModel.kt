@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woowa.di.injection.DIInjection
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
-import com.woowa.di.injection.DIInjection
 
 class CartViewModel(
     @DIInjection

@@ -13,17 +13,16 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import woowacourse.shopping.di.dao.DaoDI
-import woowacourse.shopping.fixture.TestApplication
-import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.di.dao.DaoModule
 import woowacourse.shopping.di.repository.RepositoryDI
 import woowacourse.shopping.di.repository.RepositoryModule
+import woowacourse.shopping.fixture.TestApplication
+import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
 class CartActivityTest {
-
     private lateinit var activity: CartActivity
 
     @get:Rule
@@ -34,7 +33,8 @@ class CartActivityTest {
         val controller = Robolectric.buildActivity(CartActivity::class.java)
         ModuleRegistry.registerModule(RepositoryDI::class, RepositoryModule::class)
         ModuleRegistry.registerModule(
-            DaoDI::class, DaoModule::class
+            DaoDI::class,
+            DaoModule::class,
         )
         if (DaoModule.getInstanceOrNull() == null) {
             DaoModule.initLifeCycle(controller.get())

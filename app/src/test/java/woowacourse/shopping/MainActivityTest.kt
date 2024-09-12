@@ -13,12 +13,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import woowacourse.shopping.di.dao.DaoDI
-import woowacourse.shopping.fixture.TestApplication
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.di.dao.DaoModule
 import woowacourse.shopping.di.repository.RepositoryDI
 import woowacourse.shopping.di.repository.RepositoryModule
+import woowacourse.shopping.fixture.TestApplication
+import woowacourse.shopping.ui.MainActivity
+import woowacourse.shopping.ui.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
@@ -33,7 +33,8 @@ class MainActivityTest {
         val controller = Robolectric.buildActivity(MainActivity::class.java)
         ModuleRegistry.registerModule(RepositoryDI::class, RepositoryModule::class)
         ModuleRegistry.registerModule(
-            DaoDI::class, DaoModule::class
+            DaoDI::class,
+            DaoModule::class,
         )
         if (DaoModule.getInstanceOrNull() == null) {
             DaoModule.initLifeCycle(controller.get())

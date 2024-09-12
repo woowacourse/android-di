@@ -1,7 +1,5 @@
 package woowacourse.shopping.model
 
-import java.time.LocalDateTime
-
 class Product(
     val name: String,
     val price: Int,

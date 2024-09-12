@@ -1,10 +1,10 @@
 package woowacourse.shopping.di.repository
 
+import com.woowa.di.injection.createInjectedInstance
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
-import com.woowa.di.injection.createInjectedInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions

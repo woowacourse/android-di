@@ -12,7 +12,7 @@ object ModuleRegistry {
 
     fun <T : Any, type : Any> registerModule(
         key: KClass<out type>,
-        module: KClass<out Module<T, type>>
+        module: KClass<out Module<T, type>>,
     ) {
         moduleMap[key] = module
     }
