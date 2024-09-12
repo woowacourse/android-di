@@ -34,9 +34,6 @@ object DependencyContainer {
         } ?: throw IllegalArgumentException("Unknown Instance")
     }
 
-
-    // Reflection을 사용하여 Inject 어노테이션이 붙은 프로퍼티에 의존성 주입
-    // instance가 KClass인지 체크를 해야하나?
     fun <T : Any> injectProperty(instance: T) {
         instance::class.declaredMemberProperties.forEach { property ->
             if (property.hasAnnotation<Inject>() && property is KMutableProperty<*>) {
