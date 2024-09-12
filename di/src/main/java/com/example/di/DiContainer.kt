@@ -2,7 +2,7 @@ package com.example.di
 
 import kotlin.reflect.KClass
 
-object DiContainer {
+class DiContainer {
     private val modules = mutableListOf<Module>()
     private val instances = mutableMapOf<KClass<*>, Any>()
 

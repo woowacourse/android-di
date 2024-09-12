@@ -21,8 +21,9 @@ class AndroidDiApplication : Application() {
     private fun initializeDependencies() {
         val roomDBModule = RoomDBModule()
         val repositoryModule = RepositoryModule()
-        DiContainer.initModule(repositoryModule, roomDBModule)
-        injector = DependencyInjector(DiContainer)
+        val diContainer = DiContainer()
+        diContainer.initModule(repositoryModule, roomDBModule)
+        injector = DependencyInjector(diContainer)
     }
 
     companion object {
