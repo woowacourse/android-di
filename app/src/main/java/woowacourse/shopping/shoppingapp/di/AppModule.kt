@@ -1,11 +1,36 @@
 package woowacourse.shopping.shoppingapp.di
 
-import androidx.lifecycle.SavedStateHandle
+import android.content.Context
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-class AppModule(modules: List<KClass<*>>) {
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Inject
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ApplicationContext
+
+@Target(
+    AnnotationTarget.FIELD,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.CLASS,
+)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Qualifier
+
+@Qualifier
+annotation class InMemoryDatabase
+
+@Qualifier
+annotation class RoomDatabase
+
+class AppModule(private val context: Context, modules: List<KClass<*>>) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     init {
@@ -14,21 +39,30 @@ class AppModule(modules: List<KClass<*>>) {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> resolve(
-        kClass: KClass<T>,
-        savedStateHandle: SavedStateHandle? = null,
-    ): T {
-        return instances[kClass] as? T ?: createInstance(kClass, savedStateHandle)
-    }
-
     private fun initInstances(module: KClass<*>) {
         val provider = createInstance(module)
         val functions = module.declaredFunctions
 
         functions.forEach { function ->
             val returnType = function.returnType.jvmErasure
-            val instance = function.call(provider)
+
+            val instance =
+                when {
+                    function.parameters.isEmpty() -> function.call(provider)
+                    else -> {
+                        val params =
+                            function.parameters.drop(1).map { param ->
+                                val paramType = param.type.jvmErasure
+                                if (param.findAnnotation<ApplicationContext>() != null) {
+                                    context
+                                } else {
+                                    instances[paramType]
+                                        ?: throw IllegalArgumentException("의존성 부족: ${paramType.simpleName}")
+                                }
+                            }.toTypedArray()
+                        function.call(provider, *params)
+                    }
+                }
             instances[returnType] = instance
                 ?: throw IllegalArgumentException("인스턴스를 생성하지 못했습니다: ${returnType.simpleName}")
         }
@@ -41,8 +75,8 @@ class AppModule(modules: List<KClass<*>>) {
 
         val params =
             constructor.parameters.map { parameter ->
-                instances[parameter.type.jvmErasure]
-                    ?: throw IllegalArgumentException("필요한 인스턴스가 없습니다: ${parameter.type.jvmErasure.simpleName}")
+                val paramClass = parameter.type.jvmErasure
+                instances[paramClass] ?: paramClass.instance()
             }.toTypedArray()
 
         val instance = constructor.call(*params)
@@ -50,19 +84,41 @@ class AppModule(modules: List<KClass<*>>) {
         return instance
     }
 
-    private fun <T : Any> createInstance(
-        kClass: KClass<T>,
-        savedStateHandle: SavedStateHandle? = null,
-    ): T {
-        savedStateHandle?.let { instances[SavedStateHandle::class] = it }
-        return createInstance(kClass)
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> resolve(kClass: KClass<T>): T {
+        return instances[kClass] as? T ?: createInjectInstance(kClass)
+    }
+
+    fun <T : Any> createInjectInstance(kClass: KClass<T>): T {
+        val constructor =
+            kClass.primaryConstructor
+                ?: throw IllegalArgumentException("${kClass.simpleName} 클래스에는 사용할 수 있는 생성자가 없습니다")
+
+        val params =
+            constructor.parameters.map { parameter ->
+                val paramClass = parameter.type.jvmErasure
+                instances[paramClass] ?: paramClass.instance()
+            }.toTypedArray()
+
+        val instance = constructor.call(*params)
+        instances[kClass] = instance
+        return instance
+    }
+
+    private fun <T : Any> KClass<T>.instance(): T {
+        val instance = this.primaryConstructor?.call() ?: this.constructors.first().call()
+        instances[this] = instance
+        return instance
     }
 
     companion object {
         private var instance: AppModule? = null
 
-        fun setInstance(modules: List<KClass<*>>) {
-            instance = AppModule(modules)
+        fun setInstance(
+            context: Context,
+            modules: List<KClass<*>>,
+        ) {
+            instance = AppModule(context = context, modules = modules)
         }
 
         fun getInstance(): AppModule {
