@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import woowacourse.shopping.ui.util.callMethodWithAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -47,11 +49,25 @@ object AutoDIManager {
     inline fun <reified T : Any> createAutoDIInstance(): T {
         val clazz = T::class
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
-        val args =
-            constructor.parameters.associateWith { parameter ->
-                dependencies[parameter.type.jvmErasure]
+
+        val args: MutableMap<KParameter, Any?> = mutableMapOf()
+        for (kParameter in constructor.parameters) {
+            if (kParameter.annotations.isNotEmpty()) {
+                val annotation = kParameter.annotations.first()
+                fetchAnnotationParamsValue(args, kParameter, annotation)
+                continue
             }
+            args[kParameter] = dependencies[kParameter.type.jvmErasure]
+        }
         val instance = constructor.callBy(args)
         return injectField<T>(instance)
+    }
+
+    inline fun <reified A : Annotation> fetchAnnotationParamsValue(
+        args: MutableMap<KParameter, Any?>,
+        kParameter: KParameter,
+        annotation: A,
+    ) {
+        args[kParameter] = callMethodWithAnnotation<A>()
     }
 }

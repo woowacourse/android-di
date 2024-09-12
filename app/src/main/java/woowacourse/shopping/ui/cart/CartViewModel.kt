@@ -6,19 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.FieldInject
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.util.SharedCartRepository
 
-class CartViewModel : ViewModel() {
+class CartViewModel (
+    @SharedCartRepository var cartRepository: CartRepository,
+) : ViewModel() {
     private val _cartProducts: MutableLiveData<MutableList<Product>> =
         MutableLiveData(mutableListOf())
     val cartProducts: LiveData<MutableList<Product>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
-
-    @FieldInject
-    private lateinit var cartRepository: CartRepository
 
     fun getAllCartProducts() {
         viewModelScope.launch {
