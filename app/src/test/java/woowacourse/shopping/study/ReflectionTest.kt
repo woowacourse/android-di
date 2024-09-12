@@ -15,7 +15,9 @@ import kotlin.reflect.full.superclasses
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
+
     private fun fullName() {}
+
     private fun Int.isAdult() {}
 
     companion object {

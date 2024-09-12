@@ -2,9 +2,9 @@ package woowacourse.shopping.module
 
 import olive.di.DIModule
 import olive.di.annotation.Qualifier
-import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 

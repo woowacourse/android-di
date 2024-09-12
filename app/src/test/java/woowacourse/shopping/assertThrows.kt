@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
-import kotlin.reflect.KClass
 import org.junit.Assert.fail
+import kotlin.reflect.KClass
 
 inline fun <reified T : Throwable> assertThrows(block: () -> Unit) {
     val expectedClass: KClass<T> = T::class

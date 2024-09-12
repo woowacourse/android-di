@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import olive.di.annotation.Inject
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.module.RoomCart
 import woowacourse.shopping.model.CartRepository
+import woowacourse.shopping.module.RoomCart
 
 class CartViewModel : ViewModel() {
     @Inject

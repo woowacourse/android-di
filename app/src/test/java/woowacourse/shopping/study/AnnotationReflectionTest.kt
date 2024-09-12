@@ -15,7 +15,9 @@ annotation class ClassOnly
 
 @All
 @ClassOnly
-class Pizza(@PropertyOnly val topping: String)
+class Pizza(
+    @PropertyOnly val topping: String,
+)
 
 @Retention(AnnotationRetention.SOURCE)
 annotation class Source

@@ -31,9 +31,10 @@ class DIContainer(
     private fun KClass<out DIModule>.injectAbstractModule() {
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
-            val instanceType = function.parameters
-                .map { it.type.classifier as KClass<*> }
-                .first { it != this }
+            val instanceType =
+                function.parameters
+                    .map { it.type.classifier as KClass<*> }
+                    .first { it != this }
             val cacheType = function.returnType.classifier as KClass<*>
 
             if (function.annotations.isQualifierAnnotation()) {
@@ -53,9 +54,10 @@ class DIContainer(
     }
 
     private fun List<Annotation>.qualifierNameAnnotation(): KClass<out Annotation> {
-        val nameAnnotation = first { functionAnnotation ->
-            functionAnnotation.annotationClass.annotations.any { it.annotationClass == Qualifier::class }
-        }
+        val nameAnnotation =
+            first { functionAnnotation ->
+                functionAnnotation.annotationClass.annotations.any { it.annotationClass == Qualifier::class }
+            }
         return nameAnnotation.annotationClass
     }
 
@@ -63,9 +65,10 @@ class DIContainer(
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val type = function.returnType.classifier as KClass<*>
-            val parameters = function.parameters
-                .map { it.type.classifier as KClass<*> }
-                .filter { this != it }
+            val parameters =
+                function.parameters
+                    .map { it.type.classifier as KClass<*> }
+                    .filter { this != it }
             val objectInstance = createSingleton(this)
             val arguments = parameters.map { singletonInstance(it) }
             val instance = function.call(objectInstance, *arguments.toTypedArray())
@@ -83,7 +86,7 @@ class DIContainer(
 
     private fun <T : Any> createSingleton(
         instanceType: KClass<T>,
-        cacheType: KClass<*> = instanceType
+        cacheType: KClass<*> = instanceType,
     ): T {
         return create(instanceType).apply {
             putSingletonInstance(cacheType)
@@ -112,7 +115,7 @@ class DIContainer(
     }
 
     private fun Any.putSingletonInstance(type: KClass<*>) {
-        Log.e("TEST","putSingletonInstance ${type.simpleName}" )
+        Log.e("TEST", "putSingletonInstance ${type.simpleName}")
         if (instances.containsKey(type)) {
             throw IllegalArgumentException("이미 해당 클래스의 인스턴스가 존재합니다.")
         }

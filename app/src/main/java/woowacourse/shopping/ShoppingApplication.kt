@@ -12,7 +12,7 @@ class ShoppingApplication : Application() {
         Room.databaseBuilder(
             applicationContext,
             ShoppingDatabase::class.java,
-            "shopping-database"
+            "shopping-database",
         ).build()
     }
     private val diModules = listOf(DaoDIModule::class, RepositoryDIModule::class)
