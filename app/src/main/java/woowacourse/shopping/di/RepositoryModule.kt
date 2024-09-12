@@ -14,15 +14,15 @@ object RepositoryModule {
 
     private fun bindCartRepository() {
         DiSingletonComponent.bind(
-            CartRepository::class.java,
-            CartRepositoryImpl(),
+            CartRepository::class,
+            CartRepositoryImpl::class,
         )
     }
 
     private fun bindProductRepository() {
         DiSingletonComponent.bind(
-            ProductRepository::class.java,
-            ProductRepositoryImpl(),
+            ProductRepository::class,
+            ProductRepositoryImpl::class,
         )
     }
 }
