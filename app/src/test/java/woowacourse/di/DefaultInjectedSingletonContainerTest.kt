@@ -1,13 +1,13 @@
 package woowacourse.di
 
+import com.example.sh1mj1.DefaultInjectedSingletonContainer
+import com.example.sh1mj1.InjectedComponent
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.DefaultInjectedSingletonContainer
-import woowacourse.shopping.di.InjectedComponent
 
 class DefaultInjectedSingletonContainerTest {
     @Test

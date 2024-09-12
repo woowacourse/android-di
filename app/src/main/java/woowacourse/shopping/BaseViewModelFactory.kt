@@ -2,8 +2,8 @@ package woowacourse.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.DependencyInjector
+import com.example.sh1mj1.AppContainer
+import com.example.sh1mj1.DependencyInjector
 
 class BaseViewModelFactory(
     private val appContainer: AppContainer,

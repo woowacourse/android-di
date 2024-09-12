@@ -1,6 +1,5 @@
-package woowacourse.shopping.di
+package com.example.sh1mj1
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.hasAnnotation
@@ -11,7 +10,6 @@ import kotlin.reflect.jvm.isAccessible
 class DependencyInjector(
     private val appContainer: AppContainer,
 ) {
-    // ViewModel 인스턴스 생성 및 주입
     fun <T : Any> createInstance(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
 
@@ -32,9 +30,7 @@ class DependencyInjector(
             field.isAccessible = true // private 필드에 접근할 수 있도록 설정
 
             val qualifier =
-                field.annotations.filterIsInstance<Qualifier>().firstOrNull().also {
-                    Log.d(TAG, "qualifier $it")
-                }
+                field.annotations.filterIsInstance<Qualifier>().firstOrNull()
 
             val dependency =
                 if (qualifier != null) {
@@ -83,5 +79,3 @@ class DependencyInjector(
         }
     }
 }
-
-private const val TAG = "DependencyInjector"

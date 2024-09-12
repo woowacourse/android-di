@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.sh1mj1
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject

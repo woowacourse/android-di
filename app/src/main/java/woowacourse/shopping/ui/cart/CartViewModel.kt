@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.sh1mj1.Inject
+import com.example.sh1mj1.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.BaseViewModelFactory
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.Inject
-import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.model.Product
 
-class CartViewModel() : ViewModel() {
+class CartViewModel : ViewModel() {
     @Inject
     @Qualifier("RoomDao")
     lateinit var cartRepository: CartRepository

@@ -1,17 +1,17 @@
 package woowacourse.shopping
 
+import com.example.sh1mj1.AppContainer
+import com.example.sh1mj1.InjectedActivityContainer
+import com.example.sh1mj1.InjectedComponent.InjectedSingletonComponent
+import com.example.sh1mj1.InjectedSingletonContainer
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.FakeInjectedActivityContainer
 import woowacourse.shopping.di.FakeInjectedSingletonContainer
-import woowacourse.shopping.di.InjectedActivityContainer
-import woowacourse.shopping.di.InjectedComponent
-import woowacourse.shopping.di.InjectedSingletonContainer
 import woowacourse.shopping.ui.MainViewModel
 
 class BaseViewModelFactoryTest {
@@ -26,11 +26,11 @@ class BaseViewModelFactoryTest {
             FakeInjectedSingletonContainer(
                 components =
                     mutableListOf(
-                        InjectedComponent.InjectedSingletonComponent(
+                        InjectedSingletonComponent(
                             ProductRepository::class,
                             InMemoryProductRepository(),
                         ),
-                        InjectedComponent.InjectedSingletonComponent(
+                        InjectedSingletonComponent(
                             CartRepository::class,
                             FakeCartRepository(),
                         ),
