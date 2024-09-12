@@ -5,77 +5,19 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import kotlin.reflect.KClass
 import io.mockk.mockk
-import olive.di.annotation.Inject
-import olive.di.annotation.Qualifier
-
-// create test
-class Foo
-
-// module test
-interface Parent
-
-class Child : Parent
-
-abstract class AbstractTestModule : DIModule {
-    abstract fun bindChild(child: Child): Parent
-}
-
-class TestModule : DIModule {
-    fun bindChild(): Child = Child()
-}
-
-// recursive DI test
-class Sandwich(olive: Olive)
-
-class Olive
-
-// qualifier test
-@Qualifier
-annotation class Child1
-
-@Qualifier
-annotation class Child2
-
-@Child1
-class ChildImpl1 : Parent
-
-@Child2
-class ChildImpl2 : Parent
-
-abstract class QualifierTestModule : DIModule {
-    @Child1
-    abstract fun bindChild1(child1: ChildImpl1): Parent
-
-    @Child2
-    abstract fun bindChild2(child2: ChildImpl2): Parent
-}
-
-class QualifierTest1 {
-    @Child1
-    @Inject
-    lateinit var parent: Parent
-}
-
-class QualifierTest2 {
-    @Child2
-    @Inject
-    lateinit var parent: Parent
-}
-
-// field
-class FieldInjectTest {
-    @Inject
-    lateinit var injectFoo: Foo
-    lateinit var notInjectFoo: Foo
-
-    fun isInitializedInjectFoo(): Boolean {
-        return this::injectFoo.isInitialized
-    }
-
-    fun isInitializedNotInjectFoo(): Boolean {
-        return this::notInjectFoo.isInitialized
-    }
-}
+import olive.di.fixture.AbstractTestModule
+import olive.di.fixture.Child
+import olive.di.fixture.ChildImpl1
+import olive.di.fixture.ChildImpl2
+import olive.di.fixture.FieldInjectTest
+import olive.di.fixture.Foo
+import olive.di.fixture.Olive
+import olive.di.fixture.Parent
+import olive.di.fixture.QualifierTest1
+import olive.di.fixture.QualifierTest2
+import olive.di.fixture.QualifierTestModule
+import olive.di.fixture.Sandwich
+import olive.di.fixture.TestModule
 
 class DIContainerTest {
     private lateinit var diContainer: DIContainer
@@ -144,30 +86,6 @@ class DIContainerTest {
     }
 
     @Test
-    fun `@Qualifier 어노테이션으로 인터페이스 구현체를 구분한다1`() {
-        // given
-        diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
-
-        // when
-        val actual = diContainer.singletonInstance(QualifierTest1::class)
-
-        // then
-        assertThat(actual.parent).isInstanceOf(ChildImpl1::class.java)
-    }
-
-    @Test
-    fun `@Qualifier 어노테이션으로 인터페이스 구현체를 구분한다2`() {
-        // given
-        diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
-
-        // when
-        val actual = diContainer.singletonInstance(QualifierTest2::class)
-
-        // then
-        assertThat(actual.parent).isInstanceOf(ChildImpl2::class.java)
-    }
-
-    @Test
     fun `lateinit var이고 @Inject 어노테이션이 붙은 프로퍼티에 필드 주입을 한다`() {
         // given
         diContainer = DIContainer()
@@ -191,6 +109,30 @@ class DIContainerTest {
 
         // then
         assertThat(actual.isInitializedNotInjectFoo()).isFalse()
+    }
+
+    @Test
+    fun `@Qualifier 어노테이션으로 인터페이스 구현체를 구분한다1`() {
+        // given
+        diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
+
+        // when
+        val actual = diContainer.singletonInstance(QualifierTest1::class)
+
+        // then
+        assertThat(actual.parent).isInstanceOf(ChildImpl1::class.java)
+    }
+
+    @Test
+    fun `@Qualifier 어노테이션으로 인터페이스 구현체를 구분한다2`() {
+        // given
+        diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
+
+        // when
+        val actual = diContainer.singletonInstance(QualifierTest2::class)
+
+        // then
+        assertThat(actual.parent).isInstanceOf(ChildImpl2::class.java)
     }
 
     @Test
