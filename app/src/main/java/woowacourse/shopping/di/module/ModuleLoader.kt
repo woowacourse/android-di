@@ -1,7 +1,7 @@
 package woowacourse.shopping.di.module
 
 import android.content.Context
-import woowacourse.shopping.di.DIContainer
+import com.zzang.di.DIContainer
 
 class ModuleLoader(private val context: Context) {
     fun initializeModules() {

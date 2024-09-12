@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DIContainer
-import woowacourse.shopping.di.annotation.DatabaseRepository
+import com.zzang.di.DIContainer
+import com.zzang.di.annotation.DatabaseRepository
+import com.zzang.di.module.DIModule
 
 class DatabaseModule(private val context: Context) : DIModule {
     override fun register(container: DIContainer) {
@@ -18,10 +19,8 @@ class DatabaseModule(private val context: Context) : DIModule {
 
         val cartProductDao = database.cartProductDao()
 
-        // CartProductDao를 DatabaseRepository로 등록
         container.registerInstance(CartProductDao::class, cartProductDao, DatabaseRepository::class)
 
-        // ShoppingDatabase를 DatabaseRepository로 등록
         container.registerInstance(ShoppingDatabase::class, database, DatabaseRepository::class)
     }
 }

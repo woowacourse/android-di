@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package com.zzang.di
 
-import woowacourse.shopping.di.annotation.Inject
+import com.zzang.di.annotation.Inject
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty

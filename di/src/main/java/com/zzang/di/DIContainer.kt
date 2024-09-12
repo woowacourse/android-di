@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package com.zzang.di
 
 import androidx.room.Dao
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.module.DIModule
+import com.zzang.di.annotation.Inject
+import com.zzang.di.module.DIModule
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation

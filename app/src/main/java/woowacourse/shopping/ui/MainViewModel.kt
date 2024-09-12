@@ -5,14 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.annotation.DatabaseRepository
-import woowacourse.shopping.di.annotation.InMemoryRepository
-import woowacourse.shopping.di.annotation.Inject
+import com.zzang.di.annotation.DatabaseRepository
+import com.zzang.di.annotation.InMemoryRepository
+import com.zzang.di.annotation.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel() : ViewModel() {
+class MainViewModel : ViewModel() {
     @Inject
     @InMemoryRepository
     lateinit var productRepository: ProductRepository
