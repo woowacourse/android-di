@@ -14,7 +14,7 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
-@DIModule(RepositoryDI::class)
+@DIModule
 class RepositoryModule private constructor() : DefaultLifecycleObserver, Module<RepositoryModule, RepositoryDI> {
     private lateinit var repositoryMap: Map<String, RepositoryDI>
     private lateinit var repositoryBinder: RepositoryBinder
@@ -47,10 +47,6 @@ class RepositoryModule private constructor() : DefaultLifecycleObserver, Module<
         return instance?.repositoryMap?.get(type.simpleName)
             ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
     }
-
-    override fun getInstance(): RepositoryModule = instance ?: error("Module에 대한 lifecycle이 지정되지 않았습니다.")
-
-    override fun getInstanceOrNull(): RepositoryModule? = instance
 
     companion object {
         private var instance: RepositoryModule? = null
