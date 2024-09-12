@@ -3,16 +3,10 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sh1mj1.Inject
 import com.example.sh1mj1.Qualifier
 import kotlinx.coroutines.launch
-import woowacourse.shopping.BaseViewModelFactory
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -40,15 +34,5 @@ class CartViewModel : ViewModel() {
             _onCartProductDeleted.value = true
             _cartProducts.value = cartRepository.allCartProducts()
         }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
-                    BaseViewModelFactory(appContainer).create(CartViewModel::class.java)
-                }
-            }
     }
 }
