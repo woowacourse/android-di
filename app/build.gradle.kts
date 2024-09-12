@@ -77,6 +77,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
-
-    implementation(project(":supplin"))
+    // custom di library
+    implementation("com.github.kmkim2689:android-di:1.0.1")
 }

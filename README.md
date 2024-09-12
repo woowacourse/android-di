@@ -28,7 +28,7 @@
 - [x] Recursive DI
   - [x] CartRepository가 DAO 객체를 참조하도록 변경한다.
 - [x] CartProduct 아이템에서 날짜 정보를 확인할 수 있도록 한다.
-- [ ] 테스트 코드를 작성한다.
+- [x] 테스트 코드를 작성한다.
 
 - 선택 요구 사항
   - [x] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
@@ -41,4 +41,4 @@
 
 - 선택 요구 사항
   - [x] DSL을 활용한다.
-  - [ ] DI 라이브러리를 배포하고 적용한다.
+  - [x] DI 라이브러리를 배포하고 적용한다.
