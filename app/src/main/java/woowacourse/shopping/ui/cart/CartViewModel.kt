@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import com.android.di.annotation.DiViewModel
 import com.android.di.annotation.Inject
+import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
 @DiViewModel
-class CartViewModel: ViewModel() {
+class CartViewModel : ViewModel() {
     @Inject
     private lateinit var cartRepository: CartRepository
 
@@ -22,12 +22,14 @@ class CartViewModel: ViewModel() {
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    fun getAllCartProducts() = viewModelScope.launch {
-        _cartProducts.value = cartRepository.getAllCartProducts()
-    }
+    fun getAllCartProducts() =
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.getAllCartProducts()
+        }
 
-    fun deleteCartProduct(id: Int) = viewModelScope.launch {
-        cartRepository.deleteCartProduct(id)
-        _onCartProductDeleted.value = true
-    }
+    fun deleteCartProduct(id: Int) =
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            _onCartProductDeleted.value = true
+        }
 }

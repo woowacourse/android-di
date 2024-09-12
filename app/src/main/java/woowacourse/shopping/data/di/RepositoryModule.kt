@@ -1,8 +1,8 @@
 package woowacourse.shopping.data.di
 
+import com.android.di.component.DiSingletonComponent
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
-import com.android.di.component.DiSingletonComponent
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 

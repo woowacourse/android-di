@@ -1,15 +1,14 @@
 package woowacourse.shopping.data.di
 
 import android.content.Context
+import com.android.di.component.DiSingletonComponent
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ImMemoryShoppingDatabase
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.createInMemoryDatabase
 import woowacourse.shopping.data.createRoomDatabase
-import com.android.di.component.DiSingletonComponent
 
 object LocalModule {
-
     fun install(context: Context) {
         provideShoppingDatabase(context)
         provideInMemoryShoppingDatabase(context)
@@ -33,21 +32,17 @@ object LocalModule {
         provideInMemoryCartProductDao(database)
     }
 
-    private fun provideRoomCartProductDao(
-        database: ShoppingDatabase,
-    ) {
+    private fun provideRoomCartProductDao(database: ShoppingDatabase) {
         DiSingletonComponent.provide(
             CartProductDao::class,
-            database.cartProductDao()
+            database.cartProductDao(),
         )
     }
 
-    private fun provideInMemoryCartProductDao(
-        database: ImMemoryShoppingDatabase,
-    ) {
+    private fun provideInMemoryCartProductDao(database: ImMemoryShoppingDatabase) {
         DiSingletonComponent.provide(
             CartProductDao::class,
-            database.cartProductDao()
+            database.cartProductDao(),
         )
     }
 }

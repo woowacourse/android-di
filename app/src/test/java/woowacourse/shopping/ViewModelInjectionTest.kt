@@ -20,7 +20,6 @@ import woowacourse.shopping.ui.cart.CartViewModel
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class ViewModelInjectionTest {
-
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 

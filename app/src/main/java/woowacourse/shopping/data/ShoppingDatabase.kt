@@ -32,6 +32,6 @@ abstract class ImMemoryShoppingDatabase : RoomDatabase() {
 fun createInMemoryDatabase(context: Context): ImMemoryShoppingDatabase {
     return Room.inMemoryDatabaseBuilder(
         context.applicationContext,
-        ImMemoryShoppingDatabase::class.java
+        ImMemoryShoppingDatabase::class.java,
     ).build()
 }
