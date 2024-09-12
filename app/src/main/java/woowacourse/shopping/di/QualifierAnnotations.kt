@@ -8,15 +8,15 @@ import javax.inject.Qualifier
  * Two additional meta annotations are needed : `@Qualifier`, `@Retention`.
  * ```
  * @Qualifier
- * @Retention(AnnotationRetention.BINARY)
+ * @Retention(AnnotationRetention.RUNTIME)
  * annotation class CustomRepository
  * ```
  */
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class DatabaseRepository
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class InMemoryRepository

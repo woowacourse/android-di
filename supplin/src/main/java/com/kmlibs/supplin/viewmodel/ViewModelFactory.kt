@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.kmlibs.supplin.InstanceContainer
 import com.kmlibs.supplin.InstanceSupplier
 import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelFactory(
@@ -24,8 +25,7 @@ class ViewModelFactory(
                     instanceContainer.instanceOf(parameter)
                 },
             )
-
-        InstanceSupplier.injectFields(modelClass, instance)
+        InstanceSupplier.injectFields(viewModelClass, instance)
 
         return instance as T
     }

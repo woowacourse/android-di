@@ -4,6 +4,7 @@ import android.content.Context
 import com.kmlibs.supplin.annotations.Module
 import com.kmlibs.supplin.model.InjectionData
 import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 class InjectionBuilder {
     private lateinit var context: Context
@@ -13,9 +14,9 @@ class InjectionBuilder {
         this.context = context
     }
 
-    fun <T : Any> module(vararg modules: KClass<T>) {
+    fun module(vararg modules: KClass<*>) {
         modules.forEach { module ->
-            if (module.java.isAnnotationPresent(Module::class.java)) {
+            if (module.hasAnnotation<Module>()) {
                 this.modules += module.objectInstance ?: error("no object instance")
             }
         }

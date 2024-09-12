@@ -13,30 +13,37 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberFunctions
 
 class InstanceContainer(
     private val applicationContext: Context,
     modules: List<Any>,
 ) {
-    private val functionsByReturnType: Map<KType, KFunction<*>> =
+    private val qualifiedFunctions: Map<QualifiedType, KFunction<*>> =
         modules
             .flatMap { module ->
                 module::class.declaredMemberFunctions
+            }.associateBy { function ->
+                QualifiedType(function.returnType, function.annotations.firstOrNull { annotation ->
+                    annotation.annotationClass.hasAnnotation<Qualifier>()
+                }?.annotationClass?.simpleName)
             }
-            .associateBy(KFunction<*>::returnType)
 
     private val instances: MutableMap<QualifiedType, Any> = mutableMapOf()
 
     init {
-        // 미리 각 모듈의 인스턴스를 캐시에 저장해야 오류가 나지 않음
         saveModuleInstances(modules)
-        functionsByReturnType.forEach { (returnType, function) ->
-            resolveInstance(returnType, function.annotations)
+        qualifiedFunctions.forEach { (qualifiedType, function) ->
+            resolveInstance(qualifiedType.returnType, function.annotations)
         }
     }
 
     fun <T : Any> instanceOf(kParameter: KParameter): T {
-        return instanceOf(kParameter.type)
+        val annotation = kParameter.annotations.firstOrNull { annotation ->
+            annotation::class.hasAnnotation<Qualifier>()
+        }
+        return qualifiedInstanceOf(QualifiedType(kParameter.type, annotation?.annotationClass?.simpleName))
     }
 
     fun <T : Any> instanceOf(kClassifier: KClassifier): T {
@@ -44,7 +51,10 @@ class InstanceContainer(
     }
 
     fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
-        return instanceOf(kCallable.returnType)
+        val annotation = kCallable.annotations.firstOrNull { annotation ->
+            annotation.annotationClass.hasAnnotation<Qualifier>()
+        }
+        return qualifiedInstanceOf(QualifiedType(kCallable.returnType, annotation?.annotationClass?.simpleName))
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
@@ -56,7 +66,7 @@ class InstanceContainer(
 
     private fun qualifierAnnotationOf(kAnnotatedElement: KAnnotatedElement): Annotation? =
         kAnnotatedElement.annotations.firstOrNull { annotation ->
-            annotation::class.findAnnotation<Qualifier>() != null
+            annotation.annotationClass.hasAnnotation<Qualifier>()
         }
 
     private fun qualifiedTypeOf(
@@ -73,8 +83,9 @@ class InstanceContainer(
         return instance as T
     }
 
+    // TODO 함수 작은 단위로 분리?
     private fun resolveInstance(
-        kType: KType,
+        returnType: KType,
         annotations: List<Annotation>,
     ): Any {
         val contextAnnotation =
@@ -82,20 +93,21 @@ class InstanceContainer(
                 annotation.annotationClass == ApplicationContext::class
             }
 
-        if (contextAnnotation != null && kType.classifier == Context::class) {
+        if (contextAnnotation != null && returnType.classifier == Context::class) {
             return applicationContext
         }
 
         val qualifierAnnotation =
             annotations.firstOrNull { annotation ->
-                annotation::class.findAnnotation<Qualifier>() != null
+                annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-        val qualifiedType = QualifiedType(kType, qualifierAnnotation?.annotationClass?.simpleName)
+        val qualifiedType = QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
+
         val existingInstance = instances[qualifiedType]
         if (existingInstance != null) return existingInstance
 
-        val function = functionsByReturnType[kType]
-        requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kType) }
+        val function = qualifiedFunctions[qualifiedType]
+        requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(qualifiedType.returnType) }
 
         // 재귀 주입
         val parameterValues =

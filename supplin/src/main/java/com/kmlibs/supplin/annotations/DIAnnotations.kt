@@ -4,7 +4,7 @@ package com.kmlibs.supplin.annotations
  * For supplying dependencies to classes.
  * This annotation can be used for field injection or constructor injection.
  */
-@Target(AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
 annotation class Supply
 
 /**
