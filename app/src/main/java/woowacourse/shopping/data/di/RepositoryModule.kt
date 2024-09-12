@@ -17,7 +17,7 @@ class RepositoryModule(private val context: Context) {
     private fun provideProductRepository() {
         DependencyContainer.addInstance(
             ProductRepository::class,
-            DefaultProductRepository()
+            DefaultProductRepository(),
         )
     }
 
@@ -25,9 +25,9 @@ class RepositoryModule(private val context: Context) {
         DependencyContainer.addInstance(
             CartRepository::class,
             DefaultCartRepository(
-                ShoppingDatabase.instance(context).cartProductDao()
+                ShoppingDatabase.instance(context).cartProductDao(),
             ),
-            DefaultCartRepository.QUALIFIER_NAME
+            DefaultCartRepository.QUALIFIER_NAME,
         )
 
         DependencyContainer.addInstance(

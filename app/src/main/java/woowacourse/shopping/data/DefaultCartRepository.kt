@@ -8,8 +8,7 @@ class DefaultCartRepository(private val dao: CartProductDao) : CartRepository {
         dao.insert(product.toEntity())
     }
 
-    override suspend fun cartProducts(): List<CartProductEntity> =
-        dao.getAll()
+    override suspend fun cartProducts(): List<CartProductEntity> = dao.getAll()
 
     override suspend fun deleteCartProduct(id: Long) {
         dao.delete(id)

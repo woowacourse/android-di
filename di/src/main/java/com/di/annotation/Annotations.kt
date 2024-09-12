@@ -1,6 +1,5 @@
 package woowacourse.shopping.data.di.annotation
 
-
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.CONSTRUCTOR,

@@ -23,12 +23,14 @@ class CartViewModel : ViewModel() {
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    fun getAllCartProducts() = viewModelScope.launch {
-        _cartProducts.value = cartRepository.cartProducts().toProducts()
-    }
+    fun getAllCartProducts() =
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.cartProducts().toProducts()
+        }
 
-    fun deleteCartProduct(id: Long) = viewModelScope.launch {
-        cartRepository.deleteCartProduct(id)
-        _onCartProductDeleted.value = true
-    }
+    fun deleteCartProduct(id: Long) =
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            _onCartProductDeleted.value = true
+        }
 }

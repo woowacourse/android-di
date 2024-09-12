@@ -25,10 +25,11 @@ class MainViewModel : ViewModel() {
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
-    fun addCartProduct(product: Product) = viewModelScope.launch {
-        cartRepository.addCartProduct(product)
-        _onProductAdded.value = true
-    }
+    fun addCartProduct(product: Product) =
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.value = true
+        }
 
     fun getAllProducts() {
         _products.value = productRepository.products()

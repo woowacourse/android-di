@@ -20,14 +20,14 @@ abstract class ShoppingDatabase : RoomDatabase() {
                     instance = instance ?: createDatabase(context)
                 }
             }
-            return instance?: throw IllegalStateException("Database is not created")
+            return instance ?: throw IllegalStateException("Database is not created")
         }
 
         private fun createDatabase(context: Context): ShoppingDatabase {
             return Room.databaseBuilder(
                 context,
                 ShoppingDatabase::class.java,
-                DATABASE_NAME
+                DATABASE_NAME,
             ).build()
         }
     }

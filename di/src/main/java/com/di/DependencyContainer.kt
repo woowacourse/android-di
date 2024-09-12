@@ -26,7 +26,7 @@ object DependencyContainer {
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> instance(
         classType: KClass<*>,
-        qualifier: String? = null
+        qualifier: String? = null,
     ): T {
         val key = classType to qualifier
         return instances[key]?.let { instance ->

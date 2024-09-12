@@ -14,7 +14,9 @@ annotation class ClassOnly
 
 @All
 @ClassOnly
-class Pizza(@PropertyOnly val topping: String)
+class Pizza(
+    @PropertyOnly val topping: String,
+)
 
 @Retention(AnnotationRetention.SOURCE)
 annotation class Source
@@ -31,7 +33,6 @@ annotation class Runtime
 class Chicken
 
 class AnnotationReflectionTest {
-
     @Test
     fun `Source annotation은 runtime에 접근할 수 없다`() {
         val chickenClass = Chicken::class
@@ -67,7 +68,6 @@ class AnnotationReflectionTest {
 
         assertThat(pizzaTopping.hasAnnotation<PropertyOnly>()).isTrue
     }
-
 
     @Test
     fun `Property annotation을 사용하여 property를 알 수 있다`() {

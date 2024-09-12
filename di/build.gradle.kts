@@ -8,7 +8,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-dependencies{
+dependencies {
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
 }
