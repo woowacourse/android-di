@@ -1,13 +1,15 @@
 package woowacourse.shopping.data
 
+import com.woowa.di.injection.DIInjection
 import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toDomain
+import woowacourse.shopping.di.dao.Database
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
-import com.woowa.di.injection.DIInjection
 
 class CartRepositoryImpl(
     @DIInjection
+    @Database
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

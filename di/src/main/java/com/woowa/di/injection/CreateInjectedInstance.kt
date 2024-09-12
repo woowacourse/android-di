@@ -1,6 +1,8 @@
 package com.woowa.di.injection
 
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.findAnnotation
@@ -30,11 +32,26 @@ fun <T : Any> createInjectedInstance(clazz: KClass<out T>): T {
                 val companionInstance = module.companionObjectInstance
 
                 val kFunc = module.companionObject?.functions?.find { it.name == "getInstance" }
-                return@map (kFunc?.call(companionInstance) as Module<*, *>).getDIInstance(paramType as KClass<Nothing>)
+
+                return@map if (parameter.hasQualifierAnnotation()) {
+                    val anocalss =
+                        parameter.annotations.firstOrNull { annotation ->
+                            annotation.annotationClass.findAnnotation<Qualifier>() != null
+                        }?.annotationClass
+                    (kFunc?.call(companionInstance) as Module<*, *>).getDIInstance(paramType as KClass<Nothing>, anocalss as KClass)
+                } else {
+                    (kFunc?.call(companionInstance) as Module<*, *>).getDIInstance(paramType as KClass<Nothing>)
+                }
             } else {
                 error("${parameter.name} @DIInject 어노테이션이 없습니다.")
             }
         }.toTypedArray()
 
     return primaryConstructor.call(*args)
+}
+
+private fun KParameter.hasQualifierAnnotation(): Boolean {
+    return this.annotations.any { annotation ->
+        annotation.annotationClass.findAnnotation<Qualifier>() != null
+    }
 }

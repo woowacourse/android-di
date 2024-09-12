@@ -7,25 +7,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.room.Room
-import woowacourse.shopping.data.ShoppingDatabase
 import com.woowa.di.injection.Module
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
-class DaoModule private constructor(context: Context) :
+class DaoModule private constructor(private val context: Context) :
     Module<DaoModule, DaoDI>,
     DefaultLifecycleObserver {
-        private val database: ShoppingDatabase =
-            Room.databaseBuilder(context, ShoppingDatabase::class.java, "shopping").build()
-        private lateinit var daoMap: Map<String, DaoDI>
+        private lateinit var daoMap: List<Pair<String, KFunction<*>>>
         private lateinit var daoBinder: DaoBinder
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
-            daoBinder = DaoBinder(database)
+            daoBinder = DaoBinder(context)
+
             daoMap = createRepositoryMap(daoBinder)
         }
 
@@ -35,21 +35,38 @@ class DaoModule private constructor(context: Context) :
             owner.lifecycle.removeObserver(this)
         }
 
-        private fun createRepositoryMap(daoBinder: DaoBinder): Map<String, DaoDI> {
+        private fun createRepositoryMap(daoBinder: DaoBinder): List<Pair<String, KFunction<*>>> {
             return DaoBinder::class.declaredMemberFunctions
                 .filter { it.returnType.jvmErasure.isSubclassOf(DaoDI::class) }
-                .associate { kFunction ->
-                    val result = kFunction.call(daoBinder) as DaoDI
+                .map { kFunction ->
                     val key =
                         kFunction.returnType.jvmErasure.simpleName
-                            ?: error("$result 의 key값을 지정할 수 없습니다.")
-                    key to result
+                            ?: error("$kFunction 의 key값을 지정할 수 없습니다.")
+                    key to kFunction
                 }
         }
 
         override fun getDIInstance(type: KClass<out DaoDI>): DaoDI {
-            return instance?.daoMap?.get(type.simpleName)
-                ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
+            val kFunction =
+                instance?.daoMap?.find { it.first == type.simpleName }?.second
+                    ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
+            return kFunction.call(daoBinder) as DaoDI
+        }
+
+        override fun getDIInstance(
+            type: KClass<out DaoDI>,
+            qualifier: KClass<out Annotation>,
+        ): DaoDI {
+            val kFunction =
+                instance?.daoMap?.find { it.first == type.simpleName && it.second.annotations.any { it.annotationClass.isSubclassOf(qualifier) } }?.second
+                    ?: error("${type.simpleName} 해당 interface에 대한 객체가 없습니다.")
+            return kFunction.call(daoBinder) as DaoDI
+        }
+
+        private fun KFunction<*>.hasQualifierAnnotation(): Boolean {
+            return this.annotations.any { annotation ->
+                annotation.annotationClass.findAnnotation<Qualifier>() != null
+            }
         }
 
         companion object {
