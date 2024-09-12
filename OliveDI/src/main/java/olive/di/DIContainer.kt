@@ -57,8 +57,7 @@ class DIContainer(
         }
     }
 
-    private fun KFunction<*>.parameters(): List<KClass<*>> =
-        parameters.map { it.type.classifier as KClass<*> }
+    private fun KFunction<*>.parameters(): List<KClass<*>> = parameters.map { it.type.classifier as KClass<*> }
 
     private fun List<Annotation>.isQualifierAnnotation(): Boolean {
         return any { annotation ->
@@ -137,7 +136,10 @@ class DIContainer(
             .filter { it.hasAnnotation<Inject>() }
     }
 
-    private fun namedInstance(type: KClass<*>, annotations: List<Annotation>): Any {
+    private fun namedInstance(
+        type: KClass<*>,
+        annotations: List<Annotation>,
+    ): Any {
         val nameAnnotation: KClass<out Annotation> = annotations.qualifierNameAnnotation()
         return namedInstances.instanceByName(nameAnnotation, type)
             ?: throw IllegalArgumentException("${nameAnnotation.simpleName}로 지정된 인스턴스가 존재하지 않습니다.")

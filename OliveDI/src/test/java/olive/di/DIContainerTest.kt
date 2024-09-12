@@ -2,8 +2,6 @@ package olive.di
 
 import android.app.Application
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
-import kotlin.reflect.KClass
 import io.mockk.mockk
 import olive.di.fixture.AbstractTestModule
 import olive.di.fixture.Child
@@ -18,6 +16,8 @@ import olive.di.fixture.QualifierTest2
 import olive.di.fixture.QualifierTestModule
 import olive.di.fixture.Sandwich
 import olive.di.fixture.TestModule
+import org.junit.Test
+import kotlin.reflect.KClass
 
 class DIContainerTest {
     private lateinit var diContainer: DIContainer
