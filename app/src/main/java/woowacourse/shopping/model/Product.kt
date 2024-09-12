@@ -6,9 +6,9 @@ class Product(
     val name: String,
     val price: Int,
     val imageUrl: String,
-    val createdAt: LocalDateTime = CREATE_NONE,
+    val createdAt: Long = CREATE_NONE,
 ) {
     companion object {
-        private val CREATE_NONE = LocalDateTime.now()
+        private const val CREATE_NONE = -1L
     }
 }

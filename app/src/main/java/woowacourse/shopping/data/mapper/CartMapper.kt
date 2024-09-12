@@ -11,7 +11,7 @@ fun CartProductEntity.toDomain(): Product =
         name,
         price,
         imageUrl,
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(createdAt), ZoneId.systemDefault()),
+        createdAt
     )
 
 fun Product.toData() =
