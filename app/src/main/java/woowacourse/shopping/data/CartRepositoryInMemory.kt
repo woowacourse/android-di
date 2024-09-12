@@ -4,7 +4,7 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
-class CartRepositoryInMemory() : CartRepository {
+class CartRepositoryInMemory : CartRepository {
     private val cartProducts: MutableList<CartProductEntity> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {

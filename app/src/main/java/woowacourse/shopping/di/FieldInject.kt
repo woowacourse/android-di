@@ -1,4 +1,5 @@
 package woowacourse.shopping.di
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class FieldInject

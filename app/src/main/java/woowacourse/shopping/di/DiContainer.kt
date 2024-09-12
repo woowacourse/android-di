@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.util.getAnnotationIncludeQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -11,37 +12,67 @@ import kotlin.reflect.jvm.jvmErasure
 class DiContainer(
     private val diModule: Module,
 ) {
-    private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val functions: Collection<KFunction<*>> by lazy { diModule::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC } }
+    private val dependencies: MutableMap<DependencyKey, Any> = mutableMapOf()
+    private val functions: Collection<KFunction<*>> by lazy {
+        diModule::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC }
+    }
 
-    fun <T : Any> getInstance(clazz: KClass<T>): T {
-        return (dependencies[clazz] ?: addDependency(functions, clazz)) as T
+    fun <T : Any> getInstance(
+        clazz: KClass<T>,
+        annotation: Annotation?,
+    ): T {
+        return (
+            dependencies[DependencyKey(clazz, annotation)] ?: addDependency(
+                functions,
+                clazz,
+                annotation,
+            )
+        ) as T
     }
 
     private fun addDependency(
         functions: Collection<KFunction<*>>,
         clazz: KClass<*>,
+        annotation: Annotation?,
     ): Any {
-        val func = functions.first { it.returnType.jvmErasure == clazz }
+        val sameTypeFunctions =
+            functions.filter {
+                (it.returnType.jvmErasure == clazz)
+            }
+        val func = findFunction(annotation, sameTypeFunctions)
+
         if (func.valueParameters.isEmpty()) {
-            addInstance(clazz, func.call(diModule))
-            return getInstance(clazz)
+            addInstance(clazz, annotation, func.call(diModule))
+            return getInstance(clazz, annotation)
         }
         val params =
             func.valueParameters.map { param ->
-                val paramInstance = param.type.jvmErasure
-                getInstance(paramInstance)
+                val paramInstanceType = param.type.jvmErasure
+                getInstance(
+                    paramInstanceType,
+                    param.getAnnotationIncludeQualifier(),
+                )
             }
-        addInstance(clazz, func.call(diModule, *params.toTypedArray()))
-        return getInstance(clazz)
+        addInstance(clazz, annotation, func.call(diModule, *params.toTypedArray()))
+        return getInstance(clazz, annotation)
+    }
+
+    private fun findFunction(
+        annotation: Annotation?,
+        newFunc: List<KFunction<*>>,
+    ) = if (annotation != null) {
+        newFunc.first { it.annotations.contains(annotation) }
+    } else {
+        newFunc.first()
     }
 
     private fun addInstance(
         classType: KClass<*>,
+        annotation: Annotation?,
         instance: Any?,
     ) {
         instance?.let {
-            dependencies[classType] = it
+            dependencies[DependencyKey(classType, annotation)] = it
         }
     }
 }
