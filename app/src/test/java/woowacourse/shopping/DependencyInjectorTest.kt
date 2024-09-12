@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel

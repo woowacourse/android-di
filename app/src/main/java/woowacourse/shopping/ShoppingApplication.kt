@@ -3,6 +3,8 @@ package woowacourse.shopping
 import android.app.Application
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.RoomDB
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 

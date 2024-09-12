@@ -1,6 +1,7 @@
-package woowacourse.shopping
+package woowacourse.shopping.di
 
 import woowacourse.shopping.data.CartDefaultRepository
+import woowacourse.shopping.di.Qualifier
 
 @Qualifier(CartDefaultRepository::class)
 @Retention(AnnotationRetention.SOURCE)

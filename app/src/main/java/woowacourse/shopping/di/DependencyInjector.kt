@@ -1,6 +1,5 @@
-package woowacourse.shopping
+package woowacourse.shopping.di
 
-import woowacourse.shopping.DependencyInjector.findInstance
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1

@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.di
 
 import woowacourse.shopping.data.CartInMemoryRepository
 
