@@ -70,16 +70,14 @@ object AutoDIManager {
     inline fun <reified T : Any> createAutoDIInstance(): T {
         val instance = createNoQualifierInstance<T>()
         val constructor = instance::class.primaryConstructor ?: return instance
-        for (kParameter in constructor.parameters) {
-            if (kParameter.annotations.isNotEmpty()) {
-                val annotation = kParameter.annotations.first()
-                val kParameterName = kParameter.name ?: return instance
-                val parameter = T::class.java.getDeclaredField(kParameterName)
-                parameter.apply {
-                    isAccessible = true
-                    set(instance, fetchAnnotationParamsValue(annotation))
-                }
-                continue
+        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
+        parametersWithAnnotation.forEach { kParameter ->
+            val annotation = kParameter.annotations.first()
+            val kParameterName = kParameter.name ?: return instance
+            val parameter = T::class.java.getDeclaredField(kParameterName)
+            parameter.apply {
+                isAccessible = true
+                set(instance, fetchAnnotationParamsValue(annotation))
             }
         }
         return instance
