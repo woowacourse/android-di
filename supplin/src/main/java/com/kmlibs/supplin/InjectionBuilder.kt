@@ -15,12 +15,36 @@ class InjectionBuilder {
     }
 
     fun module(vararg modules: KClass<*>) {
+        initializeModules(modules)
+    }
+
+    private fun initializeModules(modules: Array<out KClass<*>>) {
         modules.forEach { module ->
-            if (module.hasAnnotation<Module>()) {
-                this.modules += module.objectInstance ?: error("no object instance")
-            }
+            requireModuleAnnotation(module)
+            addModule(module)
         }
     }
 
+    private fun requireModuleAnnotation(module: KClass<*>) {
+        require(module.hasAnnotation<Module>()) {
+            EXCEPTION_MODULE_ANNOTATION_DOES_NOT_EXIST.format(module.simpleName)
+        }
+    }
+
+    private fun addModule(module: KClass<*>) {
+        val moduleInstance =
+            requireNotNull(module.objectInstance) {
+                EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST.format(module.simpleName)
+            }
+        modules += moduleInstance
+    }
+
     fun build(): InjectionData = InjectionData(modules, context)
+
+    companion object {
+        private const val EXCEPTION_MODULE_ANNOTATION_DOES_NOT_EXIST =
+            "Module objects %s should be annotated with @Module."
+        private const val EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST =
+            "Module object %s should have an instance."
+    }
 }
