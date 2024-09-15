@@ -58,11 +58,7 @@ object AutoDIManager {
     inline fun <reified T : Any> createNoQualifierInstance(): T {
         val clazz = T::class
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
-
-        val args: MutableMap<KParameter, Any?> = mutableMapOf()
-        constructor.parameters.forEach { kParameter ->
-            args[kParameter] = dependencies[kParameter.type.jvmErasure]
-        }
+        val args = constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }
         val instance = constructor.callBy(args)
         return injectField<T>(instance)
     }
