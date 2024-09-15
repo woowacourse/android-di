@@ -46,8 +46,6 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
-    // Glide
-    implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
 
