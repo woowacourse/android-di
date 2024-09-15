@@ -8,7 +8,7 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.BaseActivity
 
 class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
-    private val viewModel: CartViewModel by lazy(::injectionViewModel)
+    private val viewModel: CartViewModel by injectionViewModel()
 
     private lateinit var dateFormatter: DateFormatter
 
