@@ -6,6 +6,8 @@ object Injector {
 
     fun init(block: InjectionBuilder.() -> Unit) {
         val injector = InjectionBuilder().apply(block).build()
-        instanceContainer = InstanceContainer(injector.context, injector.modules)
+        if (!::instanceContainer.isInitialized) {
+            instanceContainer = InstanceContainer(injector.context, injector.modules)
+        }
     }
 }
