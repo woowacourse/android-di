@@ -21,8 +21,7 @@ object AutoDIManager {
     var provider: LibraryDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
-        val clazz = T::class
-        dependencies[clazz] = dependency
+        dependencies[T::class] = dependency
     }
 
     inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
