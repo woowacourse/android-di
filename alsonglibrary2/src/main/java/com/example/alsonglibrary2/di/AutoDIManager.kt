@@ -32,16 +32,21 @@ object AutoDIManager {
         }
     }
 
-    inline fun <reified T : Any> injectField(instance: T): T {
-        val properties = T::class.declaredMemberProperties
-        val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
-        for (mutableProperty in mutableProperties) {
-            if (mutableProperty.findAnnotation<FieldInject>() != null) {
-                mutableProperty.isAccessible = true
-                mutableProperty.setter.call(
-                    instance,
-                    dependencies[mutableProperty.returnType.jvmErasure],
-                )
+    /**
+     * createNoQualifierInstance()가 리턴한 인스턴스에서 Qualifier가 붙은 생성자 파라미터의 값을
+     * DependencyProvider에서 설정한 인스턴스로 변경합니다.
+     **/
+    inline fun <reified T : Any> createAutoDIInstance(): T {
+        val instance = createNoQualifierInstance<T>()
+        val constructor = instance::class.primaryConstructor ?: return instance
+        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
+        parametersWithAnnotation.forEach { kParameter ->
+            val annotation = kParameter.annotations.first()
+            val kParameterName = kParameter.name ?: return instance
+            val parameter = T::class.java.getDeclaredField(kParameterName)
+            parameter.apply {
+                isAccessible = true
+                set(instance, fetchAnnotationParamsValue(annotation))
             }
         }
         return instance
@@ -62,21 +67,16 @@ object AutoDIManager {
         return injectField<T>(instance)
     }
 
-    /**
-     * createNoQualifierInstance()가 리턴한 인스턴스에서 Qualifier가 붙은 생성자 파라미터의 값을
-     * DependencyProvider에서 설정한 인스턴스로 변경합니다.
-     **/
-    inline fun <reified T : Any> createAutoDIInstance(): T {
-        val instance = createNoQualifierInstance<T>()
-        val constructor = instance::class.primaryConstructor ?: return instance
-        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
-        parametersWithAnnotation.forEach { kParameter ->
-            val annotation = kParameter.annotations.first()
-            val kParameterName = kParameter.name ?: return instance
-            val parameter = T::class.java.getDeclaredField(kParameterName)
-            parameter.apply {
-                isAccessible = true
-                set(instance, fetchAnnotationParamsValue(annotation))
+    inline fun <reified T : Any> injectField(instance: T): T {
+        val properties = T::class.declaredMemberProperties
+        val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
+        for (mutableProperty in mutableProperties) {
+            if (mutableProperty.findAnnotation<FieldInject>() != null) {
+                mutableProperty.isAccessible = true
+                mutableProperty.setter.call(
+                    instance,
+                    dependencies[mutableProperty.returnType.jvmErasure],
+                )
             }
         }
         return instance
