@@ -2,9 +2,9 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.model.Product
 
-class ProductRepositoryImpl : ProductRepository {
-    private val products: List<Product> =
-        listOf(
+class InMemoryCartRepository : CartRepository {
+    private val products: MutableList<Product> =
+        mutableListOf(
             Product(
                 name = "우테코 과자",
                 price = 10_000,
@@ -22,7 +22,15 @@ class ProductRepositoryImpl : ProductRepository {
             ),
         )
 
-    override fun getAllProducts(): List<Product> {
+    override suspend fun addCartProduct(product: Product) {
+        products.add(product)
+    }
+
+    override suspend fun getAllCartProducts(): List<Product> {
         return products
+    }
+
+    override suspend fun deleteCartProduct(id: Long) {
+        products.remove(products.first { it.id == id })
     }
 }
