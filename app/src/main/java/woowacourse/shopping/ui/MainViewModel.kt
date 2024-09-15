@@ -13,11 +13,12 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.util.SharedCartRepository
 
 class MainViewModel(
-    @SharedCartRepository private val cartRepository: CartRepository
+    @SharedCartRepository private val cartRepository: CartRepository,
 ) : ViewModel() {
     init {
         Log.d("alsong", "${cartRepository::class.hashCode()}")
     }
+
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -34,34 +33,34 @@ object AutoDIManager {
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
-//        addQualifierDependency<T>()
-
         // constructor 주입
+        val constructorInjectedInstance = injectConstructor<T>()
+
+        // 필드 주입
+        val fieldInjectedInstance = injectField<T>(constructorInjectedInstance)
+
+        return fieldInjectedInstance
+    }
+
+    inline fun <reified T : Any> injectConstructor(): T {
         val clazz = T::class
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
-        val args = constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
-
-        // 어노테이션대로 바꾸기
+        val args =
+            constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
         val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
         for (parameter in parametersWithAnnotation) {
-            // 필드에도 적용할 수 있도록 수정 필요
             val annotation = parameter.annotations.first()
             args[parameter] = fetchAnnotationParamsValue(annotation) ?: continue
         }
-        val instance = constructor.callBy(args)
-
-        // 필드 주입
-        val fieldInjectedInstance = injectField<T>(instance)
-
-        return fieldInjectedInstance
+        return constructor.callBy(args)
     }
 
     inline fun <reified T : Any> addQualifierDependency() {
         val kProperties = T::class.declaredMemberProperties.filter { it.annotations.isNotEmpty() }
         for (kProperty in kProperties) {
             // 필드에도 적용할 수 있도록 수정 필요
-            val annotation = kProperty.annotations.filterNot { it is FieldInject}.first()
-            Log.d("alsong", "addQualifierDependency: ${annotation}")
+            val annotation = kProperty.annotations.filterNot { it is FieldInject }.first()
+            Log.d("alsong", "addQualifierDependency: $annotation")
             dependencies[kProperty.returnType.jvmErasure] = fetchAnnotationParamsValue(annotation) ?: continue
         }
 
@@ -94,8 +93,9 @@ object AutoDIManager {
      **/
     inline fun <reified A : Annotation> fetchAnnotationParamsValue(annotation: A): Any? {
         val dependencyProvider = provider ?: return null
-        val targetFunction = dependencyProvider::class.memberFunctions
-            .find { it.findAnnotation<A>() == annotation } ?: return null
+        val targetFunction =
+            dependencyProvider::class.memberFunctions
+                .find { it.findAnnotation<A>() == annotation } ?: return null
         return targetFunction.call(dependencyProvider)
     }
 }
