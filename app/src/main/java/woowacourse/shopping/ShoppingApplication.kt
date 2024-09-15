@@ -14,13 +14,13 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.ui.util.DependencyProvider
 
 class ShoppingApplication : Application() {
-    private val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+    val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
 
-    private val defaultProductRepository by lazy { createAutoDIInstance<DefaultProductRepository>() }
+    val defaultProductRepository by lazy { createAutoDIInstance<DefaultProductRepository>() }
 
-    private val defaultCartRepository by lazy { createAutoDIInstance<DefaultCartRepository>() }
+    val defaultCartRepository by lazy { createAutoDIInstance<DefaultCartRepository>() }
 
-    private val inMemoryCartRepository by lazy { createAutoDIInstance<InMemoryCartRepository>() }
+    val inMemoryCartRepository by lazy { createAutoDIInstance<InMemoryCartRepository>() }
 
     override fun onCreate() {
         super.onCreate()
