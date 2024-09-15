@@ -8,6 +8,7 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.ui.util.DependencyProvider
@@ -19,6 +20,8 @@ class ShoppingApplication : Application() {
 
     private val defaultCartRepository by lazy { createAutoDIInstance<DefaultCartRepository>() }
 
+    private val inMemoryCartRepository by lazy { createAutoDIInstance<InMemoryCartRepository>() }
+
     override fun onCreate() {
         super.onCreate()
         registerDependencies()
@@ -28,6 +31,6 @@ class ShoppingApplication : Application() {
     private fun registerDependencies() {
         registerDependency<CartProductDao>(shoppingDatabase.cartProductDao())
         registerDependency<ProductRepository>(defaultProductRepository)
-        registerDependency<CartRepository>(defaultCartRepository)
+        registerDependency<CartRepository>(inMemoryCartRepository)
     }
 }

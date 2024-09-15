@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,9 @@ import woowacourse.shopping.ui.util.SharedCartRepository
 class CartViewModel(
     @SharedCartRepository val cartRepository: CartRepository,
 ) : ViewModel() {
+    init {
+        Log.d("alsong", "${cartRepository::class.hashCode()}")
+    }
     private val _cartProducts: MutableLiveData<MutableList<Product>> =
         MutableLiveData(mutableListOf())
     val cartProducts: LiveData<MutableList<Product>> get() = _cartProducts

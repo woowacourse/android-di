@@ -1,11 +1,13 @@
 package com.example.alsonglibrary2.di
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -15,7 +17,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
-    val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
+    val dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
 
     var provider: LibraryDependencyProvider? = null
 
@@ -31,35 +33,45 @@ object AutoDIManager {
         }
     }
 
-    /**
-     * createNoQualifierInstance()가 리턴한 인스턴스에서 Qualifier가 붙은 생성자 파라미터의 값을
-     * DependencyProvider에서 설정한 인스턴스로 변경합니다.
-     **/
     inline fun <reified T : Any> createAutoDIInstance(): T {
-        val instance = createNoQualifierInstance<T>()
-        val constructor = instance::class.primaryConstructor ?: return instance
-        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
-        parametersWithAnnotation.forEach { kParameter ->
-            val annotation = kParameter.annotations.first()
-            val kParameterName = kParameter.name ?: return instance
-            val parameter = T::class.java.getDeclaredField(kParameterName)
-            parameter.apply {
-                isAccessible = true
-                set(instance, fetchAnnotationParamsValue(annotation))
-            }
-        }
-        return instance
-    }
+//        addQualifierDependency<T>()
 
-    /**
-     * Qualifier 어노테이션을 무시하고 Application에서 등록된 인스턴스를 주입합니다.
-     **/
-    inline fun <reified T : Any> createNoQualifierInstance(): T {
+        // constructor 주입
         val clazz = T::class
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
-        val args = constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }
+        val args = constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
+
+        // 어노테이션대로 바꾸기
+        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
+        for (parameter in parametersWithAnnotation) {
+            // 필드에도 적용할 수 있도록 수정 필요
+            val annotation = parameter.annotations.first()
+            args[parameter] = fetchAnnotationParamsValue(annotation) ?: continue
+        }
         val instance = constructor.callBy(args)
-        return injectField<T>(instance)
+
+        // 필드 주입
+        val fieldInjectedInstance = injectField<T>(instance)
+
+        return fieldInjectedInstance
+    }
+
+    inline fun <reified T : Any> addQualifierDependency() {
+        val kProperties = T::class.declaredMemberProperties.filter { it.annotations.isNotEmpty() }
+        for (kProperty in kProperties) {
+            // 필드에도 적용할 수 있도록 수정 필요
+            val annotation = kProperty.annotations.filterNot { it is FieldInject}.first()
+            Log.d("alsong", "addQualifierDependency: ${annotation}")
+            dependencies[kProperty.returnType.jvmErasure] = fetchAnnotationParamsValue(annotation) ?: continue
+        }
+
+        val constructor = T::class.primaryConstructor ?: return
+        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
+        for (parameter in parametersWithAnnotation) {
+            // 필드에도 적용할 수 있도록 수정 필요
+            val annotation = parameter.annotations.first()
+            dependencies[parameter.type.jvmErasure] = fetchAnnotationParamsValue(annotation) ?: continue
+        }
     }
 
     inline fun <reified T : Any> injectField(instance: T): T {
@@ -82,8 +94,8 @@ object AutoDIManager {
      **/
     inline fun <reified A : Annotation> fetchAnnotationParamsValue(annotation: A): Any? {
         val dependencyProvider = provider ?: return null
-        return dependencyProvider::class.memberFunctions
-            .first { it.findAnnotation<A>() != null }
-            .call(dependencyProvider)
+        val targetFunction = dependencyProvider::class.memberFunctions
+            .find { it.findAnnotation<A>() == annotation } ?: return null
+        return targetFunction.call(dependencyProvider)
     }
 }

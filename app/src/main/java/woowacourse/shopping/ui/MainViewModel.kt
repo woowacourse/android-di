@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,14 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.util.SharedCartRepository
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    @SharedCartRepository private val cartRepository: CartRepository
+) : ViewModel() {
+    init {
+        Log.d("alsong", "${cartRepository::class.hashCode()}")
+    }
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -19,9 +26,10 @@ class MainViewModel : ViewModel() {
 
     @FieldInject
     private lateinit var productRepository: ProductRepository
-
-    @FieldInject
-    private lateinit var cartRepository: CartRepository
+//
+//    @SharedCartRepository
+//    @FieldInject
+//    private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
