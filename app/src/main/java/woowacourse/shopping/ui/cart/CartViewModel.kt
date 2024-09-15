@@ -10,7 +10,7 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.util.SharedCartRepository
 
 class CartViewModel(
-    @SharedCartRepository var cartRepository: CartRepository,
+    @SharedCartRepository val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<MutableList<Product>> =
         MutableLiveData(mutableListOf())
