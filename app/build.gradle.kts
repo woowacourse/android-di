@@ -78,5 +78,5 @@ dependencies {
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
     // custom di library
-    implementation("com.github.kmkim2689:android-di:1.0.1")
+    implementation(project(":supplin"))
 }
