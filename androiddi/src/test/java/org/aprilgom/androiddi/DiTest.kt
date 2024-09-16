@@ -2,6 +2,8 @@ package org.aprilgom.androiddi
 
 import org.aprilgom.androiddi.fake.DefaultFakeRepository
 import org.aprilgom.androiddi.fake.FakeActivity
+import org.aprilgom.androiddi.fake.FakeField
+import org.aprilgom.androiddi.fake.FakeFieldInjectClass
 import org.aprilgom.androiddi.fake.FakeRecursive1
 import org.aprilgom.androiddi.fake.FakeRecursive2
 import org.aprilgom.androiddi.fake.FakeRecursive3
@@ -65,5 +67,24 @@ class DiTest {
         val recursive4 = GlobalContext.provide(FakeRecursive4::class) as FakeRecursive4
         val actual = recursive4.recursive.recursive.recursive.intValue
         assertEquals(actual, expected)
+    }
+
+    @Test
+    fun `필드 주입 테스트`() {
+        // given & when
+        val expected = 1
+        diContainer {
+            modules(
+                module {
+                    factory { FakeFieldInjectClass() }
+                    factory { FakeField(expected) }
+                },
+            )
+        }
+
+        // then
+        val fakeFieldInjectClass = GlobalContext.provide(FakeFieldInjectClass::class) as FakeFieldInjectClass
+        assertNotNull(fakeFieldInjectClass.fakeField)
+        assertEquals(fakeFieldInjectClass.fakeField.intValue, expected)
     }
 }
