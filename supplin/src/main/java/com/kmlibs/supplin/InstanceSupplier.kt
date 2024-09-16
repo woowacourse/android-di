@@ -4,6 +4,7 @@ import com.kmlibs.supplin.annotations.Supply
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 object InstanceSupplier {
@@ -15,16 +16,11 @@ object InstanceSupplier {
         targetInstance: Any,
     ) {
         clazz.memberProperties.filter { field ->
-            hasSupplyAnnotation(field)
+            field.hasAnnotation<Supply>()
         }.forEach { targetField ->
             injectSingleField(targetField as KMutableProperty<*>, targetInstance)
         }
     }
-
-    private fun hasSupplyAnnotation(property: KProperty<*>): Boolean =
-        property.annotations.any { annotation ->
-            annotation.annotationClass == Supply::class
-        }
 
     private fun injectSingleField(
         property: KMutableProperty<*>,
