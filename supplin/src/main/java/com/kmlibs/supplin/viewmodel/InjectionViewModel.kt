@@ -10,33 +10,57 @@ import com.kmlibs.supplin.Injector
  * ```
  * class ViewModel1 {
  *      @Supply
- *      private val foo: Foo
+ *      private lateinit var foo: Foo
  * }
  * ```
  *
  * ```
- * class ViewModel2 @Supply constructor(
+ * class ViewModel2 {
+ *      @Supply
+ *      private lateinit var foo1: Foo1
+ *
+ *      private lateinit var foo2: Foo2
+ * }
+ * ```
+ * ```
+ * class ViewModel3 @Supply constructor(
  *      private val foo: Foo
  * )
  * ```
  *
  * ```
- * class ViewModel3 @Supply constructor(
+ * class ViewModel4 @Supply constructor(
  *      private val foo1: Foo1
  * ) {
  *      @Supply
- *      private val foo2: Foo2
+ *      private lateinit var foo2: Foo2
  * }
  * ```
  *
- * The case below is not possible.
+ * The cases below are not possible.
  * ```
- * class ViewModel4(
+ * class ViewModel5(
  *      private val foo1: Foo1
  * ) {
  *      @Supply
- *      private val foo2: Foo2
+ *      private lateinit var foo2: Foo2
  * }
+ * ```
+ * ```
+ * class ViewModel6(
+ *      @Supply
+ *      private val foo1: Foo1,
+ *      private val foo2: Foo2
+ * )
+ * ```
+ * ```
+ * // use the way of ViewModel3 instead.
+ * class ViewModel7(
+ *      @Supply
+ *      private val foo1: Foo1,
+ *      @Supply
+ *      private val foo2: Foo2
+ * )
  * ```
  */
 inline fun <reified VM : ViewModel> ComponentActivity.injectionViewModel(): Lazy<VM> {
