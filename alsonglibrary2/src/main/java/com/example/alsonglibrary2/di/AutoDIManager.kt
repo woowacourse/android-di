@@ -81,9 +81,6 @@ object AutoDIManager {
             }
     }
 
-    /**
-     * Qualifier 어노테이션이 붙은 함수를 DependencyProvider에서 찾아서 호출합니다.
-     **/
     inline fun <reified A : Annotation> findQualifierDependency(annotation: A): Any? {
         val dependencyProvider = provider ?: return null
         val targetFunction =
