@@ -1,6 +1,5 @@
 package com.example.alsonglibrary2.di
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -55,35 +54,28 @@ object AutoDIManager {
         return constructor.callBy(args)
     }
 
-    inline fun <reified T : Any> addQualifierDependency() {
-        val kProperties = T::class.declaredMemberProperties.filter { it.annotations.isNotEmpty() }
-        for (kProperty in kProperties) {
-            // 필드에도 적용할 수 있도록 수정 필요
-            val annotation = kProperty.annotations.filterNot { it is FieldInject }.first()
-            Log.d("alsong", "addQualifierDependency: $annotation")
-            dependencies[kProperty.returnType.jvmErasure] = fetchAnnotationParamsValue(annotation) ?: continue
-        }
-
-        val constructor = T::class.primaryConstructor ?: return
-        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
-        for (parameter in parametersWithAnnotation) {
-            // 필드에도 적용할 수 있도록 수정 필요
-            val annotation = parameter.annotations.first()
-            dependencies[parameter.type.jvmErasure] = fetchAnnotationParamsValue(annotation) ?: continue
-        }
-    }
-
     inline fun <reified T : Any> injectField(instance: T): T {
         val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
-        for (mutableProperty in mutableProperties) {
-            if (mutableProperty.findAnnotation<FieldInject>() != null) {
-                mutableProperty.isAccessible = true
-                mutableProperty.setter.call(
-                    instance,
-                    dependencies[mutableProperty.returnType.jvmErasure],
-                )
+        val fieldInjectProperties =
+            mutableProperties.filter { it.findAnnotation<FieldInject>() != null }
+
+        val tempDependencies = dependencies
+        for (fieldInjectProperty in fieldInjectProperties) {
+            val qualifierAnnotation =
+                fieldInjectProperty.annotations.find {
+                    it.annotationClass.findAnnotation<AlsongQualifier>() != null
+                }
+            if (qualifierAnnotation != null) {
+                tempDependencies[fieldInjectProperty.returnType.jvmErasure] =
+                    fetchAnnotationParamsValue(qualifierAnnotation)
             }
+
+            fieldInjectProperty.isAccessible = true
+            fieldInjectProperty.setter.call(
+                instance,
+                tempDependencies[fieldInjectProperty.returnType.jvmErasure],
+            )
         }
         return instance
     }

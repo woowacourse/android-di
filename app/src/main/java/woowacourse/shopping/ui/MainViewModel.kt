@@ -9,11 +9,9 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.util.SharedCartRepository
+import woowacourse.shopping.ui.util.InMemoryCartRepository
 
-class MainViewModel(
-    @SharedCartRepository private val cartRepository: CartRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -22,6 +20,10 @@ class MainViewModel(
 
     @FieldInject
     private lateinit var productRepository: ProductRepository
+
+    @FieldInject
+    @InMemoryCartRepository
+    private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
