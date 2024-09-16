@@ -14,13 +14,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.ui.util.DependencyProvider
 
 class ShoppingApplication : Application() {
-    val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
-
-    val defaultProductRepository by lazy { createAutoDIInstance<DefaultProductRepository>() }
-
-    val defaultCartRepository by lazy { createAutoDIInstance<DefaultCartRepository>() }
-
-    val inMemoryCartRepository by lazy { createAutoDIInstance<InMemoryCartRepository>() }
+    private val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -31,6 +25,12 @@ class ShoppingApplication : Application() {
     private fun registerDependencies() {
         registerDependency<CartProductDao>(shoppingDatabase.cartProductDao())
         registerDependency<ProductRepository>(defaultProductRepository)
-        registerDependency<CartRepository>(inMemoryCartRepository)
+        registerDependency<CartRepository>(defaultCartRepository)
+    }
+
+    companion object {
+        val defaultProductRepository by lazy { createAutoDIInstance<DefaultProductRepository>() }
+        val defaultCartRepository by lazy { createAutoDIInstance<DefaultCartRepository>() }
+        val inMemoryCartRepository by lazy { createAutoDIInstance<InMemoryCartRepository>() }
     }
 }

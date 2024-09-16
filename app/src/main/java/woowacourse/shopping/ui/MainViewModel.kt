@@ -15,10 +15,6 @@ import woowacourse.shopping.ui.util.SharedCartRepository
 class MainViewModel(
     @SharedCartRepository private val cartRepository: CartRepository,
 ) : ViewModel() {
-    init {
-        Log.d("alsong", "${cartRepository::class.hashCode()}")
-    }
-
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -27,10 +23,6 @@ class MainViewModel(
 
     @FieldInject
     private lateinit var productRepository: ProductRepository
-//
-//    @SharedCartRepository
-//    @FieldInject
-//    private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {

@@ -1,12 +1,8 @@
 package woowacourse.shopping.data
 
-import android.util.Log
 import woowacourse.shopping.model.Product
 
 class InMemoryCartRepository : CartRepository {
-    init {
-        Log.d("alsong", "새로생성")
-    }
     private val products: MutableList<Product> =
         mutableListOf(
             Product(
@@ -39,6 +35,5 @@ class InMemoryCartRepository : CartRepository {
 
     override suspend fun deleteCartProduct(id: Long) {
         products.remove(products.first { it.id == id })
-        Log.d("alsong", "deleteCartProduct: ${id} - ${products}")
     }
 }
