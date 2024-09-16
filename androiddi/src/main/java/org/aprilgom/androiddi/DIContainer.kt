@@ -47,7 +47,8 @@ class DIContainer(
             targetClazz.declaredMemberProperties
         }.onSuccess {
             it.filter {
-                it.javaField?.isAnnotationPresent(Inject::class.java) ?: false
+                val isInject = it.javaField?.isAnnotationPresent(Inject::class.java) ?: false
+                it.isLateinit && isInject
             }.map {
                 it as KMutableProperty<*>
             }.forEach {

@@ -25,4 +25,8 @@ object GlobalContext {
     fun <VM : ViewModel> provideViewModelFactory(clazz: KClass<VM>): ViewModelFactory<VM> =
         diContainer?.provideViewModelFactory(clazz)
             ?: throw IllegalStateException("DIContainer is not initialized")
+
+    fun clear()  {
+        diContainer = null
+    }
 }
