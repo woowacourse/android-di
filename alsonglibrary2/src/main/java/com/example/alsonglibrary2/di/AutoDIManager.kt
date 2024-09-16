@@ -45,8 +45,10 @@ object AutoDIManager {
             constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
         val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
         for (parameter in parametersWithAnnotation) {
-            val annotation = parameter.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null } ?: continue
-            args[parameter] = fetchQualifierDependency(annotation) ?: continue
+            val annotation =
+                parameter.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null }
+                    ?: continue
+            args[parameter] = findQualifierDependency(annotation) ?: continue
         }
         return constructor.callBy(args)
     }
@@ -57,12 +59,12 @@ object AutoDIManager {
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         val fieldInjectProperties =
             mutableProperties.filter { it.findAnnotation<FieldInject>() != null }
-        fieldInjectProperties.forEach { fieldInjectProperty ->
-            changeQualifierDependency(fieldInjectProperty, updatedDependencies)
-            fieldInjectProperty.isAccessible = true
-            fieldInjectProperty.setter.call(
+        fieldInjectProperties.forEach { property ->
+            changeQualifierDependency(property, updatedDependencies)
+            property.isAccessible = true
+            property.setter.call(
                 instance,
-                updatedDependencies[fieldInjectProperty.returnType.jvmErasure],
+                updatedDependencies[property.returnType.jvmErasure],
             )
         }
         return instance
@@ -75,14 +77,14 @@ object AutoDIManager {
         property.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null }
             ?.let { qualifierAnnotation ->
                 updatedDependencies[property.returnType.jvmErasure] =
-                    fetchQualifierDependency(qualifierAnnotation)
+                    findQualifierDependency(qualifierAnnotation)
             }
     }
 
     /**
      * Qualifier 어노테이션이 붙은 함수를 DependencyProvider에서 찾아서 호출합니다.
      **/
-    inline fun <reified A : Annotation> fetchQualifierDependency(annotation: A): Any? {
+    inline fun <reified A : Annotation> findQualifierDependency(annotation: A): Any? {
         val dependencyProvider = provider ?: return null
         val targetFunction =
             dependencyProvider::class.memberFunctions
