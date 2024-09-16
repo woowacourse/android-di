@@ -1,5 +1,6 @@
 package com.kmlibs.supplin
 
+import android.app.Application
 import android.content.Context
 import com.kmlibs.supplin.annotations.ApplicationContext
 import com.kmlibs.supplin.model.QualifiedType
@@ -45,7 +46,12 @@ class InstanceContainer(
             kParameter.annotations.firstOrNull { annotation ->
                 annotation::class.hasAnnotation<Qualifier>()
             }
-        return qualifiedInstanceOf(QualifiedType(kParameter.type, annotation?.annotationClass?.simpleName))
+        return qualifiedInstanceOf(
+            QualifiedType(
+                returnType = kParameter.type,
+                qualifier = annotation?.annotationClass?.simpleName
+            )
+        )
     }
 
     fun <T : Any> instanceOf(kClassifier: KClassifier): T {
@@ -57,7 +63,12 @@ class InstanceContainer(
             kCallable.annotations.firstOrNull { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-        return qualifiedInstanceOf(QualifiedType(kCallable.returnType, annotation?.annotationClass?.simpleName))
+        return qualifiedInstanceOf(
+            QualifiedType(
+                returnType = kCallable.returnType,
+                qualifier = annotation?.annotationClass?.simpleName
+            )
+        )
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
@@ -86,7 +97,6 @@ class InstanceContainer(
         return instance as T
     }
 
-    // TODO 함수 작은 단위로 분리?
     private fun resolveInstance(
         returnType: KType,
         annotations: List<Annotation>,
@@ -104,7 +114,8 @@ class InstanceContainer(
             annotations.firstOrNull { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-        val qualifiedType = QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
+        val qualifiedType =
+            QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
 
         val existingInstance = instances[qualifiedType]
         if (existingInstance != null) return existingInstance
