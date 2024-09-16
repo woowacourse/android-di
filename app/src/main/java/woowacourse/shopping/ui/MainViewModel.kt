@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.util.InMemoryCartRepository
+import woowacourse.shopping.ui.util.DefaultCartRepository
 
 class MainViewModel : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
     private lateinit var productRepository: ProductRepository
 
     @FieldInject
-    @InMemoryCartRepository
+    @DefaultCartRepository
     private lateinit var cartRepository: CartRepository
 
     fun addCartProduct(product: Product) {

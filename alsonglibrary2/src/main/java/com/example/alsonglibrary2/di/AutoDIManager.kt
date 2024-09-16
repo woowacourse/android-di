@@ -32,10 +32,7 @@ object AutoDIManager {
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
-        // constructor 주입
         val constructorInjectedInstance = injectConstructor<T>()
-
-        // 필드 주입
         val fieldInjectedInstance = injectField<T>(constructorInjectedInstance)
 
         return fieldInjectedInstance
@@ -48,42 +45,44 @@ object AutoDIManager {
             constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
         val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
         for (parameter in parametersWithAnnotation) {
-            val annotation = parameter.annotations.first()
-            args[parameter] = fetchAnnotationParamsValue(annotation) ?: continue
+            val annotation = parameter.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null } ?: continue
+            args[parameter] = fetchQualifierDependency(annotation) ?: continue
         }
         return constructor.callBy(args)
     }
 
     inline fun <reified T : Any> injectField(instance: T): T {
+        val updatedDependencies = dependencies
         val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         val fieldInjectProperties =
             mutableProperties.filter { it.findAnnotation<FieldInject>() != null }
-
-        val tempDependencies = dependencies
-        for (fieldInjectProperty in fieldInjectProperties) {
-            val qualifierAnnotation =
-                fieldInjectProperty.annotations.find {
-                    it.annotationClass.findAnnotation<AlsongQualifier>() != null
-                }
-            if (qualifierAnnotation != null) {
-                tempDependencies[fieldInjectProperty.returnType.jvmErasure] =
-                    fetchAnnotationParamsValue(qualifierAnnotation)
-            }
-
+        fieldInjectProperties.forEach { fieldInjectProperty ->
+            changeQualifierDependency(fieldInjectProperty, updatedDependencies)
             fieldInjectProperty.isAccessible = true
             fieldInjectProperty.setter.call(
                 instance,
-                tempDependencies[fieldInjectProperty.returnType.jvmErasure],
+                updatedDependencies[fieldInjectProperty.returnType.jvmErasure],
             )
         }
         return instance
     }
 
+    fun changeQualifierDependency(
+        property: KMutableProperty<*>,
+        updatedDependencies: MutableMap<KClass<*>, Any?>,
+    ) {
+        property.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null }
+            ?.let { qualifierAnnotation ->
+                updatedDependencies[property.returnType.jvmErasure] =
+                    fetchQualifierDependency(qualifierAnnotation)
+            }
+    }
+
     /**
      * Qualifier 어노테이션이 붙은 함수를 DependencyProvider에서 찾아서 호출합니다.
      **/
-    inline fun <reified A : Annotation> fetchAnnotationParamsValue(annotation: A): Any? {
+    inline fun <reified A : Annotation> fetchQualifierDependency(annotation: A): Any? {
         val dependencyProvider = provider ?: return null
         val targetFunction =
             dependencyProvider::class.memberFunctions
