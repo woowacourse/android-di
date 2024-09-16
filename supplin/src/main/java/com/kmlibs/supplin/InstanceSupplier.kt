@@ -6,6 +6,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 object InstanceSupplier {
     /**
@@ -26,6 +27,7 @@ object InstanceSupplier {
         property: KMutableProperty<*>,
         targetInstance: Any,
     ) {
+        property.isAccessible = true
         property.setter.call(targetInstance, findInstanceOf(property))
     }
 
