@@ -30,8 +30,15 @@ class MainViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         viewModel = MainViewModel()
-        viewModel.productRepository = FakeProductRepository()
-        viewModel.cartRepository = FakeCartRepository(System.currentTimeMillis())
+        val clazz = viewModel::class
+
+        val productRepository = clazz.java.getDeclaredField("productRepository")
+        productRepository.isAccessible = true
+        productRepository.set(viewModel, FakeProductRepository())
+
+        val cartRepository = clazz.java.getDeclaredField("cartRepository")
+        cartRepository.isAccessible = true
+        cartRepository.set(viewModel, FakeCartRepository(System.currentTimeMillis()))
     }
 
     @After

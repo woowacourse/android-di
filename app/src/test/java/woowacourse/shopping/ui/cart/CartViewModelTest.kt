@@ -37,7 +37,10 @@ class CartViewModelTest {
             viewModel = CartViewModel()
 
             addCartProducts(3)
-            viewModel.cartRepository = cartRepository
+            val clazz = viewModel::class
+            val cartRepositoryProp = clazz.java.getDeclaredField("cartRepository")
+            cartRepositoryProp.isAccessible = true
+            cartRepositoryProp.set(viewModel, cartRepository)
         }
 
     @After
