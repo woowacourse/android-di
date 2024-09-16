@@ -11,12 +11,11 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var instance: ShoppingDatabase? = null
+        private lateinit var instance: ShoppingDatabase
 
         fun getInstance(context: Context): ShoppingDatabase {
-            if (instance == null) initializeDatabase(context)
+            if (!::instance.isInitialized) initializeDatabase(context)
             return instance
-                ?: throw IllegalStateException(EXCEPTION_UNINITIALIZED_DATABASE_ACCESS)
         }
 
         private fun initializeDatabase(context: Context) {
@@ -30,8 +29,5 @@ abstract class ShoppingDatabase : RoomDatabase() {
                     .build()
             }
         }
-
-        private const val EXCEPTION_UNINITIALIZED_DATABASE_ACCESS =
-            "Database has not been initialized."
     }
 }
