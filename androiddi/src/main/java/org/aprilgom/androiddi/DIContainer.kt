@@ -34,7 +34,7 @@ class DIContainer(
     private fun provide(namedKClass: NamedKClass): Any {
         val instance =
             providers[namedKClass]?.get()
-                ?: throw IllegalArgumentException("name: ${namedKClass.name} clazz: ${namedKClass.clazz} is not provided")
+                ?: throw NoSuchElementException("name: ${namedKClass.name} clazz: ${namedKClass.clazz} is not provided")
         inject(instance, instance.javaClass.kotlin)
         return instance
     }
