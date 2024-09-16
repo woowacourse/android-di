@@ -1,11 +1,9 @@
 package com.kmlibs.supplin
 
-import android.app.Application
 import android.content.Context
 import com.kmlibs.supplin.annotations.ApplicationContext
 import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
-import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KFunction
@@ -24,11 +22,10 @@ class InstanceContainer(
             .flatMap { module ->
                 module::class.declaredMemberFunctions
             }.associateBy { function ->
+                val qualifier = findAnnotationOf<Qualifier>(function.annotations)
                 QualifiedType(
-                    function.returnType,
-                    function.annotations.firstOrNull { annotation ->
-                        annotation.annotationClass.hasAnnotation<Qualifier>()
-                    }?.annotationClass?.simpleName,
+                    returnType = function.returnType,
+                    qualifier = qualifier?.annotationClass?.simpleName
                 )
             }
 
@@ -36,16 +33,11 @@ class InstanceContainer(
 
     init {
         saveModuleInstances(modules)
-        qualifiedFunctions.forEach { (qualifiedType, function) ->
-            resolveInstance(qualifiedType.returnType, function.annotations)
-        }
+        saveInstancesFromModuleFunctions()
     }
 
     fun <T : Any> instanceOf(kParameter: KParameter): T {
-        val annotation =
-            kParameter.annotations.firstOrNull { annotation ->
-                annotation::class.hasAnnotation<Qualifier>()
-            }
+        val annotation = findAnnotationOf<Qualifier>(kParameter.annotations)
         return qualifiedInstanceOf(
             QualifiedType(
                 returnType = kParameter.type,
@@ -59,10 +51,7 @@ class InstanceContainer(
     }
 
     fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
-        val annotation =
-            kCallable.annotations.firstOrNull { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
+        val annotation = findAnnotationOf<Qualifier>(kCallable.annotations)
         return qualifiedInstanceOf(
             QualifiedType(
                 returnType = kCallable.returnType,
@@ -72,16 +61,23 @@ class InstanceContainer(
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
-        val qualifierAnnotation = qualifierAnnotationOf(kType)
+        val qualifierAnnotation = findAnnotationOf<Qualifier>(kType.annotations)
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
         return qualifiedInstanceOf(qualifiedType)
     }
 
-    private fun qualifierAnnotationOf(kAnnotatedElement: KAnnotatedElement): Annotation? =
-        kAnnotatedElement.annotations.firstOrNull { annotation ->
-            annotation.annotationClass.hasAnnotation<Qualifier>()
+    private fun saveModuleInstances(modules: List<Any>) {
+        modules.forEach { module ->
+            instances[QualifiedType(module::class.createType())] = module
         }
+    }
+
+    private fun saveInstancesFromModuleFunctions() {
+        qualifiedFunctions.forEach { (qualifiedType, function) ->
+            resolveInstance(qualifiedType.returnType, function.annotations)
+        }
+    }
 
     private fun qualifiedTypeOf(
         kType: KType,
@@ -101,33 +97,31 @@ class InstanceContainer(
         returnType: KType,
         annotations: List<Annotation>,
     ): Any {
-        val contextAnnotation =
-            annotations.firstOrNull { annotation ->
-                annotation.annotationClass == ApplicationContext::class
-            }
+        if (shouldResolveContext(returnType, annotations)) return applicationContext
+        val qualifiedType = buildQualifiedType(returnType, annotations)
+        return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
+    }
 
-        if (contextAnnotation != null && returnType.classifier == Context::class) {
-            return applicationContext
+    private fun shouldResolveContext(returnType: KType, annotations: List<Annotation>): Boolean {
+        val contextAnnotation = annotations.filterIsInstance<ApplicationContext>().firstOrNull()
+        return contextAnnotation != null && returnType.classifier == Context::class
+    }
+
+    private fun buildQualifiedType(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): QualifiedType {
+        val qualifierAnnotation = annotations.firstOrNull { annotation ->
+            annotation.annotationClass.hasAnnotation<Qualifier>()
         }
+        return QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
+    }
 
-        val qualifierAnnotation =
-            annotations.firstOrNull { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
-        val qualifiedType =
-            QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
-
-        val existingInstance = instances[qualifiedType]
-        if (existingInstance != null) return existingInstance
-
+    private fun buildInstanceOf(qualifiedType: QualifiedType): Any {
         val function = qualifiedFunctions[qualifiedType]
         requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(qualifiedType.returnType) }
 
-        // 재귀 주입
-        val parameterValues =
-            function.parameters.associateWith { parameter ->
-                resolveInstance(parameter.type, parameter.annotations)
-            }
+        val parameterValues = resolveParameterValues(function)
         val instance = function.callBy(parameterValues)
         checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
 
@@ -135,9 +129,15 @@ class InstanceContainer(
         return instance
     }
 
-    private fun saveModuleInstances(modules: List<Any>) {
-        modules.forEach { module ->
-            instances[QualifiedType(module::class.createType())] = module
+    private fun resolveParameterValues(function: KFunction<*>): Map<KParameter, Any> {
+        return function.parameters.associateWith { parameter ->
+            resolveInstance(parameter.type, parameter.annotations)
+        }
+    }
+
+    private inline fun <reified T : Annotation> findAnnotationOf(annotations: List<Annotation>): Annotation? {
+        return annotations.firstOrNull { annotation ->
+            annotation.annotationClass.hasAnnotation<T>()
         }
     }
 
