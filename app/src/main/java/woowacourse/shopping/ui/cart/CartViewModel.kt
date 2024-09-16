@@ -8,7 +8,7 @@ import com.example.alsonglibrary2.di.FieldInject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.util.DefaultCartRepository
+import woowacourse.shopping.ui.util.InMemoryCartRepository
 
 class CartViewModel : ViewModel() {
     private val _cartProducts: MutableLiveData<MutableList<Product>> =
@@ -18,7 +18,7 @@ class CartViewModel : ViewModel() {
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    @DefaultCartRepository
+    @InMemoryCartRepository
     @FieldInject
     private lateinit var cartRepository: CartRepository
 

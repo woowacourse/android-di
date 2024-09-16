@@ -81,11 +81,11 @@ object AutoDIManager {
             }
     }
 
-    inline fun <reified A : Annotation> findQualifierDependency(annotation: A): Any? {
+    fun findQualifierDependency(annotation: Annotation): Any? {
         val dependencyProvider = provider ?: return null
         val targetFunction =
             dependencyProvider::class.memberFunctions
-                .find { it.findAnnotation<A>() == annotation } ?: return null
+                .find { it.findAnnotation<Annotation>() == annotation } ?: return null
         return targetFunction.call(dependencyProvider)
     }
 }
