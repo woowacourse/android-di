@@ -11,6 +11,7 @@ import kotlin.reflect.KClassifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
@@ -90,22 +91,33 @@ class InstanceContainer(
         val parameters = targetConstructor.parameters.associateWith { param ->
             instanceOf(param.type.classifier as KClass<*>)
         }
-        val instance = targetConstructor.callBy(parameters)
 
+        val instance = targetConstructor.callBy(parameters)
+        injectFields(kClass, instance)
+        instances[QualifiedType(targetConstructor.returnType, null)] = instance
+
+        return instance
+    }
+
+    private fun <T : Any> injectFields(kClass: KClass<T>, instance: T) {
         kClass.memberProperties.filter { field ->
             field.hasAnnotation<Supply>()
         }.forEach { targetField ->
-            targetField.isAccessible = true
-            try {
-                (targetField as KMutableProperty<*>).setter.call(instance, instanceOf(targetField))
-            } catch (e: Exception) {
-                val property = instanceOf(targetField.returnType.jvmErasure)
-                (targetField as KMutableProperty<*>).setter.call(instance, property)
-            }
+            injectSingleField(targetField, instance)
         }
+    }
 
-        instances[QualifiedType(targetConstructor.returnType, null)] = instance
-        return instance
+    private fun <T : Any> injectSingleField(
+        targetField: KProperty1<T, *>,
+        instance: T
+    ) {
+        targetField.isAccessible = true
+        try {
+            (targetField as KMutableProperty<*>).setter.call(instance, instanceOf(targetField))
+        } catch (e: IllegalStateException) {
+            val property = instanceOf(targetField.returnType.jvmErasure)
+            (targetField as KMutableProperty<*>).setter.call(instance, property)
+        }
     }
 
     private fun saveModuleInstances(modules: List<Any>) {
