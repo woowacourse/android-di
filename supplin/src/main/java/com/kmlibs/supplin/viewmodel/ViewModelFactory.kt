@@ -2,11 +2,11 @@ package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.InstanceContainer
 import com.kmlibs.supplin.annotations.Supply
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
@@ -20,17 +20,21 @@ class ViewModelFactory(
         }
         val targetConstructor = targetConstructor()
         val constructorParameters = targetConstructor.parameters
-        val instance =
-            targetConstructor.callBy(
-                constructorParameters.associateWith { parameter ->
-                    instanceContainer.instanceOf(parameter)
-                },
-            )
-
+        val instance = instanceOf(targetConstructor, constructorParameters)
         instanceContainer.injectFields(modelClass.kotlin, instance as T)
 
         return instance
     }
+
+    private fun instanceOf(
+        targetConstructor: KFunction<ViewModel>,
+        constructorParameters: List<KParameter>
+    ): ViewModel =
+        targetConstructor.callBy(
+            constructorParameters.associateWith { parameter ->
+                instanceContainer.instanceOf(parameter)
+            },
+        )
 
     private fun targetConstructor(): KFunction<ViewModel> =
         viewModelClass.constructors.firstOrNull { constructor ->
