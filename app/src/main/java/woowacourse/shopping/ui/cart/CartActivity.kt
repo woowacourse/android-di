@@ -3,13 +3,9 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import org.aprilgom.androiddi.diContainer
-import org.aprilgom.androiddi.module
-import org.aprilgom.androiddi.modules
 import org.aprilgom.androiddi.viewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.injectViewModels
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }

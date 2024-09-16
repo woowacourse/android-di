@@ -9,11 +9,10 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.QDefaultCartRepository
 import woowacourse.shopping.data.QProductRepository
-import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import javax.inject.Inject
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     @QProductRepository
     @Inject
     lateinit var productRepository: ProductRepository

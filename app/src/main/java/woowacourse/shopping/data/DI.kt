@@ -9,4 +9,4 @@ annotation class QDefaultCartRepository
 annotation class QProductRepository
 
 @Qualifier
-annotation class QDBInmemoryDao
+annotation class QDBInMemoryCartDao

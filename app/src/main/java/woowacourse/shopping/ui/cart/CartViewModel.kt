@@ -12,8 +12,8 @@ import woowacourse.shopping.model.Product
 import javax.inject.Inject
 
 class CartViewModel : ViewModel() {
-    @Inject
     @QDefaultCartRepository
+    @Inject
     lateinit var cartRepository: CartRepository
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
@@ -24,7 +24,7 @@ class CartViewModel : ViewModel() {
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts().map{it.toProduct()}
+            _cartProducts.value = cartRepository.getAllCartProducts().map { it.toProduct() }
         }
     }
 

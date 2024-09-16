@@ -16,6 +16,6 @@ fun CartProductEntity.toProduct(): Product {
         name = name,
         price = price,
         imageUrl = imageUrl,
-        createdAt = createdAt
+        createdAt = createdAt,
     )
 }

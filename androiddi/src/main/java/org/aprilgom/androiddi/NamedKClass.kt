@@ -12,6 +12,7 @@ data class NamedKClass(val name: String, val clazz: KClass<*>) {
         }
         return false
     }
+
     override fun hashCode(): Int {
         return name.hashCode()
     }

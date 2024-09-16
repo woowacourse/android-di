@@ -3,9 +3,10 @@ package org.aprilgom.androiddi
 class DIContainerBuilder {
     lateinit var moduleBuilders: List<ModuleBuilder>
 
-    fun build(): DIContainer{
+    fun build(): DIContainer {
         val modules = moduleBuilders.map { it.build() }
-        DIContainer.modules.addAll(modules)
-        return DIContainer
+        val providers = modules.flatMap { it.providers.entries }.associate { it.key to it.value }
+        val diContainer = DIContainer(providers)
+        return diContainer
     }
 }

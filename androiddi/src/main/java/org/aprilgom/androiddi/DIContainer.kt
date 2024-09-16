@@ -1,39 +1,68 @@
 package org.aprilgom.androiddi
 
-import android.content.Context
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.jvmName
 
-object DIContainer{
-    val modules = mutableListOf<Module>()
-    fun provide(name: String, clazz: KClass<*>): Any {
+class DIContainer(
+    private val providers: Map<NamedKClass, Provider<*>>,
+) {
+    fun provide(clazz: KClass<*>): Any {
+        val namedKClass = NamedKClass(clazz)
+        return provide(namedKClass)
+    }
+
+    fun provide(
+        name: String,
+        clazz: KClass<*>,
+    ): Any {
         val namedKClass = NamedKClass(name, clazz)
         return provide(namedKClass)
     }
 
-    private fun provide(namedKClass: NamedKClass): Any {
-        val providers = modules.flatMap { it.providers.entries }.associate { it.key to it.value }
-        return providers[namedKClass]?.get()
-            ?: throw IllegalArgumentException("name: ${namedKClass.name} clazz: ${namedKClass.clazz} is not provided")
+    fun <VM : ViewModel> provideViewModelFactory(clazz: KClass<VM>): ViewModelFactory<VM> {
+        return providers[NamedKClass(clazz)]?.get() as ViewModelFactory<VM>
     }
 
-    fun inject() {
-        modules.forEach { it.inject() }
+    private fun provide(namedKClass: NamedKClass): Any {
+        val instance =
+            providers[namedKClass]?.get()
+                ?: throw IllegalArgumentException("name: ${namedKClass.name} clazz: ${namedKClass.clazz} is not provided")
+        inject(instance, instance.javaClass.kotlin)
+        return instance
+    }
+
+    fun inject(
+        instance: Any?,
+        targetClazz: KClass<*>,
+    ) {
+        runCatching {
+            targetClazz.declaredMemberProperties
+        }.onSuccess {
+            it.filter {
+                it.javaField?.isAnnotationPresent(Inject::class.java) ?: false
+            }.map {
+                it as KMutableProperty<*>
+            }.forEach {
+                it.isAccessible = true
+                val clazz = it.returnType.classifier as KClass<*>
+                val annotationName =
+                    it.annotations.find { annotation ->
+                        annotation.annotationClass.hasAnnotation<Qualifier>()
+                    }.let { annotation ->
+                        annotation?.annotationClass?.simpleName
+                    }
+                val name = annotationName ?: clazz.jvmName
+                val propertyInstance = provide(name, it.returnType.classifier as KClass<*>)
+                it.setter.call(instance, propertyInstance)
+            }
+        }
     }
 }
-/*
-class DIContainer(
-    val context: Context,
-    modules: List<Module>
-) {
-    init{
-        _globalModule = _globalModule?.plus(modules.reduce { acc, module -> acc + module })
-    }
-    fun inject() { globalModule.inject() }
-    //private val module = modules.reduce { acc, module -> acc + module }
-    companion object{
-        private var _globalModule: Module? = null
-        val globalModule:Module get() = _globalModule!!
-    }
-}
- */

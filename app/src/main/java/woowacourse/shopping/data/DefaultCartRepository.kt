@@ -5,9 +5,10 @@ import woowacourse.shopping.model.Product
 import javax.inject.Inject
 
 class DefaultCartRepository : CartRepository {
-    @QDBInmemoryDao
+    @QDBInMemoryCartDao
     @Inject
     lateinit var dao: CartProductDao
+
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }
