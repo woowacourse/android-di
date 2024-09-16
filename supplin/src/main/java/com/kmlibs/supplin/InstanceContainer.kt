@@ -2,16 +2,22 @@ package com.kmlibs.supplin
 
 import android.content.Context
 import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.annotations.Supply
 import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
 import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.jvmErasure
 
 class InstanceContainer(
     private val applicationContext: Context,
@@ -55,7 +61,7 @@ class InstanceContainer(
         return qualifiedInstanceOf(
             QualifiedType(
                 returnType = kCallable.returnType,
-                qualifier = annotation?.annotationClass?.simpleName
+                qualifier = annotation?.annotationClass?.simpleName,
             )
         )
     }
@@ -65,6 +71,41 @@ class InstanceContainer(
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
         return qualifiedInstanceOf(qualifiedType)
+    }
+
+    fun <T : Any> instanceOf(kClass: KClass<T>): T {
+        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
+            constructor.hasAnnotation<Supply>()
+        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
+
+        return instances[QualifiedType(targetConstructor.returnType, null)] as? T
+            ?: createInstance(kClass)
+    }
+
+    private fun <T : Any> createInstance(kClass: KClass<T>): T {
+        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
+            constructor.hasAnnotation<Supply>()
+        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION)
+
+        val parameters = targetConstructor.parameters.associateWith { param ->
+            instanceOf(param.type.classifier as KClass<*>)
+        }
+        val instance = targetConstructor.callBy(parameters)
+
+        kClass.memberProperties.filter { field ->
+            field.hasAnnotation<Supply>()
+        }.forEach { targetField ->
+            targetField.isAccessible = true
+            try {
+                (targetField as KMutableProperty<*>).setter.call(instance, instanceOf(targetField))
+            } catch (e: Exception) {
+                val property = instanceOf(targetField.returnType.jvmErasure)
+                (targetField as KMutableProperty<*>).setter.call(instance, property)
+            }
+        }
+
+        instances[QualifiedType(targetConstructor.returnType, null)] = instance
+        return instance
     }
 
     private fun saveModuleInstances(modules: List<Any>) {
