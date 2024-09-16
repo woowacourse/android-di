@@ -63,7 +63,7 @@ import com.kmlibs.supplin.Injector
  * )
  * ```
  */
-inline fun <reified VM : ViewModel> ComponentActivity.injectionViewModel(): Lazy<VM> {
+inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(): Lazy<VM> {
     return viewModels {
         ViewModelFactory(
             viewModelClass = VM::class,
