@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.kmlibs.supplin.InstanceContainer
 import com.kmlibs.supplin.InstanceSupplier
+import com.kmlibs.supplin.annotations.Supply
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelFactory(
@@ -12,25 +15,32 @@ class ViewModelFactory(
     private val instanceContainer: InstanceContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        require(modelClass.isAssignableFrom(viewModelClass.java)) { EXCEPTION_VIEWMODEL_NOT_FOUND }
-
-        val primaryConstructor = viewModelClass.primaryConstructor
-        requireNotNull(primaryConstructor) { EXCEPTION_NO_PRIMARY_CONSTRUCTOR.format(viewModelClass.simpleName) }
-
-        val primaryConstructorParameters = primaryConstructor.parameters
+        require(modelClass.isAssignableFrom(viewModelClass.java)) {
+            EXCEPTION_VIEWMODEL_NOT_FOUND
+        }
+        val targetConstructor = targetConstructor()
+        val constructorParameters = targetConstructor.parameters
         val instance =
-            primaryConstructor.callBy(
-                primaryConstructorParameters.associateWith { parameter ->
+            targetConstructor.callBy(
+                constructorParameters.associateWith { parameter ->
                     instanceContainer.instanceOf(parameter)
                 },
             )
+
         InstanceSupplier.injectFields(viewModelClass, instance)
 
         return instance as T
     }
 
+    private fun targetConstructor(): KFunction<ViewModel> =
+        viewModelClass.constructors.firstOrNull { constructor ->
+            constructor.hasAnnotation<Supply>()
+        } ?: viewModelClass.primaryConstructor.also { constructor ->
+            check(constructor?.parameters?.isEmpty() == true)
+        } ?: error(EXCEPTION_NO_TARGET_CONSTRUCTOR.format(viewModelClass.simpleName))
+
     companion object {
         private const val EXCEPTION_VIEWMODEL_NOT_FOUND = "ViewModel class not found"
-        private const val EXCEPTION_NO_PRIMARY_CONSTRUCTOR = "No primary constructor found for %s"
+        private const val EXCEPTION_NO_TARGET_CONSTRUCTOR = "No primary constructor found for %s"
     }
 }
