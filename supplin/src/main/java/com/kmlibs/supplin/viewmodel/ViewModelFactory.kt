@@ -2,8 +2,8 @@ package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.InstanceContainer
-import com.kmlibs.supplin.InstanceSupplier
 import com.kmlibs.supplin.annotations.Supply
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -27,9 +27,9 @@ class ViewModelFactory(
                 },
             )
 
-        InstanceSupplier.injectFields(viewModelClass, instance)
+        instanceContainer.injectFields(modelClass.kotlin, instance as T)
 
-        return instance as T
+        return instance
     }
 
     private fun targetConstructor(): KFunction<ViewModel> =

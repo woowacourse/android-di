@@ -57,7 +57,16 @@ class InstanceContainer(
         return instanceOf(kClassifier.createType())
     }
 
-    fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
+    fun <T : Any> instanceOf(kClass: KClass<T>): T {
+        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
+            constructor.hasAnnotation<Supply>()
+        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
+
+        return instances[QualifiedType(targetConstructor.returnType, null)] as? T
+            ?: createInstance(kClass)
+    }
+
+    private fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
         val annotation = findAnnotationOf<Qualifier>(kCallable.annotations)
         return qualifiedInstanceOf(
             QualifiedType(
@@ -72,15 +81,6 @@ class InstanceContainer(
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
         return qualifiedInstanceOf(qualifiedType)
-    }
-
-    fun <T : Any> instanceOf(kClass: KClass<T>): T {
-        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
-            constructor.hasAnnotation<Supply>()
-        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
-
-        return instances[QualifiedType(targetConstructor.returnType, null)] as? T
-            ?: createInstance(kClass)
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
@@ -99,7 +99,7 @@ class InstanceContainer(
         return instance
     }
 
-    private fun <T : Any> injectFields(kClass: KClass<T>, instance: T) {
+    fun <T : Any> injectFields(kClass: KClass<T>, instance: T) {
         kClass.memberProperties.filter { field ->
             field.hasAnnotation<Supply>()
         }.forEach { targetField ->
