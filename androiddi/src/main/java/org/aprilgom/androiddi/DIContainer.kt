@@ -42,28 +42,33 @@ class DIContainer(
     fun inject(
         instance: Any?,
         targetClazz: KClass<*>,
-    ) {
-        runCatching {
-            targetClazz.declaredMemberProperties
-        }.onSuccess {
-            it.filter {
-                val isInject = it.javaField?.isAnnotationPresent(Inject::class.java) ?: false
-                it.isLateinit && isInject
-            }.map {
-                it as KMutableProperty<*>
-            }.forEach {
-                it.isAccessible = true
-                val clazz = it.returnType.classifier as KClass<*>
-                val annotationName =
-                    it.annotations.find { annotation ->
-                        annotation.annotationClass.hasAnnotation<Qualifier>()
-                    }.let { annotation ->
-                        annotation?.annotationClass?.simpleName
-                    }
-                val name = annotationName ?: clazz.jvmName
-                val propertyInstance = provide(name, it.returnType.classifier as KClass<*>)
-                it.setter.call(instance, propertyInstance)
-            }
+    ) = findInjectProperties(targetClazz).onSuccess { properties ->
+        properties.forEach { property ->
+            property.isAccessible = true
+            val propertyName = getPropertyName(property)
+            val propertyInstance = provide(propertyName, property.returnType.classifier as KClass<*>)
+            property.setter.call(instance, propertyInstance)
         }
     }
+
+    private fun getPropertyName(property: KMutableProperty<*>): String {
+        val clazzName = (property.returnType.classifier as KClass<*>).jvmName
+        val qualifierName =
+            property.annotations.find { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }.let { annotation ->
+                annotation?.annotationClass?.simpleName
+            }
+        return qualifierName ?: clazzName
+    }
+
+    private fun findInjectProperties(targetClazz: KClass<*>) =
+        runCatching {
+            targetClazz.declaredMemberProperties.filter {
+                val isInject = it.javaField?.isAnnotationPresent(Inject::class.java) ?: false
+                isInject && it.isLateinit
+            }.map {
+                it as KMutableProperty<*>
+            }
+        }
 }
