@@ -24,6 +24,6 @@ class InjectionBuilderTest {
         val injectionData = injectionBuilder.build()
 
         assertThat(injectionData.context).isInstanceOf(Context::class.java)
-        assertThat(injectionData.modules).isEqualTo(listOf(Module1, Module2))
+        assertThat(injectionData.modules).containsExactly(Module1::class, Module2::class)
     }
 }
