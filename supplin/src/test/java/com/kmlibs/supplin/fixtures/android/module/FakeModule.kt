@@ -4,13 +4,8 @@ package com.kmlibs.supplin.fixtures.android.module
 import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
-import com.kmlibs.supplin.fixtures.FakeDataSource1
-import com.kmlibs.supplin.fixtures.FakeDataSource2
 import com.kmlibs.supplin.fixtures.FakeRepository1
 import com.kmlibs.supplin.fixtures.FakeRepository2
-import com.kmlibs.supplin.fixtures.FakeRepository6
-import com.kmlibs.supplin.fixtures.FakeRepository7
-import com.kmlibs.supplin.fixtures.FakeRepository8
 import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource1
 import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource2
 import com.kmlibs.supplin.fixtures.android.datasource.FakeDataSource

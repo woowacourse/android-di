@@ -20,24 +20,26 @@ class FunctionContainer(modules: List<KClass<*>>) {
                 functionByQualifiedType(memberFunction)
             }
 
-    private fun functionByQualifiedType(function: KFunction<*>) = when {
-        function.hasAnnotation<Abstract>() && function.hasAnnotation<Concrete>() ->
-            error("@Supply and @Abstract cannot be used together")
+    private fun functionByQualifiedType(function: KFunction<*>) =
+        when {
+            function.hasAnnotation<Abstract>() && function.hasAnnotation<Concrete>() ->
+                error("@Supply and @Abstract cannot be used together")
 
-        function.hasAnnotation<Abstract>() ->
-            abstractFunctionElement(function)
+            function.hasAnnotation<Abstract>() ->
+                abstractFunctionElement(function)
 
-        function.hasAnnotation<Concrete>() ->
-            concreteFunctionElement(function)
+            function.hasAnnotation<Concrete>() ->
+                concreteFunctionElement(function)
 
-        else -> error("@Abstract or @Concrete annotation is required")
-    }
+            else -> error("@Abstract or @Concrete annotation is required")
+        }
 
     private fun abstractFunctionElement(function: KFunction<*>): Pair<QualifiedType, KFunction<*>> {
         // why last? - the first parameter is the object that function is located
         val paramType = function.parameters.last().type
-        val constructor = paramType.jvmErasure.primaryConstructor
-            ?: throw IllegalStateException("No primary constructor found for ${paramType.jvmErasure}")
+        val constructor =
+            paramType.jvmErasure.primaryConstructor
+                ?: throw IllegalStateException("No primary constructor found for ${paramType.jvmErasure}")
 
         return QualifiedType(
             returnType = function.returnType,

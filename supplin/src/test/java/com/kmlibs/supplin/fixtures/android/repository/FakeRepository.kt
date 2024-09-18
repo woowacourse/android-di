@@ -44,26 +44,32 @@ class DefaultFakeRepository5
     }
 
 @FakeRepository6
-class DefaultFakeRepository6 @Supply constructor(
-    @FakeDataSource1
-    private val fakeDataSource1: FakeDataSource,
-    @FakeDataSource2
-    private val fakeDataSource2: FakeDataSource,
-) : FakeRepository
+class DefaultFakeRepository6
+    @Supply
+    constructor(
+        @FakeDataSource1
+        private val fakeDataSource1: FakeDataSource,
+        @FakeDataSource2
+        private val fakeDataSource2: FakeDataSource,
+    ) : FakeRepository
 
 @FakeRepository7
-class DefaultFakeRepository7 @Supply constructor(
-    @FakeDataSource1
-    private val fakeDataSource1: FakeDataSource,
-) : FakeRepository {
+class DefaultFakeRepository7
     @Supply
-    @FakeDataSource2
-    private lateinit var fakeDataSource2: FakeDataSource
-}
+    constructor(
+        @FakeDataSource1
+        private val fakeDataSource1: FakeDataSource,
+    ) : FakeRepository {
+        @Supply
+        @FakeDataSource2
+        private lateinit var fakeDataSource2: FakeDataSource
+    }
 
 @FakeRepository8
-class DefaultFakeRepository8 @Supply constructor(
-    private val otherDataSource: OtherDataSource,
-    @FakeDataSource2
-    private val fakeDataSource2: FakeDataSource,
-) : FakeRepository
+class DefaultFakeRepository8
+    @Supply
+    constructor(
+        private val otherDataSource: OtherDataSource,
+        @FakeDataSource2
+        private val fakeDataSource2: FakeDataSource,
+    ) : FakeRepository

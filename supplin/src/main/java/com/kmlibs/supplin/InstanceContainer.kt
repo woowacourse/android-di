@@ -1,7 +1,6 @@
 package com.kmlibs.supplin
 
 import android.content.Context
-import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.ApplicationContext
 import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Supply
@@ -74,7 +73,10 @@ class InstanceContainer(
         return qualifiedInstanceOf(qualifiedType) ?: createInstance(kType.jvmErasure, findAnnotationOf<Qualifier>(kType.jvmErasure.annotations)) as T
     }
 
-    private fun <T : Any> createInstance(kClass: KClass<T>, qualifierAnnotation: Annotation?): T {
+    private fun <T : Any> createInstance(
+        kClass: KClass<T>,
+        qualifierAnnotation: Annotation?,
+    ): T {
         val targetConstructor =
             kClass.constructors.firstOrNull { constructor ->
                 constructor.hasAnnotation<Supply>()

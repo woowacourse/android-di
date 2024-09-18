@@ -17,7 +17,5 @@ object DatabaseModule {
 
     @Concrete
     @DatabaseRepository
-    fun provideCartRepository(shoppingDatabase: ShoppingDatabase): CartRepository =
-        DBCartRepository(shoppingDatabase.cartProductDao())
+    fun provideCartRepository(shoppingDatabase: ShoppingDatabase): CartRepository = DBCartRepository(shoppingDatabase.cartProductDao())
 }
-
