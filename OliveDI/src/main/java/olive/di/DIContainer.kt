@@ -40,7 +40,7 @@ class DIContainer(
     }
 
     private fun KFunction<*>.calledInstance(classType: KClass<*>): Any {
-        val parameters = this.parameters()
+        val parameters = parameters(classType)
         val objectInstance = createSingleton(classType)
         val arguments = parameters.map { instance(it) }
         val instance = call(objectInstance, *arguments.toTypedArray())
@@ -53,7 +53,7 @@ class DIContainer(
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val cacheType = function.toReturnType()
-            val instanceType = function.parameters().first()
+            val instanceType = function.parameters(this).first()
 
             if (function.annotations.hasQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
                 val nameAnnotation = function.annotations.qualifierNameAnnotation()
