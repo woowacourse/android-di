@@ -32,10 +32,6 @@ class InjectionBuilder {
     }
 
     private fun addModule(module: KClass<*>) {
-//        val moduleInstance =
-//            requireNotNull(module.objectInstance) {
-//                EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST.format(module.simpleName)
-//            }
         modules += module
     }
 
