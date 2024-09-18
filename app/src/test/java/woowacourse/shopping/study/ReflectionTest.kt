@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.study
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -15,7 +15,9 @@ import kotlin.reflect.full.superclasses
 
 class Person(var firstName: String, val lastName: String, private var age: Int) {
     fun greeting() {}
+
     private fun fullName() {}
+
     private fun Int.isAdult() {}
 
     companion object {
@@ -120,5 +122,23 @@ class ReflectionTest {
         val personSuperReflections = personReflection.superclasses.filterNot { it == Any::class }
 
         assertThat(personSuperReflections).hasSize(0)
+    }
+
+    @Test
+    fun `인터페이스인지 판단한다1`() {
+        val engineReflection = Engine::class
+        assertThat(engineReflection.isAbstract).isTrue()
+    }
+
+    @Test
+    fun `인터페이스인지 판단한다2`() {
+        val carReflection = Car::class
+        assertThat(carReflection.isAbstract).isFalse()
+    }
+
+    @Test
+    fun `생성자가 없는 클래스의 경우 기본 생성자가 생성된다`() {
+        val carReflection = Car::class
+        assertThat(carReflection.constructors).hasSize(1)
     }
 }
