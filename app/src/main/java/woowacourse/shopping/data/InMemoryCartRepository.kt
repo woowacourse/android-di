@@ -1,9 +1,12 @@
 package woowacourse.shopping.data
 
+import com.kmlibs.supplin.annotations.Supply
+import woowacourse.shopping.di.InMemoryRepository
 import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
-class InMemoryCartRepository : CartRepository {
+@InMemoryRepository
+class InMemoryCartRepository @Supply constructor() : CartRepository {
     private var products: List<CartedProduct> = emptyList()
 
     override suspend fun addCartProduct(product: Product) {

@@ -5,6 +5,7 @@ import com.kmlibs.supplin.fixtures.android.viewmodel.FakeViewModel1
 import com.kmlibs.supplin.fixtures.android.viewmodel.FakeViewModel2
 import com.kmlibs.supplin.fixtures.android.viewmodel.FakeViewModel3
 import com.kmlibs.supplin.fixtures.android.viewmodel.FakeViewModel4
+import com.kmlibs.supplin.fixtures.android.viewmodel.FakeViewModel5
 import com.kmlibs.supplin.viewmodel.supplinViewModel
 
 class FakeActivity1 : AppCompatActivity() {
@@ -21,4 +22,8 @@ class FakeActivity3 : AppCompatActivity() {
 
 class FakeActivity4 : AppCompatActivity() {
     val viewModel: FakeViewModel4 by supplinViewModel()
+}
+
+class FakeActivity5 : AppCompatActivity() {
+    val viewModel: FakeViewModel5 by supplinViewModel()
 }

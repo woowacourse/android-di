@@ -6,13 +6,20 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.Injector
+import com.kmlibs.supplin.fixtures.FakeRepository7
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity1
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity2
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity3
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity4
+import com.kmlibs.supplin.fixtures.android.activity.FakeActivity5
+import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
+import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeModule
+import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
+import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository8
+import kotlin.reflect.full.primaryConstructor
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +38,7 @@ class SupplinViewModelTest {
     fun setUp() {
         Injector.init {
             context(context)
-            module(FakeModule::class)
+            module(FakeModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
         }
     }
 
@@ -92,6 +99,20 @@ class SupplinViewModelTest {
         val viewModel = activity.viewModel
         assertThat(viewModel).isNotNull()
         assertThat(viewModel.isRepositoryInitialized).isTrue()
+    }
+
+    @Test
+    fun `supplinViewModel should provide ViewModel instance to Activities without modules recursively`() {
+        // given & when
+        val activity =
+            Robolectric
+                .buildActivity(FakeActivity5::class.java)
+                .create()
+                .get()
+
+        // then
+        val viewModel = activity.viewModel
+        assertThat(viewModel).isNotNull()
     }
 
     /**

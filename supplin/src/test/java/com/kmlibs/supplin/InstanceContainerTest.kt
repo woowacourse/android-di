@@ -17,7 +17,7 @@ class InstanceContainerTest {
     @Before
     fun setUp() {
         val context = mockk<Context>(relaxed = true)
-        val modules = listOf(Module1, Module2)
+        val modules = listOf(Module1::class, Module2::class)
         instanceContainer = InstanceContainer(context, modules)
     }
 

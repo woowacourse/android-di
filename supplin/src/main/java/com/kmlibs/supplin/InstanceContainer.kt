@@ -1,7 +1,9 @@
 package com.kmlibs.supplin
 
 import android.content.Context
+import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Supply
 import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
@@ -17,29 +19,41 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class InstanceContainer(
     private val applicationContext: Context,
-    modules: List<Any>,
+    modules: List<KClass<*>>,
 ) {
     private val qualifiedFunctions: Map<QualifiedType, KFunction<*>> =
         modules
             .flatMap { module ->
-                module::class.declaredMemberFunctions
-            }.associateBy { function ->
+                module.declaredMemberFunctions
+            }.associate { function ->
                 val qualifier = findAnnotationOf<Qualifier>(function.annotations)
-                QualifiedType(
-                    returnType = function.returnType,
-                    qualifier = qualifier?.annotationClass?.simpleName,
-                )
+                if (function.hasAnnotation<Abstract>()) {
+                    val paramType = function.parameters.last().type
+                    val constructor = paramType.jvmErasure.primaryConstructor
+                        ?: throw IllegalStateException("No primary constructor found for ${paramType.jvmErasure}")
+
+                    QualifiedType(
+                        returnType = function.returnType,
+                        qualifier = findAnnotationOf<Qualifier>(paramType.jvmErasure.annotations)?.annotationClass?.simpleName,
+                    ) to constructor
+                } else {
+                    QualifiedType(
+                        returnType = function.returnType,
+                        qualifier = qualifier?.annotationClass?.simpleName,
+                    ) to function
+                }
             }
 
     private val instances: MutableMap<QualifiedType, Any> = mutableMapOf()
 
     init {
-        saveModuleInstances(modules)
+        saveModuleInstances(modules.mapNotNull { it.objectInstance })
         saveInstancesFromModuleFunctions()
     }
 
@@ -50,7 +64,7 @@ class InstanceContainer(
                 returnType = kParameter.type,
                 qualifier = annotation?.annotationClass?.simpleName,
             ),
-        ) ?: createInstance(kParameter.type.jvmErasure) as T
+        ) ?: createInstance(kParameter.type.jvmErasure, annotation) as T
     }
 
     fun <T : Any> instanceOf(kClassifier: KClassifier): T {
@@ -64,7 +78,7 @@ class InstanceContainer(
             } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
 
         return instances[QualifiedType(targetConstructor.returnType, null)] as? T
-            ?: createInstance(kClass)
+            ?: createInstance(kClass, findAnnotationOf<Qualifier>(kClass.annotations))
     }
 
     private fun <T : Any> instanceOf(kCallable: KCallable<*>): T {
@@ -74,32 +88,41 @@ class InstanceContainer(
                 returnType = kCallable.returnType,
                 qualifier = annotation?.annotationClass?.simpleName,
             ),
-        ) ?: createInstance(kCallable.returnType.jvmErasure) as T
+        ) ?: createInstance(kCallable.returnType.jvmErasure, annotation) as T
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
         val qualifierAnnotation = findAnnotationOf<Qualifier>(kType.annotations)
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
-        return qualifiedInstanceOf(qualifiedType) ?: createInstance(kType.jvmErasure) as T
+        return qualifiedInstanceOf(qualifiedType) ?: createInstance(kType.jvmErasure, findAnnotationOf<Qualifier>(kType.jvmErasure.annotations)) as T
     }
 
-    private fun <T : Any> createInstance(kClass: KClass<T>): T {
+    private fun <T : Any> createInstance(kClass: KClass<T>, qualifierAnnotation: Annotation?): T {
         val targetConstructor =
             kClass.constructors.firstOrNull { constructor ->
                 constructor.hasAnnotation<Supply>()
-            } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
-
-        val parameters =
-            targetConstructor.parameters.associateWith { param ->
-                instanceOf(param.type.classifier as KClass<*>)
             }
 
-        val instance = targetConstructor.callBy(parameters)
-        injectFields(kClass, instance)
-        instances[QualifiedType(targetConstructor.returnType, null)] = instance
+        if (targetConstructor != null) {
+            val parameters =
+                targetConstructor.parameters.associateWith { param ->
+                    instanceOf(param.type.classifier as KClass<*>)
+                }
 
-        return instance
+            val instance = targetConstructor.callBy(parameters)
+            injectFields(kClass, instance)
+            instances[QualifiedType(targetConstructor.returnType, null)] = instance
+
+            return instance
+        } else {
+            val function = qualifiedFunctions[qualifiedTypeOf(kClass.createType(), qualifierAnnotation)]
+            requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName) }
+            val parameterValues = resolveParameterValues(function)
+            val instance = function.callBy(parameterValues)
+            checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
+            return instance as T
+        }
     }
 
     fun <T : Any> injectFields(
@@ -134,7 +157,9 @@ class InstanceContainer(
 
     private fun saveInstancesFromModuleFunctions() {
         qualifiedFunctions.forEach { (qualifiedType, function) ->
-            resolveInstance(qualifiedType.returnType, function.annotations)
+            if (function.hasAnnotation<Concrete>()) {
+                resolveInstance(qualifiedType.returnType, function.annotations)
+            }
         }
     }
 

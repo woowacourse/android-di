@@ -1,8 +1,9 @@
 package woowacourse.shopping.data
 
+import com.kmlibs.supplin.annotations.Supply
 import woowacourse.shopping.model.Product
 
-class ProductRepositoryImpl : ProductRepository {
+class InMemoryProductRepositoryImpl @Supply constructor() : ProductRepository {
     private val products: List<Product> =
         listOf(
             Product(

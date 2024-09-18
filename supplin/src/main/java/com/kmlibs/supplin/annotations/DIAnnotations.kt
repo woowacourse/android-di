@@ -18,3 +18,9 @@ annotation class ApplicationContext
  */
 @Target(AnnotationTarget.CLASS)
 annotation class Module
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class Concrete
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class Abstract

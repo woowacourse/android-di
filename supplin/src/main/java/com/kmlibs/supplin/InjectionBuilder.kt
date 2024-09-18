@@ -8,7 +8,7 @@ import kotlin.reflect.full.hasAnnotation
 
 class InjectionBuilder {
     private lateinit var context: Context
-    private var modules = listOf<Any>()
+    private var modules = listOf<KClass<*>>()
 
     fun context(context: Context) {
         this.context = context
@@ -32,11 +32,11 @@ class InjectionBuilder {
     }
 
     private fun addModule(module: KClass<*>) {
-        val moduleInstance =
-            requireNotNull(module.objectInstance) {
-                EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST.format(module.simpleName)
-            }
-        modules += moduleInstance
+//        val moduleInstance =
+//            requireNotNull(module.objectInstance) {
+//                EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST.format(module.simpleName)
+//            }
+        modules += module
     }
 
     fun build(): InjectionData = InjectionData(modules, context)
