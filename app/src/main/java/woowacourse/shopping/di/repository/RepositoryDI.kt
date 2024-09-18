@@ -38,9 +38,5 @@ class RepositoryBinder {
 
 @InstallIn(SingletonComponent::class)
 class RepositoryBinder2 {
-
-
     fun provideCartRepository(): CartRepository = createInjectedInstance(CartRepositoryImpl::class)
-
-
 }

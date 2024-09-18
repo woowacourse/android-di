@@ -11,7 +11,6 @@ import kotlin.reflect.jvm.jvmErasure
 
 class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component {
-
         private val binderInstance: binder = binderClazz.createInstance()
         private val binderKFunc: Map<String, KFunction<*>> = createProvider()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()

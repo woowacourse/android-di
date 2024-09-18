@@ -11,10 +11,8 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.jvm.jvmErasure
 
-
 class SingletonComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component, DefaultLifecycleObserver {
-
         private lateinit var binderInstance: binder
         private lateinit var diInstances: Map<String, Any?>
 

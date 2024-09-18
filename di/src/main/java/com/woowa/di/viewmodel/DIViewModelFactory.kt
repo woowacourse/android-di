@@ -12,9 +12,10 @@ import kotlin.reflect.jvm.kotlinProperty
 inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Factory {
     val instance = T::class.createInstance()
 
-    val fields = T::class.java.declaredFields.onEach { field ->
-        field.isAccessible = true
-    }.filter { it.isAnnotationPresent(Inject::class.java) }
+    val fields =
+        T::class.java.declaredFields.onEach { field ->
+            field.isAccessible = true
+        }.filter { it.isAnnotationPresent(Inject::class.java) }
 
     injectFields<T>(fields, instance)
     removeInstanceOnCleared<T>(instance, fields)
@@ -24,7 +25,6 @@ inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Fa
         }
     }
 }
-
 
 inline fun <reified T : ViewModel> injectFields(
     fields: List<Field>,
@@ -36,6 +36,7 @@ inline fun <reified T : ViewModel> injectFields(
         field.set(instance, fieldInstance)
     }
 }
+
 inline fun <reified T : ViewModel> removeInstanceOnCleared(
     instance: T,
     fields: List<Field>,
@@ -44,7 +45,7 @@ inline fun <reified T : ViewModel> removeInstanceOnCleared(
         fields.forEach { field ->
             ViewModelComponentManager.deleteDIInstance(
                 field.type.kotlin,
-                field.kotlinProperty?.findQualifierClassOrNull()
+                field.kotlinProperty?.findQualifierClassOrNull(),
             )
         }
     }

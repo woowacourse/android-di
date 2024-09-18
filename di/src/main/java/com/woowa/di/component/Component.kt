@@ -3,7 +3,6 @@ package com.woowa.di.component
 import kotlin.reflect.KClass
 
 interface Component {
-
     /**
      * Returns the instance you want to inject, or `null` if the instance does not exist
      */
@@ -21,8 +20,11 @@ annotation class InstallIn(val component: KClass<out Component>)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ParentManager(val manager: KClass<out ComponentManager>)
 
-data object NoParent:ComponentManager {
-    override fun getDIInstanceOrNull(type: KClass<*>, qualifier: KClass<out Annotation>?): Any? {
+data object NoParent : ComponentManager {
+    override fun getDIInstanceOrNull(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?,
+    ): Any? {
         TODO("Not yet implemented")
     }
 
