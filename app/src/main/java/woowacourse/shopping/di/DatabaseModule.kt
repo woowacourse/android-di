@@ -14,8 +14,4 @@ object DatabaseModule {
     fun provideShoppingDatabase(
         @ApplicationContext applicationContext: Context,
     ): ShoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
-
-    @Concrete
-    @DatabaseRepository
-    fun provideCartRepository(shoppingDatabase: ShoppingDatabase): CartRepository = DBCartRepository(shoppingDatabase.cartProductDao())
 }
