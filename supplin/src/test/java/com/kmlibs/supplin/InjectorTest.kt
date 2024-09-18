@@ -20,4 +20,26 @@ class InjectorTest {
         instanceContainer = Injector.instanceContainer
         assertThat(::instanceContainer.isInitialized).isTrue()
     }
+
+    @Test
+    fun `InstanceContainer in Injector cannot be initialized repeatedly`() {
+        // given
+        val mockContext = mockk<Context>(relaxed = true)
+
+        // when
+        Injector.init {
+            context(mockContext)
+            module(Module1::class, Module2::class)
+        }
+        val firstInstanceContainer = Injector.instanceContainer
+
+        Injector.init {
+            context(mockContext)
+            module(Module1::class, Module2::class)
+        }
+        val secondInstanceContainer = Injector.instanceContainer
+
+        // then
+        assertThat(firstInstanceContainer).isSameInstanceAs(secondInstanceContainer)
+    }
 }
