@@ -19,7 +19,7 @@ class InjectorTest {
             module(
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
-                FakeDataSourceModule::class
+                FakeDataSourceModule::class,
             )
         }
         instanceContainer = Injector.instanceContainer

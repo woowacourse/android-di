@@ -13,8 +13,8 @@ import com.kmlibs.supplin.fixtures.android.activity.FakeActivity4
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity5
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
-import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
+import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
 import org.junit.Before
 import org.junit.Rule

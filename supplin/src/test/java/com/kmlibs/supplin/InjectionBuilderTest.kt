@@ -25,6 +25,8 @@ class InjectionBuilderTest {
         val injectionData = injectionBuilder.build()
 
         assertThat(injectionData.context).isInstanceOf(Context::class.java)
-        assertThat(injectionData.modules).containsExactly(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+        assertThat(
+            injectionData.modules,
+        ).containsExactly(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
     }
 }
