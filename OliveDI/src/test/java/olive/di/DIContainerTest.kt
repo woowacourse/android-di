@@ -37,6 +37,18 @@ class DIContainerTest {
     }
 
     @Test
+    fun `singletonInstance()의 인스턴스가 없는 경우 새로운 인스턴스를 생성해 반환한다`() {
+        // given
+        diContainer = DIContainer()
+
+        // when
+        val actual = diContainer.singletonInstance(Foo::class)
+
+        // then
+        assertThat(actual).isInstanceOf(Foo::class.java)
+    }
+
+    @Test
     fun `singletonInstance()로 기존에 있는 인스턴스를 반환한다`() {
         // given
         diContainer = DIContainer()
@@ -47,18 +59,6 @@ class DIContainerTest {
 
         // then
         assertThat(actual).isSameInstanceAs(expected)
-    }
-
-    @Test
-    fun `singletonInstance()의 인스턴스가 없는 경우 새로운 인스턴스를 생성해 반환한다`() {
-        // given
-        diContainer = DIContainer()
-
-        // when
-        val actual = diContainer.singletonInstance(Foo::class)
-
-        // then
-        assertThat(actual).isInstanceOf(Foo::class.java)
     }
 
     @Test
