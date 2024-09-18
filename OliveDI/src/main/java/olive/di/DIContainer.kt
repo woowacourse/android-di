@@ -48,7 +48,7 @@ class DIContainer(
             val instanceType = function.parameters().first { it != this }
             val cacheType = function.returnType.classifier as KClass<*>
 
-            if (function.annotations.isQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
+            if (function.annotations.hasQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
                 val nameAnnotation = function.annotations.qualifierNameAnnotation()
                 namedInstances[cacheType] = NamedInstance(nameAnnotation, create(instanceType))
                 return@forEach
@@ -59,18 +59,17 @@ class DIContainer(
 
     private fun KFunction<*>.parameters(): List<KClass<*>> = parameters.map { it.type.classifier as KClass<*> }
 
-    private fun List<Annotation>.isQualifierAnnotation(): Boolean {
-        return any { annotation ->
-            annotation.annotationClass.annotations.any { it.annotationClass == Qualifier::class }
-        }
+    private fun List<Annotation>.hasQualifierAnnotation(): Boolean {
+        return any { annotation -> annotation.isQualifierAnnotation() }
     }
 
     private fun List<Annotation>.qualifierNameAnnotation(): KClass<out Annotation> {
-        val nameAnnotation =
-            first { functionAnnotation ->
-                functionAnnotation.annotationClass.annotations.any { it.annotationClass == Qualifier::class }
-            }
+        val nameAnnotation = first { functionAnnotation -> functionAnnotation.isQualifierAnnotation() }
         return nameAnnotation.annotationClass
+    }
+
+    private fun Annotation.isQualifierAnnotation(): Boolean {
+        return annotationClass.annotations.any { it.annotationClass == Qualifier::class }
     }
 
     fun <T : Any> instance(classType: KClass<T>): T {
@@ -101,7 +100,7 @@ class DIContainer(
 
     private fun argumentInstance(parameter: KParameter): Any {
         val parameterType = parameter.type.classifier as KClass<*>
-        if (parameter.annotations.isQualifierAnnotation()) {
+        if (parameter.annotations.hasQualifierAnnotation()) {
             return namedInstance(parameterType, parameter.annotations)
         }
         return instances[parameterType] ?: createSingleton(parameterType)
@@ -121,7 +120,7 @@ class DIContainer(
             property.isAccessible = true
             val type = property.returnType.classifier as KClass<*>
             val instance = // Qualifier가 붙은 경우 namedInstances에서 찾고, 안 붙은 경우 instances에서 찾음
-                if (property.annotations.isQualifierAnnotation()) {
+                if (property.annotations.hasQualifierAnnotation()) {
                     namedInstance(type, property.annotations)
                 } else {
                     instances[type] ?: createSingleton(type)
