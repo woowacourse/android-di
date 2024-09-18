@@ -70,7 +70,10 @@ class InstanceContainer(
         val qualifierAnnotation = findAnnotationOf<Qualifier>(kType.annotations)
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
-        return qualifiedInstanceOf(qualifiedType) ?: createInstance(kType.jvmErasure, findAnnotationOf<Qualifier>(kType.jvmErasure.annotations)) as T
+        return qualifiedInstanceOf(qualifiedType) ?: createInstance(
+            kType.jvmErasure,
+            findAnnotationOf<Qualifier>(kType.jvmErasure.annotations),
+        ) as T
     }
 
     private fun <T : Any> createInstance(
@@ -82,25 +85,45 @@ class InstanceContainer(
                 constructor.hasAnnotation<Supply>()
             }
 
-        if (targetConstructor != null) {
-            val parameters =
-                targetConstructor.parameters.associateWith { param ->
-                    instanceOf(param.type.classifier as KClass<*>)
-                }
-
-            val instance = targetConstructor.callBy(parameters)
-            injectFields(kClass, instance)
-            instances[QualifiedType(targetConstructor.returnType, null)] = instance
-
-            return instance
+        return if (targetConstructor != null) {
+            createInstanceOfImpl(targetConstructor, kClass)
         } else {
-            val function = functionContainer.qualifiedFunctions[qualifiedTypeOf(kClass.createType(), qualifierAnnotation)]
-            requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName) }
-            val parameterValues = resolveParameterValues(function)
-            val instance = function.callBy(parameterValues)
-            checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
-            return instance as T
+            createInstanceOfAbstraction(kClass, qualifierAnnotation)
         }
+    }
+
+    private fun <T : Any> createInstanceOfAbstraction(
+        kClass: KClass<T>,
+        qualifierAnnotation: Annotation?,
+    ): T {
+        val function =
+            functionContainer.qualifiedFunctions[
+                qualifiedTypeOf(
+                    kClass.createType(),
+                    qualifierAnnotation,
+                ),
+            ]
+        requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName) }
+        val parameterValues = resolveParameterValues(function)
+        val instance = function.callBy(parameterValues)
+        checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(function.name) }
+        return instance as T
+    }
+
+    private fun <T : Any> createInstanceOfImpl(
+        targetConstructor: KFunction<T>,
+        kClass: KClass<T>,
+    ): T {
+        val parameters =
+            targetConstructor.parameters.associateWith { param ->
+                instanceOf(param.type.classifier as KClass<*>)
+            }
+
+        val instance = targetConstructor.callBy(parameters)
+        injectFields(kClass, instance)
+        instances[QualifiedType(targetConstructor.returnType, null)] = instance
+
+        return instance
     }
 
     fun <T : Any> injectFields(
