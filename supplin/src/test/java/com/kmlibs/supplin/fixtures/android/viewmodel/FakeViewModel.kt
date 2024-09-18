@@ -10,9 +10,12 @@ class FakeViewModel1 @Supply constructor(
     @FakeRepository1
     val fakeRepository: FakeRepository,
 ) : ViewModel() {
+    val isRepositoryInitialized: Boolean
+        get() = ::fakeRepository2.isInitialized
+
     @Supply
     @FakeRepository2
-    private lateinit var fakeRepository2: FakeRepository
+    lateinit var fakeRepository2: FakeRepository
 }
 
 class FakeViewModel2(

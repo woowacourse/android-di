@@ -47,6 +47,7 @@ class SupplinViewModelTest {
         // then
         val viewModel = activity.viewModel
         assertThat(viewModel).isNotNull()
+        assertThat(viewModel.isRepositoryInitialized).isTrue()
     }
 
     @Test(expected = IllegalStateException::class)
@@ -72,6 +73,7 @@ class SupplinViewModelTest {
         scenario.onFragment { fragment ->
             val viewModel = fragment.viewModel
             assertThat(viewModel).isNotNull()
+            assertThat(viewModel.isRepositoryInitialized).isTrue()
         }
     }
 
