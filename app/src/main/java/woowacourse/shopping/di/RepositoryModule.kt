@@ -9,11 +9,11 @@ import woowacourse.shopping.model.ProductRepository
 
 class RepositoryModule : Module {
     override fun provideInstance(registry: DiContainer) {
-        DiContainer.addInstance(
+        registry.addInstance(
             ProductRepository::class,
             DefaultProductRepository(),
         )
-        DiContainer.addInstance(
+        registry.addInstance(
             CartRepository::class,
             DefaultCartRepository(),
         )

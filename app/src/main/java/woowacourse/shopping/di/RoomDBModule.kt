@@ -7,7 +7,7 @@ import woowacourse.shopping.data.local.ShoppingDatabase
 
 class RoomDBModule : Module {
     override fun provideInstance(dependencyRegistry: DiContainer) {
-        DiContainer.addInstance(
+        dependencyRegistry.addInstance(
             CartProductDao::class,
             ShoppingDatabase.instanceOrNull.cartProductDao(),
         )
