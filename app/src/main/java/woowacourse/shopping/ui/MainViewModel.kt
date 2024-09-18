@@ -16,7 +16,8 @@ class MainViewModel() : ViewModel() {
     @Inject
     private lateinit var productRepository: ProductRepository
 
-    private val cartRepository: CartRepository = createInjectedInstance(CartRepositoryImpl::class)
+    @Inject
+    private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

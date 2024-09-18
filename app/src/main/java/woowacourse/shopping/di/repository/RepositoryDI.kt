@@ -2,6 +2,7 @@ package woowacourse.shopping.di.repository
 
 import com.woowa.di.component.InstallIn
 import com.woowa.di.injection.createInjectedInstance
+import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.viewmodel.ViewModelComponent
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
@@ -26,8 +27,6 @@ class RepositoryBinder {
 
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
-    fun provideCartRepository(): CartRepository = createInjectedInstance(CartRepositoryImpl::class)
-
     private fun validateReturnTypes(): Boolean {
         return this::class.declaredFunctions.filter { it.visibility == KVisibility.PUBLIC }
             .all { function ->
@@ -35,4 +34,13 @@ class RepositoryBinder {
                 returnTypeClassifier != null && returnTypeClassifier.isSubclassOf(RepositoryDI::class)
             }
     }
+}
+
+@InstallIn(SingletonComponent::class)
+class RepositoryBinder2 {
+
+
+    fun provideCartRepository(): CartRepository = createInjectedInstance(CartRepositoryImpl::class)
+
+
 }

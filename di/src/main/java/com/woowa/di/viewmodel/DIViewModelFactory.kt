@@ -31,10 +31,8 @@ inline fun <reified T : ViewModel> injectFields(
     instance: T,
 ) {
     fields.map { field ->
-        val binderType = ViewModelComponentManager.getComponentType(field.type.kotlin)
         val fieldInstance =
-            ViewModelComponent.getInstance(binderType)
-                .getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
+            ViewModelComponentManager.getDIInstanceOrNull(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
         field.set(instance, fieldInstance)
     }
 }
@@ -44,8 +42,7 @@ inline fun <reified T : ViewModel> removeInstanceOnCleared(
 ) {
     instance.addCloseable {
         fields.forEach { field ->
-            val binderType = ViewModelComponentManager.getComponentType(field.type.kotlin)
-            ViewModelComponent.getInstance(binderType).deleteDIInstance(
+            ViewModelComponentManager.deleteDIInstance(
                 field.type.kotlin,
                 field.kotlinProperty?.findQualifierClassOrNull()
             )

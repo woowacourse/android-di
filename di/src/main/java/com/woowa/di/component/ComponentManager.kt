@@ -1,20 +1,15 @@
 package com.woowa.di.component
 
 import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.jvm.jvmErasure
 
-abstract class ComponentManager<component : Component> {
-    private val diInstances: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
+interface ComponentManager {
 
-    fun getComponentType(key: KClass<*>): KClass<*> {
-        return diInstances[key]
-            ?: error("${key.simpleName}에 해당하는 객체가 binder에 등록되지 않았습니다.")
-    }
+    fun getDIInstanceOrNull(key: KClass<*>, qualifier: KClass<out Annotation>?): Any?
 
-    fun <binder : Any> registerComponent(binderClazz: KClass<binder>) {
-        binderClazz.declaredFunctions.forEach { kFunc ->
-            diInstances[kFunc.returnType.jvmErasure] = binderClazz
-        }
-    }
+    fun getBinderType(key: KClass<*>): KClass<*>
+
+    fun getBinderTypeOrNull(key: KClass<*>): KClass<*>?
+
+    fun <binder : Any> registerBinder(binderClazz: KClass<binder>)
 }
+

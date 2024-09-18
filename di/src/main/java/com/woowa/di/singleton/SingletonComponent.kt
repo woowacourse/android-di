@@ -11,9 +11,9 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.jvm.jvmErasure
 
+
 class SingletonComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component, DefaultLifecycleObserver {
-        override val parent: KClass<out Component>? = null
 
         private lateinit var binderInstance: binder
         private lateinit var diInstances: Map<String, Any?>
@@ -46,7 +46,7 @@ class SingletonComponent<binder : Any> private constructor(private val binderCla
                 }
         }
 
-        override fun getDIInstance(
+        override fun getDIInstanceOrNull(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ): Any? {

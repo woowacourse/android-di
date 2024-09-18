@@ -2,7 +2,6 @@ package com.woowa.di.viewmodel
 
 import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
-import com.woowa.di.singleton.SingletonComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -12,7 +11,6 @@ import kotlin.reflect.jvm.jvmErasure
 
 class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component {
-        override val parent: KClass<out Component> = SingletonComponent::class
 
         private val binderInstance: binder = binderClazz.createInstance()
         private val binderKFunc: Map<String, KFunction<*>> = createProvider()
@@ -33,23 +31,22 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
                 }
         }
 
-        override fun getDIInstance(
+        override fun getDIInstanceOrNull(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ): Any? {
             require(!isAlreadyCreatedDI(type, qualifier)) {
                 "한 객체는 하나의 viewModel에 대해서만 생성할 수 있습니다."
             }
-
             qualifier?.let {
                 return diInstances.getOrPut((type.simpleName + it.simpleName)) {
-                    createDIInstance(type, qualifier)
+                    createDIInstanceOrNull(type, qualifier)
                 }
             }
             return diInstances.getOrPut(
                 type.simpleName ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
             ) {
-                createDIInstance(type)
+                createDIInstanceOrNull(type)
             }
         }
 
@@ -64,7 +61,7 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             diInstances.remove(type.simpleName)
         }
 
-        private fun createDIInstance(
+        private fun createDIInstanceOrNull(
             type: KClass<*>,
             qualifier: KClass<out Annotation>? = null,
         ): Any? {
