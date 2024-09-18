@@ -42,10 +42,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
-    // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     // Mockk
     testImplementation("io.mockk:mockk:1.13.5")
 }
