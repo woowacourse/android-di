@@ -20,13 +20,14 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
         private fun initializeDatabase(context: Context) {
             synchronized(this) {
-                instance = Room
-                    .databaseBuilder(
-                        context.applicationContext,
-                        ShoppingDatabase::class.java,
-                        "shopping.db",
-                    )
-                    .build()
+                instance =
+                    Room
+                        .databaseBuilder(
+                            context.applicationContext,
+                            ShoppingDatabase::class.java,
+                            "shopping.db",
+                        )
+                        .build()
             }
         }
     }

@@ -63,8 +63,8 @@ dependencies {
     // mockk
     testImplementation("io.mockk:mockk:1.12.0")
 
-    testImplementation ("androidx.test:core:1.6.1")
-    testImplementation ("androidx.fragment:fragment-testing:1.8.3")
+    testImplementation("androidx.test:core:1.6.1")
+    testImplementation("androidx.fragment:fragment-testing:1.8.3")
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

@@ -28,7 +28,7 @@ class ViewModelFactory(
 
     private fun instanceOf(
         targetConstructor: KFunction<ViewModel>,
-        constructorParameters: List<KParameter>
+        constructorParameters: List<KParameter>,
     ): ViewModel =
         targetConstructor.callBy(
             constructorParameters.associateWith { parameter ->
