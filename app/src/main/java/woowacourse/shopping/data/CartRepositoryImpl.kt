@@ -1,17 +1,17 @@
 package woowacourse.shopping.data
 
-import com.woowa.di.injection.DIInjection
 import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.di.dao.Database
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
+import javax.inject.Inject
 
-class CartRepositoryImpl(
-    @DIInjection
+class CartRepositoryImpl : CartRepository {
+    @Inject
     @Database
-    private val dao: CartProductDao,
-) : CartRepository {
+    private lateinit var dao: CartProductDao
+
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toData())
     }

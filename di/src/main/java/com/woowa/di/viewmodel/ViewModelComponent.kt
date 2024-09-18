@@ -1,13 +1,18 @@
 package com.woowa.di.viewmodel
 
+import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
+import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
+import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.kotlinProperty
 
 class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component {
@@ -64,11 +69,32 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             type: KClass<*>,
             qualifier: KClass<out Annotation>? = null,
         ): Any? {
-            qualifier?.let {
-                return binderKFunc[(type.simpleName + qualifier.simpleName)]?.call(binderInstance)
+            val kFunc =
+                if (qualifier != null) {
+                    binderKFunc[(type.simpleName + qualifier.simpleName)]
+                } else {
+                    binderKFunc[type.simpleName]
+                }
+
+            val instance =
+                if (requireNotNull(kFunc).parameters.any { it.hasAnnotation<ApplicationContext>() }) {
+                    kFunc.call(binderInstance, arrayOf(DIBuilder.applicationContext))
+                } else {
+                    kFunc.call(binderInstance)
+                }
+
+            val fields =
+                instance!!::class.java.declaredFields.onEach { field ->
+                    field.isAccessible = true
+                }.filter { it.isAnnotationPresent(Inject::class.java) }
+
+            fields.map { field ->
+                val fieldInstance =
+                    ViewModelComponentManager.getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
+                field.set(instance, fieldInstance)
             }
-            return binderKFunc[type.simpleName]?.call(binderInstance)
-                ?: error("${type.simpleName}를 binder에 정의해주세요")
+
+            return instance
         }
 
         private fun isAlreadyCreatedDI(

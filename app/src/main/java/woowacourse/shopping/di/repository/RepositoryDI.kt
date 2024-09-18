@@ -1,7 +1,6 @@
 package woowacourse.shopping.di.repository
 
 import com.woowa.di.component.InstallIn
-import com.woowa.di.injection.createInjectedInstance
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.viewmodel.ViewModelComponent
 import woowacourse.shopping.data.CartRepositoryImpl
@@ -38,5 +37,5 @@ class RepositoryBinder {
 
 @InstallIn(SingletonComponent::class)
 class RepositoryBinder2 {
-    fun provideCartRepository(): CartRepository = createInjectedInstance(CartRepositoryImpl::class)
+    fun provideCartRepository(): CartRepository = CartRepositoryImpl()
 }
