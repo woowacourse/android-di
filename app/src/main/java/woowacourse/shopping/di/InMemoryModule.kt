@@ -8,10 +8,10 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.InMemoryProductRepositoryImpl
 
 @Module
-abstract class InMemoryModule {
+interface InMemoryModule {
     @Abstract
-    abstract fun provideProductRepository(impl: InMemoryProductRepositoryImpl): ProductRepository
+    fun provideProductRepository(impl: InMemoryProductRepositoryImpl): ProductRepository
 
     @Abstract
-    abstract fun provideInMemoryCartRepository(impl: InMemoryCartRepository): CartRepository
+    fun provideInMemoryCartRepository(impl: InMemoryCartRepository): CartRepository
 }

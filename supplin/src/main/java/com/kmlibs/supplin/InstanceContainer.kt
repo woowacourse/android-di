@@ -16,10 +16,8 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
-import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
@@ -27,29 +25,7 @@ class InstanceContainer(
     private val applicationContext: Context,
     modules: List<KClass<*>>,
 ) {
-    private val qualifiedFunctions: Map<QualifiedType, KFunction<*>> =
-        modules
-            .flatMap { module ->
-                module.declaredMemberFunctions
-            }.associate { function ->
-                val qualifier = findAnnotationOf<Qualifier>(function.annotations)
-                if (function.hasAnnotation<Abstract>()) {
-                    val paramType = function.parameters.last().type
-                    val constructor = paramType.jvmErasure.primaryConstructor
-                        ?: throw IllegalStateException("No primary constructor found for ${paramType.jvmErasure}")
-
-                    QualifiedType(
-                        returnType = function.returnType,
-                        qualifier = findAnnotationOf<Qualifier>(paramType.jvmErasure.annotations)?.annotationClass?.simpleName,
-                    ) to constructor
-                } else {
-                    QualifiedType(
-                        returnType = function.returnType,
-                        qualifier = qualifier?.annotationClass?.simpleName,
-                    ) to function
-                }
-            }
-
+    private val functionContainer = FunctionContainer(modules)
     private val instances: MutableMap<QualifiedType, Any> = mutableMapOf()
 
     init {
@@ -116,7 +92,7 @@ class InstanceContainer(
 
             return instance
         } else {
-            val function = qualifiedFunctions[qualifiedTypeOf(kClass.createType(), qualifierAnnotation)]
+            val function = functionContainer.qualifiedFunctions[qualifiedTypeOf(kClass.createType(), qualifierAnnotation)]
             requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName) }
             val parameterValues = resolveParameterValues(function)
             val instance = function.callBy(parameterValues)
@@ -156,7 +132,7 @@ class InstanceContainer(
     }
 
     private fun saveInstancesFromModuleFunctions() {
-        qualifiedFunctions.forEach { (qualifiedType, function) ->
+        functionContainer.qualifiedFunctions.forEach { (qualifiedType, function) ->
             if (function.hasAnnotation<Concrete>()) {
                 resolveInstance(qualifiedType.returnType, function.annotations)
             }
@@ -205,7 +181,7 @@ class InstanceContainer(
     }
 
     private fun buildInstanceOf(qualifiedType: QualifiedType): Any {
-        val function = qualifiedFunctions[qualifiedType]
+        val function = functionContainer.qualifiedFunctions[qualifiedType]
         requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(qualifiedType.returnType) }
 
         val parameterValues = resolveParameterValues(function)
