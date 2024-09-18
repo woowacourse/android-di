@@ -31,7 +31,7 @@ object DependencyInjector {
     private fun injectProperty(
         target: Any,
         property: KMutableProperty<*>,
-        qualifier: QualifierType
+        qualifier: QualifierType,
     ) {
         val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>, qualifier)
         property.isAccessible = true

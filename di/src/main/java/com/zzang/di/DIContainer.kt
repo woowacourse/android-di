@@ -13,33 +13,41 @@ object DIContainer {
         module.register(this)
     }
 
-    private fun buildKey(type: KClass<*>, qualifier: QualifierType): String {
+    private fun buildKey(
+        type: KClass<*>,
+        qualifier: QualifierType,
+    ): String {
         return "${type.qualifiedName}_${qualifier.name}"
     }
 
     fun <T : Any> registerInstance(
         interfaceClass: KClass<T>,
         instance: T,
-        qualifier: QualifierType = QualifierType.DATABASE
+        qualifier: QualifierType = QualifierType.DATABASE,
     ) {
         val key = buildKey(interfaceClass, qualifier)
         singletonInstances[key] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> resolve(type: KClass<T>, qualifier: QualifierType = QualifierType.DATABASE): T {
+    fun <T : Any> resolve(
+        type: KClass<T>,
+        qualifier: QualifierType = QualifierType.DATABASE,
+    ): T {
         val key = buildKey(type, qualifier)
         singletonInstances[key]?.let { return it as T }
 
         val implementationType = interfaceMappings[key] ?: type
 
-        val constructor = implementationType.primaryConstructor
-            ?: throw IllegalArgumentException("${implementationType.simpleName} 클래스의 인스턴스를 생성할 수 없습니다. 생성자가 없습니다.")
+        val constructor =
+            implementationType.primaryConstructor
+                ?: throw IllegalArgumentException("${implementationType.simpleName} 클래스의 인스턴스를 생성할 수 없습니다. 생성자가 없습니다.")
 
-        val parameters = constructor.parameters.map { parameter ->
-            val parameterType = parameter.type.classifier as KClass<*>
-            resolve(parameterType)
-        }
+        val parameters =
+            constructor.parameters.map { parameter ->
+                val parameterType = parameter.type.classifier as KClass<*>
+                resolve(parameterType)
+            }
 
         val instance = constructor.call(*parameters.toTypedArray()) as T
         registerInstance(type, instance, qualifier)

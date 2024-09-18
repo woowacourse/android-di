@@ -17,19 +17,19 @@ class RepositoryModule : DIModule {
         container.registerInstance(
             ProductRepository::class,
             DefaultProductRepository(),
-            QualifierType.IN_MEMORY
+            QualifierType.IN_MEMORY,
         )
 
         container.registerInstance(
             CartRepository::class,
             DefaultCartRepository(cartProductDao),
-            QualifierType.DATABASE
+            QualifierType.DATABASE,
         )
 
         container.registerInstance(
             CartRepository::class,
             InMemoryCartRepository(),
-            QualifierType.IN_MEMORY
+            QualifierType.IN_MEMORY,
         )
     }
 }
