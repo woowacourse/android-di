@@ -1,8 +1,5 @@
 package com.kmlibs.supplin
 
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
-
 /**
  * For supplying dependencies that don't utilize other dependencies stored in `Modules`.
  *
@@ -11,6 +8,5 @@ import androidx.fragment.app.Fragment
  */
 inline fun <reified T : Any> supplinInjection(): Lazy<T> =
     lazy {
-        val instance = Injector.instanceContainer.instanceOf(T::class)
-        instance
+        Injector.instanceContainer.instanceOf(T::class)
     }

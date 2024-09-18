@@ -32,7 +32,7 @@ class InstanceContainer(
                 val qualifier = findAnnotationOf<Qualifier>(function.annotations)
                 QualifiedType(
                     returnType = function.returnType,
-                    qualifier = qualifier?.annotationClass?.simpleName
+                    qualifier = qualifier?.annotationClass?.simpleName,
                 )
             }
 
@@ -48,9 +48,9 @@ class InstanceContainer(
         return qualifiedInstanceOf(
             QualifiedType(
                 returnType = kParameter.type,
-                qualifier = annotation?.annotationClass?.simpleName
-            )
-        )
+                qualifier = annotation?.annotationClass?.simpleName,
+            ),
+        ) ?: createInstance(kParameter.type.jvmErasure) as T
     }
 
     fun <T : Any> instanceOf(kClassifier: KClassifier): T {
@@ -58,9 +58,10 @@ class InstanceContainer(
     }
 
     fun <T : Any> instanceOf(kClass: KClass<T>): T {
-        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
-            constructor.hasAnnotation<Supply>()
-        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
+        val targetConstructor =
+            kClass.constructors.firstOrNull { constructor ->
+                constructor.hasAnnotation<Supply>()
+            } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
 
         return instances[QualifiedType(targetConstructor.returnType, null)] as? T
             ?: createInstance(kClass)
@@ -72,25 +73,27 @@ class InstanceContainer(
             QualifiedType(
                 returnType = kCallable.returnType,
                 qualifier = annotation?.annotationClass?.simpleName,
-            )
-        )
+            ),
+        ) ?: createInstance(kCallable.returnType.jvmErasure) as T
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
         val qualifierAnnotation = findAnnotationOf<Qualifier>(kType.annotations)
         val qualifiedType = qualifiedTypeOf(kType, qualifierAnnotation)
 
-        return qualifiedInstanceOf(qualifiedType)
+        return qualifiedInstanceOf(qualifiedType) ?: createInstance(kType.jvmErasure) as T
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val targetConstructor = kClass.constructors.firstOrNull { constructor ->
-            constructor.hasAnnotation<Supply>()
-        } ?: error(EXCEPTION_NO_MATCHING_FUNCTION)
+        val targetConstructor =
+            kClass.constructors.firstOrNull { constructor ->
+                constructor.hasAnnotation<Supply>()
+            } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
 
-        val parameters = targetConstructor.parameters.associateWith { param ->
-            instanceOf(param.type.classifier as KClass<*>)
-        }
+        val parameters =
+            targetConstructor.parameters.associateWith { param ->
+                instanceOf(param.type.classifier as KClass<*>)
+            }
 
         val instance = targetConstructor.callBy(parameters)
         injectFields(kClass, instance)
@@ -99,7 +102,10 @@ class InstanceContainer(
         return instance
     }
 
-    fun <T : Any> injectFields(kClass: KClass<T>, instance: T) {
+    fun <T : Any> injectFields(
+        kClass: KClass<T>,
+        instance: T,
+    ) {
         kClass.memberProperties.filter { field ->
             field.hasAnnotation<Supply>()
         }.forEach { targetField ->
@@ -109,7 +115,7 @@ class InstanceContainer(
 
     private fun <T : Any> injectSingleField(
         targetField: KProperty1<T, *>,
-        instance: T
+        instance: T,
     ) {
         targetField.isAccessible = true
         try {
@@ -140,10 +146,9 @@ class InstanceContainer(
         return QualifiedType(kType, qualifier)
     }
 
-    private fun <T : Any> qualifiedInstanceOf(qualifiedType: QualifiedType): T {
+    private fun <T : Any> qualifiedInstanceOf(qualifiedType: QualifiedType): T? {
         val instance = instances[qualifiedType]
-        checkNotNull(instance) { EXCEPTION_NO_MATCHING_PROPERTY.format(qualifiedType.returnType) }
-        return instance as T
+        return instance as T?
     }
 
     private fun resolveInstance(
@@ -155,7 +160,10 @@ class InstanceContainer(
         return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
     }
 
-    private fun shouldResolveContext(returnType: KType, annotations: List<Annotation>): Boolean {
+    private fun shouldResolveContext(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): Boolean {
         val contextAnnotation = annotations.filterIsInstance<ApplicationContext>().firstOrNull()
         return contextAnnotation != null && returnType.classifier == Context::class
     }
@@ -164,9 +172,10 @@ class InstanceContainer(
         returnType: KType,
         annotations: List<Annotation>,
     ): QualifiedType {
-        val qualifierAnnotation = annotations.firstOrNull { annotation ->
-            annotation.annotationClass.hasAnnotation<Qualifier>()
-        }
+        val qualifierAnnotation =
+            annotations.firstOrNull { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
         return QualifiedType(returnType, qualifierAnnotation?.annotationClass?.simpleName)
     }
 

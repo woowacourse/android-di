@@ -8,6 +8,8 @@ import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity1
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity2
+import com.kmlibs.supplin.fixtures.android.activity.FakeActivity3
+import com.kmlibs.supplin.fixtures.android.activity.FakeActivity4
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
 import com.kmlibs.supplin.fixtures.android.module.FakeModule
@@ -39,10 +41,11 @@ class SupplinViewModelTest {
     @Test
     fun `supplinViewModel should provide the correct ViewModel instance to Activities`() {
         // given & when
-        val activity = Robolectric
-            .buildActivity(FakeActivity1::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(FakeActivity1::class.java)
+                .create()
+                .get()
 
         // then
         val viewModel = activity.viewModel
@@ -53,12 +56,42 @@ class SupplinViewModelTest {
     @Test(expected = IllegalStateException::class)
     fun `supplinViewModel cannot provide Activities with ViewModel instance annotated with @Supply on properties in constructors`() {
         // given & when
-        val activity = Robolectric
-            .buildActivity(FakeActivity2::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(FakeActivity2::class.java)
+                .create()
+                .get()
 
         activity.viewModel
+    }
+
+    @Test
+    fun `supplinViewModel should provide ViewModel instance to Activities without modules recursively - constructor injection`() {
+        // given & when
+        val activity =
+            Robolectric
+                .buildActivity(FakeActivity3::class.java)
+                .create()
+                .get()
+
+        // then
+        val viewModel = activity.viewModel
+        assertThat(viewModel).isNotNull()
+    }
+
+    @Test
+    fun `supplinViewModel should provide ViewModel instance to Activities without modules recursively - constructor and field injection`() {
+        // given & when
+        val activity =
+            Robolectric
+                .buildActivity(FakeActivity4::class.java)
+                .create()
+                .get()
+
+        // then
+        val viewModel = activity.viewModel
+        assertThat(viewModel).isNotNull()
+        assertThat(viewModel.isRepositoryInitialized).isTrue()
     }
 
     /**
