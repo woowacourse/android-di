@@ -1,9 +1,11 @@
 package woowacourse.shopping.data
 
+import olive.di.annotation.Singleton
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
+@Singleton
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProductEntity> = mutableListOf()
 

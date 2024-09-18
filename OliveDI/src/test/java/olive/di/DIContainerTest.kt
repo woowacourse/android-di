@@ -9,12 +9,14 @@ import olive.di.fixture.ChildImpl1
 import olive.di.fixture.ChildImpl2
 import olive.di.fixture.FieldInjectTest
 import olive.di.fixture.Foo
+import olive.di.fixture.NotSingletonFoo
 import olive.di.fixture.Olive
 import olive.di.fixture.Parent
 import olive.di.fixture.QualifierTest1
 import olive.di.fixture.QualifierTest2
 import olive.di.fixture.QualifierTestModule
 import olive.di.fixture.Sandwich
+import olive.di.fixture.SingletonFoo
 import olive.di.fixture.TestModule
 import org.junit.Test
 import kotlin.reflect.KClass
@@ -30,10 +32,10 @@ class DIContainerTest {
         diContainer = DIContainer()
 
         // when
-        val actual = diContainer.instance(Foo::class)
+        val actual = diContainer.instance(NotSingletonFoo::class)
 
         // then
-        assertThat(actual).isInstanceOf(Foo::class.java)
+        assertThat(actual).isInstanceOf(NotSingletonFoo::class.java)
     }
 
     @Test
@@ -42,20 +44,20 @@ class DIContainerTest {
         diContainer = DIContainer()
 
         // when
-        val actual = diContainer.singletonInstance(Foo::class)
+        val actual = diContainer.instance(SingletonFoo::class)
 
         // then
-        assertThat(actual).isInstanceOf(Foo::class.java)
+        assertThat(actual).isInstanceOf(SingletonFoo::class.java)
     }
 
     @Test
     fun `singletonInstance()로 기존에 있는 인스턴스를 반환한다`() {
         // given
         diContainer = DIContainer()
-        val expected = diContainer.singletonInstance(Foo::class)
+        val expected = diContainer.instance(SingletonFoo::class)
 
         // when
-        val actual = diContainer.singletonInstance(Foo::class)
+        val actual = diContainer.instance(SingletonFoo::class)
 
         // then
         assertThat(actual).isSameInstanceAs(expected)
@@ -67,7 +69,7 @@ class DIContainerTest {
         diContainer = DIContainer(modules = listOf(AbstractTestModule::class))
 
         // when
-        val actual = diContainer.singletonInstance(Parent::class)
+        val actual = diContainer.instance(Parent::class)
 
         // then
         assertThat(actual).isInstanceOf(Child::class.java)
@@ -79,7 +81,7 @@ class DIContainerTest {
         diContainer = DIContainer(modules = listOf(TestModule::class))
 
         // when
-        val actual = diContainer.singletonInstance(Child::class)
+        val actual = diContainer.instance(Child::class)
 
         // then
         assertThat(actual).isInstanceOf(Child::class.java)
@@ -89,7 +91,7 @@ class DIContainerTest {
     fun `lateinit var이고 @Inject 어노테이션이 붙은 프로퍼티에 필드 주입을 한다`() {
         // given
         diContainer = DIContainer()
-        diContainer.singletonInstance(Foo::class)
+        diContainer.instance(Foo::class)
 
         // when
         val actual = diContainer.instance(FieldInjectTest::class)
@@ -102,7 +104,7 @@ class DIContainerTest {
     fun `@Inject 어노테이션이 붙지 않은 lateinit var 프로퍼티에 필드 주입을 하지 않는다`() {
         // given
         diContainer = DIContainer()
-        diContainer.singletonInstance(Foo::class)
+        diContainer.instance(Foo::class)
 
         // when
         val actual = diContainer.instance(FieldInjectTest::class)
@@ -117,7 +119,7 @@ class DIContainerTest {
         diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
 
         // when
-        val actual = diContainer.singletonInstance(QualifierTest1::class)
+        val actual = diContainer.instance(QualifierTest1::class)
 
         // then
         assertThat(actual.parent).isInstanceOf(ChildImpl1::class.java)
@@ -129,7 +131,7 @@ class DIContainerTest {
         diContainer = DIContainer(modules = listOf(QualifierTestModule::class))
 
         // when
-        val actual = diContainer.singletonInstance(QualifierTest2::class)
+        val actual = diContainer.instance(QualifierTest2::class)
 
         // then
         assertThat(actual.parent).isInstanceOf(ChildImpl2::class.java)
@@ -141,11 +143,11 @@ class DIContainerTest {
         diContainer = DIContainer()
 
         // when
-        val actual = diContainer.singletonInstance(Sandwich::class)
+        val actual = diContainer.instance(Sandwich::class)
 
         // then
         assertThat(actual).isInstanceOf(Sandwich::class.java)
-        assertThat(diContainer.singletonInstance(Olive::class)).isInstanceOf(Olive::class.java)
+        assertThat(diContainer.instance(Olive::class)).isInstanceOf(Olive::class.java)
     }
 
     private fun DIContainer(modules: List<KClass<out DIModule>> = emptyList()): DIContainer {

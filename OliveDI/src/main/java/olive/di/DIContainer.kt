@@ -3,6 +3,7 @@ package olive.di
 import android.app.Application
 import olive.di.annotation.Inject
 import olive.di.annotation.Qualifier
+import olive.di.annotation.Singleton
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -34,7 +35,7 @@ class DIContainer(
             val type = function.returnType.classifier as KClass<*>
             val parameters = function.parameters().filter { this != it }
             val objectInstance = createSingleton(this)
-            val arguments = parameters.map { singletonInstance(it) }
+            val arguments = parameters.map { instance(it) }
             val instance = function.call(objectInstance, *arguments.toTypedArray())
             instances[type] = instance ?: throw IllegalArgumentException()
         }
@@ -73,11 +74,10 @@ class DIContainer(
     }
 
     fun <T : Any> instance(classType: KClass<T>): T {
+        if (classType.hasAnnotation<Singleton>()) {
+            return instances[classType] as? T ?: createSingleton(classType)
+        }
         return create(classType)
-    }
-
-    fun <T : Any> singletonInstance(classType: KClass<T>): T {
-        return instances[classType] as? T ?: createSingleton(classType)
     }
 
     private fun <T : Any> createSingleton(
