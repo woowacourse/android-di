@@ -1,7 +1,8 @@
 package woowacourse.shopping.di.repository
 
+import com.woowa.di.component.InstallIn
 import com.woowa.di.injection.createInjectedInstance
-import com.woowa.di.viewmodel.ViewModelScope
+import com.woowa.di.viewmodel.ViewModelComponent
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.repository.CartRepository
@@ -13,7 +14,7 @@ import kotlin.reflect.full.isSubclassOf
 
 interface RepositoryDI
 
-@ViewModelScope
+@InstallIn(ViewModelComponent::class)
 class RepositoryBinder {
     init {
         require(
