@@ -1,17 +1,18 @@
 package olive.di
 
 import android.app.Application
-import olive.di.annotation.Inject
-import olive.di.annotation.Qualifier
 import olive.di.annotation.Singleton
+import olive.di.util.fieldsToInject
+import olive.di.util.hasQualifierAnnotation
+import olive.di.util.parameters
+import olive.di.util.qualifierNameAnnotation
+import olive.di.util.toReturnType
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
 
@@ -32,13 +33,18 @@ class DIContainer(
     private fun KClass<out DIModule>.injectModule() { // 일반 class 모듈인 경우 함수를 직접 호출한 결과를 인스턴스로 저장
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
-            val type = function.returnType.classifier as KClass<*>
-            val parameters = function.parameters().filter { this != it }
-            val objectInstance = createSingleton(this)
-            val arguments = parameters.map { instance(it) }
-            val instance = function.call(objectInstance, *arguments.toTypedArray())
-            instances[type] = instance ?: throw IllegalArgumentException()
+            val type = function.toReturnType()
+            val instance = function.calledInstance(this)
+            instances[type] = instance
         }
+    }
+
+    private fun KFunction<*>.calledInstance(classType: KClass<*>): Any {
+        val parameters = this.parameters()
+        val objectInstance = createSingleton(classType)
+        val arguments = parameters.map { instance(it) }
+        val instance = call(objectInstance, *arguments.toTypedArray())
+        return instance ?: throw IllegalArgumentException()
     }
 
     private fun KClass<out DIModule>.injectAbstractModule() {
@@ -46,8 +52,8 @@ class DIContainer(
         // 파라미터 타입에 맞는 객체를 createSingleton로 직접 생성
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
-            val instanceType = function.parameters().first { it != this }
-            val cacheType = function.returnType.classifier as KClass<*>
+            val cacheType = function.toReturnType()
+            val instanceType = function.parameters().first()
 
             if (function.annotations.hasQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
                 val nameAnnotation = function.annotations.qualifierNameAnnotation()
@@ -56,21 +62,6 @@ class DIContainer(
             }
             createSingleton(instanceType, cacheType)
         }
-    }
-
-    private fun KFunction<*>.parameters(): List<KClass<*>> = parameters.map { it.type.classifier as KClass<*> }
-
-    private fun List<Annotation>.hasQualifierAnnotation(): Boolean {
-        return any { annotation -> annotation.isQualifierAnnotation() }
-    }
-
-    private fun List<Annotation>.qualifierNameAnnotation(): KClass<out Annotation> {
-        val nameAnnotation = first { functionAnnotation -> functionAnnotation.isQualifierAnnotation() }
-        return nameAnnotation.annotationClass
-    }
-
-    private fun Annotation.isQualifierAnnotation(): Boolean {
-        return annotationClass.annotations.any { it.annotationClass == Qualifier::class }
     }
 
     fun <T : Any> instance(classType: KClass<T>): T {
@@ -115,31 +106,28 @@ class DIContainer(
 
     private fun Any.injectFieldDependency() {
         val fieldsToInject = this::class.fieldsToInject()
-        fieldsToInject.forEach { fieldToInject ->
-            val property = fieldToInject as KMutableProperty1
+        fieldsToInject.forEach { property ->
             property.isAccessible = true
-            val type = property.returnType.classifier as KClass<*>
-            val instance = // Qualifier가 붙은 경우 namedInstances에서 찾고, 안 붙은 경우 instances에서 찾음
-                if (property.annotations.hasQualifierAnnotation()) {
-                    namedInstance(type, property.annotations)
-                } else {
-                    instances[type] ?: createSingleton(type)
-                }
-            fieldToInject.setter.call(this, instance)
+            val instance = property.propertyInstance()
+            property.setter.call(this, instance)
         }
     }
 
-    private fun KClass<*>.fieldsToInject(): List<KProperty1<out Any, *>> {
-        return declaredMemberProperties
-            .filter { it.isLateinit }
-            .filter { it.hasAnnotation<Inject>() }
+    private fun KMutableProperty1<out Any, *>.propertyInstance(): Any {
+        val type = this.toReturnType()
+        // Qualifier가 붙은 경우 namedInstances에서 찾고, 안 붙은 경우 instances에서 찾음
+        return if (annotations.hasQualifierAnnotation()) {
+            namedInstance(type, annotations)
+        } else {
+            instances[type] ?: createSingleton(type)
+        }
     }
 
     private fun namedInstance(
         type: KClass<*>,
         annotations: List<Annotation>,
     ): Any {
-        val nameAnnotation: KClass<out Annotation> = annotations.qualifierNameAnnotation()
+        val nameAnnotation = annotations.qualifierNameAnnotation()
         return namedInstances.instanceByName(nameAnnotation, type)
             ?: throw IllegalArgumentException("${nameAnnotation.simpleName}로 지정된 인스턴스가 존재하지 않습니다.")
     }
