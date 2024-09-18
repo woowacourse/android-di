@@ -1,5 +1,6 @@
 package com.woowa.di.viewmodel
 
+import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -8,16 +9,15 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.jvm.jvmErasure
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ViewModelScope
 
-class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) {
+
+class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>):
+    Component {
     private val binderInstance: binder = binderClazz.createInstance()
-    private val binderKFunc: Map<String, KFunction<*>> = createDiInstance()
+    private val binderKFunc: Map<String, KFunction<*>> = createProvider()
     private val diInstances: MutableMap<String?, Any> = mutableMapOf()
 
-    private fun createDiInstance(): Map<String, KFunction<*>> {
+    private fun createProvider(): Map<String, KFunction<*>> {
         return binderClazz.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
             .associate { kFunc ->
                 val key =
@@ -33,9 +33,9 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
     }
 
 
-    fun getDIInstance(
+    override fun getDIInstance(
         type: KClass<*>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ): Any {
         require(!isAlreadyCreatedDI(type, qualifier)) {
             "한 객체는 하나의 viewModel에 대해서만 생성할 수 있습니다."
@@ -51,9 +51,9 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
         }
     }
 
-    fun deleteDIInstance(
+    override fun deleteDIInstance(
         type: KClass<*>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ) {
         qualifier?.let {
             diInstances.remove(type.simpleName + qualifier.simpleName)
