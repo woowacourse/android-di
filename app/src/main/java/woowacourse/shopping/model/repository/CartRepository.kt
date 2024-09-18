@@ -1,9 +1,8 @@
 package woowacourse.shopping.model.repository
 
-import woowacourse.shopping.di.repository.RepositoryDI
 import woowacourse.shopping.model.Product
 
-interface CartRepository : RepositoryDI {
+interface CartRepository {
     suspend fun addCartProduct(product: Product)
 
     suspend fun getAllCartProducts(): List<Product>

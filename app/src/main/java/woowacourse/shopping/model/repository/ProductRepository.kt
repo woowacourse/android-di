@@ -1,8 +1,7 @@
 package woowacourse.shopping.model.repository
 
-import woowacourse.shopping.di.repository.RepositoryDI
 import woowacourse.shopping.model.Product
 
-interface ProductRepository : RepositoryDI {
+interface ProductRepository {
     fun getAllProducts(): List<Product>
 }
