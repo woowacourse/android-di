@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
+import olive.di.ViewModelFactory
 import woowacourse.shopping.ShoppingApplication
 
 @MainThread
