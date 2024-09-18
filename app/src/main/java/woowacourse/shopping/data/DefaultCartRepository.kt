@@ -7,18 +7,16 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-class DefaultCartRepository
-    @com.zzang.di.annotation.Inject
-    constructor(private val dao: CartProductDao) : CartRepository {
-        override suspend fun addCartProduct(product: Product) {
-            dao.insert(product.toCartProductEntity())
-        }
-
-        override suspend fun getAllCartProducts(): List<CartProduct> {
-            return dao.getAll().map { it.toModel() }
-        }
-
-        override suspend fun deleteCartProduct(id: Long) {
-            dao.delete(id)
-        }
+class DefaultCartRepository @Inject constructor(private val dao: CartProductDao) : CartRepository {
+    override suspend fun addCartProduct(product: Product) {
+        dao.insert(product.toCartProductEntity())
     }
+
+    override suspend fun getAllCartProducts(): List<CartProduct> {
+        return dao.getAll().map { it.toModel() }
+    }
+
+    override suspend fun deleteCartProduct(id: Long) {
+        dao.delete(id)
+    }
+}

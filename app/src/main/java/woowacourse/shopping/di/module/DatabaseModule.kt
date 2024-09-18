@@ -5,7 +5,7 @@ import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import com.zzang.di.DIContainer
-import com.zzang.di.annotation.DatabaseRepository
+import com.zzang.di.annotation.QualifierType
 import com.zzang.di.module.DIModule
 
 class DatabaseModule(private val context: Context) : DIModule {
@@ -19,8 +19,8 @@ class DatabaseModule(private val context: Context) : DIModule {
 
         val cartProductDao = database.cartProductDao()
 
-        container.registerInstance(CartProductDao::class, cartProductDao, DatabaseRepository::class)
+        container.registerInstance(CartProductDao::class, cartProductDao, QualifierType.DATABASE)
 
-        container.registerInstance(ShoppingDatabase::class, database, DatabaseRepository::class)
+        container.registerInstance(ShoppingDatabase::class, database, QualifierType.DATABASE)
     }
 }

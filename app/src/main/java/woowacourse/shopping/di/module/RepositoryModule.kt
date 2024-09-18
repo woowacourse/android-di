@@ -1,38 +1,35 @@
 package woowacourse.shopping.di.module
 
+import com.zzang.di.DIContainer
+import com.zzang.di.annotation.QualifierType
+import com.zzang.di.module.DIModule
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
-import com.zzang.di.DIContainer
-import com.zzang.di.annotation.DatabaseRepository
-import com.zzang.di.annotation.InMemoryRepository
-import com.zzang.di.module.DIModule
 import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
 
 class RepositoryModule : DIModule {
     override fun register(container: DIContainer) {
-        val cartProductDao = container.getInstance(CartProductDao::class, DatabaseRepository::class)
+        val cartProductDao = container.resolve(CartProductDao::class, QualifierType.DATABASE)
+
+        container.registerInstance(
+            ProductRepository::class,
+            DefaultProductRepository(),
+            QualifierType.IN_MEMORY
+        )
 
         container.registerInstance(
             CartRepository::class,
             DefaultCartRepository(cartProductDao),
-            DatabaseRepository::class,
-        )
-        container.registerInterfaceMapping(
-            CartRepository::class,
-            DefaultCartRepository::class,
-            DatabaseRepository::class,
+            QualifierType.DATABASE
         )
 
         container.registerInstance(
             CartRepository::class,
             InMemoryCartRepository(),
-            InMemoryRepository::class,
-        )
-        container.registerInterfaceMapping(
-            CartRepository::class,
-            InMemoryCartRepository::class,
-            InMemoryRepository::class,
+            QualifierType.IN_MEMORY
         )
     }
 }

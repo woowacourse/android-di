@@ -1,7 +1,7 @@
 package com.zzang.di
 
 import com.zzang.di.annotation.Inject
-import javax.inject.Qualifier
+import com.zzang.di.annotation.QualifierType
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -22,7 +22,8 @@ object DependencyInjector {
             .filterIsInstance<KMutableProperty<*>>()
             .filter { property -> property.javaField?.isAnnotationPresent(Inject::class.java) == true }
             .forEach { property ->
-                val qualifier = property.annotations.filterIsInstance<Qualifier>().firstOrNull()?.annotationClass
+                val injectAnnotation = property.javaField!!.getAnnotation(Inject::class.java)
+                val qualifier = injectAnnotation.qualifier
                 injectProperty(target, property, qualifier)
             }
     }
@@ -30,7 +31,7 @@ object DependencyInjector {
     private fun injectProperty(
         target: Any,
         property: KMutableProperty<*>,
-        qualifier: KClass<out Annotation>?,
+        qualifier: QualifierType
     ) {
         val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>, qualifier)
         property.isAccessible = true
