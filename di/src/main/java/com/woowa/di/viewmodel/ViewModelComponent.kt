@@ -30,7 +30,7 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
                 }
         }
 
-        override fun getDIInstanceOrNull(
+        override fun getDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ): Any? {

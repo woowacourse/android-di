@@ -20,7 +20,7 @@ abstract class ComponentManager {
         qualifier: KClass<out Annotation>?,
     ): Any? {
         val binderType = getBinderTypeOrNull(type) ?: return getParentDIInstance(type, qualifier)
-        return getComponentInstance(binderType).getDIInstanceOrNull(type, qualifier)
+        return getComponentInstance(binderType).getDIInstance(type, qualifier)
     }
 
     private fun getParentDIInstance(

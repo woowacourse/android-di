@@ -3,7 +3,7 @@ package com.woowa.di.component
 import kotlin.reflect.KClass
 
 interface Component {
-    fun getDIInstanceOrNull(
+    fun getDIInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any?
