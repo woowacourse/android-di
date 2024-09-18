@@ -9,7 +9,6 @@ import kotlin.reflect.jvm.jvmErasure
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ParentManager(val manager: KClass<out ComponentManager>)
 
-
 abstract class ComponentManager {
     private val binderClazzs = mutableListOf<KClass<*>>()
 

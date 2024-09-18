@@ -22,7 +22,7 @@ class DaoModule private constructor(private val context: Context) :
 
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
-            daoBinder = DaoBinder(context)
+            // daoBinder = DaoBinder(context)
 
             daoes = createRepositories()
         }

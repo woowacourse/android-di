@@ -8,4 +8,3 @@ interface Component {
         qualifier: KClass<out Annotation>? = null,
     ): Any?
 }
-
