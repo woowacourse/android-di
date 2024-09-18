@@ -46,6 +46,10 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
+
+    // Kotlin
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
+
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
 
