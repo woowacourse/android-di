@@ -2,6 +2,7 @@ package com.woowa.di.viewmodel
 
 import com.woowa.di.findQualifierClassOrNull
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
@@ -13,33 +14,67 @@ annotation class ViewModelScope
 
 class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) {
     private val binderInstance: binder = binderClazz.createInstance()
-    private val diInstances: Map<String, Any?> = createDiInstance()
+    private val binderKFunc: Map<String, KFunction<*>> = createDiInstance()
+    private val diInstances: MutableMap<String?, Any> = mutableMapOf()
 
-    private fun createDiInstance(): Map<String, Any?> {
+    private fun createDiInstance(): Map<String, KFunction<*>> {
         return binderClazz.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
             .associate { kFunc ->
-                val result = kFunc.call(binderInstance)
                 val key =
                     kFunc.returnType.jvmErasure.simpleName
                         ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")
 
                 kFunc.findQualifierClassOrNull()?.let { qualifier ->
-                    return@associate (key + qualifier.simpleName) to result
+                    return@associate (key + qualifier.simpleName) to kFunc
                 }
 
-                return@associate key to result
+                return@associate key to kFunc
             }
     }
+
 
     fun getDIInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
-    ): Any? {
-        qualifier?.let {
-            return diInstances[(it.simpleName + type.simpleName)]
+    ): Any {
+        require(!isAlreadyCreatedDI(type, qualifier)) {
+            "한 객체는 하나의 viewModel에 대해서만 생성할 수 있습니다."
         }
-        return diInstances[type.simpleName]
+
+        qualifier?.let {
+            return diInstances.getOrPut((type.simpleName + it.simpleName)) {
+                createDIInstance(type, qualifier)
+            }
+        }
+        return diInstances.getOrPut(type.simpleName) {
+            createDIInstance(type)
+        }
     }
+
+    fun deleteDIInstance(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        qualifier?.let {
+            diInstances.remove(type.simpleName + qualifier.simpleName)
+            return
+        }
+        diInstances.remove(type.simpleName)
+    }
+
+    private fun createDIInstance(type: KClass<*>, qualifier: KClass<out Annotation>? = null): Any {
+        qualifier?.let {
+            return binderKFunc[(type.simpleName + qualifier.simpleName)]?.call(binderInstance)
+                ?: error("${type.simpleName} 혹은 ${qualifier.simpleName}를 binder에 정의해주세요")
+        }
+        return binderKFunc[type.simpleName]?.call(binderInstance) ?: error("${type.simpleName}를 binder에 정의해주세요")
+    }
+
+    private fun isAlreadyCreatedDI(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ) =
+        diInstances[(type.simpleName + qualifier?.simpleName)] != null || diInstances[type.simpleName] != null
 
     companion object {
         private val instances = mutableMapOf<KClass<*>, ViewModelComponent<*>>()
@@ -48,10 +83,6 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             return instances.getOrPut(binderClazz) {
                 ViewModelComponent(binderClazz)
             } as ViewModelComponent<binder>
-        }
-
-        fun <binder : Any> deleteInstance(binderClazz: KClass<binder>) {
-            instances.remove(binderClazz) ?: error("${binderClazz.simpleName}에 대한 인스턴스가 없습니다.")
         }
     }
 }

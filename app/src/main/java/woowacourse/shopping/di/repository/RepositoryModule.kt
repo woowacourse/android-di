@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.ViewModel
 import com.woowa.di.injection.Module
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -24,6 +25,9 @@ class RepositoryModule private constructor() :
             super.onCreate(owner)
             repositoryBinder = RepositoryBinder()
             repositories = createRepositories()
+            if (owner is ViewModel) {
+                owner.lifecycle
+            }
         }
 
         override fun onDestroy(owner: LifecycleOwner) {

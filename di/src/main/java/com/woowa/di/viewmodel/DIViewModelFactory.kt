@@ -4,37 +4,51 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.woowa.di.findQualifierClassOrNull
+import java.lang.reflect.Field
 import javax.inject.Inject
-import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinProperty
 
 inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Factory {
-    val binders = mutableListOf<KClass<*>>()
     val instance = T::class.createInstance()
 
-    T::class.java.declaredFields.onEach { field ->
+    val fields = T::class.java.declaredFields.onEach { field ->
         field.isAccessible = true
     }.filter { it.isAnnotationPresent(Inject::class.java) }
-        .map { field ->
-            val binderType = ViewModelComponentManager.getComponentType(field.type.kotlin)
-            binders.add(binderType)
-            val fieldInstance =
-                ViewModelComponent.getInstance(binderType)
-                    .getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
-            field.set(instance, fieldInstance)
-        }
 
-    instance.addCloseable {
-        binders.forEach {
-            ViewModelComponent.deleteInstance(it)
-        }
-    }
-
+    injectFields<T>(fields, instance)
+    removeInstanceOnCleared<T>(instance, fields)
     return viewModelFactory {
         addInitializer(T::class) {
             instance
+        }
+    }
+}
+
+
+inline fun <reified T : ViewModel> injectFields(
+    fields: List<Field>,
+    instance: T,
+) {
+    fields.map { field ->
+        val binderType = ViewModelComponentManager.getComponentType(field.type.kotlin)
+        val fieldInstance =
+            ViewModelComponent.getInstance(binderType)
+                .getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
+        field.set(instance, fieldInstance)
+    }
+}
+inline fun <reified T : ViewModel> removeInstanceOnCleared(
+    instance: T,
+    fields: List<Field>,
+) {
+    instance.addCloseable {
+        fields.forEach { field ->
+            val binderType = ViewModelComponentManager.getComponentType(field.type.kotlin)
+            ViewModelComponent.getInstance(binderType).deleteDIInstance(
+                field.type.kotlin,
+                field.kotlinProperty?.findQualifierClassOrNull()
+            )
         }
     }
 }
