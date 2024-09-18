@@ -14,7 +14,7 @@ import com.kmlibs.supplin.fixtures.android.activity.FakeActivity5
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
-import com.kmlibs.supplin.fixtures.android.module.FakeModule
+import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
 import org.junit.Before
 import org.junit.Rule
@@ -34,7 +34,7 @@ class SupplinViewModelTest {
     fun setUp() {
         Injector.init {
             context(context)
-            module(FakeModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
         }
     }
 

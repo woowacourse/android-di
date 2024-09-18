@@ -1,8 +1,8 @@
 package com.kmlibs.supplin.fixtures.android.datasource
 
 import com.kmlibs.supplin.annotations.Supply
-import com.kmlibs.supplin.fixtures.FakeDataSource1
-import com.kmlibs.supplin.fixtures.FakeDataSource2
+import com.kmlibs.supplin.fixtures.android.FakeDataSource1
+import com.kmlibs.supplin.fixtures.android.FakeDataSource2
 
 interface FakeDataSource
 

@@ -2,8 +2,9 @@ package com.kmlibs.supplin
 
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
-import com.kmlibs.supplin.fixtures.Module1
-import com.kmlibs.supplin.fixtures.Module2
+import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
+import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
+import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
 import io.mockk.mockk
 import org.junit.Test
 
@@ -15,7 +16,11 @@ class InjectorTest {
         val mockContext = mockk<Context>(relaxed = true)
         Injector.init {
             context(mockContext)
-            module(Module1::class, Module2::class)
+            module(
+                FakeConcreteModule::class,
+                FakeRepositoryModule::class,
+                FakeDataSourceModule::class
+            )
         }
         instanceContainer = Injector.instanceContainer
         assertThat(::instanceContainer.isInitialized).isTrue()
@@ -29,13 +34,13 @@ class InjectorTest {
         // when
         Injector.init {
             context(mockContext)
-            module(Module1::class, Module2::class)
+            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
         }
         val firstInstanceContainer = Injector.instanceContainer
 
         Injector.init {
             context(mockContext)
-            module(Module1::class, Module2::class)
+            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
         }
         val secondInstanceContainer = Injector.instanceContainer
 

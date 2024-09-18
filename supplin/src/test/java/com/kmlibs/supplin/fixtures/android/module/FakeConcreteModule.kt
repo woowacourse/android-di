@@ -4,8 +4,8 @@ package com.kmlibs.supplin.fixtures.android.module
 import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
-import com.kmlibs.supplin.fixtures.FakeRepository1
-import com.kmlibs.supplin.fixtures.FakeRepository2
+import com.kmlibs.supplin.fixtures.android.FakeRepository1
+import com.kmlibs.supplin.fixtures.android.FakeRepository2
 import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource1
 import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource2
 import com.kmlibs.supplin.fixtures.android.datasource.FakeDataSource
@@ -17,7 +17,7 @@ import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository8
 import com.kmlibs.supplin.fixtures.android.repository.FakeRepository
 
 @Module
-object FakeModule {
+object FakeConcreteModule {
     @Concrete
     @FakeRepository1
     fun provideFakeRepository1(): FakeRepository = DefaultFakeRepository1()

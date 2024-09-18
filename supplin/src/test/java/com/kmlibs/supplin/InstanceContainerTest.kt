@@ -2,10 +2,11 @@ package com.kmlibs.supplin
 
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
-import com.kmlibs.supplin.fixtures.Foo
-import com.kmlibs.supplin.fixtures.Foos
-import com.kmlibs.supplin.fixtures.Module1
-import com.kmlibs.supplin.fixtures.Module2
+import com.kmlibs.supplin.fixtures.android.datasource.FakeDataSource
+import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
+import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
+import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
+import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository6
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
@@ -17,18 +18,23 @@ class InstanceContainerTest {
     @Before
     fun setUp() {
         val context = mockk<Context>(relaxed = true)
-        val modules = listOf(Module1::class, Module2::class)
+        val modules = listOf(
+            FakeConcreteModule::class,
+            FakeRepositoryModule::class,
+            FakeDataSourceModule::class
+        )
         instanceContainer = InstanceContainer(context, modules)
     }
 
     @Test
     fun `KParameter instanceOf should return the correct instance`() {
-        val primaryConstructor = Foos::class.primaryConstructor ?: error("no primary constructor")
+        val primaryConstructor =
+            DefaultFakeRepository6::class.primaryConstructor ?: error("no primary constructor")
 
         val primaryConstructorParameters = primaryConstructor.parameters
         primaryConstructorParameters.forEach { parameter ->
             val instance = instanceContainer.instanceOf<Any>(parameter)
-            assertThat(instance).isInstanceOf(Foo::class.java)
+            assertThat(instance).isInstanceOf(FakeDataSource::class.java)
         }
     }
 }

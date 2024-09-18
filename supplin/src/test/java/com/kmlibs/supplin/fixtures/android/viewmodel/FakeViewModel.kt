@@ -2,10 +2,10 @@ package com.kmlibs.supplin.fixtures.android.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.kmlibs.supplin.annotations.Supply
-import com.kmlibs.supplin.fixtures.FakeRepository1
-import com.kmlibs.supplin.fixtures.FakeRepository2
-import com.kmlibs.supplin.fixtures.FakeRepository6
-import com.kmlibs.supplin.fixtures.FakeRepository7
+import com.kmlibs.supplin.fixtures.android.FakeRepository1
+import com.kmlibs.supplin.fixtures.android.FakeRepository2
+import com.kmlibs.supplin.fixtures.android.FakeRepository6
+import com.kmlibs.supplin.fixtures.android.FakeRepository7
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository3
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository4
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository5
