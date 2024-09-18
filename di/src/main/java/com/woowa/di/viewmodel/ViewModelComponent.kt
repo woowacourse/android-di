@@ -39,13 +39,13 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             }
             qualifier?.let {
                 return diInstances.getOrPut((type.simpleName + it.simpleName)) {
-                    createDIInstanceOrNull(type, qualifier)
+                    createDIInstance(type, qualifier)
                 }
             }
             return diInstances.getOrPut(
                 type.simpleName ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
             ) {
-                createDIInstanceOrNull(type)
+                createDIInstance(type)
             }
         }
 
@@ -60,7 +60,7 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             diInstances.remove(type.simpleName)
         }
 
-        private fun createDIInstanceOrNull(
+        private fun createDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>? = null,
         ): Any? {

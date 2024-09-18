@@ -32,7 +32,7 @@ inline fun <reified T : ViewModel> injectFields(
 ) {
     fields.map { field ->
         val fieldInstance =
-            ViewModelComponentManager.getDIInstanceOrNull(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
+            ViewModelComponentManager.getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
         field.set(instance, fieldInstance)
     }
 }
