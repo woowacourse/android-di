@@ -9,3 +9,9 @@ annotation class FooQualifier1
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class FooQualifier2
+
+@Qualifier
+annotation class FakeRepository1
+
+@Qualifier
+annotation class FakeRepository2
