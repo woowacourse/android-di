@@ -1,5 +1,4 @@
 package com.example.seogi.di.annotation
 
-@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY)
 annotation class FieldInject

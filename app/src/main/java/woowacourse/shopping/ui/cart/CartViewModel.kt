@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.di.InMemory
+import woowacourse.shopping.di.OnDisk
 import woowacourse.shopping.model.repository.CartRepository
 
 class CartViewModel(
-    @InMemory private val cartRepository: CartRepository,
+    @OnDisk private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<CartProductEntity>> =
         MutableLiveData(emptyList())

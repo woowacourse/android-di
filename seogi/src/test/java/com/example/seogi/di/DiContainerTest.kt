@@ -1,12 +1,11 @@
 package com.example.seogi.di
 
 import com.example.seogi.fixture.Bar
-import com.example.seogi.fixture.Child1
-import com.example.seogi.fixture.Child2
 import com.example.seogi.fixture.ChildFoo1
 import com.example.seogi.fixture.ChildFoo2
 import com.example.seogi.fixture.FakeModule
-import com.example.seogi.fixture.ParentFoo
+import com.example.seogi.fixture.FakeViewModel
+import com.example.seogi.fixture.FakeViewModel2
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -17,7 +16,7 @@ class DiContainerTest {
         val diContainer = DiContainer(FakeModule)
 
         // when
-        val actual = diContainer.getInstance(Bar::class, null)
+        val actual = diContainer.instance(Bar::class)
 
         // then
         assertThat(actual).isInstanceOf(Bar::class.java)
@@ -29,10 +28,10 @@ class DiContainerTest {
         val diContainer = DiContainer(FakeModule)
 
         // when
-        val actual = diContainer.getInstance(ParentFoo::class, Child1())
+        val actual = diContainer.instance(FakeViewModel::class)
 
         // then
-        assertThat(actual).isInstanceOf(ChildFoo1::class.java)
+        assertThat(actual.childFoo).isInstanceOf(ChildFoo1::class.java)
     }
 
     @Test
@@ -41,9 +40,9 @@ class DiContainerTest {
         val diContainer = DiContainer(FakeModule)
 
         // when
-        val actual = diContainer.getInstance(ParentFoo::class, Child2())
+        val actual = diContainer.instance(FakeViewModel2::class)
 
         // then
-        assertThat(actual).isInstanceOf(ChildFoo2::class.java)
+        assertThat(actual.childFoo).isInstanceOf(ChildFoo2::class.java)
     }
 }

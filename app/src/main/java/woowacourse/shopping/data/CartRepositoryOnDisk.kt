@@ -1,12 +1,14 @@
 package woowacourse.shopping.data
 
+import com.example.seogi.di.annotation.FieldInject
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
-class CartRepositoryOnDisk(
-    private val dao: CartProductDao,
-) : CartRepository {
+class CartRepositoryOnDisk : CartRepository {
+    @FieldInject
+    lateinit var dao: CartProductDao
+
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }

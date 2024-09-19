@@ -8,7 +8,7 @@ import kotlin.reflect.full.declaredMemberProperties
 
 class FieldInjectionTest {
     @Test
-    fun `FieldInject어노테이션이 붙은 필드에 접근할 수 있다`() {
+    fun `FieldInject 어노테이션이 붙은 필드에 접근할 수 있다`() {
         // given
         val viewModelClass = FakeViewModel::class
 
@@ -21,7 +21,7 @@ class FieldInjectionTest {
     }
 
     @Test
-    fun `FieldInject어노테이션이 붙지 않은 필드를 구분할 수 있다`() {
+    fun `FieldInject 어노테이션이 붙지 않은 필드를 구분할 수 있다`() {
         // given
         val viewModelClass = FakeViewModel::class
         val fields =

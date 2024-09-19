@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import com.example.seogi.di.Module
 import com.example.seogi.di.annotation.Qualifier
+import com.example.seogi.di.annotation.SingleTone
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryInMemory
@@ -17,13 +18,16 @@ annotation class OnDisk
 annotation class InMemory
 
 object DiModule : Module {
+    @SingleTone
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
     @InMemory
+    @SingleTone
     fun provideCartRepositoryInMemory(): CartRepository = CartRepositoryInMemory()
 
     @OnDisk
-    fun provideCartRepositoryOnDisk(cartProductDao: CartProductDao): CartRepository = CartRepositoryOnDisk(cartProductDao)
+    @SingleTone
+    fun provideCartRepositoryOnDisk(): CartRepository = CartRepositoryOnDisk()
 
     fun provideCartProductDao(): CartProductDao = ShoppingApplication.appDatabase.cartProductDao()
 }
