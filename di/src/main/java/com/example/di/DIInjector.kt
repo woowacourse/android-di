@@ -37,7 +37,6 @@ object DIInjector {
                             function.parameters.drop(1).map {
                                 val parameterInstance =
                                     DIContainer.getInstance(it.type.jvmErasure)
-                                        ?: createInstance(it.type.jvmErasure)
                                 DIContainer.addInstance(parameterInstance::class, parameterInstance)
                                 parameterInstance
                             }
