@@ -5,5 +5,9 @@ import com.example.seogi.di.annotation.FieldInject
 
 class FakeViewModel : ViewModel() {
     @FieldInject
-    lateinit var foo: String
+    private lateinit var foo1: String
+
+    private lateinit var foo2: String
+
+    private val foo3: String = "foo2"
 }
