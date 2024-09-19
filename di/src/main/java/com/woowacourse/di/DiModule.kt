@@ -15,7 +15,7 @@ annotation class ApplicationContext
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Module
 
-class DiModule(private val context: Context, modules: List<KClass<*>>) {
+class DiModule(private val applicationContext: Context, modules: List<KClass<*>>) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     init {
@@ -39,7 +39,7 @@ class DiModule(private val context: Context, modules: List<KClass<*>>) {
                             function.parameters.drop(1).map { param ->
                                 val paramType = param.type.jvmErasure
                                 if (param.findAnnotation<ApplicationContext>() != null) {
-                                    context
+                                    applicationContext
                                 } else {
                                     instances[paramType]
                                         ?: throw IllegalArgumentException("의존성 부족: ${paramType.simpleName}")
@@ -103,7 +103,7 @@ class DiModule(private val context: Context, modules: List<KClass<*>>) {
             context: Context,
             modules: List<KClass<*>>,
         ) {
-            instance = DiModule(context = context, modules = modules)
+            instance = DiModule(applicationContext = context.applicationContext, modules = modules)
         }
 
         fun getInstance(): DiModule {
