@@ -35,17 +35,18 @@ object DependencyContainer {
         return instances[key] as? T ?: createInstance(classType)
     }
 
-    fun <T : Any> createInstance(
-        modelClass: KClass<*>
-    ): T {
-        val constructor = modelClass.constructors.firstOrNull()
-            ?: throw IllegalArgumentException("Unknown modelClass")
+    fun <T : Any> createInstance(modelClass: KClass<*>): T {
+        val constructor =
+            modelClass.constructors.firstOrNull()
+                ?: throw IllegalArgumentException("Unknown modelClass")
 
-        val params = constructor.parameters.map { parameter ->
-            val paramClass = parameter.type.classifier as? KClass<*>
-                ?: throw IllegalArgumentException("Unknown parameter type: ${parameter.type}")
-            instance<Any>(paramClass)
-        }.toTypedArray()
+        val params =
+            constructor.parameters.map { parameter ->
+                val paramClass =
+                    parameter.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException("Unknown parameter type: ${parameter.type}")
+                instance<Any>(paramClass)
+            }.toTypedArray()
 
         val instance = constructor.call(*params) as T
         injectProperty(instance)

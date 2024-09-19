@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woowacourse.di.annotation.Inject
+import com.woowacourse.di.annotation.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import com.woowacourse.di.annotation.Inject
-import com.woowacourse.di.annotation.Qualifier
 import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {

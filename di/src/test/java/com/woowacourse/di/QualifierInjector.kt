@@ -7,6 +7,7 @@ import org.junit.Test
 interface FakeRepository
 
 class DefaultRepository1 : FakeRepository
+
 class DefaultRepository2 : FakeRepository
 
 class ConstructorTestViewModel1(
@@ -30,7 +31,6 @@ class ConstructorTestViewModel4(
 )
 
 class QualifierInjectorTest {
-
     @After
     fun tearDown() {
         DependencyContainer.clear()
@@ -71,7 +71,7 @@ class QualifierInjectorTest {
         // when
         val viewModel =
             ConstructorTestViewModel3(
-                DependencyContainer.instance(FakeRepository::class, "foo")
+                DependencyContainer.instance(FakeRepository::class, "foo"),
             )
 
         // then
@@ -90,7 +90,7 @@ class QualifierInjectorTest {
         val viewModel =
             ConstructorTestViewModel4(
                 DependencyContainer.instance(FakeRepository::class, "foo"),
-                DependencyContainer.instance(FakeRepository::class, "bar")
+                DependencyContainer.instance(FakeRepository::class, "bar"),
             )
 
         // then
