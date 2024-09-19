@@ -8,11 +8,14 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.mapper.toProduct
 import shopping.di.Inject
+import shopping.di.Scope
+import shopping.di.ScopeAnnotation
 import woowacourse.shopping.model.Product
 
 class CartViewModel : ViewModel() {
 
     @Inject
+    @ScopeAnnotation(Scope.APP)
     lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =

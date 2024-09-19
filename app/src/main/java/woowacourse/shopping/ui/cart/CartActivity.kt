@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import shopping.di.Inject
+import shopping.di.Scope
+import shopping.di.ScopeAnnotation
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.GenericViewModelFactory
@@ -15,6 +18,8 @@ class CartActivity : AppCompatActivity() {
         GenericViewModelFactory()
     }
 
+    @Inject
+    @ScopeAnnotation(Scope.ACTIVITY)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
