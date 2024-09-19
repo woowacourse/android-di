@@ -1,23 +1,11 @@
 package com.android.di.component
 
 import com.android.di.annotation.Inject
-import com.android.di.annotation.Qualifier
-
+import com.android.di.annotation.hasQualifier
+import com.android.di.annotation.qualifierAnnotation
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
-
-fun List<Annotation>.hasQualifier(): Boolean =
-    any { it.isQualifier() }
-
-fun List<Annotation>.qualifierAnnotation(): KClass<out Annotation>? {
-    return firstOrNull { it.isQualifier() }?.annotationClass
-}
-
-fun Annotation.isQualifier(): Boolean {
-    return annotationClass.annotations.any { it.annotationClass == Qualifier::class }
-}
 
 object DiSingletonComponent {
     private val binds: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -41,7 +29,8 @@ object DiSingletonComponent {
         bindClassType: KClass<out Annotation>,
         instance: T? = null
     ) {
-        qualifierBinds[bindClassType] = instance ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(bindClassType))
+        qualifierBinds[bindClassType] =
+            instance ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(bindClassType))
     }
 
     fun <T : Any> match(bindClassType: KClass<T>): T {
