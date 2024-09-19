@@ -1,11 +1,11 @@
-package com.di
+package com.woowacourse.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Test
-import woowacourse.shopping.data.di.DependencyContainer
-import woowacourse.shopping.data.di.annotation.Inject
-import woowacourse.shopping.data.di.annotation.Qualifier
+import com.woowacourse.di.annotation.Inject
+import com.woowacourse.di.annotation.Qualifier
+import com.woowacourse.di.DependencyContainer
 
 class FakeRepository(
     @Inject val fakeCartRepository: FakeCartRepository,

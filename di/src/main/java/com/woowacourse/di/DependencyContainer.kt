@@ -1,7 +1,7 @@
-package woowacourse.shopping.data.di
+package com.woowacourse.di
 
-import woowacourse.shopping.data.di.annotation.Inject
-import woowacourse.shopping.data.di.annotation.Qualifier
+import com.woowacourse.di.annotation.Inject
+import com.woowacourse.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty

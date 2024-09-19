@@ -1,4 +1,4 @@
-package woowacourse.shopping.data.di.annotation
+package com.woowacourse.di.annotation
 
 @Target(
     AnnotationTarget.CLASS,
