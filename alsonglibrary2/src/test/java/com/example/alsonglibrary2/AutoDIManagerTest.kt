@@ -1,45 +1,76 @@
 package com.example.alsonglibrary2
 
-import androidx.lifecycle.ViewModelProvider
 import com.example.alsonglibrary2.di.AutoDIManager
+import com.example.alsonglibrary2.fixtures.DependencyProvider
+import com.example.alsonglibrary2.fixtures.activity.FakeActivity1
+import com.example.alsonglibrary2.fixtures.activity.FakeActivity2
+import com.example.alsonglibrary2.fixtures.activity.FakeActivity3
+import com.example.alsonglibrary2.fixtures.activity.FakeActivity4
+import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository
+import com.example.alsonglibrary2.fixtures.repository.FakeRepository
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class AutoDIManagerTest {
-    private lateinit var activity: FakeActivity
-    private lateinit var viewModel: FakeViewModel
-
     @Before
     fun setUp() {
-        activity =
-            Robolectric
-                .buildActivity(FakeActivity::class.java)
-                .create()
-                .get()
-
-        viewModel = ViewModelProvider(
-            activity,
-//            AutoDIManager.createViewModelFactory<FakeViewModel>(),
-        )[FakeViewModel::class.java]
+        AutoDIManager.dependencies.clear()
+        AutoDIManager.provider = DependencyProvider
     }
 
     @Test
-    fun `적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
+    fun `생성자에 등록된 의존성을 주입할 수 있다`() {
         // given
-        val fakeRepository = DefaultFakeRepository()
-        AutoDIManager.registerDependency<FakeRepository>(fakeRepository)
-        // when
+        AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository)
+        val activity = Robolectric.buildActivity(FakeActivity1::class.java).create().get()
 
         // then
-        val actual = activity.viewModel
-        assertThat(actual).isNotNull()
-        assertThat(actual.fakeRepository).isEqualTo(fakeRepository);
+        assertThat(activity.viewModel).isNotNull()
+        assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository)
+    }
+
+    @Test(expected = Exception::class)
+    fun `등록된 의존성이 존재하지 않으면 의존성 주입에 실패한다`() {
+        // given - Qualifier가 없는 생성자 주입
+        val activity = Robolectric.buildActivity(FakeActivity1::class.java).create().get()
+
+        // then
+        activity.viewModel
+    }
+
+    @Test
+    fun `생성자에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
+        // given
+        val activity = Robolectric.buildActivity(FakeActivity2::class.java).create().get()
+
+        // then
+        assertThat(activity.viewModel).isNotNull()
+        assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository)
+    }
+
+    @Test
+    fun `필드에 등록된 의존성을 주입할 수 있다`() {
+        // given
+        AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository)
+        val activity = Robolectric.buildActivity(FakeActivity3::class.java).create().get()
+
+        // then
+        assertThat(activity.viewModel).isNotNull()
+        assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository)
+    }
+
+    @Test
+    fun `필드에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
+        // given
+        val activity = Robolectric.buildActivity(FakeActivity4::class.java).create().get()
+
+        // then
+        assertThat(activity.viewModel).isNotNull()
+        assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository)
     }
 }

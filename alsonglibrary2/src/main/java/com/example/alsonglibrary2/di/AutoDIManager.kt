@@ -82,7 +82,7 @@ object AutoDIManager {
     }
 
     fun findQualifierDependency(annotation: Annotation): Any? {
-        val dependencyProvider = provider ?: return null
+        val dependencyProvider = provider ?: throw IllegalArgumentException()
         val targetFunction =
             dependencyProvider::class.memberFunctions
                 .find { it.findAnnotation<Annotation>() == annotation } ?: return null

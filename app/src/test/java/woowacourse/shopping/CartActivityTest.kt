@@ -45,9 +45,6 @@ class CartActivityTest {
 
     @Test
     fun `카트 상품이 가져와져야 한다`() {
-        // given
-        viewModel = CartViewModel(FakeCartRepository())
-
         // when
         viewModel.getAllCartProducts()
 
