@@ -7,9 +7,3 @@ package com.android.di.annotation
 )
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Qualifier
-
-@Qualifier
-annotation class InMemoryDatabase
-
-@Qualifier
-annotation class RoomDatabase
