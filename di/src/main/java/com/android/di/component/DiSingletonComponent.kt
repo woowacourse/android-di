@@ -40,7 +40,7 @@ object DiSingletonComponent {
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
     }
 
-    private fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T {
+    fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T {
         val instance = qualifierBinds[bindClassType]
             ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
         return instance as? T

@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import com.android.di.annotation.RoomDatabase
+import woowacourse.shopping.data.di.annotation.RoomDatabase
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.CartRepository
@@ -11,6 +11,7 @@ class CartRepositoryImpl(
 //    @InMemoryDatabase :: can use
     private val dao: CartProductDao,
 ) : CartRepository {
+
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }
