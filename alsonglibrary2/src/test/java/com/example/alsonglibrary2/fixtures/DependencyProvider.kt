@@ -7,7 +7,7 @@ import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository2
 import com.example.alsonglibrary2.fixtures.repository.FakeRepository
 
 @AlsongQualifier
-annotation class DefaultRepository
+annotation class DefaultRepository0
 
 @AlsongQualifier
 annotation class DefaultRepository1
