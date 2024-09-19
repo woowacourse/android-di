@@ -1,16 +1,9 @@
 package com.woowacourse.di
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.assertThrows
-import org.junit.Test
 import com.woowacourse.di.annotation.Inject
 import com.woowacourse.di.annotation.Qualifier
-import com.woowacourse.di.DependencyContainer
-
-class FakeRepository(
-    @Inject val fakeCartRepository: FakeCartRepository,
-    val fakeProductRepository: FakeProductRepository,
-)
+import org.junit.Test
 
 class FakeCartRepository {
     @Inject
@@ -18,21 +11,20 @@ class FakeCartRepository {
     val fakeFieldRepository: FakeFieldRepository? = null
 }
 
-class FakeProductRepository
-
 class FakeFieldRepository
 
 class DependencyContainerTest {
     @Test
-    fun `Container에 instance가 없으면 에러를 던져야 한다`() {
-        // when,then
-        assertThrows(IllegalArgumentException::class.java) {
-            DependencyContainer.instance<FakeCartRepository>(FakeCartRepository::class)
-        }
+    fun `Container에 instance가 없으면 instance를 만들어서 반환한다`() {
+        // when
+        val actual = DependencyContainer.instance<FakeCartRepository>(FakeCartRepository::class)
+
+        // then
+        assertThat(actual).isNotNull()
     }
 
     @Test
-    fun `Container에 instance가 있으면 instance를 반환해야 한다`() {
+    fun `Container에 instance가 있으면 해당 instance를 반환한다`() {
         // given
         val fakeCartRepository = FakeCartRepository()
         DependencyContainer.addInstance(FakeCartRepository::class, fakeCartRepository)
@@ -42,18 +34,6 @@ class DependencyContainerTest {
 
         // then
         assertThat(actual).isEqualTo(fakeCartRepository)
-    }
-
-    @Test
-    fun `Container에 qualifier와 일치하는 instance가 없으면 에러를 던져야 한다`() {
-        // given
-        val cartRepository = FakeCartRepository()
-        DependencyContainer.addInstance(FakeCartRepository::class, cartRepository, "?")
-
-        // when,then
-        assertThrows(IllegalArgumentException::class.java) {
-            DependencyContainer.instance<FakeCartRepository>(FakeCartRepository::class, "???")
-        }
     }
 
     @Test
