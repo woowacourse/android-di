@@ -10,11 +10,13 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
+private const val MAIN_VIEW_MODEL = "MainViewModel"
+
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by lazy {
-        DIContainer.resolve(MainViewModel::class.java, "MainViewModel")
+        DIContainer.resolve(MainViewModel::class.java, MAIN_VIEW_MODEL)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
