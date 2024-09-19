@@ -66,4 +66,8 @@ object DependencyContainer {
     private fun isInjectableProperty(property: KProperty<*>): Boolean {
         return property.hasAnnotation<Inject>() && property is KMutableProperty<*>
     }
+
+    fun clear() {
+        instances.clear()
+    }
 }
