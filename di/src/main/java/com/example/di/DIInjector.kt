@@ -33,15 +33,15 @@ object DIInjector {
     ) {
         val parameters =
             (
-                listOf(module) +
-                    function.parameters.drop(1).map {
-                        val parameterInstance =
-                            DIContainer.getInstance(it.type.jvmErasure)
-                                ?: createInstance(it.type.jvmErasure)
-                        DIContainer.addInstance(parameterInstance::class, parameterInstance)
-                        parameterInstance
-                    }
-            ).toTypedArray()
+                    listOf(module) +
+                            function.parameters.drop(1).map {
+                                val parameterInstance =
+                                    DIContainer.getInstance(it.type.jvmErasure)
+                                        ?: createInstance(it.type.jvmErasure)
+                                DIContainer.addInstance(parameterInstance::class, parameterInstance)
+                                parameterInstance
+                            }
+                    ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
         DIContainer.addInstance(function.returnType.jvmErasure, instance)
@@ -68,7 +68,7 @@ object DIInjector {
             constructor.parameters.associateWith { parameter ->
                 val annotation = parameter.findAnnotation<Qualifier>()
                 val type = annotation?.type ?: parameter.type.jvmErasure
-                DIContainer.getInstance(type) ?: createInstance(type)
+                DIContainer.getInstance(type)
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
@@ -82,7 +82,7 @@ object DIInjector {
             property.isAccessible = true
             property.javaField?.let { field ->
                 val type = field.type.kotlin
-                val fieldValue = DIContainer.getInstance(type) ?: createInstance(type)
+                val fieldValue = DIContainer.getInstance(type)
                 field.set(instance, fieldValue)
             }
         }

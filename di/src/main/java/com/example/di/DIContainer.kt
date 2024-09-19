@@ -6,11 +6,8 @@ object DIContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getInstance(type: KClass<T>): T? {
-        if (!instances.containsKey(type)) {
-            return null
-        }
-        return instances[type] as T
+    fun <T : Any> getInstance(type: KClass<T>): T {
+        return instances[type] as? T ?: DIInjector.createInstance(type)
     }
 
     fun <T : Any> addInstance(
