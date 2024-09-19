@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seogi.di.annotation.FieldInject
-import com.example.seogi.di.annotation.InMemory
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
