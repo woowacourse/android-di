@@ -4,17 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import shopping.di.DIContainer
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
+private const val MAIN_VIEW_MODEL = "MainViewModel"
+
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<MainViewModel> {
-        GenericViewModelFactory()
+    private val viewModel: MainViewModel by lazy {
+        DIContainer.resolve(MainViewModel::class.java, MAIN_VIEW_MODEL)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

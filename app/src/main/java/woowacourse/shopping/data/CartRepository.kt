@@ -1,20 +1,19 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.model.Product
+import shopping.di.Qualifier
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
-class CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf()
 
-    fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+class CartRepository(@Qualifier("RoomDB") private val cartProductDao: CartProductDao) {
+
+    suspend fun addCartProduct(product: CartProductEntity) {
+        cartProductDao.insert(product)
     }
 
-    fun getAllCartProducts(): List<Product> {
-        return cartProducts.toList()
+    suspend fun getAllCartProducts(): List<CartProductEntity> {
+        return cartProductDao.getAll()
     }
 
-    fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    suspend fun deleteCartProduct(id: Long) {
+        cartProductDao.delete(id)
     }
 }
