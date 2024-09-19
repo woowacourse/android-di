@@ -1,8 +1,8 @@
 package woowacourse.shopping.data
 
-import com.woowacourse.di.RoomDatabase
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.shoppingapp.RoomDatabase
 
 class CartRepositoryImpl(
     @RoomDatabase private val dao: CartProductDao,
