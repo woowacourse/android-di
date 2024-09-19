@@ -33,17 +33,17 @@ object DIInjector {
     ) {
         val parameters =
             (
-                    listOf(module) +
-                            function.parameters.drop(1).map {
-                                val parameterInstance =
-                                    DIContainer.getInstance(it.type.jvmErasure)
-                                DIContainer.addInstance(parameterInstance::class, parameterInstance)
-                                parameterInstance
-                            }
-                    ).toTypedArray()
+                listOf(module) +
+                    function.parameters.drop(1).map {
+                        val parameterInstance =
+                            DIContainer.getInstance(it.type.jvmErasure)
+                        DIContainer.addInstance(parameterInstance::class, parameterInstance, null)
+                        parameterInstance
+                    }
+            ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
-        DIContainer.addInstance(function.returnType.jvmErasure, instance)
+        DIContainer.addInstance(function.returnType.jvmErasure, instance, null)
     }
 
     private fun handleConstructorFunction(returnType: KClass<*>) {
@@ -55,7 +55,7 @@ object DIInjector {
 
         injectParameters.forEach { parameter ->
             val instance = createInstance(parameter)
-            DIContainer.addInstance(parameter, instance)
+            DIContainer.addInstance(parameter, instance, null)
         }
     }
 
@@ -66,8 +66,13 @@ object DIInjector {
         val parameters =
             constructor.parameters.associateWith { parameter ->
                 val annotation = parameter.findAnnotation<Qualifier>()
-                val type = annotation?.type ?: parameter.type.jvmErasure
-                DIContainer.getInstance(type)
+                if (annotation != null) {
+                    val type = annotation.annotationClass
+                    DIContainer.getInstance(type, annotation)
+                } else {
+                    val type = parameter.type.jvmErasure
+                    DIContainer.getInstance(type)
+                }
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
@@ -80,8 +85,8 @@ object DIInjector {
         properties.forEach { property ->
             property.isAccessible = true
             property.javaField?.let { field ->
-                val type = field.type.kotlin
-                val fieldValue = DIContainer.getInstance(type)
+                val qualifier = field.getAnnotation(Qualifier::class.java)
+                val fieldValue = DIContainer.getInstance(field.type.kotlin, qualifier)
                 field.set(instance, fieldValue)
             }
         }

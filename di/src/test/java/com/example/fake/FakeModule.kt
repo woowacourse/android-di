@@ -1,5 +1,4 @@
 import com.example.di.Module
-import com.example.di.annotation.Qualifier
 import com.example.fake.FakeCartDao
 import com.example.fake.FakeCartRepository
 import com.example.fake.FakeFieldRepository
