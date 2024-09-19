@@ -32,10 +32,27 @@ object DependencyContainer {
         qualifier: String? = null,
     ): T {
         val key: DependencyKey = classType to qualifier
-        return instances[key] as? T ?: throw IllegalArgumentException("Unknown Instance")
+        return instances[key] as? T ?: createInstance(classType)
     }
 
-    fun <T : Any> injectProperty(instance: T) {
+    fun <T : Any> createInstance(
+        modelClass: KClass<*>
+    ): T {
+        val constructor = modelClass.constructors.firstOrNull()
+            ?: throw IllegalArgumentException("Unknown modelClass")
+
+        val params = constructor.parameters.map { parameter ->
+            val paramClass = parameter.type.classifier as? KClass<*>
+                ?: throw IllegalArgumentException("Unknown parameter type: ${parameter.type}")
+            instance<Any>(paramClass)
+        }.toTypedArray()
+
+        val instance = constructor.call(*params) as T
+        injectProperty(instance)
+        return instance
+    }
+
+    private fun <T : Any> injectProperty(instance: T) {
         instance::class.declaredMemberProperties
             .filter { isInjectableProperty(it) }
             .forEach { property ->
