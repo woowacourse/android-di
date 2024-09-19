@@ -13,8 +13,8 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel(
-    @com.example.di.Inject private val productRepository: ProductRepository,
-    @com.example.di.Qualifier(com.example.di.DependencyType.DATABASE) @com.example.di.Inject private val cartRepository: CartRepository,
+    @Inject private val productRepository: ProductRepository,
+    @Qualifier(DependencyType.DATABASE) @Inject private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
