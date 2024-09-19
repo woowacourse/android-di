@@ -10,7 +10,8 @@ import kotlin.reflect.jvm.jvmErasure
 annotation class ParentManager(val manager: KClass<out ComponentManager>)
 
 abstract class ComponentManager {
-    private val binderClazzs = mutableListOf<KClass<*>>()
+    private val _binderClazzs = mutableListOf<KClass<*>>()
+    val binderClazzs: List<KClass<*>> get() = _binderClazzs.toList()
 
     abstract fun getComponentInstance(binderType: KClass<*>): Component
 
@@ -40,11 +41,11 @@ abstract class ComponentManager {
      * Returns the instance you want to inject, or `null` if the instance does not exist
      */
     fun getBinderTypeOrNull(key: KClass<*>): KClass<*>? {
-        return binderClazzs.find { it.declaredMemberFunctions.find { it.returnType.jvmErasure == key } != null }
+        return _binderClazzs.find { it.declaredMemberFunctions.find { it.returnType.jvmErasure == key } != null }
     }
 
     fun <binder : Any> registerBinder(binderClazz: KClass<binder>) {
-        binderClazzs.add(binderClazz)
+        _binderClazzs.add(binderClazz)
     }
 }
 
