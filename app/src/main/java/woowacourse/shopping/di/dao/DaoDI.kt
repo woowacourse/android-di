@@ -9,7 +9,6 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import javax.inject.Qualifier
 
-
 @Qualifier
 annotation class InMemory
 
