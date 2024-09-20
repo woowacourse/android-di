@@ -21,24 +21,24 @@ class InjectOwner {
 }
 
 class DependencyAutoInjectTest {
-    lateinit var fakeDependencyContainer: FakeDependencyContainer
+    private lateinit var dependencyContainer: DependencyContainer
 
     @Before
     fun setUp() {
-        fakeDependencyContainer = FakeDependencyContainer()
-        DependencyInjector.initDependencyContainer(fakeDependencyContainer)
+        dependencyContainer = DefaultDependencyContainer()
+        DependencyInjector.initDependencyContainer(dependencyContainer)
     }
 
     @Test
     fun `알맞은 인스턴스를 주입한다`() {
         // given
-        fakeDependencyContainer.setDependency(
+        dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
             "first",
         )
 
-        fakeDependencyContainer.setDependency(
+        dependencyContainer.setDependency(
             ToBeInjected::class,
             SecondDependency::class,
             "second",
