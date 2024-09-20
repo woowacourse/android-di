@@ -1,6 +1,6 @@
 package woowacourse.shopping.model
 
-class CartProduct(
+data class CartProduct(
     val id: Long,
     val name: String,
     val price: Int,
