@@ -1,19 +1,17 @@
 package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import woowacourse.shopping.model.CartProduct
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    onClickDelete: (id: Long) -> Unit,
     private val dateFormatter: DateFormatter,
-) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
-
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
+) : ListAdapter<CartProduct, CartProductViewHolder>(DIFF_CALLBACK) {
+    private val onClickDelete = { id: Long ->
+        onClickDelete(id)
+        removeItem(id)
     }
 
     override fun onCreateViewHolder(
@@ -27,13 +25,30 @@ class CartProductAdapter(
         holder: CartProductViewHolder,
         position: Int,
     ) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = items.size
+    private fun removeItem(id: Long) {
+        val newItems = currentList.filter { it.id != id }
+        submitList(newItems)
+    }
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    companion object {
+        private val DIFF_CALLBACK =
+            object : DiffUtil.ItemCallback<CartProduct>() {
+                override fun areItemsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
+
+                override fun areContentsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean {
+                    return oldItem == newItem
+                }
+            }
     }
 }
