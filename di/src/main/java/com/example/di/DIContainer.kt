@@ -1,6 +1,7 @@
 package com.example.di
 
 import androidx.lifecycle.ViewModel
+import com.example.di.annotations.FieldInject
 import com.example.di.annotations.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties

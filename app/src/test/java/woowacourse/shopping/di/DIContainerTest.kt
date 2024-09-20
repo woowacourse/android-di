@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import com.example.di.DIContainer
-import com.example.di.FieldInject
+import com.example.di.annotations.FieldInject
 import com.example.di.annotations.Qualifier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
