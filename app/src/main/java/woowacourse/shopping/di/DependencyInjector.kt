@@ -13,12 +13,13 @@ typealias Instance = Any
 
 object DependencyInjector {
     private val instances = mutableMapOf<Pair<KClass<*>, QualifierClass>, Instance>()
+    private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
 
     fun <T : Any> findInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
     ): T {
-        return instances[clazz to qualifier] as? T ?: createInstance(clazz, qualifier)
+        return instances[clazz to qualifier] as? T ?: createInstance(clazz)
     }
 
     fun <T : Any> addInstance(
@@ -29,12 +30,9 @@ object DependencyInjector {
         instances[clazz to qualifier] = instance
     }
 
-    fun <T : Any> createInstance(
-        clazz: KClass<T>,
-        qualifier: KClass<*>? = null,
-    ): T {
-        val constructor = clazz.primaryConstructor ?: findInstance(clazz, qualifier)
-        val dependencies: List<Any?> = (constructor as KFunction<T>).extractDependencies() // 생성자가 필요로 하는 의존성들을 추출해
+    fun <T : Any> createInstance(clazz: KClass<T>): T {
+        val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException(CONSTRUCTOR_NOT_FOUND)
+        val dependencies: List<Any?> = constructor.extractDependencies()
         val instance = constructor.call(*dependencies.toTypedArray())
 
         injectFields(instance)
