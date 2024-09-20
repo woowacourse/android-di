@@ -17,7 +17,7 @@ object LocalModule {
         val database = createRoomDatabase(context)
         DiSingletonComponent.provide(
             RoomDatabase::class,
-            database.cartProductDao()
+            database.cartProductDao(),
         )
     }
 
@@ -25,7 +25,7 @@ object LocalModule {
         val database = createInMemoryDatabase(context)
         DiSingletonComponent.provide(
             InMemoryDatabase::class,
-            database.cartProductDao()
+            database.cartProductDao(),
         )
     }
 }

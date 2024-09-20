@@ -27,48 +27,53 @@ object DiSingletonComponent {
 
     fun <T : Any> provide(
         bindClassType: KClass<out Annotation>,
-        instance: T? = null
+        instance: T? = null,
     ) {
         qualifierBinds[bindClassType] =
             instance ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(bindClassType))
     }
 
     fun <T : Any> match(bindClassType: KClass<T>): T {
-        val instance = binds[bindClassType]
-            ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
+        val instance =
+            binds[bindClassType]
+                ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
         return instance as? T
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
     }
 
     fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T {
-        val instance = qualifierBinds[bindClassType]
-            ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
+        val instance =
+            qualifierBinds[bindClassType]
+                ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
         return instance as? T
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
+        val constructor =
+            clazz.constructors.firstOrNull { it.hasAnnotation<Inject>() }
+                ?: clazz.primaryConstructor
+                ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR_MATCH.format(clazz))
 
-        val constructor = clazz.constructors.firstOrNull { it.hasAnnotation<Inject>() }
-            ?: clazz.primaryConstructor
-            ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR_MATCH.format(clazz))
+        val parameters =
+            constructor.parameters.map { parameter ->
+                if (!parameter.hasAnnotation<Inject>()) {
+                    throw IllegalArgumentException(ERROR_INJECT_MATCH.format(parameter.name))
+                }
 
-        val parameters = constructor.parameters.map { parameter ->
-            if (!parameter.hasAnnotation<Inject>()) {
-                throw IllegalArgumentException(ERROR_INJECT_MATCH.format(parameter.name))
+                val parameterType =
+                    parameter.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException(ERROR_PARAM_MATCH.format(parameter))
+
+                if (parameter.annotations.hasQualifier()) {
+                    val qualifier =
+                        parameter.annotations.qualifierAnnotation()
+                            ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(parameter))
+                    matchByQualifier(qualifier)
+                } else {
+                    match(parameterType)
+                }
             }
-
-            val parameterType = parameter.type.classifier as? KClass<*>
-                ?: throw IllegalArgumentException(ERROR_PARAM_MATCH.format(parameter))
-
-            if (parameter.annotations.hasQualifier()) {
-                val qualifier = parameter.annotations.qualifierAnnotation()
-                    ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(parameter))
-                matchByQualifier(qualifier)
-            } else {
-                match(parameterType)
-            }
-        }
 
         return constructor.call(*parameters.toTypedArray())
     }

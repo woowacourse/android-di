@@ -1,6 +1,5 @@
 package woowacourse.shopping.data.di
 
-import android.util.Log
 import com.android.di.component.DiSingletonComponent
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl

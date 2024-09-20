@@ -12,7 +12,7 @@ import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
 @DiViewModel
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     @Inject
     private lateinit var cartRepository: CartRepository
 

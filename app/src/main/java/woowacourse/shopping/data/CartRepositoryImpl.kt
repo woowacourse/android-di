@@ -13,7 +13,6 @@ class CartRepositoryImpl(
 //    @InMemoryDatabase :: can use
     private val dao: CartProductDao,
 ) : CartRepository {
-
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
     }

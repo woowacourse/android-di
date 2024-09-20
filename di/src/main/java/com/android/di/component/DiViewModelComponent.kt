@@ -5,7 +5,6 @@ import com.android.di.annotation.Inject
 import com.android.di.annotation.hasQualifier
 import com.android.di.annotation.qualifierAnnotation
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.hasAnnotation
 
 object DiViewModelComponent {
@@ -22,17 +21,18 @@ object DiViewModelComponent {
                 field.isAccessible = true
                 val fieldAnnotations = field.annotations.toList()
 
-                val fieldInstance = if (fieldAnnotations.hasQualifier()) {
-                    val qualifier = fieldAnnotations.qualifierAnnotation()
-                        ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(field))
-                    DiSingletonComponent.matchByQualifier(qualifier)
-                } else {
-                    DiSingletonComponent.match(field.type.kotlin)
-                }
+                val fieldInstance =
+                    if (fieldAnnotations.hasQualifier()) {
+                        val qualifier =
+                            fieldAnnotations.qualifierAnnotation()
+                                ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(field))
+                        DiSingletonComponent.matchByQualifier(qualifier)
+                    } else {
+                        DiSingletonComponent.match(field.type.kotlin)
+                    }
                 field.set(instance, fieldInstance)
             }
         }
-
     }
 
     fun <T : Any> hasAnnotation(clazz: KClass<T>): Boolean {
