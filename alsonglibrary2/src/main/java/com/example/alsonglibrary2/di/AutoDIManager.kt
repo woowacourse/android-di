@@ -54,15 +54,15 @@ object AutoDIManager {
     }
 
     inline fun <reified T : Any> injectField(instance: T): T {
-        val updatedDependencies = dependencies.toMutableMap()
+        val qualifiedDependencies = dependencies.toMutableMap()
         val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         val fieldInjectProperties =
             mutableProperties.filter { it.findAnnotation<FieldInject>() != null }
         fieldInjectProperties.forEach { property ->
-            changeQualifierDependency(property, updatedDependencies)
+            changeQualifierDependency(property, qualifiedDependencies)
             property.isAccessible = true
-            property.setter.call(instance, updatedDependencies[property.returnType.jvmErasure])
+            property.setter.call(instance, qualifiedDependencies[property.returnType.jvmErasure])
         }
         return instance
     }
