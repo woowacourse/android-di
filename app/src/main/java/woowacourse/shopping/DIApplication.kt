@@ -2,16 +2,16 @@ package woowacourse.shopping
 
 import android.app.Application
 import com.woowa.di.component.injectDI
-import woowacourse.shopping.di.dao.DaoBinder
-import woowacourse.shopping.di.repository.RepositoryBinder
-import woowacourse.shopping.di.repository.RepositoryBinder2
+import woowacourse.shopping.di.DaoBinder
+import woowacourse.shopping.di.SingletonRepositoryBinder
+import woowacourse.shopping.di.ViewModelRepositoryBinder
 
 class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         injectDI(this) {
-            binder(RepositoryBinder::class)
-            binder(RepositoryBinder2::class)
+            binder(ViewModelRepositoryBinder::class)
+            binder(SingletonRepositoryBinder::class)
             binder(DaoBinder::class)
         }
     }

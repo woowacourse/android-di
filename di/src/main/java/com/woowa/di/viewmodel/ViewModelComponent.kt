@@ -4,7 +4,6 @@ import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
-import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -12,7 +11,6 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.kotlinProperty
 
 class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
     Component {
@@ -83,17 +81,7 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
                     kFunc.call(binderInstance)
                 }
 
-            val fields =
-                instance!!::class.java.declaredFields.onEach { field ->
-                    field.isAccessible = true
-                }.filter { it.isAnnotationPresent(Inject::class.java) }
-
-            fields.map { field ->
-                val fieldInstance =
-                    ViewModelComponentManager.getDIInstance(field.type.kotlin, field.kotlinProperty?.findQualifierClassOrNull())
-                field.set(instance, fieldInstance)
-            }
-
+            injectViewModelComponentFields(instance)
             return instance
         }
 

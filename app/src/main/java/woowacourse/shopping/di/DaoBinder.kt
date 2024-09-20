@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.dao
+package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room

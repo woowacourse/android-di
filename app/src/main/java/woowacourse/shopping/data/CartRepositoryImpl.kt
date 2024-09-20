@@ -2,7 +2,7 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toDomain
-import woowacourse.shopping.di.dao.Database
+import woowacourse.shopping.di.Database
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 import javax.inject.Inject
