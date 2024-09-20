@@ -9,13 +9,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import woowacourse.shopping.fixture.TestApplication
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
 class CartActivityTest {
     private lateinit var activity: CartActivity
 

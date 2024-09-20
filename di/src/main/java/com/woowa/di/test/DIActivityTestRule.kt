@@ -1,6 +1,6 @@
 package com.woowa.di.test
 
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.testing.TestLifecycleOwner
@@ -9,7 +9,7 @@ import com.woowa.di.singleton.SingletonComponentManager
 import org.junit.rules.ExternalResource
 import org.robolectric.Robolectric
 
-class DIActivityTestRule<T : AppCompatActivity>(private val activityClass: Class<T>) : ExternalResource() {
+class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class<T>) : ExternalResource() {
     private lateinit var applicationLifecycleOwner: TestLifecycleOwner
     private lateinit var activity: T
     private lateinit var viewModelStore: ViewModelStore
