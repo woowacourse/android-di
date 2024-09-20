@@ -2,8 +2,8 @@ package woowacourse.shopping.di
 
 import com.example.di.DiContainer
 import com.example.di.Module
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
@@ -15,7 +15,7 @@ class RepositoryModule : Module {
         )
         registry.addInstance(
             CartRepository::class,
-            DefaultCartRepository(),
+            InMemoryCartRepository(),
         )
     }
 }

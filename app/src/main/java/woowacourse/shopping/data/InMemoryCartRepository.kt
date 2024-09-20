@@ -7,7 +7,7 @@ import woowacourse.shopping.model.Product
 import javax.inject.Singleton
 
 @Singleton
-class DefaultCartRepository : CartRepository {
+class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {
