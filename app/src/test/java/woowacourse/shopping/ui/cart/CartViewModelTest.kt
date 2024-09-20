@@ -6,9 +6,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.FakeCartRepository
 import woowacourse.shopping.MainDispatcherRule
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.fakeDependencyContainer
+import woowacourse.shopping.fakeCartProducts
 import woowacourse.shopping.fakeProducts
 import woowacourse.shopping.getOrAwaitValue
 
@@ -23,8 +23,8 @@ class CartViewModelTest {
 
     @Before
     fun setUp() {
-        DependencyInjector.initDependencyContainer(fakeDependencyContainer)
-        cartViewModel = DependencyInjector.createInstanceFromConstructor(CartViewModel::class.java)
+        cartViewModel = CartViewModel()
+        cartViewModel.cartRepository = FakeCartRepository(fakeCartProducts.toMutableList())
     }
 
     @Test

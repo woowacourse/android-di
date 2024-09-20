@@ -11,7 +11,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 
 class CartViewModel : ViewModel() {
     @property:FieldInject
-    private lateinit var cartRepository: CartRepository
+    lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
