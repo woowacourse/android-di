@@ -23,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 class AutoDIManagerTest {
     @Before
     fun setUp() {
-        AutoDIManager.dependencies.clear()
+        AutoDIManager.clearDependencies()
         AutoDIManager.provider = DependencyProvider
     }
 

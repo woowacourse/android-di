@@ -15,12 +15,24 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
-    val dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
+    private val _dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
+    val dependencies: Map<KClass<*>, Any?> get() = _dependencies
 
     var provider: LibraryDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
-        dependencies[T::class] = dependency
+        setDependency(T::class, dependency)
+    }
+
+    fun setDependency(
+        kClass: KClass<*>,
+        dependency: Any,
+    ) {
+        _dependencies[kClass] = dependency
+    }
+
+    fun clearDependencies() {
+        _dependencies.clear()
     }
 
     inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
@@ -54,7 +66,7 @@ object AutoDIManager {
     }
 
     inline fun <reified T : Any> injectField(instance: T): T {
-        val updatedDependencies = dependencies
+        val updatedDependencies = dependencies.toMutableMap()
         val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         val fieldInjectProperties =
@@ -62,10 +74,7 @@ object AutoDIManager {
         fieldInjectProperties.forEach { property ->
             changeQualifierDependency(property, updatedDependencies)
             property.isAccessible = true
-            property.setter.call(
-                instance,
-                updatedDependencies[property.returnType.jvmErasure],
-            )
+            property.setter.call(instance, updatedDependencies[property.returnType.jvmErasure])
         }
         return instance
     }
