@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,8 +29,14 @@ class CartViewModel() : ViewModel() {
 
     fun deleteCartProduct(id: Int) {
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
-            _onCartProductDeleted.value = true
+            runCatching {
+                val list2 = cartProducts.value
+                Log.d("테스트","$list2")
+                cartRepository.deleteCartProduct(id)
+                _onCartProductDeleted.value = true
+            }.onFailure {
+                Log.d("테스트","실패")
+            }
         }
     }
 }

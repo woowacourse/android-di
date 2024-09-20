@@ -34,22 +34,19 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("junit:junit:4.13.2")
-    implementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
     implementation("javax.inject:javax.inject:1")
+    implementation("org.robolectric:robolectric:4.13")
+
 
     // test
     implementation("androidx.lifecycle:lifecycle-runtime-testing:2.8.5")
     implementation("androidx.test.ext:junit:1.1.5")
     implementation("org.junit.jupiter:junit-jupiter:5.10.2")
     implementation("androidx.arch.core:core-testing:2.2.0")
-    implementation("org.robolectric:robolectric:4.13")
     implementation("com.google.truth:truth:1.1.3")
     implementation("androidx.arch.core:core-testing:2.2.0")
+    implementation("androidx.test.ext:junit:1.2.1")
 }
