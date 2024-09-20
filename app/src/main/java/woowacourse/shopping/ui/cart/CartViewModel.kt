@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.di.DIContainer
 import com.example.di.FieldInject
 import com.example.di.annotations.Qualifier
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.model.Product
@@ -29,14 +30,24 @@ class CartViewModel : ViewModel() {
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
+            val job =
+                async {
+                    _cartProducts.value = cartRepository.getAllCartProducts()
+                }
+            job.await()
         }
+        println()
     }
 
     fun deleteCartProduct(id: Int) {
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
-            _onCartProductDeleted.value = true
+            val job =
+                async {
+                    cartRepository.deleteCartProduct(id)
+                    _onCartProductDeleted.value = true
+                }
+            job.await()
+            println("CartViewModel.deleteCartProduct id : $id")
         }
     }
 }
