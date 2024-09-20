@@ -29,14 +29,8 @@ class CartViewModel() : ViewModel() {
 
     fun deleteCartProduct(id: Int) {
         viewModelScope.launch {
-            runCatching {
-                val list2 = cartProducts.value
-                Log.d("테스트","$list2")
-                cartRepository.deleteCartProduct(id)
-                _onCartProductDeleted.value = true
-            }.onFailure {
-                Log.d("테스트","실패")
-            }
+            cartRepository.deleteCartProduct(id)
+            _onCartProductDeleted.value = true
         }
     }
 }

@@ -40,7 +40,6 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
     implementation("org.robolectric:robolectric:4.13")
 
-
     // test
     implementation("androidx.lifecycle:lifecycle-runtime-testing:2.8.5")
     implementation("androidx.test.ext:junit:1.1.5")
