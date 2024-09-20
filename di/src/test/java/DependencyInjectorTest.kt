@@ -1,18 +1,11 @@
-package woowacourse.shopping
-
 import com.google.common.truth.Truth.assertThat
+import com.woowacourse.di.DependencyInjector
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.model.CartRepository
-import woowacourse.shopping.model.ProductRepository
-import woowacourse.shopping.ui.cart.CartViewModel
-import woowacourse.shopping.ui.product.MainViewModel
 
 class DependencyInjectorTest {
-    private val cartProductDao = mockk<CartProductDao>()
+    private val cartProductDao = mockk<FakeCartProductDao>()
 
     @Before
     fun setUp() {
@@ -21,13 +14,13 @@ class DependencyInjectorTest {
 
     @Test
     fun `ProductRepository 주입 테스트`() {
-        val productRepository = DependencyInjector.findInstance(ProductRepository::class)
+        val productRepository = DependencyInjector.findInstance(FakeProductDefaultRepository::class)
         assertThat(productRepository).isNotNull()
     }
 
     @Test
     fun `CartRepository 주입 테스트`() {
-        val cartRepository = DependencyInjector.findInstance(CartRepository::class)
+        val cartRepository = DependencyInjector.findInstance(FakeCartDefaultRepository::class)
         assertThat(cartRepository).isNotNull()
     }
 

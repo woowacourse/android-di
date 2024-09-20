@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.woowacourse.di
 
 import javax.inject.Qualifier
 

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.woowacourse.di
 
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
@@ -10,9 +10,10 @@ import kotlin.reflect.full.primaryConstructor
 
 typealias QualifierClass = KClass<*>?
 typealias Instance = Any
+typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
 object DependencyInjector {
-    private val instances = mutableMapOf<Pair<KClass<*>, QualifierClass>, Instance>()
+    private val instances = mutableMapOf<ClassWithQualifier, Instance>()
     private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
 
     fun <T : Any> findInstance(
