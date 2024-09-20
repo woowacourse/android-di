@@ -15,7 +15,7 @@ annotation class DefaultRepository1
 @AlsongQualifier
 annotation class DefaultRepository2
 
-object DependencyProvider : LibraryDependencyProvider {
+object QualifiedDependencyProvider : LibraryDependencyProvider {
     @DefaultRepository1
     fun provideFakeCartRepository1(): FakeRepository {
         return defaultFakeRepository1

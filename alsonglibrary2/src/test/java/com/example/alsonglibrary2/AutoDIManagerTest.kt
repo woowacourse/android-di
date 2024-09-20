@@ -1,7 +1,7 @@
 package com.example.alsonglibrary2
 
 import com.example.alsonglibrary2.di.AutoDIManager
-import com.example.alsonglibrary2.fixtures.DependencyProvider
+import com.example.alsonglibrary2.fixtures.QualifiedDependencyProvider
 import com.example.alsonglibrary2.fixtures.activity.FakeActivity1
 import com.example.alsonglibrary2.fixtures.activity.FakeActivity2
 import com.example.alsonglibrary2.fixtures.activity.FakeActivity3
@@ -24,7 +24,6 @@ class AutoDIManagerTest {
     @Before
     fun setUp() {
         AutoDIManager.clearDependencies()
-        AutoDIManager.provider = DependencyProvider
     }
 
     @Test
@@ -50,6 +49,7 @@ class AutoDIManagerTest {
     @Test
     fun `생성자에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
         // given
+        AutoDIManager.provider = QualifiedDependencyProvider
         val activity = Robolectric.buildActivity(FakeActivity2::class.java).create().get()
 
         // then
@@ -63,6 +63,7 @@ class AutoDIManagerTest {
         AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository1)
         val activity = Robolectric.buildActivity(FakeActivity3::class.java).create().get()
 
+
         // then
         assertThat(activity.viewModel).isNotNull()
         assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository1)
@@ -71,6 +72,7 @@ class AutoDIManagerTest {
     @Test
     fun `필드에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
         // given
+        AutoDIManager.provider = QualifiedDependencyProvider
         val activity = Robolectric.buildActivity(FakeActivity4::class.java).create().get()
 
         // then
@@ -81,6 +83,7 @@ class AutoDIManagerTest {
     @Test(expected = Exception::class)
     fun `의존성이 등록되어있지 않고 Qualifier로 지정된 의존성도 없으면 의존성 주입이 실패한다`() {
         // given
+        AutoDIManager.provider = QualifiedDependencyProvider
         val activity = Robolectric.buildActivity(FakeActivity5::class.java).create().get()
 
         // then
@@ -90,6 +93,7 @@ class AutoDIManagerTest {
     @Test
     fun `필드에 같은 타입의 의존성이 여러개 있을 때 Qualifier로 인스턴스를 다르게 주입할 수 있다`() {
         // given
+        AutoDIManager.provider = QualifiedDependencyProvider
         val activity = Robolectric.buildActivity(FakeActivity6::class.java).create().get()
 
         // then
@@ -101,6 +105,7 @@ class AutoDIManagerTest {
     @Test
     fun `생성자에 같은 타입의 의존성이 여러개 있을 때 Qualifier로 인스턴스를 다르게 주입할 수 있다`() {
         // given
+        AutoDIManager.provider = QualifiedDependencyProvider
         val activity = Robolectric.buildActivity(FakeActivity7::class.java).create().get()
 
         // then
