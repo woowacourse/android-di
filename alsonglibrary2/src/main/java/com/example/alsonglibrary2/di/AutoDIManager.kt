@@ -43,8 +43,7 @@ object AutoDIManager {
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
         val args =
             constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
-        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
-        for (parameter in parametersWithAnnotation) {
+        for (parameter in constructor.parameters) {
             val annotation =
                 parameter.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null }
                     ?: continue
