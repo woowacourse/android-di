@@ -1,15 +1,6 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartDefaultRepository
-import woowacourse.shopping.di.Qualifier
+import javax.inject.Qualifier
 
-@Qualifier(CartDefaultRepository::class)
-@Retention(AnnotationRetention.SOURCE)
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.EXPRESSION,
-    AnnotationTarget.CLASS,
-)
+@Qualifier
 annotation class RoomDB

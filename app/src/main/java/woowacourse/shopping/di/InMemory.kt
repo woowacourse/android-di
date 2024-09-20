@@ -1,12 +1,6 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartInMemoryRepository
+import javax.inject.Qualifier
 
-@Qualifier(CartInMemoryRepository::class)
-@Retention(AnnotationRetention.SOURCE)
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.PROPERTY,
-)
+@Qualifier
 annotation class InMemory

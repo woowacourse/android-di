@@ -6,6 +6,6 @@ import woowacourse.shopping.di.DependencyInjector
 
 class GlobalViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return DependencyInjector.findInstance(modelClass.kotlin)
+        return DependencyInjector.createInstance(modelClass.kotlin)
     }
 }

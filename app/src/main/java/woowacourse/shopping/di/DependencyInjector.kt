@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -13,13 +14,12 @@ typealias instance = Any
 object DependencyInjector {
     private val instances = mutableMapOf<Pair<KClass<*>, qualifier>, instance>()
 
-    private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
-    private const val DEPENDENCY_TYPE_IS_INVALID = "의존성 클래스 타입이 올바르지 않습니다."
-
     fun <T : Any> findInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
-    ): T = instances[clazz to qualifier] as? T ?: createInstance(clazz, qualifier)
+    ): T {
+        return instances[clazz to qualifier] as? T ?: createInstance(clazz, qualifier)
+    }
 
     fun <T : Any> addInstance(
         clazz: KClass<T>,
@@ -29,58 +29,41 @@ object DependencyInjector {
         instances[clazz to qualifier] = instance
     }
 
-    private fun <T : Any> createInstance(
+    fun <T : Any> createInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
     ): T {
-        val constructor: KFunction<T> = getPrimaryConstructor(clazz)
-        val dependencies: List<Any?> = constructor.extractDependencies()
+        val constructor = clazz.primaryConstructor ?: findInstance(clazz, qualifier)
+        val dependencies: List<Any?> = (constructor as KFunction<T>).extractDependencies() // 생성자가 필요로 하는 의존성들을 추출해
         val instance = constructor.call(*dependencies.toTypedArray())
 
-        injectFields(clazz, instance, qualifier)
+        injectFields(instance)
 
         return instance
     }
 
-    private fun <T : Any> getPrimaryConstructor(clazz: KClass<T>): KFunction<T> =
-        clazz.primaryConstructor ?: throw IllegalArgumentException(CONSTRUCTOR_NOT_FOUND)
-
-    private fun <T : Any> KFunction<T>.extractDependencies(): List<Any?> =
-        parameters.map { parameter ->
-            when (val classifier = parameter.type.classifier) {
-                is KClass<*> -> findInstance(classifier)
-//                {
-//                    Log.d("hye classifier", "$classifier")
-//                    val qualifier: KClass<*>? = when {
-//                        parameter.hasAnnotation<RoomDB>() -> {
-//                            Log.d("hye RoomDB", "${parameter.hasAnnotation<RoomDB>()}")
-//                            RoomDB::class
-//                        }
-//                        parameter.hasAnnotation<InMemory>() -> {
-//                            Log.d("hye InMemory", "${parameter.hasAnnotation<InMemory>()}")
-//                            InMemory::class
-//                        }
-//                        else -> null
-//                    }
-//                    findInstance(classifier, qualifier)
-//                }
-                else -> throw IllegalArgumentException(DEPENDENCY_TYPE_IS_INVALID)
-            }
+    private fun <T : Any> KFunction<T>.extractDependencies(): List<Any?> {
+        return parameters.map { parameter ->
+            val classifier: KClass<*> = parameter.type.classifier as KClass<*>
+            findInstance(classifier)
         }
+    }
 
-    private fun <T : Any> injectFields(
-        clazz: KClass<T>,
-        instance: T,
-        qualifier: KClass<*>? = null,
-    ) {
-        clazz.declaredMemberProperties.forEach { kProperty ->
-            if (kProperty.hasAnnotation<Inject>()) {
-                val classifier: KClass<*> = kProperty.returnType.classifier as KClass<*>
-                val dependency = findInstance(classifier, qualifier)
-
-                kProperty as KMutableProperty1
-                kProperty.setter.call(instance, dependency)
+    private fun <T : Any> injectFields(instance: T) {
+        val properties =
+            instance::class.declaredMemberProperties.filter { kProperty ->
+                kProperty.hasAnnotation<Inject>()
             }
+
+        properties.forEach { kProperty ->
+            val classifier: KClass<*> = kProperty.returnType.classifier as KClass<*>
+            val qualifier: Annotation = kProperty.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() } ?: return
+            val qualifierClass: KClass<out Annotation> = qualifier.annotationClass
+
+            val dependency = findInstance(classifier, qualifierClass)
+
+            kProperty as KMutableProperty1
+            kProperty.setter.call(instance, dependency)
         }
     }
 }
