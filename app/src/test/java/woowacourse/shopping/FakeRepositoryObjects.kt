@@ -80,7 +80,3 @@ class FakeProductRepository(
         return products
     }
 }
-
-interface FakeRepository
-
-class FakeRepositoryImpl : FakeRepository
