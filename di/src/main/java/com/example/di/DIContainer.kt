@@ -1,26 +1,26 @@
 package com.example.di
 
-import com.example.di.annotation.Qualifier
+import com.example.di.annotation.QualifierType
 import kotlin.reflect.KClass
 
 object DIContainer {
-    private val instances: MutableMap<Pair<KClass<*>, Qualifier?>, Any> = mutableMapOf()
+    private val instances: MutableMap<Pair<KClass<*>, QualifierType?>, Any> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> getInstance(
         type: KClass<T>,
-        qualifier: Qualifier? = null,
+        qualifierType: QualifierType?,
     ): T {
-        return instances[Pair(type, qualifier)] as? T ?: DIInjector.createInstance(type)
+        return instances[Pair(type, qualifierType)] as? T ?: DIInjector.createInstance(type)
     }
 
     fun <T : Any> addInstance(
         type: KClass<T>,
+        qualifierType: QualifierType?,
         instance: Any,
-        qualifier: Qualifier? = null,
     ) {
-        if (!instances.containsKey(Pair(type, qualifier))) {
-            instances[Pair(type, qualifier)] = instance
+        if (!instances.containsKey(Pair(type, qualifierType))) {
+            instances[Pair(type, qualifierType)] = instance
         }
     }
 

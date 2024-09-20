@@ -21,7 +21,7 @@ class DIInjectorTest {
 
     @Test
     fun `Inject Annotation이 붙은 생성자는 자동으로 의존성이 주입된다`() {
-        val cartDao = DIContainer.getInstance(FakeCartDao::class)
+        val cartDao = DIContainer.getInstance(FakeCartDao::class, null)
         assertThat(cartDao).isNotNull()
     }
 

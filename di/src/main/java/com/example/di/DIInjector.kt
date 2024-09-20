@@ -2,6 +2,7 @@ package com.example.di
 
 import com.example.di.annotation.Inject
 import com.example.di.annotation.Qualifier
+import com.example.di.annotation.QualifierType
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
@@ -18,11 +19,12 @@ object DIInjector {
         module::class.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
             val constructor = returnType.primaryConstructor
+            val qualifierType = function.findAnnotation<Qualifier>()?.type
 
             if (constructor == null) {
-                handleNoConstructorFunction(module, function)
+                handleNoConstructorFunction(module, function, qualifierType)
             } else {
-                handleConstructorFunction(returnType)
+                handleConstructorFunction(returnType, qualifierType)
             }
         }
     }
@@ -30,23 +32,31 @@ object DIInjector {
     private fun handleNoConstructorFunction(
         module: Module,
         function: KFunction<*>,
+        qualifierType: QualifierType?,
     ) {
         val parameters =
             (
                 listOf(module) +
                     function.parameters.drop(1).map {
                         val parameterInstance =
-                            DIContainer.getInstance(it.type.jvmErasure)
-                        DIContainer.addInstance(parameterInstance::class, parameterInstance, null)
+                            DIContainer.getInstance(it.type.jvmErasure, qualifierType)
+                        DIContainer.addInstance(
+                            parameterInstance::class,
+                            qualifierType,
+                            parameterInstance,
+                        )
                         parameterInstance
                     }
             ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
-        DIContainer.addInstance(function.returnType.jvmErasure, instance, null)
+        DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, instance)
     }
 
-    private fun handleConstructorFunction(returnType: KClass<*>) {
+    private fun handleConstructorFunction(
+        returnType: KClass<*>,
+        qualifierType: QualifierType?,
+    ) {
         val injectParameters =
             returnType.primaryConstructor?.parameters
                 ?.filter { it.hasAnnotation<Inject>() }
@@ -55,24 +65,19 @@ object DIInjector {
 
         injectParameters.forEach { parameter ->
             val instance = createInstance(parameter)
-            DIContainer.addInstance(parameter, instance, null)
+            DIContainer.addInstance(parameter, qualifierType, instance)
         }
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
-        val constructor = modelClass.primaryConstructor
-        requireNotNull(constructor) { "Class must have a primary constructor: $modelClass" }
+        val constructor =
+            modelClass.primaryConstructor
+                ?: return DIContainer.getInstance(modelClass, modelClass.findAnnotation<Qualifier>()?.type)
 
         val parameters =
             constructor.parameters.associateWith { parameter ->
-                val annotation = parameter.findAnnotation<Qualifier>()
-                if (annotation != null) {
-                    val type = annotation.annotationClass
-                    DIContainer.getInstance(type, annotation)
-                } else {
-                    val type = parameter.type.jvmErasure
-                    DIContainer.getInstance(type)
-                }
+                val annotation = parameter.findAnnotation<Qualifier>()?.type
+                DIContainer.getInstance(parameter.type.jvmErasure, annotation)
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
@@ -85,8 +90,9 @@ object DIInjector {
         properties.forEach { property ->
             property.isAccessible = true
             property.javaField?.let { field ->
-                val qualifier = field.getAnnotation(Qualifier::class.java)
-                val fieldValue = DIContainer.getInstance(field.type.kotlin, qualifier)
+                val type = field.type.kotlin
+                val annotation = property.findAnnotation<Qualifier>()?.type
+                val fieldValue = DIContainer.getInstance(type, annotation)
                 field.set(instance, fieldValue)
             }
         }

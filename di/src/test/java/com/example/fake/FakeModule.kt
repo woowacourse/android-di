@@ -1,4 +1,6 @@
 import com.example.di.Module
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.QualifierType
 import com.example.fake.FakeCartDao
 import com.example.fake.FakeCartRepository
 import com.example.fake.FakeFieldRepository
@@ -10,6 +12,7 @@ class FakeModule : Module {
         return FakeCartDao()
     }
 
+    @Qualifier(QualifierType.Database)
     fun provideFakeDatabaseCartRepository(
         fakeCartDao: FakeCartDao,
         fakeProductRepository: FakeProductRepository,
@@ -17,6 +20,7 @@ class FakeModule : Module {
         return FakeDatabaseCartRepository(fakeCartDao, fakeProductRepository)
     }
 
+    @Qualifier(QualifierType.InMemory)
     fun provideFakeInMemoryCartRepository(): FakeCartRepository {
         return FakeInMemoryCartRepository()
     }

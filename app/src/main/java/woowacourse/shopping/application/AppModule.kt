@@ -2,8 +2,8 @@ package woowacourse.shopping.application
 
 import android.content.Context
 import com.example.di.Module
-import com.example.di.annotation.Database
-import com.example.di.annotation.InMemory
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.QualifierType
 import woowacourse.shopping.data.repository.DatabaseCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.InMemoryCartRepository
@@ -17,17 +17,17 @@ class AppModule(private val context: Context) : Module {
         return ShoppingDatabase.getInstance(context).cartProductDao()
     }
 
-    @Database
-    fun provideDatabaseCartRepository(cartProductDao: CartProductDao): CartRepository {
-        return DatabaseCartRepository(cartProductDao)
+    fun provideDefaultProductRepository(): ProductRepository {
+        return DefaultProductRepository()
     }
 
-    @InMemory
+    @Qualifier(QualifierType.InMemory)
     fun provideInMemoryCartRepository(): CartRepository {
         return InMemoryCartRepository()
     }
 
-    fun provideProductRepository(): ProductRepository {
-        return DefaultProductRepository()
+    @Qualifier(QualifierType.Database)
+    fun provideDatabaseCartRepository(cartProductDao: CartProductDao): CartRepository {
+        return DatabaseCartRepository(cartProductDao)
     }
 }
