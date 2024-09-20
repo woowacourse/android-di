@@ -9,26 +9,26 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityTest {
+class CartActivityTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var activity: MainActivity
-    private lateinit var viewModel: MainViewModel
+    private lateinit var activity: CartActivity
+    private lateinit var viewModel: CartViewModel
 
     @Before
     fun setUp() {
         activity =
             Robolectric
-                .buildActivity(MainActivity::class.java)
+                .buildActivity(CartActivity::class.java)
                 .create()
                 .get()
 
-        viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
     }
 
     @Test
@@ -44,10 +44,13 @@ class MainActivityTest {
     }
 
     @Test
-    fun `MainViewModel이 상품들을 가져올 수 있어야 한다`() {
+    fun `카트 상품이 가져와져야 한다`() {
+        // when
+        viewModel.getAllCartProducts()
+
         // then
-        assertThat(viewModel.products.getOrAwaitValue()[0].name).isEqualTo("우테코 과자")
-        assertThat(viewModel.products.getOrAwaitValue()[1].name).isEqualTo("우테코 쥬스")
-        assertThat(viewModel.products.getOrAwaitValue()[2].name).isEqualTo("우테코 아이스크림")
+        assertThat(viewModel.cartProducts.getOrAwaitValue()[0].name).isEqualTo("우테코 과자")
+        assertThat(viewModel.cartProducts.getOrAwaitValue()[1].name).isEqualTo("우테코 쥬스")
+        assertThat(viewModel.cartProducts.getOrAwaitValue()[2].name).isEqualTo("우테코 아이스크림")
     }
 }

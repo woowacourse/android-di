@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.alsonglibrary2.di.AutoDIManager
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.AutoDIManager
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
@@ -56,12 +56,14 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
+        viewModel.cartProducts.observe(this) { products ->
             val adapter =
                 CartProductAdapter(
-                    items = it,
+                    items = products,
                     dateFormatter = dateFormatter,
-                    onClickDelete = viewModel::deleteCartProduct,
+                    onClickDelete = { position ->
+                        viewModel.deleteCartProduct(products[position].id)
+                    },
                 )
             binding.rvCartProducts.adapter = adapter
         }
