@@ -17,9 +17,6 @@ object RepositoryModule {
         DiSingletonComponent.bind(
             CartRepository::class,
             CartRepositoryImpl::class,
-            logging = {
-                Log.d("DI logging",it)
-            }
         )
     }
 
@@ -27,9 +24,6 @@ object RepositoryModule {
         DiSingletonComponent.bind(
             ProductRepository::class,
             ProductRepositoryImpl::class,
-            logging = {
-                Log.d("DI logging",it)
-            }
         )
     }
 }

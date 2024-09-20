@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import com.android.di.annotation.Inject
 import woowacourse.shopping.data.di.annotation.RoomDatabase
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
@@ -7,6 +8,7 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
 class CartRepositoryImpl(
+    @Inject
     @RoomDatabase
 //    @InMemoryDatabase :: can use
     private val dao: CartProductDao,

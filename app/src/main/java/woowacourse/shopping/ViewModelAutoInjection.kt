@@ -1,5 +1,6 @@
 package woowacourse.shopping
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.annotation.MainThread
@@ -31,10 +32,10 @@ private class ViewModelComponent : ViewModelProvider.Factory {
             modelClass.constructors.firstOrNull()
                 ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR.format(modelClass))
 
-        val parameters =
-            constructor.parameterTypes.map { parameterType ->
-                DiSingletonComponent.match(parameterType.kotlin)
-            }.toTypedArray()
+
+        val parameters = constructor.parameters.mapIndexed { index, parameter ->
+            DiSingletonComponent.match(parameter.type.kotlin)
+        }.toTypedArray()
 
         val viewModel = constructor.newInstance(*parameters) as T
         DiViewModelComponent.injectFields(viewModel)
