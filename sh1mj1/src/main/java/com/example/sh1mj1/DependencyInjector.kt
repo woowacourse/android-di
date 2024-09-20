@@ -38,13 +38,26 @@ class DependencyInjector(
     ): T {
         val constructorArgs =
             injectedArgs.map { kParameter ->
-                val qualifier = kParameter.annotations.filterIsInstance<Qualifier>().firstOrNull()
-                foundDependency(qualifier, kParameter)
+                val qualifier = kParameter.withQualifier()
+                val kClass = kParameter.type.classifier as KClass<*>
+                foundDependency(qualifier, kClass)
             }.toTypedArray()
 
         val viewModel = constructor.call(*constructorArgs)
         return viewModel
     }
+
+    private fun KParameter.withQualifier(): Qualifier? = annotations.filterIsInstance<Qualifier>().firstOrNull()
+
+    private fun foundDependency(
+        qualifier: Qualifier?,
+        kClass: KClass<*>,
+    ): Any =
+        if (qualifier != null) {
+            appContainer.find(kClass, qualifier)
+        } else {
+            appContainer.find(kClass)
+        } ?: throw IllegalArgumentException("Unresolved dependency for parameter: ${kClass.simpleName}")
 
     private fun <T : Any> setField(
         injectedFields: List<KProperty1<T, *>>,
@@ -53,31 +66,12 @@ class DependencyInjector(
         injectedFields.forEach { field ->
             field.isAccessible = true
 
-            val qualifier = field.annotations.filterIsInstance<Qualifier>().firstOrNull()
-            val dependency = foundDependency(qualifier, field)
+            val qualifier = field.withQualifier()
+            val kClass = field.returnType.classifier as KClass<*>
+            val dependency = foundDependency(qualifier, kClass)
             (field as KMutableProperty<*>).setter.call(viewModel, dependency)
         }
     }
 
-    private fun <T : Any> foundDependency(
-        qualifier: Qualifier?,
-        field: KProperty1<T, *>,
-    ): Any =
-        if (qualifier != null) {
-            appContainer.find(field.returnType.classifier as KClass<*>, qualifier)
-        } else {
-            appContainer.find(field.returnType.classifier as KClass<*>)
-        } ?: throw IllegalArgumentException("Unresolved dependency for field: ${field.name}")
-
-    private fun foundDependency(
-        qualifier: Qualifier?,
-        kParameter: KParameter,
-    ): Any =
-        if (qualifier != null) {
-            appContainer.find(kParameter.type.classifier as KClass<*>, qualifier).also {
-                println("Tag $it")
-            }
-        } else {
-            appContainer.find(kParameter.type.classifier as KClass<*>)
-        } ?: throw IllegalArgumentException("Unresolved dependency for parameter: ${kParameter.name}")
+    private fun <T : Any> KProperty1<T, *>.withQualifier(): Qualifier? = annotations.filterIsInstance<Qualifier>().firstOrNull()
 }
