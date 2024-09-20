@@ -1,5 +1,6 @@
 package woowacourse.shopping
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.android.di.component.DiSingletonComponent
 import org.junit.Assert.assertNotNull
@@ -7,11 +8,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.createRoomDatabase
+import woowacourse.shopping.data.di.annotation.RoomDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.ui.MainViewModel
@@ -20,29 +24,24 @@ import woowacourse.shopping.ui.cart.CartViewModel
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class ViewModelInjectionTest {
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @Mock
-    private lateinit var mockCartRepository: CartRepository
-
-    @Mock
-    private lateinit var mockProductRepository: ProductRepository
-
-    @Mock
-    private lateinit var mockCartProductDao: CartProductDao
+    private lateinit var context: Context
 
     @Before
     fun setup() {
-        MockitoAnnotations.openMocks(this)
+        context = RuntimeEnvironment.getApplication()
 
-        DiSingletonComponent.provide(CartRepository::class, mockCartRepository)
-        DiSingletonComponent.provide(ProductRepository::class, mockProductRepository)
-        DiSingletonComponent.provide(CartProductDao::class, mockCartProductDao)
+        DiSingletonComponent.bind(CartRepository::class, CartRepositoryImpl::class)
+        DiSingletonComponent.bind(ProductRepository::class, ProductRepositoryImpl::class)
+        val database = createRoomDatabase(context)
+        DiSingletonComponent.provide(
+            RoomDatabase::class,
+            database.cartProductDao(),
+        )
     }
 
     @Test
-    fun testCartViewModelInjection() {
+    fun `CartViewModel의 의존성 주입이 정상적으로 이루어졌는지 확인한다`() {
         val factory = inject()
         val viewModel = factory.create(CartViewModel::class.java)
 
@@ -55,7 +54,7 @@ class ViewModelInjectionTest {
     }
 
     @Test
-    fun testMainViewModelInjection() {
+    fun `MainViewModel의 의존성 주입이 정상적으로 이루어졌는지 확인한다`() {
         val factory = inject()
         val viewModel = factory.create(MainViewModel::class.java)
 
