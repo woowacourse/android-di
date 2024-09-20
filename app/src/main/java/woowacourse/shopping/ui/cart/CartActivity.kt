@@ -2,18 +2,15 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.alsonglibrary2.di.AutoDIManager
+import com.example.alsonglibrary2.di.createAutoDIViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<CartViewModel> {
-        AutoDIManager.createViewModelFactory<CartViewModel>()
-    }
+    private val viewModel by createAutoDIViewModel<CartViewModel>()
 
     private lateinit var dateFormatter: DateFormatter
 

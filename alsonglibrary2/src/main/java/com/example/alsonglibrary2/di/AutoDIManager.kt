@@ -1,9 +1,5 @@
 package com.example.alsonglibrary2.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance
@@ -33,14 +29,6 @@ object AutoDIManager {
 
     fun clearDependencies() {
         _dependencies.clear()
-    }
-
-    inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
-        return viewModelFactory {
-            initializer {
-                createAutoDIInstance<VM>()
-            }
-        }
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
