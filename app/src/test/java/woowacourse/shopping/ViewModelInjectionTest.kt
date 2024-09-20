@@ -1,14 +1,11 @@
 package woowacourse.shopping
 
 import android.content.Context
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.android.di.component.DiSingletonComponent
 import org.junit.Assert.assertNotNull
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -24,7 +21,6 @@ import woowacourse.shopping.ui.cart.CartViewModel
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class ViewModelInjectionTest {
-
     private lateinit var context: Context
 
     @Before

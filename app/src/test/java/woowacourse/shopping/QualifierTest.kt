@@ -3,8 +3,6 @@ package woowacourse.shopping
 import android.content.Context
 import com.android.di.annotation.Qualifier
 import com.android.di.component.DiSingletonComponent
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -12,18 +10,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ImMemoryShoppingDatabase
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.createInMemoryDatabase
 import woowacourse.shopping.data.createRoomDatabase
 import woowacourse.shopping.data.di.annotation.InMemoryDatabase
 import woowacourse.shopping.data.di.annotation.RoomDatabase
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
-import woowacourse.shopping.model.Product
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -44,7 +36,7 @@ class QualifierTest {
     @Test
     fun `RoomDatabase 어노테이션 테스트`() {
         val isQualifier = RoomDatabase::class.annotations.any { it is Qualifier }
-        assertTrue( isQualifier)
+        assertTrue(isQualifier)
     }
 
     @Test
@@ -68,5 +60,4 @@ class QualifierTest {
         val exceptDatabase: ImMemoryShoppingDatabase = DiSingletonComponent.matchByQualifier(InMemoryDatabase::class)
         assertTrue(realDatabase == exceptDatabase)
     }
-
 }

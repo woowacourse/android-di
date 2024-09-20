@@ -14,7 +14,6 @@ import woowacourse.shopping.domain.ProductRepository
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class SingletonTest {
-
     @Before
     fun setup() {
         RepositoryModule.install()
