@@ -8,11 +8,11 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-typealias qualifier = KClass<*>?
-typealias instance = Any
+typealias QualifierClass = KClass<*>?
+typealias Instance = Any
 
 object DependencyInjector {
-    private val instances = mutableMapOf<Pair<KClass<*>, qualifier>, instance>()
+    private val instances = mutableMapOf<Pair<KClass<*>, QualifierClass>, Instance>()
 
     fun <T : Any> findInstance(
         clazz: KClass<T>,
