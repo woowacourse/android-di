@@ -21,19 +21,27 @@ object DependencyInjector {
 
     fun <T : Any> createInstanceFromConstructor(modelClass: Class<T>): T {
         val kClass: KClass<T> = modelClass.kotlin
-        val targetInstance: T
-        val primaryConstructor = kClass.primaryConstructor
         val qualifier: String = kClass.findAnnotation<Qualifier>()?.name ?: ""
-
-        if (primaryConstructor == null) {
-            targetInstance = getInstanceFromDependencyContainer(kClass, qualifier)
-        } else {
-            primaryConstructor.isAccessible = true
-            targetInstance = getInstanceFromConstructor(primaryConstructor)
-            setDependencyOfProperties(kClass, targetInstance)
-        }
+        val targetInstance: T = checkClassTypeThenGetInstance(kClass, qualifier)
+        setDependencyOfProperties(kClass, targetInstance)
         dependencyContainer.setInstance(kClass, targetInstance, qualifier)
         return targetInstance
+    }
+
+    private fun <T : Any> checkClassTypeThenGetInstance(
+        kClass: KClass<T>,
+        qualifier: String,
+    ): T {
+        val objectInstance: T? = kClass.objectInstance
+        val primaryConstructor: KFunction<T>? = kClass.primaryConstructor
+        return if (primaryConstructor == null) {
+            getInstanceFromDependencyContainer(kClass, qualifier)
+        } else if (objectInstance != null) {
+            objectInstance
+        } else {
+            primaryConstructor.isAccessible = true
+            getInstanceFromConstructor(primaryConstructor)
+        }
     }
 
     private fun <T : Any> getInstanceFromDependencyContainer(
@@ -68,12 +76,9 @@ object DependencyInjector {
     ) {
         kClass.declaredMemberProperties.forEach { kProperty ->
             if (checkNeedsDependencyInject(kProperty)) {
-                val isAccessible = kProperty.isAccessible
+                kProperty.isAccessible = true
                 val classifier = kProperty.returnType.classifier as KClass<*>
                 val dependency: Any = createInstanceFromConstructor(classifier.java)
-                if (!isAccessible) {
-                    kProperty.isAccessible = true
-                }
                 (kProperty as KMutableProperty<*>).setter.call(targetInstance, dependency)
             }
         }
