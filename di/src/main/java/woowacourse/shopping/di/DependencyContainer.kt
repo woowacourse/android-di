@@ -6,27 +6,23 @@ import kotlin.reflect.KClassifier
 interface DependencyContainer {
     fun <T : Any> getInstance(
         kClassifier: KClassifier,
-        qualifier: String,
+        qualifier: String? = null,
     ): T?
 
     fun <T : Any> getImplement(
         kClassifier: KClassifier,
-        qualifier: String,
+        qualifier: String? = null,
     ): KClass<T>?
 
     fun <T : Any> setDependency(
         kClassifier: KClassifier,
         kClass: KClass<T>,
-        qualifier: String,
+        qualifier: String? = null,
     )
 
     fun setInstance(
         kClassifier: KClassifier,
         instance: Any,
-        qualifier: String,
+        qualifier: String? = null,
     )
-
-    companion object {
-        const val DEFAULT_QUALIFIER = "default"
-    }
 }

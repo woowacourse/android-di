@@ -11,4 +11,4 @@ annotation class ParamInject
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FIELD,
 )
-annotation class Qualifier(val name: String = "")
+annotation class Qualifier(val name: String)

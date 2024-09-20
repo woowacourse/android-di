@@ -12,6 +12,9 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
+    private const val ERROR_DEPENDENCY_NOT_FOUND =
+        "Couldn't find dependency from Dependency Container :"
+
     lateinit var dependencyContainer: DependencyContainer
         private set
 
@@ -19,9 +22,11 @@ object DependencyInjector {
         dependencyContainer = container
     }
 
-    fun <T : Any> createInstanceFromConstructor(modelClass: Class<T>): T {
+    fun <T : Any> createInstanceFromConstructor(
+        modelClass: Class<T>,
+        qualifier: String? = null
+    ): T {
         val kClass: KClass<T> = modelClass.kotlin
-        val qualifier: String = kClass.findAnnotation<Qualifier>()?.name ?: ""
         val targetInstance: T = checkClassTypeThenGetInstance(kClass, qualifier)
         setDependencyOfProperties(kClass, targetInstance)
         dependencyContainer.setInstance(kClass, targetInstance, qualifier)
@@ -30,7 +35,7 @@ object DependencyInjector {
 
     private fun <T : Any> checkClassTypeThenGetInstance(
         kClass: KClass<T>,
-        qualifier: String,
+        qualifier: String?,
     ): T {
         val objectInstance: T? = kClass.objectInstance
         val primaryConstructor: KFunction<T>? = kClass.primaryConstructor
@@ -46,15 +51,17 @@ object DependencyInjector {
 
     private fun <T : Any> getInstanceFromDependencyContainer(
         kClass: KClass<T>,
-        qualifier: String,
+        qualifier: String?,
     ): T {
         val instanceFromContainer = dependencyContainer.getInstance<T>(kClass, qualifier)
         return if (instanceFromContainer != null) {
             instanceFromContainer
         } else {
             val implementKClass =
-                requireNotNull(dependencyContainer.getImplement<T>(kClass, qualifier))
-            createInstanceFromConstructor(implementKClass.java)
+                requireNotNull(dependencyContainer.getImplement<T>(kClass, qualifier)) {
+                    "$ERROR_DEPENDENCY_NOT_FOUND $kClass to $qualifier"
+                }
+            createInstanceFromConstructor(implementKClass.java, qualifier)
         }
     }
 
@@ -66,7 +73,9 @@ object DependencyInjector {
     private fun getDependencyOfParameters(parameters: List<KParameter>): Array<Any> {
         return parameters.map { param ->
             val classifier = param.type.classifier as KClass<*>
-            createInstanceFromConstructor(classifier.java)
+            if (param.hasAnnotation<ParamInject>()) {
+                createInstanceFromConstructor(classifier.java)
+            }
         }.toTypedArray()
     }
 
@@ -78,7 +87,8 @@ object DependencyInjector {
             if (checkNeedsDependencyInject(kProperty)) {
                 kProperty.isAccessible = true
                 val classifier = kProperty.returnType.classifier as KClass<*>
-                val dependency: Any = createInstanceFromConstructor(classifier.java)
+                val qualifier: String? = kProperty.findAnnotation<Qualifier>()?.name
+                val dependency: Any = createInstanceFromConstructor(classifier.java, qualifier)
                 (kProperty as KMutableProperty<*>).setter.call(targetInstance, dependency)
             }
         }

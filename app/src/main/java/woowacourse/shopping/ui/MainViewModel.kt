@@ -5,16 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.RepositoryQualifier.Companion.IN_MEMORY
+import woowacourse.shopping.data.RepositoryQualifier.IN_MEMORY
+import woowacourse.shopping.data.RepositoryQualifier.Companion.ROOM_DB
+import woowacourse.shopping.data.RepositoryQualifier.ROOM_DB
 import woowacourse.shopping.di.FieldInject
+import woowacourse.shopping.di.Qualifier
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
     @property:FieldInject
+    @Qualifier(name = ROOM_DB)
     lateinit var cartRepository: CartRepository
 
     @property:FieldInject
+    @Qualifier(name = IN_MEMORY)
     lateinit var productRepository: ProductRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
