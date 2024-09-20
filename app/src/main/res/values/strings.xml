@@ -7,7 +7,7 @@
     <string name="delete_cart_product">삭제</string>
     <string name="menu_cart_title">장바구니</string>
 
-    <string name="date_format">d MMM yyyy HH:mm:ss</string>
+    <string name="date_format">yyyy.MM.dd</string>
 
     <string name="cart_added">장바구니에 추가되었습니다.</string>
     <string name="cart_deleted">품목이 삭제되었습니다.</string>

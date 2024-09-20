@@ -3,13 +3,18 @@ package woowacourse.shopping.ui.product
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.QualifierType
+import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class ProductViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
+    @Inject private val productRepository: ProductRepository,
+    @Qualifier(QualifierType.Database) @Inject private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
@@ -18,8 +23,10 @@ class ProductViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        _onProductAdded.value = true
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.value = true
+        }
     }
 
     fun getAllProducts() {
