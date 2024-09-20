@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.data.di
 
+import com.android.di.component.DiSingletonComponent
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.di.component.DiSingletonComponent
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
@@ -14,15 +14,15 @@ object RepositoryModule {
 
     private fun bindCartRepository() {
         DiSingletonComponent.bind(
-            CartRepository::class.java,
-            CartRepositoryImpl(),
+            CartRepository::class,
+            CartRepositoryImpl::class,
         )
     }
 
     private fun bindProductRepository() {
         DiSingletonComponent.bind(
-            ProductRepository::class.java,
-            ProductRepositoryImpl(),
+            ProductRepository::class,
+            ProductRepositoryImpl::class,
         )
     }
 }
