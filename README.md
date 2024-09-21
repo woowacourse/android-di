@@ -39,3 +39,29 @@ Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 �
 
   - **해결방안**
     - [x] 여러 번 인스턴스화할 필요 없는 객체는 최초 한 번만 인스턴스화한다. (이 단계에서는 너무 깊게 생각하지 말고 싱글 오브젝트로 구현해도 된다.)
+
+<br>
+
+### 🚀 2단계 - Annotation
+### 필수
+>**필드 주입**
+  - [x] ViewModel 내 필드 주입 구현
+
+>**Annotation**
+  - **필수**
+    - [x] `Annotation`을 붙여서 필요한 요소에만 의존성을 주입
+  - [x] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성
+
+>**Recursive DI**
+  - [x] CartRepository가 `DAO` 객체를 참조하도록 변경
+  - [x] 장바구니 뷰에서 상품이 담긴 날짜 정보를 확인할 수 있도록 변경
+
+### 선택
+  - [x] 상품의 `position`과 `CartRepository::deleteCartProduct`의 id가 동일한 값임을 보장할 수 없다는 문제를 해결
+  - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+
+<br>
+
+### 🚀 3단계 - Qualifier
+- [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택 가능
+- [ ] DI 라이브러리 모듈 분리

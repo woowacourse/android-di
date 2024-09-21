@@ -12,15 +12,17 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<CartViewModel> { GlobalViewModelFactory() }
 
+    private lateinit var adapter: CartProductAdapter
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
+        observeCartProducts()
+        observeDeletedCartProductPosition()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -53,17 +55,24 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
+        adapter =
+            CartProductAdapter(
+                viewModel,
+                dateFormatter = dateFormatter,
+            )
+    }
+
+    private fun observeCartProducts() {
         viewModel.cartProducts.observe(this) {
-            val adapter =
-                CartProductAdapter(
-                    items = it,
-                    dateFormatter = dateFormatter,
-                    onClickDelete = viewModel::deleteCartProduct,
-                )
+            adapter.updateCartProducts(it)
             binding.rvCartProducts.adapter = adapter
         }
-        viewModel.onCartProductDeleted.observe(this) {
-            if (!it) return@observe
+    }
+
+    private fun observeDeletedCartProductPosition() {
+        viewModel.deletedCartProductPosition.observe(this) { position ->
+            if (position == null) return@observe
+            adapter.removeItem(position)
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
     }

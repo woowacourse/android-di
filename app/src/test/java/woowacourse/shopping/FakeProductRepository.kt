@@ -1,0 +1,5 @@
+package woowacourse.shopping
+
+interface FakeProductRepository
+
+class FakeDefaultProductRepository : FakeProductRepository

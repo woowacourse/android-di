@@ -11,7 +11,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.R
-import woowacourse.shopping.TestFixture
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -47,8 +46,7 @@ class CartActivityTest {
 
         val adapter =
             CartProductAdapter(
-                items = TestFixture.cartProducts,
-                onClickDelete = viewModel::deleteCartProduct,
+                cartHandler = viewModel,
                 dateFormatter = DateFormatter(activity),
             )
         val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_cart_products)
