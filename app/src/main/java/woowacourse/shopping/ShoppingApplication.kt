@@ -1,16 +1,21 @@
 package woowacourse.shopping
 
-import android.app.Application
-import woowacourse.shopping.di.DiContainer
+import com.example.seogi.di.DiApplication
+import com.example.seogi.di.DiContainer
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.DiModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : DiApplication(DiModule) {
     override fun onCreate() {
         super.onCreate()
+        appDatabase = ShoppingDatabase.getInstance(this)
         diContainer = DiContainer(DiModule)
     }
 
     companion object {
+        lateinit var appDatabase: ShoppingDatabase
+            private set
+
         lateinit var diContainer: DiContainer
             private set
     }
