@@ -1,5 +1,6 @@
 package com.example.sh1mj1
 
+import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.isSuperclassOf
