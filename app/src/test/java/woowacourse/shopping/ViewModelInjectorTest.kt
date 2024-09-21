@@ -1,8 +1,12 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.di.DependencyModule
+import com.example.di.Injected
+import com.example.di.Injector
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -10,7 +14,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.ViewModelFactory
 import woowacourse.shopping.util.injectedViewModels
 
 class FakeDataSource1
@@ -20,20 +23,20 @@ class FakeDataSource2
 interface FakeRepository
 
 class FakeRepositoryImpl(
-    @com.example.di.Inject val fakeDataSource: FakeDataSource1,
+    @Injected val fakeDataSource: FakeDataSource1,
     val fakeDataSourceImplWithNoAutoInject: FakeDataSource2? = null,
 ) : FakeRepository
 
 class FakeViewModel(
-    @com.example.di.Inject val fakeRepository: FakeRepository,
+    @Injected val fakeRepository: FakeRepository,
 ) : ViewModel() {
-    @com.example.di.Inject
+    @Injected
     lateinit var fieldFakeRepository: FakeRepository
 }
 
 private val testModule =
-    com.example.di.Module().apply {
-        addDeferredTypes(
+    DependencyModule().apply {
+        addDeferredDependency(
             FakeRepository::class to FakeRepositoryImpl::class,
             FakeDataSource1::class to FakeDataSource1::class,
             FakeDataSource2::class to FakeDataSource2::class,
@@ -42,12 +45,18 @@ private val testModule =
 
 class FakeActivity : AppCompatActivity() {
     val viewModel: FakeViewModel by injectedViewModels {
-        ViewModelFactory(testModule)
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return Injector(testModule).inject(modelClass.kotlin)
+            }
+        }
     }
 }
 
 @RunWith(RobolectricTestRunner::class)
 class ViewModelInjectorTest {
+    private val dependencyModule = DependencyModule()
+
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
