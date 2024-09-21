@@ -7,14 +7,19 @@ interface AppContainer {
 
     fun add(vararg component: InjectedComponent)
 
-    fun find(clazz: KClass<*>): Any?
-
     fun find(
         clazz: KClass<*>,
         qualifier: Qualifier,
     ): Any?
 
+    fun findWithKey(componentKey: ComponentKey): Any
+
     fun clearActivityScopedObjects()
 }
 
 inline fun <reified T> AppContainer.find(qualifier: Qualifier): T = find(T::class, qualifier) as T
+
+data class ComponentKey(
+    val clazz: KClass<*>,
+    val qualifier: Qualifier? = null,
+)

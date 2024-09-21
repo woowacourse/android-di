@@ -11,4 +11,6 @@ interface InjectedSingletonContainer {
         clazz: KClass<*>,
         qualifier: Qualifier,
     ): Any?
+
+    fun findWithKey(componentKey: ComponentKey): Any
 }

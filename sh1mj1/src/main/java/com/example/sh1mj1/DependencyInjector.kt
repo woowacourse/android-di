@@ -36,11 +36,21 @@ class DependencyInjector(
         injectedArgs: List<KParameter>,
         constructor: KFunction<T>,
     ): T {
+        /*
+        주입 대상이나 Qualifier가 많아질 경우 성능에 영향을 미칠 수 있을 것 같아요.
+        개선할 수 있는 방법이 있을까요?
+         */
         val constructorArgs =
             injectedArgs.map { kParameter ->
-                val qualifier = kParameter.withQualifier()
-                val kClass = kParameter.type.classifier as KClass<*>
-                foundDependency(qualifier, kClass)
+//                val qualifier = kParameter.withQualifier()
+//                val kClass = kParameter.type.classifier as KClass<*>
+                val componentKey =
+                    ComponentKey(
+                        clazz = kParameter.type.classifier as KClass<*>,
+                        qualifier = kParameter.withQualifier(),
+                    )
+                foundDependencyWithKey(componentKey)
+//                foundDependency(qualifier, kClass)
             }.toTypedArray()
 
         val viewModel = constructor.call(*constructorArgs)
@@ -49,15 +59,7 @@ class DependencyInjector(
 
     private fun KParameter.withQualifier(): Qualifier? = annotations.filterIsInstance<Qualifier>().firstOrNull()
 
-    private fun foundDependency(
-        qualifier: Qualifier?,
-        kClass: KClass<*>,
-    ): Any =
-        if (qualifier != null) {
-            appContainer.find(kClass, qualifier)
-        } else {
-            appContainer.find(kClass)
-        } ?: throw IllegalArgumentException("Unresolved dependency for parameter: ${kClass.simpleName}")
+    private fun foundDependencyWithKey(componentKey: ComponentKey): Any = appContainer.findWithKey(componentKey)
 
     private fun <T : Any> setField(
         injectedFields: List<KProperty1<T, *>>,
@@ -66,9 +68,16 @@ class DependencyInjector(
         injectedFields.forEach { field ->
             field.isAccessible = true
 
-            val qualifier = field.withQualifier()
-            val kClass = field.returnType.classifier as KClass<*>
-            val dependency = foundDependency(qualifier, kClass)
+//            val qualifier = field.withQualifier()
+//            val kClass = field.returnType.classifier as KClass<*>
+            val componentKey =
+                ComponentKey(
+                    clazz = field.returnType.classifier as KClass<*>,
+                    qualifier = field.withQualifier(),
+                )
+
+//            val dependency = foundDependency(qualifier, kClass)
+            val dependency = foundDependencyWithKey(componentKey)
             (field as KMutableProperty<*>).setter.call(viewModel, dependency)
         }
     }

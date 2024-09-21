@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import com.example.sh1mj1.AppContainer
+import com.example.sh1mj1.ComponentKey
 import com.example.sh1mj1.DefaultInjectedActivityContainer
 import com.example.sh1mj1.DefaultInjectedSingletonContainer
 import com.example.sh1mj1.InjectedActivityContainer
@@ -26,17 +27,14 @@ class DefaultAppContainer(
         }
     }
 
-    override fun find(clazz: KClass<*>): Any =
-        singletonComponentContainer.find(clazz)
-            ?: activityComponentContainer.find(clazz)
-            ?: throw IllegalStateException("There is no component for ${clazz.simpleName}")
-
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier,
     ): Any =
         singletonComponentContainer.find(clazz, qualifier)
             ?: throw IllegalStateException("There is no component for ${clazz.simpleName}")
+
+    override fun findWithKey(componentKey: ComponentKey): Any = singletonComponentContainer.findWithKey(componentKey)
 
     override fun clearActivityScopedObjects() {
         activityComponentContainer.clear()
