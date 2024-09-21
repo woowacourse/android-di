@@ -57,3 +57,16 @@
 
 - Module
     - 내가 만든 DI 라이브러리를 모듈로 분리한다.
+
+
+## Step 4 - Lifecycle
+
+### 기능 요구 사항
+
+다음 문제점을 해결한다.
+- CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
+- 모든 의존성이 싱글 오브젝트로 만들어질 필요는 없다.
+  - CartRepository는 Application LifeCycle 동안 유지되도록 구현한다.
+  - ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+  - DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- DI 라이브러리가 제대로 동작하는지 테스트 코드를 작성한다.
