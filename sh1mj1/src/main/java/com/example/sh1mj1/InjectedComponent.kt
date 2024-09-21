@@ -1,19 +1,31 @@
 package com.example.sh1mj1
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 
 sealed class InjectedComponent {
     abstract val injectedClass: KClass<*>
     abstract val instance: Any?
     abstract val qualifier: Qualifier?
 
-    class InjectedSingletonComponent(
+    data class InjectedSingletonComponent(
         override val injectedClass: KClass<*>,
         override val instance: Any? = null,
         override val qualifier: Qualifier? = null,
-    ) : InjectedComponent()
+    ) : InjectedComponent() {
+        fun injectableProperties(): List<KProperty1<out Any, *>> {
+            if (qualifier?.generate == true) {
+                return emptyList()
+            }
+            return instance!!::class.memberProperties.filter {
+                it.hasAnnotation<Inject>()
+            }
+        }
+    }
 
-    class InjectedActivityComponent(
+    data class InjectedActivityComponent(
         override val injectedClass: KClass<*>,
         override val instance: Any? = null,
         val activityClass: KClass<*>,
