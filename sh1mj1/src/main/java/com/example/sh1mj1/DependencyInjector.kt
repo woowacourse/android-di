@@ -50,7 +50,7 @@ class DependencyInjector(
         return viewModel
     }
 
-    private fun foundDependencyWithKey(componentKey: ComponentKey): Any = appContainer.findWithKey(componentKey)
+    private fun foundDependencyWithKey(componentKey: ComponentKey): Any = appContainer.find(componentKey)
 
     private fun <T : Any> setField(
         injectedFields: List<KProperty1<T, *>>,

@@ -7,8 +7,6 @@ import com.example.sh1mj1.DefaultInjectedSingletonContainer
 import com.example.sh1mj1.InjectedActivityContainer
 import com.example.sh1mj1.InjectedComponent
 import com.example.sh1mj1.InjectedSingletonContainer
-import com.example.sh1mj1.Qualifier
-import kotlin.reflect.KClass
 
 class DefaultAppContainer(
     private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer,
@@ -27,14 +25,7 @@ class DefaultAppContainer(
         }
     }
 
-    override fun find(
-        clazz: KClass<*>,
-        qualifier: Qualifier,
-    ): Any =
-        singletonComponentContainer.find(clazz, qualifier)
-            ?: throw IllegalStateException("There is no component for ${clazz.simpleName}")
-
-    override fun findWithKey(componentKey: ComponentKey): Any = singletonComponentContainer.findWithKey(componentKey)
+    override fun find(componentKey: ComponentKey): Any = singletonComponentContainer.findWithKey(componentKey)
 
     override fun clearActivityScopedObjects() {
         activityComponentContainer.clear()
