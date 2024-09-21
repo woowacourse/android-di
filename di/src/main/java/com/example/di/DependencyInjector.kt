@@ -10,11 +10,11 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class DependencyInjector(private val registry: DiContainer) {
+class DependencyInjector(private val container: DiContainer) {
     fun inject(classType: KClass<*>): Any {
-        return registry.getTargetOrNull(classType) ?: run {
+        return container.getTargetOrNull(classType) ?: run {
             if (classType.isSingleton()) {
-                registry.getInstanceOrNull(classType) ?: createInstance(classType)
+                container.getInstanceOrNull(classType) ?: createInstance(classType)
             } else {
                 createInstance(classType)
             }
@@ -28,7 +28,7 @@ class DependencyInjector(private val registry: DiContainer) {
         val parameterDependencies = resolveConstructorParameters(constructor.parameters)
         val instance = constructor.callBy(parameterDependencies)
         injectFields(instance)
-        registry.addInstance(classType, instance)
+        container.addInstance(classType, instance)
         return instance
     }
 
