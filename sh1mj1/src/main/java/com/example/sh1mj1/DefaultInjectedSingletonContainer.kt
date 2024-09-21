@@ -5,22 +5,17 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 
 class DefaultInjectedSingletonContainer private constructor() : InjectedSingletonContainer {
-    private val components: MutableList<InjectedComponent.InjectedSingletonComponent> = mutableListOf()
-
-    private val cachedComponents: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> =
+    private val components: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> =
         mutableMapOf()
 
     override fun add(component: InjectedComponent.InjectedSingletonComponent) {
-        components.add(component)
-
-        // cache component
         val componentKey =
             ComponentKey(
                 clazz = component.injectedClass,
                 qualifier = component.qualifier,
             )
-        check(!cachedComponents.containsKey(componentKey)) { "There is already a component for $componentKey" }
-        cachedComponents[componentKey] = component
+        check(!components.containsKey(componentKey)) { "There is already a component for $componentKey" }
+        components[componentKey] = component
     }
 
     override fun find(
@@ -34,7 +29,7 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
     )
 
     override fun findWithKey(componentKey: ComponentKey): Any {
-        val foundComponent = cachedComponents[componentKey]
+        val foundComponent = components[componentKey]
         val foundInstance =
             foundComponent?.instance ?: throw IllegalStateException("There is no component for $componentKey")
 
@@ -59,7 +54,6 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
 
     override fun clear() {
         components.clear()
-        cachedComponents.clear()
     }
 
     companion object {
