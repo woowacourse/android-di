@@ -1,12 +1,12 @@
 package woowacourse.shopping.data.local
 
+import com.example.di.Inject
+import com.example.di.Singleton
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class LocalCartRepository(

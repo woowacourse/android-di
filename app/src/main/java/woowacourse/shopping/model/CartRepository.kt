@@ -1,6 +1,6 @@
 package woowacourse.shopping.model
 
-import javax.inject.Singleton
+import com.example.di.Singleton
 
 @Singleton
 interface CartRepository {

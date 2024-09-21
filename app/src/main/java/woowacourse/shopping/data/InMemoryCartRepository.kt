@@ -1,10 +1,10 @@
 package woowacourse.shopping.data
 
+import com.example.di.Singleton
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
-import javax.inject.Singleton
 
 @Singleton
 class InMemoryCartRepository : CartRepository {

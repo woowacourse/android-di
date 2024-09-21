@@ -3,7 +3,7 @@ package woowacourse.shopping.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import javax.inject.Singleton
+import com.example.di.Singleton
 
 @Dao
 @Singleton
