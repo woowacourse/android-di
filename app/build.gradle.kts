@@ -60,11 +60,10 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.assertj:assertj-core:3.22.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("com.google.truth:truth:1.1.3")
-    // Reflection
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
@@ -77,4 +76,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
+    // Di
+    implementation(project(":di"))
 }

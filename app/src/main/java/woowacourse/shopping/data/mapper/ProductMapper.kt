@@ -8,5 +8,5 @@ fun Product.toEntity(): CartProductEntity {
         name = name,
         price = price,
         imageUrl = imageUrl,
-    )
+    ).apply { id = this@toEntity.id }
 }
