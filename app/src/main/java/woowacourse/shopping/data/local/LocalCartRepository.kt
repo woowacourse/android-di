@@ -1,7 +1,7 @@
 package woowacourse.shopping.data.local
 
-import com.example.di.Inject
-import com.example.di.Singleton
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Singleton
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct

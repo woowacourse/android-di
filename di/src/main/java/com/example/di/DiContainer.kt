@@ -1,5 +1,6 @@
 package com.example.di
 
+import com.example.di.annotation.Provides
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter

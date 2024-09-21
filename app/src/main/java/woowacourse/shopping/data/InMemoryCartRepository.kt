@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import com.example.di.Singleton
+import com.example.di.annotation.Singleton
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository

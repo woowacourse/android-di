@@ -1,5 +1,8 @@
 package com.example.di
 
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Singleton
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1

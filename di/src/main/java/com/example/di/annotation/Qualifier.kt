@@ -1,4 +1,4 @@
-package com.example.di
+package com.example.di.annotation
 
 import kotlin.reflect.KClass
 

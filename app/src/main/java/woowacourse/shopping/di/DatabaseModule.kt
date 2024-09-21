@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
-import com.example.di.Inject
-import com.example.di.InstanceProvideModule
-import com.example.di.Provides
+import com.example.di.annotation.Inject
+import com.example.di.annotation.InstanceProvideModule
+import com.example.di.annotation.Provides
 import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
 

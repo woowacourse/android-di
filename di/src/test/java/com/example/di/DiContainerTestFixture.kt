@@ -1,5 +1,9 @@
 package com.example.di
 
+import com.example.di.annotation.Inject
+import com.example.di.annotation.InstanceProvideModule
+import com.example.di.annotation.Provides
+
 interface TestDao
 
 interface TestApi

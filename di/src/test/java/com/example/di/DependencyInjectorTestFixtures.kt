@@ -1,5 +1,9 @@
 package com.example.di
 
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Singleton
+
 class TestUseCase(
     @Inject
     @Qualifier(ParameterRepositoryImpl::class)

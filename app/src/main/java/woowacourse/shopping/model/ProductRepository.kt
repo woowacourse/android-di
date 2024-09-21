@@ -1,6 +1,6 @@
 package woowacourse.shopping.model
 
-import com.example.di.Singleton
+import com.example.di.annotation.Singleton
 
 @Singleton
 interface ProductRepository {
