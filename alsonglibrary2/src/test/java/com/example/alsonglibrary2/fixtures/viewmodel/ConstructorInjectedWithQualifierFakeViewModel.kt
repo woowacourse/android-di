@@ -2,10 +2,8 @@ package com.example.alsonglibrary2.fixtures.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.alsonglibrary2.fixtures.DefaultRepository1
-import com.example.alsonglibrary2.fixtures.DefaultRepository2
 import com.example.alsonglibrary2.fixtures.repository.FakeRepository
 
-class FakeViewModel7(
-    @DefaultRepository1 val fakeRepository1: FakeRepository,
-    @DefaultRepository2 val fakeRepository2: FakeRepository,
+class ConstructorInjectedWithQualifierFakeViewModel(
+    @DefaultRepository1 val fakeRepository: FakeRepository,
 ) : ViewModel()
