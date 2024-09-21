@@ -10,7 +10,7 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
 
     override fun add(component: InjectedComponent.InjectedSingletonComponent) {
         val componentKey =
-            ComponentKey(
+            ComponentKey.of(
                 clazz = component.injectedClass,
                 qualifier = component.qualifier,
             )
@@ -21,12 +21,13 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier?,
-    ): Any = findWithKey(
-        ComponentKey(
-            clazz = clazz,
-            qualifier = qualifier,
-        ),
-    )
+    ): Any =
+        findWithKey(
+            ComponentKey.of(
+                clazz = clazz,
+                qualifier = qualifier,
+            ),
+        )
 
     override fun findWithKey(componentKey: ComponentKey): Any {
         val foundComponent = components[componentKey]
@@ -40,7 +41,7 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
         foundComponent.injectableProperties().forEach { kProperty ->
             val dependency =
                 findWithKey(
-                    ComponentKey(
+                    ComponentKey.of(
                         clazz = kProperty.returnType.classifier as KClass<*>,
                         qualifier = kProperty.withQualifier(),
                     ),

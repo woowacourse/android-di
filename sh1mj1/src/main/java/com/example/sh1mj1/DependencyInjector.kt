@@ -40,7 +40,7 @@ class DependencyInjector(
         val constructorArgs =
             injectedArgs.map { kParameter ->
                 val componentKey =
-                    ComponentKey(
+                    ComponentKey.of(
                         clazz = kParameter.type.classifier as KClass<*>,
                         qualifier = kParameter.withQualifier(),
                     )
@@ -61,7 +61,7 @@ class DependencyInjector(
             field.isAccessible = true
 
             val componentKey =
-                ComponentKey(
+                ComponentKey.of(
                     clazz = field.returnType.classifier as KClass<*>,
                     qualifier = field.withQualifier(),
                 )

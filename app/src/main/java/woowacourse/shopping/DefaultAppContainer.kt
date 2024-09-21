@@ -9,7 +9,7 @@ import com.example.sh1mj1.InjectedComponent
 import com.example.sh1mj1.InjectedSingletonContainer
 
 class DefaultAppContainer(
-    private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer,
+    private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer.instance,
     private val activityComponentContainer: InjectedActivityContainer = DefaultInjectedActivityContainer,
 ) : AppContainer {
     override fun add(component: InjectedComponent) {
