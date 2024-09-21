@@ -7,37 +7,27 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
 class DiContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
     private val sources = mutableMapOf<KClass<*>, Any>()
     private val modules = mutableListOf<Any>()
-
-    fun addInstance(
-        classType: KClass<*>,
-        instance: Any,
-    ) {
-        instances[classType] = instance
-    }
-
-    fun getInstanceOrNull(instanceType: KClass<*>): Any? = instances[instanceType]
 
     fun addModule(vararg newModules: Any) {
         modules.addAll(newModules)
     }
 
-    fun getTargetOrNull(instanceType: KClass<*>): Any? {
-        return sources[instanceType] ?: run {
-            val targetModuleAndFunction = findTargetModule(instanceType)
+    fun getSourceOrNull(sourceType: KClass<*>): Any? {
+        return sources[sourceType] ?: run {
+            val targetModuleAndFunction = findTargetModule(sourceType)
             if (targetModuleAndFunction.isEmpty()) {
                 null
             } else {
-                val newInstance = createInstance(targetModuleAndFunction)
-                addSource(instanceType, newInstance)
-                newInstance
+                val newSource = create(targetModuleAndFunction)
+                addSource(sourceType, newSource)
+                newSource
             }
         }
     }
 
-    private fun findTargetModule(instanceType: KClass<*>): Map<Any, KFunction<*>> {
+    private fun findTargetModule(sourceType: KClass<*>): Map<Any, KFunction<*>> {
         val targetModuleAndFunction =
             modules
                 .filter { it::class.objectInstance != null }
@@ -45,7 +35,7 @@ class DiContainer {
                 .entries
                 .flatMap { (module, functions) ->
                     functions.filter {
-                        it.isReturnTypeMatchedWith(instanceType)
+                        it.isReturnTypeMatchedWith(sourceType)
                     }.map { module to it }
                 }
                 .toMap()
@@ -57,9 +47,10 @@ class DiContainer {
             function.hasAnnotation<Provides>()
         }
 
-    private fun KFunction<*>.isReturnTypeMatchedWith(instanceType: KClass<*>) = returnType.classifier == instanceType
+    private fun KFunction<*>.isReturnTypeMatchedWith(sourceType: KClass<*>) =
+        returnType.classifier == sourceType
 
-    private fun createInstance(targetModuleAndFunction: Map<Any, KFunction<*>>): Any {
+    private fun create(targetModuleAndFunction: Map<Any, KFunction<*>>): Any {
         val targetFunction = targetModuleAndFunction.values.first()
         val targetModule = targetModuleAndFunction.keys.first()
         val params = targetFunction.parameters.resolve(targetModule)
@@ -71,15 +62,15 @@ class DiContainer {
             if (param.kind == KParameter.Kind.INSTANCE) {
                 targetModule
             } else {
-                getTargetOrNull(param.type.classifier as KClass<*>)
+                getSourceOrNull(param.type.classifier as KClass<*>)
             }
         }
     }
 
     private fun addSource(
         classType: KClass<*>,
-        instance: Any,
+        source: Any,
     ) {
-        sources[classType] = instance
+        sources[classType] = source
     }
 }

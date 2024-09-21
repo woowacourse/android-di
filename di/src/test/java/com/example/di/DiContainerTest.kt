@@ -19,7 +19,7 @@ class DiContainerTest {
         // given : 모듈에서 메서드 인자가 없는 provideTestDataBase 확인
 
         // when : TestDataBase의 인스턴스를 가져온다
-        val result = container.getTargetOrNull(TestDataBase::class)
+        val result = container.getSourceOrNull(TestDataBase::class)
 
         // then
         Assertions.assertThat(result).isInstanceOf(TestDataBase::class.java)
@@ -30,7 +30,7 @@ class DiContainerTest {
         // given : 모듈에서 메서드 인자가 있는 provideTestDao 확인
 
         // when : TestDao의 인스턴스를 가져온다
-        val result = container.getTargetOrNull(TestDao::class)
+        val result = container.getSourceOrNull(TestDao::class)
 
         // then
         Assertions.assertThat(result).isInstanceOf(TestDao::class.java)
@@ -41,7 +41,7 @@ class DiContainerTest {
         // given : TestApi의 인스턴스를 제공하는 RetrofitModule를 DiContainer에 추가하지 않았을 때
 
         // when : TestApi의 인스턴스를 가져온다
-        val result = container.getTargetOrNull(TestApi::class)
+        val result = container.getSourceOrNull(TestApi::class)
 
         // then
         Assertions.assertThat(result).isNull()
@@ -53,7 +53,7 @@ class DiContainerTest {
         container.addModule(RetrofitModule)
 
         // when : TestApi의 인스턴스를 가져온다
-        val result = container.getTargetOrNull(TestApi::class)
+        val result = container.getSourceOrNull(TestApi::class)
 
         // then
         Assertions.assertThat(result).isInstanceOf(TestApi::class.java)

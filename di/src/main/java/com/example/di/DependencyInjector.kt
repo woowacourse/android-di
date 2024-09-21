@@ -11,10 +11,12 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DependencyInjector(private val container: DiContainer) {
+    private val instances = mutableMapOf<KClass<*>, Any>()
+
     fun inject(classType: KClass<*>): Any {
-        return container.getTargetOrNull(classType) ?: run {
+        return container.getSourceOrNull(classType) ?: run {
             if (classType.isSingleton()) {
-                container.getInstanceOrNull(classType) ?: createInstance(classType)
+                getInstanceOrNull(classType) ?: createInstance(classType)
             } else {
                 createInstance(classType)
             }
@@ -23,12 +25,14 @@ class DependencyInjector(private val container: DiContainer) {
 
     private fun KClass<*>.isSingleton() = findAnnotation<Singleton>() != null
 
+    private fun getInstanceOrNull(instanceType: KClass<*>): Any? = instances[instanceType]
+
     private fun createInstance(classType: KClass<*>): Any {
         val constructor = getPrimaryConstructor(classType)
         val parameterDependencies = resolveConstructorParameters(constructor.parameters)
         val instance = constructor.callBy(parameterDependencies)
         injectFields(instance)
-        container.addInstance(classType, instance)
+        addInstance(classType, instance)
         return instance
     }
 
@@ -82,5 +86,12 @@ class DependencyInjector(private val container: DiContainer) {
 
     private fun findQualifiedAnnotationOrNull(property: KProperty<*>): KClass<*>? {
         return property.findAnnotation<Qualifier>()?.injectedClassType
+    }
+
+    private fun addInstance(
+        classType: KClass<*>,
+        instance: Any,
+    ) {
+        instances[classType] = instance
     }
 }
