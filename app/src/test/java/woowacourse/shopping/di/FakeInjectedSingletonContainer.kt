@@ -22,7 +22,7 @@ class FakeInjectedSingletonContainer(
         clazz: KClass<*>,
         qualifier: Qualifier,
     ): Any? =
-        components.find {
-            clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
+        components.find { component ->
+            clazz.isSuperclassOf(component.injectedClass) && qualifier.value == component.qualifier?.value
         }?.instance
 }
