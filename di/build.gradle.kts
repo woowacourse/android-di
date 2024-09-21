@@ -15,9 +15,6 @@ dependencies {
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
 
-    // MockK
-    testImplementation("io.mockk:mockk:1.13.8")
-
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
 }
