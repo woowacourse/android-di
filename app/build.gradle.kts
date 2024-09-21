@@ -61,6 +61,11 @@ dependencies {
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("de.mannodermaus.junit5:android-test-runner:1.4.0")
+
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("com.google.truth:truth:1.1.3")
