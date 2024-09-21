@@ -8,7 +8,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -39,12 +38,13 @@ class DependencyInjector(private val registry: DiContainer) {
             val targetClassType =
                 findQualifiedAnnotationOrNull(parameter)
                     ?: (parameter.type.classifier as? KClass<*>)
-            targetClassType?.let { classifier ->
-                inject(classifier)
+            targetClassType?.let { clazz ->
+                inject(clazz)
             }
         }
     }
 
+    // target 인스턴스에서 @Inject가 붙은 필드를 찾아 injectProperty로 필드 주입을 수행한다
     private fun <T : Any> injectFields(target: T) {
         target::class.declaredMemberProperties
             .filter { kProperty ->
@@ -55,6 +55,7 @@ class DependencyInjector(private val registry: DiContainer) {
             }
     }
 
+    // target 인스턴스와 mutableProperty의 의존성을 해소한다.
     private fun <T : Any> injectProperty(
         target: T,
         mutableProperty: KMutableProperty1<out T, *>,
@@ -69,17 +70,13 @@ class DependencyInjector(private val registry: DiContainer) {
         }
     }
 
+    // @Qualified 어노테이션이 있으면 명시된 구현체 타입 정보를, 없으면 null을 반환한다
     private fun findQualifiedAnnotationOrNull(parameter: KParameter): KClass<*>? {
-        return parameter.annotations
-            .find { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }?.annotationClass?.findAnnotation<Qualifier>()?.injectedClassType
+        val qualifier = parameter.findAnnotation<Qualifier>()
+        return qualifier?.injectedClassType
     }
 
     private fun findQualifiedAnnotationOrNull(property: KProperty<*>): KClass<*>? {
-        return property.annotations
-            .find { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }?.annotationClass?.findAnnotation<Qualifier>()?.injectedClassType
+        return property.findAnnotation<Qualifier>()?.injectedClassType
     }
 }

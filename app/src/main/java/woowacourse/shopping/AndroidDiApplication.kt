@@ -4,8 +4,7 @@ import android.app.Application
 import com.example.di.DependencyInjector
 import com.example.di.DiContainer
 import woowacourse.shopping.data.local.ShoppingDatabase
-import woowacourse.shopping.di.RepositoryModule
-import woowacourse.shopping.di.RoomDBModule
+import woowacourse.shopping.di.DatabaseModule
 
 class AndroidDiApplication : Application() {
     override fun onCreate() {
@@ -19,14 +18,13 @@ class AndroidDiApplication : Application() {
     }
 
     private fun initializeDependencies() {
-        val roomDBModule = RoomDBModule()
-        val repositoryModule = RepositoryModule()
         val diContainer = DiContainer()
-        diContainer.initModule(repositoryModule, roomDBModule)
+        diContainer.addModule(DatabaseModule)
         injector = DependencyInjector(diContainer)
     }
 
     companion object {
         lateinit var injector: DependencyInjector
+            private set
     }
 }

@@ -11,7 +11,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
     companion object {
         private var instance: ShoppingDatabase? = null
-        val instanceOrNull get() = instance ?: throw IllegalArgumentException()
+        val instanceOrException get() = instance ?: throw IllegalArgumentException()
 
         fun init(context: Context): ShoppingDatabase? {
             if (instance == null) {
