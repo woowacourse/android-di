@@ -3,7 +3,7 @@ package com.example.alsonglibrary2
 import androidx.appcompat.app.AppCompatActivity
 import com.example.alsonglibrary2.di.AutoDIManager
 import com.example.alsonglibrary2.di.createAutoDIViewModel
-import com.example.alsonglibrary2.fixtures.QualifiedDependencyProvider
+import com.example.alsonglibrary2.fixtures.FakeDependencyProvider
 import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository1
 import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository2
 import com.example.alsonglibrary2.fixtures.repository.FakeRepository
@@ -58,7 +58,7 @@ class AutoDIManagerTest {
     @Test
     fun `생성자에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
         // given
-        AutoDIManager.provider = QualifiedDependencyProvider
+        AutoDIManager.provider = FakeDependencyProvider
 
         class FakeActivity2 : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithQualifierFakeViewModel>()
@@ -88,7 +88,7 @@ class AutoDIManagerTest {
     @Test
     fun `필드에 Qualifier로 지정된 의존성을 주입할 수 있다`() {
         // given
-        AutoDIManager.provider = QualifiedDependencyProvider
+        AutoDIManager.provider = FakeDependencyProvider
 
         class FakeActivity4 : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierFakeViewModel>()
@@ -103,7 +103,7 @@ class AutoDIManagerTest {
     @Test(expected = Exception::class)
     fun `의존성이 등록되어있지 않고 Qualifier로 지정된 의존성도 없으면 의존성 주입이 실패한다`() {
         // given
-        AutoDIManager.provider = QualifiedDependencyProvider
+        AutoDIManager.provider = FakeDependencyProvider
 
         class FakeActivity5 : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierAndNoProviderFakeViewModel>()
@@ -117,7 +117,7 @@ class AutoDIManagerTest {
     @Test
     fun `필드에 같은 타입의 의존성이 여러개 있을 때 Qualifier로 인스턴스를 다르게 주입할 수 있다`() {
         // given
-        AutoDIManager.provider = QualifiedDependencyProvider
+        AutoDIManager.provider = FakeDependencyProvider
 
         class FakeActivity6 : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithTwoQualifierFakeViewModel>()
@@ -133,7 +133,7 @@ class AutoDIManagerTest {
     @Test
     fun `생성자에 같은 타입의 의존성이 여러개 있을 때 Qualifier로 인스턴스를 다르게 주입할 수 있다`() {
         // given
-        AutoDIManager.provider = QualifiedDependencyProvider
+        AutoDIManager.provider = FakeDependencyProvider
 
         class FakeActivity7 : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithTwoQualifierFakeViewModel>()
