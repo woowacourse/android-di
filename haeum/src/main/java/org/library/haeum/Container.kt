@@ -12,7 +12,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.kotlinProperty
 
 class Container(
-    private val context: Context,
+    private val context: Any,
     modules: List<Any>,
 ) {
     private val types: HashMap<Type, Any> = hashMapOf()
@@ -91,7 +91,6 @@ class Container(
             }
         val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
         val existingInstance = types[type]
-        // qualifier 어노테이션이 없다면 그대로 반환
         if (existingInstance != null) return existingInstance
 
         val function = returnTypes[type] ?: throw IllegalArgumentException("5555")
