@@ -50,7 +50,6 @@ class DependencyInjector(
         return viewModel
     }
 
-
     private fun foundDependencyWithKey(componentKey: ComponentKey): Any = appContainer.findWithKey(componentKey)
 
     private fun <T : Any> setField(
@@ -71,6 +70,7 @@ class DependencyInjector(
         }
     }
 }
+
 fun KParameter.withQualifier(): Qualifier? = annotations.filterIsInstance<Qualifier>().firstOrNull()
 
 fun <T : Any> KProperty1<T, *>.withQualifier(): Qualifier? = annotations.filterIsInstance<Qualifier>().firstOrNull()
