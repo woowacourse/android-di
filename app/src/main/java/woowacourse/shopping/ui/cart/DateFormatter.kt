@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class DateFormatter(@Qualifier(QualifierType.ActivityContext) context: Context) {
+class DateFormatter(
+    @Qualifier(QualifierType.ActivityContext) context: Context,
+) {
     private val formatter =
         SimpleDateFormat(
             context.getString(R.string.date_format),

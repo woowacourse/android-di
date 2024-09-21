@@ -14,8 +14,8 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-object Injector {
-    fun injectModule(module: Module) {
+object DIInjector {
+    fun injectModule(module: DIModule) {
         module::class.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
             val constructor = returnType.primaryConstructor
@@ -30,7 +30,7 @@ object Injector {
     }
 
     private fun handleNoConstructorFunction(
-        module: Module,
+        module: DIModule,
         function: KFunction<*>,
         qualifierType: QualifierType?,
     ) {
@@ -38,10 +38,8 @@ object Injector {
             (
                 listOf(module) +
                     function.parameters.drop(1).map {
-                        val parameterInstance =
-                            Container.getInstance(it.type.jvmErasure, qualifierType)
-                                ?: return
-                        Container.addInstance(
+                        val parameterInstance = DIContainer.getInstance(it.type.jvmErasure, qualifierType)
+                        DIContainer.addInstance(
                             parameterInstance::class,
                             qualifierType,
                             parameterInstance,
@@ -51,13 +49,16 @@ object Injector {
             ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
-        Container.addInstance(function.returnType.jvmErasure, qualifierType, instance)
+        DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, instance)
     }
 
     private fun handleConstructorFunction(
         returnType: KClass<*>,
         qualifierType: QualifierType?,
     ) {
+        val instance = createInstance(returnType)
+        DIContainer.addInstance(returnType, qualifierType, instance)
+
         val injectParameters =
             returnType.primaryConstructor?.parameters
                 ?.filter { it.hasAnnotation<Inject>() }
@@ -65,23 +66,23 @@ object Injector {
                 ?: return
 
         injectParameters.forEach { parameter ->
-            val instance = createInstance(parameter)
-            Container.addInstance(parameter, qualifierType, instance)
+            val parameterInstance = createInstance(parameter)
+            DIContainer.addInstance(parameter, qualifierType, parameterInstance)
         }
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
         val constructor =
             modelClass.primaryConstructor
-                ?: return Container.getInstance(
+                ?: return DIContainer.getInstance(
                     modelClass,
                     modelClass.findAnnotation<Qualifier>()?.type,
-                ) ?: throw IllegalArgumentException("Primary constructor not found")
+                )
 
         val parameters =
             constructor.parameters.associateWith { parameter ->
                 val annotation = parameter.findAnnotation<Qualifier>()?.type
-                Container.getInstance(parameter.type.jvmErasure, annotation)
+                DIContainer.getInstance(parameter.type.jvmErasure, annotation)
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
@@ -96,9 +97,18 @@ object Injector {
             property.javaField?.let { field ->
                 val type = field.type.kotlin
                 val annotation = property.findAnnotation<Qualifier>()?.type
-                val fieldValue = Container.getInstance(type, annotation)
+                val fieldValue = DIContainer.getInstance(type, annotation)
                 field.set(instance, fieldValue)
             }
+        }
+    }
+
+    fun releaseModule(module: DIModule) {
+        module::class.declaredFunctions.forEach { function ->
+            val returnType = function.returnType.jvmErasure
+            val qualifierType = function.findAnnotation<Qualifier>()?.type
+
+            DIContainer.removeInstance(returnType, qualifierType)
         }
     }
 }

@@ -4,5 +4,5 @@ enum class QualifierType {
     Database,
     InMemory,
     ApplicationContext,
-    ActivityContext
+    ActivityContext,
 }

@@ -1,7 +1,7 @@
 package woowacourse.shopping.application
 
 import android.app.Application
-import com.example.di.Injector
+import com.example.di.DIInjector
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -10,6 +10,6 @@ class ShoppingApplication : Application() {
     }
 
     private fun setupModule() {
-        Injector.injectModule(ApplicationModule(this))
+        DIInjector.injectModule(ApplicationModule(this))
     }
 }

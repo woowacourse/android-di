@@ -9,19 +9,19 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class InjectorTest {
+class DIInjectorTest {
     private lateinit var viewModel: FakeViewModel
 
     @Before
     fun setup() {
-        Container.clear()
-        Injector.injectModule(FakeModule())
-        viewModel = Injector.createInstance(FakeViewModel::class)
+        DIContainer.clear()
+        DIInjector.injectModule(FakeModule())
+        viewModel = DIInjector.createInstance(FakeViewModel::class)
     }
 
     @Test
     fun `Inject Annotation이 붙은 생성자는 자동으로 의존성이 주입된다`() {
-        val cartDao = Container.getInstance(FakeCartDao::class)
+        val cartDao = DIContainer.getInstance(FakeCartDao::class)
         assertThat(cartDao).isNotNull()
     }
 

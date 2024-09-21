@@ -3,7 +3,7 @@ package com.example.di.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.di.Injector
+import com.example.di.DIInjector
 import kotlin.reflect.KClass
 
 class ViewModelFactory : ViewModelProvider.Factory {
@@ -11,6 +11,6 @@ class ViewModelFactory : ViewModelProvider.Factory {
         modelClass: KClass<T>,
         extras: CreationExtras,
     ): T {
-        return Injector.createInstance(modelClass)
+        return DIInjector.createInstance(modelClass)
     }
 }

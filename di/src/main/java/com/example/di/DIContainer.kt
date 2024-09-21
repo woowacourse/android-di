@@ -3,7 +3,7 @@ package com.example.di
 import com.example.di.annotation.QualifierType
 import kotlin.reflect.KClass
 
-object Container {
+object DIContainer {
     private val instances: MutableMap<Dependency, Any> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
@@ -12,7 +12,7 @@ object Container {
         qualifierType: QualifierType? = null,
     ): T {
         val dependency = Dependency(type, qualifierType)
-        return instances[dependency] as? T ?: Injector.createInstance(type)
+        return instances[dependency] as? T ?: DIInjector.createInstance(type)
     }
 
     fun <T : Any> addInstance(
@@ -24,6 +24,14 @@ object Container {
         if (!instances.containsKey(dependency)) {
             instances[dependency] = instance
         }
+    }
+
+    fun <T : Any> removeInstance(
+        type: KClass<T>,
+        qualifierType: QualifierType? = null,
+    ) {
+        val dependency = Dependency(type, qualifierType)
+        instances.remove(dependency)
     }
 
     fun clear() {

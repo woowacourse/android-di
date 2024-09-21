@@ -4,24 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.di.Injector
+import com.example.di.DIActivity
+import com.example.di.DIModule
 import com.example.di.viewmodel.provideViewModel
 import woowacourse.shopping.R
-import woowacourse.shopping.application.ViewModelModule
+import woowacourse.shopping.application.ActivityModule
 import woowacourse.shopping.databinding.ActivityProductBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
-class ProductActivity : AppCompatActivity() {
+class ProductActivity : DIActivity() {
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }
 
     private val viewModel: ProductViewModel by provideViewModel()
+
+    override val module: DIModule by lazy { ActivityModule(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setupModule()
         setupBinding()
         setupToolbar()
         setupView()
@@ -33,11 +34,6 @@ class ProductActivity : AppCompatActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
-    }
-
-    private fun setupModule() {
-        Injector.injectModule(ViewModelModule())
-        Injector.injectFields(this)
     }
 
     private fun setupBinding() {
