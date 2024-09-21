@@ -25,7 +25,7 @@ class DefaultAppContainer(
         }
     }
 
-    override fun find(componentKey: ComponentKey): Any = singletonComponentContainer.findWithKey(componentKey)
+    override fun find(componentKey: ComponentKey): Any = singletonComponentContainer.find(componentKey)
 
     override fun clearActivityScopedObjects() {
         activityComponentContainer.clear()

@@ -22,7 +22,7 @@ class FakeInjectedSingletonContainer(
             clazz.isSuperclassOf(component.injectedClass) && qualifier.value == component.qualifier?.value
         }?.instance
 
-    override fun findWithKey(componentKey: ComponentKey): Any {
+    override fun find(componentKey: ComponentKey): Any {
         TODO("Not yet implemented")
     }
 }

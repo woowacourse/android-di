@@ -65,7 +65,7 @@ class DefaultInjectedSingletonContainerTest {
 
         // then
         val stubRepo =
-            container.findWithKey(
+            container.find(
                 ComponentKey.of(
                     StubRepo::class,
                     null,
@@ -96,7 +96,7 @@ class DefaultInjectedSingletonContainerTest {
 
         // then
         val foundComponent1 =
-            container.findWithKey(
+            container.find(
                 ComponentKey.of(
                     StubRepo::class,
                     null,
@@ -105,7 +105,7 @@ class DefaultInjectedSingletonContainerTest {
         foundComponent1.shouldBeInstanceOf<Default1StubRepo>()
 
         val foundComponent2 =
-            container.findWithKey(
+            container.find(
                 ComponentKey.of(
                     StubRepo::class,
                     Qualifier("1"),

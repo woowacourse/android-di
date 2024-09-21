@@ -10,7 +10,7 @@ interface InjectedSingletonContainer {
         qualifier: Qualifier?,
     ): Any?
 
-    fun findWithKey(componentKey: ComponentKey): Any
+    fun find(componentKey: ComponentKey): Any
 
     fun clear()
 }
