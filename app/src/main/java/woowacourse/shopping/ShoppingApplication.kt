@@ -3,9 +3,7 @@ package woowacourse.shopping
 import android.app.Application
 import com.example.sh1mj1.AppContainer
 import com.example.sh1mj1.Qualifier
-import com.example.sh1mj1.find
 import com.example.sh1mj1.singletonComponent
-import woowacourse.shopping.data.CartDao
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -21,16 +19,14 @@ class ShoppingApplication : Application() {
         container = DefaultAppContainer()
 
         container.add(
-            singletonComponent<CartDao>(CartProductDao.instance(this), Qualifier("RoomDao")),
+            singletonComponent<CartProductDao>(CartProductDao.instance(this), Qualifier("RoomDao", generate = true)),
         )
 
         container.add(
             singletonComponent<ProductRepository>(InMemoryProductRepository(), Qualifier("InMemory")),
             singletonComponent<CartRepository>(InMemoryCartRepository(), Qualifier("InMemory")),
             singletonComponent<CartRepository>(
-                DefaultCartRepository(
-                    container.find<CartDao>(Qualifier("RoomDao")),
-                ),
+                DefaultCartRepository(),
                 Qualifier("RoomDao"),
             ),
         )

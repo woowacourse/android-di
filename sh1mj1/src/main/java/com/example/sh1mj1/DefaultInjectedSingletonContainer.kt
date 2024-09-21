@@ -1,15 +1,18 @@
 package com.example.sh1mj1
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.isSuperclassOf
 
 object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
     private val components: MutableList<InjectedComponent.InjectedSingletonComponent> = mutableListOf()
 
-    private val cachedComponents: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> = mutableMapOf()
+    private val cachedComponents: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> =
+        mutableMapOf()
 
     override fun add(component: InjectedComponent.InjectedSingletonComponent) {
         components.add(component)
+
         // cache component
         val componentKey =
             ComponentKey(
@@ -17,6 +20,14 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
                 qualifier = component.qualifier,
             )
         cachedComponents[componentKey] = component
+
+        components.forEach { component ->
+            println("component: ${component.injectedClass}")
+        }
+
+        cachedComponents.forEach { (key, value) ->
+            println("key: $key, value: $value")
+        }
     }
 
     override fun find(clazz: KClass<*>): Any? =
@@ -32,8 +43,27 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
             clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
         }?.instance
 
-    override fun findWithKey(componentKey: ComponentKey): Any =
-        cachedComponents[componentKey]?.instance ?: throw IllegalStateException("There is no component for $componentKey")
+    override fun findWithKey(componentKey: ComponentKey): Any {
+        val foundComponent = cachedComponents[componentKey]
+        val foundInstance =
+            foundComponent?.instance ?: throw IllegalStateException("There is no component for $componentKey")
+
+        foundComponent.injectableProperties().forEach { kProperty ->
+            println("kProperty: $kProperty")
+
+            val dependency =
+                findWithKey(
+                    ComponentKey(
+                        clazz = kProperty.returnType.classifier as KClass<*>,
+                        qualifier = kProperty.withQualifier(),
+                    ),
+                )
+
+            (kProperty as KMutableProperty<*>).setter.call(foundInstance, dependency)
+        }
+
+        return foundInstance
+    }
 }
 
 private const val TAG = "DefaultInjectedSingleto"
