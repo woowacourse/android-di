@@ -3,9 +3,8 @@ package com.example.sh1mj1
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.isSuperclassOf
 
-object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
+class DefaultInjectedSingletonContainer private constructor() : InjectedSingletonContainer {
     private val components: MutableList<InjectedComponent.InjectedSingletonComponent> = mutableListOf()
 
     private val cachedComponents: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> =
@@ -24,29 +23,15 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
         cachedComponents[componentKey] = component
     }
 
-    override fun find(clazz: KClass<*>): Any? {
-        val allComponentsQualifier = components.map { it.qualifier }
-        // 중복된 value가 있는지 확인
-        val duplicateValues =
-            allComponentsQualifier
-                .filterNotNull() // null 제거 (만약 qualifier가 null일 수 있으면)
-                .groupBy { it.value } // value 기준으로 그룹핑
-                .filter { it.value.size > 1 } // 그룹의 크기가 1보다 큰 경우만 필터링
-                .keys // 중복된 value 값들
-        check(duplicateValues.isEmpty()) { "There are duplicated Qualifier value: $duplicateValues" }
-
-        return components.find {
-            clazz.isSuperclassOf(it.injectedClass)
-        }?.instance
-    }
-
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier?,
-    ): Any? =
-        components.find {
-            clazz.isSuperclassOf(it.injectedClass) && qualifier?.value == it.qualifier?.value
-        }?.instance
+    ): Any = findWithKey(
+        ComponentKey(
+            clazz = clazz,
+            qualifier = qualifier,
+        ),
+    )
 
     override fun findWithKey(componentKey: ComponentKey): Any {
         val foundComponent = cachedComponents[componentKey]
@@ -71,6 +56,13 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
 
         return foundInstance
     }
-}
 
-private const val TAG = "DefaultInjectedSingleto"
+    override fun clear() {
+        components.clear()
+        cachedComponents.clear()
+    }
+
+    companion object {
+        val instance = DefaultInjectedSingletonContainer()
+    }
+}

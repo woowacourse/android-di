@@ -2,9 +2,23 @@ package com.example.sh1mj1
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.types.shouldBeInstanceOf
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class DefaultInjectedSingletonContainerTest {
+    private lateinit var container: InjectedSingletonContainer
+
+    @BeforeEach
+    fun setUp() {
+        container = DefaultInjectedSingletonContainer.instance
+    }
+
+    @AfterEach
+    fun tearDown() {
+        container.clear()
+    }
+
     interface StubRepo
 
     class Default1StubRepo : StubRepo
@@ -29,11 +43,11 @@ class DefaultInjectedSingletonContainerTest {
             )
 
         // when
-        DefaultInjectedSingletonContainer.add(component1)
+        container.add(component1)
 
         // then
         shouldThrow<IllegalStateException> {
-            DefaultInjectedSingletonContainer.add(component2)
+            container.add(component2)
         }
     }
 
@@ -47,11 +61,11 @@ class DefaultInjectedSingletonContainerTest {
             )
 
         // when
-        DefaultInjectedSingletonContainer.add(component)
+        container.add(component)
 
         // then
         val stubRepo =
-            DefaultInjectedSingletonContainer.findWithKey(
+            container.findWithKey(
                 ComponentKey(
                     StubRepo::class,
                     null,
@@ -77,12 +91,12 @@ class DefaultInjectedSingletonContainerTest {
             )
 
         // when
-        DefaultInjectedSingletonContainer.add(component1)
-        DefaultInjectedSingletonContainer.add(component2)
+        container.add(component1)
+        container.add(component2)
 
         // then
         val foundComponent1 =
-            DefaultInjectedSingletonContainer.findWithKey(
+            container.findWithKey(
                 ComponentKey(
                     StubRepo::class,
                     null,
@@ -91,7 +105,7 @@ class DefaultInjectedSingletonContainerTest {
         foundComponent1.shouldBeInstanceOf<Default1StubRepo>()
 
         val foundComponent2 =
-            DefaultInjectedSingletonContainer.findWithKey(
+            container.findWithKey(
                 ComponentKey(
                     StubRepo::class,
                     Qualifier("1"),
