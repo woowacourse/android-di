@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
 
 class InjectViewModelFactory(
@@ -14,10 +15,9 @@ class InjectViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructors = viewModelClass.primaryConstructor ?: return modelClass as T
         val parameters = constructors.parameters
-        val arguments =
-            Array<Any>(parameters.size) {
-                container.getKParameterInstance(parameters[it])
-            }
+        val arguments = parameters.map {
+            container.getKParameterInstance(it) as KParameter
+        }.toTypedArray()
         val viewModel = constructors.call(*arguments)
         container.injectTo(viewModel)
         return viewModel as T
