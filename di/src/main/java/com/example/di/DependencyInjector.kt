@@ -1,6 +1,5 @@
 package com.example.di
 
-import javax.inject.Singleton
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -13,11 +12,16 @@ import kotlin.reflect.jvm.isAccessible
 
 class DependencyInjector(private val registry: DiContainer) {
     fun inject(classType: KClass<*>): Any {
-        val isSingleton = classType.findAnnotation<Singleton>() != null
-        return registry.getInstanceOrNull(classType)?.takeIf { isSingleton } ?: createInstance(
-            classType,
-        )
+        return registry.getTargetOrNull(classType) ?: run {
+            if (classType.isSingleton()) {
+                registry.getInstanceOrNull(classType) ?: createInstance(classType)
+            } else {
+                createInstance(classType)
+            }
+        }
     }
+
+    private fun KClass<*>.isSingleton() = findAnnotation<Singleton>() != null
 
     private fun createInstance(classType: KClass<*>): Any {
         val constructor = getPrimaryConstructor(classType)
