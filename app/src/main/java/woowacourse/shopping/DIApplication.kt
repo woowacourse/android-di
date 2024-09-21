@@ -1,11 +1,18 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.ui.injection.repository.RepositoryModule
+import com.woowa.di.component.injectDI
+import woowacourse.shopping.di.DaoBinder
+import woowacourse.shopping.di.SingletonRepositoryBinder
+import woowacourse.shopping.di.ViewModelRepositoryBinder
 
 class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        RepositoryModule.initLifeCycle(this)
+        injectDI(this) {
+            binder(ViewModelRepositoryBinder::class)
+            binder(SingletonRepositoryBinder::class)
+            binder(DaoBinder::class)
+        }
     }
 }

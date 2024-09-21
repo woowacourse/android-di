@@ -1,37 +1,30 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import com.woowa.di.test.DIActivityTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import woowacourse.shopping.fixture.TestApplication
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.injection.repository.RepositoryModule
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = TestApplication::class)
 class MainActivityTest {
-    private lateinit var activity: MainActivity
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @get:Rule
+    val diRule = DIActivityTestRule(MainActivity::class.java)
+
+    private lateinit var activity: MainActivity
+
     @Before
     fun setUp() {
-        val controller = Robolectric.buildActivity(MainActivity::class.java)
-        if (RepositoryModule.getInstanceOrNull() == null) {
-            RepositoryModule.initLifeCycle(controller.get())
-            RepositoryModule.getInstance().onCreate(controller.get() as LifecycleOwner)
-        }
-        activity = controller.create().get()
+        activity = diRule.getActivity()
     }
 
     @Test
@@ -41,10 +34,8 @@ class MainActivityTest {
 
     @Test
     fun `ViewModel 주입 테스트`() {
-        // given
+        // ViewModelProvider를 통해 ViewModel 주입 여부 확인
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
-
-        // then
         assertThat(viewModel).isNotNull()
     }
 }
