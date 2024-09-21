@@ -7,6 +7,8 @@ import com.example.sh1mj1.DefaultInjectedSingletonContainer
 import com.example.sh1mj1.InjectedActivityContainer
 import com.example.sh1mj1.InjectedComponent
 import com.example.sh1mj1.InjectedSingletonContainer
+import com.example.sh1mj1.Qualifier
+import kotlin.reflect.KClass
 
 class DefaultAppContainer(
     private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer.instance,
@@ -24,6 +26,8 @@ class DefaultAppContainer(
             add(it)
         }
     }
+
+    override fun find(clazz: KClass<*>, qualifier: Qualifier?): Any = find(ComponentKey.of(clazz, qualifier))
 
     override fun find(componentKey: ComponentKey): Any = singletonComponentContainer.find(componentKey)
 

@@ -44,14 +44,14 @@ class DependencyInjector(
                         clazz = kParameter.type.classifier as KClass<*>,
                         qualifier = kParameter.withQualifier(),
                     )
-                foundDependencyWithKey(componentKey)
+                foundDependency(componentKey)
             }.toTypedArray()
 
         val viewModel = constructor.call(*constructorArgs)
         return viewModel
     }
 
-    private fun foundDependencyWithKey(componentKey: ComponentKey): Any = appContainer.find(componentKey)
+    private fun foundDependency(componentKey: ComponentKey): Any = appContainer.find(componentKey)
 
     private fun <T : Any> setField(
         injectedFields: List<KProperty1<T, *>>,
@@ -66,7 +66,7 @@ class DependencyInjector(
                     qualifier = field.withQualifier(),
                 )
 
-            val dependency = foundDependencyWithKey(componentKey)
+            val dependency = foundDependency(componentKey)
             (field as KMutableProperty<*>).setter.call(viewModel, dependency)
         }
     }
