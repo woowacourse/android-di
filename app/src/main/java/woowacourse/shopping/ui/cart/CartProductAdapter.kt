@@ -7,6 +7,7 @@ import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductAdapter(
     onClickDelete: (position: Long) -> Unit,
+    private val dateFormatter: DateFormatter,
 ) : ListAdapter<CartProduct, CartProductViewHolder>(diffUtil) {
     private val onClickDelete = { position: Int ->
         onClickDelete(currentList[position].id)
@@ -16,7 +17,7 @@ class CartProductAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, onClickDelete)
+        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
     }
 
     override fun onBindViewHolder(

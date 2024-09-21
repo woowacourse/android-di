@@ -8,6 +8,7 @@ import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
+    private val dateFormatter: DateFormatter,
     onClickDelete: (position: Int) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
@@ -19,17 +20,19 @@ class CartProductViewHolder(
 
     fun bind(cartProduct: CartProduct) {
         binding.item = cartProduct
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.createdAt)
     }
 
     companion object {
         fun from(
             parent: ViewGroup,
+            dateFormatter: DateFormatter,
             onClickDelete: (position: Int) -> Unit,
         ): CartProductViewHolder {
             val binding =
                 ItemCartProductBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
-            return CartProductViewHolder(binding, onClickDelete)
+            return CartProductViewHolder(binding, dateFormatter, onClickDelete)
         }
     }
 }

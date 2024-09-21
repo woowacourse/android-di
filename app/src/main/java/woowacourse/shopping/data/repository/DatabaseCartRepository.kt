@@ -1,8 +1,6 @@
 package woowacourse.shopping.data.repository
 
 import com.example.di.annotation.Inject
-import com.example.di.annotation.Qualifier
-import com.example.di.annotation.QualifierType
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.model.CartProduct
@@ -10,7 +8,6 @@ import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.local.dao.CartProductDao
 
-@Qualifier(QualifierType.Database)
 class DatabaseCartRepository(
     @Inject private val dao: CartProductDao,
 ) : CartRepository {

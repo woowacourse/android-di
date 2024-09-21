@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.di.Injector
 import com.example.di.viewmodel.provideViewModel
 import woowacourse.shopping.R
+import woowacourse.shopping.application.ViewModelModule
 import woowacourse.shopping.databinding.ActivityProductBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
@@ -19,6 +21,7 @@ class ProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        setupModule()
         setupBinding()
         setupToolbar()
         setupView()
@@ -30,6 +33,11 @@ class ProductActivity : AppCompatActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
+    }
+
+    private fun setupModule() {
+        Injector.injectModule(ViewModelModule())
+        Injector.injectFields(this)
     }
 
     private fun setupBinding() {

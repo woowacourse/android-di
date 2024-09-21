@@ -14,7 +14,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-object DIInjector {
+object Injector {
     fun injectModule(module: Module) {
         module::class.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
@@ -39,8 +39,9 @@ object DIInjector {
                 listOf(module) +
                     function.parameters.drop(1).map {
                         val parameterInstance =
-                            DIContainer.getInstance(it.type.jvmErasure, qualifierType)
-                        DIContainer.addInstance(
+                            Container.getInstance(it.type.jvmErasure, qualifierType)
+                                ?: return
+                        Container.addInstance(
                             parameterInstance::class,
                             qualifierType,
                             parameterInstance,
@@ -50,7 +51,7 @@ object DIInjector {
             ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
-        DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, instance)
+        Container.addInstance(function.returnType.jvmErasure, qualifierType, instance)
     }
 
     private fun handleConstructorFunction(
@@ -65,25 +66,28 @@ object DIInjector {
 
         injectParameters.forEach { parameter ->
             val instance = createInstance(parameter)
-            DIContainer.addInstance(parameter, qualifierType, instance)
+            Container.addInstance(parameter, qualifierType, instance)
         }
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
         val constructor =
             modelClass.primaryConstructor
-                ?: return DIContainer.getInstance(modelClass, modelClass.findAnnotation<Qualifier>()?.type)
+                ?: return Container.getInstance(
+                    modelClass,
+                    modelClass.findAnnotation<Qualifier>()?.type,
+                ) ?: throw IllegalArgumentException("Primary constructor not found")
 
         val parameters =
             constructor.parameters.associateWith { parameter ->
                 val annotation = parameter.findAnnotation<Qualifier>()?.type
-                DIContainer.getInstance(parameter.type.jvmErasure, annotation)
+                Container.getInstance(parameter.type.jvmErasure, annotation)
             }
 
         return constructor.callBy(parameters).also { injectFields(it) }
     }
 
-    private fun <T : Any> injectFields(instance: T) {
+    fun <T : Any> injectFields(instance: T) {
         val properties =
             instance::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
 
@@ -92,7 +96,7 @@ object DIInjector {
             property.javaField?.let { field ->
                 val type = field.type.kotlin
                 val annotation = property.findAnnotation<Qualifier>()?.type
-                val fieldValue = DIContainer.getInstance(type, annotation)
+                val fieldValue = Container.getInstance(type, annotation)
                 field.set(instance, fieldValue)
             }
         }
