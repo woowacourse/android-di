@@ -1,40 +1,38 @@
 package woowacourse.shopping.di
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
+typealias ClassQualifier = Pair<DependencyType, AnnotationQualifier>
 
-class DefaultDependencyContainer : DependencyContainer {
-    private val dependencies: MutableMap<Pair<KClassifier, String?>, KClass<*>> =
+class DefaultDependencyContainer(
+    private val dependencies: MutableMap<ClassQualifier, ImplementationClass<*>> =
+        mutableMapOf(),
+    private val cachedInstances: MutableMap<ClassQualifier, DependencyInstance> =
         mutableMapOf()
-
-    private val cachedInstances: MutableMap<Pair<KClassifier, String?>, Any> =
-        mutableMapOf()
-
-    override fun <T : Any> getInstance(
-        kClassifier: KClassifier,
-        qualifier: String?,
-    ): T? = cachedInstances[kClassifier to qualifier] as T?
+) : DependencyContainer {
+    override fun <T : DependencyInstance> getInstance(
+        dependency: DependencyType,
+        qualifier: AnnotationQualifier,
+    ): T? = cachedInstances[dependency to qualifier] as T?
 
     override fun <T : Any> getImplement(
-        kClassifier: KClassifier,
-        qualifier: String?,
-    ): KClass<T>? = dependencies[kClassifier to qualifier] as? KClass<T>
+        dependency: DependencyType,
+        qualifier: AnnotationQualifier,
+    ): ImplementationClass<T>? = dependencies[dependency to qualifier] as? ImplementationClass<T>
 
     override fun <T : Any> setDependency(
-        kClassifier: KClassifier,
-        kClass: KClass<T>,
-        qualifier: String?,
+        dependency: DependencyType,
+        implementation: ImplementationClass<T>,
+        qualifier: AnnotationQualifier,
     ) {
-        dependencies[kClassifier to qualifier] = kClass
+        dependencies[dependency to qualifier] = implementation
     }
 
     override fun setInstance(
-        kClassifier: KClassifier,
-        instance: Any,
-        qualifier: String?,
+        dependency: DependencyType,
+        instance: DependencyInstance,
+        qualifier: AnnotationQualifier,
     ) {
-        if (dependencies.contains(kClassifier to qualifier)) {
-            cachedInstances[kClassifier to qualifier] = instance
+        if (dependencies.contains(dependency to qualifier)) {
+            cachedInstances[dependency to qualifier] = instance
         }
     }
 }

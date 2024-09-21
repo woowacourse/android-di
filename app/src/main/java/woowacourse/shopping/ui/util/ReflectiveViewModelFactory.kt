@@ -10,6 +10,6 @@ class ReflectiveViewModelFactory : ViewModelProvider.Factory {
         modelClass: Class<T>,
         extras: CreationExtras,
     ): T {
-        return DependencyInjector.createInstanceFromConstructor(modelClass)
+        return DependencyInjector.createInstance(modelClass.kotlin)
     }
 }

@@ -1,11 +1,9 @@
 package woowacourse.shopping.data
 
-enum class RepositoryQualifier(val qualifier: String) {
-    IN_MEMORY("InMemory"),
-    ROOM_DB("RoomDB");
+import javax.inject.Qualifier
 
-    companion object {
-        const val IN_MEMORY = "InMemory"
-        const val ROOM_DB = "RoomDB"
-    }
-}
+@Qualifier
+annotation class RoomDB
+
+@Qualifier
+annotation class InMemory

@@ -1,28 +1,34 @@
 package woowacourse.shopping.di
 
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 
+typealias DependencyType = KClassifier
+typealias AnnotationQualifier = KAnnotatedElement?
+typealias ImplementationClass<T> = KClass<T>
+typealias DependencyInstance = Any
+
 interface DependencyContainer {
-    fun <T : Any> getInstance(
-        kClassifier: KClassifier,
-        qualifier: String? = null,
+    fun <T : DependencyInstance> getInstance(
+        dependency: DependencyType,
+        qualifier: AnnotationQualifier = null,
     ): T?
 
     fun <T : Any> getImplement(
-        kClassifier: KClassifier,
-        qualifier: String? = null,
-    ): KClass<T>?
+        dependency: DependencyType,
+        qualifier: AnnotationQualifier = null,
+    ): ImplementationClass<T>?
 
     fun <T : Any> setDependency(
-        kClassifier: KClassifier,
-        kClass: KClass<T>,
-        qualifier: String? = null,
+        dependency: DependencyType,
+        implementation: ImplementationClass<T>,
+        qualifier: AnnotationQualifier = null,
     )
 
     fun setInstance(
-        kClassifier: KClassifier,
-        instance: Any,
-        qualifier: String? = null,
+        dependency: DependencyType,
+        instance: DependencyInstance,
+        qualifier: AnnotationQualifier = null,
     )
 }

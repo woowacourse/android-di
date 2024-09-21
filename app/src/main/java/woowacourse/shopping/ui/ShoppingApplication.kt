@@ -1,6 +1,8 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
+import woowacourse.shopping.data.InMemory
+import woowacourse.shopping.data.RoomDB
 import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
@@ -10,9 +12,6 @@ import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.data.RepositoryQualifier.ROOM_DB
-import woowacourse.shopping.data.RepositoryQualifier.IN_MEMORY
-
 
 class ShoppingApplication : Application() {
     val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
@@ -22,12 +21,12 @@ class ShoppingApplication : Application() {
         defaultDependencyContainer.setDependency(
             ProductRepository::class,
             DefaultProductRepository::class,
-            IN_MEMORY.name,
+            InMemory::class,
         )
         defaultDependencyContainer.setDependency(
             CartRepository::class,
             DefaultCartRepository::class,
-            ROOM_DB.name,
+            RoomDB::class,
         )
         defaultDependencyContainer.setDependency(
             CartProductDao::class,

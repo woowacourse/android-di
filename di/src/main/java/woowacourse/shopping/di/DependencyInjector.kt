@@ -1,12 +1,12 @@
 package woowacourse.shopping.di
 
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -22,25 +22,24 @@ object DependencyInjector {
         dependencyContainer = container
     }
 
-    fun <T : Any> createInstanceFromConstructor(
-        modelClass: Class<T>,
-        qualifier: String? = null
+    fun <T : Any> createInstance(
+        modelClass: KClass<T>,
+        qualifier: AnnotationQualifier = null
     ): T {
-        val kClass: KClass<T> = modelClass.kotlin
-        val targetInstance: T = checkClassTypeThenGetInstance(kClass, qualifier)
-        setDependencyOfProperties(kClass, targetInstance)
-        dependencyContainer.setInstance(kClass, targetInstance, qualifier)
+        val targetInstance: T = checkClassTypeThenGetInstance(modelClass, qualifier)
+        setDependencyOfProperties(modelClass, targetInstance)
+        dependencyContainer.setInstance(modelClass, targetInstance, qualifier)
         return targetInstance
     }
 
     private fun <T : Any> checkClassTypeThenGetInstance(
-        kClass: KClass<T>,
-        qualifier: String?,
+        modelClass: KClass<T>,
+        qualifier: AnnotationQualifier,
     ): T {
-        val objectInstance: T? = kClass.objectInstance
-        val primaryConstructor: KFunction<T>? = kClass.primaryConstructor
+        val objectInstance: T? = modelClass.objectInstance
+        val primaryConstructor: KFunction<T>? = modelClass.primaryConstructor
         return if (primaryConstructor == null) {
-            getInstanceFromDependencyContainer(kClass, qualifier)
+            getInstanceFromDependencyContainer(modelClass, qualifier)
         } else if (objectInstance != null) {
             objectInstance
         } else {
@@ -50,18 +49,18 @@ object DependencyInjector {
     }
 
     private fun <T : Any> getInstanceFromDependencyContainer(
-        kClass: KClass<T>,
-        qualifier: String?,
+        modelClass: KClass<T>,
+        qualifier: AnnotationQualifier,
     ): T {
-        val instanceFromContainer = dependencyContainer.getInstance<T>(kClass, qualifier)
+        val instanceFromContainer = dependencyContainer.getInstance<T>(modelClass, qualifier)
         return if (instanceFromContainer != null) {
             instanceFromContainer
         } else {
             val implementKClass =
-                requireNotNull(dependencyContainer.getImplement<T>(kClass, qualifier)) {
-                    "$ERROR_DEPENDENCY_NOT_FOUND $kClass to $qualifier"
+                requireNotNull(dependencyContainer.getImplement<T>(modelClass, qualifier)) {
+                    "$ERROR_DEPENDENCY_NOT_FOUND $modelClass to $qualifier"
                 }
-            createInstanceFromConstructor(implementKClass.java, qualifier)
+            createInstance(implementKClass, qualifier)
         }
     }
 
@@ -71,25 +70,27 @@ object DependencyInjector {
     }
 
     private fun getDependencyOfParameters(parameters: List<KParameter>): Array<Any> {
-        return parameters.map { param ->
-            val classifier = param.type.classifier as KClass<*>
-            if (param.hasAnnotation<ParamInject>()) {
-                createInstanceFromConstructor(classifier.java)
+        return parameters.map { parameter ->
+            val classifier = parameter.type.classifier as KClass<*>
+            if (parameter.hasAnnotation<ParamInject>()) {
+                createInstance(classifier)
             }
         }.toTypedArray()
     }
 
     private fun <T : Any> setDependencyOfProperties(
-        kClass: KClass<T>,
+        modelClass: KClass<T>,
         targetInstance: T,
     ) {
-        kClass.declaredMemberProperties.forEach { kProperty ->
-            if (checkNeedsDependencyInject(kProperty)) {
-                kProperty.isAccessible = true
-                val classifier = kProperty.returnType.classifier as KClass<*>
-                val qualifier: String? = kProperty.findAnnotation<Qualifier>()?.name
-                val dependency: Any = createInstanceFromConstructor(classifier.java, qualifier)
-                (kProperty as KMutableProperty<*>).setter.call(targetInstance, dependency)
+        modelClass.declaredMemberProperties.forEach { property ->
+            if (checkNeedsDependencyInject(property)) {
+                property.isAccessible = true
+                val classifier = property.returnType.classifier as KClass<*>
+                val qualifier: Annotation? =
+                    property.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
+                val dependency: DependencyInstance =
+                    createInstance(classifier, qualifier?.annotationClass)
+                (property as KMutableProperty<*>).setter.call(targetInstance, dependency)
             }
         }
     }
