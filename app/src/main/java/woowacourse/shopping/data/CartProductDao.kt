@@ -13,5 +13,5 @@ interface CartProductDao {
     suspend fun insert(cartProduct: CartProductEntity)
 
     @Query("DELETE FROM cart_products WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Int)
 }
