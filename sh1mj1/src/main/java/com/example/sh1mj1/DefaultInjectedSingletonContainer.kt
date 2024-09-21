@@ -20,20 +20,32 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
                 clazz = component.injectedClass,
                 qualifier = component.qualifier,
             )
+        check(!cachedComponents.containsKey(componentKey)) { "There is already a component for $componentKey" }
         cachedComponents[componentKey] = component
     }
 
-    override fun find(clazz: KClass<*>): Any? =
-        components.find {
+    override fun find(clazz: KClass<*>): Any? {
+        val allComponentsQualifier = components.map { it.qualifier }
+        // 중복된 value가 있는지 확인
+        val duplicateValues =
+            allComponentsQualifier
+                .filterNotNull() // null 제거 (만약 qualifier가 null일 수 있으면)
+                .groupBy { it.value } // value 기준으로 그룹핑
+                .filter { it.value.size > 1 } // 그룹의 크기가 1보다 큰 경우만 필터링
+                .keys // 중복된 value 값들
+        check(duplicateValues.isEmpty()) { "There are duplicated Qualifier value: $duplicateValues" }
+
+        return components.find {
             clazz.isSuperclassOf(it.injectedClass)
         }?.instance
+    }
 
     override fun find(
         clazz: KClass<*>,
-        qualifier: Qualifier,
+        qualifier: Qualifier?,
     ): Any? =
         components.find {
-            clazz.isSuperclassOf(it.injectedClass) && qualifier.value == it.qualifier?.value
+            clazz.isSuperclassOf(it.injectedClass) && qualifier?.value == it.qualifier?.value
         }?.instance
 
     override fun findWithKey(componentKey: ComponentKey): Any {

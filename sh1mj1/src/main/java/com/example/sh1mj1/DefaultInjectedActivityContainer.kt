@@ -19,12 +19,10 @@ object DefaultInjectedActivityContainer : InjectedActivityContainer {
         clazz: KClass<*>,
         qualifier: Qualifier,
     ): Any? =
-        components.find {
-            clazz.isSuperclassOf(it.injectedClass) &&
-                it::class.annotations.find { it.annotationClass == qualifier.annotationClass } != null
-        }?.instance?.let {
-            DefaultInjectedSingletonContainer.find(clazz)
-        }
+        components.find { component ->
+            clazz.isSuperclassOf(component.injectedClass) &&
+                component::class.annotations.find { it.annotationClass == qualifier.annotationClass } != null
+        }?.instance
 
     override fun clear() {
         components.clear()
