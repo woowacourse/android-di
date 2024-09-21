@@ -20,14 +20,6 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
                 qualifier = component.qualifier,
             )
         cachedComponents[componentKey] = component
-
-        components.forEach { component ->
-            println("component: ${component.injectedClass}")
-        }
-
-        cachedComponents.forEach { (key, value) ->
-            println("key: $key, value: $value")
-        }
     }
 
     override fun find(clazz: KClass<*>): Any? =
@@ -48,9 +40,11 @@ object DefaultInjectedSingletonContainer : InjectedSingletonContainer {
         val foundInstance =
             foundComponent?.instance ?: throw IllegalStateException("There is no component for $componentKey")
 
-        foundComponent.injectableProperties().forEach { kProperty ->
-            println("kProperty: $kProperty")
+        if (foundComponent.qualifier?.generate == true) {
+            return foundInstance
+        }
 
+        foundComponent.injectableProperties().forEach { kProperty ->
             val dependency =
                 findWithKey(
                     ComponentKey(

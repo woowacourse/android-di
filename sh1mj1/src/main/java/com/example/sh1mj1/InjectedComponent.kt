@@ -15,14 +15,10 @@ sealed class InjectedComponent {
         override val instance: Any? = null,
         override val qualifier: Qualifier? = null,
     ) : InjectedComponent() {
-        fun injectableProperties(): List<KProperty1<out Any, *>> {
-            if (qualifier?.generate == true) {
-                return emptyList()
-            }
-            return instance!!::class.memberProperties.filter {
+        fun injectableProperties(): List<KProperty1<out Any, *>> =
+            instance!!::class.memberProperties.filter {
                 it.hasAnnotation<Inject>()
             }
-        }
     }
 
     data class InjectedActivityComponent(
