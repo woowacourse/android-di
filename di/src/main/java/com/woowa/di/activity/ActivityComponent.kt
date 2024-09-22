@@ -34,6 +34,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         context = null
+        instances.remove(clazz)
         owner.lifecycle.removeObserver(this)
     }
 

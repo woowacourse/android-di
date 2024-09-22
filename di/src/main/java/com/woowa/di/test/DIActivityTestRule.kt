@@ -39,9 +39,12 @@ class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class
     override fun after() {
         super.after()
         applicationLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        viewModelStore.clear()
-        controller.destroy()
+        if (activity.lifecycle.currentState != Lifecycle.State.DESTROYED){
+            controller.destroy()
+        }
     }
 
     fun getActivity(): T = activity
+
+    fun getController():ActivityController<T> = controller
 }
