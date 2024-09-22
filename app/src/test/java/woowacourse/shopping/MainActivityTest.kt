@@ -3,6 +3,7 @@ package woowacourse.shopping
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +34,7 @@ class MainActivityTest {
                 .get()
 
         // then
-        assertThat(activity).isNotNull()
+        activity.shouldNotBeNull()
     }
 
     @Test
@@ -47,6 +48,6 @@ class MainActivityTest {
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        viewModel.shouldNotBeNull()
     }
 }
