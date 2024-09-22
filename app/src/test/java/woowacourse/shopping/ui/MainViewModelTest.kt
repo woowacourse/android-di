@@ -2,19 +2,24 @@ package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.ProductFixture
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.FakeCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val coroutinesTestRule = CoroutinesTestRule()
 
     private lateinit var vm: MainViewModel
     private lateinit var productRepository: ProductRepository
@@ -22,13 +27,13 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
-        productRepository = DefaultProductRepository()
+        productRepository = InMemoryProductRepository()
         cartRepository = FakeCartRepository()
         vm =
             MainViewModel(
                 productRepository,
-                cartRepository,
             )
+        vm.cartRepository = cartRepository
     }
 
     @Test

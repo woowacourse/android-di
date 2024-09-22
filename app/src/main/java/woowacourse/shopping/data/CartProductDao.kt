@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import android.content.Context
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -14,4 +15,8 @@ interface CartProductDao {
 
     @Query("DELETE FROM cart_products WHERE id = :id")
     suspend fun delete(id: Long)
+
+    companion object {
+        fun instance(context: Context): CartProductDao = ShoppingDatabase.instance(context).cartProductDao()
+    }
 }

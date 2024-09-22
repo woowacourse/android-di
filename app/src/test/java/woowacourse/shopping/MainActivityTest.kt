@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
@@ -64,7 +64,7 @@ class MainActivityTest {
         productRepositoryField.isAccessible = true
         val productRepository = productRepositoryField.get(viewModel) as ProductRepository
 
-        assertThat(productRepository).isInstanceOf(DefaultProductRepository::class.java)
+        assertThat(productRepository).isInstanceOf(InMemoryProductRepository::class.java)
     }
 
     @Test
@@ -84,6 +84,6 @@ class MainActivityTest {
         cartRepositoryField.isAccessible = true
         val cartRepository = cartRepositoryField.get(viewModel) as ProductRepository
 
-        assertThat(cartRepository).isInstanceOf(DefaultProductRepository::class.java)
+        assertThat(cartRepository).isInstanceOf(InMemoryProductRepository::class.java)
     }
 }

@@ -1,18 +1,28 @@
 package woowacourse.shopping.data
 
+import com.example.sh1mj1.Inject
+import com.example.sh1mj1.Qualifier
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
 class DefaultCartRepository : CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf()
+    @Inject
+    @Qualifier("RoomDao", generate = true)
+    lateinit var dao: CartProductDao
 
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+    override suspend fun addCartProduct(product: Product) {
+        dao.insert(CartProductEntity(product.name, product.price, product.imageUrl))
     }
 
-    override fun allCartProducts(): List<Product> = cartProducts.toList()
+    override suspend fun allCartProducts(): List<Product> = dao.getAll().toData()
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        dao.delete(id)
     }
 }
+
+fun List<CartProductEntity>.toData(): List<Product> =
+    map {
+        Product(it.id, it.name, it.price, it.imageUrl, it.createdAt)
+    }
+
+private const val TAG = "DefaultCartRepository"

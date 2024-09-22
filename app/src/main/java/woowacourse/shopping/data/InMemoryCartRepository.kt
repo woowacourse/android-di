@@ -2,7 +2,7 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository(
+class InMemoryCartRepository(
     private val cartProducts: MutableList<Product> = mutableListOf(),
 ) : CartRepository {
     constructor(vararg products: Product) : this(products.toMutableList())
