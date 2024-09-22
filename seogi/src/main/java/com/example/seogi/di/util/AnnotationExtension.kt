@@ -17,6 +17,4 @@ internal fun KClass<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull
 
 internal fun KFunction<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
-internal fun KClass<*>.hasSingleToneAnnotation() = annotations.any { it.annotationClass.hasAnnotation<SingleTone>() }
-
-internal fun KFunction<*>.hasSingleToneAnnotation() = annotations.contains(SingleTone())
+fun KFunction<*>.hasSingleToneAnnotation() = annotations.contains(SingleTone())

@@ -1,5 +1,6 @@
 package com.example.seogi.di
 
+import android.content.Context
 import com.example.seogi.di.annotation.FieldInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
 import com.example.seogi.di.util.hasSingleToneAnnotation
@@ -17,6 +18,7 @@ import kotlin.reflect.jvm.jvmErasure
 @Suppress("UNCHECKED_CAST")
 class DiContainer(
     private val diModule: Module,
+    context: Context,
 ) {
     private val dependencies: MutableMap<DependencyKey, Any> = mutableMapOf()
     private val functions: Collection<KFunction<*>> by lazy {
@@ -24,6 +26,8 @@ class DiContainer(
     }
 
     init {
+        dependencies[DependencyKey(Context::class, null)] = context
+
         functions.forEach {
             addDependency(it.returnType.jvmErasure, it.getAnnotationIncludeQualifier())
         }

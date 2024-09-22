@@ -5,18 +5,15 @@ import com.example.seogi.di.DiContainer
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.DiModule
 
-class ShoppingApplication : DiApplication(DiModule) {
+class ShoppingApplication : DiApplication() {
     override fun onCreate() {
         super.onCreate()
         appDatabase = ShoppingDatabase.getInstance(this)
-        diContainer = DiContainer(DiModule)
+        diContainer = DiContainer(DiModule, this)
     }
 
     companion object {
         lateinit var appDatabase: ShoppingDatabase
-            private set
-
-        lateinit var diContainer: DiContainer
             private set
     }
 }
