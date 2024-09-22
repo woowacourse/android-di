@@ -12,7 +12,7 @@ class ProductViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
         binding.root.setOnClickListener {
-            onClickProduct(binding.item!!)
+            onClickProduct(binding.item ?: return@setOnClickListener)
         }
     }
 

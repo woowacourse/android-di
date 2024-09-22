@@ -13,7 +13,7 @@ class CartProductViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
         binding.ivCartProductDelete.setOnClickListener {
-            onClickDelete(binding.item!!.id)
+            onClickDelete(binding.item?.id ?: return@setOnClickListener)
         }
     }
 
