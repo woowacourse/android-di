@@ -40,57 +40,71 @@ class RetainActivityLifecycleTest {
                 .setup()
 
         // then
+        // TODO: 프로퍼티에 접근했을 때 인스턴스가 할당되지 않았다는 예외를 던지는 UninitializedPropertyAccessException 를 던지지 않는다는 assertion 만으로 충분할까?
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-//
+
+    @Test
+    fun `액티비티가 onCreate 되었을 때 dateFormatter 의 인스턴스는 존재한다`() {
+        // given
+        val controller = Robolectric
+            .buildActivity(StubActivity::class.java)
+
+        // when
+        controller.create()
+
+        // then
+        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
+    }
+
+
+    @Test
+    fun `액티비티가 pause 되었을 때 dateFormatter 의 인스턴스를 존재한다`() {
+        // given
+        val controller = Robolectric
+            .buildActivity(StubActivity::class.java)
+        controller.setup()
+
+        // when
+        controller.pause()
+
+        // then
+        shouldNotThrow<Exception> { controller.get().dateFormatter }
+        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
+    }
+
+
+    @Test
+    fun `액티비티가 stop 되었을 때 dateFormatter 의 인스턴스는 존재한다`() {
+        // given
+        val controller = Robolectric
+            .buildActivity(StubActivity::class.java)
+        controller.setup()
+
+        // when
+        controller.stop()
+
+        // then
+        shouldNotThrow<Exception> { controller.get().dateFormatter }
+        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
+    }
+
+    // TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 의 인스턴스는 존재한다
 //    @Test
-//    fun `액티비티가 onCreate 되었을 때 dateFormatter 의 인스턴스는 존재한다`() {
+//    fun `액티비티의 구성 변경이 일어나도 dateFormatter 의 인스턴스는 존재한다`() {
 //        // given
 //        val controller = Robolectric
 //            .buildActivity(StubActivity::class.java)
-//            .setup()
-//
-//        val context = controller.get()
-//        val dateFormatter = StubDateFormatter(context)
-//
+//        controller.setup()
 //
 //        // when
-//
-//        // TODO: 어디선가에서 dateFormatter를 주입해준다.
-//        controller.get().dateFormatter = dateFormatter
-//
+//        controller.configurationChange()
 //
 //        // then
-//
+//        shouldNotThrow<Exception> { controller.get().dateFormatter }
+//        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
 //    }
-//
-//
-//    @Test
-//    fun `DateFormatter 는 액티비티 라이프 사이클에 따른다`() {
-//        // given
-//        val controller = Robolectric
-//            .buildActivity(StubActivity::class.java)
-//            .setup()
-//
-//        // baseContext?
-//        val context = controller.get()
-//        val dateFormatter = StubDateFormatter(context)
-//        controller.get().dateFormatter = StubDateFormatter(context)
-//
-//        // when
-//        controller.get().dateFormatter.isCleanedUp = false
-//
-//        // // Activity가 Created, Started, Resumed된 상태일 때 의존성 주입 필요 마킹된 필드에 인스턴스가 존재한다.
-//
-//
-//        //// Activity가 Destroyed된 상태일 때 의존성 주입된 필드 인스턴스가 제거된다.
-//
-//
-//        // then
-//
-//    }
-//
 //
 }
 
