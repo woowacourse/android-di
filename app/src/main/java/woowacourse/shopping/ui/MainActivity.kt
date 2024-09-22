@@ -4,32 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import woowa.shopping.di.libs.inject.inject
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import woowa.shopping.di.libs.android.injectViewModel
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<MainViewModel> {
-        val productRepository by inject<ProductRepository>()
-        val cartRepository by inject<CartRepository>()
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MainViewModel(
-                    productRepository,
-                    cartRepository
-                ) as T
-            }
-        }
-    }
+    private val viewModel by injectViewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupView()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cart_menu, menu)
@@ -68,12 +54,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupProductList() {
-        viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
+        val adapter =
+            ProductAdapter(
+                onClickProduct = viewModel::addCartProduct,
             )
-            binding.rvProducts.adapter = adapter
+        binding.rvProducts.adapter = adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.products.collect {
+                    adapter.submitList(it)
+                }
+            }
         }
         viewModel.onProductAdded.observe(this) {
             if (!it) return@observe

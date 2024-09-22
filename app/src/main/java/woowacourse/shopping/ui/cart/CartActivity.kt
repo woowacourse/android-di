@@ -2,27 +2,18 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import woowa.shopping.di.libs.inject.inject
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import woowa.shopping.di.libs.android.injectViewModel
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-
-    private val viewModel by viewModels<CartViewModel> {
-        val cartRepository by inject<CartRepository>()
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return CartViewModel(cartRepository) as T
-            }
-        }
-    }
+    private val viewModel by injectViewModel<CartViewModel>()
 
     private lateinit var dateFormatter: DateFormatter
 
@@ -65,13 +56,18 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
+        val adapter =
+            CartProductAdapter(
+                onClickDelete = viewModel::deleteCartProduct,
                 dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
             )
-            binding.rvCartProducts.adapter = adapter
+        binding.rvCartProducts.adapter = adapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.cartProducts.collect {
+                    adapter.submitList(it)
+                }
+            }
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe

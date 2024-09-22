@@ -1,15 +1,17 @@
 package woowa.shopping.di.libs.inject
 
+import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.container.Containers
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
+import woowa.shopping.di.libs.factory.Lifecycle
+import woowa.shopping.di.libs.qualify.Qualifier
 
-class InjectDelegate<T : Any>(private val clazz: KClass<T>) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return Containers.get(clazz)
+// TODO : 추후 Scope 기반으로 변경 (ComponentCallbacks, ComponentActivity, Fragment, ViewModel)
+inline fun <reified T : Any> inject(
+    qualifier: Qualifier? = null,
+    lifecycle: Lifecycle = Lifecycle.SINGLETON,
+): Lazy<T> {
+    return lazy {
+        @OptIn(InternalApi::class)
+        Containers.resolve(T::class, qualifier, lifecycle)
     }
-}
-
-inline fun <reified T : Any> inject(): InjectDelegate<T> {
-    return InjectDelegate(T::class)
 }
