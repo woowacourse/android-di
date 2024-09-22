@@ -35,7 +35,7 @@ abstract class ComponentManager2 {
                     ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
                 val qualifier = property?.kotlinProperty?.findQualifierClassOrNull()
 
-                require(!isAlreadyCreatedDI(type, qualifier)) {
+                require(!isAlreadyCreatedDI(type, qualifier) || findComponentType(type, qualifier) == targetClass) {
                     "한 객체는 하나의 ${targetClass} ${type.simpleName}에 대해서만 생성할 수 있습니다."
                 }
 
@@ -96,14 +96,19 @@ abstract class ComponentManager2 {
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any? {
-        val componentType = if (qualifier != null) {
-            components[type.simpleName + qualifier.simpleName]
-        } else {
-            components[type.simpleName]
-        } ?: return getParentDIInstance(type, qualifier)
+        val componentType = findComponentType(type,qualifier) ?: return getParentDIInstance(type, qualifier)
 
         return getComponentInstance(componentType).getDIInstance(type, qualifier)
 
+    }
+
+    private fun findComponentType(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?
+    ) = if (qualifier != null) {
+        components[type.simpleName + qualifier.simpleName]
+    } else {
+        components[type.simpleName]
     }
 
     private fun getParentDIInstance(

@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.woowa.di.fixture.TestActivity
 import com.woowa.di.fixture.TestApplication
 import com.woowa.di.fixture.component.ComponentTestViewModel
+import com.woowa.di.fixture.component.ComponentTestViewModel2
 import com.woowa.di.fixture.component.FailComponentTestViewModel
 import com.woowa.di.test.DIActivityTestRule
 import com.woowa.di.viewmodel.getDIViewModelFactory
@@ -86,8 +87,8 @@ class ComponentTest {
         assertThrows<IllegalArgumentException> {
             ViewModelProvider(
                 activity,
-                getDIViewModelFactory<ComponentTestViewModel>(),
-            )[ComponentTestViewModel::class.java]
+                getDIViewModelFactory<ComponentTestViewModel2>(),
+            )[ComponentTestViewModel2::class.java]
         }
     }
 }
