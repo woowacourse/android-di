@@ -67,7 +67,8 @@ class DependencyInjector(
                 )
 
             val dependency = foundDependency(componentKey)
-            (field as KMutableProperty<*>).setter.call(viewModel, dependency)
+            val kMutableProperty = field as? KMutableProperty<*> ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
+            kMutableProperty.setter.call(viewModel, dependency)
         }
     }
 }

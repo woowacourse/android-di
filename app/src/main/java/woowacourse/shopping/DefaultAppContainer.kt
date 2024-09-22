@@ -27,7 +27,10 @@ class DefaultAppContainer(
         }
     }
 
-    override fun find(clazz: KClass<*>, qualifier: Qualifier?): Any = find(ComponentKey.of(clazz, qualifier))
+    override fun find(
+        clazz: KClass<*>,
+        qualifier: Qualifier?,
+    ): Any = find(ComponentKey.of(clazz, qualifier))
 
     override fun find(componentKey: ComponentKey): Any = singletonComponentContainer.find(componentKey)
 

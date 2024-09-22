@@ -2,6 +2,7 @@ package com.example.sh1mj1
 
 import kotlin.reflect.KClass
 
+@Suppress("DataClassPrivateConstructor")
 data class ComponentKey private constructor(
     val clazz: KClass<*>,
     val qualifier: Qualifier? = null,
@@ -20,24 +21,3 @@ data class ComponentKey private constructor(
         }
     }
 }
-
-/*
-data class ComponentKey private constructor(
-    val clazz: KClass<*>,
-    val qualifier: Qualifier? = null
-) {
-    companion object {
-        // 캐시를 위한 맵
-        private val cache = mutableMapOf<Pair<KClass<*>, Qualifier?>, ComponentKey>()
-
-        // 인스턴스를 반환하는 함수
-        fun getInstance(clazz: KClass<*>, qualifier: Qualifier? = null): ComponentKey {
-            val key = clazz to qualifier
-            return cache.getOrPut(key) {
-                ComponentKey(clazz, qualifier)
-            }
-        }
-    }
-}
-
- */
