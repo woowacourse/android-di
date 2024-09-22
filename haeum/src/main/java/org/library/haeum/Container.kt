@@ -2,10 +2,12 @@ package org.library.haeum
 
 import android.content.Context
 import javax.inject.Qualifier
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
@@ -49,8 +51,9 @@ class Container(
             targetField?.isAccessible = true
             targetField?.set(
                 targetInstance,
-                ModuleInjector.container.getKPropertyInstance(
-                    targetField.kotlinProperty ?: throw IllegalArgumentException("해당 파라미터 타입에 맞는 인스턴스를 찾을 수 없습니다: $targetProperty"),
+                container?.getKPropertyInstance(
+                    targetField.kotlinProperty
+                        ?: throw IllegalArgumentException("해당 파라미터 타입에 맞는 인스턴스를 찾을 수 없습니다: $targetProperty"),
                 ),
             )
         }
@@ -94,11 +97,13 @@ class Container(
             it.annotationClass.hasAnnotation<Qualifier>()
         }
         val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
-        val function = returnTypes[type] ?: throw IllegalArgumentException("해당 타입에 맞는 함수를 찾을 수 없습니다: $type.")
+        val function =
+            returnTypes[type] ?: throw IllegalArgumentException("해당 타입에 맞는 함수를 찾을 수 없습니다: $type.")
         val parameterValues = function.parameters.associateWith { parameter ->
             createInstance(parameter.type, parameter.annotations)
         }
-        val instance = function.callBy(parameterValues) ?: throw IllegalArgumentException("인스턴스 생성에 실패했습니다: ${function.name}")
+        val instance = function.callBy(parameterValues)
+            ?: throw IllegalArgumentException("인스턴스 생성에 실패했습니다: ${function.name}")
 
         types[type] = instance
         return instance
@@ -111,5 +116,23 @@ class Container(
             }
 
         return contextAnnotation != null && kType.classifier == Context::class
+    }
+
+    companion object {
+        var container: Container? = null
+
+        fun initializeModuleInjector(
+            context: Context,
+            vararg modules: KClass<out Any>
+        ) {
+            if (container != null) return
+
+            val instances =
+                modules.filter { it.hasAnnotation<Module>() }.map {
+                    it.objectInstance ?: it.createInstance()
+                }
+
+            container = Container(context, instances)
+        }
     }
 }

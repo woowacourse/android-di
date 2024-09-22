@@ -10,17 +10,17 @@ import kotlin.reflect.full.primaryConstructor
 
 class InjectViewModelFactory(
     private val viewModelClass: KClass<out ViewModel>,
-    private val container: Container = ModuleInjector.container,
+    private val container: Container? = Container.container,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructors = viewModelClass.primaryConstructor ?: return modelClass as T
         val parameters = constructors.parameters
         val arguments =
             parameters.map {
-                container.getKParameterInstance(it) as KParameter
+                container?.getKParameterInstance(it) as KParameter
             }.toTypedArray()
         val viewModel = constructors.call(*arguments)
-        container.injectTo(viewModel)
+        container?.injectTo(viewModel)
         return viewModel as T
     }
 }
