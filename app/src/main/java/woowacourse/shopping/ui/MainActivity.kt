@@ -13,7 +13,7 @@ import woowacourse.shopping.util.injectedViewModels
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by injectedViewModels()
+    private val viewModel: MainViewModel by injectedViewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

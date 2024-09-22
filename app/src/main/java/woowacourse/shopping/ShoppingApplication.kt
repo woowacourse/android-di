@@ -1,23 +1,36 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.example.di.DependencyModule
+import com.example.di.Injector
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.DataBaseCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.di.DependencyProvider
-import woowacourse.shopping.di.RepositoryModule
+import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingApplication : Application() {
-    lateinit var repositoryModule: DependencyProvider
+    lateinit var injector: Injector
         private set
 
     override fun onCreate() {
         super.onCreate()
-        repositoryModule =
-            RepositoryModule(
-                CartRepository::class to CartRepositoryImpl::class,
-                ProductRepository::class to ProductRepositoryImpl::class,
-            )
+        val db = ShoppingDatabase.getInstance(this)
+
+        val dependencyModule =
+            DependencyModule().apply {
+                addDeferredDependency(
+                    CartRepository::class to DataBaseCartRepository::class,
+                    CartRepository::class to InMemoryCartRepository::class,
+                    ProductRepository::class to ProductRepositoryImpl::class,
+                )
+
+                addInstanceDependency(
+                    CartProductDao::class to db.cartProductDao(),
+                )
+            }
+        injector = Injector(dependencyModule)
     }
 }

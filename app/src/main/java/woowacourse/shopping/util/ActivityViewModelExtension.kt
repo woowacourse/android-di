@@ -6,24 +6,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.di.ViewModelFactory
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
-        ViewModelFactory(
-            (application as ShoppingApplication).repositoryModule,
-        )
+        viewModelFactory {
+            initializer {
+                (application as ShoppingApplication).injector.inject(VM::class)
+            }
+        }
     },
 ): Lazy<VM> {
-    val factoryPromise = factoryProducer ?: { defaultViewModelProviderFactory }
-
     return ViewModelLazy(
         VM::class,
         { viewModelStore },
-        factoryPromise,
+        factoryProducer ?: { defaultViewModelProviderFactory },
         { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
     )
 }

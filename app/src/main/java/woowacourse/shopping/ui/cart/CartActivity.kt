@@ -56,7 +56,7 @@ class CartActivity : AppCompatActivity() {
         viewModel.cartProducts.observe(this) {
             val adapter =
                 CartProductAdapter(
-                    items = it,
+                    data = it,
                     dateFormatter = dateFormatter,
                     onClickDelete = viewModel::deleteCartProduct,
                 )
