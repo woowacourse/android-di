@@ -15,6 +15,12 @@
 - [x] 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
 - [x] Qualifier 구현
 - [x] DI 라이브러리를 모듈로 분리.
+- [ ] DateFormatter 의존성 주입
+- [ ] 생명주기에 맞게 주입
+  - [ ] CartRepository는 앱 전체 LifeCycle 동안 유지
+  - [ ] ProductRepository는 ViewModel LifeCycle 동안 유지
+  - [ ] DateFormatter는 Activity LifeCycle 동안 유지
+- [ ] DI 라이브러리가 작동하는지 테스트를 작성
 
 ### 선택 요구 사항
 - [ ] TDD로 DI 구현
