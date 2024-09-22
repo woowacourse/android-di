@@ -2,43 +2,64 @@ package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.FakeProductRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private lateinit var viewModel: MainViewModel
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
+    private val testDispatcher = StandardTestDispatcher()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
-        productRepository = FakeProductRepository()
-        cartRepository = FakeCartRepository()
-        viewModel = MainViewModel(productRepository, cartRepository)
+        Dispatchers.setMain(testDispatcher)
+        viewModel = MainViewModel()
+        val clazz = viewModel::class
+
+        val productRepository = clazz.java.getDeclaredField("productRepository")
+        productRepository.isAccessible = true
+        productRepository.set(viewModel, FakeProductRepository())
+
+        val cartRepository = clazz.java.getDeclaredField("cartRepository")
+        cartRepository.isAccessible = true
+        cartRepository.set(viewModel, FakeCartRepository(System.currentTimeMillis()))
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `카트에 상품을 추가할 수 있다`() {
-        // given
-        val product = Product("Product1", 1000, "image1")
+    fun `카트에 상품을 추가할 수 있다`() =
+        runTest {
+            // given
+            val product = Product(1L, "Product1", 1000, "image1")
 
-        // when
-        viewModel.addCartProduct(product)
+            // when
+            viewModel.addCartProduct(product)
+            advanceUntilIdle()
 
-        // then
-        val productAdded = viewModel.onProductAdded.getOrAwaitValue()
-        assertThat(productAdded).isTrue()
-    }
+            // then
+            val productAdded = viewModel.onProductAdded.getOrAwaitValue()
+            assertThat(productAdded).isTrue()
+        }
 
     @Test
     fun `모든 상품을 가져올 수 있다`() {
@@ -49,9 +70,9 @@ class MainViewModelTest {
         val products = viewModel.products.getOrAwaitValue()
         assertThat(products).isEqualTo(
             listOf(
-                Product("Product1", 1000, "image1"),
-                Product("Product2", 2000, "image2"),
-                Product("Product3", 3000, "image3"),
+                Product(1, "Product1", 1000, "image1"),
+                Product(2, "Product2", 2000, "image2"),
+                Product(3, "Product3", 3000, "image3"),
             ),
         )
     }

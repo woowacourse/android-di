@@ -1,17 +1,25 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository : CartRepository {
-    private var products: List<Product> = emptyList()
+class FakeCartRepository(private val creationTime: Long) : CartRepository {
+    private var products: List<CartedProduct> = emptyList()
 
-    override fun addCartProduct(product: Product) {
-        products = products + product
+    override suspend fun addCartProduct(product: Product) {
+        products = products +
+            CartedProduct(
+                product.id,
+                product.name,
+                product.price,
+                product.imageUrl,
+                creationTime,
+            )
     }
 
-    override fun getAllCartProducts(): List<Product> = products
+    override suspend fun getAllCartProducts(): List<CartedProduct> = products
 
-    override fun deleteCartProduct(id: Int) {
-        products = products.filterIndexed { index, _ -> index != id }
+    override suspend fun deleteCartProduct(id: Long) {
+        products = products.filter { it.id != id }
     }
 }

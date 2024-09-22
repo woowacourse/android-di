@@ -2,13 +2,13 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
+import com.kmlibs.supplin.viewmodel.supplinViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.util.injectionViewModel
 import woowacourse.shopping.ui.BaseActivity
 
 class CartActivity : BaseActivity<ActivityCartBinding>(R.layout.activity_cart) {
-    private val viewModel: CartViewModel by lazy(::injectionViewModel)
+    private val viewModel: CartViewModel by supplinViewModel()
 
     private lateinit var dateFormatter: DateFormatter
 

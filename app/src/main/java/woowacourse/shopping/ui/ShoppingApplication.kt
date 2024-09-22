@@ -1,22 +1,20 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.di.AppModule
-import woowacourse.shopping.di.DefaultAppModule
-import woowacourse.shopping.di.InstanceContainer
+import com.kmlibs.supplin.Injector
+import woowacourse.shopping.di.DatabaseModule
+import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {
-    private val appModule: AppModule by lazy {
-        DefaultAppModule(appContext = this)
-    }
-
     override fun onCreate() {
         super.onCreate()
-        instanceContainer = InstanceContainer(listOf(appModule))
+        initializeInjector()
     }
 
-    companion object {
-        lateinit var instanceContainer: InstanceContainer
-            private set
+    private fun initializeInjector() {
+        Injector.init {
+            context(this@ShoppingApplication)
+            module(DatabaseModule::class, RepositoryModule::class)
+        }
     }
 }
