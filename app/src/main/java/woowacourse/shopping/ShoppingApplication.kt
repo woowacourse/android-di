@@ -12,8 +12,8 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.ui.cart.KoreaLocaleDateFormatter
 import woowacourse.shopping.ui.cart.DateFormatter
-import woowacourse.shopping.ui.cart.IDateFormatter
 
 class ShoppingApplication : DiApplication() {
 
@@ -36,7 +36,7 @@ class ShoppingApplication : DiApplication() {
         )
 
         activityContainer.add(
-            activityScopeComponent<IDateFormatter>(::DateFormatter),
+            activityScopeComponent<DateFormatter>(::KoreaLocaleDateFormatter),
         )
     }
 }

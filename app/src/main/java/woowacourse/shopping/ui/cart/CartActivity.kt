@@ -3,7 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.sh1mj1.component.activityscope.injectedSh1mj1ActivityComponent
+import com.example.sh1mj1.component.activityscope.injectActivityScopeComponent
 import com.example.sh1mj1.injectedSh1mj1ViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -12,8 +12,7 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by injectedSh1mj1ViewModel<CartViewModel>()
-
-    private val dateFormatter by injectedSh1mj1ActivityComponent<IDateFormatter>()
+    private val dateFormatter by injectActivityScopeComponent<DateFormatter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

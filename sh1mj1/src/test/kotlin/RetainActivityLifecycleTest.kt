@@ -1,12 +1,7 @@
 package com.example.sh1mj1
 
-import android.app.Activity
-import android.content.Context
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import com.example.sh1mj1.component.activityscope.activityScopeComponent
-import com.example.sh1mj1.component.activityscope.injectedSh1mj1ActivityComponent
+import com.example.sh1mj1.stub.StubApplication
+import com.example.sh1mj1.stub.StubActivity
 import io.kotest.assertions.throwables.shouldNotThrow
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,21 +10,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = Stub1Application::class)
+@Config(application = StubApplication::class)
 class RetainActivityLifecycleTest {
-    class StubActivity : Activity() {
-        val dateFormatter by injectedSh1mj1ActivityComponent<IDateFormatter>()
-    }
-
-    interface IDateFormatter
-
-    class StubDateFormatter(context: Context) : LifecycleEventObserver, IDateFormatter {
-        override fun onStateChanged(
-            source: LifecycleOwner,
-            event: Lifecycle.Event,
-        ) {
-        }
-    }
 
     @Test
     fun `액티비티가 setup 될 때 dateFormatter 를 외부에서 자동으로 주입해준다`() {
@@ -108,15 +90,3 @@ class RetainActivityLifecycleTest {
 //
 }
 
-class Stub1Application : DiApplication() {
-    override fun onCreate() {
-        super.onCreate()
-
-        activityContainer.add(
-            activityScopeComponent<RetainActivityLifecycleTest.IDateFormatter>(
-                instanceProvider = RetainActivityLifecycleTest::StubDateFormatter,
-                qualifier = null,
-            ),
-        )
-    }
-}
