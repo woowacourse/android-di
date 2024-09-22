@@ -16,10 +16,13 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
     ) {
         if (activity::class.hasAnnotation<DIActivity>() && activity is LifecycleOwner) {
             val component =
-                ActivityComponentManager.getComponentInstance(activity::class) as ActivityComponent<*>
+                ActivityComponentManager.createComponent(activity::class) as ActivityComponent<*>
             activity.lifecycle.addObserver(component)
         }
     }
+
+    override fun onActivityStarted(activity: Activity) {}
+
 
     override fun onActivityDestroyed(activity: Activity) {
         if (activity is LifecycleOwner && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
@@ -28,7 +31,6 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
         }
     }
 
-    override fun onActivityStarted(activity: Activity) {}
 
     override fun onActivityResumed(activity: Activity) {}
 

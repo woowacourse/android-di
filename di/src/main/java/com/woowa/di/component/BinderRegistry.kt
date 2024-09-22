@@ -33,7 +33,7 @@ class DIBuilder {
 
     fun binder(binder: KClass<*>) {
         val componentClazz =
-            binder.findAnnotation<InstallIn>()?.component2
+            binder.findAnnotation<InstallIn>()?.component
                 ?: error("InstallIn 어노테이션을 통해 component를 명시해주세요")
         when (componentClazz) {
             ViewModelComponent::class -> ViewModelComponentManager.registerBinder(binder)
