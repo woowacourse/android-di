@@ -11,7 +11,7 @@ inline fun <reified T : Any?> injectViewModelComponentFields(instance: T) {
         it.isAnnotationPresent(Inject::class.java)
     }.map { field ->
         val fieldInstance =
-            ViewModelComponentManager2.getDIInstance(
+            ViewModelComponentManager.getDIInstance(
                 field.type.kotlin,
                 field.kotlinProperty?.findQualifierClassOrNull(),
             )

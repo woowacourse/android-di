@@ -1,9 +1,9 @@
 package com.woowa.di.fixture.qualifier
 
 import com.woowa.di.component.InstallIn
-import com.woowa.di.singleton.SingletonComponent2
+import com.woowa.di.singleton.SingletonComponent
 
-@InstallIn(SingletonComponent2::class)
+@InstallIn(SingletonComponent::class)
 class QualifierTestBinder {
     @FakeQualifier
     fun provideQualifierFake(): TestQualifier = FakeImpl()

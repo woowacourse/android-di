@@ -1,66 +1,131 @@
 package com.woowa.di.component
 
+import android.util.Log
+import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.singleton.SingletonComponent
+import javax.inject.Inject
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.jvmErasure
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ParentManager(val manager: KClass<out ComponentManager>)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ParentManager2(val manager: KClass<out ComponentManager2>)
+import kotlin.reflect.jvm.kotlinProperty
 
 abstract class ComponentManager {
     private val _binderClazzs = mutableListOf<KClass<*>>()
     val binderClazzs: List<KClass<*>> get() = _binderClazzs.toList()
 
-    abstract fun getComponentInstance(binderType: KClass<*>): Component
+    private val binders
+        get() = _binderClazzs.map { it.createInstance() }
+
+    private val components: MutableMap<String, KClass<*>> = mutableMapOf()
+
+    fun createComponent(targetClass: KClass<*>): Component =
+        getComponentInstance(targetClass).apply {
+            targetClass.java.declaredFields.onEach { it.isAccessible = true }.filter { property ->
+                property.isAnnotationPresent(Inject::class.java)
+            }.forEach { property ->
+                val type =
+                    property?.kotlinProperty?.returnType?.jvmErasure
+                        ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
+                val qualifier = property?.kotlinProperty?.findQualifierClassOrNull()
+
+                require(!isAlreadyCreatedDI(type, qualifier) || findComponentType(type, qualifier) == targetClass) {
+                    "한 객체는 ${targetClass.simpleName} 에 대해서만 생성할 수 있습니다."
+                }
+
+                findKCallableOrNull(type, qualifier)?.let { callable ->
+                    registerDIInstance(callable.first, callable.second)
+                    qualifier?.let {
+                        components[type.simpleName + it.simpleName] = targetClass
+                        return@forEach
+                    }
+                    components[type.simpleName ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")] =
+                        targetClass
+                }
+            }
+
+            if (this is SingletonComponent<*>) {
+                binders.forEach { binder ->
+                    binder::class.declaredMemberFunctions.forEach {
+                        this.registerDIInstance(binder, it)
+                        val type = it.returnType.jvmErasure
+                        val qualifier = it.findQualifierClassOrNull()
+                        if (qualifier != null) {
+                            components[type.simpleName + qualifier.simpleName] = targetClass
+                        } else {
+                            components[
+                                type.simpleName
+                                    ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
+                            ] = targetClass
+                        }
+                    }
+                }
+            }
+        }
+
+    private fun findKCallableOrNull(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ): Pair<Any, KFunction<*>>? {
+        val binder =
+            binders.find {
+                it::class.declaredMemberFunctions.any {
+                    it.returnType.jvmErasure == type &&
+                        it.findQualifierClassOrNull() == qualifier
+                }
+            }
+                ?: return null
+        val kFunc =
+            binder::class.declaredMemberFunctions.find {
+                it.returnType.jvmErasure == type &&
+                    it.findQualifierClassOrNull() == qualifier
+            } ?: return null
+        return binder to kFunc
+    }
+
+    abstract fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component
 
     fun getDIInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any? {
-        val binderType = getBinderTypeOrNull(type) ?: return getParentDIInstance(type, qualifier)
-        return getComponentInstance(binderType).getDIInstance(type, qualifier)
+        val componentType = findComponentType(type, qualifier) ?: return getParentDIInstance(type, qualifier)
+
+        return getComponentInstance(componentType).getDIInstance(type, qualifier)
+    }
+
+    private fun findComponentType(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?,
+    ) = if (qualifier != null) {
+        components[type.simpleName + qualifier.simpleName]
+    } else {
+        components[type.simpleName]
     }
 
     private fun getParentDIInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
     ): Any? {
-        require(this::class.findAnnotation<ParentManager>()?.manager != NoParent::class) {
+        Log.d("테스트", "${components.keys}")
+        require(this::class.findAnnotation<ParentManager2>()?.manager != NoParent::class) {
             "${type.simpleName}이 binder에 정의되어 있지 않습니다."
         }
 
         val parentManager =
-            this::class.findAnnotation<ParentManager>()?.manager?.objectInstance
+            this::class.findAnnotation<ParentManager2>()?.manager?.objectInstance
                 ?: error("${this::class.simpleName}의 parentManager를 정의해주세요")
         return parentManager.getDIInstance(type, qualifier)
     }
 
-    /**
-     * Returns the instance you want to inject, or `null` if the instance does not exist
-     */
-    fun getBinderTypeOrNull(key: KClass<*>): KClass<*>? {
-        return _binderClazzs.find { it.declaredMemberFunctions.find { it.returnType.jvmErasure == key } != null }
-    }
+    private fun isAlreadyCreatedDI(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ) = components[(type.simpleName + qualifier?.simpleName)] != null || components[type.simpleName] != null
 
     fun <binder : Any> registerBinder(binderClazz: KClass<binder>) {
         _binderClazzs.add(binderClazz)
-    }
-}
-
-data object NoParent : ComponentManager() {
-    override fun getComponentInstance(binderType: KClass<*>): Component {
-        throw IllegalArgumentException()
-    }
-}
-
-data object NoParent2 : ComponentManager2() {
-    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2 {
-        throw IllegalArgumentException()
     }
 }

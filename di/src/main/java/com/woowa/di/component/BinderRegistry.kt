@@ -5,10 +5,10 @@ import android.content.Context
 import com.woowa.di.activity.ActivityComponent
 import com.woowa.di.activity.ActivityComponentManager
 import com.woowa.di.activity.ActivityLifecycleListener
-import com.woowa.di.singleton.SingletonComponent2
-import com.woowa.di.singleton.SingletonComponentManager2
-import com.woowa.di.viewmodel.ViewModelComponent2
-import com.woowa.di.viewmodel.ViewModelComponentManager2
+import com.woowa.di.singleton.SingletonComponent
+import com.woowa.di.singleton.SingletonComponentManager
+import com.woowa.di.viewmodel.ViewModelComponent
+import com.woowa.di.viewmodel.ViewModelComponentManager
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
@@ -27,7 +27,7 @@ class DIBuilder {
     }
 
     fun createSingleton(app: Application): DIBuilder {
-        SingletonComponentManager2.createComponent(app::class)
+        SingletonComponentManager.createComponent(app::class)
         return this
     }
 
@@ -36,9 +36,9 @@ class DIBuilder {
             binder.findAnnotation<InstallIn>()?.component2
                 ?: error("InstallIn 어노테이션을 통해 component를 명시해주세요")
         when (componentClazz) {
-            ViewModelComponent2::class -> ViewModelComponentManager2.registerBinder(binder)
+            ViewModelComponent::class -> ViewModelComponentManager.registerBinder(binder)
             ActivityComponent::class -> ActivityComponentManager.registerBinder(binder)
-            SingletonComponent2::class -> SingletonComponentManager2.registerBinder(binder)
+            SingletonComponent::class -> SingletonComponentManager.registerBinder(binder)
         }
     }
 

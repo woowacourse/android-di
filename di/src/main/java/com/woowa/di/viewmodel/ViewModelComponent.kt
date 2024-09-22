@@ -6,40 +6,19 @@ import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ViewModelComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
+class ViewModelComponent<T : Any> private constructor() :
     Component {
-        private val binderInstance: binder = binderClazz.createInstance()
-        private val binderKFunc: Map<String, KFunction<*>> = createProvider()
+        private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()
-
-        private fun createProvider(): Map<String, KFunction<*>> {
-            return binderClazz.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
-                .associate { kFunc ->
-                    val key =
-                        kFunc.returnType.jvmErasure.simpleName
-                            ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")
-
-                    kFunc.findQualifierClassOrNull()?.let { qualifier ->
-                        return@associate (key + qualifier.simpleName) to kFunc
-                    }
-
-                    return@associate key to kFunc
-                }
-        }
 
         override fun getDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ): Any? {
-            require(!isAlreadyCreatedDI(type, qualifier)) {
-                "한 객체는 하나의 viewModel에 대해서만 생성할 수 있습니다."
-            }
             qualifier?.let {
                 return diInstances.getOrPut((type.simpleName + it.simpleName)) {
                     createDIInstance(type, qualifier)
@@ -52,7 +31,42 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             }
         }
 
-        fun deleteDIInstance(
+        override fun registerDIInstance(
+            binder: Any,
+            kFunc: KFunction<*>,
+        ) {
+            diFunc[kFunc] = binder
+        }
+
+        private fun createDIInstance(
+            type: KClass<*>,
+            qualifier: KClass<out Annotation>? = null,
+        ): Any? {
+            val kFunc =
+                diFunc.keys.find { it.returnType.jvmErasure == type && it.findQualifierClassOrNull() == qualifier }
+                    ?: error("${type.simpleName}이 component에 등록되지 않았습니다.")
+
+            val parameters =
+                kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
+                    when {
+                        it.hasAnnotation<ApplicationContext>() -> DIBuilder.applicationContext
+                        else -> ViewModelComponentManager.getDIInstance(it.type.jvmErasure, it.findQualifierClassOrNull())
+                    }
+                }
+
+            val receiver = diFunc.getValue(kFunc)
+            val instance =
+                if (parameters.isEmpty()) {
+                    kFunc.call(receiver)
+                } else {
+                    kFunc.call(diFunc[kFunc], parameters.toTypedArray())
+                }
+
+            injectViewModelComponentFields(instance)
+            return instance
+        }
+
+        override fun deleteDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ) {
@@ -63,42 +77,19 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
             diInstances.remove(type.simpleName)
         }
 
-        private fun createDIInstance(
-            type: KClass<*>,
-            qualifier: KClass<out Annotation>? = null,
-        ): Any? {
-            val kFunc =
-                if (qualifier != null) {
-                    binderKFunc[(type.simpleName + qualifier.simpleName)]
-                } else {
-                    binderKFunc[type.simpleName]
-                }
-
-            val instance =
-                if (requireNotNull(kFunc).parameters.any { it.hasAnnotation<ApplicationContext>() }) {
-                    kFunc.call(binderInstance, arrayOf(DIBuilder.applicationContext))
-                } else {
-                    kFunc.call(binderInstance)
-                }
-
-            injectViewModelComponentFields(instance)
-            return instance
-        }
-
-        private fun isAlreadyCreatedDI(
-            type: KClass<*>,
-            qualifier: KClass<out Annotation>? = null,
-        ) = diInstances[(type.simpleName + qualifier?.simpleName)] != null || diInstances[type.simpleName] != null
-
         companion object {
             private val instances = mutableMapOf<KClass<*>, ViewModelComponent<*>>()
 
             fun <binder : Any> getInstance(binderClazz: KClass<binder>): ViewModelComponent<binder> {
                 return instances.getOrPut(binderClazz) {
-                    val newInstance = ViewModelComponent(binderClazz)
+                    val newInstance = ViewModelComponent<binder>()
                     instances[binderClazz] = newInstance
                     newInstance
                 } as ViewModelComponent<binder>
+            }
+
+            fun deleteInstance(binderClazz: KClass<*>) {
+                instances.remove(binderClazz)
             }
         }
     }

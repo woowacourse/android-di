@@ -1,19 +1,14 @@
 package com.woowa.di.viewmodel
 
+import androidx.lifecycle.ViewModel
+import com.woowa.di.component.Component
 import com.woowa.di.component.ComponentManager
-import com.woowa.di.component.ParentManager
+import com.woowa.di.component.ParentManager2
 import com.woowa.di.singleton.SingletonComponentManager
 import kotlin.reflect.KClass
 
-@ParentManager(SingletonComponentManager::class)
+@ParentManager2(SingletonComponentManager::class)
 object ViewModelComponentManager : ComponentManager() {
-    override fun getComponentInstance(binderType: KClass<*>): ViewModelComponent<*> = ViewModelComponent.getInstance(binderType)
-
-    fun deleteDIInstance(
-        type: KClass<*>,
-        qualifier: KClass<out Annotation>? = null,
-    ) {
-        val binderType = getBinderTypeOrNull(type) ?: return
-        getComponentInstance(binderType).deleteDIInstance(type, qualifier)
-    }
+    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component =
+        ViewModelComponent.getInstance(componentType as KClass<out ViewModel>)
 }

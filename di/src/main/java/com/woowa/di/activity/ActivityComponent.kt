@@ -7,10 +7,10 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.woowa.di.ActivityContext
 import com.woowa.di.ApplicationContext
-import com.woowa.di.component.Component2
+import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
-import com.woowa.di.singleton.SingletonComponentManager2
+import com.woowa.di.singleton.SingletonComponentManager
 import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinProperty
 
 class ActivityComponent<T : ComponentActivity> private constructor(private val clazz: KClass<T>) :
-    Component2, DefaultLifecycleObserver {
+    Component, DefaultLifecycleObserver {
         private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()
         private var context: Context? = null
@@ -73,7 +73,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
                         it.hasAnnotation<ApplicationContext>() -> DIBuilder.applicationContext
                         it.hasAnnotation<ActivityContext>() -> context
                         else ->
-                            SingletonComponentManager2.getDIInstance(
+                            SingletonComponentManager.getDIInstance(
                                 it.type.jvmErasure,
                                 it.findQualifierClassOrNull(),
                             )

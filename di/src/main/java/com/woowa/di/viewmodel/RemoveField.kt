@@ -10,11 +10,11 @@ inline fun <reified T : ViewModel> removeInstancesOnCleared(instance: T) {
         T::class.java.declaredFields.onEach { field ->
             field.isAccessible = true
         }.filter { it.isAnnotationPresent(Inject::class.java) }.forEach { field ->
-            ViewModelComponentManager2.getComponentInstance(T::class).deleteDIInstance(
+            ViewModelComponentManager.getComponentInstance(T::class).deleteDIInstance(
                 field.type.kotlin,
                 field.kotlinProperty?.findQualifierClassOrNull(),
             )
         }
-        ViewModelComponent2.deleteInstance(T::class)
+        ViewModelComponent.deleteInstance(T::class)
     }
 }
