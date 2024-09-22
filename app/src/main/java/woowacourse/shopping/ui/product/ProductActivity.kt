@@ -8,8 +8,8 @@ import com.example.di.DIActivity
 import com.example.di.DIModule
 import com.example.di.viewmodel.provideViewModel
 import woowacourse.shopping.R
-import woowacourse.shopping.application.ActivityModule
 import woowacourse.shopping.databinding.ActivityProductBinding
+import woowacourse.shopping.module.ProductActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class ProductActivity : DIActivity() {
@@ -17,7 +17,7 @@ class ProductActivity : DIActivity() {
 
     private val viewModel: ProductViewModel by provideViewModel()
 
-    override val module: DIModule by lazy { ActivityModule(this) }
+    override val module: DIModule = ProductActivityModule()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

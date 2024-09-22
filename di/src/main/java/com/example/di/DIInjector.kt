@@ -36,17 +36,18 @@ object DIInjector {
     ) {
         val parameters =
             (
-                listOf(module) +
-                    function.parameters.drop(1).map {
-                        val parameterInstance = DIContainer.getInstance(it.type.jvmErasure, qualifierType)
-                        DIContainer.addInstance(
-                            parameterInstance::class,
-                            qualifierType,
-                            parameterInstance,
-                        )
-                        parameterInstance
-                    }
-            ).toTypedArray()
+                    listOf(module) +
+                            function.parameters.drop(1).map {
+                                val parameterInstance =
+                                    DIContainer.getInstance(it.type.jvmErasure, qualifierType)
+                                DIContainer.addInstance(
+                                    parameterInstance::class,
+                                    qualifierType,
+                                    parameterInstance,
+                                )
+                                parameterInstance
+                            }
+                    ).toTypedArray()
 
         val instance = function.call(*parameters) ?: return
         DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, instance)

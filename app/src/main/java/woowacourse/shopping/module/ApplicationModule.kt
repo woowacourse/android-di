@@ -1,4 +1,4 @@
-package woowacourse.shopping.application
+package woowacourse.shopping.module
 
 import android.content.Context
 import com.example.di.DIModule
@@ -30,9 +30,5 @@ class ApplicationModule(private val context: Context) : DIModule {
     @Qualifier(QualifierType.Database)
     fun provideDatabaseCartRepository(cartProductDao: CartProductDao): CartRepository {
         return DatabaseCartRepository(cartProductDao)
-    }
-
-    fun provideDefaultProductRepository(): ProductRepository {
-        return DefaultProductRepository()
     }
 }
