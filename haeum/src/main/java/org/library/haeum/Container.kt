@@ -61,7 +61,7 @@ class Container(
             kProperty.annotations.find { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-        val instance = types[Type(kProperty.returnType, annotation?.annotationClass?.simpleName)]
+        val instance = types[Type(kProperty.returnType, annotation?.annotationClass?.simpleName)] ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
         return instance as T
     }
 
@@ -70,7 +70,7 @@ class Container(
             kParameter.annotations.find { annotation ->
                 annotation::class.hasAnnotation<Qualifier>()
             }
-        val instance = types[Type(kParameter.type, annotation?.annotationClass?.simpleName)]
+        val instance = types[Type(kParameter.type, annotation?.annotationClass?.simpleName)] ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
         return instance as T
     }
 
