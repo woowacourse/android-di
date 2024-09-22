@@ -1,7 +1,7 @@
 package woowacourse.shopping.ui.util
 
 import com.example.alsonglibrary2.di.AlsongQualifier
-import com.example.alsonglibrary2.di.LibraryDependencyProvider
+import com.example.alsonglibrary2.di.QualifierDependencyProvider
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 
@@ -11,7 +11,8 @@ annotation class DefaultCartRepository
 @AlsongQualifier
 annotation class InMemoryCartRepository
 
-object DependencyProvider : LibraryDependencyProvider {
+object QualifierDependencyProvider :
+    QualifierDependencyProvider {
     @DefaultCartRepository
     fun provideDefaultCartRepository(): CartRepository {
         return ShoppingApplication.defaultCartRepository

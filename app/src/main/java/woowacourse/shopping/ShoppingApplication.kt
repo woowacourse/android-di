@@ -11,7 +11,7 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.ui.util.DependencyProvider
+import woowacourse.shopping.ui.util.QualifierDependencyProvider
 
 class ShoppingApplication : Application() {
     private val shoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
@@ -19,7 +19,7 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         registerDependencies()
-        AutoDIManager.provider = DependencyProvider
+        AutoDIManager.qualifierDependencyProvider = QualifierDependencyProvider
     }
 
     private fun registerDependencies() {

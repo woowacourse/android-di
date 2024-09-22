@@ -14,7 +14,7 @@ object AutoDIManager {
     private val _dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
     val dependencies: Map<KClass<*>, Any?> get() = _dependencies
 
-    var provider: LibraryDependencyProvider? = null
+    var qualifierDependencyProvider: QualifierDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
         setDependency(T::class, dependency)
@@ -78,7 +78,7 @@ object AutoDIManager {
     }
 
     fun findQualifierDependency(annotation: Annotation): Any? {
-        val dependencyProvider = provider ?: throw IllegalArgumentException()
+        val dependencyProvider = qualifierDependencyProvider ?: throw IllegalArgumentException()
         val targetFunction =
             dependencyProvider::class.memberFunctions
                 .find { it.findAnnotation<Annotation>() == annotation } ?: return null
