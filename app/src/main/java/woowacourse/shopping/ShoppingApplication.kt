@@ -2,8 +2,8 @@ package woowacourse.shopping
 
 import com.example.sh1mj1.DiApplication
 import com.example.sh1mj1.annotation.Qualifier
-import com.example.sh1mj1.component.singletonComponent
-import com.example.sh1mj1.container.DefaultActivityComponentContainer
+import com.example.sh1mj1.component.singleton.singletonComponent
+import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.container.DefaultAppContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository

@@ -2,7 +2,7 @@ package com.example.sh1mj1
 
 import android.app.Application
 import com.example.sh1mj1.container.AppContainer
-import com.example.sh1mj1.container.DefaultActivityComponentContainer
+import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.container.DefaultAppContainer
 
 open class DiApplication : Application() {

@@ -5,8 +5,8 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.example.sh1mj1.component.ActivityComponent
-import com.example.sh1mj1.component.injectedSh1mj1ActivityComponent
+import com.example.sh1mj1.component.activityscope.ActivityComponent
+import com.example.sh1mj1.component.activityscope.injectedSh1mj1ActivityComponent
 import io.kotest.assertions.throwables.shouldNotThrow
 import org.junit.Test
 import org.junit.runner.RunWith

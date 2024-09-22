@@ -1,10 +1,10 @@
 package com.example.sh1mj1
 
 import com.example.sh1mj1.annotation.Qualifier
-import com.example.sh1mj1.component.ComponentKey
-import com.example.sh1mj1.component.InjectedComponent
-import com.example.sh1mj1.component.InjectedSingletonContainer
-import com.example.sh1mj1.container.DefaultInjectedSingletonContainer
+import com.example.sh1mj1.component.singleton.ComponentKey
+import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
+import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
+import com.example.sh1mj1.container.singleton.DefaultInjectedSingletonContainer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.junit.jupiter.api.AfterEach
@@ -34,14 +34,14 @@ class DefaultInjectedSingletonContainerTest {
     fun `같은 타입이며 같은 Qualfier 인 컴포넌트를 컨테이너에 넣을 때 예외를 던진다`() {
         // given
         val component1 =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 StubRepo::class,
                 Default1StubRepo(),
                 Qualifier("1"),
             )
 
         val component2 =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 StubRepo::class,
                 Default2StubRepo(),
                 Qualifier("1"),
@@ -60,7 +60,7 @@ class DefaultInjectedSingletonContainerTest {
     fun `하나의 타입 컴포넌트를 컨테이너에 넣고 찾는다`() {
         // given
         val component =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 StubRepo::class,
                 Default1StubRepo(),
             )
@@ -83,13 +83,13 @@ class DefaultInjectedSingletonContainerTest {
     fun `같은 타입이고 하나에만 Qualifier 가 붙어있는 컴포넌트를 컨테이너에 넣고 클래스로만 찾을 때 예외를 던진다`() {
         // given
         val component1 =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 StubRepo::class,
                 Default1StubRepo(),
             )
 
         val component2 =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 StubRepo::class,
                 Default2StubRepo(),
                 Qualifier("1"),

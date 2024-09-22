@@ -1,4 +1,4 @@
-package com.example.sh1mj1.component
+package com.example.sh1mj1.component.singleton
 
 import com.example.sh1mj1.annotation.Qualifier
 import kotlin.reflect.KClass

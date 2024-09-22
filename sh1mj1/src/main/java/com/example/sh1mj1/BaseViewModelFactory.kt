@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sh1mj1.container.AppContainer
-import com.example.sh1mj1.container.DependencyInjector
 
 class BaseViewModelFactory(
     appContainer: AppContainer,

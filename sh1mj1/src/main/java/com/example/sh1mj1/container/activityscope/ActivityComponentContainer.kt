@@ -1,7 +1,7 @@
-package com.example.sh1mj1.container
+package com.example.sh1mj1.container.activityscope
 
 import android.content.Context
-import com.example.sh1mj1.component.ActivityComponent
+import com.example.sh1mj1.component.activityscope.ActivityComponent
 import kotlin.reflect.KClass
 
 class DefaultActivityComponentContainer private constructor() : ActivityComponentContainer {

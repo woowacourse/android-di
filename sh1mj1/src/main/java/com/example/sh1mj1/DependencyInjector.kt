@@ -1,7 +1,8 @@
-package com.example.sh1mj1.container
+package com.example.sh1mj1
 
 import com.example.sh1mj1.annotation.Inject
-import com.example.sh1mj1.component.ComponentKey
+import com.example.sh1mj1.component.singleton.ComponentKey
+import com.example.sh1mj1.container.AppContainer
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
