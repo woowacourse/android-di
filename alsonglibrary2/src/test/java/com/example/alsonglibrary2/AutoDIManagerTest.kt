@@ -38,10 +38,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository1)
 
-        class FakeActivity1 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithoutQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity1::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -51,10 +51,10 @@ class AutoDIManagerTest {
     @Test(expected = Exception::class)
     fun `등록된 의존성이 존재하지 않으면 의존성 주입에 실패한다`() {
         // given
-        class FakeActivity1 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithoutQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity1::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         activity.viewModel
@@ -65,10 +65,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.provider = FakeDependencyProvider
 
-        class FakeActivity2 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity2::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -80,10 +80,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository1)
 
-        class FakeActivity3 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithoutQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity3::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -95,10 +95,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.provider = FakeDependencyProvider
 
-        class FakeActivity4 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity4::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -110,10 +110,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.provider = FakeDependencyProvider
 
-        class FakeActivity5 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierAndNoProviderFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity5::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         activity.viewModel
@@ -124,10 +124,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.provider = FakeDependencyProvider
 
-        class FakeActivity6 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithTwoQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity6::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -140,10 +140,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.provider = FakeDependencyProvider
 
-        class FakeActivity7 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithTwoQualifierFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity7::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -156,10 +156,10 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository1)
 
-        class FakeActivity8 : AppCompatActivity() {
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedOnlyAnnotationFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity8::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
@@ -172,10 +172,11 @@ class AutoDIManagerTest {
         // given
         AutoDIManager.registerDependency<FakeDao>(fakeDao)
         AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository3)
-        class FakeActivity9 : AppCompatActivity() {
+
+        class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorRecursiveInjectedFakeViewModel>()
         }
-        val activity = Robolectric.buildActivity(FakeActivity9::class.java).create().get()
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
