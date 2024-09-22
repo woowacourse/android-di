@@ -4,11 +4,7 @@ interface Qualifier {
     val qualifier: String
 }
 
-data class StringQualifier(override val qualifier: String) : Qualifier {
-    override fun toString(): String {
-        return qualifier
-    }
-}
+data class StringQualifier(override val qualifier: String) : Qualifier
 
 fun qualifier(name: String): Qualifier = StringQualifier(name)
 
