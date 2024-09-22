@@ -64,4 +64,11 @@ Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 �
 
 ### 🚀 3단계 - Qualifier
 - [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택 가능
-- [ ] DI 라이브러리 모듈 분리
+- [x] DI 라이브러리 모듈 분리
+
+### 🚀 4단계 - LifeCycle
+- [ ] CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리하지 않도록 구현
+- [ ] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현
+- [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현
+- [ ] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현
+- [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성
