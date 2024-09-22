@@ -6,9 +6,13 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
+import kotlin.reflect.full.allSupertypes
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.kotlinProperty
 
 class Container(
@@ -38,18 +42,18 @@ class Container(
     }
 
     fun <T : Any> injectTo(targetInstance: T) {
-        // @Inject 있는 것만 필터링
-        targetInstance::class.java.declaredFields.filter { field ->
-            field.annotations.any {
+        targetInstance::class.memberProperties.filter { property ->
+            property.annotations.any {
                 it.annotationClass == Inject::class
             }
-        }.forEach { targetField ->
-            targetField.isAccessible = true
-            targetField.set(
+        }.forEach { targetProperty ->
+            val targetField = targetProperty.javaField
+            targetField?.isAccessible = true
+            targetField?.set(
                 targetInstance,
                 ModuleInjector.container.getKPropertyInstance(
-                    targetField.kotlinProperty ?: throw IllegalArgumentException("2222"),
-                ),
+                    targetField.kotlinProperty ?: throw IllegalArgumentException("2222r")
+                )
             )
         }
     }

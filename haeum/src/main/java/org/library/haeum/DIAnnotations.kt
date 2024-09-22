@@ -1,6 +1,6 @@
 package org.library.haeum
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class Inject
 
 annotation class HaeumContext
