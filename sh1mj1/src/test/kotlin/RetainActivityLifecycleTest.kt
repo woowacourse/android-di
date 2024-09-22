@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.example.sh1mj1.component.activityscope.ActivityComponent
+import com.example.sh1mj1.component.activityscope.activityScopeComponent
 import com.example.sh1mj1.component.activityscope.injectedSh1mj1ActivityComponent
 import io.kotest.assertions.throwables.shouldNotThrow
 import org.junit.Test
@@ -113,9 +113,8 @@ class Stub1Application : DiApplication() {
         super.onCreate()
 
         activityContainer.add(
-            ActivityComponent(
-                injectedClass = RetainActivityLifecycleTest.IDateFormatter::class,
-                instanceProvider = { context: Context -> RetainActivityLifecycleTest.StubDateFormatter(context) },
+            activityScopeComponent<RetainActivityLifecycleTest.IDateFormatter>(
+                instanceProvider = RetainActivityLifecycleTest::StubDateFormatter,
                 qualifier = null,
             ),
         )

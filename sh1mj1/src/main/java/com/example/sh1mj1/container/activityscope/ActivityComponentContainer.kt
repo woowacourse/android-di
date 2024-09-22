@@ -1,13 +1,13 @@
 package com.example.sh1mj1.container.activityscope
 
 import android.content.Context
-import com.example.sh1mj1.component.activityscope.ActivityComponent
+import com.example.sh1mj1.component.activityscope.ActivityScopeComponent
 import kotlin.reflect.KClass
 
 class DefaultActivityComponentContainer private constructor() : ActivityComponentContainer {
-    private val components = mutableListOf<ActivityComponent>()
+    private val components = mutableListOf<ActivityScopeComponent>()
 
-    fun add(component: ActivityComponent) {
+    fun add(component: ActivityScopeComponent) {
         components.add(component)
     }
 
