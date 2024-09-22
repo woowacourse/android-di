@@ -35,7 +35,7 @@ class Container(
             types[Type(module::class.createType(nullable = false))] = module
         }
         returnTypes.forEach { (type, function) ->
-            findInstance(type.returnType, function.annotations)
+            createInstance(type.returnType, function.annotations)
         }
     }
 
@@ -76,14 +76,6 @@ class Container(
         return instance as T
     }
 
-    private fun findInstance(
-        kType: KType,
-        annotations: List<Annotation>,
-    ): Any {
-        if (isHaeumContext(kType, annotations)) return context
-        return findExistingInstance(kType, annotations) ?: createInstance(kType, annotations)
-    }
-
     private fun findExistingInstance(kType: KType, annotations: List<Annotation>): Any? {
         val qualifierAnnotation = annotations.find {
             it.annotationClass.hasAnnotation<Qualifier>()
@@ -93,6 +85,11 @@ class Container(
     }
 
     private fun createInstance(kType: KType, annotations: List<Annotation>): Any {
+        if (isHaeumContext(kType, annotations)) return context
+
+        val existingInstance = findExistingInstance(kType, annotations)
+        if (existingInstance != null) return existingInstance
+
         val qualifierAnnotation = annotations.find {
             it.annotationClass.hasAnnotation<Qualifier>()
         }
@@ -101,7 +98,7 @@ class Container(
         val function = returnTypes[type] ?: throw IllegalArgumentException("5555")
 
         val parameterValues = function.parameters.associateWith { parameter ->
-            findInstance(parameter.type, parameter.annotations)
+            createInstance(parameter.type, parameter.annotations)
         }
         val instance = function.callBy(parameterValues) ?: throw IllegalArgumentException("6666")
 
