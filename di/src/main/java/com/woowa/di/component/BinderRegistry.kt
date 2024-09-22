@@ -26,7 +26,7 @@ class DIBuilder {
         return this
     }
 
-    fun createSingleton(app:Application):DIBuilder {
+    fun createSingleton(app: Application): DIBuilder {
         SingletonComponentManager2.createComponent(app::class)
         return this
     }

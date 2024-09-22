@@ -1,9 +1,7 @@
 package woowacourse.shopping.di
 
 import com.woowa.di.component.InstallIn
-import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponent2
-import com.woowa.di.viewmodel.ViewModelComponent
 import com.woowa.di.viewmodel.ViewModelComponent2
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl

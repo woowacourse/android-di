@@ -60,8 +60,7 @@ data object NoParent : ComponentManager() {
 }
 
 data object NoParent2 : ComponentManager2() {
-
-    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2{
+    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2 {
         throw IllegalArgumentException()
     }
 }

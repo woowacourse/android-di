@@ -7,8 +7,8 @@ import com.woowa.di.component.InstallIn
 import woowacourse.shopping.ui.cart.DateFormatter
 
 @InstallIn(ActivityComponent::class)
- class DateFormatBinder {
+class DateFormatBinder {
     fun provideDateFormatter(
         @ActivityContext context: Context,
     ): DateFormatter = DateFormatter(context)
- }
+}

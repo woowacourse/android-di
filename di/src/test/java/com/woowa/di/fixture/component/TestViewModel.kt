@@ -12,7 +12,6 @@ class ComponentTestViewModel : ViewModel() {
 }
 
 class ComponentTestViewModel2 : ViewModel() {
-
     @Inject
     lateinit var viewModelFake: TestViewModelComponent
 }

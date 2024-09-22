@@ -9,8 +9,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinProperty
@@ -24,19 +22,18 @@ abstract class ComponentManager2 {
 
     private val components: MutableMap<String, KClass<*>> = mutableMapOf()
 
-    fun createComponent(
-        targetClass: KClass<*>,
-    ): Component2 =
+    fun createComponent(targetClass: KClass<*>): Component2 =
         getComponentInstance(targetClass).apply {
             targetClass.java.declaredFields.onEach { it.isAccessible = true }.filter { property ->
                 property.isAnnotationPresent(Inject::class.java)
             }.forEach { property ->
-                val type = property?.kotlinProperty?.returnType?.jvmErasure
-                    ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
+                val type =
+                    property?.kotlinProperty?.returnType?.jvmErasure
+                        ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
                 val qualifier = property?.kotlinProperty?.findQualifierClassOrNull()
 
                 require(!isAlreadyCreatedDI(type, qualifier) || findComponentType(type, qualifier) == targetClass) {
-                    "한 객체는 하나의 ${targetClass} ${type.simpleName}에 대해서만 생성할 수 있습니다."
+                    "한 객체는 하나의 $targetClass ${type.simpleName}에 대해서만 생성할 수 있습니다."
                 }
 
                 findKCallableOrNull(type, qualifier)?.let { callable ->
@@ -48,7 +45,6 @@ abstract class ComponentManager2 {
                     components[type.simpleName ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")] =
                         targetClass
                 }
-
             }
 
             if (this is SingletonComponent2<*>) {
@@ -60,14 +56,13 @@ abstract class ComponentManager2 {
                         if (qualifier != null) {
                             components[type.simpleName + qualifier.simpleName] = targetClass
                         } else {
-                            components[type.simpleName
-                                ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")] = targetClass
+                            components[
+                                type.simpleName
+                                    ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
+                            ] = targetClass
                         }
                     }
-
                 }
-
-
             }
         }
 
@@ -76,11 +71,18 @@ abstract class ComponentManager2 {
         qualifier: KClass<out Annotation>? = null,
     ): Pair<Any, KFunction<*>>? {
         val binder =
-            binders.find { it::class.declaredMemberFunctions.any { it.returnType.jvmErasure == type && it.findQualifierClassOrNull() == qualifier } }
+            binders.find {
+                it::class.declaredMemberFunctions.any {
+                    it.returnType.jvmErasure == type &&
+                        it.findQualifierClassOrNull() == qualifier
+                }
+            }
                 ?: return null
         val kFunc =
-            binder::class.declaredMemberFunctions.find { it.returnType.jvmErasure == type && it.findQualifierClassOrNull() == qualifier }
-                ?: return null
+            binder::class.declaredMemberFunctions.find {
+                it.returnType.jvmErasure == type &&
+                    it.findQualifierClassOrNull() == qualifier
+            } ?: return null
         return binder to kFunc
     }
 
@@ -91,20 +93,18 @@ abstract class ComponentManager2 {
 
     abstract fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2
 
-
     fun getDIInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any? {
-        val componentType = findComponentType(type,qualifier) ?: return getParentDIInstance(type, qualifier)
+        val componentType = findComponentType(type, qualifier) ?: return getParentDIInstance(type, qualifier)
 
         return getComponentInstance(componentType).getDIInstance(type, qualifier)
-
     }
 
     private fun findComponentType(
         type: KClass<*>,
-        qualifier: KClass<out Annotation>?
+        qualifier: KClass<out Annotation>?,
     ) = if (qualifier != null) {
         components[type.simpleName + qualifier.simpleName]
     } else {

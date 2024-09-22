@@ -10,10 +10,9 @@ interface Component2 {
     ): Any?
 
     fun registerDIInstance(
-        binder:Any,
-        kFunc:KFunction<*>,
+        binder: Any,
+        kFunc: KFunction<*>,
     )
-
 
     fun deleteDIInstance(
         type: KClass<*>,
