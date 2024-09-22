@@ -1,9 +1,12 @@
 package woowacourse.shopping.model
 
+import com.example.di.annotation.Singleton
+
+@Singleton
 interface CartRepository {
-    fun addCartProduct(product: Product)
+    suspend fun addCartProduct(product: Product)
 
-    fun getAllCartProducts(): List<Product>
+    suspend fun getAllCartProducts(): List<CartProduct>
 
-    fun deleteCartProduct(id: Int)
+    suspend fun deleteCartProduct(id: Long)
 }

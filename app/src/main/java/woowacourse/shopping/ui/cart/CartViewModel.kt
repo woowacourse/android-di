@@ -3,25 +3,39 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.di.annotation.Inject
+import com.example.di.annotation.InjectedViewModel
+import com.example.di.annotation.Qualifier
+import kotlinx.coroutines.launch
+import woowacourse.shopping.data.local.LocalCartRepository
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.CartRepository
-import woowacourse.shopping.model.Product
 
-class CartViewModel(
-    private val cartRepository: CartRepository,
-) : ViewModel() {
-    private val _cartProducts: MutableLiveData<List<Product>> =
+@InjectedViewModel
+class CartViewModel : ViewModel() {
+    @Inject
+    @Qualifier(LocalCartRepository::class)
+    private lateinit var cartRepository: CartRepository
+
+    private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        _cartProducts.value = cartRepository.getAllCartProducts()
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.getAllCartProducts()
+        }
     }
 
-    fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        _onCartProductDeleted.value = true
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            _cartProducts.value = _cartProducts.value?.filter { it.id != id }
+            _onCartProductDeleted.value = true
+        }
     }
 }

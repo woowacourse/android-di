@@ -1,23 +1,30 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.DependencyRegistry
-import woowacourse.shopping.di.RepositoryModule
+import com.example.di.DependencyInjector
+import com.example.di.DiContainer
+import woowacourse.shopping.data.local.ShoppingDatabase
+import woowacourse.shopping.di.DatabaseModule
 
 class AndroidDiApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        initializeDatabase()
         initializeDependencies()
-        injector = DependencyInjector(DependencyRegistry)
+    }
+
+    private fun initializeDatabase() {
+        ShoppingDatabase.init(this)
     }
 
     private fun initializeDependencies() {
-        val repositoryModule = RepositoryModule()
-        DependencyRegistry.initModule(repositoryModule)
+        val diContainer = DiContainer()
+        diContainer.addModule(DatabaseModule)
+        injector = DependencyInjector(diContainer)
     }
 
     companion object {
         lateinit var injector: DependencyInjector
+            private set
     }
 }
