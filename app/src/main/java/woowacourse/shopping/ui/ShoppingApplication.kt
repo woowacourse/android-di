@@ -1,29 +1,47 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.data.repository.CartDefaultRepository
-import woowacourse.shopping.data.repository.ProductDefaultRepository
+import woowacourse.shopping.data.InMemory
+import woowacourse.shopping.data.RoomDB
+import woowacourse.shopping.data.local.CartProductDao
+import woowacourse.shopping.data.local.ShoppingDatabase
+import woowacourse.shopping.data.repository.DefaultCartRepository
+import woowacourse.shopping.data.repository.DefaultProductRepository
+import woowacourse.shopping.di.DefaultDependencyContainer
+import woowacourse.shopping.di.DependencyContainer
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.ui.util.DependencyContainer
-import woowacourse.shopping.ui.util.ViewModelDependencyContainer
 
 class ShoppingApplication : Application() {
+    val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+
     override fun onCreate() {
         super.onCreate()
-        viewModelDependencyContainer.setDependency(
+        defaultDependencyContainer.setDependency(
             ProductRepository::class,
-            ProductDefaultRepository::class
+            DefaultProductRepository::class,
+            InMemory::class,
         )
-        viewModelDependencyContainer.setDependency(
+        defaultDependencyContainer.setDependency(
             CartRepository::class,
-            CartDefaultRepository::class
+            DefaultCartRepository::class,
+            RoomDB::class,
         )
+        defaultDependencyContainer.setDependency(
+            CartProductDao::class,
+            database.cartProductDao()::class,
+        )
+        defaultDependencyContainer.setInstance(
+            CartProductDao::class,
+            database.cartProductDao(),
+        )
+        DependencyInjector.initDependencyContainer(defaultDependencyContainer)
     }
 
     companion object {
-        val viewModelDependencyContainer: DependencyContainer by lazy {
-            ViewModelDependencyContainer()
+        val defaultDependencyContainer: DependencyContainer by lazy {
+            DefaultDependencyContainer()
         }
     }
 }

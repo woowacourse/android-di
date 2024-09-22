@@ -15,7 +15,6 @@ import woowacourse.shopping.R
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -27,10 +26,11 @@ class MainActivityTest {
     @Test
     fun `Activity 실행 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
 
         // then
         assertThat(activity).isNotNull()
@@ -39,10 +39,11 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
@@ -52,12 +53,13 @@ class MainActivityTest {
     @Test
     fun `Product 클릭 시 토스트 메시지 출력 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .start()
-            .resume()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .start()
+                .resume()
+                .get()
 
         // when
         val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
