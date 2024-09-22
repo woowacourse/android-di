@@ -6,7 +6,6 @@ import javax.inject.Inject
 
 @DIActivity
 class TestActivity : ComponentActivity() {
-
     @Inject
     lateinit var activityComponent: TestActivityComponent
 }

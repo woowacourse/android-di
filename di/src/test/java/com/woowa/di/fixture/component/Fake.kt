@@ -6,7 +6,7 @@ class FakeSingleComponentImpl : TestSingletonComponent
 
 interface TestActivityComponent
 
-class FakeActivityComponentImpl: TestActivityComponent
+class FakeActivityComponentImpl : TestActivityComponent
 
 interface TestViewModelComponent
 

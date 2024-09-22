@@ -23,14 +23,12 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStarted(activity: Activity) {}
 
-
     override fun onActivityDestroyed(activity: Activity) {
         if (activity is LifecycleOwner && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
             ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>)
                 .deleteAllDIInstance(activity::class)
         }
     }
-
 
     override fun onActivityResumed(activity: Activity) {}
 

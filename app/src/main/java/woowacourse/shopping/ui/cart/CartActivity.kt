@@ -34,7 +34,6 @@ class CartActivity : AppCompatActivity() {
         return true
     }
 
-
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

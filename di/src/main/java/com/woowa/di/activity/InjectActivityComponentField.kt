@@ -19,7 +19,7 @@ fun injectActivityComponentField(instance: Any) {
             )
         field.set(instance, fieldInstance)
     }
- }
+}
 
 fun getApplicationContextInjectedInstance(
     binderInstance: Any,

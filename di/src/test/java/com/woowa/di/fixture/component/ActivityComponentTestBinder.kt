@@ -4,6 +4,6 @@ import com.woowa.di.activity.ActivityComponent
 import com.woowa.di.component.InstallIn
 
 @InstallIn(ActivityComponent::class)
-class ActivityComponentTestBinder{
+class ActivityComponentTestBinder {
     fun provideActivityComponent(): TestActivityComponent = FakeActivityComponentImpl()
 }

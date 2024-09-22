@@ -107,6 +107,5 @@ class ComponentTest {
         assertThrows<IllegalStateException> {
             ActivityComponentManager.getDIInstance(TestActivityComponent::class)
         }
-
     }
 }
