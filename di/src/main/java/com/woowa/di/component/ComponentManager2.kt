@@ -26,7 +26,7 @@ abstract class ComponentManager2 {
 
     fun createComponent(
         targetClass: KClass<*>,
-    ): Component2<*> =
+    ): Component2 =
         getComponentInstance(targetClass).apply {
             targetClass.java.declaredFields.onEach { it.isAccessible = true }.filter { property ->
                 property.isAnnotationPresent(Inject::class.java)
@@ -51,7 +51,7 @@ abstract class ComponentManager2 {
 
             }
 
-            if (this is SingletonComponent2) {
+            if (this is SingletonComponent2<*>) {
                 binders.forEach { binder ->
                     binder::class.declaredMemberFunctions.forEach {
                         this.registerDIInstance(binder, it)
@@ -89,7 +89,7 @@ abstract class ComponentManager2 {
             .map { it as T }
     }
 
-    abstract fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2<out T>
+    abstract fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2
 
 
     fun getDIInstance(

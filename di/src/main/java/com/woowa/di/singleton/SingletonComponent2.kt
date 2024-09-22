@@ -21,7 +21,7 @@ import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinProperty
 
 class SingletonComponent2<T : Application> private constructor(private val clazz: KClass<T>) :
-    Component2<T>, DefaultLifecycleObserver {
+    Component2, DefaultLifecycleObserver {
     private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
     private val diInstances: MutableMap<String, Any?> = mutableMapOf()
 
@@ -115,7 +115,7 @@ class SingletonComponent2<T : Application> private constructor(private val clazz
 
         fun <binder : Application> getInstance(binderClazz: KClass<binder>): SingletonComponent2<binder> {
             return instances.getOrPut(binderClazz) {
-                val newInstance = SingletonComponent2<binder>(binderClazz)
+                val newInstance = SingletonComponent2(binderClazz)
                 instances[binderClazz] = newInstance
                 ProcessLifecycleOwner.get().lifecycle.addObserver(newInstance)
                 newInstance

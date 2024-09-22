@@ -14,6 +14,6 @@ import kotlin.reflect.KClass
 @ParentManager2(NoParent2::class)
 object SingletonComponentManager2 : ComponentManager2() {
 
-    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2<out T> =
-        SingletonComponent2.getInstance(componentType as KClass<Application>) as Component2<out T>
+    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2 =
+        SingletonComponent2.getInstance(componentType as KClass<Application>)
 }

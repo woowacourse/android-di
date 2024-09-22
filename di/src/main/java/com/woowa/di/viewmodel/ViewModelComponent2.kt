@@ -17,8 +17,8 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ViewModelComponent2<T : ViewModel> private constructor() :
-    Component2<T> {
+class ViewModelComponent2<T : Any> private constructor() :
+    Component2 {
     private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
     private val diInstances: MutableMap<String, Any?> = mutableMapOf()
 
@@ -85,7 +85,7 @@ class ViewModelComponent2<T : ViewModel> private constructor() :
     companion object {
         private val instances = mutableMapOf<KClass<*>, ViewModelComponent2<*>>()
 
-        fun <binder : ViewModel> getInstance(binderClazz: KClass<binder>): ViewModelComponent2<binder> {
+        fun <binder : Any> getInstance(binderClazz: KClass<binder>): ViewModelComponent2<binder> {
             return instances.getOrPut(binderClazz) {
                 val newInstance = ViewModelComponent2<binder>()
                 instances[binderClazz] = newInstance
