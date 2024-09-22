@@ -95,7 +95,9 @@ class ViewModelComponent<binder : Any> private constructor(private val binderCla
 
             fun <binder : Any> getInstance(binderClazz: KClass<binder>): ViewModelComponent<binder> {
                 return instances.getOrPut(binderClazz) {
-                    ViewModelComponent(binderClazz)
+                    val newInstance = ViewModelComponent(binderClazz)
+                    instances[binderClazz] = newInstance
+                    newInstance
                 } as ViewModelComponent<binder>
             }
         }

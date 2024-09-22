@@ -9,6 +9,10 @@ import kotlin.reflect.jvm.jvmErasure
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ParentManager(val manager: KClass<out ComponentManager>)
 
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ParentManager2(val manager: KClass<out ComponentManager2>)
+
 abstract class ComponentManager {
     private val _binderClazzs = mutableListOf<KClass<*>>()
     val binderClazzs: List<KClass<*>> get() = _binderClazzs.toList()
@@ -51,6 +55,13 @@ abstract class ComponentManager {
 
 data object NoParent : ComponentManager() {
     override fun getComponentInstance(binderType: KClass<*>): Component {
+        throw IllegalArgumentException()
+    }
+}
+
+data object NoParent2 : ComponentManager2() {
+
+    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component2<out T> {
         throw IllegalArgumentException()
     }
 }

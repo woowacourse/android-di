@@ -7,6 +7,7 @@ import kotlin.reflect.full.createInstance
 
 inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Factory {
     val instance = T::class.createInstance()
+    ViewModelComponentManager2.createComponent(T::class)
     injectViewModelComponentFields<T>(instance)
     removeInstancesOnCleared<T>(instance)
     return viewModelFactory {
