@@ -1,106 +1,72 @@
 # android-di
 
-## 2단계 - Annotation
+## 4단계
 
-### 필드 주입
-
-- [x] ViewModel 내 필드 주입을 구현한다.
-
-### Annotation
+### 기능 요구 사항
 
 다음 문제점을 해결한다.
 
-- [x] 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분할 수 없다.
-    - [x] Annotation을 붙여서 필요한 요소에만 의존성을 주입한다.
-- [x] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
-
-### Recursive DI
-
-- [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
-
-```kotlin
-class DefaultCartRepository(
-    private val dao: CartProductDao,
-) : CartRepository {
-    suspend fun addCartProduct(product: Product) {
-        dao.insert(product.toEntity())
-    }
-
-    suspend fun getAllCartProducts(): List<CartProductEntity> {
-        return dao.getAll()
-    }
-
-    suspend fun deleteCartProduct(id: Long) {
-        dao.delete(id)
-    }
-}
-
-```
-
-* CartProductEntity에는 createdAt 프로퍼티가 있어서 언제 장바구니에 상품이 담겼는지를 알 수 있다.
-
-- [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
-
-```kotlin
-fun bind(product: ...) {
-    binding.item = product
-    binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt) // 추가됨
-}
-
-```
+- [ ] CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
+- [ ] 모든 의존성이 싱글 오브젝트로 만들어질 필요 없다.
+    - [ ] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+    - [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+    - [ ] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
 
 ### 선택 요구 사항
 
-- [x] 현재는 장바구니 아이템 삭제 버튼을 누르면 RecyclerView의 position에 해당하는 상품이 지워진다.
-    - [x] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
-- [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+- [ ] DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
+- [ ] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.
 
-## 3단계 - Qualifier
+### 힌트
 
-### Qualifier
+각 LifeCycle을 어떻게 관리하느냐에 따라 구현이 천차만별로 달라진다. 이 과정에서 Android LifeCycle에 대한 학습이 요구될 수 있다.
 
-다음 문제점을 해결한다.
+#### Hilt 구현 예시 - Context
 
-- [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 없다.
-- [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
-
-### 모듈 분리
-
-- [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
-
-- ### 선택 요구 사항
-- [x] DSL을 활용한다.
-- [ ] 내가 만든 DI 라이브러리를 배포하고 적용한다.
-
-### Hilt 구현 예시
-
-Hilt에 동일한 인터페이스의 다른 구현체를 제공하기 위해 @Qualifier를 사용한다.
+Hilt에서는 Predefined qualifiers가 존재한다.
+예를 들어 Context 타입의 Android Context를 이용하고 싶다면 @ActivityContext qualifier를 활용하여 해당 인스턴스를 주입받을 수 있다.
 
 ```kotlin
-@Qualifier
-annotation class InMemoryLogger
+class AnalyticsAdapter @Inject constructor(
+    @ActivityContext private val context: Context,
+    private val service: AnalyticsService
+) { ... }
+```
 
-@Qualifier
-annotation class DatabaseLogger
+#### Hilt 구현 예시 - LifeCycle 관리
 
-@InstallIn(ApplicationComponent::class)
-@Module
-abstract class LoggingDatabaseModule {
+Hilt는 Android LifeCycle에 따라 생성된 인스턴스를 자동으로 만들고 제거한다.
 
-    @DatabaseLogger
-    @Singleton
-    @Binds
-    abstract fun bindDatabaseLogger(impl: LoggerLocalDataSource): LoggerDataSource
-}
+[공식 문서 - Hilt Component](https://developer.android.com/training/dependency-injection/hilt-android#generated-components)
 
-@InstallIn(ActivityComponent::class)
-@Module
-abstract class LoggingInMemoryModule {
+| 생성된 구성 요소                 | 생성 위치                  | 소멸 위치                |
+|---------------------------|------------------------|----------------------|
+| SingletonComponent        | Application#onCreate() | Application 소멸됨      |
+| ActivityRetainedComponent | Activity#onCreate()    | Activity#onDestroy() |
+| ViewModelComponent        | ViewModel 생성됨          | ViewModel 소멸됨        |
+| ActivityComponent         | Activity#onCreate()    | Activity#onDestroy() |
+| FragmentComponent         | Fragment#onAttach()    | Fragment#onDestroy() |
+| ViewComponent             | View#super()           | View 소멸됨             |
+| ViewWithFragmentComponent | View#super()           | View 소멸됨             |
+| ServiceComponent          | Service#onCreate()     | Service#onDestroy()  |
 
-    @InMemoryLogger
-    @ActivityScoped
-    @Binds
-    abstract fun bindInMemoryLogger(impl: LoggerInMemoryDataSource): LoggerDataSource
-}
+### Koin 구현 예시
 
+Android 컴포넌트에 바인딩된 특정 스코프를 생성하여 관리할 수 있다.
+[Koin Android Scope API](https://insert-koin.io/docs/reference/koin-android/scope/#android-scope-api)
+
+* `createActivityScope()` - 현재 Activity에 대한 스코프 생성
+* `createActivityRetainedScope()` - 현재 Activity에 대한 스코프 생성(Configuration Changes 대응)
+* `createFragmentScope()` - 현재 Fragment에 대한 스코프 생성 및 부모 Activity 스코프에 링크
+
+### LifeCycle 시나리오 테스트
+
+다음을 참고하여 Activity 등 컴포넌트의 LifeCycle에 따라 달라지는 상태를 검증하는 테스트 시나리오를 추가할 수 있다.
+[Robolectric - Androidx Test](https://robolectric.org/androidx_test)
+
+```kotlin
+val controller = buildActivity<ExampleActivity>().setup()
+controller.recreate()
+controller.pause().stop()
 ```
