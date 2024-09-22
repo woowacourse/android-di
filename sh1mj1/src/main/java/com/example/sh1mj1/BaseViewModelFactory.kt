@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package com.example.sh1mj1
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -23,7 +23,7 @@ class BaseViewModelFactory(
 inline fun <reified VM : ViewModel> injectedViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
-            val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
+            val appContainer = (this[APPLICATION_KEY] as DiApplication).container
             BaseViewModelFactory(appContainer).create(VM::class.java)
         }
     }

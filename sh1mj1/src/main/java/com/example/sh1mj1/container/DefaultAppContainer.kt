@@ -1,11 +1,9 @@
-package woowacourse.shopping
+package com.example.sh1mj1.container
 
 import com.example.sh1mj1.annotation.Qualifier
 import com.example.sh1mj1.component.ComponentKey
 import com.example.sh1mj1.component.InjectedSingletonComponent
 import com.example.sh1mj1.component.InjectedSingletonContainer
-import com.example.sh1mj1.container.AppContainer
-import com.example.sh1mj1.container.DefaultInjectedSingletonContainer
 import kotlin.reflect.KClass
 
 class DefaultAppContainer(

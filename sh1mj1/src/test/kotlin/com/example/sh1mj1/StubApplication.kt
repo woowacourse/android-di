@@ -2,7 +2,7 @@ package com.example.sh1mj1.com.example.sh1mj1
 
 import android.app.Application
 import com.example.sh1mj1.container.AppContainer
-import woowacourse.shopping.DefaultAppContainer
+import com.example.sh1mj1.container.DefaultAppContainer
 
 class StubApplication : Application() {
     lateinit var container: AppContainer
