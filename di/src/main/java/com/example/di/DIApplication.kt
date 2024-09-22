@@ -1,6 +1,7 @@
 package com.example.di
 
 import android.app.Application
+import com.example.di.annotation.LifeCycleScope
 
 abstract class DIApplication : Application() {
     abstract val module: DIModule
@@ -8,23 +9,25 @@ abstract class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        println("DIApplication.onCreate()")
         injectDependencies()
     }
 
     override fun onTerminate() {
         super.onTerminate()
 
+        println("DIApplication.onTerminate()")
         releaseDependencies()
     }
 
     private fun injectDependencies() {
-        DIInjector.injectModule(module)
+        DIInjector.injectModule(module, LifeCycleScope.APPLICATION)
 
         val targetApplication = this::class.java.cast(this)
         DIInjector.injectFields(targetApplication)
     }
 
     private fun releaseDependencies() {
-        DIInjector.releaseModule(module)
+        DIInjector.releaseModule(module::class, LifeCycleScope.APPLICATION)
     }
 }

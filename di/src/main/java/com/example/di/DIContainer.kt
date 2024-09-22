@@ -22,6 +22,7 @@ object DIContainer {
     ) {
         val dependency = Dependency(type, qualifierType)
         if (!instances.containsKey(dependency)) {
+            println("add Instance $type")
             instances[dependency] = instance
         }
     }
@@ -31,7 +32,10 @@ object DIContainer {
         qualifierType: QualifierType? = null,
     ) {
         val dependency = Dependency(type, qualifierType)
-        instances.remove(dependency)
+        if (instances.containsKey(dependency)) {
+            println("remove Instance $type")
+            instances.remove(dependency)
+        }
     }
 
     fun clear() {

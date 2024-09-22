@@ -1,6 +1,8 @@
 package com.example.di
 
 import com.example.di.annotation.Inject
+import com.example.di.annotation.LifeCycle
+import com.example.di.annotation.LifeCycleScope
 import com.example.di.annotation.Qualifier
 import com.example.di.annotation.QualifierType
 import kotlin.reflect.KClass
@@ -15,16 +17,21 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 object DIInjector {
-    fun injectModule(module: DIModule) {
+    fun injectModule(
+        module: DIModule,
+        lifeCycleScope: LifeCycleScope,
+    ) {
+        DIContainer.addInstance(module::class, null, module)
+
         module::class.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
             val constructor = returnType.primaryConstructor
             val qualifierType = function.findAnnotation<Qualifier>()?.type
 
             if (constructor == null) {
-                handleNoConstructorFunction(module, function, qualifierType)
+                handleNoConstructorFunction(module, function, qualifierType, lifeCycleScope)
             } else {
-                handleConstructorFunction(returnType, qualifierType)
+                handleConstructorFunction(returnType, qualifierType, lifeCycleScope)
             }
         }
     }
@@ -33,6 +40,7 @@ object DIInjector {
         module: DIModule,
         function: KFunction<*>,
         qualifierType: QualifierType?,
+        lifeCycleScope: LifeCycleScope,
     ) {
         val parameters =
             (
@@ -40,22 +48,22 @@ object DIInjector {
                             function.parameters.drop(1).map {
                                 val parameterInstance =
                                     DIContainer.getInstance(it.type.jvmErasure, qualifierType)
-                                DIContainer.addInstance(
-                                    parameterInstance::class,
-                                    qualifierType,
-                                    parameterInstance,
-                                )
                                 parameterInstance
                             }
                     ).toTypedArray()
 
-        val instance = function.call(*parameters) ?: return
-        DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, instance)
+        val functionInstance = function.call(*parameters) ?: return
+        val functionLifeCycleScope = function.findAnnotation<LifeCycle>()?.scope ?: return
+
+        if (lifeCycleScope == functionLifeCycleScope) {
+            DIContainer.addInstance(function.returnType.jvmErasure, qualifierType, functionInstance)
+        }
     }
 
     private fun handleConstructorFunction(
         returnType: KClass<*>,
         qualifierType: QualifierType?,
+        lifeCycleScope: LifeCycleScope,
     ) {
         val instance = createInstance(returnType)
         DIContainer.addInstance(returnType, qualifierType, instance)
@@ -68,7 +76,10 @@ object DIInjector {
 
         injectParameters.forEach { parameter ->
             val parameterInstance = createInstance(parameter)
-            DIContainer.addInstance(parameter, qualifierType, parameterInstance)
+            val parameterLifeCycleScope = parameter.findAnnotation<LifeCycle>()?.scope ?: return
+            if (lifeCycleScope == parameterLifeCycleScope) {
+                DIContainer.addInstance(parameter, qualifierType, parameterInstance)
+            }
         }
     }
 
@@ -104,12 +115,17 @@ object DIInjector {
         }
     }
 
-    fun releaseModule(module: DIModule) {
-        module::class.declaredFunctions.forEach { function ->
+    fun releaseModule(
+        moduleType: KClass<*>,
+        lifeCycleScope: LifeCycleScope,
+    ) {
+        moduleType.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
             val qualifierType = function.findAnnotation<Qualifier>()?.type
-
-            DIContainer.removeInstance(returnType, qualifierType)
+            val functionLifeCycleScope = function.findAnnotation<LifeCycle>()?.scope ?: return
+            if (lifeCycleScope == functionLifeCycleScope) {
+                DIContainer.removeInstance(returnType, qualifierType)
+            }
         }
     }
 }

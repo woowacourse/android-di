@@ -8,19 +8,19 @@ import com.example.di.annotation.Inject
 import com.example.di.viewmodel.provideViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.module.CartActivityModule
+import woowacourse.shopping.module.CartModule
 
 class CartActivity : DIActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by provideViewModel()
+    private val viewModel: CartViewModel by provideViewModel(CartModule::class)
 
     private lateinit var adapter: CartProductAdapter
 
     @Inject
     private lateinit var dateFormatter: DateFormatter
 
-    override val module: DIModule = CartActivityModule(this)
+    override val module: DIModule = CartModule(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

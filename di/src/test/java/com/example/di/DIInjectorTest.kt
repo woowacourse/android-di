@@ -3,6 +3,7 @@ package com.example.di
 import FakeDatabaseCartRepository
 import FakeModule
 import FakeViewModel
+import com.example.di.annotation.LifeCycleScope
 import com.example.fake.FakeCartDao
 import com.example.fake.FakeInMemoryCartRepository
 import com.google.common.truth.Truth.assertThat
@@ -15,7 +16,7 @@ class DIInjectorTest {
     @Before
     fun setup() {
         DIContainer.clear()
-        DIInjector.injectModule(FakeModule())
+        DIInjector.injectModule(FakeModule(), LifeCycleScope.VIEW_MODEL)
         viewModel = DIInjector.createInstance(FakeViewModel::class)
     }
 
