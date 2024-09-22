@@ -11,7 +11,7 @@ import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.data.repository.ProductRepository
 
 @Module
-object Module {
+object DIModule {
     fun provideShoppingDatabase(
         @HaeumContext context: Context,
     ): ShoppingDatabase = ShoppingDatabase.getDatabase(context)
