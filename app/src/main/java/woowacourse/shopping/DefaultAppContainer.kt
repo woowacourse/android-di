@@ -1,13 +1,13 @@
 package woowacourse.shopping
 
-import com.example.sh1mj1.AppContainer
-import com.example.sh1mj1.ComponentKey
-import com.example.sh1mj1.DefaultInjectedActivityContainer
-import com.example.sh1mj1.DefaultInjectedSingletonContainer
-import com.example.sh1mj1.InjectedActivityContainer
-import com.example.sh1mj1.InjectedComponent
-import com.example.sh1mj1.InjectedSingletonContainer
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.ComponentKey
+import com.example.sh1mj1.component.InjectedComponent
+import com.example.sh1mj1.component.InjectedSingletonContainer
+import com.example.sh1mj1.container.AppContainer
+import com.example.sh1mj1.container.DefaultInjectedActivityContainer
+import com.example.sh1mj1.container.DefaultInjectedSingletonContainer
+import com.example.sh1mj1.container.InjectedActivityContainer
 import kotlin.reflect.KClass
 
 class DefaultAppContainer(

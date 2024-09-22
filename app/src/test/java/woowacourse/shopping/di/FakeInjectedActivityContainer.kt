@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
-import com.example.sh1mj1.InjectedActivityContainer
-import com.example.sh1mj1.InjectedComponent
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.InjectedComponent
+import com.example.sh1mj1.container.InjectedActivityContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSuperclassOf
 

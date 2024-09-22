@@ -1,5 +1,7 @@
 package com.example.sh1mj1
 
+import com.example.sh1mj1.annotation.Inject
+import com.example.sh1mj1.component.InjectedComponent
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 

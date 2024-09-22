@@ -1,4 +1,4 @@
-package com.example.sh1mj1
+package com.example.sh1mj1.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject

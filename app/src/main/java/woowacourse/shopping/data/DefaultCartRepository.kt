@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import com.example.sh1mj1.Inject
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Inject
+import com.example.sh1mj1.annotation.Qualifier
 import woowacourse.shopping.model.Product
 
 class DefaultCartRepository : CartRepository {

@@ -1,5 +1,7 @@
-package com.example.sh1mj1
+package com.example.sh1mj1.container
 
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.InjectedComponent
 import kotlin.reflect.KClass
 
 interface InjectedActivityContainer {

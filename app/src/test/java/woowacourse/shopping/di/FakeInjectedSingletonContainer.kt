@@ -1,9 +1,9 @@
 package woowacourse.shopping.di
 
-import com.example.sh1mj1.ComponentKey
-import com.example.sh1mj1.InjectedComponent
-import com.example.sh1mj1.InjectedSingletonContainer
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.ComponentKey
+import com.example.sh1mj1.component.InjectedComponent
+import com.example.sh1mj1.component.InjectedSingletonContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSuperclassOf
 

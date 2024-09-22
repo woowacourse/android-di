@@ -1,5 +1,9 @@
-package com.example.sh1mj1
+package com.example.sh1mj1.container
 
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.ComponentKey
+import com.example.sh1mj1.component.InjectedComponent
+import com.example.sh1mj1.component.InjectedSingletonContainer
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty

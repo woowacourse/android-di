@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.sh1mj1.Inject
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Inject
+import com.example.sh1mj1.annotation.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository

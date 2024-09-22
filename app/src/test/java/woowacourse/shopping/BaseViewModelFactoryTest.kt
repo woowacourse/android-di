@@ -1,10 +1,10 @@
 package woowacourse.shopping
 
-import com.example.sh1mj1.AppContainer
-import com.example.sh1mj1.InjectedActivityContainer
-import com.example.sh1mj1.InjectedComponent.InjectedSingletonComponent
-import com.example.sh1mj1.InjectedSingletonContainer
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.InjectedComponent.InjectedSingletonComponent
+import com.example.sh1mj1.component.InjectedSingletonContainer
+import com.example.sh1mj1.container.AppContainer
+import com.example.sh1mj1.container.InjectedActivityContainer
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository

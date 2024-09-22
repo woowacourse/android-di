@@ -1,6 +1,6 @@
 package com.example.sh1mj1.extension
 
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.annotation.Qualifier
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import kotlin.reflect.full.memberProperties

@@ -1,5 +1,6 @@
-package com.example.sh1mj1
+package com.example.sh1mj1.component
 
+import com.example.sh1mj1.annotation.Qualifier
 import kotlin.reflect.KClass
 
 interface InjectedSingletonContainer {
