@@ -1,14 +1,18 @@
 package com.woowa.di.test
 
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.woowa.di.singleton.SingletonComponent
+import com.woowa.di.singleton.SingletonComponent2
 import com.woowa.di.singleton.SingletonComponentManager
+import com.woowa.di.singleton.SingletonComponentManager2
 import org.junit.rules.ExternalResource
 import org.robolectric.Robolectric
 import org.robolectric.android.controller.ActivityController
+import kotlin.reflect.KClass
 
 class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class<T>) :
     ExternalResource() {
@@ -21,8 +25,8 @@ class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class
         super.before()
         applicationLifecycleOwner = TestLifecycleOwner(Lifecycle.State.CREATED)
 
-        SingletonComponentManager.binderClazzs.forEach {
-            val component = SingletonComponent.getInstance(it)
+        SingletonComponentManager2.binderClazzs.forEach {
+            val component = SingletonComponent2.getInstance(it as KClass<Application>)
             applicationLifecycleOwner.lifecycle.addObserver(component)
         }
         applicationLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
