@@ -61,7 +61,8 @@ class Container(
             kProperty.annotations.find { annotation ->
                 annotation.annotationClass.hasAnnotation<Qualifier>()
             }
-        val instance = types[Type(kProperty.returnType, annotation?.annotationClass?.simpleName)] ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
+        val instance = types[Type(kProperty.returnType, annotation?.annotationClass?.simpleName)]
+            ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
         return instance as T
     }
 
@@ -70,7 +71,8 @@ class Container(
             kParameter.annotations.find { annotation ->
                 annotation::class.hasAnnotation<Qualifier>()
             }
-        val instance = types[Type(kParameter.type, annotation?.annotationClass?.simpleName)] ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
+        val instance = types[Type(kParameter.type, annotation?.annotationClass?.simpleName)]
+            ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
         return instance as T
     }
 
@@ -78,14 +80,7 @@ class Container(
         kType: KType,
         annotations: List<Annotation>,
     ): Any {
-        val contextAnnotation =
-            annotations.find { annotation ->
-                annotation.annotationClass == HaeumContext::class
-            }
-
-        if (contextAnnotation != null && kType.classifier == Context::class) {
-            return context
-        }
+        if (isHaeumContext(kType, annotations)) return context
 
         val qualifierAnnotation =
             annotations.find { annotation ->
@@ -105,5 +100,14 @@ class Container(
 
         types[type] = instance
         return instance
+    }
+
+    private fun isHaeumContext(kType: KType, annotations: List<Annotation>): Boolean {
+        val contextAnnotation =
+            annotations.find { annotation ->
+                annotation.annotationClass == HaeumContext::class
+            }
+
+        return contextAnnotation != null && kType.classifier == Context::class
     }
 }
