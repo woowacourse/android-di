@@ -6,4 +6,4 @@ annotation class ActivityContext
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DIAndroid
+annotation class DIActivity

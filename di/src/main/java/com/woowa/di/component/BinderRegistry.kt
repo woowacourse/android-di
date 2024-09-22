@@ -2,11 +2,12 @@ package com.woowa.di.component
 
 import android.app.Application
 import android.content.Context
-import com.woowa.di.singleton.SingletonComponent
-import com.woowa.di.singleton.SingletonComponentManager
+import com.woowa.di.activity.ActivityComponent
+import com.woowa.di.activity.ActivityComponentManager
+import com.woowa.di.activity.ActivityLifecycleListener
+import com.woowa.di.singleton.SingletonComponent2
 import com.woowa.di.singleton.SingletonComponentManager2
-import com.woowa.di.viewmodel.ViewModelComponent
-import com.woowa.di.viewmodel.ViewModelComponentManager
+import com.woowa.di.viewmodel.ViewModelComponent2
 import com.woowa.di.viewmodel.ViewModelComponentManager2
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
@@ -16,7 +17,7 @@ fun injectDI(
     block: DIBuilder.() -> Unit,
 ) {
     DIBuilder().initApplicationContext(app.applicationContext).apply(block).createSingleton(app)
-    // app.registerActivityLifecycleCallbacks(ActivityLifecycleListener())
+    app.registerActivityLifecycleCallbacks(ActivityLifecycleListener())
 }
 
 class DIBuilder {
@@ -32,11 +33,12 @@ class DIBuilder {
 
     fun binder(binder: KClass<*>) {
         val componentClazz =
-            binder.findAnnotation<InstallIn>()?.component
+            binder.findAnnotation<InstallIn>()?.component2
                 ?: error("InstallIn 어노테이션을 통해 component를 명시해주세요")
         when (componentClazz) {
-            ViewModelComponent::class -> ViewModelComponentManager2.registerBinder(binder)
-            SingletonComponent::class -> SingletonComponentManager2.registerBinder(binder)
+            ViewModelComponent2::class -> ViewModelComponentManager2.registerBinder(binder)
+            ActivityComponent::class -> ActivityComponentManager.registerBinder(binder)
+            SingletonComponent2::class -> SingletonComponentManager2.registerBinder(binder)
         }
     }
 
