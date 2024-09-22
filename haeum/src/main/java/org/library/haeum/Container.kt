@@ -50,7 +50,7 @@ class Container(
             targetField?.set(
                 targetInstance,
                 ModuleInjector.container.getKPropertyInstance(
-                    targetField.kotlinProperty ?: throw IllegalArgumentException("2222r"),
+                    targetField.kotlinProperty ?: throw IllegalArgumentException("해당 파라미터 타입에 맞는 인스턴스를 찾을 수 없습니다: $targetProperty"),
                 ),
             )
         }
@@ -94,13 +94,11 @@ class Container(
             it.annotationClass.hasAnnotation<Qualifier>()
         }
         val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
-
-        val function = returnTypes[type] ?: throw IllegalArgumentException("5555")
-
+        val function = returnTypes[type] ?: throw IllegalArgumentException("해당 타입에 맞는 함수를 찾을 수 없습니다: $type.")
         val parameterValues = function.parameters.associateWith { parameter ->
             createInstance(parameter.type, parameter.annotations)
         }
-        val instance = function.callBy(parameterValues) ?: throw IllegalArgumentException("6666")
+        val instance = function.callBy(parameterValues) ?: throw IllegalArgumentException("인스턴스 생성에 실패했습니다: ${function.name}")
 
         types[type] = instance
         return instance
