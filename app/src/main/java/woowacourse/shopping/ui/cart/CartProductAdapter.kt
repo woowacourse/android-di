@@ -8,7 +8,7 @@ import woowacourse.shopping.model.Product
 class CartProductAdapter(
     items: List<Product>,
     onClickDelete: (position: Int) -> Unit,
-    private val dateFormatter: DateFormatter,
+    private val dateFormatter: IDateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
     private val items: MutableList<Product> = items.toMutableList()
 
