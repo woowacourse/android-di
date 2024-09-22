@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import com.example.sh1mj1.DiApplication
 import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.activityscope.activityScopeComponent
 import com.example.sh1mj1.component.singleton.singletonComponent
 import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.container.DefaultAppContainer
@@ -11,6 +12,8 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.IDateFormatter
 
 class ShoppingApplication : DiApplication() {
 
@@ -30,6 +33,10 @@ class ShoppingApplication : DiApplication() {
                 DefaultCartRepository(),
                 Qualifier("RoomDao"),
             ),
+        )
+
+        activityContainer.add(
+            activityScopeComponent<IDateFormatter>(::DateFormatter),
         )
     }
 }
