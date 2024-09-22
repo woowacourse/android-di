@@ -2,24 +2,20 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import woowacourse.shopping.DIApplication
+import org.library.haeum.createViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.ui.common.BindingActivity
 
-class CartActivity : AppCompatActivity() {
-    private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-
-    private val viewModel by viewModels<CartViewModel> {
-        (application as DIApplication).diContainer.createViewModel(CartViewModel::class.java)
+class CartActivity : BindingActivity<ActivityCartBinding>(R.layout.activity_cart) {
+    private val viewModel: CartViewModel by lazy {
+        createViewModel()
     }
 
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupDateFormatter()
         setupBinding()
         setupToolbar()
@@ -41,9 +37,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupBinding() {
-        binding.lifecycleOwner = this
         binding.vm = viewModel
-        setContentView(binding.root)
     }
 
     private fun setupView() {
