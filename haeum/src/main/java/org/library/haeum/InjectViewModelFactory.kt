@@ -13,7 +13,7 @@ class InjectViewModelFactory(
     private val container: Container? = Container.container,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructors = viewModelClass.primaryConstructor ?: return modelClass as T
+        val constructors = viewModelClass.primaryConstructor ?: throw IllegalArgumentException("ViewModel에 기본 생성자가 없습니다: ${viewModelClass.qualifiedName}")
         val parameters = constructors.parameters
         val arguments =
             parameters.map {
