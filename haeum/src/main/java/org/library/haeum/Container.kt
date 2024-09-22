@@ -76,26 +76,35 @@ class Container(
         return instance as T
     }
 
+
+    //
     private fun findInstance(
         kType: KType,
         annotations: List<Annotation>,
     ): Any {
         if (isHaeumContext(kType, annotations)) return context
+        return findExistingInstance(kType, annotations) ?: createInstance(kType, annotations)
+    }
 
-        val qualifierAnnotation =
-            annotations.find { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
+    private fun findExistingInstance(kType: KType, annotations: List<Annotation>): Any? {
+        val qualifierAnnotation = annotations.find {
+            it.annotationClass.hasAnnotation<Qualifier>()
+        }
         val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
-        val existingInstance = types[type]
-        if (existingInstance != null) return existingInstance
+        return types[type]
+    }
+
+    private fun createInstance(kType: KType, annotations: List<Annotation>): Any {
+        val qualifierAnnotation = annotations.find {
+            it.annotationClass.hasAnnotation<Qualifier>()
+        }
+        val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
 
         val function = returnTypes[type] ?: throw IllegalArgumentException("5555")
 
-        val parameterValues =
-            function.parameters.associateWith { parameter ->
-                findInstance(parameter.type, parameter.annotations)
-            }
+        val parameterValues = function.parameters.associateWith { parameter ->
+            findInstance(parameter.type, parameter.annotations)
+        }
         val instance = function.callBy(parameterValues) ?: throw IllegalArgumentException("6666")
 
         types[type] = instance
