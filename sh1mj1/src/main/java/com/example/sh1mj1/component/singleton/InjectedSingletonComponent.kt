@@ -7,22 +7,21 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
-
-data class InjectedSingletonComponent(
-    val injectedClass: KClass<*>,
-    val instance: Any? = null,
+data class InjectedSingletonComponent<T : Any>(
+    val injectedClass: KClass<T>,
+    val instance: T,
     val qualifier: Qualifier? = null,
 ) {
     fun injectableProperties(): List<KProperty1<out Any, *>> =
-        instance!!::class.memberProperties.filter {
+        instance::class.memberProperties.filter {
             it.hasAnnotation<Inject>()
         }
 }
 
-inline fun <reified T> singletonComponent(
+inline fun <reified T : Any> singletonComponent(
     instance: T,
     qualifier: Qualifier? = null,
-): InjectedSingletonComponent =
+): InjectedSingletonComponent<T> =
     InjectedSingletonComponent(
         injectedClass = T::class,
         instance = instance,

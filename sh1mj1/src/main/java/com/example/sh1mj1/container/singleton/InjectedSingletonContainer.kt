@@ -6,7 +6,7 @@ import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
 import kotlin.reflect.KClass
 
 interface InjectedSingletonContainer {
-    fun add(component: InjectedSingletonComponent)
+    fun<T : Any>  add(component: InjectedSingletonComponent<T>)
 
     fun find(
         clazz: KClass<*>,

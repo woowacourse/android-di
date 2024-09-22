@@ -8,10 +8,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 
 class DefaultInjectedSingletonContainer private constructor() : InjectedSingletonContainer {
-    private val components: MutableMap<ComponentKey, InjectedSingletonComponent> =
+    private val components: MutableMap<ComponentKey, InjectedSingletonComponent<*>> =
         mutableMapOf()
 
-    override fun add(component: InjectedSingletonComponent) {
+    override fun <T : Any> add(component: InjectedSingletonComponent<T>) {
         val componentKey =
             ComponentKey.of(
                 clazz = component.injectedClass,

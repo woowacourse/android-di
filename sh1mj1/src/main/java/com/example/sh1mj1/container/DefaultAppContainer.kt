@@ -10,18 +10,18 @@ import kotlin.reflect.KClass
 class DefaultAppContainer(
     private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer.instance,
 ) : AppContainer {
-    override fun add(component: InjectedSingletonComponent) {
+    override fun<T : Any>  add(component: InjectedSingletonComponent<T>) {
         singletonComponentContainer.add(component)
     }
 
-    override fun add(vararg component: InjectedSingletonComponent) {
+    override fun add(vararg component: InjectedSingletonComponent<*>) {
         component.forEach {
             add(it)
         }
     }
 
-    override fun find(
-        clazz: KClass<*>,
+    override fun <T : Any> find(
+        clazz: KClass<T>,
         qualifier: Qualifier?,
     ): Any = find(ComponentKey.of(clazz, qualifier))
 
