@@ -1,6 +1,5 @@
 package woowacourse.shopping.data
 
-import android.util.Log
 import com.example.sh1mj1.Inject
 import com.example.sh1mj1.Qualifier
 import woowacourse.shopping.model.Product
@@ -11,9 +10,7 @@ class DefaultCartRepository : CartRepository {
     lateinit var dao: CartProductDao
 
     override suspend fun addCartProduct(product: Product) {
-        dao.insert(CartProductEntity(product.name, product.price, product.imageUrl)).also {
-            Log.d(TAG, "addCartProduct: $it")
-        }
+        dao.insert(CartProductEntity(product.name, product.price, product.imageUrl))
     }
 
     override suspend fun allCartProducts(): List<Product> = dao.getAll().toData()
