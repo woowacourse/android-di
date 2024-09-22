@@ -12,16 +12,8 @@ typealias QualifierClass = KClass<*>?
 typealias Instance = Any
 typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
-object DependencyInjector {
+class DependencyInjector {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
-    private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
-
-    fun <T : Any> findInstance(
-        clazz: KClass<T>,
-        qualifier: KClass<*>? = null,
-    ): T {
-        return instances[clazz to qualifier] as? T ?: createInstance(clazz)
-    }
 
     fun <T : Any> addInstance(
         clazz: KClass<T>,
@@ -29,6 +21,13 @@ object DependencyInjector {
         qualifier: KClass<*>? = null,
     ) {
         instances[clazz to qualifier] = instance
+    }
+
+    private fun <T : Any> findInstance(
+        clazz: KClass<T>,
+        qualifier: KClass<*>? = null,
+    ): T {
+        return instances[clazz to qualifier] as? T ?: createInstance(clazz)
     }
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
@@ -56,13 +55,16 @@ object DependencyInjector {
 
         properties.forEach { kProperty ->
             val classifier: KClass<*> = kProperty.returnType.classifier as KClass<*>
-            val qualifier: Annotation = kProperty.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() } ?: return
-            val qualifierClass: KClass<out Annotation> = qualifier.annotationClass
-
+            val qualifier: Annotation? = kProperty.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+            val qualifierClass: KClass<out Annotation>? = qualifier?.annotationClass
             val dependency = findInstance(classifier, qualifierClass)
 
             kProperty as KMutableProperty1
             kProperty.setter.call(instance, dependency)
         }
+    }
+
+    companion object {
+        const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
     }
 }

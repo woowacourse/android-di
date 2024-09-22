@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.util.Log
 import com.woowacourse.di.DependencyInjector
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
@@ -14,6 +15,7 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        dependencyInjector = DependencyInjector()
         initialize()
     }
 
@@ -23,7 +25,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun registerProductRepository() {
-        DependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             ProductRepository::class,
             RepositoryModule.provideProductRepository(),
             InMemory::class,
@@ -31,15 +33,20 @@ class ShoppingApplication : Application() {
     }
 
     private fun registerCartRepository() {
-        DependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             CartRepository::class,
             RepositoryModule.provideCartRepository(cartProductDao),
             RoomDB::class,
         )
-        DependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             CartRepository::class,
             RepositoryModule.provideCartInMemoryRepository(),
             InMemory::class,
         )
+    }
+
+    companion object {
+        lateinit var dependencyInjector: DependencyInjector
+            private set
     }
 }
