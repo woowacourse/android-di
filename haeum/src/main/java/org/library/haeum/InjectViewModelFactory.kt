@@ -15,9 +15,10 @@ class InjectViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructors = viewModelClass.primaryConstructor ?: return modelClass as T
         val parameters = constructors.parameters
-        val arguments = parameters.map {
-            container.getKParameterInstance(it) as KParameter
-        }.toTypedArray()
+        val arguments =
+            parameters.map {
+                container.getKParameterInstance(it) as KParameter
+            }.toTypedArray()
         val viewModel = constructors.call(*arguments)
         container.injectTo(viewModel)
         return viewModel as T

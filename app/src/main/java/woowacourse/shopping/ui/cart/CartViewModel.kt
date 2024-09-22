@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.library.haeum.Inject
 import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.di.InMemoryRepository
 import woowacourse.shopping.di.RoomDBRepository
 import woowacourse.shopping.model.Product
 

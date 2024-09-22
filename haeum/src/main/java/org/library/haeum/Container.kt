@@ -6,10 +6,8 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
-import kotlin.reflect.full.allSupertypes
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
@@ -52,8 +50,8 @@ class Container(
             targetField?.set(
                 targetInstance,
                 ModuleInjector.container.getKPropertyInstance(
-                    targetField.kotlinProperty ?: throw IllegalArgumentException("2222r")
-                )
+                    targetField.kotlinProperty ?: throw IllegalArgumentException("2222r"),
+                ),
             )
         }
     }
