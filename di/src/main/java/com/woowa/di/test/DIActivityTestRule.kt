@@ -8,11 +8,14 @@ import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
 import org.junit.rules.ExternalResource
 import org.robolectric.Robolectric
+import org.robolectric.android.controller.ActivityController
 
-class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class<T>) : ExternalResource() {
+class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class<T>) :
+    ExternalResource() {
     private lateinit var applicationLifecycleOwner: TestLifecycleOwner
     private lateinit var activity: T
     private lateinit var viewModelStore: ViewModelStore
+    private lateinit var controller: ActivityController<T>
 
     override fun before() {
         super.before()
@@ -24,11 +27,9 @@ class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class
         }
         applicationLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
 
+        controller = Robolectric.buildActivity(activityClass)
         activity =
-            Robolectric.buildActivity(activityClass)
-                .create()
-                .start()
-                .resume()
+            controller.create()
                 .get()
         viewModelStore = activity.viewModelStore
     }
@@ -37,6 +38,7 @@ class DIActivityTestRule<T : ComponentActivity>(private val activityClass: Class
         super.after()
         applicationLifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         viewModelStore.clear()
+        controller.destroy()
     }
 
     fun getActivity(): T = activity
