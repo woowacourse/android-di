@@ -68,6 +68,6 @@ fun bind(product: ...) {
 ### Qualifier
 - [x] DateFormatter의 인스턴스를 DI 라이브러리에서 관리하도록 한다.
 - [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
-- [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
 - [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
 - [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.

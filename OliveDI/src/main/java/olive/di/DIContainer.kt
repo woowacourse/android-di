@@ -3,6 +3,7 @@ package olive.di
 import android.app.Application
 import olive.di.annotation.ActivityScope
 import olive.di.annotation.Singleton
+import olive.di.annotation.ViewModelScope
 import olive.di.util.fieldsToInject
 import olive.di.util.hasQualifierAnnotation
 import olive.di.util.parameters
@@ -35,7 +36,11 @@ class DIContainer(
             val instanceProvider = InstanceProvider { function.calledInstance(this) }
             if (hasAnnotation<ActivityScope>()) {
                 activityInstances[type] = instanceProvider
-                return
+                return@forEach
+            }
+            if (hasAnnotation<ViewModelScope>()) {
+                viewModelInstances[type] = instanceProvider
+                return@forEach
             }
             instances[type] = instanceProvider.get()
         }
@@ -60,6 +65,14 @@ class DIContainer(
             if (function.annotations.hasQualifierAnnotation()) { // Qualifier가 붙은 경우 namedInstances에 저장
                 val nameAnnotation = function.annotations.qualifierNameAnnotation()
                 namedInstances[cacheType] = NamedInstance(nameAnnotation, create(instanceType))
+                return@forEach
+            }
+            if (function.hasAnnotation<ActivityScope>()) {
+                activityInstances[cacheType] = InstanceProvider { create(instanceType) }
+                return@forEach
+            }
+            if (function.hasAnnotation<ViewModelScope>()) {
+                viewModelInstances[cacheType] = InstanceProvider { create(instanceType) }
                 return@forEach
             }
             createSingleton(instanceType, cacheType)

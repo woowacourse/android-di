@@ -2,16 +2,16 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import olive.di.DIViewModel
 import olive.di.annotation.Inject
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 import woowacourse.shopping.module.RoomCart
 
-class MainViewModel : ViewModel() {
+class MainViewModel : DIViewModel() {
     @Inject
     private lateinit var productRepository: ProductRepository
 
