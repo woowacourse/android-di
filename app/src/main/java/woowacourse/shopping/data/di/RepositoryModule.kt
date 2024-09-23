@@ -8,11 +8,13 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class RepositoryModule(private val context: Context) {
     fun install() {
         provideProductRepository()
         provideCartRepository()
+        provideDateFormatter()
     }
 
     private fun provideProductRepository() {
@@ -35,6 +37,13 @@ class RepositoryModule(private val context: Context) {
             CartRepository::class,
             InMemoryCartRepository(),
             InMemoryCartRepository.QUALIFIER_NAME,
+        )
+    }
+
+    private fun provideDateFormatter() {
+        DependencyContainer.addInstance(
+            DateFormatter::class,
+            DateFormatter(context),
         )
     }
 }
