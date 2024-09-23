@@ -3,8 +3,10 @@ package woowacourse.shopping.di
 import android.content.Context
 import com.example.seogi.di.Module
 import com.example.seogi.di.annotation.ActivityScoped
+import com.example.seogi.di.annotation.DaoInstance
 import com.example.seogi.di.annotation.Qualifier
 import com.example.seogi.di.annotation.SingleTone
+import com.example.seogi.di.annotation.ViewModelScoped
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryInMemory
@@ -21,7 +23,7 @@ annotation class OnDisk
 annotation class InMemory
 
 object DiModule : Module {
-    @SingleTone
+    @ViewModelScoped
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
     @InMemory
@@ -35,5 +37,6 @@ object DiModule : Module {
     @ActivityScoped
     fun provideDateFormatter(context: Context): DateFormatter = DateFormatter(context)
 
+    @DaoInstance
     fun provideCartProductDao(): CartProductDao = ShoppingApplication.appDatabase.cartProductDao()
 }

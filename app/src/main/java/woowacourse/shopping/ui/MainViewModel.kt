@@ -2,8 +2,8 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.seogi.di.DiViewModel
 import com.example.seogi.di.annotation.FieldInject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.OnDisk
@@ -13,7 +13,7 @@ import woowacourse.shopping.model.repository.ProductRepository
 
 class MainViewModel(
     private val productRepository: ProductRepository,
-) : ViewModel() {
+) : DiViewModel() {
     @FieldInject
     @OnDisk
     lateinit var cartRepository: CartRepository

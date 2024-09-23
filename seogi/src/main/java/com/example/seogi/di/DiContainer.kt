@@ -3,7 +3,7 @@ package com.example.seogi.di
 import android.content.Context
 import com.example.seogi.di.annotation.FieldInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
-import com.example.seogi.di.util.hasSingleToneAnnotation
+import com.example.seogi.di.util.hasDaoInstanceAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -61,8 +61,8 @@ class DiContainer(
         annotation: Annotation?,
     ): T {
         return (
-                dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
-                ) as T
+            dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
+        ) as T
     }
 
     private fun addDependency(
@@ -93,7 +93,7 @@ class DiContainer(
     }
 
     private fun KFunction<*>.injectFields(instance: Any) {
-        if (!hasSingleToneAnnotation()) return
+        if (hasDaoInstanceAnnotation()) return
         inject(instance)
     }
 

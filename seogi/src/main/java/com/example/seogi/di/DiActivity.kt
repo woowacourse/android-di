@@ -1,12 +1,11 @@
 package com.example.seogi.di
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.seogi.di.DiApplication.Companion.diContainer
+import com.example.seogi.di.DiApplication.Companion.module
 import com.example.seogi.di.annotation.ActivityScoped
 import com.example.seogi.di.annotation.FieldInject
 import kotlin.reflect.KMutableProperty1
@@ -18,9 +17,6 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 open class DiActivity : AppCompatActivity() {
-    private val module: Module by lazy { (application as DiApplication).module }
-    private val diContainer: DiContainer by lazy { (application as DiApplication).diContainer }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

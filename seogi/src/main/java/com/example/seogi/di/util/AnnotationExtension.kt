@@ -1,7 +1,7 @@
 package com.example.seogi.di.util
 
+import com.example.seogi.di.annotation.DaoInstance
 import com.example.seogi.di.annotation.Qualifier
-import com.example.seogi.di.annotation.SingleTone
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -17,4 +17,4 @@ internal fun KClass<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull
 
 internal fun KFunction<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
-fun KFunction<*>.hasSingleToneAnnotation() = annotations.contains(SingleTone())
+internal fun KFunction<*>.hasDaoInstanceAnnotation() = annotations.contains(DaoInstance())

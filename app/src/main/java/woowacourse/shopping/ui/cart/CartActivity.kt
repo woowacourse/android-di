@@ -18,7 +18,6 @@ class CartActivity : DiActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -28,10 +27,6 @@ class CartActivity : DiActivity() {
         finish()
         return true
     }
-
-/*    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
-    }*/
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
