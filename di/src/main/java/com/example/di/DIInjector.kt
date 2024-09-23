@@ -44,13 +44,13 @@ object DIInjector {
     ) {
         val parameters =
             (
-                    listOf(module) +
-                            function.parameters.drop(1).map {
-                                val parameterInstance =
-                                    DIContainer.getInstance(it.type.jvmErasure, qualifierType)
-                                parameterInstance
-                            }
-                    ).toTypedArray()
+                listOf(module) +
+                    function.parameters.drop(1).map {
+                        val parameterInstance =
+                            DIContainer.getInstance(it.type.jvmErasure, qualifierType)
+                        parameterInstance
+                    }
+            ).toTypedArray()
 
         val functionInstance = function.call(*parameters) ?: return
         val functionLifeCycleScope = function.findAnnotation<LifeCycle>()?.scope ?: return

@@ -4,9 +4,11 @@ import com.example.di.annotation.QualifierType
 import com.example.di.viewmodel.DIViewModel
 import com.example.fake.FakeCartRepository
 import com.example.fake.FakeFieldRepository
+import com.example.fake.FakeProductRepository
 
 class FakeViewModel(
-    @Qualifier(QualifierType.Database) @Inject val fakeDatabaseCartRepository: FakeCartRepository,
+    @Qualifier(QualifierType.Database) @Inject val fakeCartRepository: FakeCartRepository,
+    @Inject val fakeProductRepository: FakeProductRepository,
 ) : DIViewModel(FakeModule::class) {
     @Inject
     lateinit var fakeFieldRepository: FakeFieldRepository
