@@ -8,13 +8,11 @@ import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
-import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.kotlinProperty
 
 class SingletonComponent<T : Application> private constructor(private val clazz: KClass<T>) :
     Component, DefaultLifecycleObserver {
@@ -78,24 +76,10 @@ class SingletonComponent<T : Application> private constructor(private val clazz:
                     kFunc.call(diFunc[kFunc], *parameters.toTypedArray())
                 }
 
-            injectFields(instance)
-            return instance
-        }
-
-        private fun injectFields(instance: Any?) {
-            val fields =
-                requireNotNull(instance)::class.java.declaredFields.onEach { field ->
-                    field.isAccessible = true
-                }.filter { it.isAnnotationPresent(Inject::class.java) }
-
-            fields.map { field ->
-                val fieldInstance =
-                    SingletonComponentManager.getDIInstance(
-                        field.type.kotlin,
-                        field.kotlinProperty?.findQualifierClassOrNull(),
-                    )
-                field.set(instance, fieldInstance)
+            instance?.let {
+                injectSingletonComponentFields(it)
             }
+            return instance
         }
 
         override fun deleteDIInstance(

@@ -4,6 +4,6 @@ package com.woowa.di
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ActivityContext
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DIActivity
+annotation class ApplicationContext

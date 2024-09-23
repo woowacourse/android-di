@@ -7,6 +7,7 @@ import com.woowa.di.activity.ActivityComponentManager
 import com.woowa.di.activity.ActivityLifecycleListener
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
+import com.woowa.di.singleton.injectSingletonComponentFields
 import com.woowa.di.viewmodel.ViewModelComponent
 import com.woowa.di.viewmodel.ViewModelComponentManager
 import kotlin.reflect.KClass
@@ -28,6 +29,7 @@ class DIBuilder {
 
     fun createSingleton(app: Application): DIBuilder {
         SingletonComponentManager.createComponent(app::class)
+        injectSingletonComponentFields(app)
         return this
     }
 

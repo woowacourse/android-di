@@ -4,8 +4,8 @@ import com.woowa.di.findQualifierClassOrNull
 import javax.inject.Inject
 import kotlin.reflect.jvm.kotlinProperty
 
-inline fun <reified T : Any?> injectViewModelComponentFields(instance: T) {
-    T::class.java.declaredFields.onEach { field ->
+fun injectViewModelComponentFields(instance: Any) {
+    instance::class.java.declaredFields.onEach { field ->
         field.isAccessible = true
     }.filter {
         it.isAnnotationPresent(Inject::class.java)

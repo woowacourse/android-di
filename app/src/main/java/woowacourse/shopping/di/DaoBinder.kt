@@ -16,7 +16,7 @@ annotation class InMemory
 annotation class Database
 
 @InstallIn(SingletonComponent::class)
-class DaoBinder {
+object DaoBinder {
     @Database
     fun provideCartProductDao(
         @ApplicationContext context: Context,

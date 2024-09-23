@@ -11,13 +11,11 @@ import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
 import com.woowa.di.singleton.SingletonComponentManager
-import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.kotlinProperty
 
 class ActivityComponent<T : ComponentActivity> private constructor(private val clazz: KClass<T>) :
     Component, DefaultLifecycleObserver {
@@ -28,7 +26,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
             context = (owner as ComponentActivity).baseContext
-            injectActivityComponentField((owner as ComponentActivity))
+            injectActivityComponentFields(owner)
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
@@ -89,24 +87,10 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
                     kFunc.call(diFunc[kFunc], *parameters.toTypedArray())
                 }
 
-            injectFields(instance)
-            return instance
-        }
-
-        private fun injectFields(instance: Any?) {
-            val fields =
-                requireNotNull(instance)::class.java.declaredFields.onEach { field ->
-                    field.isAccessible = true
-                }.filter { it.isAnnotationPresent(Inject::class.java) }
-
-            fields.map { field ->
-                val fieldInstance =
-                    ActivityComponentManager.getDIInstance(
-                        field.type.kotlin,
-                        field.kotlinProperty?.findQualifierClassOrNull(),
-                    )
-                field.set(instance, fieldInstance)
+            instance?.let {
+                injectActivityComponentFields(it)
             }
+            return instance
         }
 
         fun deleteAllDIInstance(targetClass: KClass<out Activity>) {

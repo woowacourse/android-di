@@ -1,7 +1,7 @@
 package com.woowa.di.fixture.component
 
 import androidx.activity.ComponentActivity
-import com.woowa.di.DIActivity
+import com.woowa.di.activity.DIActivity
 import javax.inject.Inject
 
 @DIActivity

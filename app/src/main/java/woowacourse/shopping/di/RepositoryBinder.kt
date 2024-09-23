@@ -9,11 +9,11 @@ import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
 @InstallIn(ViewModelComponent::class)
-class ViewModelRepositoryBinder {
+object ViewModelRepositoryBinder {
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 }
 
 @InstallIn(SingletonComponent::class)
-class SingletonRepositoryBinder {
+object SingletonRepositoryBinder {
     fun provideCartRepository(): CartRepository = CartRepositoryImpl()
 }

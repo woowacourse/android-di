@@ -62,7 +62,9 @@ class ViewModelComponent<T : Any> private constructor() :
                     kFunc.call(diFunc[kFunc], parameters.toTypedArray())
                 }
 
-            injectViewModelComponentFields(instance)
+            instance?.let {
+                injectViewModelComponentFields(it)
+            }
             return instance
         }
 

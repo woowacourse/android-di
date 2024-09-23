@@ -4,8 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.LifecycleOwner
-import com.woowa.di.DIActivity
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
@@ -14,7 +12,7 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
         activity: Activity,
         savedInstanceState: Bundle?,
     ) {
-        if (activity::class.hasAnnotation<DIActivity>() && activity is LifecycleOwner) {
+        if (activity::class.hasAnnotation<DIActivity>() && activity is ComponentActivity) {
             val component =
                 ActivityComponentManager.createComponent(activity::class) as ActivityComponent<*>
             activity.lifecycle.addObserver(component)
@@ -24,7 +22,7 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {}
 
     override fun onActivityDestroyed(activity: Activity) {
-        if (activity is LifecycleOwner && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
+        if (activity is ComponentActivity && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
             ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>)
                 .deleteAllDIInstance(activity::class)
         }

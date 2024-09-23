@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.woowa.di.DIActivity
+import com.woowa.di.activity.DIActivity
 import com.woowa.di.viewmodel.getDIViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
