@@ -2,8 +2,9 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import com.example.di.InjectActivity
+import com.example.di.android.InjectActivity
 import com.example.di.annotation.Inject
+import com.example.di.annotation.lifecycle.ActivityLifeCycle
 import com.example.di.injectViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -13,6 +14,7 @@ class CartActivity : InjectActivity() {
     private val viewModel: CartViewModel by injectViewModel()
 
     @Inject
+    @ActivityLifeCycle
     private lateinit var dateFormatter: DateFormatter
     private lateinit var adapter: CartProductAdapter
 

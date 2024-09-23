@@ -14,4 +14,8 @@ object Injector {
     fun <T : Any> injectFields(targetInstance: T) {
         instanceContainer.injectFields(targetInstance)
     }
+
+    fun deleteInstance(classType: KClass<*>) {
+        instanceContainer.deleteInstance(classType)
+    }
 }

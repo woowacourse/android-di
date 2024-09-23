@@ -97,4 +97,8 @@ class InstanceContainer(private val sourceContainer: SourceContainer) {
     ) {
         instances[classType] = instance
     }
+
+    fun deleteInstance(classType: KClass<*>) {
+        instances.remove(classType)
+    }
 }

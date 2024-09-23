@@ -1,7 +1,9 @@
-package com.example.di
+package com.example.di.android
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.di.Injector
+import com.example.di.LifecycleTracker
 
 abstract class InjectActivity : AppCompatActivity() {
     private lateinit var lifecycleTracker: LifecycleTracker
@@ -17,7 +19,7 @@ abstract class InjectActivity : AppCompatActivity() {
     }
 
     private fun setupLifecycle() {
-        lifecycleTracker = LifecycleTracker()
+        lifecycleTracker = LifecycleTracker(this)
         lifecycle.addObserver(lifecycleTracker)
     }
 }
