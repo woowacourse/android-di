@@ -19,26 +19,26 @@ class ShoppingApplication : Application() {
     private fun setupDI(context: Context) {
         val database = DatabaseProvider.getDatabase(context)
         DIContainer.register(
-            CartProductDao::class.java,
-            database.cartProductDao(),
-            "RoomDB",
+            clazz = CartProductDao::class.java,
+            instance = database.cartProductDao(),
+            qualifier = "RoomDB",
             scope = Scope.APP
         )
         DIContainer.register(
-            CartProductDao::class.java,
-            InMemoryCartProductDao(),
-            "InMemory",
+            clazz = CartProductDao::class.java,
+            instance = InMemoryCartProductDao(),
+            qualifier = "InMemory",
             scope = Scope.APP
         )
 
         DIContainer.register(
-            ProductRepository::class.java,
-            ProductRepository(),
+            clazz = ProductRepository::class.java,
+            instance = ProductRepository(),
             scope = Scope.VIEWMODEL
         )
         DIContainer.register(
-            CartRepository::class.java,
-            CartRepository(database.cartProductDao()),
+            clazz = CartRepository::class.java,
+            instance = CartRepository(database.cartProductDao()),
             scope = Scope.APP
         )
     }
