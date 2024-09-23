@@ -31,6 +31,10 @@ object AutoDIManager {
         _dependencies.clear()
     }
 
+    inline fun <reified T : Any> removeDependency() {
+        (dependencies as MutableMap<KClass<*>, Any?>).remove(T::class)
+    }
+
     inline fun <reified T : Any> createAutoDIInstance(): T {
         val constructorInjectedInstance = injectConstructor<T>()
         val fieldInjectedInstance = injectField<T>(constructorInjectedInstance)
