@@ -5,12 +5,12 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.Injector
-import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity1
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity2
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity3
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity4
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity5
+import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
@@ -35,7 +35,7 @@ class SupplinViewModelTest {
                 ApplicationProvider.getApplicationContext<FakeApplication>(),
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
-                FakeDataSourceModule::class
+                FakeDataSourceModule::class,
             )
         }
     }

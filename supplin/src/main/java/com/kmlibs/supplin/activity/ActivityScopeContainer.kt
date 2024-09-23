@@ -27,11 +27,14 @@ class ActivityScopeContainer private constructor(
         super.onDestroy(owner)
     }
 
-    override fun resolveInstance(returnType: KType, annotations: List<Annotation>): Any {
+    override fun resolveInstance(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): Any {
         if (shouldResolveContext(returnType, annotations)) return activity
         val qualifiedType = buildQualifiedType(returnType, annotations)
         return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
-        ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
+            ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
     }
 
     private fun shouldResolveContext(
@@ -50,7 +53,7 @@ class ActivityScopeContainer private constructor(
 
         fun <T : ComponentActivity> containerOf(
             activity: T,
-            module: KClass<*>
+            module: KClass<*>,
         ): ActivityScopeContainer {
             qualifiedContainerType = QualifiedContainerType(module, activity::class.simpleName)
             return containers.getOrPut(qualifiedContainerType) {
@@ -61,4 +64,3 @@ class ActivityScopeContainer private constructor(
         }
     }
 }
-

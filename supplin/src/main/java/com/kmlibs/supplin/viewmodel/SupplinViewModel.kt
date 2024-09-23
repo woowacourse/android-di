@@ -5,7 +5,6 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import com.kmlibs.supplin.Injector
 import kotlin.reflect.KClass
 
 /**
@@ -66,25 +65,20 @@ import kotlin.reflect.KClass
  * )
  * ```
  */
-inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(
-    vararg modules: KClass<*>,
-): Lazy<VM> {
+inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(vararg modules: KClass<*>): Lazy<VM> {
     return viewModels {
         ViewModelFactory(
             viewModelClass = VM::class,
-            modules = modules.toList()
+            modules = modules.toList(),
         )
     }
 }
 
-inline fun <reified VM : ViewModel> Fragment.supplinViewModel(
-    vararg modules: KClass<*>,
-): Lazy<VM> {
+inline fun <reified VM : ViewModel> Fragment.supplinViewModel(vararg modules: KClass<*>): Lazy<VM> {
     return viewModels {
         ViewModelFactory(
             viewModelClass = VM::class,
-            modules = modules.toList()
+            modules = modules.toList(),
         )
     }
 }
-

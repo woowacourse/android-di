@@ -14,7 +14,7 @@ class FakeApplication : Application() {
                 this@FakeApplication,
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
-                FakeDataSourceModule::class
+                FakeDataSourceModule::class,
             )
         }
     }

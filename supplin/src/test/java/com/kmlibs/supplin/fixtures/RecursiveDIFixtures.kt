@@ -3,28 +3,35 @@ package com.kmlibs.supplin.fixtures
 import com.kmlibs.supplin.annotations.Supply
 import com.kmlibs.supplin.fixtures.android.FakeRepository1
 import com.kmlibs.supplin.fixtures.android.repository.FakeRepository
-import com.kmlibs.supplin.supplinInjection
 
-class Root1 @Supply constructor(
-    private val child1: Child1,
-    private val child2: Child2,
-)
-
-class Root2 @Supply constructor(
-    private val child3: Child3,
-)
-
-class Root3 @Supply constructor(
-    private val child4: Child4,
-)
-
-class Root4 @Supply constructor() {
+class Root1
     @Supply
-    private lateinit var child1: Child1
+    constructor(
+        private val child1: Child1,
+        private val child2: Child2,
+    )
 
+class Root2
     @Supply
-    private lateinit var child2: Child2
-}
+    constructor(
+        private val child3: Child3,
+    )
+
+class Root3
+    @Supply
+    constructor(
+        private val child4: Child4,
+    )
+
+class Root4
+    @Supply
+    constructor() {
+        @Supply
+        private lateinit var child1: Child1
+
+        @Supply
+        private lateinit var child2: Child2
+    }
 
 class Root5 {
     @Supply
@@ -34,15 +41,21 @@ class Root5 {
     private lateinit var child2: Child2
 }
 
-class Child1 @Supply constructor(
-    private val grandChild: GrandChild1,
-)
+class Child1
+    @Supply
+    constructor(
+        private val grandChild: GrandChild1,
+    )
 
-class Child2 @Supply constructor()
+class Child2
+    @Supply
+    constructor()
 
-class Child3 @Supply constructor(
-    private val grandChild: GrandChild2
-)
+class Child3
+    @Supply
+    constructor(
+        private val grandChild: GrandChild2,
+    )
 
 class Child4(
     @Supply
@@ -51,17 +64,23 @@ class Child4(
     private val grandChild2: GrandChild2,
 )
 
-class GrandChild1 @Supply constructor() {
+class GrandChild1
     @Supply
-    private lateinit var grandGrandChild: GreatGrandChild1
-}
+    constructor() {
+        @Supply
+        private lateinit var grandGrandChild: GreatGrandChild1
+    }
 
-class GrandChild2 @Supply constructor(
-    @FakeRepository1
-    private val repository: FakeRepository,
-)
+class GrandChild2
+    @Supply
+    constructor(
+        @FakeRepository1
+        private val repository: FakeRepository,
+    )
 
-class GreatGrandChild1 @Supply constructor()
+class GreatGrandChild1
+    @Supply
+    constructor()
 
 /*
 class Test1 {

@@ -1,7 +1,6 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.ApplicationContext
 import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
@@ -23,7 +22,5 @@ object CartModule {
 
     @Concrete
     @DatabaseRepository
-    fun provideCartRepository(
-        database: ShoppingDatabase
-    ): CartRepository = DBCartRepository(database)
+    fun provideCartRepository(database: ShoppingDatabase): CartRepository = DBCartRepository(database)
 }

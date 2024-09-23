@@ -9,6 +9,7 @@ import woowacourse.shopping.ui.cart.DateFormatter
 @Module
 object DateModule {
     @Concrete
-    fun provideDateFormatter(@ActivityContext context: Context): DateFormatter =
-        DateFormatter(context)
+    fun provideDateFormatter(
+        @ActivityContext context: Context,
+    ): DateFormatter = DateFormatter(context)
 }

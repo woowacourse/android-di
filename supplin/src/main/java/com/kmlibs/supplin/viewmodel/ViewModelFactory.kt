@@ -2,10 +2,10 @@ package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.kmlibs.supplin.application.ApplicationScopeContainer
 import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.annotations.Supply
 import com.kmlibs.supplin.annotations.Within
+import com.kmlibs.supplin.application.ApplicationScopeContainer
 import com.kmlibs.supplin.model.Scope
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

@@ -59,4 +59,3 @@ class FunctionContainer<T : Any>(module: KClass<T>) {
         }
     }
 }
-

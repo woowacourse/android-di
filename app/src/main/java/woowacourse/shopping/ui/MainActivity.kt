@@ -8,7 +8,6 @@ import com.kmlibs.supplin.activity.SupplinActivity
 import com.kmlibs.supplin.viewmodel.supplinViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.DateModule
 import woowacourse.shopping.di.ProductModule
 import woowacourse.shopping.ui.cart.CartActivity
 

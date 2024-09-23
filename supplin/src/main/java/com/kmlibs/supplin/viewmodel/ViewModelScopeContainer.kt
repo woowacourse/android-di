@@ -11,7 +11,6 @@ class ViewModelScopeContainer private constructor(
     viewModel: ViewModel,
     module: KClass<*>,
 ) : ComponentContainer(module) {
-
     init {
         viewModel.addCloseable {
             clearDependencies()
@@ -22,10 +21,13 @@ class ViewModelScopeContainer private constructor(
         containers.remove(qualifiedContainerType)
     }
 
-    override fun resolveInstance(returnType: KType, annotations: List<Annotation>): Any {
+    override fun resolveInstance(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): Any {
         val qualifiedType = buildQualifiedType(returnType, annotations)
         return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
-        ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
+            ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
     }
 
     companion object {
@@ -36,7 +38,7 @@ class ViewModelScopeContainer private constructor(
 
         fun <T : ViewModel> containerOf(
             viewModel: T,
-            module: KClass<*>
+            module: KClass<*>,
         ): ViewModelScopeContainer {
             qualifiedContainerType = QualifiedContainerType(module, viewModel::class.simpleName)
             return containers.getOrPut(qualifiedContainerType) {

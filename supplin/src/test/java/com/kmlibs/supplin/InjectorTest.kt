@@ -1,14 +1,10 @@
 package com.kmlibs.supplin
 
-import android.app.Application
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
-import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +40,7 @@ class InjectorTest {
                 application,
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
-                FakeDataSourceModule::class
+                FakeDataSourceModule::class,
             )
         }
 
@@ -53,11 +49,10 @@ class InjectorTest {
                 application,
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
-                FakeDataSourceModule::class
+                FakeDataSourceModule::class,
             )
         }
 
         // then
-
     }
 }

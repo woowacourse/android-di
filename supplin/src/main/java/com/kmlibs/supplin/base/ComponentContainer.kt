@@ -30,19 +30,23 @@ abstract class ComponentContainer(private val module: KClass<*>) {
         saveModuleInstance()
     }
 
-    abstract fun resolveInstance(returnType: KType, annotations: List<Annotation>): Any
+    abstract fun resolveInstance(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): Any
 
     private fun saveModuleInstance() {
         val moduleInstance = module.objectInstance
         if (moduleInstance != null) {
             val typeParameters = module.typeParameters
-            val type = if (typeParameters.isNotEmpty()) {
-                module.createType(
-                    typeParameters.map { KTypeProjection.invariant(Any::class.createType()) }
-                )
-            } else {
-                module.createType()
-            }
+            val type =
+                if (typeParameters.isNotEmpty()) {
+                    module.createType(
+                        typeParameters.map { KTypeProjection.invariant(Any::class.createType()) },
+                    )
+                } else {
+                    module.createType()
+                }
             _instances[QualifiedType(type)] = moduleInstance
         }
     }
@@ -166,7 +170,6 @@ abstract class ComponentContainer(private val module: KClass<*>) {
         kClass: KClass<T>,
         instance: T,
     ) {
-
         kClass.memberProperties.filter { field ->
             field.hasAnnotation<Supply>()
         }.forEach { targetField ->

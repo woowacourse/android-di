@@ -14,21 +14,30 @@ import kotlin.reflect.full.hasAnnotation
 class InjectionBuilder {
     private var componentContainers: MutableMap<KClass<*>, ComponentContainer> = mutableMapOf()
 
-    fun applicationModule(application: Application, vararg modules: KClass<*>) {
+    fun applicationModule(
+        application: Application,
+        vararg modules: KClass<*>,
+    ) {
         modules.forEach {
             requireModuleAnnotation(it)
             addContainer(application::class, ApplicationScopeContainer.containerOf(application.applicationContext, it))
         }
     }
 
-    fun activityModule(activity: ComponentActivity, vararg modules: KClass<*>) {
+    fun activityModule(
+        activity: ComponentActivity,
+        vararg modules: KClass<*>,
+    ) {
         modules.forEach {
             requireModuleAnnotation(it)
             addContainer(activity::class, ActivityScopeContainer.containerOf(activity, it))
         }
     }
 
-    fun viewModelModule(viewModel: ViewModel, vararg modules: KClass<*>) {
+    fun viewModelModule(
+        viewModel: ViewModel,
+        vararg modules: KClass<*>,
+    ) {
         modules.forEach {
             requireModuleAnnotation(it)
             addContainer(viewModel::class, ViewModelScopeContainer.containerOf(viewModel, it))
@@ -41,7 +50,10 @@ class InjectionBuilder {
         }
     }
 
-    private fun addContainer(clazz: KClass<*>, componentContainer: ComponentContainer) {
+    private fun addContainer(
+        clazz: KClass<*>,
+        componentContainer: ComponentContainer,
+    ) {
         componentContainers[clazz] = componentContainer
     }
 

@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.kmlibs.supplin.base.ComponentContainer
 import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.base.ComponentContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.jvmErasure
 
 class ApplicationScopeContainer private constructor(
     private val applicationContext: Context,
-    module: KClass<*>
+    module: KClass<*>,
 ) : DefaultLifecycleObserver,
     ComponentContainer(module) {
     override fun onCreate(owner: LifecycleOwner) {
@@ -26,7 +26,10 @@ class ApplicationScopeContainer private constructor(
         super.onDestroy(owner)
     }
 
-    override fun resolveInstance(returnType: KType, annotations: List<Annotation>): Any {
+    override fun resolveInstance(
+        returnType: KType,
+        annotations: List<Annotation>,
+    ): Any {
         if (shouldResolveContext(returnType, annotations)) return applicationContext
         val qualifiedType = buildQualifiedType(returnType, annotations)
         val instance = instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
@@ -59,4 +62,3 @@ class ApplicationScopeContainer private constructor(
         }
     }
 }
-

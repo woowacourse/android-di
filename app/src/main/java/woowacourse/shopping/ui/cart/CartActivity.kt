@@ -1,9 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import com.kmlibs.supplin.activity.SupplinActivity
 import com.kmlibs.supplin.supplinInjection
 import com.kmlibs.supplin.viewmodel.supplinViewModel
