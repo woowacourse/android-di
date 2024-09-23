@@ -2,7 +2,6 @@ package com.android.diandroid
 
 import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
-import com.android.di.component.Module
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +34,7 @@ class ApplicationInjectorTest {
         val realInjector = DiInjector(DiContainer())
 
         // when
-        application.saveInjector(realActivityName,realInjector)
+        application.saveInjector(realActivityName, realInjector)
 
         // then
         assert(application.getInjector(realActivityName) == realInjector)

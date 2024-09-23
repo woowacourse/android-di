@@ -22,10 +22,10 @@ class ActivityInjectorTest {
 
     @Test
     fun `액티비티가 생성되면 di를 주입하는 diInjector가 생성되어야 한다`() {
-        //when
+        // when
         testActivity = activityController.create().get()
 
-        //then
+        // then
         assert(testActivity.diInjector != null)
     }
 
