@@ -8,45 +8,25 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 
 class ViewModelComponentContainer private constructor() {
-    private val components = mutableListOf<ViewModelScopeComponent<*>>()
-
-    /*
-    private val components: MutableMap<ComponentKey, InjectedSingletonComponent<*>> =
-        mutableMapOf()
-     */
-
-    private val cachedComponents = mutableMapOf<ComponentKey, ViewModelScopeComponent<*>>()
+    private val components = mutableMapOf<ComponentKey, ViewModelScopeComponent<*>>()
 
     fun add(component: ViewModelScopeComponent<*>) {
-        if (components.contains(component)) {
-            throw IllegalStateException("ViewModelComponentContainer already contains ${component.injectedClass.simpleName}")
-        }
-        components.add(component)
-
-        // cache
         val componentKey = ComponentKey.of(component.injectedClass, component.qualifier)
-        cachedComponents[componentKey] = component
+        components[componentKey] = component
     }
 
     fun find(clazz: KClass<*>, qualifier: Qualifier?): Any? = find(ComponentKey.of(clazz, qualifier))
 
     fun remove(clazz: KClass<*>, qualifier: Qualifier?) {
-        ComponentKey.of(clazz, qualifier).let {
-            components.remove(cachedComponents[it])
-            cachedComponents.remove(it)
-        }
+        remove(ComponentKey.of(clazz, qualifier))
     }
 
-    fun remove(component: ViewModelScopeComponent<*>) {
-        components.remove(component)
-    }
-
-    fun all(): List<ViewModelScopeComponent<*>> {
-        return components
+    fun remove(componentKey: ComponentKey) {
+        components.remove(componentKey)
     }
 
     fun find(componentKey: ComponentKey): Any? {
-        val foundComponent = cachedComponents[componentKey]
+        val foundComponent = components[componentKey]
         val foundInstance =
             foundComponent?.instance
 
@@ -69,10 +49,6 @@ class ViewModelComponentContainer private constructor() {
         return foundInstance
     }
 
-    fun remove(clazz: KClass<*>) {
-        components.removeIf { it.injectedClass == clazz }
-    }
-
     companion object {
         private var instance: ViewModelComponentContainer? = null
 
@@ -84,5 +60,3 @@ class ViewModelComponentContainer private constructor() {
         }
     }
 }
-
-private const val TAG = "ViewModelComponentConta"

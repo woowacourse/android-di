@@ -41,7 +41,7 @@ class DefaultAppContainer(
         viewModelScopeComponentContainer.find(clazz, qualifier)
 
     override fun removeVMS(clazz: KClass<*>, qualifier: Qualifier?) {
-        viewModelScopeComponentContainer.remove(clazz)
+        viewModelScopeComponentContainer.remove(clazz, qualifier)
     }
 
     override fun clearActivityScopedObjects() {
