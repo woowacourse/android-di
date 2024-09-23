@@ -1,6 +1,5 @@
 package woowa.shopping.di.libs.container
 
-import woowa.shopping.di.libs.android.ScopeComponent
 import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.factory.InstanceFactory
 import woowa.shopping.di.libs.factory.Lifecycle
@@ -9,6 +8,7 @@ import woowa.shopping.di.libs.factory.SingletonInstanceFactory
 import woowa.shopping.di.libs.qualify.Qualifier
 import woowa.shopping.di.libs.qualify.qualifier
 import woowa.shopping.di.libs.scope.Scope
+import woowa.shopping.di.libs.scope.ScopeComponent
 import woowa.shopping.di.libs.scope.ScopeDSL
 import kotlin.reflect.KClass
 

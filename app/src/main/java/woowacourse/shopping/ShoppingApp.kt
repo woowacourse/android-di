@@ -40,15 +40,17 @@ class ShoppingApp : Application() {
                 single<CartRepository>(qualifier<InMemoryCartRepository>()) { InMemoryCartRepository() }
             }
             container {
-                viewModel<MainViewModel> {
-                    MainViewModel(
-                        get(),
-                        get(qualifier<DefaultCartRepository>()),
-                    )
+                viewModel<MainViewModel>(
+                    viewModelFactory = {
+                        MainViewModel(
+                            get(),
+                            get(qualifier<DefaultCartRepository>()),
+                        )
+                    })
+                viewModel<CartViewModel> {
+                    CartViewModel(get(qualifier<InMemoryCartRepository>()))
                 }
-                viewModel<CartViewModel> { CartViewModel(get(qualifier<DefaultCartRepository>())) }
             }
-
             container {
                 scope<CartActivity> {
                     scoped { DateFormatter(get()) }

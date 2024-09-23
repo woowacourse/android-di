@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import woowa.shopping.di.libs.android.ScopeViewModel
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
 
 class CartViewModel(
     private val cartRepository: CartRepository,
-) : ViewModel() {
+) : ScopeViewModel() {
     private val _cartProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val cartProducts: StateFlow<List<Product>> = _cartProducts.asStateFlow()
 

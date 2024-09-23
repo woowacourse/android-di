@@ -8,13 +8,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import woowa.shopping.di.libs.android.ScopeActivity
-import woowa.shopping.di.libs.android.injectViewModel
+import woowa.shopping.di.libs.android.scopeViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : ScopeActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val viewModel by injectViewModel<CartViewModel>()
+    private val viewModel by scopeViewModel<CartViewModel>()
 
     private val dateFormatter: DateFormatter by inject()
 

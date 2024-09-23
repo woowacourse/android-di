@@ -43,8 +43,3 @@ fun startScope(qualifier: Qualifier): Scope {
     Containers.scopeInstanceRegistry.unlockScope(qualifier)
     return Scope(qualifier, Lifecycle.SCOPED)
 }
-
-@OptIn(InternalApi::class)
-fun cancelScope(qualifier: Qualifier) {
-    Containers.scopeInstanceRegistry.clearScope(qualifier)
-}
