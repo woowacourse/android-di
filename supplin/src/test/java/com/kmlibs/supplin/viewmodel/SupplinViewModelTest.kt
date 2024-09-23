@@ -1,11 +1,11 @@
 package com.kmlibs.supplin.viewmodel
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.kmlibs.supplin.Injector
+import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity1
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity2
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity3
@@ -25,16 +25,18 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class SupplinViewModelTest {
-    private val context = ApplicationProvider.getApplicationContext<Context>()
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
         Injector.init {
-            context(context)
-            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+            applicationModule(
+                ApplicationProvider.getApplicationContext<FakeApplication>(),
+                FakeConcreteModule::class,
+                FakeRepositoryModule::class,
+                FakeDataSourceModule::class
+            )
         }
     }
 

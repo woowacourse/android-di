@@ -63,6 +63,7 @@ class GrandChild2 @Supply constructor(
 
 class GreatGrandChild1 @Supply constructor()
 
+/*
 class Test1 {
     val root: Root1 by supplinInjection<Root1>()
 }
@@ -82,3 +83,4 @@ class Test4 {
 class Test5 {
     val root: Root5 by supplinInjection<Root5>()
 }
+*/
