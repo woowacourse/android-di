@@ -1,8 +1,8 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.di.DependencyInjector
-import com.example.di.DiContainer
+import com.example.di.Injector
+import com.example.di.SourceContainer
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.di.DatabaseModule
 
@@ -18,13 +18,7 @@ class AndroidDiApplication : Application() {
     }
 
     private fun initializeDependencies() {
-        val diContainer = DiContainer()
-        diContainer.addModule(DatabaseModule)
-        injector = DependencyInjector(diContainer)
-    }
-
-    companion object {
-        lateinit var injector: DependencyInjector
-            private set
+        val sourceContainer = SourceContainer().apply { addModule(DatabaseModule) }
+        Injector.init(sourceContainer)
     }
 }

@@ -13,7 +13,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class DependencyInjector(private val container: DiContainer) {
+class InstanceContainer(private val container: SourceContainer) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     fun inject(classType: KClass<*>): Any {

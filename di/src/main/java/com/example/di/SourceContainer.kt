@@ -7,7 +7,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
-class DiContainer {
+class SourceContainer {
     private val sources = mutableMapOf<KClass<*>, Any>()
     private val modules = mutableListOf<Any>()
 
@@ -48,8 +48,7 @@ class DiContainer {
             function.hasAnnotation<Provides>()
         }
 
-    private fun KFunction<*>.isReturnTypeMatchedWith(sourceType: KClass<*>) =
-        returnType.classifier == sourceType
+    private fun KFunction<*>.isReturnTypeMatchedWith(sourceType: KClass<*>) = returnType.classifier == sourceType
 
     private fun create(targetModuleAndFunction: Map<Any, KFunction<*>>): Any {
         val targetFunction = targetModuleAndFunction.values.first()
