@@ -1,10 +1,12 @@
 package com.woowacourse.di
 
 import android.content.Context
+import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
@@ -88,6 +90,18 @@ class DiModule(private val applicationContext: Context, modules: List<KClass<*>>
         val instance = constructor.call(*params)
         instances[kClass] = instance
         return instance
+    }
+
+    fun inject(target: Any) {
+        val kClass = target::class.java
+        val properties = kClass.declaredFields
+        properties.forEach { field ->
+            if (field.isAnnotationPresent(Inject::class.java)) {
+                field.isAccessible = true
+                val fieldInstance = resolve(field.type.kotlin)
+                field.set(target, fieldInstance)
+            }
+        }
     }
 
     private fun <T : Any> KClass<T>.instance(): T {

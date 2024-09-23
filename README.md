@@ -17,7 +17,7 @@
 - [x] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
 - [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
 - [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다. 
-- [ ] CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
+- [x] CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
 - [ ] 모든 의존성이 싱글 오브젝트로 만들어질 필요 없다.
   - [ ] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
   - [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.

@@ -5,6 +5,7 @@ import com.woowacourse.di.DiModule
 import woowacourse.shopping.data.di.DaoModule
 import woowacourse.shopping.data.di.DatabaseModule
 import woowacourse.shopping.data.di.RepositoryModule
+import woowacourse.shopping.ui.di.DateFormatterModule
 import javax.inject.Qualifier
 
 @Qualifier
@@ -20,6 +21,7 @@ class ShoppingApplication : Application() {
             context = applicationContext,
             modules =
                 listOf(
+                    DateFormatterModule::class,
                     DatabaseModule::class,
                     DaoModule::class,
                     RepositoryModule::class,
