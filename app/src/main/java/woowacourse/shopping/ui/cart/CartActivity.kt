@@ -22,7 +22,7 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DependencyInjector.injectDependencies(this,this)
+        DependencyInjector.injectDependencies(this, this)
         setupBinding()
         setupToolbar()
         setupView()

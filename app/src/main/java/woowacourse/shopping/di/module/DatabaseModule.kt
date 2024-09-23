@@ -19,18 +19,16 @@ class DatabaseModule(private val context: Context) : DIModule {
 
         val cartProductDao = database.cartProductDao()
 
-        container.registerComponentScopedInstance(
+        container.registerModuleInstance(
             type = CartProductDao::class,
             instance = cartProductDao,
             qualifier = QualifierType.DATABASE,
-            owner = this
         )
 
-        container.registerComponentScopedInstance(
+        container.registerModuleInstance(
             type = ShoppingDatabase::class,
             instance = database,
             qualifier = QualifierType.DATABASE,
-            owner = this
         )
     }
 }
