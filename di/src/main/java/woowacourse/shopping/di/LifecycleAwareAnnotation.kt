@@ -17,7 +17,7 @@ annotation class ApplicationLifecycleAware
     AnnotationTarget.FIELD,
 )
 @LifecycleAware
-annotation class ViewModelLifecycleAware
+annotation class ActivityLifecycleAware
 
 @Target(
     AnnotationTarget.PROPERTY,
@@ -25,3 +25,10 @@ annotation class ViewModelLifecycleAware
 )
 @LifecycleAware
 annotation class FragmentLifecycleAware
+
+@Target(
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.FIELD,
+)
+@LifecycleAware
+annotation class ViewModelLifecycleAware
