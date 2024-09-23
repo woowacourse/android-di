@@ -25,7 +25,7 @@ abstract class ComponentManager {
                 saveWhereDIInstanceCreated(property, targetClass)
             }
 
-            if (this is SingletonComponent<*>) {
+            if (this is SingletonComponent) {
                 createComponentOfAllBinder(targetClass)
             }
         }

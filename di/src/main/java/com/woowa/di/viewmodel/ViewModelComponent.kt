@@ -1,5 +1,6 @@
 package com.woowa.di.viewmodel
 
+import androidx.lifecycle.ViewModel
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
@@ -10,7 +11,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ViewModelComponent<T : Any> private constructor() :
+class ViewModelComponent private constructor() :
     Component {
         private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()
@@ -72,14 +73,14 @@ class ViewModelComponent<T : Any> private constructor() :
         }
 
         companion object {
-            private val instances = mutableMapOf<KClass<*>, ViewModelComponent<*>>()
+            private val instances = mutableMapOf<KClass<*>, ViewModelComponent>()
 
-            fun <binder : Any> getInstance(binderClazz: KClass<binder>): ViewModelComponent<binder> {
+            fun <binder : ViewModel> getInstance(binderClazz: KClass<binder>): ViewModelComponent {
                 return instances.getOrPut(binderClazz) {
-                    val newInstance = ViewModelComponent<binder>()
+                    val newInstance = ViewModelComponent()
                     instances[binderClazz] = newInstance
                     newInstance
-                } as ViewModelComponent<binder>
+                }
             }
 
             fun deleteInstance(binderClazz: KClass<*>) {

@@ -23,8 +23,9 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityDestroyed(activity: Activity) {
         if (activity is ComponentActivity && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
-            ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>)
-                .deleteAllDIInstance(activity::class)
+            ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>).deleteAllDIInstance()
+            ActivityComponent.deleteInstance(activity::class)
+
         }
     }
 

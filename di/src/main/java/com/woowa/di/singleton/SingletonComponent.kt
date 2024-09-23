@@ -14,7 +14,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class SingletonComponent<T : Application> private constructor(private val clazz: KClass<T>) :
+class SingletonComponent private constructor() :
     Component, DefaultLifecycleObserver {
         private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()
@@ -87,14 +87,14 @@ class SingletonComponent<T : Application> private constructor(private val clazz:
         }
 
         companion object {
-            private var instance: SingletonComponent<*>? = null
+            private var instance: SingletonComponent? = null
 
-            fun <binder : Application> getInstance(binderClazz: KClass<binder>): SingletonComponent<binder> {
-                return instance as? SingletonComponent<binder> ?: initInstance(binderClazz)
+            fun getInstance(): SingletonComponent {
+                return instance ?: initInstance()
             }
 
-            private fun <binder : Application> initInstance(binderClazz: KClass<binder>): SingletonComponent<binder> {
-                val newInstance = SingletonComponent(binderClazz)
+            private fun initInstance(): SingletonComponent {
+                val newInstance = SingletonComponent()
                 instance = newInstance
                 ProcessLifecycleOwner.get().lifecycle.addObserver(newInstance)
                 return newInstance
