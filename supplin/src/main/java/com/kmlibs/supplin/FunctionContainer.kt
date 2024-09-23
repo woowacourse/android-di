@@ -11,12 +11,10 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-class FunctionContainer(modules: List<KClass<*>>) {
+class FunctionContainer<T : Any>(module: KClass<T>) {
     val qualifiedFunctions: Map<QualifiedType, KFunction<*>> =
-        modules
-            .flatMap { module ->
-                module.declaredMemberFunctions
-            }.associate { memberFunction ->
+        module.declaredMemberFunctions
+            .associate { memberFunction ->
                 functionByQualifiedType(memberFunction)
             }
 
@@ -61,3 +59,4 @@ class FunctionContainer(modules: List<KClass<*>>) {
         }
     }
 }
+

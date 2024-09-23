@@ -2,17 +2,22 @@ package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.kmlibs.supplin.InstanceContainer
+import com.kmlibs.supplin.application.ApplicationScopeContainer
+import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.annotations.Supply
+import com.kmlibs.supplin.annotations.Within
+import com.kmlibs.supplin.model.Scope
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelFactory(
     private val viewModelClass: KClass<out ViewModel>,
-    private val instanceContainer: InstanceContainer,
+    private val modules: List<KClass<*>>,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(viewModelClass.java)) {
@@ -21,20 +26,29 @@ class ViewModelFactory(
         val targetConstructor = targetConstructor()
         val constructorParameters = targetConstructor.parameters
         val instance = instanceOf(targetConstructor, constructorParameters)
-        instanceContainer.injectFields(modelClass.kotlin, instance as T)
+        Injector.init {
+            viewModelModule(instance, modules = modules.toTypedArray())
+        }
+        modelClass.kotlin.memberProperties.filter { it.hasAnnotation<Supply>() }.forEach {
+            val scope = requireNotNull(it.findAnnotation<Within>()?.scope)
+            if (scope == Scope.Application::class) {
+                ApplicationScopeContainer.container.injectSingleField(it, instance as T)
+            }
+            if (scope == Scope.ViewModel::class) {
+                ViewModelScopeContainer.containerOf(instance, modules.first())
+                    .injectSingleField(it, instance as T)
+            }
+        }
 
-        return instance
+        return instance as T
     }
 
     private fun instanceOf(
         targetConstructor: KFunction<ViewModel>,
         constructorParameters: List<KParameter>,
-    ): ViewModel =
-        targetConstructor.callBy(
-            constructorParameters.associateWith { parameter ->
-                instanceContainer.instanceOf(parameter)
-            },
-        )
+    ): ViewModel {
+        return targetConstructor.call()
+    }
 
     private fun targetConstructor(): KFunction<ViewModel> =
         viewModelClass.constructors.firstOrNull { constructor ->

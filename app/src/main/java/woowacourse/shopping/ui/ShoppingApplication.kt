@@ -14,8 +14,7 @@ class ShoppingApplication : Application() {
 
     private fun initializeInjector() {
         Injector.init {
-            context(this@ShoppingApplication)
-            module(DatabaseModule::class, ProductModule::class, CartModule::class)
+            applicationModule(this@ShoppingApplication, DatabaseModule::class, CartModule::class)
         }
     }
 }

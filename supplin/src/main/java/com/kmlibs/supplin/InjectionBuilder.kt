@@ -1,27 +1,37 @@
 package com.kmlibs.supplin
 
-import android.content.Context
+import android.app.Application
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModel
+import com.kmlibs.supplin.activity.ActivityScopeContainer
 import com.kmlibs.supplin.annotations.Module
-import com.kmlibs.supplin.model.InjectionData
+import com.kmlibs.supplin.application.ApplicationScopeContainer
+import com.kmlibs.supplin.base.ComponentContainer
+import com.kmlibs.supplin.viewmodel.ViewModelScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
 class InjectionBuilder {
-    private lateinit var context: Context
-    private var modules = listOf<KClass<*>>()
+    private var componentContainers: MutableMap<KClass<*>, ComponentContainer> = mutableMapOf()
 
-    fun context(context: Context) {
-        this.context = context
+    fun applicationModule(application: Application, vararg modules: KClass<*>) {
+        modules.forEach {
+            requireModuleAnnotation(it)
+            addContainer(application::class, ApplicationScopeContainer.containerOf(application.applicationContext, it))
+        }
     }
 
-    fun module(vararg modules: KClass<*>) {
-        initializeModules(modules)
+    fun activityModule(activity: ComponentActivity, vararg modules: KClass<*>) {
+        modules.forEach {
+            requireModuleAnnotation(it)
+            addContainer(activity::class, ActivityScopeContainer.containerOf(activity, it))
+        }
     }
 
-    private fun initializeModules(modules: Array<out KClass<*>>) {
-        modules.forEach { module ->
-            requireModuleAnnotation(module)
-            addModule(module)
+    fun viewModelModule(viewModel: ViewModel, vararg modules: KClass<*>) {
+        modules.forEach {
+            requireModuleAnnotation(it)
+            addContainer(viewModel::class, ViewModelScopeContainer.containerOf(viewModel, it))
         }
     }
 
@@ -31,16 +41,14 @@ class InjectionBuilder {
         }
     }
 
-    private fun addModule(module: KClass<*>) {
-        modules += module
+    private fun addContainer(clazz: KClass<*>, componentContainer: ComponentContainer) {
+        componentContainers[clazz] = componentContainer
     }
 
-    fun build(): InjectionData = InjectionData(modules, context)
+    fun build(): MutableMap<KClass<*>, ComponentContainer> = componentContainers
 
     companion object {
         private const val EXCEPTION_MODULE_ANNOTATION_DOES_NOT_EXIST =
             "Module objects %s should be annotated with @Module."
-        private const val EXCEPTION_OBJECT_INSTANCE_DOES_NOT_EXIST =
-            "Module object %s should have an instance."
     }
 }

@@ -1,20 +1,29 @@
 package woowacourse.shopping.di
 
-import com.kmlibs.supplin.ApplicationScopeContainer
+import android.content.Context
 import com.kmlibs.supplin.annotations.Abstract
+import com.kmlibs.supplin.annotations.ApplicationContext
+import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
-import com.kmlibs.supplin.annotations.Within
-import com.kmlibs.supplin.model.Scope
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DBCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ShoppingDatabase
 
 @Module
-@Within(Scope.Application::class)
-interface CartModule {
-    @Abstract
-    fun provideInMemoryCartRepository(impl: InMemoryCartRepository): CartRepository
+object CartModule {
+    @Concrete
+    fun provideShoppingDatabase(
+        @ApplicationContext applicationContext: Context,
+    ): ShoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
 
-    @Abstract
-    fun provideCartRepository(impl: DBCartRepository): CartRepository
+    @Concrete
+    @InMemoryRepository
+    fun provideInMemoryCartRepository(): CartRepository = InMemoryCartRepository()
+
+    @Concrete
+    @DatabaseRepository
+    fun provideCartRepository(
+        database: ShoppingDatabase
+    ): CartRepository = DBCartRepository(database)
 }

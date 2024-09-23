@@ -1,6 +1,5 @@
 package com.kmlibs.supplin.annotations
 
-import com.kmlibs.supplin.ComponentContainer
 import com.kmlibs.supplin.model.Scope
 import kotlin.reflect.KClass
 
@@ -39,7 +38,7 @@ annotation class Concrete
 annotation class Abstract
 
 /**
- * For distinguishing lifecycle of modules.
+ * For distinguishing lifecycle of property.
  */
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY)
 annotation class Within(val scope: KClass<out Scope>)
