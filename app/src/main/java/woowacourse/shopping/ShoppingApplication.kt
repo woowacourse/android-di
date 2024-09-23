@@ -3,6 +3,7 @@ package woowacourse.shopping
 import android.app.Application
 import android.content.Context
 import shopping.di.DIContainer
+import shopping.di.QualifierType
 import shopping.di.Scope
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
@@ -21,13 +22,13 @@ class ShoppingApplication : Application() {
         DIContainer.register(
             clazz = CartProductDao::class.java,
             instance = database.cartProductDao(),
-            qualifier = "RoomDB",
+            qualifier = QualifierType.ROOM_DB,
             scope = Scope.APP
         )
         DIContainer.register(
             clazz = CartProductDao::class.java,
             instance = InMemoryCartProductDao(),
-            qualifier = "InMemory",
+            qualifier = QualifierType.IN_MEMORY,
             scope = Scope.APP
         )
 

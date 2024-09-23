@@ -1,9 +1,9 @@
 package woowacourse.shopping.data
 
 import shopping.di.Qualifier
+import shopping.di.QualifierType
 
-
-class CartRepository(@Qualifier("RoomDB") private val cartProductDao: CartProductDao) {
+class CartRepository(@Qualifier(QualifierType.ROOM_DB) private val cartProductDao: CartProductDao) {
 
     suspend fun addCartProduct(product: CartProductEntity) {
         cartProductDao.insert(product)
