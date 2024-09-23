@@ -1,7 +1,6 @@
 package com.example.seogi.di
 
 import android.content.Context
-import com.example.seogi.di.annotation.FieldInject
 import com.example.seogi.di.util.fieldsToInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
 import com.example.seogi.di.util.hasDaoInstanceAnnotation
@@ -10,7 +9,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
@@ -57,7 +55,10 @@ class DiContainer(
         }
     }
 
-    fun hasDependency(clazz: KClass<*>, annotation: Annotation? = null): Boolean {
+    fun hasDependency(
+        clazz: KClass<*>,
+        annotation: Annotation? = null,
+    ): Boolean {
         val key = DependencyKey(clazz, annotation)
         return dependencies.containsKey(key)
     }
@@ -67,8 +68,8 @@ class DiContainer(
         annotation: Annotation?,
     ): T {
         return (
-                dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
-                ) as T
+            dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
+        ) as T
     }
 
     private fun addDependency(

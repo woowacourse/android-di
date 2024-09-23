@@ -10,11 +10,7 @@ import com.example.seogi.di.annotation.ActivityScoped
 import com.example.seogi.di.annotation.FieldInject
 import com.example.seogi.di.util.findDependencyFunctionsToRemove
 import java.lang.reflect.Field
-import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KType
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
@@ -40,10 +36,11 @@ open class DiActivity : AppCompatActivity() {
         }
     }
 
-    private fun findViewModelField() = this::class.declaredMemberProperties.firstOrNull {
-        val fieldType = requireNotNull(it.javaField?.type)
-        ViewModel::class.java.isAssignableFrom(fieldType)
-    }?.javaField
+    private fun findViewModelField() =
+        this::class.declaredMemberProperties.firstOrNull {
+            val fieldType = requireNotNull(it.javaField?.type)
+            ViewModel::class.java.isAssignableFrom(fieldType)
+        }?.javaField
 
     private fun injectViewModelInstance(viewModelProperty: Field?) {
         viewModelProperty?.let { field ->

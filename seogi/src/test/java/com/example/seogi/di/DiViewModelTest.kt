@@ -1,8 +1,9 @@
 package com.example.seogi.di
 
+import com.example.seogi.fixture.Child1
 import com.example.seogi.fixture.FakeActivity
 import com.example.seogi.fixture.FakeApplication
-import com.example.seogi.fixture.FakeDateFormatter
+import com.example.seogi.fixture.ParentFoo
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,11 +13,11 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = FakeApplication::class)
-class DiActivityTest {
+class DiViewModelTest {
     private val diContainer = DiApplication.diContainer
 
     @Test
-    fun `Activity가 실행될 때 dateFormatter인스턴스가 저장된다`() {
+    fun `ViewModel이 생성될 때 인스턴스가 저장된다`() {
         // given
         Robolectric
             .buildActivity(FakeActivity::class.java)
@@ -24,20 +25,23 @@ class DiActivityTest {
             .get()
 
         // then
-        assertThat(diContainer.hasDependency(FakeDateFormatter::class, null)).isTrue()
+        assertThat(diContainer.hasDependency(ParentFoo::class, Child1())).isTrue()
     }
 
     @Test
-    fun `Activity가 destroy될 때 dateFormatter인스턴스가 삭제된다`() {
+    fun `ViewModel이 onCleared될 때 인스턴스가 저장된다`() {
         // given
-        val activity =
+        val viewModel =
             Robolectric
                 .buildActivity(FakeActivity::class.java)
                 .create()
-                .destroy()
                 .get()
+                .viewModel
+
+        // when
+        viewModel.onClearedViewModel()
 
         // then
-        assertThat(diContainer.hasDependency(FakeDateFormatter::class, null)).isFalse()
+        assertThat(diContainer.hasDependency(ParentFoo::class, Child1())).isFalse()
     }
 }

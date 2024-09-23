@@ -25,11 +25,11 @@ object FakeModule : Module {
     fun provideBar(): Bar = Bar()
 
     @Child1
-    @SingleTone
+    @ViewModelScoped
     fun provideChildFoo1(): ParentFoo = ChildFoo1()
 
     @Child2
-    @ViewModelScoped
+    @SingleTone
     fun provideChildFoo2(bar: Bar): ParentFoo = ChildFoo2(bar)
 
     @ActivityScoped

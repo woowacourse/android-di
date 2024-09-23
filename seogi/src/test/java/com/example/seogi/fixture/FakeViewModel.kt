@@ -1,9 +1,9 @@
 package com.example.seogi.fixture
 
-import androidx.lifecycle.ViewModel
+import com.example.seogi.di.DiViewModel
 import com.example.seogi.di.annotation.FieldInject
 
-class FakeViewModel : ViewModel() {
+class FakeViewModel : DiViewModel() {
     @FieldInject
     @Child1
     lateinit var childFoo: ParentFoo
@@ -11,11 +11,15 @@ class FakeViewModel : ViewModel() {
     private lateinit var foo2: String
 
     private val foo3: String = "foo2"
+
+    fun onClearedViewModel() {
+        super.onCleared()
+    }
 }
 
 class FakeViewModel2(
     @Child1 val childFoo1: ParentFoo,
-) : ViewModel() {
+) : DiViewModel() {
     @FieldInject
     @Child2
     lateinit var childFoo2: ParentFoo
