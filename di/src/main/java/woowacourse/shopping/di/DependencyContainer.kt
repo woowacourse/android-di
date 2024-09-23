@@ -21,12 +21,14 @@ interface DependencyContainer {
     ): ImplementationClass<T>?
 
     fun <T : Any> setDependency(
+//        vararg dependencies: Pair<ClassQualifier, ImplementationClass<out T>>,
         dependency: DependencyType,
         implementation: ImplementationClass<T>,
         qualifier: AnnotationQualifier = null,
     )
 
     fun setInstance(
+//        vararg instances: Pair<ClassQualifier, DependencyInstance>,
         dependency: DependencyType,
         instance: DependencyInstance,
         qualifier: AnnotationQualifier = null,

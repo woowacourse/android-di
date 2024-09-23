@@ -7,18 +7,9 @@ import kotlin.reflect.KClass
 typealias LifecycleAwareAnnotation = KClass<*>?
 
 interface LifecycleDependencyContainer : DependencyContainer {
-    fun setLifecycle(context: Context)
+    fun setApplicationContext(context: Context)
 
-    fun getLifecycleOwner(): LifecycleOwner
-
-    fun getContext(): Context
-
-    fun <T : Any> setDependencyWithinLifecycle(
-        dependency: DependencyType,
-        implementation: ImplementationClass<T>,
-        qualifier: AnnotationQualifier = null,
-        lifecycleAware: LifecycleAwareAnnotation = null,
-    )
+    fun getApplicationContext(): Context
 
     fun setInstanceWithinLifecycle(
         dependency: DependencyType,
