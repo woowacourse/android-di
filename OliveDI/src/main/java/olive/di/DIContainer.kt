@@ -1,6 +1,7 @@
 package olive.di
 
 import android.app.Application
+import olive.di.annotation.ActivityScope
 import olive.di.annotation.Singleton
 import olive.di.util.fieldsToInject
 import olive.di.util.hasQualifierAnnotation
@@ -21,9 +22,6 @@ class DIContainer(
     applicationType: KClass<out Application>,
     diModules: List<KClass<out DIModule>>,
 ) {
-    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val namedInstances: NamedInstances = NamedInstances()
-
     init {
         instances[applicationType] = applicationInstance
         diModules.filter { !it.isAbstract }.forEach { it.injectModule() }
@@ -31,6 +29,14 @@ class DIContainer(
     }
 
     private fun KClass<out DIModule>.injectModule() { // 일반 class 모듈인 경우 함수를 직접 호출한 결과를 인스턴스로 저장
+        if (hasAnnotation<ActivityScope>()) {
+            val functions = this.declaredMemberFunctions
+            functions.forEach { function ->
+                val type = function.toReturnType()
+                activityInstances[type] = InstanceProvider { function.calledInstance(this) }
+            }
+            return
+        }
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val type = function.toReturnType()

@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import olive.di.DIActivity
 import olive.di.ViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : DIActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val application: ShoppingApplication by lazy { applicationContext as ShoppingApplication }
