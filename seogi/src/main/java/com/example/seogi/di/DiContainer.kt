@@ -2,6 +2,7 @@ package com.example.seogi.di
 
 import android.content.Context
 import com.example.seogi.di.annotation.FieldInject
+import com.example.seogi.di.util.fieldsToInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
 import com.example.seogi.di.util.hasDaoInstanceAnnotation
 import kotlin.reflect.KClass
@@ -61,8 +62,8 @@ class DiContainer(
         annotation: Annotation?,
     ): T {
         return (
-            dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
-        ) as T
+                dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
+                ) as T
     }
 
     private fun addDependency(
@@ -98,10 +99,7 @@ class DiContainer(
     }
 
     private fun inject(instance: Any) {
-        val fields =
-            instance::class.declaredMemberProperties.filter {
-                it.annotations.contains(FieldInject())
-            }.map { it as KMutableProperty1 }
+        val fields = instance::class.fieldsToInject().map { it as KMutableProperty1 }
         fields.forEach { field ->
             val qualifierAnnotation = field.getAnnotationIncludeQualifier()
             val value = getInstance(field.returnType.jvmErasure, qualifierAnnotation)
