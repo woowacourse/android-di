@@ -2,9 +2,9 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import shopping.di.DIContainer
 import shopping.di.Inject
 import shopping.di.Scope
 import shopping.di.ScopeAnnotation
@@ -12,8 +12,9 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.base.BaseViewModel
 
-class MainViewModel : ViewModel() {
+class MainViewModel : BaseViewModel() {
 
     @Inject
     @ScopeAnnotation(Scope.VIEWMODEL)
@@ -28,6 +29,17 @@ class MainViewModel : ViewModel() {
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
+
+    init {
+        DIContainer.register(
+            clazz = ProductRepository::class.java,
+            instance = ProductRepository(),
+            scope = Scope.VIEWMODEL,
+            owner = this
+        )
+
+        DIContainer.injectFields(this)
+    }
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {

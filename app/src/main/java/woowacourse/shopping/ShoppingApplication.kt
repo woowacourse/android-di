@@ -33,11 +33,6 @@ class ShoppingApplication : Application() {
         )
 
         DIContainer.register(
-            clazz = ProductRepository::class.java,
-            instance = ProductRepository(),
-            scope = Scope.VIEWMODEL
-        )
-        DIContainer.register(
             clazz = CartRepository::class.java,
             instance = CartRepository(database.cartProductDao()),
             scope = Scope.APP
