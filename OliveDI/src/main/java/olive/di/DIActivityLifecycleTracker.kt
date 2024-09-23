@@ -7,7 +7,6 @@ class DIActivityLifecycleTracker : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         activityInstances.forEach { (type, instanceProvider) ->
-            println("TEST!!!!!!!!!!!!!!! $type")
             val instance = instanceProvider.get()
             instances[type] = instance
         }

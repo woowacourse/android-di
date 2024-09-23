@@ -1,4 +1,4 @@
 package olive.di.annotation
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FUNCTION)
 annotation class ActivityScope

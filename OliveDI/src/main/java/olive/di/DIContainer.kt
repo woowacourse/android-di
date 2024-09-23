@@ -29,25 +29,21 @@ class DIContainer(
     }
 
     private fun KClass<out DIModule>.injectModule() { // 일반 class 모듈인 경우 함수를 직접 호출한 결과를 인스턴스로 저장
-        if (hasAnnotation<ActivityScope>()) {
-            val functions = this.declaredMemberFunctions
-            functions.forEach { function ->
-                val type = function.toReturnType()
-                activityInstances[type] = InstanceProvider { function.calledInstance(this) }
-            }
-            return
-        }
         val functions = this.declaredMemberFunctions
         functions.forEach { function ->
             val type = function.toReturnType()
-            val instance = function.calledInstance(this)
-            instances[type] = instance
+            val instanceProvider = InstanceProvider { function.calledInstance(this) }
+            if (hasAnnotation<ActivityScope>()) {
+                activityInstances[type] = instanceProvider
+                return
+            }
+            instances[type] = instanceProvider.get()
         }
     }
 
     private fun KFunction<*>.calledInstance(classType: KClass<*>): Any {
         val parameters = parameters(classType)
-        val objectInstance = createSingleton(classType)
+        val objectInstance = instance(classType)
         val arguments = parameters.map { instance(it) }
         val instance = call(objectInstance, *arguments.toTypedArray())
         return instance ?: throw IllegalArgumentException()
