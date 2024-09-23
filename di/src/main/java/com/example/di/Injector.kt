@@ -11,63 +11,82 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-class Injector(
-    private val dependencyModule: DependencyProvider,
-) {
-    fun <T : Any> inject(modelClass: KClass<T>): T {
-        val instance = createInstance(modelClass)
-        injectProperty(modelClass, instance)
+class Injector(private val applicationDependencyContainer: DependencyContainer) {
+    fun <T : Any> inject(
+        modelClass: KClass<T>,
+        container: DependencyContainer,
+    ): T {
+        val instance = createInstance(modelClass, container)
+        injectProperty(instance, container)
         return instance
     }
 
-    private fun <T : Any> createInstance(modelClass: KClass<T>): T {
+    fun instantiateInstances(
+        dependencies: List<KClass<out Any>>,
+        container: DependencyContainer,
+    ) {
+        dependencies.forEach {
+            createInstance(it, container)
+        }
+    }
+
+    private fun <T : Any> createInstance(
+        modelClass: KClass<T>,
+        container: DependencyContainer,
+    ): T {
         val constructor =
             requireNotNull(modelClass.primaryConstructor) { "No suitable constructor found for $modelClass" }
         val arguments =
             constructor.parameters
                 .filter { it.hasAnnotation<Injected>() }
-                .associateWith { findParameterDependency(it) }
+                .associateWith { findParameterDependency(it, container) }
 
         return if (arguments.isEmpty()) {
-            dependencyModule.getInstance(modelClass) ?: modelClass.createInstance().also {
-                dependencyModule.addInstanceDependency(modelClass to it)
+            container.getInstance(modelClass) ?: modelClass.createInstance().also {
+                container.add(it)
             }
         } else {
             constructor.callBy(arguments).also {
-                dependencyModule.addInstanceDependency(modelClass to it)
+                container.add(it)
             }
         }
     }
 
-    private fun findParameterDependency(parameter: KParameter): Any {
+    private fun findParameterDependency(
+        parameter: KParameter,
+        container: DependencyContainer,
+    ): Any {
         val qualifier =
             parameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         val type = parameter.type.jvmErasure
 
-        return dependencyModule.getInstance(type, qualifier)
-            ?: inject(dependencyModule.getImplementationClass(type, qualifier))
+        return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
+            ?: createInstance(DependencyModule.getImplementationClass(type, qualifier), container)
     }
 
-    private fun <T : Any> injectProperty(
-        modelClass: KClass<T>,
+    fun <T : Any> injectProperty(
         instance: T,
+        container: DependencyContainer,
     ) {
         val properties =
-            modelClass.declaredMemberProperties
+            instance::class.declaredMemberProperties
                 .filterIsInstance<KMutableProperty1<T, *>>()
                 .filter { it.hasAnnotation<Injected>() }
 
         properties.forEach { property ->
             property.isAccessible = true
-            property.setter.call(instance, findPropertyDependency(property))
+            property.setter.call(instance, findPropertyDependency(property, container))
         }
     }
 
-    private fun findPropertyDependency(property: KProperty1<*, *>): Any {
+    private fun findPropertyDependency(
+        property: KProperty1<*, *>,
+        container: DependencyContainer,
+    ): Any {
         val qualifier = property.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         val type = property.returnType.jvmErasure
 
-        return dependencyModule.getInstance(type, qualifier)
-            ?: inject(dependencyModule.getImplementationClass(type, qualifier))
+        return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
+            ?: createInstance(DependencyModule.getImplementationClass(type, qualifier), container)
     }
 }

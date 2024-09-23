@@ -2,25 +2,37 @@ package com.example.di
 
 import kotlin.reflect.KClass
 
-class DependencyModule : DependencyProvider {
+object DependencyModule {
     private val instanceDependencies = hashMapOf<KClass<out Any>, Any>()
     private val deferredDependencies = hashMapOf<KClass<out Any>, MutableList<KClass<out Any>>>()
+    private val singleTonDependencies = hashMapOf<KClass<out Any>, MutableList<KClass<out Any>>>()
 
-    override fun addInstanceDependency(vararg dependencies: Pair<KClass<out Any>, Any>) {
+    fun addInstanceDependency(vararg dependencies: Pair<KClass<out Any>, Any>) {
         dependencies.forEach { (requiredType, instance) ->
             instanceDependencies[requiredType] = instance
         }
     }
 
-    override fun addDeferredDependency(vararg dependencies: Pair<KClass<out Any>, KClass<out Any>>) {
+    fun addDeferredDependency(vararg dependencies: Pair<KClass<out Any>, KClass<out Any>>) {
         dependencies.forEach { (requiredType, concreteType) ->
             deferredDependencies.computeIfAbsent(requiredType) { mutableListOf() }.add(concreteType)
         }
     }
 
-    override fun getImplementationClass(
+    fun addSingletonDependency(vararg dependencies: Pair<KClass<out Any>, KClass<out Any>>) {
+        dependencies.forEach { (requiredType, concreteType) ->
+            singleTonDependencies.computeIfAbsent(requiredType) { mutableListOf() }.add(concreteType)
+            deferredDependencies.computeIfAbsent(requiredType) { mutableListOf() }.add(concreteType)
+        }
+    }
+
+    fun getSingletonInstances() = instanceDependencies.toMap()
+
+    fun getSingletonDependencies() = singleTonDependencies.entries.flatMap { it.value }
+
+    fun getImplementationClass(
         kClass: KClass<*>,
-        annotation: Annotation?,
+        annotation: Annotation? = null,
     ): KClass<out Any> {
         val targets = requireNotNull(deferredDependencies[kClass]) { "해당 타입에 대한 의존성이 등록되지 않았습니다. 어노테이션을 확인하세요: ${kClass.simpleName}" }
 
@@ -32,24 +44,6 @@ class DependencyModule : DependencyProvider {
         }
         return targets.findTargetWithAnnotation(annotation)
             ?: error("해당 타입에 대한 의존성이 등록되지 않았습니다. 어노테이션을 확인하세요: ${kClass.simpleName}")
-    }
-
-    override fun <T : Any> getInstance(
-        kClass: KClass<*>,
-        annotation: Annotation?,
-    ): T? {
-        if (annotation == null) return instanceDependencies[kClass] as? T
-        val implementations =
-            deferredDependencies[kClass]
-                ?: error("해당 타입에 대한 의존성이 등록되지 않았습니다. 어노테이션을 확인하세요: ${kClass.simpleName}")
-        val implementation = implementations.findTargetWithAnnotation(annotation)
-
-        return instanceDependencies[implementation] as? T
-    }
-
-    override fun clear() {
-        instanceDependencies.clear()
-        deferredDependencies.clear()
     }
 
     private fun KClass<*>.hasAnnotation(annotationClass: KClass<out Annotation>): Boolean {

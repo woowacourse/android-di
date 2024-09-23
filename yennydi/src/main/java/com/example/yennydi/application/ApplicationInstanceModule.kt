@@ -5,8 +5,8 @@ import com.example.di.DependencyContainer
 import com.example.di.DependencyModule
 import kotlin.reflect.KClass
 
-class ApplicationInstanceModule(initialized: Map<KClass<out Any>, Any>) : DependencyContainer, DefaultLifecycleObserver {
-    private val instances = initialized.toMutableMap()
+class ApplicationInstanceModule() : DependencyContainer, DefaultLifecycleObserver {
+    private val instances = hashMapOf<KClass<out Any>, Any>()
 
     override fun <T : Any> getInstance(
         kClass: KClass<*>,
