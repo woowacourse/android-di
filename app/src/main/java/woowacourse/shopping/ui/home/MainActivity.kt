@@ -4,16 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import org.library.haeum.createViewModel
+import org.library.haeum.di.DIActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.ActivityModule
+import woowacourse.shopping.di.ViewModelModule
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.common.BindingActivity
 
-class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : DIActivity(ActivityModule(), ViewModelModule()) {
     private val viewModel: MainViewModel by lazy {
         createViewModel()
     }
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
     }
 
     private fun setupBinding() {
+        setContentView(binding.root)
+        binding.lifecycleOwner = this
         binding.vm = viewModel
     }
 

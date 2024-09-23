@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.library.haeum.Inject
+import org.library.haeum.di.HaeumInject
 import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.di.RoomDBRepository
 import woowacourse.shopping.model.Product
 
 class CartViewModel : ViewModel() {
-    @Inject
+    @HaeumInject
     @RoomDBRepository
     lateinit var cartRepository: CartRepository
 

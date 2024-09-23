@@ -1,138 +1,115 @@
 package org.library.haeum
 
-import android.content.Context
+import org.library.haeum.di.HaeumInject
+import org.library.haeum.di.Module
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.kotlinProperty
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.jvmErasure
 
 class Container(
-    private val context: Any,
-    modules: List<Any>,
+    private val module: Module,
 ) {
-    private val types: HashMap<Type, Any> = hashMapOf()
-    private val returnTypes: Map<Type, KFunction<*>> =
-        modules.flatMap { module ->
-            module::class.declaredMemberFunctions
-        }.associateBy { declaredMemberFunction ->
-            Type(
-                declaredMemberFunction.returnType,
-                declaredMemberFunction.annotations.find {
-                    it.annotationClass.hasAnnotation<Qualifier>()
-                }?.annotationClass?.simpleName,
-            )
-        }
-
-    init {
-        modules.forEach { module ->
-            types[Type(module::class.createType(nullable = false))] = module
-        }
-        returnTypes.forEach { (type, function) ->
-            createInstance(type.returnType, function.annotations)
-        }
-    }
-
-    fun <T : Any> injectTo(targetInstance: T) {
-        targetInstance::class.memberProperties.filter { property ->
-            property.annotations.any {
-                it.annotationClass == Inject::class
+    fun <T : Any> injectTo(kClass: KClass<out T>): T {
+        val constructor =
+            kClass.primaryConstructor
+                ?: throw IllegalArgumentException("${kClass}에 주 생성자가 없습니다.")
+        val arguments =
+            constructor.valueParameters.associateWith {
+                resolveDependency(it)
             }
-        }.forEach { targetProperty ->
-            val targetField = targetProperty.javaField
-            targetField?.isAccessible = true
-            targetField?.set(
-                targetInstance,
-                container?.getKPropertyInstance(
-                    targetField.kotlinProperty
-                        ?: throw IllegalArgumentException("해당 파라미터 타입에 맞는 인스턴스를 찾을 수 없습니다: $targetProperty"),
-                ),
-            )
-        }
-    }
+        val instance = constructor.callBy(arguments)
 
-    fun <T> getKPropertyInstance(kProperty: KProperty<*>): T {
-        val annotation =
-            kProperty.annotations.find { annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
+        kClass.declaredMemberProperties.filterIsInstance<KMutableProperty1<T, *>>()
+            .filter { it.hasAnnotation<HaeumInject>() }
+            .forEach {
+                it.setter.call(instance, resolveDependency(it))
             }
-        val instance = types[Type(kProperty.returnType, annotation?.annotationClass?.simpleName)]
-            ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
-        return instance as T
-    }
-
-    fun <T> getKParameterInstance(kParameter: KParameter): T {
-        val annotation =
-            kParameter.annotations.find { annotation ->
-                annotation::class.hasAnnotation<Qualifier>()
-            }
-        val instance = types[Type(kParameter.type, annotation?.annotationClass?.simpleName)]
-            ?: throw IllegalArgumentException("찾으려는 return type이 없습니다.")
-        return instance as T
-    }
-
-    private fun findExistingInstance(kType: KType, annotations: List<Annotation>): Any? {
-        val qualifierAnnotation = annotations.find {
-            it.annotationClass.hasAnnotation<Qualifier>()
-        }
-        val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
-        return types[type]
-    }
-
-    private fun createInstance(kType: KType, annotations: List<Annotation>): Any {
-        if (isHaeumContext(kType, annotations)) return context
-
-        val existingInstance = findExistingInstance(kType, annotations)
-        if (existingInstance != null) return existingInstance
-
-        val qualifierAnnotation = annotations.find {
-            it.annotationClass.hasAnnotation<Qualifier>()
-        }
-        val type = Type(kType, qualifierAnnotation?.annotationClass?.simpleName)
-        val function =
-            returnTypes[type] ?: throw IllegalArgumentException("해당 타입에 맞는 함수를 찾을 수 없습니다: $type.")
-        val parameterValues = function.parameters.associateWith { parameter ->
-            createInstance(parameter.type, parameter.annotations)
-        }
-        val instance = function.callBy(parameterValues)
-            ?: throw IllegalArgumentException("인스턴스 생성에 실패했습니다: ${function.name}")
-
-        types[type] = instance
         return instance
     }
 
-    private fun isHaeumContext(kType: KType, annotations: List<Annotation>): Boolean {
-        val contextAnnotation =
-            annotations.find { annotation ->
-                annotation.annotationClass == HaeumContext::class
-            }
+    fun resolveDependency(property: KProperty1<*, *>): Any {
+        instances[property.returnType::class]?.let {
+            return instances
+        }
 
-        return contextAnnotation != null && kType.classifier == Context::class
+        val qualifier =
+            property.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
+        if (qualifier != null) {
+            val qualifiedInstance = instances[qualifiedInstances[qualifier]]
+            if (qualifiedInstance != null) return qualifiedInstance
+            return resolveDependency(qualifier)
+        }
+        return resolveDependency(property.returnType)
+    }
+
+    private fun resolveDependency(qualifier: Annotation): Any {
+        val function =
+            module::class.declaredMemberFunctions.find { func ->
+                func.annotations.any { it == qualifier }
+            } ?: throw IllegalArgumentException("$qualifier 가 없습니다.")
+
+        return invokeProvider(function)
+    }
+
+    private fun resolveDependency(parameter: KParameter): Any {
+        instances[parameter.type::class]?.let {
+            return instances
+        }
+        parameter.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.let {
+            val qualifiedInstance = instances[qualifiedInstances[it]]
+            if (qualifiedInstance != null) return qualifiedInstance
+            return resolveDependency(it)
+        }
+        return resolveDependency(parameter.type)
+    }
+
+    private fun resolveDependency(type: KType): Any {
+        val functions =
+            module::class.declaredMemberFunctions.filter { func ->
+                func.returnType == type
+            }
+        return invokeProvider(functions.first())
+    }
+
+    fun invokeProvider(provider: KFunction<*>): Any {
+        var instance = instances[provider.returnType.jvmErasure]
+        if (instance != null) {
+            return instance
+        }
+        val arguments = arrayListOf<Any>()
+        provider.valueParameters.forEach { parameter ->
+            arguments.add(resolveDependency(parameter))
+        }
+
+        instance =
+            provider.call(module, *arguments.toTypedArray())
+                ?: throw IllegalArgumentException("의존성 주입에 실패했습니다.")
+
+        val qualifier =
+            provider.annotations.find { annotation ->
+                annotation.annotationClass.annotations.any { sub ->
+                    sub.annotationClass == Qualifier::class
+                }
+            }
+        if (qualifier != null) {
+            qualifiedInstances[qualifier] = instance::class
+        }
+        instances[instance::class] = instance
+        return instance
     }
 
     companion object {
-        var container: Container? = null
-
-        fun initializeModuleInjector(
-            context: Context,
-            vararg modules: KClass<out Any>
-        ) {
-            if (container != null) return
-
-            val instances =
-                modules.filter { it.hasAnnotation<Module>() }.map {
-                    it.objectInstance ?: it.createInstance()
-                }
-
-            container = Container(context, instances)
-        }
+        private val instances = hashMapOf<KClass<out Any>, Any>()
+        private val qualifiedInstances = hashMapOf<Annotation, KClass<out Any>>()
     }
 }
