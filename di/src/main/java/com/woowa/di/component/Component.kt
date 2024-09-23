@@ -14,8 +14,5 @@ interface Component {
         kFunc: KFunction<*>,
     )
 
-    fun deleteDIInstance(
-        type: KClass<*>,
-        qualifier: KClass<out Annotation>?,
-    )
+    fun deleteAllDIInstance()
 }

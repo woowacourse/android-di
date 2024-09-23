@@ -38,6 +38,10 @@ class ViewModelComponent<T : Any> private constructor() :
             diFunc[kFunc] = binder
         }
 
+        override fun deleteAllDIInstance() {
+            diInstances.clear()
+        }
+
         private fun createDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>? = null,
@@ -54,10 +58,9 @@ class ViewModelComponent<T : Any> private constructor() :
                     }
                 }
 
-            val receiver = diFunc.getValue(kFunc)
             val instance =
                 if (parameters.isEmpty()) {
-                    kFunc.call(receiver)
+                    kFunc.call(diFunc[kFunc])
                 } else {
                     kFunc.call(diFunc[kFunc], parameters.toTypedArray())
                 }
@@ -66,17 +69,6 @@ class ViewModelComponent<T : Any> private constructor() :
                 injectViewModelComponentFields(it)
             }
             return instance
-        }
-
-        override fun deleteDIInstance(
-            type: KClass<*>,
-            qualifier: KClass<out Annotation>?,
-        ) {
-            qualifier?.let {
-                diInstances.remove(type.simpleName + qualifier.simpleName)
-                return
-            }
-            diInstances.remove(type.simpleName)
         }
 
         companion object {

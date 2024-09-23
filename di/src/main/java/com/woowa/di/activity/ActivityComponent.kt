@@ -32,7 +32,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
         override fun onDestroy(owner: LifecycleOwner) {
             super.onDestroy(owner)
             context = null
-            instances.remove(clazz)
+            deleteAllDIInstance()
             owner.lifecycle.removeObserver(this)
         }
 
@@ -57,6 +57,10 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
             kFunc: KFunction<*>,
         ) {
             diFunc[kFunc] = binder
+        }
+
+        override fun deleteAllDIInstance() {
+            diInstances.clear()
         }
 
         private fun createDIInstance(
@@ -96,17 +100,6 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val c
         fun deleteAllDIInstance(targetClass: KClass<out Activity>) {
             diInstances.clear()
             instances.remove(targetClass)
-        }
-
-        override fun deleteDIInstance(
-            type: KClass<*>,
-            qualifier: KClass<out Annotation>?,
-        ) {
-            qualifier?.let {
-                diInstances.remove(type.simpleName + qualifier.simpleName)
-                return
-            }
-            diInstances.remove(type.simpleName)
         }
 
         companion object {
