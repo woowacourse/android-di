@@ -30,6 +30,7 @@ class DefaultInjectedSingletonContainerTest {
 
     class Default2StubRepo : StubRepo
 
+    // TODO: 에외를 던지지 않도록 수정했음
     @Test
     fun `같은 타입이며 같은 Qualfier 인 컴포넌트를 컨테이너에 넣을 때 예외를 던진다`() {
         // given
