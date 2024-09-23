@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.android.di.annotation.DiActivity
 import com.android.di.annotation.Inject
-import com.android.di_android.ActivityInjector
+import com.android.diandroid.ActivityInjector
 import woowacourse.shopping.R
 import woowacourse.shopping.data.di.ActivityLifeModule
 import woowacourse.shopping.databinding.ActivityCartBinding

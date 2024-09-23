@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.android.di.component.DiComponent
-import com.android.di_android.ActivityInjector
+import com.android.diandroid.ActivityInjector
 import woowacourse.shopping.data.di.ViewModelLifeModule
 
 @MainThread
@@ -24,8 +24,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModelsWithAutoInject(
     )
 }
 
-fun inject(activityInjector: ActivityInjector): ViewModelProvider.Factory =
-    ViewModelComponent(activityInjector)
+fun inject(activityInjector: ActivityInjector): ViewModelProvider.Factory = ViewModelComponent(activityInjector)
 
 class ViewModelComponent(
     private val activityInjector: ActivityInjector,

@@ -1,4 +1,4 @@
-package com.android.di_android
+package com.android.diandroid
 
 import android.app.Application
 import com.android.di.component.DiContainer
@@ -18,11 +18,14 @@ abstract class ApplicationInjector : Application() {
         diInjector.addModule(module)
     }
 
-    fun getApplicationContainer(): DiContainer{
+    fun getApplicationContainer(): DiContainer {
         return diInjector.diContainer
     }
 
-    fun saveInjector(key: String, injector: DiInjector) {
+    fun saveInjector(
+        key: String,
+        injector: DiInjector,
+    ) {
         childInjectors[key] = injector
     }
 

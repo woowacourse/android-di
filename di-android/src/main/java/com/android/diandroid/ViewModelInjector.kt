@@ -1,9 +1,8 @@
-package com.android.di_android
+package com.android.diandroid
 
 import androidx.lifecycle.ViewModel
 import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
-import com.android.di.component.Module
 
 // TODO : fix
 abstract class ViewModelInjector(

@@ -8,7 +8,6 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class DiContainer(private val parentContainer: DiContainer? = null) {
-
     private val binds: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val qualifierBinds: MutableMap<KClass<out Annotation>, Any> = mutableMapOf()
 

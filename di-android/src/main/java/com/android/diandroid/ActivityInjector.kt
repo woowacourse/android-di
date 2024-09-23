@@ -1,4 +1,4 @@
-package com.android.di_android
+package com.android.diandroid
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,6 @@ import com.android.di.component.DiComponent
 import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
 import com.android.di.component.Module
-import kotlin.reflect.KClass
 
 abstract class ActivityInjector : AppCompatActivity() {
     private lateinit var applicationInjector: ApplicationInjector
@@ -19,8 +18,8 @@ abstract class ActivityInjector : AppCompatActivity() {
             ?: createActivityInjector()
     }
 
-    fun injectModule(module: Module){
-        if(!DiComponent.hasActivityAnnotation(javaClass.kotlin)){
+    fun injectModule(module: Module) {
+        if (!DiComponent.hasActivityAnnotation(javaClass.kotlin)) {
             throw IllegalArgumentException(ERROR_ANNOTATION)
         }
         diInjector.addModule(module)

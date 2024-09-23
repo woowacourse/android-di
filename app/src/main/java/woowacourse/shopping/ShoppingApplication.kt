@@ -1,6 +1,6 @@
 package woowacourse.shopping
 
-import com.android.di_android.ApplicationInjector
+import com.android.diandroid.ApplicationInjector
 import woowacourse.shopping.data.di.ApplicationLifeModule
 import woowacourse.shopping.data.di.ApplicationModule
 
