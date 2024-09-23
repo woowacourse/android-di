@@ -6,6 +6,7 @@ import olive.di.DIContainer
 import olive.di.DIModule
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.module.DaoDIModule
+import woowacourse.shopping.module.DateFormatterDIModule
 import woowacourse.shopping.module.RepositoryDIModule
 
 class ShoppingApplication : Application(), DIModule {
@@ -16,7 +17,7 @@ class ShoppingApplication : Application(), DIModule {
             "shopping-database",
         ).build()
     }
-    private val diModules = listOf(DaoDIModule::class, RepositoryDIModule::class)
+    private val diModules = listOf(DaoDIModule::class, RepositoryDIModule::class, DateFormatterDIModule::class)
     val diContainer: DIContainer by lazy {
         DIContainer(
             this,

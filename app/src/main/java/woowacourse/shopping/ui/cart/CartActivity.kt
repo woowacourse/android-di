@@ -16,12 +16,11 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel: CartViewModel by viewModels { ViewModelFactory(application.diContainer) }
 
-    private lateinit var dateFormatter: DateFormatter
+    private val dateFormatter: DateFormatter by lazy { application.diContainer.instance(DateFormatter::class) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -30,10 +29,6 @@ class CartActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
