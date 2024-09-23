@@ -13,7 +13,8 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by createAutoDIViewModel<CartViewModel>()
 
-    private lateinit var dateFormatter: DateFormatter
+    private lateinit var _dateFormatter: DateFormatter
+    val dateFormatter: DateFormatter get() = _dateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

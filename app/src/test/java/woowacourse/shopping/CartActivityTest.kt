@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
+import com.example.alsonglibrary2.di.AutoDIManager
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -9,6 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
 
@@ -44,13 +46,23 @@ class CartActivityTest {
     }
 
     @Test
-    fun `카트 상품이 가져와져야 한다`() {
-        // when
-        viewModel.getAllCartProducts()
+    fun `DateFormatter를 자동으로 주입할 수 있다`() {
+        // then
+        assertThat(activity.dateFormatter).isNotNull()
+    }
+
+    @Test
+    fun `CartActivity가 destroy 되어도 CartRepository의 인스턴스는 유지된다`() {
+        // given
+        activity =
+            Robolectric
+                .buildActivity(CartActivity::class.java)
+                .create()
+                .destroy()
+                .get()
 
         // then
-        assertThat(viewModel.cartProducts.getOrAwaitValue()[0].name).isEqualTo("우테코 과자")
-        assertThat(viewModel.cartProducts.getOrAwaitValue()[1].name).isEqualTo("우테코 쥬스")
-        assertThat(viewModel.cartProducts.getOrAwaitValue()[2].name).isEqualTo("우테코 아이스크림")
+        val actual = AutoDIManager.dependencies[CartRepository::class]
+        assertThat(actual).isNotNull()
     }
 }
