@@ -11,7 +11,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-open class DIAppComponentActivity : AppCompatActivity() {
+open class DIAppCompatActivity : AppCompatActivity() {
     private val module = DIApplication.module
 
     private val injectableTypes =
@@ -79,9 +79,5 @@ open class DIAppComponentActivity : AppCompatActivity() {
             property.isAccessible = true
             property.javaField?.set(this, null)
         }
-    }
-
-    private fun loadActivityScopeDependencies() {
-        dependencies.forEach { DIContainer.addDependency(it) }
     }
 }

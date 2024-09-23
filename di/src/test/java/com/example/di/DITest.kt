@@ -63,7 +63,7 @@ class DITest {
         @Inject val applicationScopeRepository: ApplicationScopeRepository,
     ) : DIViewModel()
 
-    class TestActivity : DIAppComponentActivity() {
+    class TestActivity : DIAppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setTheme(com.google.android.material.R.style.Theme_AppCompat_DayNight_NoActionBar)
