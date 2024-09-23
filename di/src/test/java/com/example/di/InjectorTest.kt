@@ -33,6 +33,7 @@ class InjectorTest {
     @Test
     fun `Inject Annotation이 붙은 생성자는 자동으로 의존성이 주입된다`() {
         val cartRepository = activity.viewModel.fakeCartRepository
+
         assertThat(cartRepository).isNotNull()
     }
 
@@ -41,12 +42,14 @@ class InjectorTest {
         val cartRepository =
             (activity.viewModel.fakeCartRepository) as FakeDatabaseCartRepository
         val productRepository = cartRepository.fakeProductRepository
+
         assertThat(productRepository).isNull()
     }
 
     @Test
     fun `Inject Annotation이 붙은 필드는 자동으로 의존성이 주입된다`() {
         val fieldRepository = activity.viewModel.fakeFieldRepository
+
         assertThat(fieldRepository).isNotNull()
     }
 }

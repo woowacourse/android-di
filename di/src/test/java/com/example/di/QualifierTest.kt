@@ -34,12 +34,14 @@ class QualifierTest {
     @Test
     fun `Qualifier Annotation이 붙은 생성자는 정확한 타입의 의존성이 주입된다`() {
         val cartRepository = activity.viewModel.fakeCartRepository
+
         assertThat(cartRepository).isInstanceOf(FakeDatabaseCartRepository::class.java)
     }
 
     @Test
     fun `Qualifier Annotation이 없는 경우 기본 구현체는 주입되지 않는다`() {
         val databaseCartRepository = activity.viewModel.fakeCartRepository
+
         assertThat(databaseCartRepository).isNotInstanceOf(FakeInMemoryCartRepository::class.java)
     }
 }
