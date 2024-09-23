@@ -148,13 +148,11 @@ class DependencyInjectorTest {
         val firstController: ActivityController<CartActivity> =
             Robolectric.buildActivity(CartActivity::class.java).setup()
 
-        cartActivity.viewModel
-
         shadowOf(Looper.getMainLooper()).idle()
 
         val firstDateFormatter = firstController.get().dateFormatter
 
-        firstController.recreate()
+        firstController.recreate() // TODO: 예외발생 해결
         shadowOf(Looper.getMainLooper()).idle()
 
         val secondDateFormatter = firstController.get().dateFormatter
@@ -164,19 +162,6 @@ class DependencyInjectorTest {
 
         val secondController: ActivityController<CartActivity> =
             Robolectric.buildActivity(CartActivity::class.java).setup()
-
-        dependencyInjector.addInstance(
-            DateFormatter::class,
-            RepositoryModule.provideDateFormatter(cartActivity.applicationContext),
-            scope = ActivityScope::class,
-        )
-
-//        dependencyInjector.addInstance(
-//            FakeCartRepository::class,
-//            fakeCartRepository,
-//            qualifier = RoomDB::class,
-//            scope = ViewModelScope::class,
-//        )
 
         val thirdDateFormatter = secondController.get().dateFormatter
         shadowOf(Looper.getMainLooper()).idle()
