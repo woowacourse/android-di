@@ -101,6 +101,7 @@ class ComponentTest {
         assertThat(diInstance).isNotNull()
 
         // when
+        activity.finish()
         diRule.getController().destroy()
 
         // then

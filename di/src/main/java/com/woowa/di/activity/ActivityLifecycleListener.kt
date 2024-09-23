@@ -25,7 +25,6 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
         if (activity is ComponentActivity && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
             ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>).deleteAllDIInstance()
             ActivityComponent.deleteInstance(activity::class)
-
         }
     }
 
