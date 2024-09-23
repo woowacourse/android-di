@@ -109,4 +109,19 @@ class ComponentTest {
             ActivityComponentManager.getDIInstance(TestActivityComponent::class)
         }
     }
+
+    @Test
+    fun `acitivity의 configuration change가 발생해도, DI 객체는 유지된다`() {
+        // given
+        val diInstance = ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        assertThat(diInstance).isNotNull()
+
+        // when
+        diRule.getController().configurationChange()
+
+        // then
+        assertDoesNotThrow {
+            ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        }
+    }
 }
