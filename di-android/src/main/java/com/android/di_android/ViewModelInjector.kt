@@ -5,6 +5,7 @@ import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
 import com.android.di.component.Module
 
+// TODO : fix
 abstract class ViewModelInjector(
     private val applicationInjector: ApplicationInjector,
 ) : ViewModel() {
