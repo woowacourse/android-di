@@ -8,8 +8,8 @@ import shopping.di.DIContainer
 import shopping.di.Inject
 import shopping.di.Scope
 import shopping.di.ScopeAnnotation
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.fake.ICartRepository
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.base.BaseViewModel
@@ -22,7 +22,7 @@ class MainViewModel : BaseViewModel() {
 
     @Inject
     @ScopeAnnotation(Scope.APP)
-    lateinit var cartRepository: CartRepository
+    lateinit var cartRepository: ICartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

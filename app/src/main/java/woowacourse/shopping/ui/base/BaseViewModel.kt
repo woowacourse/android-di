@@ -10,7 +10,7 @@ abstract class BaseViewModel : ViewModel(), ScopeOwner {
         DIContainer.createViewModelScope(this)
     }
 
-    override fun onCleared() {
+    public override fun onCleared() {
         super.onCleared()
         DIContainer.clearViewModelScope(this)
     }
