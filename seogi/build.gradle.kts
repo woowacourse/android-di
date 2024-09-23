@@ -46,4 +46,7 @@ dependencies {
 
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
+
+    // mockk
+    testImplementation("io.mockk:mockk:1.13.10")
 }
