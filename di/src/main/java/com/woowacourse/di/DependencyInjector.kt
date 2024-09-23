@@ -15,6 +15,7 @@ typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 class DependencyInjector {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
     private val singletonInstances = mutableMapOf<ClassWithQualifier, Instance>()
+    private val viewModelScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
 
     // TODO: 매개변수 줄이기
     fun <T : Any> addInstance(
@@ -26,6 +27,9 @@ class DependencyInjector {
         when (scope) {
             Singleton::class -> {
                 singletonInstances[clazz to qualifier] = instance
+            }
+            ViewModelScope::class -> {
+                viewModelScopeInstances[clazz to qualifier] = instance
             }
             else -> {
                 instances[clazz to qualifier] = instance
@@ -41,6 +45,9 @@ class DependencyInjector {
         return when (scope) {
             Singleton::class -> {
                 singletonInstances[clazz to qualifier] as? T ?: createInstance(clazz)
+            }
+            ViewModelScope::class -> {
+                viewModelScopeInstances[clazz to qualifier] as? T ?: createInstance(clazz)
             }
             else -> {
                 instances[clazz to qualifier] as? T ?: createInstance(clazz)
@@ -79,6 +86,7 @@ class DependencyInjector {
             val scope: KClass<*>? =
                 when {
                     kProperty.hasAnnotation<Singleton>() -> Singleton::class
+                    kProperty.hasAnnotation<ViewModelScope>() -> ViewModelScope::class
                     else -> null
                 }
 
@@ -86,6 +94,10 @@ class DependencyInjector {
             kProperty as KMutableProperty1
             kProperty.setter.call(instance, dependency)
         }
+    }
+
+    fun clearViewModelInstances() {
+        viewModelScopeInstances.clear()
     }
 
     companion object {

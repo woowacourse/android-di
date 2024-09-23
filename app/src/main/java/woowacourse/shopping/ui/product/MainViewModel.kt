@@ -8,7 +8,9 @@ import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
 import com.woowacourse.di.Singleton
+import com.woowacourse.di.ViewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
@@ -16,6 +18,7 @@ import woowacourse.shopping.model.ProductRepository
 class MainViewModel : ViewModel() {
     @Inject
     @InMemory
+    @ViewModelScope
     lateinit var productRepository: ProductRepository
 
     @Inject
@@ -28,6 +31,11 @@ class MainViewModel : ViewModel() {
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
+
+    override fun onCleared() {
+        super.onCleared()
+        ShoppingApplication.dependencyInjector.clearViewModelInstances()
+    }
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {

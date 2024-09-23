@@ -5,6 +5,7 @@ import com.woowacourse.di.DependencyInjector
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
 import com.woowacourse.di.Singleton
+import com.woowacourse.di.ViewModelScope
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
@@ -29,6 +30,7 @@ class ShoppingApplication : Application() {
             ProductRepository::class,
             RepositoryModule.provideProductRepository(),
             InMemory::class,
+            ViewModelScope::class,
         )
     }
 
