@@ -1,5 +1,6 @@
 package com.example.di
 
+import android.app.Application
 import com.example.di.annotation.Provides
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -9,7 +10,11 @@ import kotlin.reflect.full.hasAnnotation
 
 class SourceContainer {
     private val sources = mutableMapOf<KClass<*>, Any>()
-    private val modules = mutableListOf<Any>()
+    private val modules = mutableListOf<Any>(ApplicationContextModule)
+
+    fun initApplication(app: Application) {
+        ApplicationContextModule.initApplication(app)
+    }
 
     fun addModule(vararg newModules: Any) {
         modules.addAll(newModules)
@@ -17,7 +22,7 @@ class SourceContainer {
 
     fun getSourceOrNull(sourceType: KClass<*>): Any? {
         return sources[sourceType] ?: run {
-            val targetModuleAndFunction = findTargetModule(sourceType)
+            val targetModuleAndFunction = findSourceTypeProvide(sourceType)
             if (targetModuleAndFunction.isEmpty()) {
                 null
             } else {
@@ -28,20 +33,17 @@ class SourceContainer {
         }
     }
 
-    private fun findTargetModule(sourceType: KClass<*>): Map<Any, KFunction<*>> {
-        val targetModuleAndFunction =
-            modules
-                .filter { it::class.objectInstance != null }
-                .associateWith { it::class.getAnnotatedFunctions() }
-                .entries
-                .flatMap { (module, functions) ->
-                    functions.filter {
-                        it.isReturnTypeMatchedWith(sourceType)
-                    }.map { module to it }
-                }
-                .toMap()
-        return targetModuleAndFunction
-    }
+    private fun findSourceTypeProvide(sourceType: KClass<*>): Map<Any, KFunction<*>> =
+        modules
+            .filter { it::class.objectInstance != null }
+            .associateWith { it::class.getAnnotatedFunctions() }
+            .entries
+            .flatMap { (module, functions) ->
+                functions.filter {
+                    it.isReturnTypeMatchedWith(sourceType)
+                }.map { module to it }
+            }
+            .toMap()
 
     private fun KClass<*>.getAnnotatedFunctions() =
         functions.filter { function ->

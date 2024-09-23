@@ -18,7 +18,12 @@ class AndroidDiApplication : Application() {
     }
 
     private fun initializeDependencies() {
-        val sourceContainer = SourceContainer().apply { addModule(DatabaseModule) }
+        val sourceContainer =
+            SourceContainer()
+                .apply {
+                    initApplication(this@AndroidDiApplication)
+                    addModule(DatabaseModule)
+                }
         Injector.init(sourceContainer)
     }
 }

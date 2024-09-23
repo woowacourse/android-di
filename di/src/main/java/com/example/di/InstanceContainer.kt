@@ -13,11 +13,11 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class InstanceContainer(private val container: SourceContainer) {
+class InstanceContainer(private val sourceContainer: SourceContainer) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     fun inject(classType: KClass<*>): Any {
-        return container.getSourceOrNull(classType) ?: run {
+        return sourceContainer.getSourceOrNull(classType) ?: run {
             if (classType.isSingleton()) {
                 getInstanceOrNull(classType) ?: createInstance(classType)
             } else {
@@ -56,7 +56,7 @@ class InstanceContainer(private val container: SourceContainer) {
     }
 
     // target 인스턴스에서 @Inject가 붙은 필드를 찾아 injectProperty로 필드 주입을 수행한다
-    private fun <T : Any> injectFields(target: T) {
+    fun <T : Any> injectFields(target: T) {
         target::class.declaredMemberProperties
             .filter { kProperty ->
                 kProperty.findAnnotation<Inject>() != null && kProperty is KMutableProperty1<*, *>

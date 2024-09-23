@@ -10,4 +10,8 @@ object Injector {
     }
 
     fun inject(classType: KClass<*>) = instanceContainer.inject(classType)
+
+    fun <T : Any> injectFields(targetInstance: T) {
+        instanceContainer.injectFields(targetInstance)
+    }
 }
