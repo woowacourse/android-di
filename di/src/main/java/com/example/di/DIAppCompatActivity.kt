@@ -49,6 +49,10 @@ open class DIAppComponentActivity : AppCompatActivity() {
         dependencies.forEach { DIContainer.destroyDependency(it) }
     }
 
+    private fun loadActivityScopeDependencies() {
+        dependencies.forEach { DIContainer.addDependency(it) }
+    }
+
     private fun injectFields() {
         val properties =
             this::class
