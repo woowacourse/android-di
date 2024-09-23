@@ -14,20 +14,38 @@ typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
 class DependencyInjector {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
+    private val singletonInstances = mutableMapOf<ClassWithQualifier, Instance>()
 
+    // TODO: 매개변수 줄이기
     fun <T : Any> addInstance(
         clazz: KClass<T>,
         instance: T,
         qualifier: KClass<*>? = null,
+        scope: Any? = null,
     ) {
-        instances[clazz to qualifier] = instance
+        when (scope) {
+            Singleton::class -> {
+                singletonInstances[clazz to qualifier] = instance
+            }
+            else -> {
+                instances[clazz to qualifier] = instance
+            }
+        }
     }
 
     private fun <T : Any> findInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
+        scope: KClass<*>? = null,
     ): T {
-        return instances[clazz to qualifier] as? T ?: createInstance(clazz)
+        return when (scope) {
+            Singleton::class -> {
+                singletonInstances[clazz to qualifier] as? T ?: createInstance(clazz)
+            }
+            else -> {
+                instances[clazz to qualifier] as? T ?: createInstance(clazz)
+            }
+        }
     }
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
@@ -57,8 +75,14 @@ class DependencyInjector {
             val classifier: KClass<*> = kProperty.returnType.classifier as KClass<*>
             val qualifier: Annotation? = kProperty.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
             val qualifierClass: KClass<out Annotation>? = qualifier?.annotationClass
-            val dependency = findInstance(classifier, qualifierClass)
 
+            val scope: KClass<*>? =
+                when {
+                    kProperty.hasAnnotation<Singleton>() -> Singleton::class
+                    else -> null
+                }
+
+            val dependency = findInstance(classifier, qualifierClass, scope)
             kProperty as KMutableProperty1
             kProperty.setter.call(instance, dependency)
         }

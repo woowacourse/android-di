@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
+import com.woowacourse.di.Singleton
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
@@ -19,6 +20,7 @@ class MainViewModel : ViewModel() {
 
     @Inject
     @RoomDB
+    @Singleton
     lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

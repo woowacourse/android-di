@@ -1,10 +1,10 @@
 package woowacourse.shopping
 
 import android.app.Application
-import android.util.Log
 import com.woowacourse.di.DependencyInjector
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
+import com.woowacourse.di.Singleton
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
@@ -37,11 +37,13 @@ class ShoppingApplication : Application() {
             CartRepository::class,
             RepositoryModule.provideCartRepository(cartProductDao),
             RoomDB::class,
+            Singleton::class,
         )
         dependencyInjector.addInstance(
             CartRepository::class,
             RepositoryModule.provideCartInMemoryRepository(),
             InMemory::class,
+            Singleton::class,
         )
     }
 
