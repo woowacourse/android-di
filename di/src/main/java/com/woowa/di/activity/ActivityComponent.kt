@@ -9,6 +9,7 @@ import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -72,7 +73,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val t
             val parameters =
                 kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
                     when {
-                        it.hasAnnotation<ApplicationContext>() -> DIBuilder.applicationContext
+                        it.hasAnnotation<ApplicationContext>() -> SingletonComponent.applicationContext
                         it.hasAnnotation<ActivityContext>() -> context
                         else ->
                             SingletonComponentManager.getDIInstance(

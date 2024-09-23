@@ -1,5 +1,6 @@
 package com.woowa.di.singleton
 
+import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -22,6 +23,7 @@ class SingletonComponent private constructor() :
             super.onDestroy(owner)
             deleteAllDIInstance()
             instance = null
+            _applicationContext = null
             ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
         }
 
@@ -59,7 +61,7 @@ class SingletonComponent private constructor() :
             val parameters =
                 kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
                     when {
-                        it.hasAnnotation<ApplicationContext>() -> DIBuilder.applicationContext
+                        it.hasAnnotation<ApplicationContext>() -> applicationContext
                         else ->
                             SingletonComponentManager.getDIInstance(
                                 it.type.jvmErasure,
@@ -86,6 +88,17 @@ class SingletonComponent private constructor() :
         }
 
         companion object {
+
+            private var _applicationContext: Context? = null
+            val applicationContext get() = _applicationContext
+
+            fun initApplicationContext(context:Context) {
+                require(_applicationContext == null) {
+                    "binder는 단 한 번만 초기화 가능합니다."
+                }
+                _applicationContext = context
+            }
+
             private var instance: SingletonComponent? = null
 
             fun getInstance(): SingletonComponent {

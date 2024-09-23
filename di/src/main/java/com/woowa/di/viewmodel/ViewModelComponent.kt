@@ -5,6 +5,7 @@ import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.singleton.SingletonComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -54,7 +55,7 @@ class ViewModelComponent private constructor() :
             val parameters =
                 kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
                     when {
-                        it.hasAnnotation<ApplicationContext>() -> DIBuilder.applicationContext
+                        it.hasAnnotation<ApplicationContext>() -> SingletonComponent.applicationContext
                         else -> ViewModelComponentManager.getDIInstance(it.type.jvmErasure, it.findQualifierClassOrNull())
                     }
                 }

@@ -17,15 +17,12 @@ fun injectDI(
     app: Application,
     block: DIBuilder.() -> Unit,
 ) {
-    DIBuilder().initApplicationContext(app.applicationContext).apply(block).createSingleton(app)
+    SingletonComponent.initApplicationContext(app.applicationContext)
+    DIBuilder().apply(block).createSingleton(app)
     app.registerActivityLifecycleCallbacks(ActivityLifecycleListener())
 }
 
 class DIBuilder {
-    fun initApplicationContext(context: Context): DIBuilder {
-        applicationContext = context
-        return this
-    }
 
     fun createSingleton(app: Application): DIBuilder {
         SingletonComponentManager.createComponent(app::class)
@@ -42,9 +39,5 @@ class DIBuilder {
             ActivityComponent::class -> ActivityComponentManager.registerBinder(binder)
             SingletonComponent::class -> SingletonComponentManager.registerBinder(binder)
         }
-    }
-
-    companion object {
-        lateinit var applicationContext: Context
     }
 }
