@@ -2,12 +2,13 @@ package com.android.diandroid
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.android.di.component.DiComponent
 import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
 import com.android.di.component.Module
 
-abstract class ActivityInjector : ComponentActivity() {
+abstract class ActivityInjector : AppCompatActivity() {
     private lateinit var applicationInjector: ApplicationInjector
     lateinit var diInjector: DiInjector
 
