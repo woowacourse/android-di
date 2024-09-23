@@ -3,9 +3,8 @@ package com.example.sh1mj1
 import com.example.sh1mj1.annotation.Qualifier
 import com.example.sh1mj1.component.singleton.ComponentKey
 import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
-import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
 import com.example.sh1mj1.container.singleton.DefaultInjectedSingletonContainer
-import io.kotest.assertions.throwables.shouldThrow
+import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

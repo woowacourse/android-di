@@ -60,6 +60,6 @@ class DefaultStubRepo : StubRepo {
     override fun all(): List<String> = listOf("11", "22")
 }
 
-class ViewModelScopeStubRepo: StubRepo {
+class ViewModelScopeStubRepo : StubRepo {
     override fun all(): List<String> = listOf("33", "44")
 }

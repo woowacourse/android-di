@@ -37,10 +37,15 @@ class DefaultAppContainer(
             ?: viewModelScopeComponentContainer.find(componentKey)
             ?: throw IllegalStateException("${componentKey.clazz.simpleName} not found in AppContainer")
 
-    override fun <T : Any> findVMS(clazz: KClass<T>, qualifier: Qualifier?): Any? =
-        viewModelScopeComponentContainer.find(clazz, qualifier)
+    override fun <T : Any> findVMS(
+        clazz: KClass<T>,
+        qualifier: Qualifier?,
+    ): Any? = viewModelScopeComponentContainer.find(clazz, qualifier)
 
-    override fun removeVMS(clazz: KClass<*>, qualifier: Qualifier?) {
+    override fun removeVMS(
+        clazz: KClass<*>,
+        qualifier: Qualifier?,
+    ) {
         viewModelScopeComponentContainer.remove(clazz, qualifier)
     }
 

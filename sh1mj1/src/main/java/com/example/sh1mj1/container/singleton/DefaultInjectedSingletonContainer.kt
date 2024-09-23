@@ -17,10 +17,11 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
                 clazz = component.injectedClass,
                 qualifier = component.qualifier,
             )
-        if(components.containsKey(componentKey)){
-            // TODO: 그냥 예외를 던지고, 테스트에서는 application 을 아예 다시 실행하는 옵션을 주는 건? application 이 가진 컨테이너가 초기화되지가 않네..
-            return
-        }
+        if (components.containsKey(componentKey))
+            {
+                // TODO: 그냥 예외를 던지고, 테스트에서는 application 을 아예 다시 실행하는 옵션을 주는 건? application 이 가진 컨테이너가 초기화되지가 않네..
+                return
+            }
         components[componentKey] = component
     }
 

@@ -1,7 +1,6 @@
 package com.example.sh1mj1.component.activityscope
 
 import android.app.Activity
-import android.util.Log
 import com.example.sh1mj1.DiApplication
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass

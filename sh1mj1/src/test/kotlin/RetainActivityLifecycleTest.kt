@@ -12,7 +12,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(application = StubApplication::class)
 class RetainActivityLifecycleTest {
-
     @Test
     fun `액티비티가 setup 될 때 dateFormatter 를 외부에서 자동으로 주입해준다`() {
         // given
@@ -26,12 +25,12 @@ class RetainActivityLifecycleTest {
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-
     @Test
     fun `액티비티가 onCreate 되었을 때 dateFormatter 의 인스턴스는 존재한다`() {
         // given
-        val controller = Robolectric
-            .buildActivity(StubActivity::class.java)
+        val controller =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
 
         // when
         controller.create()
@@ -40,12 +39,12 @@ class RetainActivityLifecycleTest {
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-
     @Test
     fun `액티비티가 pause 되었을 때 dateFormatter 의 인스턴스를 존재한다`() {
         // given
-        val controller = Robolectric
-            .buildActivity(StubActivity::class.java)
+        val controller =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
         controller.setup()
 
         // when
@@ -56,12 +55,12 @@ class RetainActivityLifecycleTest {
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-
     @Test
     fun `액티비티가 stop 되었을 때 dateFormatter 의 인스턴스는 존재한다`() {
         // given
-        val controller = Robolectric
-            .buildActivity(StubActivity::class.java)
+        val controller =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
         controller.setup()
 
         // when
@@ -93,6 +92,4 @@ class RetainActivityLifecycleTest {
 //
 //        original shouldBeSameInstanceAs recreated
 //    }
-
 }
-

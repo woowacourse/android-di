@@ -1,16 +1,12 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class KoreaLocaleDateFormatter(context: Context) :DateFormatter/*,DefaultLifecycleObserver*/ {
+class KoreaLocaleDateFormatter(context: Context) : DateFormatter/*,DefaultLifecycleObserver*/ {
     private val formatter =
         SimpleDateFormat(
             context.getString(R.string.date_format),

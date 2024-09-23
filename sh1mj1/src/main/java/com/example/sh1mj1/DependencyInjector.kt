@@ -20,9 +20,7 @@ import kotlin.reflect.jvm.isAccessible
 class DependencyInjector(
     private val appContainer: AppContainer,
 ) {
-    fun <T : Any> createInstance(
-        modelClass: Class<T>,
-    ): Pair<T, List<Pair<KClass<*>, Qualifier?>>> {
+    fun <T : Any> createInstance(modelClass: Class<T>): Pair<T, List<Pair<KClass<*>, Qualifier?>>> {
         val kClass = modelClass.kotlin
 
         val constructor =
@@ -41,7 +39,7 @@ class DependencyInjector(
         val viewModelScopeConstructorParam =
             injectedArgs.filter { it.hasAnnotation<ViewModelScope>() }.map { it.type.classifier as KClass<*> to it.withQualifier() }
         val viewModelScopeFields =
-            injectedFields.filter { it.hasAnnotation<ViewModelScope>() }.map { it.returnType.classifier as KClass<*>  to it.withQualifier()}
+            injectedFields.filter { it.hasAnnotation<ViewModelScope>() }.map { it.returnType.classifier as KClass<*> to it.withQualifier() }
 
         val viewModelScopeComponents = viewModelScopeConstructorParam + viewModelScopeFields
 
@@ -82,13 +80,17 @@ class DependencyInjector(
                 )
 
             val dependency = foundDependency(componentKey)
-            val kMutableProperty = field as? KMutableProperty<*>
-                ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
+            val kMutableProperty =
+                field as? KMutableProperty<*>
+                    ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
             kMutableProperty.setter.call(viewModel, dependency)
         }
     }
 
-    fun removeViewModelScopeComponent(kClass: KClass<*>, qualifier: Qualifier?) {
+    fun removeViewModelScopeComponent(
+        kClass: KClass<*>,
+        qualifier: Qualifier?,
+    ) {
         ViewModelComponentContainer.instance().remove(kClass, qualifier)
     }
 }

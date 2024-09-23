@@ -2,8 +2,8 @@ package com.example.sh1mj1
 
 import android.app.Application
 import com.example.sh1mj1.container.AppContainer
-import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.container.DefaultAppContainer
+import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
 
 open class DiApplication : Application() {

@@ -20,9 +20,10 @@ class RetainViewModelLifecycleTest {
     @Test
     fun `액티비티에서 뷰모델이 정상적으로 주입도어 뷰모델의 함수를 사용할 수 있다`() {
         // given & when
-        val activityController = Robolectric
-            .buildActivity(StubActivity::class.java)
-            .setup()
+        val activityController =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+                .setup()
 
         val activity = activityController.get()
 
@@ -34,9 +35,10 @@ class RetainViewModelLifecycleTest {
     @Test
     fun `액티비티의 구성변경이 일어나도 뷰모델은 유지되어 뷰모델은 같다`() {
         // given
-        val activityController = Robolectric
-            .buildActivity(StubActivity::class.java)
-            .setup()
+        val activityController =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+                .setup()
 
         val activity = activityController.get()
 
@@ -55,9 +57,10 @@ class RetainViewModelLifecycleTest {
     @Test
     fun `액티비티의 구성변경이 일어나도 뷰모델은 유지되어 뷰모델의 싱글톤 레포지토리는 같다`() {
         // given
-        val activityController = Robolectric
-            .buildActivity(StubActivity::class.java)
-            .setup()
+        val activityController =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+                .setup()
 
         val activity = activityController.get()
 
@@ -73,14 +76,13 @@ class RetainViewModelLifecycleTest {
         originalRepo shouldBeSameInstanceAs repoAfterConfigurationChanged
     }
 
-
-
     @Test
-    fun `뷰모델이 clear 되었을 때 뷰모델이 가진 뷰모델 스코프 레포지토리는 삭제된다`(){
+    fun `뷰모델이 clear 되었을 때 뷰모델이 가진 뷰모델 스코프 레포지토리는 삭제된다`()  {
         // given
-        val activityController = Robolectric
-            .buildActivity(StubActivity::class.java)
-            .setup()
+        val activityController =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+                .setup()
 
         val activity = activityController.get()
         val viewModelScopeRepo = activity.viewModel.repo2
@@ -94,8 +96,4 @@ class RetainViewModelLifecycleTest {
             qualifier = Qualifier("viewModelScope"),
         ) shouldBe null
     }
-
-
-
 }
-

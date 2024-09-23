@@ -17,19 +17,21 @@ class ActivityScopeComponentFactoryTest {
     @Test
     fun `StubActivity 의 dateFormatter 의 구현체 타입을 확인한다`() {
         // given
-        val activity = Robolectric
-            .buildActivity(StubActivity::class.java)
-            .setup()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+                .setup()
+                .get()
 
         // when
         val factory = injectActivityScopeComponent<DateFormatter>()
 
         // then
-        val dateFormatter = factory.getValue(
-            thisRef = activity,
-            property = StubActivity::dateFormatter
-        )
+        val dateFormatter =
+            factory.getValue(
+                thisRef = activity,
+                property = StubActivity::dateFormatter,
+            )
         dateFormatter.shouldBeInstanceOf<StubDateFormatter>()
     }
 }

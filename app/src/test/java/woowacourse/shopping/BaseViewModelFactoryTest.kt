@@ -3,9 +3,9 @@ package woowacourse.shopping
 import com.example.sh1mj1.BaseViewModelFactory
 import com.example.sh1mj1.annotation.Qualifier
 import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
-import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
 import com.example.sh1mj1.container.AppContainer
 import com.example.sh1mj1.container.DefaultAppContainer
+import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository

@@ -15,9 +15,15 @@ class ViewModelComponentContainer private constructor() {
         components[componentKey] = component
     }
 
-    fun find(clazz: KClass<*>, qualifier: Qualifier?): Any? = find(ComponentKey.of(clazz, qualifier))
+    fun find(
+        clazz: KClass<*>,
+        qualifier: Qualifier?,
+    ): Any? = find(ComponentKey.of(clazz, qualifier))
 
-    fun remove(clazz: KClass<*>, qualifier: Qualifier?) {
+    fun remove(
+        clazz: KClass<*>,
+        qualifier: Qualifier?,
+    ) {
         remove(ComponentKey.of(clazz, qualifier))
     }
 

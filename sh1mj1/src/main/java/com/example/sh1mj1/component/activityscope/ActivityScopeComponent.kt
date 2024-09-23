@@ -17,5 +17,5 @@ inline fun <reified T : Any> activityScopeComponent(
     ActivityScopeComponent(
         injectedClass = T::class,
         instanceProvider = instanceProvider,
-        qualifier = qualifier
+        qualifier = qualifier,
     )
