@@ -47,14 +47,14 @@ class Container {
         qualifier: Qualifier,
         onRegister: ScopeDSL.() -> Unit,
     ) {
-        val scope = Scope(qualifier, lifecycle = Lifecycle.SCOPED)
+        val scope = Scope(scopeQualifier = qualifier, lifecycle = Lifecycle.SCOPED)
         val scopeDSL = ScopeDSL(scope, qualifier)
         scopeDSL.onRegister()
     }
 
-    inline fun <reified T> scope(noinline onRegister: ScopeDSL.() -> Unit) where T : Any, T : ScopeComponent {
-        val qualifier = qualifier(T::class)
-        scope(qualifier, onRegister)
+    inline fun <reified T> scope(noinline configureScope: ScopeDSL.() -> Unit) where T : Any, T : ScopeComponent {
+        val qualifier = qualifier<T>()
+        scope(qualifier, configureScope)
     }
 
     data class Key(

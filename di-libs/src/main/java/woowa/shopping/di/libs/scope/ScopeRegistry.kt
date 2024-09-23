@@ -2,6 +2,7 @@ package woowa.shopping.di.libs.scope
 
 import org.jetbrains.annotations.VisibleForTesting
 import woowa.shopping.di.libs.annotation.InternalApi
+import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.factory.ScopedInstanceFactory
 import woowa.shopping.di.libs.qualify.Qualifier
 import kotlin.reflect.KClass
@@ -28,11 +29,12 @@ class ScopeRegistry {
         lockedScope.remove(scopeQualifier)
     }
 
-    fun registerScope(scopeQualifier: Qualifier) {
-        require(scopeQualifier !in scopedFactoriesMap) {
-            "$scopeQualifier 에 해당하는 Scope 가 이미 존재합니다"
+    fun findScope(scopeQualifier: Qualifier): Scope {
+        val factories = scopedFactoriesMap[scopeQualifier]
+        requireNotNull(factories) {
+            "$scopeQualifier 에 해당하는 Scope 가 존재하지 않습니다"
         }
-        scopedFactoriesMap[scopeQualifier] = mutableMapOf()
+        return Scope(scopeQualifier, Lifecycle.SCOPED)
     }
 
     fun registerInstanceFactories(
@@ -71,7 +73,7 @@ class ScopeRegistry {
             "$scopeQualifier 에 해당하는 Scope 가 없습니다"
         }
         require(isUnLocked(scopeQualifier)) {
-            "$scopeQualifier 에 해당하는 Scope 를 만들어주세요"
+            "$scopeQualifier 는 Lock 상태입니다"
         }
         val factory: ScopedInstanceFactory<*>? = factories[factoryKey]
         return factory?.instance() as? T

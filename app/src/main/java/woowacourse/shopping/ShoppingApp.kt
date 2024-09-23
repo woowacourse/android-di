@@ -40,15 +40,19 @@ class ShoppingApp : Application() {
                 single<CartRepository>(qualifier<InMemoryCartRepository>()) { InMemoryCartRepository() }
             }
             container {
-                viewModel<MainViewModel>(
+                viewModel(
                     viewModelFactory = {
                         MainViewModel(
                             get(),
                             get(qualifier<DefaultCartRepository>()),
                         )
-                    })
-                viewModel<CartViewModel> {
-                    CartViewModel(get(qualifier<InMemoryCartRepository>()))
+                    },
+                    configureScope = {
+                        scoped<ProductRepository> { ProductRepositoryImpl() }
+                    }
+                )
+                viewModel {
+                    CartViewModel(get(qualifier<DefaultCartRepository>()))
                 }
             }
             container {
