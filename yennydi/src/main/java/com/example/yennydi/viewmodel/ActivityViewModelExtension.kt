@@ -1,6 +1,5 @@
-package woowacourse.shopping.util
+package com.example.yennydi.viewmodel
 
-import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
@@ -8,15 +7,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.ShoppingApplication
+import com.example.yennydi.activity.DiActivity
+import com.example.yennydi.application.DiApplication
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.injectedViewModels(
+inline fun <reified VM : ViewModel> DiActivity.injectedViewModels(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
         viewModelFactory {
             initializer {
-                (application as ShoppingApplication).injector.inject(VM::class)
+                (application as DiApplication).injector.inject(VM::class, instanceModule)
             }
         }
     },
