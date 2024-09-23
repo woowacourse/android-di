@@ -8,6 +8,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinProperty
 
@@ -19,26 +20,40 @@ abstract class ComponentManager {
 
     fun createComponent(targetClass: KClass<*>): Component =
         getComponentInstance(targetClass).apply {
-            targetClass.java.declaredFields.onEach { it.isAccessible = true }.filter { property ->
-                property.isAnnotationPresent(Inject::class.java)
-            }.forEach { property ->
-                saveWhereDIInstanceCreated(property, targetClass)
-            }
+            saveWhereDIFieldCreated(targetClass)
+            saveWhereDIConstructorCreated(targetClass)
 
             if (this is SingletonComponent) {
                 createComponentOfAllBinder(targetClass)
             }
         }
 
-    private fun Component.saveWhereDIInstanceCreated(
-        property: Field,
-        targetClass: KClass<*>,
-    ) {
-        val type =
-            property?.kotlinProperty?.returnType?.jvmErasure
-                ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
-        val qualifier = property?.kotlinProperty?.findQualifierClassOrNull()
+    private fun Component.saveWhereDIConstructorCreated(targetClass: KClass<*>) {
+        targetClass.primaryConstructor?.parameters?.forEach { kParameter ->
+            val type = kParameter.type.jvmErasure
+            val qualifier = kParameter.findQualifierClassOrNull()
+            saveWhereDIInstanceCreated(targetClass, type, qualifier)
+        }
+    }
 
+    private fun Component.saveWhereDIFieldCreated(targetClass: KClass<*>) {
+        targetClass.java.declaredFields.onEach { it.isAccessible = true }.filter { property ->
+            property.isAnnotationPresent(Inject::class.java)
+        }.forEach { property ->
+            val type =
+                property?.kotlinProperty?.returnType?.jvmErasure
+                    ?: error("Kotlin으로 나타낼 수 없는 타입은 DI 주입을 할 수 없습니다.")
+            val qualifier = property?.kotlinProperty?.findQualifierClassOrNull()
+
+            saveWhereDIInstanceCreated(targetClass, type, qualifier)
+        }
+    }
+
+    private fun Component.saveWhereDIInstanceCreated(
+        targetClass: KClass<*>,
+        type:KClass<*>,
+        qualifier: KClass<out Annotation>? = null
+    ) {
         require(
             !isAlreadyCreatedDI(type, qualifier) || findComponentType(
                 type,
