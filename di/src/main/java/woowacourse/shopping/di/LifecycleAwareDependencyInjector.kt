@@ -22,12 +22,19 @@ class LifecycleAwareDependencyInjector {
         dependencyContainer = container
     }
 
-    fun <T : Any> createInstanceWithLifecycle(
-        modelClass: KClass<T>,
-        lifecycleOwner: LifecycleOwner,
-    ): T {
+    fun initLifecycleOwner(lifecycleOwner: LifecycleOwner) {
         this.lifecycleOwner = lifecycleOwner
-        return createInstance(modelClass)
+    }
+
+    fun <T : Any> createInstanceOfProperty(modelProperty: KProperty<T>): T {
+        val modelClass = modelProperty.returnType.classifier as KClass<T>
+        val qualifier: Annotation? = modelProperty.checkAnnotation<Qualifier>()
+        val lifecycleAware: Annotation? = modelProperty.checkAnnotation<LifecycleAware>()
+        return createInstance(
+            modelClass,
+            qualifier?.annotationClass,
+            lifecycleAware?.annotationClass,
+        )
     }
 
     fun <T : Any> createInstance(
@@ -39,7 +46,6 @@ class LifecycleAwareDependencyInjector {
         // 그러니 먼저 타겟 인스턴스를 받아야한다.
         val targetInstance: T = checkClassTypeThenGetInstance(modelClass, qualifier, lifecycleAware)
         setLifecycleOwner(modelClass, targetInstance)
-
         setDependencyOfProperties(modelClass, targetInstance)
         if (lifecycleAware == null) {
             dependencyContainer.setInstance(modelClass, targetInstance, qualifier)
@@ -49,7 +55,7 @@ class LifecycleAwareDependencyInjector {
                 targetInstance,
                 qualifier,
                 lifecycleOwner,
-                lifecycleAware
+                lifecycleAware,
             )
         }
         return targetInstance
@@ -107,9 +113,10 @@ class LifecycleAwareDependencyInjector {
             val classifier = parameter.type.classifier as KClass<*>
             if (parameter.hasAnnotation<ParamInject>()) {
                 createInstance(classifier)
-            }
-            if (parameter.hasAnnotation<ApplicationContext>()) {
-                dependencyContainer.getContext()
+            } else if (parameter.hasAnnotation<ApplicationContext>()) {
+                dependencyContainer.getApplicationContext()
+            } else {
+
             }
         }.toTypedArray()
     }
