@@ -1,7 +1,6 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.di.DIContainer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -36,9 +35,9 @@ class MainViewModelTest {
 
         productRepository = FakeProductRepository()
         cartRepository = FakeCartRepository()
-        DIContainer.setInstance(ProductRepository::class, productRepository, "room")
-        DIContainer.setInstance(CartRepository::class, cartRepository, "room")
-        viewModel = MainViewModel()
+        // DIContainer.setInstance(ProductRepository::class, productRepository, "room")
+        // DIContainer.setInstance(CartRepository::class, cartRepository, "room")
+        // viewModel = MainViewModel()
     }
 
     @After
