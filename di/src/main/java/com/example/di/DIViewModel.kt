@@ -26,6 +26,12 @@ open class DIViewModel : ViewModel() {
             .filter { injectableTypes.contains(it.returnType) }
             .map { Dependency(module, it, null) }
 
+    override fun onCleared() {
+        super.onCleared()
+        destroyFields()
+        dependencies.forEach { DIContainer.destroyDependency(it) }
+    }
+
     private fun destroyFields() {
         val properties =
             this::class
@@ -35,11 +41,5 @@ open class DIViewModel : ViewModel() {
             property.isAccessible = true
             property.javaField?.set(this, null)
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        destroyFields()
-        dependencies.forEach { DIContainer.destroyDependency(it) }
     }
 }
