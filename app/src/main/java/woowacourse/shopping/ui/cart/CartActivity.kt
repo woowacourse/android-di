@@ -3,10 +3,8 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.example.alsonglibrary2.di.createAutoDIViewModel
+import woowacourse.shopping.CartActivityLifecycleObserver
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
@@ -15,17 +13,18 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by createAutoDIViewModel<CartViewModel>()
 
-    private var _dateFormatter: DateFormatter? = null
-    private val dateFormatter: DateFormatter get() = _dateFormatter!!
+    private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(CartActivityLifecycleObserver)
+    }
 
+    override fun onStart() {
+        super.onStart()
         setupBinding()
         setupToolbar()
         setupView()
-
-        setUpLifecycle()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -69,22 +68,5 @@ class CartActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun setUpLifecycle() {
-        lifecycle.addObserver(
-            object : LifecycleEventObserver {
-                override fun onStateChanged(
-                    source: LifecycleOwner,
-                    event: Lifecycle.Event,
-                ) {
-                    when (event) {
-                        Lifecycle.Event.ON_CREATE -> _dateFormatter = DateFormatter(this@CartActivity)
-                        Lifecycle.Event.ON_DESTROY -> _dateFormatter = null
-                        else -> {}
-                    }
-                }
-            },
-        )
     }
 }
