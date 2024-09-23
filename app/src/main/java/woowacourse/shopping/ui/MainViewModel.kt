@@ -7,17 +7,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.InMemory
 import woowacourse.shopping.data.RoomDB
+import woowacourse.shopping.di.ApplicationLifecycleAware
 import woowacourse.shopping.di.FieldInject
+import woowacourse.shopping.di.ViewModelLifecycleAware
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
     @property:FieldInject
+    @ApplicationLifecycleAware
     @RoomDB
     lateinit var cartRepository: CartRepository
 
     @property:FieldInject
+    @ViewModelLifecycleAware
     @InMemory
     lateinit var productRepository: ProductRepository
 
