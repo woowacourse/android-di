@@ -8,7 +8,6 @@ import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
-import javax.inject.Qualifier
 
 @InstallIn(ViewModelComponent::class)
 object ViewModelRepositoryBinder {
@@ -17,5 +16,7 @@ object ViewModelRepositoryBinder {
 
 @InstallIn(SingletonComponent::class)
 object SingletonRepositoryBinder {
-    fun provideCartRepository(@Database dao: CartProductDao): CartRepository = CartRepositoryImpl(dao)
+    fun provideCartRepository(
+        @Database dao: CartProductDao,
+    ): CartRepository = CartRepositoryImpl(dao)
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
-import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -88,11 +87,10 @@ class SingletonComponent private constructor() :
         }
 
         companion object {
-
             private var _applicationContext: Context? = null
             val applicationContext get() = _applicationContext
 
-            fun initApplicationContext(context:Context) {
+            fun initApplicationContext(context: Context) {
                 require(_applicationContext == null) {
                     "binder는 단 한 번만 초기화 가능합니다."
                 }

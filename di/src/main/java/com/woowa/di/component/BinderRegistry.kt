@@ -1,7 +1,6 @@
 package com.woowa.di.component
 
 import android.app.Application
-import android.content.Context
 import com.woowa.di.activity.ActivityComponent
 import com.woowa.di.activity.ActivityComponentManager
 import com.woowa.di.activity.ActivityLifecycleListener
@@ -23,7 +22,6 @@ fun injectDI(
 }
 
 class DIBuilder {
-
     fun createSingleton(app: Application): DIBuilder {
         SingletonComponentManager.createComponent(app::class)
         injectSingletonComponentFields(app)

@@ -7,7 +7,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.woowa.di.ActivityContext
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
-import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager

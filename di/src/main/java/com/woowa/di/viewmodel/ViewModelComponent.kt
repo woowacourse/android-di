@@ -3,7 +3,6 @@ package com.woowa.di.viewmodel
 import androidx.lifecycle.ViewModel
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
-import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
 import com.woowa.di.singleton.SingletonComponent
 import kotlin.reflect.KClass
