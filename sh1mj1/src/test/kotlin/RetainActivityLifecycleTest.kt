@@ -1,7 +1,7 @@
 package com.example.sh1mj1
 
-import com.example.sh1mj1.stub.StubApplication
 import com.example.sh1mj1.stub.StubActivity
+import com.example.sh1mj1.stub.StubApplication
 import io.kotest.assertions.throwables.shouldNotThrow
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,21 +72,27 @@ class RetainActivityLifecycleTest {
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-    // TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 의 인스턴스는 존재한다
+    // TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다
 //    @Test
-//    fun `액티비티의 구성 변경이 일어나도 dateFormatter 의 인스턴스는 존재한다`() {
+//    fun `액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다`() {
 //        // given
 //        val controller = Robolectric
 //            .buildActivity(StubActivity::class.java)
 //        controller.setup()
 //
+//        val original = controller.get().dateFormatter
+//
 //        // when
 //        controller.configurationChange()
+//
+//        val recreated = controller.get().dateFormatter
 //
 //        // then
 //        shouldNotThrow<Exception> { controller.get().dateFormatter }
 //        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
-//    }
 //
+//        original shouldBeSameInstanceAs recreated
+//    }
+
 }
 
