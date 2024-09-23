@@ -1,5 +1,6 @@
 package com.woowacourse.di
 
+import android.util.Log
 import com.woowacourse.di.annotation.Inject
 import com.woowacourse.di.annotation.Qualifier
 import kotlin.reflect.KClass
@@ -53,7 +54,7 @@ object DependencyContainer {
         return instance
     }
 
-    private fun <T : Any> injectProperty(instance: T) {
+    fun <T : Any> injectProperty(instance: T) {
         instance::class.declaredMemberProperties
             .filter { isInjectableProperty(it) }
             .forEach { property ->

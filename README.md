@@ -64,7 +64,7 @@
 ### 기능 요구 사항
 
 다음 문제점을 해결한다.
-- CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
+- [x]CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
 - 모든 의존성이 싱글 오브젝트로 만들어질 필요는 없다.
   - CartRepository는 Application LifeCycle 동안 유지되도록 구현한다.
   - ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
