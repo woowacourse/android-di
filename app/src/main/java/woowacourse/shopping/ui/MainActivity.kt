@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.zzang.di.DIContainer
 import com.zzang.di.provideViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -67,5 +68,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToCart() {
         startActivity(Intent(this, CartActivity::class.java))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DIContainer.clearActivityScopedInstances(this)
     }
 }

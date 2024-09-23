@@ -11,8 +11,8 @@ class QualifierTest {
     @Test
     fun `Qualifier가 InMemory일때 FakeInMemoryRepository 인스턴스를 가져온다`() {
         // given
-        DIContainer.registerInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
-        DIContainer.registerInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
 
         // when
         val inMemoryRepo = DIContainer.resolve(TestRepository::class, QualifierType.IN_MEMORY)
@@ -24,8 +24,8 @@ class QualifierTest {
     @Test
     fun `Qualifier가 Database일때 FakeDatabaseRepository 인스턴스를 가져온다`() {
         // given
-        DIContainer.registerInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
-        DIContainer.registerInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
 
         // when
         val dbRepo = DIContainer.resolve(TestRepository::class, QualifierType.DATABASE)
@@ -37,8 +37,8 @@ class QualifierTest {
     @Test
     fun `Qualifier가 없을 경우 기본값인 Database의 FakeDatabaseRepository 인스턴스를 가져온다`() {
         // given
-        DIContainer.registerInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
-        DIContainer.registerInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeInMemoryRepository(), QualifierType.IN_MEMORY)
+        DIContainer.registerSingletonInstance(TestRepository::class, FakeDatabaseRepository(), QualifierType.DATABASE)
 
         // when
         val dbRepo = DIContainer.resolve(TestRepository::class)

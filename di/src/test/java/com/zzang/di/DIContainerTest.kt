@@ -8,7 +8,7 @@ class DIContainerTest {
     @Test
     fun `싱글톤 객체 테스트(객체 1번 생성)`() {
         // given
-        DIContainer.registerInstance(TestClass::class, TestClass())
+        DIContainer.registerSingletonInstance(TestClass::class, TestClass())
 
         // when
         val testClass1 = DIContainer.resolve(TestClass::class)

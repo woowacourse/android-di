@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zzang.di.DIContainer
 import com.zzang.di.annotation.Inject
 import com.zzang.di.annotation.QualifierType
 import kotlinx.coroutines.launch
@@ -33,5 +34,10 @@ class MainViewModel : ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        DIContainer.clearViewModelScopedInstances(this)
     }
 }
