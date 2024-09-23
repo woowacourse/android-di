@@ -14,12 +14,6 @@
 - [x] 장바구니에 접근할 때마다 매번 CartRepository 인스턴스를 새로 만들고 있다.
 - [x] 여러 번 인스턴스화할 필요 없는 객체는 최초 한 번만 인스턴스화한다. (이 단계에서는 너무 깊게 생각하지 말고 싱글 오브젝트로 구현해도 된다.)
 
-### 선택 요구 사항
-- [ ] TDD로 DI 구현
-- [ ] Robolectric으로 기능 테스트
-- [ ] ViewModel 테스트
-- [ ] 모든 도메인 로직, Repository 단위 테스트
-
 <br>
 
 ## 2단계 (Annotation)
@@ -67,3 +61,13 @@ fun bind(product: ...) {
 
 ### 모듈 분리
 - [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
+
+<br>
+
+## 4단계 (LifeCycle)
+### Qualifier
+- [ ] DateFormatter의 인스턴스를 DI 라이브러리에서 관리하도록 한다.
+- [ ] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+- [ ] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [ ] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
