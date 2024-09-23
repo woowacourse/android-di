@@ -19,6 +19,14 @@ inline fun <reified VM : ScopeViewModel> ComponentActivity.scopeViewModel(): Laz
     }
 }
 
+@OptIn(InternalApi::class)
+inline fun <reified VM : ScopeViewModel> ComponentActivity.getViewModel(): VM {
+    require(Containers.scopeInstanceRegistry.isLocked(qualifier<VM>()).not()) {
+        "Scope 이 초기화 되지 않았습니다."
+    }
+    return Containers.resolveScopedInstance(qualifier<VM>(), VM::class, null)
+}
+
 inline fun <reified VM : ScopeViewModel> Container.viewModel(
     crossinline configureScope: ScopeDSL.() -> Unit = {},
     noinline viewModelFactory: Scope.() -> VM,

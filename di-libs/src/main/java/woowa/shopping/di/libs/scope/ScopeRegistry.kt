@@ -37,6 +37,10 @@ class ScopeRegistry {
         return Scope(scopeQualifier, Lifecycle.SCOPED)
     }
 
+    fun isLocked(scopeQualifier: Qualifier): Boolean {
+        return scopeQualifier in lockedScope
+    }
+
     fun registerInstanceFactories(
         scopeQualifier: Qualifier,
         factories: List<ScopedInstanceFactory<*>>
