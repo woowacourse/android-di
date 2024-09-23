@@ -47,6 +47,6 @@ class DiContainerTest {
         val actual = diContainer.instance(FakeViewModel2::class)
 
         // then
-        assertThat(actual.childFoo).isInstanceOf(ChildFoo2::class.java)
+        assertThat(actual.childFoo2).isInstanceOf(ChildFoo2::class.java)
     }
 }

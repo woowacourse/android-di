@@ -57,6 +57,11 @@ class DiContainer(
         }
     }
 
+    fun hasDependency(clazz: KClass<*>, annotation: Annotation? = null): Boolean {
+        val key = DependencyKey(clazz, annotation)
+        return dependencies.containsKey(key)
+    }
+
     private fun <T : Any> getInstance(
         clazz: KClass<T>,
         annotation: Annotation?,

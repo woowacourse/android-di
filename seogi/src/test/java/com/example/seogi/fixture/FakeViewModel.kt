@@ -3,11 +3,10 @@ package com.example.seogi.fixture
 import androidx.lifecycle.ViewModel
 import com.example.seogi.di.annotation.FieldInject
 
-class FakeViewModel(
-    @Child1 val childFoo: ParentFoo,
-) : ViewModel() {
+class FakeViewModel : ViewModel() {
     @FieldInject
-    private lateinit var foo1: String
+    @Child1
+    lateinit var childFoo: ParentFoo
 
     private lateinit var foo2: String
 
@@ -15,10 +14,11 @@ class FakeViewModel(
 }
 
 class FakeViewModel2(
-    @Child2 val childFoo: ParentFoo,
+    @Child1 val childFoo1: ParentFoo,
 ) : ViewModel() {
     @FieldInject
-    private lateinit var foo1: String
+    @Child2
+    lateinit var childFoo2: ParentFoo
 
     private lateinit var foo2: String
 
