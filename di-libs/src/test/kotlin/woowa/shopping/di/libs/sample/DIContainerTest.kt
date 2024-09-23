@@ -9,7 +9,7 @@ import woowa.shopping.di.libs.container.Containers
 import woowa.shopping.di.libs.container.startDI
 import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.inject.inject
-import woowa.shopping.di.libs.qualify.qualifier
+import woowa.shopping.di.libs.qualify.named
 
 class DIContainerTest {
     class Service
@@ -107,10 +107,10 @@ class DIContainerTest {
         shouldThrow<IllegalStateException> {
             startDI {
                 container {
-                    single(qualifier("오둥")) { Service() }
+                    single(named("오둥")) { Service() }
                 }
                 container {
-                    single(qualifier("오둥")) { Service() }
+                    single(named("오둥")) { Service() }
                 }
             }
         }
@@ -122,16 +122,16 @@ class DIContainerTest {
         startDI {
             container {
                 single { Service() }
-                single<Repository>(qualifier("안녕")) { RepositoryImpl(get()) }
+                single<Repository>(named("안녕")) { RepositoryImpl(get()) }
             }
 
             container {
-                single<Repository>(qualifier("오둥아")) { RepositoryImpl(get()) }
+                single<Repository>(named("오둥아")) { RepositoryImpl(get()) }
             }
         }
         // when
-        val repository1 by inject<Repository>(qualifier("안녕"))
-        val repository2 by inject<Repository>(qualifier("오둥아"))
+        val repository1 by inject<Repository>(named("안녕"))
+        val repository2 by inject<Repository>(named("오둥아"))
         // then
         repository1 shouldNotBe repository2
     }
@@ -141,13 +141,13 @@ class DIContainerTest {
         // given
         startDI {
             container {
-                single(qualifier("둥가둥가")) { Service() }
-                single(qualifier("오둥이")) { RepositoryImpl(get(qualifier("둥가둥가"))) }
+                single(named("둥가둥가")) { Service() }
+                single(named("오둥이")) { RepositoryImpl(get(named("둥가둥가"))) }
             }
         }
         // when
-        val repository1 by inject<RepositoryImpl>(qualifier("오둥이"))
-        val service by inject<Service>(qualifier("둥가둥가"))
+        val repository1 by inject<RepositoryImpl>(named("오둥이"))
+        val service by inject<Service>(named("둥가둥가"))
         // then
         repository1.service shouldBe service
     }

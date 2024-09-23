@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import woowa.shopping.di.libs.container.Containers
 import woowa.shopping.di.libs.container.startDI
 import woowa.shopping.di.libs.inject.inject
-import woowa.shopping.di.libs.qualify.qualifier
+import woowa.shopping.di.libs.qualify.named
 import woowa.shopping.di.libs.scope.startScope
 
 class ScopedContainersTest {
@@ -28,14 +28,14 @@ class ScopedContainersTest {
         // given
         startDI {
             container {
-                scope(qualifier("scope")) {
+                scope(named("scope")) {
                     scoped<Service> { Service() }
                     scoped<Repository> { RepositoryImpl(get()) }
                 }
             }
         }
         // when
-        val scope = startScope(qualifier("scope"))
+        val scope = startScope(named("scope"))
         val service1 = scope.get<Service>()
         val service2 = scope.get<Service>()
         // then
@@ -47,19 +47,19 @@ class ScopedContainersTest {
         // given
         startDI {
             container {
-                scope(qualifier("scope")) {
+                scope(named("scope")) {
                     scoped<Service> { Service() }
                     scoped<Repository> { RepositoryImpl(get()) }
                 }
-                scope(qualifier("scope2")) {
+                scope(named("scope2")) {
                     scoped<Service> { Service() }
                     scoped<Repository> { RepositoryImpl(get()) }
                 }
             }
         }
         // when
-        val scope = startScope(qualifier("scope"))
-        val scope2 = startScope(qualifier("scope2"))
+        val scope = startScope(named("scope"))
+        val scope2 = startScope(named("scope2"))
         val service1 = scope.get<Service>()
         val service2 = scope2.get<Service>()
         // then
@@ -71,14 +71,14 @@ class ScopedContainersTest {
         // given
         startDI {
             container {
-                scope(qualifier("scope")) {
+                scope(named("scope")) {
                     scoped<Service> { Service() }
                     scoped<Repository> { RepositoryImpl(get()) }
                 }
             }
         }
         // when
-        val scope = startScope(qualifier("scope"))
+        val scope = startScope(named("scope"))
         scope.cancel()
         // then
         shouldThrow<IllegalArgumentException> {
@@ -92,14 +92,14 @@ class ScopedContainersTest {
         startDI {
             container {
                 single { Service() }
-                scope(qualifier("scope")) {
+                scope(named("scope")) {
                     scoped<Repository> { RepositoryImpl(get()) }
                 }
             }
         }
         // when
         val service by inject<Service>()
-        val scope = startScope(qualifier("scope"))
+        val scope = startScope(named("scope"))
         val repository = scope.get<Repository>() as RepositoryImpl
         // then
         repository.service shouldBe service
