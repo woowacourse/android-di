@@ -1,5 +1,8 @@
 package woowacourse.shopping
 
+import android.os.Looper
+import com.google.common.truth.Truth.assertThat
+import com.woowacourse.di.ActivityScope
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
 import com.woowacourse.di.Singleton
@@ -8,10 +11,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.android.controller.ActivityController
 import woowacourse.shopping.ShoppingApplication.Companion.dependencyInjector
+import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.DateFormatter
 
 @RunWith(RobolectricTestRunner::class)
 class DependencyInjectorTest {
@@ -113,5 +121,70 @@ class DependencyInjectorTest {
                 .get()
 
         activity.firstSuccessCaseViewModel
+    }
+
+    // 작성 중인 테스트 - 정상 동작 하지 않음
+    @Test
+    fun `DateFormatter의 인스턴스는 Activity LifeCycle 동안 유지되어야 한다`() {
+        val cartActivity =
+            Robolectric
+                .buildActivity(CartActivity::class.java)
+                .create()
+                .get()
+
+        dependencyInjector.addInstance(
+            FakeCartRepository::class,
+            fakeCartRepository,
+            qualifier = RoomDB::class,
+            scope = ViewModelScope::class,
+        )
+
+        dependencyInjector.addInstance(
+            DateFormatter::class,
+            RepositoryModule.provideDateFormatter(cartActivity.applicationContext),
+            scope = ActivityScope::class,
+        )
+
+        val firstController: ActivityController<CartActivity> =
+            Robolectric.buildActivity(CartActivity::class.java).setup()
+
+        cartActivity.viewModel
+
+        shadowOf(Looper.getMainLooper()).idle()
+
+        val firstDateFormatter = firstController.get().dateFormatter
+
+        firstController.recreate()
+        shadowOf(Looper.getMainLooper()).idle()
+
+        val secondDateFormatter = firstController.get().dateFormatter
+
+        firstController.pause().stop()
+        firstController.destroy()
+
+        val secondController: ActivityController<CartActivity> =
+            Robolectric.buildActivity(CartActivity::class.java).setup()
+
+        dependencyInjector.addInstance(
+            DateFormatter::class,
+            RepositoryModule.provideDateFormatter(cartActivity.applicationContext),
+            scope = ActivityScope::class,
+        )
+
+//        dependencyInjector.addInstance(
+//            FakeCartRepository::class,
+//            fakeCartRepository,
+//            qualifier = RoomDB::class,
+//            scope = ViewModelScope::class,
+//        )
+
+        val thirdDateFormatter = secondController.get().dateFormatter
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertAll(
+            { assertThat(firstDateFormatter).isNotNull() },
+            { assertThat(secondDateFormatter).isEqualTo(firstDateFormatter) },
+            { assertThat(thirdDateFormatter).isNotEqualTo(firstDateFormatter) },
+        )
     }
 }

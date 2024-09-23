@@ -20,7 +20,7 @@ class CartActivity : AppCompatActivity() {
 
     @Inject
     @ActivityScope
-    private lateinit var dateFormatter: DateFormatter
+    lateinit var dateFormatter: DateFormatter
 
     private lateinit var lifecycleTracker: LifecycleTracker
 
