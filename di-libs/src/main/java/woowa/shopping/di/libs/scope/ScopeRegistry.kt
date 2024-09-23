@@ -1,5 +1,6 @@
 package woowa.shopping.di.libs.scope
 
+import org.jetbrains.annotations.VisibleForTesting
 import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.factory.ScopedInstanceFactory
 import woowa.shopping.di.libs.qualify.Qualifier
@@ -25,6 +26,13 @@ class ScopeRegistry {
             "$scopeQualifier 에 해당하는 Scope 가 존재하지 않습니다"
         }
         lockedScope.remove(scopeQualifier)
+    }
+
+    fun registerScope(scopeQualifier: Qualifier) {
+        require(scopeQualifier !in scopedFactoriesMap) {
+            "$scopeQualifier 에 해당하는 Scope 가 이미 존재합니다"
+        }
+        scopedFactoriesMap[scopeQualifier] = mutableMapOf()
     }
 
     fun registerInstanceFactories(
@@ -56,7 +64,7 @@ class ScopeRegistry {
         scopeQualifier: Qualifier,
         instanceClazz: KClass<T>,
         instanceQualifier: Qualifier? = null,
-    ): T {
+    ): T? {
         val factoryKey = FactoryKey(instanceClazz, instanceQualifier)
         val factories = scopedFactoriesMap[scopeQualifier]
         require(factories != null) {
@@ -65,11 +73,8 @@ class ScopeRegistry {
         require(isUnLocked(scopeQualifier)) {
             "$scopeQualifier 에 해당하는 Scope 를 만들어주세요"
         }
-        require(factoryKey in factories.keys) {
-            "$factoryKey 에 해당하는 ScopeInstance 가 존재하지 않습니다"
-        }
-        val factory: ScopedInstanceFactory<*> = requireNotNull(factories[factoryKey])
-        return factory.instance() as T
+        val factory: ScopedInstanceFactory<*>? = factories[factoryKey]
+        return factory?.instance() as? T
     }
 
     private fun isUnLocked(scopeQualifier: Qualifier): Boolean {
@@ -84,6 +89,12 @@ class ScopeRegistry {
         }
         factories.forEach { (key, factory) -> factory.clear() }
         lockedScope.add(scopeQualifier)
+    }
+
+    @VisibleForTesting
+    fun clear() {
+        scopedFactoriesMap.clear()
+        lockedScope.clear()
     }
 
     private fun ScopedInstanceFactory<*>.toKey() = FactoryKey(instanceClazz, qualifier)
