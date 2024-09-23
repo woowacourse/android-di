@@ -11,7 +11,7 @@ interface ParentFoo
 
 class ChildFoo1 : ParentFoo
 
-class ChildFoo2(bar: Bar) : ParentFoo
+class ChildFoo2(private val bar: Bar) : ParentFoo
 
 class Bar
 

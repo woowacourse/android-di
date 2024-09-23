@@ -8,6 +8,10 @@ class FakeViewModel : DiViewModel() {
     @Child1
     lateinit var childFoo: ParentFoo
 
+    @FieldInject
+    @Child2
+    lateinit var childFoo2: ParentFoo
+
     private lateinit var foo2: String
 
     private val foo3: String = "foo2"
