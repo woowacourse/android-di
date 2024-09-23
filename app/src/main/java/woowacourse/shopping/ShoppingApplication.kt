@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.woowacourse.di.ActivityScope
 import com.woowacourse.di.DependencyInjector
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
@@ -9,6 +10,7 @@ import com.woowacourse.di.ViewModelScope
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     private val db by lazy { ShoppingDatabase.initialize(applicationContext) }
@@ -21,16 +23,25 @@ class ShoppingApplication : Application() {
     }
 
     private fun initialize() {
+        registerDateFormatter()
         registerProductRepository()
         registerCartRepository()
+    }
+
+    private fun registerDateFormatter() {
+        dependencyInjector.addInstance(
+            DateFormatter::class,
+            RepositoryModule.provideDateFormatter(applicationContext),
+            scope = ActivityScope::class,
+        )
     }
 
     private fun registerProductRepository() {
         dependencyInjector.addInstance(
             ProductRepository::class,
             RepositoryModule.provideProductRepository(),
-            InMemory::class,
-            ViewModelScope::class,
+            qualifier = InMemory::class,
+            scope = ViewModelScope::class,
         )
     }
 
@@ -38,14 +49,14 @@ class ShoppingApplication : Application() {
         dependencyInjector.addInstance(
             CartRepository::class,
             RepositoryModule.provideCartRepository(cartProductDao),
-            RoomDB::class,
-            Singleton::class,
+            qualifier = RoomDB::class,
+            scope = Singleton::class,
         )
         dependencyInjector.addInstance(
             CartRepository::class,
             RepositoryModule.provideCartInMemoryRepository(),
-            InMemory::class,
-            Singleton::class,
+            qualifier = InMemory::class,
+            scope = Singleton::class,
         )
     }
 

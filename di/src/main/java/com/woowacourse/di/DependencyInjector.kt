@@ -16,6 +16,7 @@ class DependencyInjector {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
     private val singletonInstances = mutableMapOf<ClassWithQualifier, Instance>()
     private val viewModelScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
+    private val activityScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
 
     // TODO: 매개변수 줄이기
     fun <T : Any> addInstance(
@@ -31,13 +32,16 @@ class DependencyInjector {
             ViewModelScope::class -> {
                 viewModelScopeInstances[clazz to qualifier] = instance
             }
+            ActivityScope::class -> {
+                activityScopeInstances[clazz to qualifier] = instance
+            }
             else -> {
                 instances[clazz to qualifier] = instance
             }
         }
     }
 
-    private fun <T : Any> findInstance(
+    fun <T : Any> findInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
         scope: KClass<*>? = null,
@@ -48,6 +52,9 @@ class DependencyInjector {
             }
             ViewModelScope::class -> {
                 viewModelScopeInstances[clazz to qualifier] as? T ?: createInstance(clazz)
+            }
+            ActivityScope::class -> {
+                activityScopeInstances[clazz to qualifier] as? T ?: createInstance(clazz)
             }
             else -> {
                 instances[clazz to qualifier] as? T ?: createInstance(clazz)
@@ -87,6 +94,7 @@ class DependencyInjector {
                 when {
                     kProperty.hasAnnotation<Singleton>() -> Singleton::class
                     kProperty.hasAnnotation<ViewModelScope>() -> ViewModelScope::class
+                    kProperty.hasAnnotation<ActivityScope>() -> ActivityScope::class
                     else -> null
                 }
 
@@ -98,6 +106,10 @@ class DependencyInjector {
 
     fun clearViewModelInstances() {
         viewModelScopeInstances.clear()
+    }
+
+    fun clearActivityInstances() {
+        activityScopeInstances.clear()
     }
 
     companion object {
