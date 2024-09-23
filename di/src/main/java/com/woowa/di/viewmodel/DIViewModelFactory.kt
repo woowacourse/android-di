@@ -23,11 +23,12 @@ inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Fa
 
 inline fun <reified T : ViewModel> createInstance(clazz: KClass<T>): T {
     val constructor = clazz.primaryConstructor ?: error("주 생성자가 없는 객체는 DI 주입을 할 수 없습니다.")
-    val args = constructor.parameters.associateWith {
-        ViewModelComponentManager.getDIInstance(
-            it.type.jvmErasure,
-            it.findQualifierClassOrNull()
-        )
-    }
+    val args =
+        constructor.parameters.associateWith {
+            ViewModelComponentManager.getDIInstance(
+                it.type.jvmErasure,
+                it.findQualifierClassOrNull(),
+            )
+        }
     return constructor.callBy(args)
 }

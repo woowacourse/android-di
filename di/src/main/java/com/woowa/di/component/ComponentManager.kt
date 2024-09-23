@@ -2,7 +2,6 @@ package com.woowa.di.component
 
 import com.woowa.di.findQualifierClassOrNull
 import com.woowa.di.singleton.SingletonComponent
-import java.lang.reflect.Field
 import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -51,8 +50,8 @@ abstract class ComponentManager {
 
     private fun Component.saveWhereDIInstanceCreated(
         targetClass: KClass<*>,
-        type:KClass<*>,
-        qualifier: KClass<out Annotation>? = null
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
     ) {
         require(
             !isAlreadyCreatedDI(type, qualifier) || findComponentType(

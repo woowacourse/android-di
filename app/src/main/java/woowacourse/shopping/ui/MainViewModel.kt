@@ -11,9 +11,8 @@ import woowacourse.shopping.model.repository.ProductRepository
 import javax.inject.Inject
 
 class MainViewModel(
-    var productRepository: ProductRepository
+    var productRepository: ProductRepository,
 ) : ViewModel() {
-
     @Inject
     private lateinit var cartRepository: CartRepository
 
