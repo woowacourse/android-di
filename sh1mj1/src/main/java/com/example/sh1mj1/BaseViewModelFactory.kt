@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sh1mj1.container.AppContainer
+import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
 
 class BaseViewModelFactory(
     appContainer: AppContainer,
@@ -15,7 +16,16 @@ class BaseViewModelFactory(
     private val dependencyInjector = DependencyInjector(appContainer)
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return dependencyInjector.createInstance(modelClass)
+        val viewModel = dependencyInjector.createInstance(modelClass)
+        val viewModelScopeCOmponents = viewModel.second
+        viewModel.first.addCloseable {
+            viewModelScopeCOmponents.forEach{
+                dependencyInjector.removeViewModelScopeComponent(
+                    it.first, it.second
+                )
+            }
+        }
+        return viewModel.first
     }
 }
 

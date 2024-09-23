@@ -27,7 +27,7 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier?,
-    ): Any =
+    ): Any? =
         find(
             ComponentKey.of(
                 clazz = clazz,
@@ -35,16 +35,16 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
             ),
         )
 
-    override fun find(componentKey: ComponentKey): Any {
+    override fun find(componentKey: ComponentKey): Any? {
         val foundComponent = components[componentKey]
         val foundInstance =
-            foundComponent?.instance ?: throw IllegalStateException("There is no component for $componentKey")
+            foundComponent?.instance
 
-        if (foundComponent.qualifier?.generate == true) {
+        if (foundComponent?.qualifier?.generate == true) {
             return foundInstance
         }
 
-        foundComponent.injectableProperties().forEach { kProperty ->
+        foundComponent?.injectableProperties()?.forEach { kProperty ->
             val dependency =
                 find(
                     ComponentKey.of(

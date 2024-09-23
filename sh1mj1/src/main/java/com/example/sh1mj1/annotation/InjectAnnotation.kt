@@ -7,4 +7,4 @@ annotation class Inject
 annotation class Qualifier(val value: String, val generate: Boolean = false)
 
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ActivityScope
+annotation class ViewModelScope

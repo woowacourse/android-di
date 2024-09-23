@@ -9,6 +9,7 @@ import com.example.sh1mj1.annotation.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
+import java.io.Closeable
 
 class CartViewModel : ViewModel() {
     @Inject
