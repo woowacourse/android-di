@@ -46,13 +46,23 @@ class DiContainer(
         return instance
     }
 
+    fun removeDependency(func: KFunction<*>) {
+        val returnTypeClass = func.returnType.jvmErasure
+        val annotation = func.getAnnotationIncludeQualifier()
+        val key = DependencyKey(returnTypeClass, annotation)
+
+        if (dependencies.containsKey(key)) {
+            dependencies.remove(key)
+        }
+    }
+
     private fun <T : Any> getInstance(
         clazz: KClass<T>,
         annotation: Annotation?,
     ): T {
         return (
-            dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
-        ) as T
+                dependencies[DependencyKey(clazz, annotation)] ?: instance(clazz)
+                ) as T
     }
 
     private fun addDependency(
