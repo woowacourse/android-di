@@ -13,6 +13,7 @@ import org.aprilgom.androiddi.fake.FakeRecursive1
 import org.aprilgom.androiddi.fake.FakeRecursive2
 import org.aprilgom.androiddi.fake.FakeRecursive3
 import org.aprilgom.androiddi.fake.FakeRecursive4
+import org.aprilgom.androiddi.fake.FakeScopeActivity
 import org.aprilgom.androiddi.fake.FakeViewModel
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -48,7 +49,7 @@ class DiTest {
                 .get()
 
         // then
-        val viewModel = activity.viewModel
+        val viewModel = activity.fakeViewModel
         assertNotNull(viewModel)
         assertEquals(viewModel.fakeRepository.javaClass.kotlin, DefaultFakeRepository::class)
     }
@@ -137,5 +138,63 @@ class DiTest {
 
         assertEquals(fakeQualifier1.getValue(), expected1)
         assertEquals(fakeQualifier2.getValue(), expected2)
+    }
+
+    @Test
+    fun `Activity가 stop되었을 때에도 Repository가 유지된다`() {
+        diContainer {
+            modules(
+                module {
+                    factory(named = "QDefaultFakeRepository") { DefaultFakeRepository() }
+                    viewModel { FakeViewModel(get(named = "QDefaultFakeRepository")) }
+                },
+            )
+        }
+        val controller = Robolectric.buildActivity(FakeActivity::class.java).setup()
+        val activity = controller.get()
+        controller.stop()
+
+        val repository = activity.fakeViewModel.fakeRepository
+        assertNotNull(repository)
+    }
+
+    @Test
+    fun `Activity가 살아있을 경우 activity scope의 필드에 접근할 수 있다`() {
+        diContainer {
+            modules(
+                module {
+                    scope(named = "FakeScope") {
+                        scoped(named = "FakeField") { FakeField(1) }
+                    }
+                },
+            )
+        }
+        val controller =
+            Robolectric.buildActivity(FakeScopeActivity::class.java)
+                .setup()
+
+        val activity = controller.get()
+        val expected = activity.scope.get<FakeField>("FakeField")
+        assertEquals(FakeField(1), expected)
+    }
+
+    @Test(expected = NullPointerException::class)
+    fun `Activity가 destroy되었을 경우 activity scope의 필드에 접근하지 못한다`() {
+        diContainer {
+            modules(
+                module {
+                    scope(named = "FakeScope") {
+                        scoped(named = "FakeField") { FakeField(1) }
+                    }
+                },
+            )
+        }
+        val controller =
+            Robolectric.buildActivity(FakeScopeActivity::class.java)
+                .setup()
+                .destroy()
+
+        val activity = controller.get()
+        activity.scope.get<FakeField>("FakeField")
     }
 }

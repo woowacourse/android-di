@@ -1,7 +1,9 @@
 package org.aprilgom.androiddi
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
@@ -87,10 +89,58 @@ inline fun <reified VM : ViewModel> ModuleBuilder.viewModel(crossinline block: (
     providers[NamedKClass(VM::class)] = LazyProvider { ViewModelFactory(VM::class) { block() } }
 }
 
-inline fun <reified VM : ViewModel> AppCompatActivity.viewModel(): Lazy<VM> =
+inline fun <reified VM : ViewModel> ComponentActivity.viewModel(): Lazy<VM> =
     lazy {
         val factory = GlobalContext.provideViewModelFactory(VM::class)
         val instance = ViewModelProvider(this, factory)[VM::class.java]
         GlobalContext.inject(instance, VM::class)
         instance
+    }
+
+inline fun ModuleBuilder.scope(
+    named: String,
+    block: ScopeBuilder.() -> Unit,
+) {
+    val builder = ScopeBuilder(named)
+    builder.block()
+    val scope = builder.build(this)
+    GlobalContext.scopeMap[named] = scope
+}
+
+inline fun <reified T> ScopeBuilder.scoped(
+    named: String,
+    crossinline block: () -> T,
+) {
+    val namedKClass = NamedKClass(named, T::class)
+    if (providers.containsKey(namedKClass)) {
+        return
+    }
+    val provider = ScopedProvider(name) { block() }
+    providers[NamedKClass(named, T::class)] = provider
+}
+
+fun ComponentActivity.activitiyScope(named: String): Lazy<Scope> =
+    lazy {
+        val scope =
+            GlobalContext.scopeMap[named] ?: throw NoSuchElementException("$named scope not found")
+        val context = this
+        val contextNamed = NamedKClass(named, Context::class)
+        val globalProviders = GlobalContext.diContainer?.providers
+        if (globalProviders?.containsKey(contextNamed) == false) {
+            globalProviders.set(
+                contextNamed,
+                ScopedProvider(named) {
+                    context
+                },
+            )
+        }
+        val observer =
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    super.onDestroy(owner)
+                    scope.close()
+                }
+            }
+        this.lifecycle.addObserver(observer)
+        scope
     }
