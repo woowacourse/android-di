@@ -1,11 +1,13 @@
 package woowa.shopping.di.libs.container
 
+import woowa.shopping.di.libs.android.ScopeComponent
 import woowa.shopping.di.libs.annotation.InternalApi
 import woowa.shopping.di.libs.factory.InstanceFactory
 import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.factory.PrototypeInstanceFactory
 import woowa.shopping.di.libs.factory.SingletonInstanceFactory
 import woowa.shopping.di.libs.qualify.Qualifier
+import woowa.shopping.di.libs.qualify.qualifier
 import woowa.shopping.di.libs.scope.Scope
 import woowa.shopping.di.libs.scope.ScopeDSL
 import kotlin.reflect.KClass
@@ -39,6 +41,7 @@ class Container {
                 factory = { scope.factory() },
             )
     }
+
     @OptIn(InternalApi::class)
     fun scope(
         qualifier: Qualifier,
@@ -47,6 +50,11 @@ class Container {
         val scope = Scope(qualifier, lifecycle = Lifecycle.SCOPED)
         val scopeDSL = ScopeDSL(scope, qualifier)
         scopeDSL.onRegister()
+    }
+
+    inline fun <reified T> scope(noinline onRegister: ScopeDSL.() -> Unit) where T : Any, T : ScopeComponent {
+        val qualifier = qualifier(T::class)
+        scope(qualifier, onRegister)
     }
 
     data class Key(

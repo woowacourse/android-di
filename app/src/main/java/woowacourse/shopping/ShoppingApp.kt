@@ -13,7 +13,9 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApp : Application() {
     override fun onCreate() {
@@ -45,6 +47,12 @@ class ShoppingApp : Application() {
                     )
                 }
                 viewModel<CartViewModel> { CartViewModel(get(qualifier<DefaultCartRepository>())) }
+            }
+
+            container {
+                scope<CartActivity> {
+                    scoped { DateFormatter(get()) }
+                }
             }
         }
     }
