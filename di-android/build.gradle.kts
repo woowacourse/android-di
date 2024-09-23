@@ -41,5 +41,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    // Robolectric
+    testImplementation("org.robolectric:robolectric:4.13")
+
+    // di
     implementation(project(":di"))
 }

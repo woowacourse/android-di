@@ -1,13 +1,14 @@
 package com.android.diandroid
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import com.android.di.component.DiComponent
 import com.android.di.component.DiContainer
 import com.android.di.component.DiInjector
 import com.android.di.component.Module
 
-abstract class ActivityInjector : AppCompatActivity() {
+abstract class ActivityInjector : ComponentActivity() {
     private lateinit var applicationInjector: ApplicationInjector
     lateinit var diInjector: DiInjector
 
@@ -31,6 +32,7 @@ abstract class ActivityInjector : AppCompatActivity() {
         when {
             isChangingConfigurations -> {
                 applicationInjector.saveInjector(extractKey(), diInjector)
+
             }
         }
     }
@@ -55,7 +57,6 @@ abstract class ActivityInjector : AppCompatActivity() {
     }
 
     companion object {
-        private const val ERROR_CONSTRUCTOR = "No suitable constructor for %s"
         private const val ERROR_ANNOTATION = " AppCompatActivity class must be annotated with @DiActivity"
     }
 }
