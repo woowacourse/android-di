@@ -5,6 +5,7 @@ import com.woowa.di.singleton.SingletonComponent
 import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -74,19 +75,20 @@ abstract class ComponentManager {
 
     private fun Component.createComponentOfAllBinder(targetClass: KClass<*>) {
         _binders.forEach { binder ->
-            binder::class.declaredMemberFunctions.forEach {
-                this.registerDIInstance(binder, it)
-                val type = it.returnType.jvmErasure
-                val qualifier = it.findQualifierClassOrNull()
-                if (qualifier != null) {
-                    components[type.simpleName + qualifier.simpleName] = targetClass
-                } else {
-                    components[
-                        type.simpleName
-                            ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
-                    ] = targetClass
+            binder::class.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
+                .forEach {
+                    this.registerDIInstance(binder, it)
+                    val type = it.returnType.jvmErasure
+                    val qualifier = it.findQualifierClassOrNull()
+                    if (qualifier != null) {
+                        components[type.simpleName + qualifier.simpleName] = targetClass
+                    } else {
+                        components[
+                            type.simpleName
+                                ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
+                        ] = targetClass
+                    }
                 }
-            }
         }
     }
 
@@ -95,20 +97,33 @@ abstract class ComponentManager {
         qualifier: KClass<out Annotation>? = null,
     ): Pair<Any, KFunction<*>>? {
         val binder =
-            _binders.find { binder ->
-                binder::class.declaredMemberFunctions.any {
-                    it.returnType.jvmErasure == type &&
-                        it.findQualifierClassOrNull() == qualifier
-                }
-            } ?: return null
+            findBinder(type, qualifier) ?: return null
 
         val kFunc =
-            binder::class.declaredMemberFunctions.find {
-                it.returnType.jvmErasure == type &&
-                    it.findQualifierClassOrNull() == qualifier
-            } ?: return null
+            findKFunc(binder, type, qualifier) ?: return null
         return binder to kFunc
     }
+
+    private fun findBinder(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?,
+    ) = _binders.find { binder ->
+        binder::class.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
+            .any {
+                it.returnType.jvmErasure == type &&
+                    it.findQualifierClassOrNull() == qualifier
+            }
+    }
+
+    private fun findKFunc(
+        binder: Any,
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?,
+    ) = binder::class.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
+        .find {
+            it.returnType.jvmErasure == type &&
+                it.findQualifierClassOrNull() == qualifier
+        }
 
     abstract fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component
 
@@ -116,7 +131,8 @@ abstract class ComponentManager {
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any? {
-        val componentType = findComponentType(type, qualifier) ?: return getParentDIInstance(type, qualifier)
+        val componentType =
+            findComponentType(type, qualifier) ?: return getParentDIInstance(type, qualifier)
 
         return getComponentInstance(componentType).getDIInstance(type, qualifier)
     }
