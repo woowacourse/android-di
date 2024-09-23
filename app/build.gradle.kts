@@ -79,4 +79,5 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.3.0")
     // module
     implementation(project(":di"))
+    implementation(project(":di-android"))
 }

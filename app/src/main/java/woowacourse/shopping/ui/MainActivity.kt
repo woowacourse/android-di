@@ -4,20 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.android.di.annotation.DiActivity
+import com.android.di_android.ActivityInjector
 import woowacourse.shopping.R
+import woowacourse.shopping.data.di.ActivityLifeModule
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.viewModelsWithAutoInject
 
-class MainActivity : AppCompatActivity() {
+@DiActivity
+class MainActivity : ActivityInjector() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    private val viewModel: MainViewModel by viewModelsWithAutoInject()
+    private val viewModel: MainViewModel by viewModelsWithAutoInject(
+        activityInjector = this@MainActivity
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        injectModule(ActivityLifeModule(this@MainActivity))
         setupBinding()
         setupToolbar()
         setupView()
