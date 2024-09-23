@@ -5,16 +5,20 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.DependencyInjectedActivity
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.util.ReflectiveViewModelFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DependencyInjectedActivity(ShoppingApplication.getApplication()) {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels { ReflectiveViewModelFactory() }
+    private val viewModel: MainViewModel by viewModels {
+        ReflectiveViewModelFactory(
+            dependencyInjector
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
