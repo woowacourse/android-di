@@ -6,20 +6,12 @@ import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartRepository
 
 @AlsongQualifier
-annotation class DefaultCartRepository
-
-@AlsongQualifier
-annotation class InMemoryCartRepository
+annotation class QualifiedCartRepository
 
 object QualifierDependencyProvider :
     QualifierDependencyProvider {
-    @DefaultCartRepository
-    fun provideDefaultCartRepository(): CartRepository {
-        return ShoppingApplication.defaultCartRepository
-    }
-
-    @InMemoryCartRepository
+    @QualifiedCartRepository
     fun provideInMemoryCartRepository(): CartRepository {
-        return ShoppingApplication.inMemoryCartRepository
+        return ShoppingApplication.defaultCartRepository
     }
 }
