@@ -10,7 +10,7 @@ class DependencyAutoInjectTest {
 
     @Before
     fun setUp() {
-        dependencyContainer = DefaultDependencyContainer()
+        dependencyContainer = ApplicationDependencyContainer()
         DependencyInjector.initDependencyContainer(dependencyContainer)
     }
 

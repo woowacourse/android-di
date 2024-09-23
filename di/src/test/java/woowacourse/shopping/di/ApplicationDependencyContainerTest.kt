@@ -4,12 +4,12 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class DefaultDependencyContainerTest {
+class ApplicationDependencyContainerTest {
     private lateinit var dependencyContainer: DependencyContainer
 
     @Before
     fun setUp() {
-        dependencyContainer = DefaultDependencyContainer()
+        dependencyContainer = ApplicationDependencyContainer()
     }
 
     @Test

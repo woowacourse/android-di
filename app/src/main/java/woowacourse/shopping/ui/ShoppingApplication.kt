@@ -7,9 +7,9 @@ import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.DefaultDependencyContainer
-import woowacourse.shopping.di.DependencyContainer
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.ApplicationDependencyContainer
+import woowacourse.shopping.di.LifecycleAwareDependencyInjector
+import woowacourse.shopping.di.LifecycleDependencyContainer
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
@@ -18,30 +18,31 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        defaultDependencyContainer.setDependency(
+        applicationDependencyContainer.setLifecycle(this)
+        applicationDependencyContainer.setDependency(
             ProductRepository::class,
             DefaultProductRepository::class,
             InMemory::class,
         )
-        defaultDependencyContainer.setDependency(
+        applicationDependencyContainer.setDependency(
             CartRepository::class,
             DefaultCartRepository::class,
             RoomDB::class,
         )
-        defaultDependencyContainer.setDependency(
+        applicationDependencyContainer.setDependency(
             CartProductDao::class,
             database.cartProductDao()::class,
         )
-        defaultDependencyContainer.setInstance(
+        applicationDependencyContainer.setInstance(
             CartProductDao::class,
             database.cartProductDao(),
         )
-        DependencyInjector.initDependencyContainer(defaultDependencyContainer)
+        LifecycleAwareDependencyInjector().initDependencyContainer(applicationDependencyContainer)
     }
 
     companion object {
-        val defaultDependencyContainer: DependencyContainer by lazy {
-            DefaultDependencyContainer()
+        val applicationDependencyContainer: LifecycleDependencyContainer by lazy {
+            ApplicationDependencyContainer()
         }
     }
 }
