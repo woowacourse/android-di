@@ -2,25 +2,24 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.woowacourse.di.DiModule
+import com.woowacourse.di.DiActivity
+import com.woowacourse.di.annotations.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.AppViewModelFactory
-import javax.inject.Inject
+import woowacourse.shopping.shoppingapp.di.ActivityLifecycleModule
+import woowacourse.shopping.ui.viewModels
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : DiActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<CartViewModel> { AppViewModelFactory() }
+    private val viewModel: CartViewModel by viewModels()
 
     @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DiModule.getInstance().inject(this)
+        injectModule(ActivityLifecycleModule(this@CartActivity))
         setupBinding()
         setupToolbar()
         setupView()
