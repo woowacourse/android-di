@@ -139,7 +139,7 @@ class ScopeRegistryTest {
     }
 
     @Test
-    fun `Scope 의 생명주기가 끝나면, Scope 에 등록된 객체들을 모두 삭제한다`() {
+    fun `Scope 의 생명주기가 끝나면, Scope 에 등록된 객체들은 모두 Lock 이 걸린다`() {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
@@ -160,5 +160,8 @@ class ScopeRegistryTest {
         scopeRegistry.unlockScope(scopeQualifier)
         scopeRegistry.clearScope(scopeQualifier)
         // then
+        shouldThrow<IllegalArgumentException> {
+            scopeRegistry.resolve(scopeQualifier, String::class, named("string1"))
+        }
     }
 }

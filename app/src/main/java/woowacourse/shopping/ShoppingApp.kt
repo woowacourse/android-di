@@ -47,7 +47,7 @@ class ShoppingApp : Application() {
                             get(qualifier<DefaultCartRepository>()),
                         )
                     },
-                    configureScope = {
+                    configureBindings = {
                         scoped<ProductRepository> { ProductRepositoryImpl() }
                     }
                 )

@@ -46,7 +46,7 @@ class MainActivityTest {
                 .create()
                 .get()
         // when & then
-        shouldNotThrow<IllegalArgumentException> {
+        shouldNotThrow<IllegalStateException> {
             activity.getViewModel<MainViewModel>()
         }
     }

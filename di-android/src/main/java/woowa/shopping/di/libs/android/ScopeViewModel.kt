@@ -11,7 +11,6 @@ import woowa.shopping.di.libs.qualify.Qualifier
 import woowa.shopping.di.libs.qualify.qualifier
 import woowa.shopping.di.libs.scope.ScopeComponent
 import woowa.shopping.di.libs.scope.findScope
-import woowa.shopping.di.libs.scope.startScope
 
 abstract class ScopeViewModel : ScopeComponent, DefaultLifecycleObserver {
     protected val viewModelScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())

@@ -36,6 +36,17 @@ data class Scope(
         }
         Containers.scopeInstanceRegistry.clearScope(scopeQualifier)
     }
+
+    @OptIn(InternalApi::class)
+    fun isLocked(): Boolean {
+        require(lifecycle == Lifecycle.SCOPED) {
+            "Scoped 인 경우에만 Scope를 취소할 수 있습니다."
+        }
+        requireNotNull(scopeQualifier) {
+            "scopeQualifier 는 null 일 수 없습니다."
+        }
+        return Containers.scopeInstanceRegistry.isLocked(scopeQualifier)
+    }
 }
 
 @OptIn(InternalApi::class)
@@ -47,4 +58,9 @@ fun startScope(qualifier: Qualifier): Scope {
 @OptIn(InternalApi::class)
 fun findScope(qualifier: Qualifier): Scope {
     return Containers.scopeInstanceRegistry.findScope(qualifier)
+}
+
+@OptIn(InternalApi::class)
+fun isLocked(qualifier: Qualifier): Boolean {
+    return Containers.scopeInstanceRegistry.isLocked(qualifier)
 }
