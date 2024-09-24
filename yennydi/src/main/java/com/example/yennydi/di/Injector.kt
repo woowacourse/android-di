@@ -1,4 +1,4 @@
-package com.example.di
+package com.example.yennydi.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -12,6 +12,10 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(private val applicationDependencyContainer: DependencyContainer) {
+    init {
+        //
+    }
+
     fun <T : Any> inject(
         modelClass: KClass<T>,
         container: DependencyContainer,
@@ -43,11 +47,12 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
 
         return if (arguments.isEmpty()) {
             container.getInstance(modelClass) ?: modelClass.createInstance().also {
-                container.add(it)
+                container.addInstance(modelClass, it)
             }
         } else {
             constructor.callBy(arguments).also {
-                container.add(it)
+                container.addInstance(modelClass, it)
+                injectProperty(it, container)
             }
         }
     }
@@ -59,9 +64,8 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
         val qualifier =
             parameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         val type = parameter.type.jvmErasure
-
         return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
-            ?: createInstance(DependencyModule.getImplementationClass(type, qualifier), container)
+            ?: createInstance(container.getImplementationClass(type, qualifier), container)
     }
 
     fun <T : Any> injectProperty(
@@ -87,6 +91,6 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
         val type = property.returnType.jvmErasure
 
         return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
-            ?: createInstance(DependencyModule.getImplementationClass(type, qualifier), container)
+            ?: createInstance(container.getImplementationClass(type, qualifier), container)
     }
 }

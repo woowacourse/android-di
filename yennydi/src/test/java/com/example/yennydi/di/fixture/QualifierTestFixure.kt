@@ -1,7 +1,7 @@
-package di.fixture
+package com.example.yennydi.di.fixture
 
-import com.example.di.Injected
-import com.example.di.Qualifier
+import com.example.yennydi.di.Injected
+import com.example.yennydi.di.Qualifier
 
 @Qualifier
 annotation class A

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.di.DependencyModule
 import com.example.di.Injected
 import com.example.di.Injector
+import com.example.yennydi.viewmodel.injectedViewModels
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -14,7 +15,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.util.injectedViewModels
 
 class FakeDataSource1
 
@@ -35,7 +35,7 @@ class FakeViewModel(
 }
 
 private val testModule =
-    DependencyModule().apply {
+    DependencyModule.apply {
         addDeferredDependency(
             FakeRepository::class to FakeRepositoryImpl::class,
             FakeDataSource1::class to FakeDataSource1::class,
@@ -47,7 +47,7 @@ class FakeActivity : AppCompatActivity() {
     val viewModel: FakeViewModel by injectedViewModels {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return Injector(testModule).inject(modelClass.kotlin)
+                return Injector().inject(modelClass.kotlin)
             }
         }
     }
@@ -55,7 +55,7 @@ class FakeActivity : AppCompatActivity() {
 
 @RunWith(RobolectricTestRunner::class)
 class ViewModelInjectorTest {
-    private val dependencyModule = DependencyModule()
+    private val dependencyModule = DependencyModule
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()

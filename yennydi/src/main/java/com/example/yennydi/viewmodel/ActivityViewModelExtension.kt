@@ -16,7 +16,7 @@ inline fun <reified VM : ViewModel> DiActivity.injectedViewModels(
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
         viewModelFactory {
             initializer {
-                (application as DiApplication).injector.inject(VM::class, instanceModule)
+                (application as DiApplication).injector.inject(VM::class, instanceContainer)
             }
         }
     },
