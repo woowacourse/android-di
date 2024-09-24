@@ -1,6 +1,7 @@
 package woowacourse.shopping.data.di
 
 import android.content.Context
+import android.util.Log
 import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.Module
 import woowacourse.shopping.data.CartRepository
@@ -12,10 +13,15 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.ui.cart.DateFormatter
 
 class ApplicationModule(private val context: Context) : Module {
-    fun install() {
+    override fun install() {
+        Log.d("ApplicationModule", "install")
         provideProductRepository()
         provideCartRepository()
-        provideDateFormatter()
+    }
+
+    override fun clear() {
+        Log.d("ApplicationModule", "clear")
+        DependencyContainer.removeInstance(DateFormatter::class)
     }
 
     private fun provideProductRepository() {
@@ -38,13 +44,6 @@ class ApplicationModule(private val context: Context) : Module {
             classType = CartRepository::class,
             instance = InMemoryCartRepository(),
             qualifier = InMemoryCartRepository.QUALIFIER_NAME,
-        )
-    }
-
-    private fun provideDateFormatter() {
-        DependencyContainer.addInstance(
-            classType = DateFormatter::class,
-            instance = DateFormatter(context),
         )
     }
 }

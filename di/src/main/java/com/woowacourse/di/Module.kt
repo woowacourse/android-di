@@ -1,4 +1,7 @@
 package com.woowacourse.di
 
 
-interface Module
+interface Module {
+    fun install()
+    fun clear()
+}
