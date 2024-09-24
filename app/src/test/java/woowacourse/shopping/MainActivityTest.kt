@@ -1,8 +1,6 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth.assertThat
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.After
