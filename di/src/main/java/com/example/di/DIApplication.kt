@@ -9,14 +9,12 @@ abstract class DIApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        println("DIApplication.onCreate()")
         injectDependencies()
     }
 
     override fun onTerminate() {
         super.onTerminate()
 
-        println("DIApplication.onTerminate()")
         releaseDependencies()
     }
 

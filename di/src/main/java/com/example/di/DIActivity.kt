@@ -10,14 +10,12 @@ abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        println("DIActivity.onCreate()")
         injectDependencies()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        println("DIActivity.onDestroy()")
         releaseDependencies()
     }
 

@@ -12,7 +12,15 @@ object DIContainer {
         qualifierType: QualifierType? = null,
     ): T {
         val dependency = Dependency(type, qualifierType)
-        return if (containsInstance(type, qualifierType)) instances[dependency] as T else DIInjector.createInstance(type)
+        return if (containsInstance(
+                type,
+                qualifierType,
+            )
+        ) {
+            instances[dependency] as T
+        } else {
+            DIInjector.createInstance(type)
+        }
     }
 
     fun <T : Any> addInstance(
@@ -22,7 +30,6 @@ object DIContainer {
     ) {
         val dependency = Dependency(type, qualifierType)
         if (!containsInstance(type, qualifierType)) {
-            println("add Instance $type")
             instances[dependency] = instance
         }
     }
@@ -33,7 +40,6 @@ object DIContainer {
     ) {
         val dependency = Dependency(type, qualifierType)
         if (containsInstance(type, qualifierType)) {
-            println("remove Instance $type")
             instances.remove(dependency)
         }
     }

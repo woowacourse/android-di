@@ -30,7 +30,9 @@ class LifeCycleTest {
     @Before
     fun setup() {
         activityController = Robolectric.buildActivity(FakeActivity::class.java)
+
         activity = activityController.get()
+
         application = activity.application as FakeApplication
     }
 

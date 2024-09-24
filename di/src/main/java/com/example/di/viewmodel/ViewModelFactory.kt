@@ -14,7 +14,6 @@ class ViewModelFactory(private val moduleType: KClass<*>) : ViewModelProvider.Fa
         modelClass: KClass<T>,
         extras: CreationExtras,
     ): T {
-        println("ViewModelFactory.create()")
         val module = DIContainer.getInstance(moduleType) as DIModule
         DIInjector.injectModule(module, LifeCycleScope.VIEW_MODEL)
         return DIInjector.createInstance(modelClass)
