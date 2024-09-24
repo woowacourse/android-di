@@ -1,28 +1,29 @@
 package com.example.yennydi.application
 
 import android.app.Application
-import com.example.di.DependencyModule
-import com.example.di.Injector
+import com.example.yennydi.di.DependencyProvider
+import com.example.yennydi.di.Injector
 
 abstract class DiApplication : Application() {
     lateinit var injector: Injector
 
-    lateinit var instanceModule: ApplicationInstanceModule
+    lateinit var instanceContainer: ApplicationInstanceContainer
+
+    abstract val dependencyProvider: DependencyProvider
 
     override fun onCreate() {
         super.onCreate()
-        setupDependency()
-        instanceModule = ApplicationInstanceModule(DependencyModule.getSingletonInstances())
+        instanceContainer = ApplicationInstanceContainer()
+        dependencyProvider.register(instanceContainer)
+
         injector =
-            Injector(instanceModule).apply {
-                instantiateInstances(DependencyModule.getSingletonDependencies(), instanceModule)
+            Injector(instanceContainer).apply {
+                instantiateInstances(instanceContainer.getDeferred(), instanceContainer)
             }
     }
 
-    abstract fun setupDependency()
-
     override fun onTerminate() {
-        instanceModule.clear()
+        instanceContainer.clear()
         super.onTerminate()
     }
 }

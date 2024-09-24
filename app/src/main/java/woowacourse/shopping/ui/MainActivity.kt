@@ -5,15 +5,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import com.example.yennydi.activity.DiActivity
+import com.example.yennydi.di.DependencyProvider
 import com.example.yennydi.viewmodel.injectedViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.ShoppingActivityModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by injectedViewModels<MainViewModel>()
+
+    override val dependencyProvider: DependencyProvider = ShoppingActivityModule(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

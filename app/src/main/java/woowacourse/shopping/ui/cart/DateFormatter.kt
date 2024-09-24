@@ -1,7 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import com.example.di.Injected
+import com.example.yennydi.di.Injected
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
