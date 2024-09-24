@@ -30,6 +30,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -43,4 +46,6 @@ dependencies {
     testImplementation("org.junit.jupiter", "junit-jupiter", "5.10.2")
     testImplementation("org.assertj", "assertj-core", "3.25.3")
     testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }

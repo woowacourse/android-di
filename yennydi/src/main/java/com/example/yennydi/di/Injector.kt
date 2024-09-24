@@ -12,10 +12,6 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class Injector(private val applicationDependencyContainer: DependencyContainer) {
-    init {
-        //
-    }
-
     fun <T : Any> inject(
         modelClass: KClass<T>,
         container: DependencyContainer,

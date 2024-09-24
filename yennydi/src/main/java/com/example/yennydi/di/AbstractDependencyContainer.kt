@@ -4,6 +4,7 @@ import kotlin.reflect.KClass
 
 abstract class AbstractDependencyContainer : DependencyContainer {
     protected val deferred = hashMapOf<KClass<out Any>, MutableSet<KClass<out Any>>>()
+
     private val instances = hashMapOf<KClass<out Any>, Any>()
 
     override fun <T : Any> getInstance(
