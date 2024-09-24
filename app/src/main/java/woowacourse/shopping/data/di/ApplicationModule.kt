@@ -21,7 +21,7 @@ class ApplicationModule(private val context: Context) : Module {
 
     override fun clear() {
         Log.d("ApplicationModule", "clear")
-        DependencyContainer.removeInstance(DateFormatter::class)
+        DependencyContainer.clear()
     }
 
     private fun provideProductRepository() {

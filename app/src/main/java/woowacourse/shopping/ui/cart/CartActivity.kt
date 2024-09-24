@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.woowacourse.di.DiActivity
+import com.woowacourse.di.Module
 import com.woowacourse.di.annotation.Inject
 import woowacourse.shopping.R
+import woowacourse.shopping.data.di.ActivityModule
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : DiActivity() {
+    override val module: Module = ActivityModule(this)
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<CartViewModel> {

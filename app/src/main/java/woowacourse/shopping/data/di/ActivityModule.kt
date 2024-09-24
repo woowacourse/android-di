@@ -1,17 +1,23 @@
 package woowacourse.shopping.data.di
 
 import android.content.Context
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.Module
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.cart.DateFormatter
 
 class ActivityModule(private val context: Context) : Module {
-    fun provideProductRepository(): ProductRepository {
-        return DefaultProductRepository()
+    override fun install() {
+        provideDateFormatter()
     }
 
-    fun provideDateFormatter(): DateFormatter {
-        return DateFormatter(context)
+    override fun clear() {
+        DependencyContainer.removeInstance(DateFormatter::class)
+    }
+
+    private fun provideDateFormatter() {
+        DependencyContainer.addInstance(
+            classType = DateFormatter::class,
+            instance = DateFormatter(context),
+        )
     }
 }
