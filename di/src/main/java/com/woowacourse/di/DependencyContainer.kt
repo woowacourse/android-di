@@ -37,4 +37,8 @@ object DependencyContainer {
     fun clear() {
         instances.clear()
     }
+
+    fun size(): Int {
+        return instances.size
+    }
 }

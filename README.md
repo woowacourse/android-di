@@ -68,4 +68,4 @@
   - [x]CartRepository는 Application LifeCycle 동안 유지되도록 구현한다.
   - [x]ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
   - [x]DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
-- DI 라이브러리가 제대로 동작하는지 테스트 코드를 작성한다.
+- [x]DI 라이브러리가 제대로 동작하는지 테스트 코드를 작성한다.

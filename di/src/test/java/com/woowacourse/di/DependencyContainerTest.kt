@@ -3,6 +3,7 @@ package com.woowacourse.di
 import com.google.common.truth.Truth.assertThat
 import com.woowacourse.di.annotation.Inject
 import com.woowacourse.di.annotation.Qualifier
+import org.junit.After
 import org.junit.Test
 
 class FakeCartRepository {
@@ -14,6 +15,11 @@ class FakeCartRepository {
 class FakeFieldRepository
 
 class DependencyContainerTest {
+    @After
+    fun tearDown() {
+        DependencyContainer.clear()
+    }
+
     @Test
     fun `Container에 instance가 없으면 instance를 만들어서 반환한다`() {
         // when
@@ -48,5 +54,19 @@ class DependencyContainerTest {
 
         // then
         assertThat(actual).isEqualTo(cartRepository)
+    }
+
+    @Test
+    fun `Container에 있는 특정 instance를 삭제할 수 있다`() {
+        // given
+        val cartRepository = FakeCartRepository()
+        DependencyContainer.addInstance(FakeCartRepository::class, cartRepository)
+        assertThat(DependencyContainer.size()).isEqualTo(1)
+
+        // when
+        DependencyContainer.removeInstance(FakeCartRepository::class)
+
+        // then
+        assertThat(DependencyContainer.size()).isEqualTo(0)
     }
 }
