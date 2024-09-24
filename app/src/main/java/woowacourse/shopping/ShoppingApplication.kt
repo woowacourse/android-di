@@ -6,6 +6,7 @@ import woowacourse.shopping.data.di.ApplicationModule
 
 class ShoppingApplication : DiApplication() {
     override val module: Module = ApplicationModule(this)
+
     override fun onCreate() {
         super.onCreate()
     }

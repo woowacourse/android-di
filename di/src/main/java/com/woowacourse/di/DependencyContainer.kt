@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 typealias DependencyKey = Pair<KClass<*>, String?>
 
 object DependencyContainer {
-     val instances = mutableMapOf<DependencyKey, Any>()
+    private val instances = mutableMapOf<DependencyKey, Any>()
 
     fun <T : Any> addInstance(
         classType: KClass<T>,

@@ -13,7 +13,6 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 object Injector {
-
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
         val constructor =
             modelClass.constructors.firstOrNull()
