@@ -18,4 +18,11 @@ object Injector {
     fun deleteInstance(classType: KClass<*>) {
         instanceContainer.deleteInstance(classType)
     }
+
+    fun <T : Any> deleteFields(
+        target: T,
+        targetAnnotation: KClass<*>,
+    ) {
+        instanceContainer.deleteAnnotatedFields(target, targetAnnotation)
+    }
 }

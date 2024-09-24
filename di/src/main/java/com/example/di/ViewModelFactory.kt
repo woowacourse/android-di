@@ -7,13 +7,20 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.di.annotation.InjectedViewModel
+import com.example.di.annotation.lifecycle.ViewModelLifeCycle
 import kotlin.reflect.full.findAnnotation
 
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         return if (ViewModel::class.java.isAssignableFrom(modelClass)) {
-            Injector.inject(kClass) as T
+            val resultViewModel = Injector.inject(kClass) as T
+            resultViewModel
+                .apply {
+                    addCloseable {
+                        Injector.deleteFields(this, ViewModelLifeCycle::class)
+                    }
+                }
         } else {
             throw IllegalArgumentException("${modelClass}은 ViewModel 클래스가 아닙니다.")
         }
