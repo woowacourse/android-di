@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
 
-class SourceContainerContainerTest {
+class SourceContainerTest {
     private lateinit var sourceContainer: SourceContainer
 
     @Before

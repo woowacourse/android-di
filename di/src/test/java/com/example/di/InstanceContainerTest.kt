@@ -70,4 +70,78 @@ class InstanceContainerTest {
         val result2 = instanceContainer.inject(SingletonTestUseCase::class)
         assertThat(result1).isSameInstanceAs(result2)
     }
+
+    @Test
+    fun `커스텀 어노테이션이 달린 생성자 프로퍼티 인스턴스를 제거한다`() {
+        // given : FieldDeleteTestParent에 의존성을 주입한다
+        val result = instanceContainer.inject(ConstructorDeleteTestParent1::class)
+        val isInstanceSaved =
+            instanceContainer.getInstanceOrNull(ConstructorDeleteTestChild1::class) != null
+
+        // when : ExampleLifeCycle 어노테이션이 달린 필드의 인스턴스를 제거한다면
+        instanceContainer.deleteAnnotatedProperties(result::class, ExampleLifeCycle::class)
+        val isInstanceDeleted =
+            instanceContainer.getInstanceOrNull(ConstructorDeleteTestChild1::class) == null
+
+        // then
+        assertThat(isInstanceSaved).isEqualTo(true)
+        assertThat(isInstanceDeleted).isEqualTo(true)
+    }
+
+    @Test
+    fun `커스텀 어노테이션이 없는 생성자 프로퍼티의 인스턴스는 제거되지 않는다`() {
+        // given : FieldDeleteTestParent에 의존성을 주입한다
+        val result =
+            instanceContainer.inject(ConstructorDeleteTestParent2::class)
+                as ConstructorDeleteTestParent2
+        result.constructorDeleteTestChild1
+        result.constructorDeleteTestChild2
+
+        // when : ExampleLifeCycle 어노테이션이 달린 필드의 인스턴스를 제거한다면
+        instanceContainer.deleteAnnotatedProperties(result::class, ExampleLifeCycle::class)
+
+        // then : ConstructorDeleteTestChild1의 인스턴스만 지워진다
+        val isDeleted =
+            instanceContainer.getInstanceOrNull(ConstructorDeleteTestChild1::class) == null
+        val isLiving =
+            instanceContainer.getInstanceOrNull(ConstructorDeleteTestChild2::class) != null
+        assertThat(isDeleted).isEqualTo(true)
+        assertThat(isLiving).isEqualTo(true)
+    }
+
+    @Test
+    fun `커스텀 어노테이션이 달린 필드의 인스턴스를 제거한다`() {
+        // given : FieldDeleteTestParent에 의존성을 주입한다
+        val result = instanceContainer.inject(FieldDeleteTestParent1::class)
+        val isInjected = instanceContainer.getInstanceOrNull(FieldDeleteTestChild1::class) != null
+
+        // when : ExampleLifeCycle 어노테이션이 달린 필드의 인스턴스를 제거한다면
+        instanceContainer.deleteAnnotatedFields(result, ExampleLifeCycle::class)
+        val isDeleted = instanceContainer.getInstanceOrNull(FieldDeleteTestChild1::class) == null
+
+        // then
+        assertThat(isInjected).isEqualTo(true)
+        assertThat(isDeleted).isEqualTo(true)
+    }
+
+    @Test
+    fun `커스텀 어노테이션이 없는 필드의 인스턴스는 제거되지 않는다`() {
+        // given : FieldDeleteTestParent에 의존성을 주입한다
+        val result =
+            instanceContainer.inject(FieldDeleteTestParent2::class)
+                as FieldDeleteTestParent2
+        result.fieldDeleteTestChild1
+        result.fieldDeleteTestChild2
+
+        // when : ExampleLifeCycle 어노테이션이 달린 필드의 인스턴스를 제거한다면
+        instanceContainer.deleteAnnotatedFields(result, ExampleLifeCycle::class)
+
+        // then : ConstructorDeleteTestChild1의 인스턴스만 지워진다
+        val isDeleted =
+            instanceContainer.getInstanceOrNull(FieldDeleteTestChild1::class) == null
+        val isLiving =
+            instanceContainer.getInstanceOrNull(FieldDeleteTestChild2::class) != null
+        assertThat(isDeleted).isEqualTo(true)
+        assertThat(isLiving).isEqualTo(true)
+    }
 }
