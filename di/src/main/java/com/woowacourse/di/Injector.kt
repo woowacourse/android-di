@@ -17,7 +17,7 @@ object Injector {
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
         val constructor =
             modelClass.constructors.firstOrNull()
-                ?: throw IllegalArgumentException("Unknown modelClass")
+                ?: throw IllegalArgumentException("Unknown modelClass: ${modelClass.simpleName}")
 
         val params =
             constructor.parameters.associateWith { parameter ->

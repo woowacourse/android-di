@@ -14,21 +14,11 @@ import woowacourse.shopping.ui.cart.DateFormatter
 
 class ApplicationModule(private val context: Context) : Module {
     override fun install() {
-        Log.d("ApplicationModule", "install")
-        provideProductRepository()
         provideCartRepository()
     }
 
     override fun clear() {
-        Log.d("ApplicationModule", "clear")
         DependencyContainer.clear()
-    }
-
-    private fun provideProductRepository() {
-        DependencyContainer.addInstance(
-            classType = ProductRepository::class,
-            instance = DefaultProductRepository(),
-        )
     }
 
     private fun provideCartRepository() {
