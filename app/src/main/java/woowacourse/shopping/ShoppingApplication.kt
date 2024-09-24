@@ -1,11 +1,14 @@
 package woowacourse.shopping
 
-import android.app.Application
-import woowacourse.shopping.data.di.RepositoryModule
+import com.woowacourse.di.DiApplication
+import woowacourse.shopping.data.di.ApplicationModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : DiApplication() {
     override fun onCreate() {
         super.onCreate()
-        RepositoryModule(this).install()
+    }
+
+    override fun install() {
+        ApplicationModule(this).install()
     }
 }
