@@ -3,6 +3,8 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
@@ -25,6 +27,9 @@ class MainViewModel(
     }
 
     fun getAllProducts() {
+        viewModelScope.launch {
+
+        }
         _products.value = productRepository.getAllProducts()
     }
 }
