@@ -30,9 +30,7 @@ class LifeCycleTest {
     @Before
     fun setup() {
         activityController = Robolectric.buildActivity(FakeActivity::class.java)
-
         activity = activityController.get()
-
         application = activity.application as FakeApplication
     }
 
@@ -56,6 +54,10 @@ class LifeCycleTest {
 
     @Test
     fun `Activity가 생성되면 LifeCycleScope이 ACTIVITY인 인스턴스가 주입된다`() {
+        activity = activityController.create().get()
+
+        activityController.start()
+
         val containsFieldRepository =
             DIContainer.containsInstance(FakeFieldRepository::class)
 
@@ -76,6 +78,8 @@ class LifeCycleTest {
 
     @Test
     fun `ViewModel이 생성되면 LifeCycleScope이 VIEWMODEL인 인스턴스가 주입된다`() {
+        activity = activityController.create().get()
+
         val containsProductRepository =
             DIContainer.containsInstance(FakeProductRepository::class)
 
@@ -84,6 +88,8 @@ class LifeCycleTest {
 
     @Test
     fun `ViewModel이 종료되면 LifeCycleScope이 VIEWMODEL인 인스턴스가 삭제된다`() {
+        activity = activityController.create().get()
+
         activity.viewModel.onCleared()
 
         val containsProductRepository =

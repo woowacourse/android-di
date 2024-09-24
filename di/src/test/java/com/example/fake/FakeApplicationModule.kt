@@ -5,11 +5,9 @@ import com.example.di.annotation.Qualifier
 import com.example.di.annotation.QualifierType
 import com.example.fake.FakeCartDao
 import com.example.fake.FakeCartRepository
-import com.example.fake.FakeFieldRepository
 import com.example.fake.FakeInMemoryCartRepository
-import com.example.fake.FakeProductRepository
 
-class FakeModule : DIModule {
+class FakeApplicationModule : DIModule {
     @LifeCycle(LifeCycleScope.APPLICATION)
     fun provideFakeCartDao(): FakeCartDao {
         return FakeCartDao()
@@ -25,15 +23,5 @@ class FakeModule : DIModule {
     @Qualifier(QualifierType.InMemory)
     fun provideFakeInMemoryCartRepository(): FakeCartRepository {
         return FakeInMemoryCartRepository()
-    }
-
-    @LifeCycle(LifeCycleScope.ACTIVITY)
-    fun provideFakeFieldRepository(): FakeFieldRepository {
-        return FakeFieldRepository()
-    }
-
-    @LifeCycle(LifeCycleScope.VIEW_MODEL)
-    fun provideFakeProductRepository(): FakeProductRepository {
-        return FakeProductRepository()
     }
 }
