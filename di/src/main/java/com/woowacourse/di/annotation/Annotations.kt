@@ -1,7 +1,5 @@
 package com.woowacourse.di.annotation
 
-import com.woowacourse.di.scope.LifecycleScope
-
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.CONSTRUCTOR,
@@ -19,5 +17,3 @@ annotation class Inject
 )
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Qualifier(val value: String)
-
-annotation class LifeCycle(val scope: LifecycleScope)
