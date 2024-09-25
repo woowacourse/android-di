@@ -39,9 +39,6 @@ android {
     }
     testOptions {
         unitTests.isIncludeAndroidResources = true
-        unitTests {
-            isIncludeAndroidResources = true
-        }
     }
     packaging {
         resources {
