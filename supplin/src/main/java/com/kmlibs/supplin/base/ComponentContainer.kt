@@ -7,7 +7,6 @@ import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
@@ -140,7 +139,7 @@ abstract class ComponentContainer(vararg modules: KClass<*>) {
         requireNotNull(function) {
             EXCEPTION_NO_MATCHING_FUNCTION.format(
                 kClass.createType().jvmErasure.simpleName,
-                qualifierAnnotation
+                qualifierAnnotation,
             )
         }
         val parameterValues = resolveParameterValues(function)
@@ -148,7 +147,7 @@ abstract class ComponentContainer(vararg modules: KClass<*>) {
         checkNotNull(instance) {
             EXCEPTION_NULL_INSTANCE.format(
                 kClass.createType().jvmErasure.simpleName,
-                qualifierAnnotation
+                qualifierAnnotation,
             )
         }
         return instance as T

@@ -49,17 +49,17 @@ class ViewModelFactory(
 
     private fun injectSingleField(
         property: KProperty1<out ViewModel, *>,
-        viewModel: ViewModel
+        viewModel: ViewModel,
     ) {
         try {
             Injector.componentContainers[viewModelClass]?.injectSingleField(
                 property,
-                viewModel
+                viewModel,
             ) ?: throw IllegalArgumentException()
         } catch (e: IllegalArgumentException) {
             ApplicationScopeContainer.container.injectSingleField(
                 property,
-                viewModel
+                viewModel,
             )
         }
     }
@@ -68,10 +68,11 @@ class ViewModelFactory(
         targetConstructor: KFunction<ViewModel>,
         constructorParameters: List<KParameter>,
     ): ViewModel {
-        val args: Map<KParameter, Any> = constructorParameters.associateWith { parameter ->
-            Injector.componentContainers[viewModelClass]?.instanceOf(parameter)
-                ?: ApplicationScopeContainer.container.instanceOf(parameter)
-        }
+        val args: Map<KParameter, Any> =
+            constructorParameters.associateWith { parameter ->
+                Injector.componentContainers[viewModelClass]?.instanceOf(parameter)
+                    ?: ApplicationScopeContainer.container.instanceOf(parameter)
+            }
 
         return targetConstructor.callBy(args)
     }

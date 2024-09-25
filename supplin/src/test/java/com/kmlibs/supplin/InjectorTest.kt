@@ -7,7 +7,6 @@ import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

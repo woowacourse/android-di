@@ -7,10 +7,8 @@ import com.kmlibs.supplin.model.QualifiedType
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
@@ -37,13 +35,16 @@ class FunctionContainer(vararg modules: KClass<*>) {
         val targetParameter = function.valueParameters
         require(targetParameter.size == 1) { EXCEPTION_INVALID_PARAMETER_COUNT }
 
-        val paramType = requireNotNull(targetParameter.firstOrNull()?.type) {
-            EXCEPTION_NO_MATCHING_PARAMETER.format(function.name)
-        }
+        val paramType =
+            requireNotNull(targetParameter.firstOrNull()?.type) {
+                EXCEPTION_NO_MATCHING_PARAMETER.format(function.name)
+            }
         val constructor =
-            requireNotNull(paramType.jvmErasure.constructors.firstOrNull { constructor ->
-                constructor.hasAnnotation<Supply>()
-            }) {
+            requireNotNull(
+                paramType.jvmErasure.constructors.firstOrNull { constructor ->
+                    constructor.hasAnnotation<Supply>()
+                },
+            ) {
                 EXCEPTION_NO_PRIMARY_CONSTRUCTOR_FOUND.format(paramType.jvmErasure)
             }
 

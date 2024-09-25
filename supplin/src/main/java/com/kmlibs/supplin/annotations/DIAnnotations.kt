@@ -51,7 +51,6 @@ annotation class SupplinActivity(val modules: Array<KClass<*>>)
 @Target(AnnotationTarget.CLASS)
 annotation class SupplinViewModel(val modules: Array<KClass<*>>)
 
-
 /**
  * For distinguishing lifecycle of property.
  */

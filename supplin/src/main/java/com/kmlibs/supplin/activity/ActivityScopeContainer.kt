@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
 import com.kmlibs.supplin.annotations.ActivityContext
 import com.kmlibs.supplin.application.ApplicationScopeContainer
 import com.kmlibs.supplin.base.ComponentContainer
@@ -34,7 +33,7 @@ class ActivityScopeContainer private constructor(
         if (shouldResolveContext(returnType, annotations)) return activity
         val qualifiedType = buildQualifiedType(returnType, annotations)
         return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
-        ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
+            ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
     }
 
     private fun shouldResolveContext(

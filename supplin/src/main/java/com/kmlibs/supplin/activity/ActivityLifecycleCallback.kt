@@ -20,12 +20,13 @@ class ActivityLifecycleCallback : Application.ActivityLifecycleCallbacks {
         val targetAnnotation = activity::class.findAnnotation<SupplinActivity>() ?: return
         require(activity is ComponentActivity) { EXCEPTION_INVALID_ACTIVITY_TYPE }
 
-        val modules = targetAnnotation.modules.onEach { module ->
-            require(module.hasAnnotation<Module>()) { EXCEPTION_NO_MODULE_ANNOTATION }
-            require(module.findAnnotation<Within>()?.scope == Scope.Activity::class) {
-                EXCEPTION_NO_WITHIN_ANNOTATION
+        val modules =
+            targetAnnotation.modules.onEach { module ->
+                require(module.hasAnnotation<Module>()) { EXCEPTION_NO_MODULE_ANNOTATION }
+                require(module.findAnnotation<Within>()?.scope == Scope.Activity::class) {
+                    EXCEPTION_NO_WITHIN_ANNOTATION
+                }
             }
-        }
 
         Injector.setModules {
             activityModule(activity, *modules)
@@ -49,7 +50,10 @@ class ActivityLifecycleCallback : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity) {}
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivitySaveInstanceState(
+        activity: Activity,
+        outState: Bundle,
+    ) {}
 
     companion object {
         private const val EXCEPTION_INVALID_ACTIVITY_TYPE =

@@ -1,6 +1,5 @@
 package com.kmlibs.supplin
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -8,7 +7,6 @@ import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
-import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

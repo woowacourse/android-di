@@ -18,7 +18,5 @@ object DatabaseModule {
     ): ShoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
 
     @Concrete
-    fun provideCartProductDao(
-        shoppingDatabase: ShoppingDatabase,
-    ): CartProductDao = shoppingDatabase.cartProductDao()
+    fun provideCartProductDao(shoppingDatabase: ShoppingDatabase): CartProductDao = shoppingDatabase.cartProductDao()
 }

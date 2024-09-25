@@ -1,7 +1,6 @@
 package woowacourse.shopping.di
 
 import com.kmlibs.supplin.annotations.Abstract
-import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
 import com.kmlibs.supplin.annotations.Within
 import com.kmlibs.supplin.model.Scope

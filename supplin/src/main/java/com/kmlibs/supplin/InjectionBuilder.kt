@@ -31,7 +31,7 @@ class InjectionBuilder {
         }
         addContainer(
             application::class,
-            ApplicationScopeContainer.initializeModules(application.applicationContext, *modules)
+            ApplicationScopeContainer.initializeModules(application.applicationContext, *modules),
         )
         application.registerActivityLifecycleCallbacks(ActivityLifecycleCallback())
     }
@@ -80,7 +80,10 @@ class InjectionBuilder {
         }
     }
 
-    private fun requireWithinAnnotation(module: KClass<*>, scope: Scope) {
+    private fun requireWithinAnnotation(
+        module: KClass<*>,
+        scope: Scope,
+    ) {
         val moduleScope = module.findAnnotation<Within>()?.scope
         require(moduleScope != null && moduleScope == scope::class) {
             EXCEPTION_INVALID_WITHIN_MODULE.format(module.simpleName, scope::class.simpleName)
