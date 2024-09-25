@@ -16,7 +16,12 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
         context: Context,
     ): T? {
         val component = components.firstOrNull { it.injectedClass == injectedClass }
+        println("$TAG components: $components")
         return component?.instanceProvider?.invoke(context) as? T
+    }
+
+    fun remove(injectedClass: KClass<*>) {
+        components.removeIf { it.injectedClass == injectedClass }
     }
 
     companion object {
@@ -32,3 +37,5 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
 }
 
 interface ActivityComponentContainer
+
+private const val TAG = "DefaultActivityComponentContainer"

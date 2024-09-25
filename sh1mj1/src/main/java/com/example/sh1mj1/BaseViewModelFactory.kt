@@ -29,6 +29,7 @@ class BaseViewModelFactory(
     }
 }
 
+// TODO: appContainer를 외부에서 주입하는 방식?
 inline fun <reified VM : ViewModel> injectedViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {

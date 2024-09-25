@@ -20,6 +20,7 @@ import kotlin.reflect.jvm.isAccessible
 class DependencyInjector(
     private val appContainer: AppContainer,
 ) {
+    // TODO: nunu createInstance가 많은 역할을 하고 있는 것 같아요! 메서드를 분리해봐도 좋을 것 같습니다.
     fun <T : Any> createInstance(modelClass: Class<T>): Pair<T, List<Pair<KClass<*>, Qualifier?>>> {
         val kClass = modelClass.kotlin
 

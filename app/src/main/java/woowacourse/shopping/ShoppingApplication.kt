@@ -19,8 +19,6 @@ import woowacourse.shopping.ui.cart.KoreaLocaleDateFormatter
 class ShoppingApplication : DiApplication() {
     override fun onCreate() {
         super.onCreate()
-        container = DefaultAppContainer()
-        activityContainer = DefaultActivityComponentContainer.instance()
 
         container.add(
             singletonComponent<CartProductDao>(CartProductDao.instance(this), Qualifier("RoomDao", generate = true)),
