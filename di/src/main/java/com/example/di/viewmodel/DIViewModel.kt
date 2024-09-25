@@ -8,6 +8,7 @@ import kotlin.reflect.KClass
 abstract class DIViewModel(private val moduleType: KClass<*>) : ViewModel() {
     override fun onCleared() {
         super.onCleared()
+
         DIInjector.releaseModule(moduleType, LifeCycleScope.VIEW_MODEL)
     }
 }

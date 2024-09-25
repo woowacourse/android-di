@@ -36,6 +36,8 @@ class LifeCycleTest {
 
     @Test
     fun `Application이 생성되면 LifeCycleScope이 APPLICATION인 인스턴스가 주입된다`() {
+        application.onCreate()
+
         val containsCartRepository =
             DIContainer.containsInstance(FakeCartRepository::class, QualifierType.Database)
 
@@ -44,6 +46,8 @@ class LifeCycleTest {
 
     @Test
     fun `Application이 종료되면 LifeCycleScope이 APPLICATION인 인스턴스가 삭제된다`() {
+        application.onCreate()
+
         application.onTerminate()
 
         val containsCartRepository =
@@ -74,6 +78,18 @@ class LifeCycleTest {
             DIContainer.containsInstance(FakeFieldRepository::class)
 
         assertThat(containsFieldRepository).isFalse()
+    }
+
+    @Test
+    fun `Activity가 종료되더라도 LifeCycleScope이 VIEWMODEL인 인스턴스는 삭제 되지 않는다`() {
+        activity = activityController.create().get()
+
+        activityController.destroy()
+
+        val containsProductRepository =
+            DIContainer.containsInstance(FakeProductRepository::class)
+
+        assertThat(containsProductRepository).isTrue()
     }
 
     @Test
