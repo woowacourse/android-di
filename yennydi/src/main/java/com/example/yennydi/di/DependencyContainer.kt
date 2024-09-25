@@ -11,7 +11,7 @@ interface DependencyContainer {
     fun getImplementationClass(
         kClass: KClass<*>,
         annotation: Annotation? = null,
-    ): KClass<out Any>
+    ): KClass<out Any>?
 
     fun <T : Any> addInstance(
         kClass: KClass<*>,

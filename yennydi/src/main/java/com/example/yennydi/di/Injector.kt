@@ -57,11 +57,9 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
         parameter: KParameter,
         container: DependencyContainer,
     ): Any {
-        val qualifier =
-            parameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
+        val qualifier = parameter.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         val type = parameter.type.jvmErasure
-        return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
-            ?: createInstance(container.getImplementationClass(type, qualifier), container)
+        return findDependency(type, qualifier, container)
     }
 
     fun <T : Any> injectProperty(
@@ -85,8 +83,20 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
     ): Any {
         val qualifier = property.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
         val type = property.returnType.jvmErasure
+        return findDependency(type, qualifier, container)
+    }
 
-        return container.getInstance(type, qualifier) ?: applicationDependencyContainer.getInstance(type, qualifier)
-            ?: createInstance(container.getImplementationClass(type, qualifier), container)
+    private fun findDependency(
+        type: KClass<*>,
+        qualifier: Annotation?,
+        container: DependencyContainer,
+    ): Any {
+        container.getInstance<Any>(type, qualifier)?.let { return it }
+        val implementationClass =
+            container.getImplementationClass(type, qualifier)
+                ?: return applicationDependencyContainer.getInstance(type, qualifier)
+                    ?: error("해당 타입에 대한 의존성이 등록되지 않았습니다. ${type.simpleName}")
+
+        return createInstance(implementationClass, container)
     }
 }

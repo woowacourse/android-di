@@ -19,8 +19,8 @@ abstract class AbstractDependencyContainer : DependencyContainer {
     override fun getImplementationClass(
         kClass: KClass<*>,
         annotation: Annotation?,
-    ): KClass<out Any> {
-        val targets = requireNotNull(deferred[kClass]) { "해당 타입에 대한 의존성이 등록되지 않았습니다: ${kClass.simpleName}" }
+    ): KClass<out Any>? {
+        val targets = deferred[kClass] ?: return null
         if (annotation == null) {
             if (targets.size > 1) {
                 error("해당 타입에 대한 구현체가 여러 개입니다. 어노테이션을 확인하세요: ${kClass.simpleName}")
