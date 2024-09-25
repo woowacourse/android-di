@@ -18,7 +18,7 @@ class InjectionBuilderTest {
     private lateinit var injectionBuilder: InjectionBuilder
 
     @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
