@@ -18,7 +18,7 @@ class CartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(CartActivityLifecycleObserver)
+        lifecycle.addObserver(CartActivityLifecycleObserver(this))
     }
 
     override fun onStart() {

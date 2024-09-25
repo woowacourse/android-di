@@ -9,24 +9,22 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-object CartActivityLifecycleObserver : DefaultLifecycleObserver {
+class CartActivityLifecycleObserver(
+    private val context: Context,
+) : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        val activity = owner as Context
-        val dateFormatter = DateFormatter(activity)
-        injectDateFormatter(activity, dateFormatter)
+        injectDateFormatter(owner)
     }
 
-    private fun injectDateFormatter(
-        activity: Context,
-        dateFormatter: DateFormatter,
-    ) {
+    private fun injectDateFormatter(owner: LifecycleOwner) {
+        val dateFormatter = DateFormatter(context)
         val property =
-            activity::class.declaredMemberProperties
+            owner::class.declaredMemberProperties
                 .filterIsInstance<KMutableProperty<*>>()
                 .first { it.returnType.jvmErasure == DateFormatter::class }
 
         property.isAccessible = true
-        property.setter.call(activity, dateFormatter)
+        property.setter.call(owner, dateFormatter)
     }
 }
