@@ -4,15 +4,16 @@ import android.os.Bundle
 import android.widget.Toast
 import com.woowacourse.di.DiActivity
 import com.woowacourse.di.annotations.Inject
+import com.woowacourse.di.viewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.shoppingapp.di.ActivityLifecycleModule
-import woowacourse.shopping.ui.viewModels
+import woowacourse.shopping.shoppingapp.di.ViewModelLifecycleModule
 
 class CartActivity : DiActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels()
+    private val viewModel: CartViewModel by viewModels(ViewModelLifecycleModule())
 
     @Inject
     private lateinit var dateFormatter: DateFormatter

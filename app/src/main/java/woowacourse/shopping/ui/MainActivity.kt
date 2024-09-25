@@ -5,14 +5,16 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import com.woowacourse.di.DiActivity
+import com.woowacourse.di.viewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.shoppingapp.di.ActivityLifecycleModule
+import woowacourse.shopping.shoppingapp.di.ViewModelLifecycleModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DiActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels(ViewModelLifecycleModule())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

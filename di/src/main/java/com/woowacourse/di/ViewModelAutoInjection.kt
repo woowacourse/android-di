@@ -1,18 +1,19 @@
-package woowacourse.shopping.ui
+package com.woowacourse.di
 
+import android.os.Build
 import androidx.activity.viewModels
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.woowacourse.di.DiActivity
-import woowacourse.shopping.shoppingapp.di.ViewModelLifecycleModule
 
 @MainThread
 inline fun <reified VM : ViewModel> DiActivity.viewModels(
+    diModule: DiModule,
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
-        inject(this)
+        inject(this, diModule)
     },
 ): Lazy<VM> {
     return this.viewModels(
@@ -21,14 +22,19 @@ inline fun <reified VM : ViewModel> DiActivity.viewModels(
     )
 }
 
-fun inject(diActivity: DiActivity): ViewModelProvider.Factory = ViewModelComponent(diActivity)
+fun inject(
+    diActivity: DiActivity,
+    diModule: DiModule,
+): ViewModelProvider.Factory = ViewModelComponent(diActivity, diModule)
 
 class ViewModelComponent(
     private val diActivity: DiActivity,
+    private val diModule: DiModule,
 ) : ViewModelProvider.Factory {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val diInjector = diActivity.diInjector
-        diActivity.diInjector.addModule(ViewModelLifecycleModule())
+        diActivity.diInjector.addModule(diModule)
 
         val constructor =
             modelClass.constructors.firstOrNull()
