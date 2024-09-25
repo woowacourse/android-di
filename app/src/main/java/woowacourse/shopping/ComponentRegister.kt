@@ -15,6 +15,8 @@ class ComponentRegister(
     private val context: Context,
     private val cartProductDao: CartProductDao,
 ) {
+    private val dependencyInjector = ShoppingApplication.dependencyContainer
+
     fun initialize() {
         registerDateFormatter()
         registerProductRepository()
@@ -22,7 +24,7 @@ class ComponentRegister(
     }
 
     private fun registerDateFormatter() {
-        ShoppingApplication.dependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             DateFormatter::class,
             DIModule.provideDateFormatter(context),
             scope = ActivityScope::class,
@@ -30,7 +32,7 @@ class ComponentRegister(
     }
 
     private fun registerProductRepository() {
-        ShoppingApplication.dependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             ProductRepository::class,
             DIModule.provideProductRepository(),
             qualifier = InMemory::class,
@@ -39,13 +41,13 @@ class ComponentRegister(
     }
 
     private fun registerCartRepository() {
-        ShoppingApplication.dependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             CartRepository::class,
             DIModule.provideCartRepository(cartProductDao),
             qualifier = RoomDB::class,
             scope = Singleton::class,
         )
-        ShoppingApplication.dependencyInjector.addInstance(
+        dependencyInjector.addInstance(
             CartRepository::class,
             DIModule.provideCartInMemoryRepository(),
             qualifier = InMemory::class,

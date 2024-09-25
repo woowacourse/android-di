@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
@@ -34,7 +35,7 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        ShoppingApplication.dependencyInjector.clearViewModelInstances()
+        ShoppingApplication.dependencyContainer.clearViewModelInstances()
     }
 
     fun addCartProduct(product: Product) {

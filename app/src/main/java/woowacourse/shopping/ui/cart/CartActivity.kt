@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.woowacourse.di.ActivityScope
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.Inject
 import woowacourse.shopping.GlobalViewModelFactory
 import woowacourse.shopping.LifecycleTracker
@@ -46,7 +47,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = ShoppingApplication.dependencyInjector.findInstance(DateFormatter::class, scope = ActivityScope::class)
+        dateFormatter = ShoppingApplication.dependencyContainer.findInstance(DateFormatter::class, scope = ActivityScope::class)
     }
 
     private fun setupToolbar() {

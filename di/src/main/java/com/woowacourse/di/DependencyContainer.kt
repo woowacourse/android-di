@@ -12,7 +12,7 @@ typealias QualifierClass = KClass<*>?
 typealias Instance = Any
 typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
-class DependencyInjector {
+class DependencyContainer {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
     private val singletonInstances = mutableMapOf<ClassWithQualifier, Instance>()
     private val viewModelScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
