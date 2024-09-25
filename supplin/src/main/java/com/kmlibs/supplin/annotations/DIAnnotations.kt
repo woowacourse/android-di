@@ -38,7 +38,22 @@ annotation class Concrete
 annotation class Abstract
 
 /**
+ * Used at the Activities,
+ * For defining which module to use in the Activity Scope
+ */
+@Target(AnnotationTarget.CLASS)
+annotation class SupplinActivity(val modules: Array<KClass<*>>)
+
+/**
+ * Used at the ViewModels,
+ * For defining which module to use in the ViewModel Scope
+ */
+@Target(AnnotationTarget.CLASS)
+annotation class SupplinViewModel(val modules: Array<KClass<*>>)
+
+
+/**
  * For distinguishing lifecycle of property.
  */
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.CLASS)
 annotation class Within(val scope: KClass<out Scope>)

@@ -4,25 +4,25 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import com.kmlibs.supplin.annotations.ActivityContext
 import com.kmlibs.supplin.application.ApplicationScopeContainer
 import com.kmlibs.supplin.base.ComponentContainer
-import com.kmlibs.supplin.model.QualifiedContainerType
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 class ActivityScopeContainer private constructor(
     private val activity: ComponentActivity,
-    module: KClass<*>,
+    vararg modules: KClass<*>,
 ) : DefaultLifecycleObserver,
-    ComponentContainer(module) {
+    ComponentContainer(*modules) {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         saveInstancesFromModuleFunctions()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        containers.remove(qualifiedContainerType)
+        containers.remove(activity::class)
         owner.lifecycle.removeObserver(this)
         super.onDestroy(owner)
     }
@@ -34,7 +34,7 @@ class ActivityScopeContainer private constructor(
         if (shouldResolveContext(returnType, annotations)) return activity
         val qualifiedType = buildQualifiedType(returnType, annotations)
         return instances[qualifiedType] ?: buildInstanceOf(qualifiedType)
-            ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
+        ?: ApplicationScopeContainer.container.resolveInstance(returnType, annotations)
     }
 
     private fun shouldResolveContext(
@@ -47,20 +47,21 @@ class ActivityScopeContainer private constructor(
 
     companion object {
         private val containers =
-            mutableMapOf<QualifiedContainerType, ActivityScopeContainer>()
-
-        private lateinit var qualifiedContainerType: QualifiedContainerType
+            mutableMapOf<KClass<out ComponentActivity>, ActivityScopeContainer>()
 
         fun <T : ComponentActivity> containerOf(
             activity: T,
-            module: KClass<*>,
+            vararg modules: KClass<*>,
         ): ActivityScopeContainer {
-            qualifiedContainerType = QualifiedContainerType(module, activity::class.simpleName)
-            return containers.getOrPut(qualifiedContainerType) {
-                ActivityScopeContainer(activity, module).also {
+            return containers.getOrPut(activity::class) {
+                ActivityScopeContainer(activity, *modules).also {
                     activity.lifecycle.addObserver(it)
                 }
             }
+        }
+
+        fun <T : ComponentActivity> removeContainer(activity: T) {
+            containers.remove(activity::class)
         }
     }
 }

@@ -11,10 +11,8 @@ import woowacourse.shopping.model.Product
 class DBCartRepository
     @Supply
     constructor(
-        shoppingDatabase: ShoppingDatabase,
+        private val cartProductDao: CartProductDao,
     ) : CartRepository {
-        private val cartProductDao = shoppingDatabase.cartProductDao()
-
         override suspend fun addCartProduct(product: Product) {
             cartProductDao.insert(product.toEntity())
         }

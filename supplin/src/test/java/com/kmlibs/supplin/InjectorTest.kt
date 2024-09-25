@@ -21,7 +21,7 @@ class InjectorTest {
 
     @Test
     fun `Injector should be initialized by explicitly calling init`() {
-        Injector.init {
+        Injector.setModules {
             applicationModule(
                 application,
                 FakeConcreteModule::class,
@@ -35,7 +35,7 @@ class InjectorTest {
     @Test
     fun `InstanceContainer in Injector cannot be initialized repeatedly`() {
         // when
-        Injector.init {
+        Injector.setModules {
             applicationModule(
                 application,
                 FakeConcreteModule::class,
@@ -44,7 +44,7 @@ class InjectorTest {
             )
         }
 
-        Injector.init {
+        Injector.setModules {
             applicationModule(
                 application,
                 FakeConcreteModule::class,

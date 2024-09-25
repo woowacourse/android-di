@@ -8,7 +8,7 @@ object Injector {
         private set
     private lateinit var injectionBuilder: InjectionBuilder
 
-    fun init(block: InjectionBuilder.() -> Unit) {
+    fun setModules(block: InjectionBuilder.() -> Unit) {
         if (!::injectionBuilder.isInitialized) {
             injectionBuilder = InjectionBuilder()
         }

@@ -20,14 +20,14 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class ComponentContainer(private val module: KClass<*>) {
-    private val functionContainer = FunctionContainer(module)
+abstract class ComponentContainer(vararg modules: KClass<*>) {
+    private val functionContainer = FunctionContainer(*modules)
     private val _instances = mutableMapOf<QualifiedType, Any>()
     val instances: Map<QualifiedType, Any>
-        get() = _instances
+        get() = _instances.toMap()
 
     init {
-        saveModuleInstance()
+        modules.forEach(::saveModuleInstance)
     }
 
     abstract fun resolveInstance(
@@ -35,20 +35,18 @@ abstract class ComponentContainer(private val module: KClass<*>) {
         annotations: List<Annotation>,
     ): Any
 
-    private fun saveModuleInstance() {
-        val moduleInstance = module.objectInstance
-        if (moduleInstance != null) {
-            val typeParameters = module.typeParameters
-            val type =
-                if (typeParameters.isNotEmpty()) {
-                    module.createType(
-                        typeParameters.map { KTypeProjection.invariant(Any::class.createType()) },
-                    )
-                } else {
-                    module.createType()
-                }
-            _instances[QualifiedType(type)] = moduleInstance
-        }
+    private fun saveModuleInstance(module: KClass<*>) {
+        val moduleInstance = module.objectInstance ?: return
+        val typeParameters = module.typeParameters
+        val type =
+            if (typeParameters.isNotEmpty()) {
+                val arguments =
+                    typeParameters.map { KTypeProjection.invariant(Any::class.createType()) }
+                module.createType(arguments)
+            } else {
+                module.createType()
+            }
+        _instances[QualifiedType(type)] = moduleInstance
     }
 
     protected fun saveInstancesFromModuleFunctions() {
@@ -72,27 +70,13 @@ abstract class ComponentContainer(private val module: KClass<*>) {
         return QualifiedType(kType, qualifier)
     }
 
-    fun <T : Any> instanceOf(kParameter: KParameter): T {
-        val annotation = findAnnotationOf<Qualifier>(kParameter.annotations)
-        return qualifiedInstanceOf(
-            QualifiedType(
-                returnType = kParameter.type,
-                qualifier = annotation?.annotationClass?.simpleName,
-            ),
-        ) ?: createInstance(kParameter.type.jvmErasure, annotation) as T
-    }
-
-    fun <T : Any> instanceOf(kClassifier: KClassifier): T {
-        return instanceOf(kClassifier.createType())
-    }
-
     fun <T : Any> instanceOf(kClass: KClass<T>): T {
         val targetConstructor =
             kClass.constructors.firstOrNull { constructor ->
                 constructor.hasAnnotation<Supply>()
             } ?: error(EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.simpleName))
 
-        return _instances[QualifiedType(targetConstructor.returnType, null)] as? T
+        return qualifiedInstanceOf(QualifiedType(targetConstructor.returnType, null))
             ?: createInstance(kClass, findAnnotationOf<Qualifier>(kClass.annotations))
     }
 
@@ -104,6 +88,16 @@ abstract class ComponentContainer(private val module: KClass<*>) {
                 qualifier = annotation?.annotationClass?.simpleName,
             ),
         ) ?: createInstance(kCallable.returnType.jvmErasure, annotation) as T
+    }
+
+    fun <T : Any> instanceOf(kParameter: KParameter): T {
+        val annotation = findAnnotationOf<Qualifier>(kParameter.annotations)
+        return qualifiedInstanceOf(
+            QualifiedType(
+                returnType = kParameter.type,
+                qualifier = annotation?.annotationClass?.simpleName,
+            ),
+        ) ?: createInstance(kParameter.type.jvmErasure, annotation) as T
     }
 
     private fun <T : Any> instanceOf(kType: KType): T {
@@ -143,10 +137,20 @@ abstract class ComponentContainer(private val module: KClass<*>) {
                     qualifierAnnotation,
                 ),
             ]
-        requireNotNull(function) { EXCEPTION_NO_MATCHING_FUNCTION.format(kClass.createType().jvmErasure.simpleName, qualifierAnnotation) }
+        requireNotNull(function) {
+            EXCEPTION_NO_MATCHING_FUNCTION.format(
+                kClass.createType().jvmErasure.simpleName,
+                qualifierAnnotation
+            )
+        }
         val parameterValues = resolveParameterValues(function)
         val instance = function.callBy(parameterValues)
-        checkNotNull(instance) { EXCEPTION_NULL_INSTANCE.format(kClass.createType().jvmErasure.simpleName, qualifierAnnotation) }
+        checkNotNull(instance) {
+            EXCEPTION_NULL_INSTANCE.format(
+                kClass.createType().jvmErasure.simpleName,
+                qualifierAnnotation
+            )
+        }
         return instance as T
     }
 
@@ -177,9 +181,9 @@ abstract class ComponentContainer(private val module: KClass<*>) {
         }
     }
 
-    fun <T : Any> injectSingleField(
-        targetField: KProperty1<T, *>,
-        instance: T,
+    fun injectSingleField(
+        targetField: KProperty1<*, *>,
+        instance: Any,
     ) {
         targetField.isAccessible = true
         try {

@@ -30,7 +30,7 @@ class SupplinViewModelTest {
 
     @Before
     fun setUp() {
-        Injector.init {
+        Injector.setModules {
             applicationModule(
                 ApplicationProvider.getApplicationContext<FakeApplication>(),
                 FakeConcreteModule::class,

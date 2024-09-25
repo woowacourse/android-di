@@ -12,18 +12,12 @@ import kotlin.reflect.jvm.jvmErasure
 
 class ApplicationScopeContainer private constructor(
     private val applicationContext: Context,
-    module: KClass<*>,
+    vararg modules: KClass<*>,
 ) : DefaultLifecycleObserver,
-    ComponentContainer(module) {
+    ComponentContainer(*modules) {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         saveInstancesFromModuleFunctions()
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        _container = null
-        owner.lifecycle.removeObserver(this)
-        super.onDestroy(owner)
     }
 
     override fun resolveInstance(
@@ -46,16 +40,17 @@ class ApplicationScopeContainer private constructor(
 
     companion object {
         private const val EXCEPTION_NULL_INSTANCE = "Failed to create instance for the function: %s"
+
         private var _container: ApplicationScopeContainer? = null
         val container: ApplicationScopeContainer
             get() = _container!!
 
-        fun <T : Any> containerOf(
+        fun initializeModules(
             applicationContext: Context,
-            module: KClass<T>,
+            vararg module: KClass<*>,
         ): ApplicationScopeContainer {
             _container =
-                ApplicationScopeContainer(applicationContext, module).also {
+                ApplicationScopeContainer(applicationContext, *module).also {
                     ProcessLifecycleOwner.get().lifecycle.addObserver(it)
                 }
             return container

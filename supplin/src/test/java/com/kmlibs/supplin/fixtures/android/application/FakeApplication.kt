@@ -9,7 +9,7 @@ import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
 class FakeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Injector.init {
+        Injector.setModules {
             applicationModule(
                 this@FakeApplication,
                 FakeConcreteModule::class,

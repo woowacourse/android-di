@@ -65,20 +65,14 @@ import kotlin.reflect.KClass
  * )
  * ```
  */
-inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(vararg modules: KClass<*>): Lazy<VM> {
+inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(): Lazy<VM> {
     return viewModels {
-        ViewModelFactory(
-            viewModelClass = VM::class,
-            modules = modules.toList(),
-        )
+        ViewModelFactory(VM::class)
     }
 }
 
-inline fun <reified VM : ViewModel> Fragment.supplinViewModel(vararg modules: KClass<*>): Lazy<VM> {
+inline fun <reified VM : ViewModel> Fragment.supplinViewModel(): Lazy<VM> {
     return viewModels {
-        ViewModelFactory(
-            viewModelClass = VM::class,
-            modules = modules.toList(),
-        )
+        ViewModelFactory(VM::class)
     }
 }

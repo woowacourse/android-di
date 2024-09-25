@@ -4,16 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import com.kmlibs.supplin.activity.SupplinActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.kmlibs.supplin.annotations.SupplinActivity
 import com.kmlibs.supplin.viewmodel.supplinViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ProductModule
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : SupplinActivity() {
+class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel: MainViewModel by supplinViewModel(ProductModule::class)
+    private val viewModel: MainViewModel by supplinViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

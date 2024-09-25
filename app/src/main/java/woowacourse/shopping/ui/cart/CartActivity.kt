@@ -2,14 +2,16 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import com.kmlibs.supplin.activity.SupplinActivity
+import androidx.appcompat.app.AppCompatActivity
+import com.kmlibs.supplin.annotations.SupplinActivity
 import com.kmlibs.supplin.supplinInjection
 import com.kmlibs.supplin.viewmodel.supplinViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.DateModule
 
-class CartActivity : SupplinActivity(DateModule::class) {
+@SupplinActivity(modules = [DateModule::class])
+class CartActivity : AppCompatActivity() {
     private val binding: ActivityCartBinding by lazy { ActivityCartBinding.inflate(layoutInflater) }
     private val viewModel: CartViewModel by supplinViewModel()
     private val dateFormatter: DateFormatter by supplinInjection()

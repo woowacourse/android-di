@@ -1,16 +1,16 @@
 package com.kmlibs.supplin.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.kmlibs.supplin.Injector
 import com.kmlibs.supplin.application.ApplicationScopeContainer
 import com.kmlibs.supplin.base.ComponentContainer
-import com.kmlibs.supplin.model.QualifiedContainerType
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 class ViewModelScopeContainer private constructor(
-    viewModel: ViewModel,
-    module: KClass<*>,
-) : ComponentContainer(module) {
+    private val viewModel: ViewModel,
+    vararg modules: KClass<*>,
+) : ComponentContainer(*modules) {
     init {
         viewModel.addCloseable {
             clearDependencies()
@@ -18,7 +18,8 @@ class ViewModelScopeContainer private constructor(
     }
 
     private fun clearDependencies() {
-        containers.remove(qualifiedContainerType)
+        containers.remove(viewModel::class)
+        Injector.setModules { removeModuleByComponent(viewModel::class) }
     }
 
     override fun resolveInstance(
@@ -32,17 +33,14 @@ class ViewModelScopeContainer private constructor(
 
     companion object {
         private val containers =
-            mutableMapOf<QualifiedContainerType, ViewModelScopeContainer>()
-
-        private lateinit var qualifiedContainerType: QualifiedContainerType
+            mutableMapOf<KClass<out ViewModel>, ViewModelScopeContainer>()
 
         fun <T : ViewModel> containerOf(
             viewModel: T,
-            module: KClass<*>,
+            vararg modules: KClass<*>,
         ): ViewModelScopeContainer {
-            qualifiedContainerType = QualifiedContainerType(module, viewModel::class.simpleName)
-            return containers.getOrPut(qualifiedContainerType) {
-                ViewModelScopeContainer(viewModel, module)
+            return containers.getOrPut(viewModel::class) {
+                ViewModelScopeContainer(viewModel, *modules)
             }
         }
     }

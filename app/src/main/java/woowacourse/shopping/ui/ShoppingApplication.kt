@@ -12,7 +12,7 @@ class ShoppingApplication : Application() {
     }
 
     private fun initializeInjector() {
-        Injector.init {
+        Injector.setModules {
             applicationModule(this@ShoppingApplication, DatabaseModule::class, CartModule::class)
         }
     }
