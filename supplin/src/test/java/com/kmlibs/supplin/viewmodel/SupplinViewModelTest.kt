@@ -16,6 +16,7 @@ import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +38,13 @@ class SupplinViewModelTest {
                 FakeRepositoryModule::class,
                 FakeDataSourceModule::class,
             )
+        }
+    }
+
+    @After
+    fun tearDown() {
+        Injector.setModules {
+            removeAllModules()
         }
     }
 
