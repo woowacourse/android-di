@@ -33,7 +33,6 @@ class FakeActivity5 : AppCompatActivity() {
     val viewModel: FakeViewModel5 by supplinViewModel()
 }
 
-
 @SupplinActivity([FakeActivityUtilModule::class])
 class FakeActivity6 : AppCompatActivity() {
     val fakeUtil1 by supplinInjection<FakeUtil1>()
