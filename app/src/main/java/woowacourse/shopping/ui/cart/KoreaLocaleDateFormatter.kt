@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class KoreaLocaleDateFormatter(context: Context) : DateFormatter/*,DefaultLifecycleObserver*/ {
+class KoreaLocaleDateFormatter(context: Context) : DateFormatter {
     private val formatter =
         SimpleDateFormat(
             context.getString(R.string.date_format),
@@ -14,20 +14,6 @@ class KoreaLocaleDateFormatter(context: Context) : DateFormatter/*,DefaultLifecy
         )
 
     override fun formatDate(timestamp: Long): String = formatter.format(Date(timestamp))
-//
-//    override fun onCreate(owner: LifecycleOwner) {
-//        super.onCreate(owner)
-//        Log.d(TAG, "onCreate. owner: $owner")
-//    }
-//
-//    override fun onDestroy(owner: LifecycleOwner) {
-//        super.onDestroy(owner)
-//        Log.d(TAG, "onDestroy. owner: $owner")
-//        if((owner as ComponentActivity).isChangingConfigurations){
-//            owner.lifecycle.removeObserver(this)
-//        }
-//
-//    }
 }
 
 interface DateFormatter {

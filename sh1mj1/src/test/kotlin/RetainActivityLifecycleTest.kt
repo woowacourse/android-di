@@ -1,6 +1,5 @@
 package com.example.sh1mj1
 
-import com.example.sh1mj1.container.activityscope.ActivityComponentContainer
 import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.stub.StubActivity
 import com.example.sh1mj1.stub.StubApplication
@@ -83,11 +82,13 @@ class RetainActivityLifecycleTest {
                 .buildActivity(StubActivity::class.java)
         controller.setup()
         val activityContext = controller.get().baseContext
+        controller.get().useDateFormatter()
+
         // when
         controller.destroy()
 
         // then
-        val find = DefaultActivityComponentContainer.instance().find(DateFormatter::class, activityContext)
+        val find = DefaultActivityComponentContainer.instance().findComponentInstance(DateFormatter::class, activityContext)
         find shouldBe null
     }
 

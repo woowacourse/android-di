@@ -17,18 +17,16 @@ class StubActivity : ComponentActivity() {
     val viewModel by injectedSh1mj1ViewModel<StubViewModel>()
     val dateFormatter by injectActivityScopeComponent<DateFormatter>()
 
+    fun useDateFormatter() {
+        println(dateFormatter.formatDate(0))
+    }
+
     fun useViewModelFunction() {
         viewModel.printAll()
     }
 }
 
-class StubDateFormatter(context: Context) : LifecycleEventObserver, DateFormatter {
-    override fun onStateChanged(
-        source: LifecycleOwner,
-        event: Lifecycle.Event,
-    ) {
-    }
-
+class StubDateFormatter(context: Context) : DateFormatter {
     override fun formatDate(timestamp: Long): String = STUB_FORMAT
 
     companion object {

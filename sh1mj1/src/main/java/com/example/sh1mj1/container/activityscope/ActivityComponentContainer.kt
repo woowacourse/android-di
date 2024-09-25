@@ -11,7 +11,12 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
         components.add(component)
     }
 
-    fun <T : Any> find(
+    // activityComponent 를 리턴하는 함수
+    fun <T : Any> findComponent(
+        injectedClass: KClass<T>,
+    ): ActivityScopeComponent? = components.firstOrNull { it.injectedClass == injectedClass }
+
+    fun <T : Any> findComponentInstance(
         injectedClass: KClass<T>,
         context: Context,
     ): T? {
@@ -21,7 +26,13 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
     }
 
     fun remove(injectedClass: KClass<*>) {
-        components.removeIf { it.injectedClass == injectedClass }
+        components.removeIf {
+            println("$TAG it.injectedClass: ${it.injectedClass}")
+            println("$TAG injectedClass: $injectedClass")
+            val canRemove = it.injectedClass == injectedClass
+            println("$TAG canRemove: $canRemove")
+            canRemove
+        }
     }
 
     companion object {
