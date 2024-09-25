@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.woowacourse.di.DiActivity
-import com.woowacourse.di.annotations.injectFields
 import woowacourse.shopping.shoppingapp.di.ViewModelLifecycleModule
 
 @MainThread
@@ -41,7 +40,7 @@ class ViewModelComponent(
             }.toTypedArray()
 
         val viewModel = constructor.newInstance(*parameters) as T
-        injectFields(diInjector.diContainer, viewModel)
+        diInjector.diContainer.injectFields(viewModel)
 
         return viewModel
     }

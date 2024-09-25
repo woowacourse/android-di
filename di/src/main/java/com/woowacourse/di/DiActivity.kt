@@ -2,7 +2,6 @@ package com.woowacourse.di
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.woowacourse.di.annotations.injectFields
 
 abstract class DiActivity : AppCompatActivity() {
     private lateinit var diApplication: DiApplication
@@ -24,7 +23,7 @@ abstract class DiActivity : AppCompatActivity() {
 
     fun injectModule(diModule: DiModule) {
         diInjector.addModule(diModule)
-        injectFields(diInjector.diContainer, this@DiActivity)
+        diInjector.diContainer.injectFields(this@DiActivity)
     }
 
     override fun onStop() {
