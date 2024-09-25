@@ -22,9 +22,9 @@ class InjectionBuilder {
         application: Application,
         vararg modules: KClass<*>,
     ) {
-//        require(componentContainers[application::class] == null) {
-//            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(application::class.simpleName)
-//        }
+        require(componentContainers[application::class] == null) {
+            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(application::class.simpleName)
+        }
         modules.forEach { module ->
             requireModuleAnnotation(module)
             requireWithinAnnotation(module, Scope.Application)
@@ -40,9 +40,9 @@ class InjectionBuilder {
         activity: ComponentActivity,
         vararg modules: KClass<*>,
     ) {
-//        require(componentContainers[activity::class] == null) {
-//            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(activity::class.simpleName)
-//        }
+        require(componentContainers[activity::class] == null) {
+            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(activity::class.simpleName)
+        }
         modules.forEach { module ->
             requireModuleAnnotation(module)
             requireWithinAnnotation(module, Scope.Activity)
@@ -54,9 +54,9 @@ class InjectionBuilder {
         viewModel: ViewModel,
         vararg modules: KClass<*>,
     ) {
-//        require(componentContainers[viewModel::class] == null) {
-//            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(viewModel::class.simpleName)
-//        }
+        require(componentContainers[viewModel::class] == null) {
+            EXCEPTION_MODULE_ALREADY_INITIALIZED.format(viewModel::class.simpleName)
+        }
         modules.forEach { module ->
             requireModuleAnnotation(module)
             requireWithinAnnotation(module, Scope.ViewModel)
@@ -66,6 +66,10 @@ class InjectionBuilder {
 
     fun removeModuleByComponent(component: KClass<*>) {
         componentContainers.remove(component)
+    }
+
+    fun removeAllModules() {
+        componentContainers.clear()
     }
 
     fun build(): Map<KClass<*>, ComponentContainer> = componentContainers.toMap()
