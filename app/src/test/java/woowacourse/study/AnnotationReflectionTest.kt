@@ -15,6 +15,7 @@ annotation class PropertyOnly
 @Target(AnnotationTarget.CLASS)
 annotation class ClassOnly
 
+// Retention : 애노테이션의 라이프 사이클 즉, 애노테이션이 언제까지 살아 남아 있을지를 정하는 것
 @Retention(AnnotationRetention.SOURCE)
 annotation class Source
 
