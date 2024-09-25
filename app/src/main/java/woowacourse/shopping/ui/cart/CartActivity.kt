@@ -20,7 +20,7 @@ class CartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(CartActivityLifecycleObserver(this))
+        lifecycle.addObserver(CartActivityLifecycleObserver(DateFormatter(this)))
     }
 
     override fun onStart() {

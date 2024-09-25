@@ -19,10 +19,10 @@ object AutoDIManager {
     var qualifierDependencyProvider: QualifierDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
-        setDependency(T::class, dependency)
+        registerDependency(T::class, dependency)
     }
 
-    fun setDependency(
+    fun registerDependency(
         kClass: KClass<*>,
         dependency: Any,
     ) {
