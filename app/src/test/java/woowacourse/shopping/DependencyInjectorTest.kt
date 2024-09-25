@@ -141,7 +141,7 @@ class DependencyInjectorTest {
 
         dependencyInjector.addInstance(
             DateFormatter::class,
-            RepositoryModule.provideDateFormatter(cartActivity.applicationContext),
+            DIModule.provideDateFormatter(cartActivity.applicationContext),
             scope = ActivityScope::class,
         )
 

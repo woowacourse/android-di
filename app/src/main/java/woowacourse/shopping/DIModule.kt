@@ -9,7 +9,7 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import woowacourse.shopping.ui.cart.DateFormatter
 
-object RepositoryModule {
+object DIModule {
     fun provideDateFormatter(context: Context): DateFormatter = DateFormatter(context)
 
     fun provideProductRepository(): ProductRepository = ProductDefaultRepository()
