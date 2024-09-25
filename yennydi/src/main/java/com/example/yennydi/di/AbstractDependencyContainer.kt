@@ -11,7 +11,7 @@ abstract class AbstractDependencyContainer : DependencyContainer {
         kClass: KClass<*>,
         annotation: Annotation?,
     ): T? {
-        if (annotation == null) return instances[kClass] as? T
+        if (annotation == null) instances[kClass]?.let { return it as? T }
         val implements = getImplementationClass(kClass, annotation)
         return instances[implements] as? T
     }

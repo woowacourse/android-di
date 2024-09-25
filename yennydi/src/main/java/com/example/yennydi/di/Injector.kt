@@ -25,8 +25,8 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
         dependencies: List<KClass<out Any>>,
         container: DependencyContainer,
     ) {
-        dependencies.forEach {
-            createInstance(it, container)
+        dependencies.forEach { dependency ->
+            createInstance(dependency, container).also { container.addInstance(dependency, it) }
         }
     }
 
@@ -42,12 +42,9 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
                 .associateWith { findParameterDependency(it, container) }
 
         return if (arguments.isEmpty()) {
-            container.getInstance(modelClass) ?: modelClass.createInstance().also {
-                container.addInstance(modelClass, it)
-            }
+            container.getInstance(modelClass) ?: modelClass.createInstance()
         } else {
             constructor.callBy(arguments).also {
-                container.addInstance(modelClass, it)
                 injectProperty(it, container)
             }
         }
@@ -97,6 +94,6 @@ class Injector(private val applicationDependencyContainer: DependencyContainer) 
                 ?: return applicationDependencyContainer.getInstance(type, qualifier)
                     ?: error("해당 타입에 대한 의존성이 등록되지 않았습니다. ${type.simpleName}")
 
-        return createInstance(implementationClass, container)
+        return createInstance(implementationClass, container).also { container.addInstance(type, it) }
     }
 }

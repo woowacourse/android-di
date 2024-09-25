@@ -9,11 +9,12 @@ import com.example.yennydi.viewmodel.injectedViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.ShoppingActivityModule
+import woowacourse.shopping.di.ShoppingViewModelModule
 
 class CartActivity : DiActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by injectedViewModels()
+    private val viewModel: CartViewModel by injectedViewModels(ShoppingViewModelModule())
 
     override val dependencyProvider: DependencyProvider = ShoppingActivityModule(this)
 

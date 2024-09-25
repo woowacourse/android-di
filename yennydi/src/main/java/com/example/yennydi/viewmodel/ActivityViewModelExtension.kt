@@ -1,7 +1,6 @@
 package com.example.yennydi.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -9,14 +8,20 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.yennydi.activity.DiActivity
 import com.example.yennydi.application.DiApplication
+import com.example.yennydi.di.DependencyProvider
 
 @MainThread
-inline fun <reified VM : ViewModel> DiActivity.injectedViewModels(
+inline fun <reified VM : DiViewModel> DiActivity.injectedViewModels(
+    dependencyProvider: DependencyProvider,
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
         viewModelFactory {
             initializer {
-                (application as DiApplication).injector.inject(VM::class, instanceContainer)
+                val viewModelInstanceContainer = ViewModelInstanceContainer()
+                dependencyProvider.register(viewModelInstanceContainer)
+                val viewModel = (application as DiApplication).injector.inject(VM::class, viewModelInstanceContainer)
+                viewModel.inject(viewModelInstanceContainer)
+                viewModel
             }
         }
     },
