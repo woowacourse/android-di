@@ -1,13 +1,17 @@
 package com.example.sh1mj1
 
+import com.example.sh1mj1.container.activityscope.ActivityComponentContainer
+import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import com.example.sh1mj1.stub.StubActivity
 import com.example.sh1mj1.stub.StubApplication
 import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.matchers.shouldBe
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import woowacourse.shopping.ui.cart.DateFormatter
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = StubApplication::class)
@@ -71,7 +75,23 @@ class RetainActivityLifecycleTest {
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
-    // TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다
+    @Test
+    fun `액티비티가 destory 되었을 때 dateFormatter 의 인스턴스는 존재 삭제된다`() {
+        // given
+        val controller =
+            Robolectric
+                .buildActivity(StubActivity::class.java)
+        controller.setup()
+        val activityContext = controller.get().baseContext
+        // when
+        controller.destroy()
+
+        // then
+        val find = DefaultActivityComponentContainer.instance().find(DateFormatter::class, activityContext)
+        find shouldBe null
+    }
+
+//    TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다
 //    @Test
 //    fun `액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다`() {
 //        // given
