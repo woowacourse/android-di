@@ -1,5 +1,7 @@
 package com.example.alsonglibrary2.di
 
+import com.example.alsonglibrary2.di.anotations.AlsongQualifier
+import com.example.alsonglibrary2.di.anotations.FieldInject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance

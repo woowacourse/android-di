@@ -1,7 +1,7 @@
 package com.example.alsonglibrary2.fixtures
 
-import com.example.alsonglibrary2.di.AlsongQualifier
 import com.example.alsonglibrary2.di.QualifierDependencyProvider
+import com.example.alsonglibrary2.di.anotations.AlsongQualifier
 import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository1
 import com.example.alsonglibrary2.fixtures.instance.defaultFakeRepository2
 import com.example.alsonglibrary2.fixtures.repository.FakeRepository

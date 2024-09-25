@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.createAutoDIViewModel
 import woowacourse.shopping.CartActivityLifecycleObserver
 import woowacourse.shopping.R
@@ -13,12 +14,13 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by createAutoDIViewModel<CartViewModel>()
 
+    @ActivityScope
     private lateinit var _dateFormatter: DateFormatter
     val dateFormatter: DateFormatter get() = _dateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(CartActivityLifecycleObserver(this))
+        lifecycle.addObserver(CartActivityLifecycleObserver())
     }
 
     override fun onStart() {

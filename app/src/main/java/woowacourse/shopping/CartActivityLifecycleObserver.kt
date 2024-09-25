@@ -1,30 +1,28 @@
 package woowacourse.shopping
 
-import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import woowacourse.shopping.ui.cart.DateFormatter
-import kotlin.reflect.KMutableProperty
+import com.example.alsonglibrary2.di.anotations.ActivityScope
+import woowacourse.shopping.ShoppingApplication.Companion.dateFormatter
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.javaField
 
-class CartActivityLifecycleObserver(
-    private val context: Context,
-) : DefaultLifecycleObserver {
+class CartActivityLifecycleObserver : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         injectDateFormatter(owner)
     }
 
     private fun injectDateFormatter(owner: LifecycleOwner) {
-        val dateFormatter = DateFormatter(context)
-        val property =
+        val properties =
             owner::class.declaredMemberProperties
-                .filterIsInstance<KMutableProperty<*>>()
-                .first { it.returnType.jvmErasure == DateFormatter::class }
+                .filter { it.hasAnnotation<ActivityScope>() }
 
-        property.isAccessible = true
-        property.setter.call(owner, dateFormatter)
+        properties.forEach { property ->
+            property.isAccessible = true
+            property.javaField?.set(owner, dateFormatter)
+        }
     }
 }
