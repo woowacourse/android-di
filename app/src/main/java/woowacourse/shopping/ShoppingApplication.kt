@@ -9,6 +9,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.util.QualifierDependencyProvider
 
 class ShoppingApplication : Application() {
@@ -23,6 +24,7 @@ class ShoppingApplication : Application() {
     private fun registerDependencies() {
         registerDependency<CartProductDao>(shoppingDatabase.cartProductDao())
         registerDependency<CartRepository>(defaultCartRepository)
+        registerDependency<DateFormatter>(DateFormatter(this))
     }
 
     companion object {
