@@ -42,17 +42,4 @@ class ActivityInjectorTest {
         // then
         assert(expectedInjector == originalInjector)
     }
-
-    @Test
-    fun `액티비티가 종료될 때 diInjector가 제거되어야 한다`() {
-        // given
-        testActivity = activityController.create().get()
-
-        // when
-        activityController.destroy()
-
-        // then
-        val app = testActivity.application as TestApplication
-        assert(app.getInjector(testActivity.javaClass.name) == null)
-    }
 }

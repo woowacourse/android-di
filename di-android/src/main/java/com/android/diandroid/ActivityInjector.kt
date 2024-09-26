@@ -55,6 +55,7 @@ abstract class ActivityInjector : AppCompatActivity() {
     }
 
     companion object {
-        private const val ERROR_ANNOTATION = " AppCompatActivity class must be annotated with @DiActivity"
+        private const val ERROR_ANNOTATION =
+            " AppCompatActivity class must be annotated with @DiActivity"
     }
 }
