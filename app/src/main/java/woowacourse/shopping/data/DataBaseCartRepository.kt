@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import com.example.di.Injected
+import com.example.yennydi.di.Injected
 import woowacourse.shopping.DataBase
 import woowacourse.shopping.InMemory
 import woowacourse.shopping.data.mapper.toDomain

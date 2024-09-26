@@ -33,3 +33,11 @@
 ### 3 단계
 - [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
 - [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
+
+### 4 단계
+- [x] `CartActivity`에서 사용하는 `DateFormatter` 의 인스턴스를 매번 개발자가 관리하지 않아도 되도록 수정한다.
+- [x] 각 의존성이 적절한 생명주기에 따라 관리되어야 한다.
+  - CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+  - ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+  - DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [x] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트한다.

@@ -1,6 +1,6 @@
 package woowacourse.shopping
 
-import com.example.di.Qualifier
+import com.example.yennydi.di.Qualifier
 
 @Target(
     AnnotationTarget.CLASS,
