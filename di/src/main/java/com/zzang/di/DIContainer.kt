@@ -13,20 +13,20 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    private val moduleInstances = mutableMapOf<String, Any>()
-    private val applicationScopedInstances = mutableMapOf<String, Any>()
-    private val activityScopedInstances = mutableMapOf<ComponentActivity, MutableMap<String, Any>>()
-    private val viewModelScopedInstances = mutableMapOf<ViewModel, MutableMap<String, Any>>()
+    private val moduleInstances = mutableMapOf<Dependency, Any>()
+    private val applicationScopedInstances = mutableMapOf<Dependency, Any>()
+    private val activityScopedInstances = mutableMapOf<ComponentActivity, MutableMap<Dependency, Any>>()
+    private val viewModelScopedInstances = mutableMapOf<ViewModel, MutableMap<Dependency, Any>>()
 
     fun loadModule(module: DIModule) {
         module.register(this)
     }
 
-    private fun buildKey(
+    private fun buildDependency(
         type: KClass<*>,
         qualifier: QualifierType? = null,
-    ): String {
-        return "${type.qualifiedName}_${qualifier?.name}"
+    ): Dependency {
+        return Dependency(type, qualifier)
     }
 
     fun <T : Any> registerModuleInstance(
@@ -34,7 +34,7 @@ object DIContainer {
         instance: T,
         qualifier: QualifierType? = null,
     ) {
-        val key = buildKey(type, qualifier)
+        val key = buildDependency(type, qualifier)
         moduleInstances[key] = instance
     }
 
@@ -68,7 +68,7 @@ object DIContainer {
         instance: T,
         qualifier: QualifierType? = null,
     ) {
-        val key = buildKey(interfaceClass, qualifier)
+        val key = buildDependency(interfaceClass, qualifier)
         applicationScopedInstances[key] = instance
     }
 
@@ -77,7 +77,7 @@ object DIContainer {
         type: KClass<T>,
         instance: T,
     ) {
-        val key = buildKey(type)
+        val key = buildDependency(type)
         activityScopedInstances.getOrPut(activity) { mutableMapOf() }[key] = instance
     }
 
@@ -86,7 +86,7 @@ object DIContainer {
         type: KClass<T>,
         instance: T,
     ) {
-        val key = buildKey(type)
+        val key = buildDependency(type)
         viewModelScopedInstances.getOrPut(viewModel) { mutableMapOf() }[key] = instance
     }
 
@@ -96,7 +96,7 @@ object DIContainer {
         qualifier: QualifierType? = null,
         owner: Any? = null,
     ): T {
-        val key = buildKey(type, qualifier)
+        val key = buildDependency(type, qualifier)
 
         if (type == Context::class) {
             return owner as T
