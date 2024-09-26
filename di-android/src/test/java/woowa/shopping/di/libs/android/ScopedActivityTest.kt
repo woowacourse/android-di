@@ -12,8 +12,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
-import woowa.shopping.di.libs.android.sample.SampleScopedActivity
 import woowa.shopping.di.libs.android.sample.SampleRepository
+import woowa.shopping.di.libs.android.sample.SampleScopedActivity
 import woowa.shopping.di.libs.android.sample.SampleService
 import woowa.shopping.di.libs.android.sample.SampleServiceImpl
 import woowa.shopping.di.libs.container.Containers

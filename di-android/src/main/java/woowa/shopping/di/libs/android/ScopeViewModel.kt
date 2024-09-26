@@ -13,7 +13,7 @@ import woowa.shopping.di.libs.scope.ScopeComponent
 import woowa.shopping.di.libs.scope.findScope
 
 abstract class ScopeViewModel : ScopeComponent, DefaultLifecycleObserver {
-    protected val viewModelScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    val viewModelScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
     override val scope by lazy {
         findScope(qualifier(this::class))
     }

@@ -9,7 +9,6 @@ import woowa.shopping.di.libs.scope.ScopeComponent
 import woowa.shopping.di.libs.scope.startScope
 
 abstract class ScopeActivity : AppCompatActivity(), ScopeComponent {
-
     var _scope: Scope? = null
     override val scope: Scope
         get() = requireNotNull(_scope) { "Scope is not initialized" }
