@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application android:theme="@style/Theme.AppCompat">
+        <activity android:name="woowa.shopping.di.libs.android.sample.SampleActivity" />
+        <activity android:name="woowa.shopping.di.libs.android.study.AndroidXActivity" />
+    </application>
+</manifest>

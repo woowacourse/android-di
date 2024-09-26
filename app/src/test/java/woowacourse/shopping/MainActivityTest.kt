@@ -1,8 +1,7 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth.assertThat
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.After
 import org.junit.Rule
@@ -10,6 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowa.shopping.di.libs.android.getViewModel
 import woowa.shopping.di.libs.container.Containers
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
@@ -45,9 +45,9 @@ class MainActivityTest {
                 .buildActivity(MainActivity::class.java)
                 .create()
                 .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
-
-        // then
-        viewModel.shouldNotBeNull()
+        // when & then
+        shouldNotThrow<IllegalStateException> {
+            activity.getViewModel<MainViewModel>()
+        }
     }
 }
