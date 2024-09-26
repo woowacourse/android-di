@@ -101,8 +101,10 @@ class ComponentTest {
         // given
         val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         assertThat(diInstance).isNotNull()
-        val beforeDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
-            TestSingletonComponent::class)
+        val beforeDISingletonInstance =
+            SingletonComponent.getInstance().getDIInstance(
+                TestSingletonComponent::class,
+            )
         assertThat(beforeDISingletonInstance).isNotNull()
 
         // when
@@ -113,8 +115,10 @@ class ComponentTest {
         assertThrows<IllegalStateException> {
             ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         }
-        val afterDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
-            TestSingletonComponent::class)
+        val afterDISingletonInstance =
+            SingletonComponent.getInstance().getDIInstance(
+                TestSingletonComponent::class,
+            )
         assertThat(afterDISingletonInstance).isNotNull()
     }
 

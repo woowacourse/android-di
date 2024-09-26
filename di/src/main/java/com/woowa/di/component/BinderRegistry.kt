@@ -1,9 +1,9 @@
 package com.woowa.di.component
 
 import android.app.Application
+import com.woowa.di.activity.ActivityLifecycleListener
 import com.woowa.di.activity.ActivityRetainedComponent
 import com.woowa.di.activity.ActivityRetainedComponentManager
-import com.woowa.di.activity.ActivityLifecycleListener
 import com.woowa.di.injectFieldFromComponent
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
