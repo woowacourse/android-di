@@ -17,17 +17,13 @@ fun injectDI(
     block: DIBuilder.() -> Unit,
 ) {
     SingletonComponent.initApplicationContext(app.applicationContext)
-    DIBuilder().apply(block).createSingleton(app)
+    DIBuilder().apply(block)
+    SingletonComponentManager.createComponent(app::class)
+    injectSingletonComponentFields(app)
     app.registerActivityLifecycleCallbacks(ActivityLifecycleListener())
 }
 
 class DIBuilder {
-    fun createSingleton(app: Application): DIBuilder {
-        SingletonComponentManager.createComponent(app::class)
-        injectSingletonComponentFields(app)
-        return this
-    }
-
     fun binder(binder: KClass<*>) {
         val componentClazz =
             binder.findAnnotation<InstallIn>()?.component
