@@ -3,10 +3,10 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.alsonglibrary2.di.ActivityLifecycleObserver
 import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.anotations.FieldInject
 import com.example.alsonglibrary2.di.createAutoDIViewModel
-import com.example.alsonglibrary2.di.ActivityLifecycleObserver
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 

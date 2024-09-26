@@ -12,4 +12,3 @@ class LifecycleFakeViewModel : LifecycleViewModel() {
         super.onCleared()
     }
 }
-

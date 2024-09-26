@@ -3,10 +3,10 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.alsonglibrary2.di.LifecycleViewModel
 import com.example.alsonglibrary2.di.anotations.FieldInject
 import com.example.alsonglibrary2.di.anotations.ViewModelScope
 import kotlinx.coroutines.launch
-import com.example.alsonglibrary2.di.LifecycleViewModel
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product

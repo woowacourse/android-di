@@ -2,7 +2,6 @@ package com.example.alsonglibrary2
 
 import androidx.appcompat.app.AppCompatActivity
 import com.example.alsonglibrary2.di.AutoDIManager
-import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.createAutoDIViewModel
 import com.example.alsonglibrary2.fixtures.FakeQualifierDependencyProvider
 import com.example.alsonglibrary2.fixtures.dao.FakeDao
