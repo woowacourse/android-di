@@ -2,6 +2,7 @@ package com.example.alsonglibrary2
 
 import androidx.appcompat.app.AppCompatActivity
 import com.example.alsonglibrary2.di.AutoDIManager
+import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.createAutoDIViewModel
 import com.example.alsonglibrary2.fixtures.FakeQualifierDependencyProvider
 import com.example.alsonglibrary2.fixtures.dao.FakeDao
@@ -19,6 +20,7 @@ import com.example.alsonglibrary2.fixtures.viewmodel.FieldInjectedWithQualifierA
 import com.example.alsonglibrary2.fixtures.viewmodel.FieldInjectedWithQualifierFakeViewModel
 import com.example.alsonglibrary2.fixtures.viewmodel.FieldInjectedWithTwoQualifierFakeViewModel
 import com.example.alsonglibrary2.fixtures.viewmodel.FieldInjectedWithoutQualifierFakeViewModel
+import com.example.alsonglibrary2.fixtures.viewmodel.LifecycleFakeViewModel
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -41,6 +43,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithoutQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -54,6 +57,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithoutQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -68,6 +72,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -83,6 +88,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithoutQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -98,6 +104,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -113,6 +120,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithQualifierAndNoProviderFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -127,6 +135,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedWithTwoQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -143,6 +152,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorInjectedWithTwoQualifierFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -159,6 +169,7 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<FieldInjectedOnlyAnnotationFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
@@ -176,10 +187,29 @@ class AutoDIManagerTest {
         class FakeActivity : AppCompatActivity() {
             val viewModel by createAutoDIViewModel<ConstructorRecursiveInjectedFakeViewModel>()
         }
+
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
 
         // then
         assertThat(activity.viewModel).isNotNull()
         assertThat(activity.viewModel.fakeRepository).isEqualTo(defaultFakeRepository3)
+    }
+
+    @Test
+    fun `ViewModelScope 어노테이션이 붙은 프로퍼티는 뷰모델 clear시 인스턴스가 사라진다`() {
+        // given
+        AutoDIManager.registerDependency<FakeRepository>(defaultFakeRepository1)
+
+        class FakeActivity : AppCompatActivity() {
+            val viewModel by createAutoDIViewModel<LifecycleFakeViewModel>()
+        }
+
+        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+
+        // when
+        activity.viewModel.alsongClear()
+
+        // then
+        assertThat(AutoDIManager.dependencies[FakeRepository::class]).isNull()
     }
 }

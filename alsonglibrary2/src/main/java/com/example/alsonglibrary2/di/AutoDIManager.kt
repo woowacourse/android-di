@@ -38,7 +38,7 @@ object AutoDIManager {
     }
 
     fun removeDependency(kClass: KClass<*>) {
-        (dependencies as MutableMap<KClass<*>, Any?>).remove(kClass::class)
+        (dependencies as MutableMap<KClass<*>, Any?>).remove(kClass)
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
