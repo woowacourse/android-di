@@ -1,13 +1,17 @@
 package com.kmlibs.supplin
 
-object Injector {
-    lateinit var instanceContainer: InstanceContainer
-        private set
+import com.kmlibs.supplin.base.ComponentContainer
+import kotlin.reflect.KClass
 
-    fun init(block: InjectionBuilder.() -> Unit) {
-        val injector = InjectionBuilder().apply(block).build()
-        if (!::instanceContainer.isInitialized) {
-            instanceContainer = InstanceContainer(injector.context, injector.modules)
+object Injector {
+    lateinit var componentContainers: Map<KClass<*>, ComponentContainer>
+        private set
+    private lateinit var injectionBuilder: InjectionBuilder
+
+    fun setModules(block: InjectionBuilder.() -> Unit) {
+        if (!::injectionBuilder.isInitialized) {
+            injectionBuilder = InjectionBuilder()
         }
+        componentContainers = injectionBuilder.apply(block).build()
     }
 }

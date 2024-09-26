@@ -1,15 +1,18 @@
 package com.kmlibs.supplin.fixtures.android.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.kmlibs.supplin.annotations.SupplinViewModel
 import com.kmlibs.supplin.annotations.Supply
 import com.kmlibs.supplin.fixtures.android.FakeRepository1
 import com.kmlibs.supplin.fixtures.android.FakeRepository2
 import com.kmlibs.supplin.fixtures.android.FakeRepository6
 import com.kmlibs.supplin.fixtures.android.FakeRepository7
+import com.kmlibs.supplin.fixtures.android.module.FakeViewModelUtilModule
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository3
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository4
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository5
 import com.kmlibs.supplin.fixtures.android.repository.FakeRepository
+import com.kmlibs.supplin.fixtures.android.util.FakeUtil2
 
 class FakeViewModel1
     @Supply
@@ -77,3 +80,9 @@ class FakeViewModel7
         @FakeRepository7
         lateinit var fakeRepository7: FakeRepository
     }
+
+@SupplinViewModel(modules = [FakeViewModelUtilModule::class])
+class FakeViewModel8 : ViewModel() {
+    @Supply
+    lateinit var fakeUtil2: FakeUtil2
+}

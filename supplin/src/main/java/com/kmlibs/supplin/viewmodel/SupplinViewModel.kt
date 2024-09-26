@@ -5,7 +5,6 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import com.kmlibs.supplin.Injector
 
 /**
  * These three cases following below are possible.
@@ -67,18 +66,12 @@ import com.kmlibs.supplin.Injector
  */
 inline fun <reified VM : ViewModel> ComponentActivity.supplinViewModel(): Lazy<VM> {
     return viewModels {
-        ViewModelFactory(
-            viewModelClass = VM::class,
-            instanceContainer = Injector.instanceContainer,
-        )
+        ViewModelFactory(VM::class)
     }
 }
 
 inline fun <reified VM : ViewModel> Fragment.supplinViewModel(): Lazy<VM> {
     return viewModels {
-        ViewModelFactory(
-            viewModelClass = VM::class,
-            instanceContainer = Injector.instanceContainer,
-        )
+        ViewModelFactory(VM::class)
     }
 }

@@ -8,19 +8,20 @@ import woowacourse.shopping.model.CartedProduct
 import woowacourse.shopping.model.Product
 
 @DatabaseRepository
-class DBCartRepository @Supply constructor(
-    shoppingDatabase: ShoppingDatabase,
-) : CartRepository {
-    private val cartProductDao = shoppingDatabase.cartProductDao()
-    override suspend fun addCartProduct(product: Product) {
-        cartProductDao.insert(product.toEntity())
-    }
+class DBCartRepository
+    @Supply
+    constructor(
+        private val cartProductDao: CartProductDao,
+    ) : CartRepository {
+        override suspend fun addCartProduct(product: Product) {
+            cartProductDao.insert(product.toEntity())
+        }
 
-    override suspend fun getAllCartProducts(): List<CartedProduct> {
-        return cartProductDao.getAll().map(CartProductEntity::toCartedProduct)
-    }
+        override suspend fun getAllCartProducts(): List<CartedProduct> {
+            return cartProductDao.getAll().map(CartProductEntity::toCartedProduct)
+        }
 
-    override suspend fun deleteCartProduct(id: Long) {
-        cartProductDao.delete(id)
+        override suspend fun deleteCartProduct(id: Long) {
+            cartProductDao.delete(id)
+        }
     }
-}

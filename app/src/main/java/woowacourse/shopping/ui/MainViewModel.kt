@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kmlibs.supplin.annotations.SupplinViewModel
 import com.kmlibs.supplin.annotations.Supply
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.DatabaseRepository
+import woowacourse.shopping.di.ProductModule
 import woowacourse.shopping.model.Product
 
+@SupplinViewModel(modules = [ProductModule::class])
 class MainViewModel : ViewModel() {
     @Supply
     private lateinit var productRepository: ProductRepository

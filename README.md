@@ -42,3 +42,15 @@
 - 선택 요구 사항
   - [x] DSL을 활용한다.
   - [x] DI 라이브러리를 배포하고 적용한다.
+
+### Step 4
+- [x] CartActivity에서 사용하는 DateFormatter의 인스턴스를 자동으로 주입한다.
+- [x] 모든 의존성이 적절한 생명주기 이내에만 유지되도록 한다.
+  - [x] CartRepository는 앱 전체 LifeCycle 동안 유지된다.
+  - [x] ProductRepository는 ViewModel LifeCycle 동안 유지된다.
+  - [x] DateFormatter는 Activity LifeCycle 동안 유지된다.
+- [ ] 테스트 코드를 작성한다.
+
+- 선택 요구 사항
+  - [ ] DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
+  - [ ] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.

@@ -4,6 +4,7 @@ package com.kmlibs.supplin.fixtures.android.module
 import com.kmlibs.supplin.annotations.Abstract
 import com.kmlibs.supplin.annotations.Concrete
 import com.kmlibs.supplin.annotations.Module
+import com.kmlibs.supplin.annotations.Within
 import com.kmlibs.supplin.fixtures.android.FakeRepository1
 import com.kmlibs.supplin.fixtures.android.FakeRepository2
 import com.kmlibs.supplin.fixtures.android.datasource.DefaultFakeDataSource1
@@ -15,8 +16,12 @@ import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository6
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository7
 import com.kmlibs.supplin.fixtures.android.repository.DefaultFakeRepository8
 import com.kmlibs.supplin.fixtures.android.repository.FakeRepository
+import com.kmlibs.supplin.fixtures.android.util.FakeUtil1
+import com.kmlibs.supplin.fixtures.android.util.FakeUtil2
+import com.kmlibs.supplin.model.Scope
 
 @Module
+@Within(Scope.Application::class)
 object FakeConcreteModule {
     @Concrete
     @FakeRepository1
@@ -28,6 +33,7 @@ object FakeConcreteModule {
 }
 
 @Module
+@Within(Scope.Application::class)
 interface FakeRepositoryModule {
     @Abstract
     fun bindFakeRepository6(impl: DefaultFakeRepository6): FakeRepository
@@ -40,10 +46,25 @@ interface FakeRepositoryModule {
 }
 
 @Module
+@Within(Scope.Application::class)
 interface FakeDataSourceModule {
     @Abstract
     fun bindFakeDataSource1(impl: DefaultFakeDataSource1): FakeDataSource
 
     @Abstract
     fun bindFakeDataSource2(impl: DefaultFakeDataSource2): FakeDataSource
+}
+
+@Module
+@Within(Scope.Activity::class)
+object FakeActivityUtilModule {
+    @Concrete
+    fun provideFakeUtils(): FakeUtil1 = FakeUtil1()
+}
+
+@Module
+@Within(Scope.ViewModel::class)
+object FakeViewModelUtilModule {
+    @Concrete
+    fun provideFakeUtils(): FakeUtil2 = FakeUtil2()
 }

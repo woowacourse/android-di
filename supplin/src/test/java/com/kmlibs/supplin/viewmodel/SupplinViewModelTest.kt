@@ -1,6 +1,5 @@
 package com.kmlibs.supplin.viewmodel
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ApplicationProvider
@@ -11,11 +10,13 @@ import com.kmlibs.supplin.fixtures.android.activity.FakeActivity2
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity3
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity4
 import com.kmlibs.supplin.fixtures.android.activity.FakeActivity5
+import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment1
 import com.kmlibs.supplin.fixtures.android.fragment.FakeFragment2
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,16 +26,25 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class SupplinViewModelTest {
-    private val context = ApplicationProvider.getApplicationContext<Context>()
-
     @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
-        Injector.init {
-            context(context)
-            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+        Injector.setModules {
+            applicationModule(
+                ApplicationProvider.getApplicationContext<FakeApplication>(),
+                FakeConcreteModule::class,
+                FakeRepositoryModule::class,
+                FakeDataSourceModule::class,
+            )
+        }
+    }
+
+    @After
+    fun tearDown() {
+        Injector.setModules {
+            removeAllModules()
         }
     }
 

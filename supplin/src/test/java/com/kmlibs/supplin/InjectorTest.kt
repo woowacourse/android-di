@@ -1,50 +1,61 @@
 package com.kmlibs.supplin
 
-import android.content.Context
-import com.google.common.truth.Truth.assertThat
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
+import com.kmlibs.supplin.fixtures.android.application.FakeApplication
 import com.kmlibs.supplin.fixtures.android.module.FakeConcreteModule
 import com.kmlibs.supplin.fixtures.android.module.FakeDataSourceModule
 import com.kmlibs.supplin.fixtures.android.module.FakeRepositoryModule
-import io.mockk.mockk
+import org.junit.After
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class InjectorTest {
-    private lateinit var instanceContainer: InstanceContainer
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @After
+    fun tearDown() {
+        Injector.setModules {
+            removeAllModules()
+        }
+    }
 
     @Test
     fun `Injector should be initialized by explicitly calling init`() {
-        val mockContext = mockk<Context>(relaxed = true)
-        Injector.init {
-            context(mockContext)
-            module(
+        Injector.setModules {
+            applicationModule(
+                ApplicationProvider.getApplicationContext<FakeApplication>(),
                 FakeConcreteModule::class,
                 FakeRepositoryModule::class,
                 FakeDataSourceModule::class,
             )
         }
-        instanceContainer = Injector.instanceContainer
-        assertThat(::instanceContainer.isInitialized).isTrue()
+        Injector.componentContainers
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `InstanceContainer in Injector cannot be initialized repeatedly`() {
-        // given
-        val mockContext = mockk<Context>(relaxed = true)
-
         // when
-        Injector.init {
-            context(mockContext)
-            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+        Injector.setModules {
+            applicationModule(
+                ApplicationProvider.getApplicationContext<FakeApplication>(),
+                FakeConcreteModule::class,
+                FakeRepositoryModule::class,
+                FakeDataSourceModule::class,
+            )
         }
-        val firstInstanceContainer = Injector.instanceContainer
 
-        Injector.init {
-            context(mockContext)
-            module(FakeConcreteModule::class, FakeRepositoryModule::class, FakeDataSourceModule::class)
+        Injector.setModules {
+            applicationModule(
+                ApplicationProvider.getApplicationContext<FakeApplication>(),
+                FakeConcreteModule::class,
+                FakeRepositoryModule::class,
+                FakeDataSourceModule::class,
+            )
         }
-        val secondInstanceContainer = Injector.instanceContainer
-
-        // then
-        assertThat(firstInstanceContainer).isSameInstanceAs(secondInstanceContainer)
     }
 }
