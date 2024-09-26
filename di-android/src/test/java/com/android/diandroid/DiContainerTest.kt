@@ -13,7 +13,6 @@ class DiContainerTest {
     @Before
     fun setup() {
         diContainer = DiContainer(null)
-
     }
 
     @Test
@@ -39,7 +38,7 @@ class DiContainerTest {
         // when
         diContainer.remove(TestService::class)
 
-        //Then
+        // Then
         assertThrows(IllegalArgumentException::class.java) {
             diContainer.match(TestService::class)
         }

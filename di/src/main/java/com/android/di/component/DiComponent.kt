@@ -37,7 +37,7 @@ object DiComponent {
                 if (fieldInstance != null) {
                     field.set(instance, fieldInstance)
                 }
-            }else {
+            } else {
                 diContainer.remove(field.type.kotlin)
             }
         }

@@ -18,9 +18,7 @@ class DiContainer(private val parentContainer: DiContainer? = null) {
         binds[bindClassType] = createInstance(implClassType)
     }
 
-    fun <T : Any> remove(
-        bindClassType: KClass<T>
-    ){
+    fun <T : Any> remove(bindClassType: KClass<T>) {
         binds.remove(bindClassType)
     }
 
