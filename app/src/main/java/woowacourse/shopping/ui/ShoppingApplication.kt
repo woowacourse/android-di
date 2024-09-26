@@ -11,7 +11,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class ShoppingApplication : DependencyInjectedApplication() {
-    val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()
