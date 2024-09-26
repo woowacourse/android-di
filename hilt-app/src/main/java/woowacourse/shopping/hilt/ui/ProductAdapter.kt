@@ -3,7 +3,7 @@ package woowacourse.shopping.hilt.ui
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import woowacourse.shopping.hilt.model.Product
-import woowacourse.shopping.utils.ItemDiffCallback
+import woowacourse.shopping.hilt.utils.ItemDiffCallback
 
 class ProductAdapter(
     private val onClickProduct: (product: Product) -> Unit,
