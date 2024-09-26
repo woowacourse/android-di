@@ -22,9 +22,9 @@ class ApplicationModule(private val context: Context) : Module {
         DependencyContainer.addInstance(
             classType = CartRepository::class,
             instance =
-            DefaultCartRepository(
-                ShoppingDatabase.instance(context).cartProductDao(),
-            ),
+                DefaultCartRepository(
+                    ShoppingDatabase.instance(context).cartProductDao(),
+                ),
             qualifier = QualifierType.DATABASE,
         )
 
