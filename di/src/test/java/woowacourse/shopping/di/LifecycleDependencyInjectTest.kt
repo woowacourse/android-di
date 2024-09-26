@@ -1,20 +1,53 @@
 package woowacourse.shopping.di
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.google.common.truth.Truth.assertThat
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
+@Config(
+    application = FakeApplication::class,
+)
 class LifecycleDependencyInjectTest {
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    lateinit var activityController: ActivityController<FakeActicity>
+    lateinit var application: FakeApplication
+
+    @Before
+    fun setUp() {
+        activityController =
+            Robolectric.buildActivity(FakeActicity::class.java)
+        application = activityController.get().application as FakeApplication
+    }
 
     @Test
     fun `Activity 생명주기를 따르는 의존성은 Activity가 Create된 후 인스턴스화된다`() {
+        // when
+        val activity = activityController.create().get()
 
+        // then
+        assertThat(activity.activityScopeObject).isNotNull()
     }
 
     @Test
     fun `Activity 생명주기를 따르는 의존성은 Activity가 Destroy된 후 인스턴스가 삭제된다`() {
+        // given
+        val activity = activityController.create().destroy().get()
 
+        // when
+        val instance = activity.dependencyContainer.getInstance<ApplicationScopeObject>(ApplicationScopeObject::class)
+
+        // then
+        assertThat(instance).isNull()
     }
 
     @Test

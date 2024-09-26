@@ -6,7 +6,7 @@ import woowacourse.shopping.di.container.LifecycleDependencyContainer
 
 abstract class DependencyInjectedActivity :
     AppCompatActivity() {
-    protected lateinit var dependencyContainer: LifecycleDependencyContainer
+    lateinit var dependencyContainer: LifecycleDependencyContainer
     lateinit var dependencyInjector: LifecycleAwareDependencyInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
