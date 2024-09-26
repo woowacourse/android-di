@@ -1,7 +1,7 @@
 package com.example.seogi.di.util
 
-import com.example.seogi.di.annotation.DaoInstance
 import com.example.seogi.di.annotation.FieldInject
+import com.example.seogi.di.annotation.Provides
 import com.example.seogi.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -19,7 +19,7 @@ internal fun KClass<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull
 
 internal fun KFunction<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
-internal fun KFunction<*>.hasDaoInstanceAnnotation() = annotations.contains(DaoInstance())
+internal fun KFunction<*>.hasProvidesAnnotation() = annotations.contains(Provides())
 
 internal fun KClass<*>.fieldsToInject(): List<KProperty1<*, *>> =
     declaredMemberProperties

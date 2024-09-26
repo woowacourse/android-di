@@ -17,7 +17,7 @@ class SingleToneTest {
     private val diContainer = DiApplication.diContainer
 
     @Test
-    fun `SingleTone 어노테이션이 붙은 경우 앱이 실행 될 때 인스턴스가 저장된다`()  {
+    fun `SingleTone 어노테이션이 붙은 경우 앱이 실행 될 때 인스턴스가 저장된다`() {
         assertThat(diContainer.hasDependency(ParentFoo::class, Child2())).isTrue()
     }
 

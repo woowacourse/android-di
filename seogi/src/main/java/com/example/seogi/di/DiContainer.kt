@@ -3,7 +3,7 @@ package com.example.seogi.di
 import android.content.Context
 import com.example.seogi.di.util.fieldsToInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
-import com.example.seogi.di.util.hasDaoInstanceAnnotation
+import com.example.seogi.di.util.hasProvidesAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -100,7 +100,7 @@ class DiContainer(
     }
 
     private fun KFunction<*>.injectFields(instance: Any) {
-        if (hasDaoInstanceAnnotation()) return
+        if (hasProvidesAnnotation()) return
         inject(instance)
     }
 
