@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.injectFieldFromComponent
 import com.woowa.di.singleton.SingletonComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -67,7 +68,7 @@ class ViewModelComponent private constructor() :
                 }
 
             instance?.let {
-                injectViewModelComponentFields(it)
+                injectFieldFromComponent<ViewModelComponentManager>(it)
             }
             return instance
         }

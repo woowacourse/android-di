@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.injectFieldFromComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
@@ -12,7 +13,7 @@ import kotlin.reflect.jvm.jvmErasure
 inline fun <reified T : ViewModel> getDIViewModelFactory(): ViewModelProvider.Factory {
     ViewModelComponentManager.createComponent(T::class)
     val instance = createInstance(T::class)
-    injectViewModelComponentFields(instance)
+    injectFieldFromComponent<ViewModelComponentManager>(instance)
     removeInstancesOnCleared<T>(instance)
     return viewModelFactory {
         addInitializer(T::class) {

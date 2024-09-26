@@ -4,9 +4,9 @@ import android.app.Application
 import com.woowa.di.activity.ActivityComponent
 import com.woowa.di.activity.ActivityComponentManager
 import com.woowa.di.activity.ActivityLifecycleListener
+import com.woowa.di.injectFieldFromComponent
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
-import com.woowa.di.singleton.injectSingletonComponentFields
 import com.woowa.di.viewmodel.ViewModelComponent
 import com.woowa.di.viewmodel.ViewModelComponentManager
 import kotlin.reflect.KClass
@@ -19,7 +19,7 @@ fun injectDI(
     SingletonComponent.initApplicationContext(app.applicationContext)
     DIBuilder().apply(block)
     SingletonComponentManager.createComponent(app::class)
-    injectSingletonComponentFields(app)
+    injectFieldFromComponent<SingletonComponentManager>(app)
     app.registerActivityLifecycleCallbacks(ActivityLifecycleListener())
 }
 

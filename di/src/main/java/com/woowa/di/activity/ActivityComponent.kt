@@ -8,6 +8,7 @@ import com.woowa.di.ActivityContext
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.injectFieldFromComponent
 import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.singleton.SingletonComponentManager
 import kotlin.reflect.KClass
@@ -26,7 +27,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val t
         super.onCreate(owner)
         context = (owner as? ComponentActivity)?.baseContext
             ?: error("ComponentActivity에서만 DI를 주입할 수 있습니다.")
-        injectActivityComponentFields(owner)
+        injectFieldFromComponent<ActivityComponentManager>(owner)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -91,7 +92,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val t
             }
 
         instance?.let {
-            injectActivityComponentFields(it)
+            injectFieldFromComponent<ActivityComponentManager>(it)
         }
         return instance
     }

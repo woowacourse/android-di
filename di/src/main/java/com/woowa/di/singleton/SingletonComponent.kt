@@ -7,6 +7,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
+import com.woowa.di.injectFieldFromComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -77,7 +78,7 @@ class SingletonComponent private constructor() :
                 }
 
             instance?.let {
-                injectSingletonComponentFields(it)
+                injectFieldFromComponent<SingletonComponentManager>(it)
             }
             return instance
         }
