@@ -20,10 +20,14 @@ class ApplicationDependencyContainerTest {
         dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
-            "first",
+            FirstQualifier::class,
         )
 
-        val actual = dependencyContainer.getImplement<FirstDependency>(ToBeInjected::class, "second")
+        val actual =
+            dependencyContainer.getImplement<FirstDependency>(
+                ToBeInjected::class,
+                SecondQualifier::class,
+            )
 
         assertThat(actual).isNull()
     }
