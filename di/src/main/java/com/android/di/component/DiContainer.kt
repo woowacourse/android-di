@@ -18,6 +18,12 @@ class DiContainer(private val parentContainer: DiContainer? = null) {
         binds[bindClassType] = createInstance(implClassType)
     }
 
+    fun <T : Any> remove(
+        bindClassType: KClass<T>
+    ){
+        binds.remove(bindClassType)
+    }
+
     fun <T : Any> bind(
         bindClassType: KClass<T>,
         instance: T,
@@ -33,7 +39,7 @@ class DiContainer(private val parentContainer: DiContainer? = null) {
             instance ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(bindClassType))
     }
 
-    fun <T : Any> match(bindClassType: KClass<T>): T {
+    fun <T : Any> match(bindClassType: KClass<T>): T? {
         val instance =
             binds[bindClassType]
                 ?: parentContainer?.match(bindClassType)
@@ -42,7 +48,7 @@ class DiContainer(private val parentContainer: DiContainer? = null) {
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
     }
 
-    fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T {
+    fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T? {
         val instance =
             qualifierBinds[bindClassType]
                 ?: parentContainer?.matchByQualifier(bindClassType)

@@ -34,7 +34,11 @@ object DiComponent {
                     } else {
                         diContainer.match(field.type.kotlin)
                     }
-                field.set(instance, fieldInstance)
+                if (fieldInstance != null) {
+                    field.set(instance, fieldInstance)
+                }
+            }else {
+                diContainer.remove(field.type.kotlin)
             }
         }
     }
