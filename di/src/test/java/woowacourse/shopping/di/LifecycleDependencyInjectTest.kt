@@ -79,6 +79,16 @@ class LifecycleDependencyInjectTest {
 
     @Test
     fun `Application의 생명주기를 따르는 의존성은 앱이 종료되기 전까지 인스턴스로 남아있다`() {
+        // given
+        val activity = activityController.create().get()
+        activity.fakeViewModel
 
+        // when
+        activityController.destroy()
+        val applicationScopeInstance =
+            application.applicationDependencyContainer.getInstance<ApplicationScopeObject>(ApplicationScopeObject::class)
+
+        // then
+        assertThat(applicationScopeInstance).isNotNull()
     }
 }
