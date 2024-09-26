@@ -3,8 +3,6 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 
-typealias ClassQualifier = Pair<DependencyType, AnnotationQualifier>
-
 class ApplicationDependencyContainer(
     private val dependencyStorage: HashMap<ClassQualifier, DependencyProvider> = hashMapOf(),
 ) : LifecycleDependencyContainer {
@@ -13,13 +11,13 @@ class ApplicationDependencyContainer(
     override fun <T : DependencyInstance> getInstance(
         dependency: DependencyType,
         qualifier: AnnotationQualifier,
-    ): T? = dependencyStorage[dependency to qualifier]?.getInstance()
+    ): T? = dependencyStorage[ClassQualifier(dependency, qualifier)]?.getInstance()
 
     override fun <T : Any> getImplement(
         dependency: DependencyType,
         qualifier: AnnotationQualifier,
     ): ImplementationClass<T>? =
-        dependencyStorage[dependency to qualifier]?.getImplement()
+        dependencyStorage[ClassQualifier(dependency, qualifier)]?.getImplement()
 
     override fun <T : Any> setDependency(
         dependency: DependencyType,
@@ -28,7 +26,7 @@ class ApplicationDependencyContainer(
     ) {
         val dependencyProvider = ComponentDependencyProvider()
         dependencyProvider.setDependency(implementation)
-        dependencyStorage[dependency to qualifier] = dependencyProvider
+        dependencyStorage[ClassQualifier(dependency, qualifier)] = dependencyProvider
     }
 
     override fun setInstance(
@@ -36,8 +34,8 @@ class ApplicationDependencyContainer(
         instance: DependencyInstance,
         qualifier: AnnotationQualifier,
     ) {
-        if (dependencyStorage.contains(dependency to qualifier)) {
-            dependencyStorage[dependency to qualifier]?.setInstance(instance)
+        if (dependencyStorage.contains(ClassQualifier(dependency, qualifier))) {
+            dependencyStorage[ClassQualifier(dependency, qualifier)]?.setInstance(instance)
         }
     }
 
@@ -58,7 +56,7 @@ class ApplicationDependencyContainer(
         println("\nhodu: setInstanceWitinLifecycle")
         println("hodu: instance being set = $instance")
         val dependencyProvider: DependencyProvider =
-            dependencyStorage[dependency to qualifier]
+            dependencyStorage[ClassQualifier(dependency, qualifier)]
                 ?: ComponentDependencyProvider()
         dependencyProvider.setInstance(instance)
         when (lifecycleAware) {
