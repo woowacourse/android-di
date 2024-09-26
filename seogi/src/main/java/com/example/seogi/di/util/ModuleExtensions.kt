@@ -6,7 +6,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
 
-internal fun Module.findDependencyFunctionsToRemove(
+internal fun Module.findDependencyFunctions(
     annotation: Annotation,
     types: List<KType>,
 ): List<KFunction<*>> =

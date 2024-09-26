@@ -5,7 +5,7 @@ import com.example.seogi.di.DiApplication.Companion.diContainer
 import com.example.seogi.di.DiApplication.Companion.module
 import com.example.seogi.di.annotation.ViewModelScoped
 import com.example.seogi.di.util.fieldsToInject
-import com.example.seogi.di.util.findDependencyFunctionsToRemove
+import com.example.seogi.di.util.findDependencyFunctions
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 
@@ -14,7 +14,7 @@ open class DiViewModel : ViewModel() {
         super.onCleared()
         val viewModelDependencyTypes = viewModelDependencyTypes()
         val dependencies =
-            module.findDependencyFunctionsToRemove(ViewModelScoped(), viewModelDependencyTypes)
+            module.findDependencyFunctions(ViewModelScoped(), viewModelDependencyTypes)
 
         dependencies.forEach {
             diContainer.removeDependency(it)

@@ -8,7 +8,7 @@ import com.example.seogi.di.DiApplication.Companion.diContainer
 import com.example.seogi.di.DiApplication.Companion.module
 import com.example.seogi.di.annotation.ActivityScoped
 import com.example.seogi.di.annotation.FieldInject
-import com.example.seogi.di.util.findDependencyFunctionsToRemove
+import com.example.seogi.di.util.findDependencyFunctions
 import java.lang.reflect.Field
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -56,7 +56,7 @@ open class DiActivity : AppCompatActivity() {
         super.onDestroy()
 
         val injectPropertyTypes = injectProperties.map { it.returnType }
-        val dependencies = module.findDependencyFunctionsToRemove(ActivityScoped(), injectPropertyTypes)
+        val dependencies = module.findDependencyFunctions(ActivityScoped(), injectPropertyTypes)
 
         dependencies.forEach {
             diContainer.removeDependency(it)
