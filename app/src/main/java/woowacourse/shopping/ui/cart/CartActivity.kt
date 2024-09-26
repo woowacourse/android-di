@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.anotations.FieldInject
 import com.example.alsonglibrary2.di.createAutoDIViewModel
-import woowacourse.shopping.CartActivityLifecycleObserver
+import com.example.alsonglibrary2.di.CartActivityLifecycleObserver
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
