@@ -1,104 +1,114 @@
 package com.woowa.di.singleton
 
+import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
-import com.woowa.di.component.DIBuilder
 import com.woowa.di.findQualifierClassOrNull
-import javax.inject.Inject
+import com.woowa.di.injectFieldFromComponent
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.kotlinProperty
 
-class SingletonComponent<binder : Any> private constructor(private val binderClazz: KClass<binder>) :
+class SingletonComponent private constructor() :
     Component, DefaultLifecycleObserver {
-        private lateinit var binderInstance: binder
-        private lateinit var diInstances: Map<String, Any?>
-
-        override fun onCreate(owner: LifecycleOwner) {
-            super.onCreate(owner)
-            binderInstance = binderClazz.createInstance()
-            diInstances = saveDIInstance()
-        }
+        private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
+        private val diInstances: MutableMap<String, Any?> = mutableMapOf()
 
         override fun onDestroy(owner: LifecycleOwner) {
             super.onDestroy(owner)
-            instances.remove(binderClazz)
-            owner.lifecycle.removeObserver(this)
-        }
-
-        private fun saveDIInstance(): Map<String, Any?> {
-            return binderClazz.declaredMemberFunctions.filter { it.visibility == KVisibility.PUBLIC }
-                .associate { kFunc ->
-                    val key =
-                        kFunc.returnType.jvmErasure.simpleName
-                            ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다.")
-
-                    val result = createInjectedInstance(kFunc)
-
-                    kFunc.findQualifierClassOrNull()?.let { qualifier ->
-                        return@associate (key + qualifier.simpleName) to result
-                    }
-
-                    return@associate key to result
-                }
-        }
-
-        private fun createInjectedInstance(kFunc: KFunction<*>): Any? {
-            return if (kFunc.parameters.any { it.hasAnnotation<ApplicationContext>() }) {
-                kFunc.call(binderInstance, DIBuilder.applicationContext)
-            } else {
-                kFunc.call(binderInstance)
-            }
+            deleteAllDIInstance()
+            instance = null
+            _applicationContext = null
+            ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
         }
 
         override fun getDIInstance(
             type: KClass<*>,
             qualifier: KClass<out Annotation>?,
         ): Any? {
-            val instance =
-                if (qualifier != null) {
-                    diInstances[(type.simpleName + qualifier.simpleName)]
-                } else {
-                    diInstances[type.simpleName]
+            qualifier?.let {
+                return diInstances.getOrPut((type.simpleName + it.simpleName)) {
+                    createDIInstance(type, qualifier)
                 }
-
-            injectFields(instance)
-            return instance
-        }
-
-        private fun injectFields(instance: Any?) {
-            val fields =
-                requireNotNull(instance)::class.java.declaredFields.onEach { field ->
-                    field.isAccessible = true
-                }.filter { it.isAnnotationPresent(Inject::class.java) }
-
-            fields.map { field ->
-                val fieldInstance =
-                    SingletonComponentManager.getDIInstance(
-                        field.type.kotlin,
-                        field.kotlinProperty?.findQualifierClassOrNull(),
-                    )
-                field.set(instance, fieldInstance)
+            }
+            return diInstances.getOrPut(
+                type.simpleName ?: error("익명 객체와 같이, 이름이 없는 객체는 di 주입을 할 수 없습니다."),
+            ) {
+                createDIInstance(type)
             }
         }
 
-        companion object {
-            private val instances = mutableMapOf<KClass<*>, SingletonComponent<*>>()
+        override fun registerDIInstance(
+            binder: Any,
+            kFunc: KFunction<*>,
+        ) {
+            diFunc[kFunc] = binder
+        }
 
-            fun <binder : Any> getInstance(binderClazz: KClass<binder>): SingletonComponent<binder> {
-                return instances.getOrPut(binderClazz) {
-                    val newInstance = SingletonComponent(binderClazz)
-                    ProcessLifecycleOwner.get().lifecycle.addObserver(newInstance)
-                    newInstance
-                } as SingletonComponent<binder>
+        private fun createDIInstance(
+            type: KClass<*>,
+            qualifier: KClass<out Annotation>? = null,
+        ): Any? {
+            val kFunc =
+                diFunc.keys.find { it.returnType.jvmErasure == type && it.findQualifierClassOrNull() == qualifier }
+                    ?: error("${type.simpleName}이 component에 등록되지 않았습니다.")
+
+            val parameters =
+                kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
+                    when {
+                        it.hasAnnotation<ApplicationContext>() -> applicationContext
+                        else ->
+                            SingletonComponentManager.getDIInstance(
+                                it.type.jvmErasure,
+                                it.findQualifierClassOrNull(),
+                            )
+                    }
+                }
+
+            val instance =
+                if (parameters.isEmpty()) {
+                    kFunc.call(diFunc[kFunc])
+                } else {
+                    kFunc.call(diFunc[kFunc], *parameters.toTypedArray())
+                }
+
+            instance?.let {
+                injectFieldFromComponent<SingletonComponentManager>(it)
+            }
+            return instance
+        }
+
+        override fun deleteAllDIInstance() {
+            diInstances.clear()
+        }
+
+        companion object {
+            private var _applicationContext: Context? = null
+            val applicationContext get() = _applicationContext
+
+            fun initApplicationContext(context: Context) {
+                require(_applicationContext == null) {
+                    "binder는 단 한 번만 초기화 가능합니다."
+                }
+                _applicationContext = context
+            }
+
+            private var instance: SingletonComponent? = null
+
+            fun getInstance(): SingletonComponent {
+                return instance ?: initInstance()
+            }
+
+            private fun initInstance(): SingletonComponent {
+                val newInstance = SingletonComponent()
+                instance = newInstance
+                ProcessLifecycleOwner.get().lifecycle.addObserver(newInstance)
+                return newInstance
             }
         }
     }

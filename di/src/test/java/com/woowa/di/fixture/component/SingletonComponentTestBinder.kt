@@ -4,6 +4,6 @@ import com.woowa.di.component.InstallIn
 import com.woowa.di.singleton.SingletonComponent
 
 @InstallIn(SingletonComponent::class)
-class SingletonComponentTestBinder {
+object SingletonComponentTestBinder {
     fun provideSingletonComponent(): TestSingletonComponent = FakeSingleComponentImpl()
 }

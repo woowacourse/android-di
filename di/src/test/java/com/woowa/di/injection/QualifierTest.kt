@@ -3,8 +3,8 @@ package com.woowa.di.injection
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
-import com.woowa.di.fixture.TestActivity
 import com.woowa.di.fixture.TestApplication
+import com.woowa.di.fixture.component.TestActivity
 import com.woowa.di.fixture.qualifier.FailQualifierTestViewModel
 import com.woowa.di.fixture.qualifier.QualifierTestViewModel
 import com.woowa.di.test.DIActivityTestRule

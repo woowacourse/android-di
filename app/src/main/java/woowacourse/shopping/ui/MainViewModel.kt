@@ -10,10 +10,9 @@ import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 import javax.inject.Inject
 
-class MainViewModel() : ViewModel() {
-    @Inject
-    private lateinit var productRepository: ProductRepository
-
+class MainViewModel(
+    var productRepository: ProductRepository,
+) : ViewModel() {
     @Inject
     private lateinit var cartRepository: CartRepository
 

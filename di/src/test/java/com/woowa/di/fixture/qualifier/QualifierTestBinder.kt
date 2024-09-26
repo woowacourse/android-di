@@ -4,7 +4,7 @@ import com.woowa.di.component.InstallIn
 import com.woowa.di.singleton.SingletonComponent
 
 @InstallIn(SingletonComponent::class)
-class QualifierTestBinder {
+object QualifierTestBinder {
     @FakeQualifier
     fun provideQualifierFake(): TestQualifier = FakeImpl()
 

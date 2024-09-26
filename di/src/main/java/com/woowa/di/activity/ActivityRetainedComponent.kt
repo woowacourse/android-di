@@ -1,21 +1,40 @@
-package com.woowa.di.viewmodel
+package com.woowa.di.activity
 
-import androidx.lifecycle.ViewModel
+import android.content.Context
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.woowa.di.ActivityContext
 import com.woowa.di.ApplicationContext
 import com.woowa.di.component.Component
 import com.woowa.di.findQualifierClassOrNull
 import com.woowa.di.injectFieldFromComponent
 import com.woowa.di.singleton.SingletonComponent
+import com.woowa.di.singleton.SingletonComponentManager
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ViewModelComponent private constructor() :
-    Component {
+class ActivityRetainedComponent<T : ComponentActivity> private constructor(private val targetClazz: KClass<T>) :
+    Component, DefaultLifecycleObserver {
         private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
         private val diInstances: MutableMap<String, Any?> = mutableMapOf()
+        private var context: Context? = null
+
+        override fun onCreate(owner: LifecycleOwner) {
+            super.onCreate(owner)
+            context = (owner as? ComponentActivity)?.baseContext
+                ?: error("ComponentActivity에서만 DI를 주입할 수 있습니다.")
+            injectFieldFromComponent<ActivityRetainedComponentManager>(owner)
+        }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            super.onDestroy(owner)
+            context = null
+            owner.lifecycle.removeObserver(this)
+        }
 
         override fun getDIInstance(
             type: KClass<*>,
@@ -56,7 +75,12 @@ class ViewModelComponent private constructor() :
                 kFunc.parameters.filter { it.kind == KParameter.Kind.VALUE }.map {
                     when {
                         it.hasAnnotation<ApplicationContext>() -> SingletonComponent.applicationContext
-                        else -> ViewModelComponentManager.getDIInstance(it.type.jvmErasure, it.findQualifierClassOrNull())
+                        it.hasAnnotation<ActivityContext>() -> context
+                        else ->
+                            SingletonComponentManager.getDIInstance(
+                                it.type.jvmErasure,
+                                it.findQualifierClassOrNull(),
+                            )
                     }
                 }
 
@@ -64,24 +88,24 @@ class ViewModelComponent private constructor() :
                 if (parameters.isEmpty()) {
                     kFunc.call(diFunc[kFunc])
                 } else {
-                    kFunc.call(diFunc[kFunc], parameters.toTypedArray())
+                    kFunc.call(diFunc[kFunc], *parameters.toTypedArray())
                 }
 
             instance?.let {
-                injectFieldFromComponent<ViewModelComponentManager>(it)
+                injectFieldFromComponent<ActivityRetainedComponentManager>(it)
             }
             return instance
         }
 
         companion object {
-            private val instances = mutableMapOf<KClass<*>, ViewModelComponent>()
+            private val instances = mutableMapOf<KClass<*>, ActivityRetainedComponent<*>>()
 
-            fun <binder : ViewModel> getInstance(binderClazz: KClass<binder>): ViewModelComponent {
+            fun <binder : ComponentActivity> getInstance(binderClazz: KClass<binder>): ActivityRetainedComponent<binder> {
                 return instances.getOrPut(binderClazz) {
-                    val newInstance = ViewModelComponent()
+                    val newInstance = ActivityRetainedComponent(binderClazz)
                     instances[binderClazz] = newInstance
                     newInstance
-                }
+                } as ActivityRetainedComponent<binder>
             }
 
             fun deleteInstance(binderClazz: KClass<*>) {

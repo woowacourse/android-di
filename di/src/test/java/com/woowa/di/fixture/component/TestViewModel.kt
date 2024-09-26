@@ -11,6 +11,11 @@ class ComponentTestViewModel : ViewModel() {
     lateinit var viewModelFake: TestViewModelComponent
 }
 
+class ComponentTestViewModel2 : ViewModel() {
+    @Inject
+    lateinit var viewModelFake: TestViewModelComponent
+}
+
 class FailComponentTestViewModel : ViewModel() {
     lateinit var fake: TestSingletonComponent
 }

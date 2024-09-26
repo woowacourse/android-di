@@ -8,5 +8,5 @@ import kotlin.reflect.KClass
 
 @ParentManager(NoParent::class)
 object SingletonComponentManager : ComponentManager() {
-    override fun getComponentInstance(binderType: KClass<*>): Component = SingletonComponent.getInstance(binderType)
+    override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component = SingletonComponent.getInstance()
 }

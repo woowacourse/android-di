@@ -3,10 +3,15 @@ package com.woowa.di.injection
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
-import com.woowa.di.fixture.TestActivity
+import com.woowa.di.activity.ActivityRetainedComponentManager
 import com.woowa.di.fixture.TestApplication
 import com.woowa.di.fixture.component.ComponentTestViewModel
+import com.woowa.di.fixture.component.ComponentTestViewModel2
 import com.woowa.di.fixture.component.FailComponentTestViewModel
+import com.woowa.di.fixture.component.TestActivity
+import com.woowa.di.fixture.component.TestActivityComponent
+import com.woowa.di.fixture.component.TestSingletonComponent
+import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.test.DIActivityTestRule
 import com.woowa.di.viewmodel.getDIViewModelFactory
 import org.junit.Before
@@ -86,8 +91,65 @@ class ComponentTest {
         assertThrows<IllegalArgumentException> {
             ViewModelProvider(
                 activity,
-                getDIViewModelFactory<ComponentTestViewModel>(),
-            )[ComponentTestViewModel::class.java]
+                getDIViewModelFactory<ComponentTestViewModel2>(),
+            )[ComponentTestViewModel2::class.java]
+        }
+    }
+
+    @Test
+    fun `activity가 소멸되어도 SingletonComponent 객체는 유지된다`() {
+        // given
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
+        assertThat(diInstance).isNotNull()
+        val beforeDISingletonInstance =
+            SingletonComponent.getInstance().getDIInstance(
+                TestSingletonComponent::class,
+            )
+        assertThat(beforeDISingletonInstance).isNotNull()
+
+        // when
+        activity.finish()
+        diRule.getController().destroy()
+
+        // then
+        assertThrows<IllegalStateException> {
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
+        }
+        val afterDISingletonInstance =
+            SingletonComponent.getInstance().getDIInstance(
+                TestSingletonComponent::class,
+            )
+        assertThat(afterDISingletonInstance).isNotNull()
+    }
+
+    @Test
+    fun `activity가 소멸되면, 주입된 객체는 제거되기 때문에, 객체를 호출하면 에러가 발생한다`() {
+        // given
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
+        assertThat(diInstance).isNotNull()
+
+        // when
+        activity.finish()
+        diRule.getController().destroy()
+
+        // then
+        assertThrows<IllegalStateException> {
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
+        }
+    }
+
+    @Test
+    fun `acitivity의 configuration change가 발생해도, DI 객체는 유지된다`() {
+        // given
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
+        assertThat(diInstance).isNotNull()
+
+        // when
+        diRule.getController().configurationChange()
+
+        // then
+        assertDoesNotThrow {
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         }
     }
 }
