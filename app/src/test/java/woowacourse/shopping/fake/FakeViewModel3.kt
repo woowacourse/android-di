@@ -1,14 +1,14 @@
 package woowacourse.shopping.fake
 
 import androidx.lifecycle.ViewModel
-import org.library.haeum.Inject
+import org.library.haeum.di.HaeumInject
 
 class FakeViewModel3 : ViewModel() {
-    @Inject
+    @HaeumInject
     @FakeRoomDBRepository
     lateinit var fakeRepository1: FakeRepository
 
-    @Inject
+    @HaeumInject
     @FakeInMemoryRepository
     lateinit var fakeRepository2: FakeRepository
 }

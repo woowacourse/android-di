@@ -1,8 +1,5 @@
 package woowacourse.shopping.fake
 
-import org.library.haeum.Module
-
-@Module
 object FakeModule {
     @FakeRoomDBRepository
     fun provideFakeRoomRepository(): FakeRepository {

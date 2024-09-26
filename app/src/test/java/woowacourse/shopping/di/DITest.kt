@@ -14,7 +14,6 @@ import woowacourse.shopping.fake.FakeApplication
 @RunWith(RobolectricTestRunner::class)
 @Config(application = FakeApplication::class)
 class DITest {
-
     @Test
     fun `DefaultRoomFakeRepository 주입 할 수 있다`() {
         val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
