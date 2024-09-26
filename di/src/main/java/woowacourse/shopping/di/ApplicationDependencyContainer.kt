@@ -52,66 +52,38 @@ class ApplicationDependencyContainer(
         lifecycleOwner: LifecycleOwner?,
         lifecycleAware: LifecycleAwareAnnotation,
     ) {
-        println("hodu")
-        println("\nhodu: setInstanceWitinLifecycle")
-        println("hodu: instance being set = $instance")
         val dependencyProvider: DependencyProvider =
             dependencyStorage[ClassQualifier(dependency, qualifier)]
                 ?: ComponentDependencyProvider()
         dependencyProvider.setInstance(instance)
         when (lifecycleAware) {
-            ApplicationLifecycleAware::class -> {
-                // 어플리케이션 lifecycle에 aware
-                println("hodu")
-                println("\nhodu: 어플리케이션 lifecycle에 aware")
-                println(
-                    "hodu: 사용 중인 DependencyContainer가 이미 어플리케이션의 Lifecycle에 종속되어 있기 때문에, 따로 옵저빙을 하지 않는다."
-                )
-            }
+            ApplicationLifecycleAware::class -> {}
 
             ActivityLifecycleAware::class -> {
-                // 액티비티 lifecycle에 aware
-                println("hodu")
-                println("\nhodu: 액티비티 lifecycle에 aware")
-                lifecycleOwner?.lifecycle?.addObserver(ComponentLifecycleObserver {
-                    dependencyProvider.deleteInstance()
-                    println("hodu: instance 삭제됨!")
-                    println("hodu: instance = ${dependencyProvider.getInstance<Any>()}")
-                })
-                println("hodu: 액티비티 lifecycle에 옵저버 등록")
+                lifecycleOwner?.lifecycle?.addObserver(
+                    ComponentLifecycleObserver {
+                        dependencyProvider.deleteInstance()
+                    },
+                )
             }
 
             FragmentLifecycleAware::class -> {
-                // 프래그먼트 lifecycle에 aware
-                println("hodu")
-                println("\nhodu: 프래그먼트 lifecycle에 aware")
-                lifecycleOwner?.lifecycle?.addObserver(ComponentLifecycleObserver {
-                    dependencyProvider.deleteInstance()
-                    println("hodu: instance 삭제됨!")
-                    println("hodu: instance = ${dependencyProvider.getInstance<Any>()}")
-                })
-                println("hodu: 프래그먼트 lifecycle에 옵저버 등록")
+                lifecycleOwner?.lifecycle?.addObserver(
+                    ComponentLifecycleObserver(
+                        onFinish = {
+                            dependencyProvider.deleteInstance()
+                        }
+                    ),
+                )
             }
 
             ViewModelLifecycleAware::class -> {
-                // 뷰모델 lifecycle에 aware
-                println("hodu")
-                println("\nhodu: 뷰모델 lifecycle에 aware")
                 lifecycleOwner?.lifecycle?.addObserver(
                     ViewModelLifecycleObserver(
-                        {
-                            dependencyProvider.setInstance(instance)
-                            println("hodu: instance 설정됨!")
-                            println("hodu: instance = ${dependencyProvider.getInstance<Any>()}")
-                        },
-                        {
-                            dependencyProvider.deleteInstance()
-                            println("hodu: instance 삭제됨!")
-                            println("hodu: instance = ${dependencyProvider.getInstance<Any>()}")
-                        },
-                    )
+                        onCreate = { dependencyProvider.setInstance(instance) },
+                        onFinish = { dependencyProvider.deleteInstance() },
+                    ),
                 )
-                println("hodu: 뷰모델 lifecycle에 옵저버 등록")
             }
 
             else -> {}

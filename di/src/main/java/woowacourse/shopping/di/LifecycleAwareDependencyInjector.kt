@@ -42,8 +42,6 @@ class LifecycleAwareDependencyInjector {
         qualifier: AnnotationQualifier = null,
         lifecycleAware: LifecycleAwareAnnotation = null,
     ): T {
-        // 라이프사이클은 인스턴스화 된 안드로이드 컴포넌트로부터 획득할 수 있다!
-        // 그러니 먼저 타겟 인스턴스를 받아야한다.
         val targetInstance: T = checkClassTypeThenGetInstance(modelClass, qualifier, lifecycleAware)
         setLifecycleOwner(modelClass, targetInstance)
         setDependencyOfProperties(modelClass, targetInstance)
