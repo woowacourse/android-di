@@ -1,9 +1,9 @@
 package com.example.di
 
-import com.example.di.annotation.Inject
+import com.example.di.annotation.ChadInject
+import com.example.di.annotation.ChadQualifier
 import com.example.di.annotation.LifeCycle
 import com.example.di.annotation.LifeCycleScope
-import com.example.di.annotation.Qualifier
 import com.example.di.annotation.QualifierType
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -26,7 +26,7 @@ object DIInjector {
         module::class.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
             val constructor = returnType.primaryConstructor
-            val qualifierType = function.findAnnotation<Qualifier>()?.type
+            val qualifierType = function.findAnnotation<ChadQualifier>()?.type
 
             if (constructor == null) {
                 handleNoConstructorFunction(module, function, qualifierType, lifeCycleScope)
@@ -70,7 +70,7 @@ object DIInjector {
 
         val injectParameters =
             returnType.primaryConstructor?.parameters
-                ?.filter { it.hasAnnotation<Inject>() }
+                ?.filter { it.hasAnnotation<ChadInject>() }
                 ?.map { it.type.jvmErasure }
                 ?: return
 
@@ -88,12 +88,12 @@ object DIInjector {
             modelClass.primaryConstructor
                 ?: return DIContainer.getInstance(
                     modelClass,
-                    modelClass.findAnnotation<Qualifier>()?.type,
+                    modelClass.findAnnotation<ChadQualifier>()?.type,
                 )
 
         val parameters =
             constructor.parameters.associateWith { parameter ->
-                val annotation = parameter.findAnnotation<Qualifier>()?.type
+                val annotation = parameter.findAnnotation<ChadQualifier>()?.type
                 DIContainer.getInstance(parameter.type.jvmErasure, annotation)
             }
 
@@ -102,13 +102,13 @@ object DIInjector {
 
     fun <T : Any> injectFields(instance: T) {
         val properties =
-            instance::class.declaredMemberProperties.filter { it.hasAnnotation<Inject>() }
+            instance::class.declaredMemberProperties.filter { it.hasAnnotation<ChadInject>() }
 
         properties.forEach { property ->
             property.isAccessible = true
             property.javaField?.let { field ->
                 val type = field.type.kotlin
-                val annotation = property.findAnnotation<Qualifier>()?.type
+                val annotation = property.findAnnotation<ChadQualifier>()?.type
                 val fieldValue = DIContainer.getInstance(type, annotation)
                 field.set(instance, fieldValue)
             }
@@ -121,7 +121,7 @@ object DIInjector {
     ) {
         moduleType.declaredFunctions.forEach { function ->
             val returnType = function.returnType.jvmErasure
-            val qualifierType = function.findAnnotation<Qualifier>()?.type
+            val qualifierType = function.findAnnotation<ChadQualifier>()?.type
             val functionLifeCycleScope = function.findAnnotation<LifeCycle>()?.scope ?: return
             if (lifeCycleScope == functionLifeCycleScope) {
                 DIContainer.removeInstance(returnType, qualifierType)

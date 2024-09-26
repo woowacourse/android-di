@@ -1,9 +1,7 @@
 package woowacourse.shopping.application
 
-import com.example.di.DIApplication
-import com.example.di.DIModule
-import woowacourse.shopping.module.ApplicationModule
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class ShoppingApplication : DIApplication() {
-    override val module: DIModule = ApplicationModule(this)
-}
+@HiltAndroidApp
+class ShoppingApplication : Application()
