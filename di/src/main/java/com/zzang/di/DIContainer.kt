@@ -35,7 +35,9 @@ object DIContainer {
         qualifier: QualifierType? = null,
     ) {
         val key = buildDependency(type, qualifier)
-        moduleInstances[key] = instance
+        if(!moduleInstances.containsKey(key)) {
+            moduleInstances[key] = instance
+        }
     }
 
     private fun <T : Any> registerComponentScopedInstance(
