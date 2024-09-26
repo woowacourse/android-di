@@ -24,7 +24,7 @@ class ApplicationDependencyContainerTest {
         )
 
         val actual =
-            dependencyContainer.getImplement<FirstDependency>(
+            dependencyContainer.getImplementation<FirstDependency>(
                 ToBeInjected::class,
                 SecondQualifier::class,
             )

@@ -21,11 +21,11 @@ class ApplicationDependencyContainer(
         qualifier: AnnotationQualifier,
     ): T? = dependencyStorage[ClassQualifier(dependency, qualifier)]?.getInstance()
 
-    override fun <T : Any> getImplement(
+    override fun <T : Any> getImplementation(
         dependency: DependencyType,
         qualifier: AnnotationQualifier,
     ): ImplementationClass<T>? =
-        dependencyStorage[ClassQualifier(dependency, qualifier)]?.getImplement()
+        dependencyStorage[ClassQualifier(dependency, qualifier)]?.getImplementation()
 
     override fun <T : Any> setDependency(
         dependency: DependencyType,

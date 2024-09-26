@@ -6,7 +6,7 @@ import woowacourse.shopping.di.container.ImplementationClass
 interface DependencyProvider {
     fun <T : DependencyInstance> getInstance(): T?
 
-    fun <T : Any> getImplement(): ImplementationClass<T>?
+    fun <T : Any> getImplementation(): ImplementationClass<T>?
 
     fun <T : Any> setDependency(implementationClass: ImplementationClass<T>)
 

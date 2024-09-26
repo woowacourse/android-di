@@ -15,7 +15,7 @@ interface DependencyContainer {
         qualifier: AnnotationQualifier = null,
     ): T?
 
-    fun <T : Any> getImplement(
+    fun <T : Any> getImplementation(
         dependency: DependencyType,
         qualifier: AnnotationQualifier = null,
     ): ImplementationClass<T>?

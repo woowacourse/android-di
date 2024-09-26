@@ -9,7 +9,7 @@ class ComponentDependencyProvider : DependencyProvider {
 
     override fun <T : DependencyInstance> getInstance(): T? = dependencyInstance as? T
 
-    override fun <T : Any> getImplement(): ImplementationClass<T>? =
+    override fun <T : Any> getImplementation(): ImplementationClass<T>? =
         implementationClass as? ImplementationClass<T>
 
     override fun <T : Any> setDependency(implementationClass: ImplementationClass<T>) {

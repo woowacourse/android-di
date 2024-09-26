@@ -62,7 +62,7 @@ object DependencyInjector {
             instanceFromContainer
         } else {
             val implementKClass =
-                requireNotNull(dependencyContainer.getImplement<T>(modelClass, qualifier)) {
+                requireNotNull(dependencyContainer.getImplementation<T>(modelClass, qualifier)) {
                     "$ERROR_DEPENDENCY_NOT_FOUND $modelClass to $qualifier"
                 }
             createInstance(implementKClass, qualifier)
