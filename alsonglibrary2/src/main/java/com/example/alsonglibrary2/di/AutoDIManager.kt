@@ -1,9 +1,7 @@
 package com.example.alsonglibrary2.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.alsonglibrary2.di.anotations.AlsongQualifier
+import com.example.alsonglibrary2.di.anotations.FieldInject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.createInstance
@@ -15,20 +13,32 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 object AutoDIManager {
-    val dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
+    private val _dependencies: MutableMap<KClass<*>, Any?> = mutableMapOf()
+    val dependencies: Map<KClass<*>, Any?> get() = _dependencies
 
-    var provider: LibraryDependencyProvider? = null
+    var qualifierDependencyProvider: QualifierDependencyProvider? = null
 
     inline fun <reified T : Any> registerDependency(dependency: Any) {
-        dependencies[T::class] = dependency
+        registerDependency(T::class, dependency)
     }
 
-    inline fun <reified VM : ViewModel> createViewModelFactory(): ViewModelProvider.Factory {
-        return viewModelFactory {
-            initializer {
-                createAutoDIInstance<VM>()
-            }
-        }
+    fun registerDependency(
+        kClass: KClass<*>,
+        dependency: Any,
+    ) {
+        _dependencies[kClass] = dependency
+    }
+
+    fun clearDependencies() {
+        _dependencies.clear()
+    }
+
+    inline fun <reified T : Any> removeDependency() {
+        (dependencies as MutableMap<KClass<*>, Any?>).remove(T::class)
+    }
+
+    fun removeDependency(kClass: KClass<*>) {
+        (dependencies as MutableMap<KClass<*>, Any?>).remove(kClass)
     }
 
     inline fun <reified T : Any> createAutoDIInstance(): T {
@@ -43,8 +53,7 @@ object AutoDIManager {
         val constructor = clazz.primaryConstructor ?: return clazz.createInstance()
         val args =
             constructor.parameters.associateWith { dependencies[it.type.jvmErasure] }.toMutableMap()
-        val parametersWithAnnotation = constructor.parameters.filter { it.annotations.isNotEmpty() }
-        for (parameter in parametersWithAnnotation) {
+        for (parameter in constructor.parameters) {
             val annotation =
                 parameter.annotations.find { it.annotationClass.findAnnotation<AlsongQualifier>() != null }
                     ?: continue
@@ -54,18 +63,15 @@ object AutoDIManager {
     }
 
     inline fun <reified T : Any> injectField(instance: T): T {
-        val updatedDependencies = dependencies
+        val qualifiedDependencies = dependencies.toMutableMap()
         val properties = T::class.declaredMemberProperties
         val mutableProperties = properties.filterIsInstance<KMutableProperty<*>>()
         val fieldInjectProperties =
             mutableProperties.filter { it.findAnnotation<FieldInject>() != null }
         fieldInjectProperties.forEach { property ->
-            changeQualifierDependency(property, updatedDependencies)
+            changeQualifierDependency(property, qualifiedDependencies)
             property.isAccessible = true
-            property.setter.call(
-                instance,
-                updatedDependencies[property.returnType.jvmErasure],
-            )
+            property.setter.call(instance, qualifiedDependencies[property.returnType.jvmErasure])
         }
         return instance
     }
@@ -82,7 +88,7 @@ object AutoDIManager {
     }
 
     fun findQualifierDependency(annotation: Annotation): Any? {
-        val dependencyProvider = provider ?: throw IllegalArgumentException()
+        val dependencyProvider = qualifierDependencyProvider ?: throw IllegalArgumentException()
         val targetFunction =
             dependencyProvider::class.memberFunctions
                 .find { it.findAnnotation<Annotation>() == annotation } ?: return null

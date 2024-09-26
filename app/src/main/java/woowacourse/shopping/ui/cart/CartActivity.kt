@@ -2,25 +2,31 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.alsonglibrary2.di.AutoDIManager
+import com.example.alsonglibrary2.di.ActivityLifecycleObserver
+import com.example.alsonglibrary2.di.anotations.ActivityScope
+import com.example.alsonglibrary2.di.anotations.FieldInject
+import com.example.alsonglibrary2.di.createAutoDIViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<CartViewModel> {
-        AutoDIManager.createViewModelFactory<CartViewModel>()
-    }
+    private val viewModel by createAutoDIViewModel<CartViewModel>()
 
-    private lateinit var dateFormatter: DateFormatter
+    @ActivityScope
+    @FieldInject
+    private lateinit var _dateFormatter: DateFormatter
+    val dateFormatter: DateFormatter get() = _dateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(ActivityLifecycleObserver())
+    }
 
-        setupDateFormatter()
+    override fun onStart() {
+        super.onStart()
         setupBinding()
         setupToolbar()
         setupView()
@@ -29,10 +35,6 @@ class CartActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

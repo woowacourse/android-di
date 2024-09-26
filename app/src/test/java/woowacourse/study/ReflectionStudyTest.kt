@@ -8,9 +8,11 @@ import kotlin.reflect.full.primaryConstructor
 class Dog(
     private val name: String,
     private val age: Int,
-) {
+) : Animal {
     private val speed: Int = 10
 }
+
+interface Animal
 
 class ReflectionStudy {
     @Test
@@ -35,5 +37,14 @@ class ReflectionStudy {
 
         // then
         assertThat(actual).isEqualTo(listOf("name", "age"))
+    }
+
+    @Test
+    fun `KClass의 isAbstract 프로퍼티는 KClass가 인터페이스일 때 true를 반환한다`() {
+        // given
+        val expected = Animal::class.isAbstract
+
+        // then
+        assertThat(expected).isTrue()
     }
 }
