@@ -20,6 +20,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 //java {
@@ -43,6 +47,7 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
