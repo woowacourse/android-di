@@ -1,5 +1,5 @@
-import com.example.di.annotation.Inject
-import com.example.di.annotation.Qualifier
+import com.example.di.annotation.ChadInject
+import com.example.di.annotation.ChadQualifier
 import com.example.di.annotation.QualifierType
 import com.example.fake.FakeActivityModule
 import com.example.fake.FakeCartRepository
@@ -8,9 +8,9 @@ import com.example.fake.FakeFieldRepository
 import com.example.fake.FakeProductRepository
 
 class FakeViewModel(
-    @Qualifier(QualifierType.Database) @Inject val fakeCartRepository: FakeCartRepository,
-    @Inject val fakeProductRepository: FakeProductRepository,
+    @ChadQualifier(QualifierType.Database) @ChadInject val fakeCartRepository: FakeCartRepository,
+    @ChadInject val fakeProductRepository: FakeProductRepository,
 ) : FakeDIViewModel(FakeActivityModule::class) {
-    @Inject
+    @ChadInject
     lateinit var fakeFieldRepository: FakeFieldRepository
 }

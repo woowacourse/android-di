@@ -1,3 +1,3 @@
 package com.example.di.annotation
 
-annotation class Inject
+annotation class ChadInject

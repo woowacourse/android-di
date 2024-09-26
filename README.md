@@ -46,3 +46,8 @@
     - [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
     - [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
 - [x] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+
+### [5단계] Hilt
+
+- [x] 지금까지 만든 쇼핑 장바구니 앱에 적용된 DI 라이브러리를 Hilt 코드로 교체한다.
+    - 기존에 만들어 둔 모듈과 테스트 코드를 삭제하진 않아도 된다. 이전 요구 사항을 동일하게 만족해야 한다.

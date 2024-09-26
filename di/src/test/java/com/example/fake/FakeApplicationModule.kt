@@ -1,7 +1,7 @@
 import com.example.di.DIModule
+import com.example.di.annotation.ChadQualifier
 import com.example.di.annotation.LifeCycle
 import com.example.di.annotation.LifeCycleScope
-import com.example.di.annotation.Qualifier
 import com.example.di.annotation.QualifierType
 import com.example.fake.FakeCartDao
 import com.example.fake.FakeCartRepository
@@ -14,13 +14,13 @@ class FakeApplicationModule : DIModule {
     }
 
     @LifeCycle(LifeCycleScope.APPLICATION)
-    @Qualifier(QualifierType.Database)
+    @ChadQualifier(QualifierType.Database)
     fun provideFakeDatabaseCartRepository(fakeCartDao: FakeCartDao): FakeCartRepository {
         return FakeDatabaseCartRepository(fakeCartDao)
     }
 
     @LifeCycle(LifeCycleScope.APPLICATION)
-    @Qualifier(QualifierType.InMemory)
+    @ChadQualifier(QualifierType.InMemory)
     fun provideFakeInMemoryCartRepository(): FakeCartRepository {
         return FakeInMemoryCartRepository()
     }
