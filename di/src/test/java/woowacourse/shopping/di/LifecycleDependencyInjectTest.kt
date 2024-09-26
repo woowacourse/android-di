@@ -52,12 +52,29 @@ class LifecycleDependencyInjectTest {
 
     @Test
     fun `ViewModel의 생명주기를 따르는 의존성은 ViewModel이 생성된 후 인스턴스화된다`() {
+        // given
+        val activity = activityController.create().get()
 
+        // when
+        val viewModel = activity.fakeViewModel
+        val viewModelScopeInstance = activity.fakeViewModel.viewModelScopeObject
+
+        // then
+        assertThat(viewModel).isNotNull()
+        assertThat(viewModelScopeInstance).isNotNull()
     }
 
     @Test
     fun `ViewModel의 생명주기를 따르는 의존성은 ViewModel이 Clear된 후 인스턴스가 삭제된다`() {
+        // given
+        val activity = activityController.create().destroy().get()
 
+        // when
+        val viewModelScopeInstance =
+            activity.dependencyContainer.getInstance<ViewModelScopeObject>(ViewModelScopeObject::class)
+
+        // then
+        assertThat(viewModelScopeInstance).isNull()
     }
 
     @Test
