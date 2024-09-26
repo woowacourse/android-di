@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.di.annotation.Inject
 import com.example.di.annotation.InjectedViewModel
 import com.example.di.annotation.Qualifier
+import com.example.di.annotation.lifecycle.ViewModelLifeCycle
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.local.LocalCartRepository
@@ -17,6 +18,7 @@ import woowacourse.shopping.model.ProductRepository
 @InjectedViewModel
 class MainViewModel : ViewModel() {
     @Inject
+    @ViewModelLifeCycle
     @Qualifier(DefaultProductRepository::class)
     private lateinit var productRepository: ProductRepository
 

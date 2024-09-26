@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package com.example.di
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
@@ -7,15 +7,20 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.di.annotation.InjectedViewModel
-import woowacourse.shopping.AndroidDiApplication
+import com.example.di.annotation.lifecycle.ViewModelLifeCycle
 import kotlin.reflect.full.findAnnotation
 
-class ViewModelFactory :
-    ViewModelProvider.Factory {
+class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         return if (ViewModel::class.java.isAssignableFrom(modelClass)) {
-            AndroidDiApplication.injector.inject(kClass) as T
+            val resultViewModel = Injector.inject(kClass) as T
+            resultViewModel
+                .apply {
+                    addCloseable {
+                        Injector.deleteFields(this, ViewModelLifeCycle::class)
+                    }
+                }
         } else {
             throw IllegalArgumentException("${modelClass}은 ViewModel 클래스가 아닙니다.")
         }
@@ -23,7 +28,7 @@ class ViewModelFactory :
 }
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.provideViewModel(
+inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null,
 ): Lazy<VM> {
