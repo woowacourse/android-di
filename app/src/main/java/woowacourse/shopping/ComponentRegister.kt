@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.content.Context
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
 import woowacourse.shopping.data.CartProductDao
@@ -12,8 +13,6 @@ class ComponentRegister(
     private val context: Context,
     private val cartProductDao: CartProductDao,
 ) {
-    private val dependencyInjector = ShoppingApplication.dependencyContainer
-
     fun initialize() {
         registerDateFormatter()
         registerProductRepository()
@@ -21,14 +20,14 @@ class ComponentRegister(
     }
 
     private fun registerDateFormatter() {
-        dependencyInjector.addInstance(
+        DependencyContainer.addInstance(
             DateFormatter::class,
             DIModule.provideDateFormatter(context),
         )
     }
 
     private fun registerProductRepository() {
-        dependencyInjector.addInstance(
+        DependencyContainer.addInstance(
             ProductRepository::class,
             DIModule.provideProductRepository(),
             qualifier = InMemory::class,
@@ -36,12 +35,12 @@ class ComponentRegister(
     }
 
     private fun registerCartRepository() {
-        dependencyInjector.addInstance(
+        DependencyContainer.addInstance(
             CartRepository::class,
             DIModule.provideCartRepository(cartProductDao),
             qualifier = RoomDB::class,
         )
-        dependencyInjector.addInstance(
+        DependencyContainer.addInstance(
             CartRepository::class,
             DIModule.provideCartInMemoryRepository(),
             qualifier = InMemory::class,

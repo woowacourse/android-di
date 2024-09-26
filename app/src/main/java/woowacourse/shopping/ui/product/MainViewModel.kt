@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
 import kotlinx.coroutines.launch
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        ShoppingApplication.dependencyContainer.clearViewModelInstances()
+        DependencyContainer.clearViewModelInstances()
     }
 
     fun addCartProduct(product: Product) {

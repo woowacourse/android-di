@@ -10,8 +10,9 @@ import kotlin.reflect.full.primaryConstructor
 
 typealias Instance = Any
 
-class DependencyContainer {
+object DependencyContainer {
     private val instances = mutableMapOf<ClassQualifier, Instance>()
+    private const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
 
     fun <T : Any> addInstance(
         kClass: KClass<T>,
@@ -76,9 +77,5 @@ class DependencyContainer {
         activityInstances.forEach {
             instances.remove(it.key)
         }
-    }
-
-    companion object {
-        const val CONSTRUCTOR_NOT_FOUND = "적합한 생성자를 찾을 수 없습니다."
     }
 }

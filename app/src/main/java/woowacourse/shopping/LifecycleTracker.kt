@@ -2,12 +2,11 @@ package woowacourse.shopping
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.woowacourse.di.DependencyContainer
 
 class LifecycleTracker : DefaultLifecycleObserver {
-    private val dependencyInjector = ShoppingApplication.dependencyContainer
-
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        dependencyInjector.clearActivityInstances()
+        DependencyContainer.clearActivityInstances()
     }
 }

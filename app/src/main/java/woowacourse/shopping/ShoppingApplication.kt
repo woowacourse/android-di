@@ -1,7 +1,6 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingApplication : Application() {
@@ -11,13 +10,7 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        dependencyContainer = DependencyContainer()
         componentRegister = ComponentRegister(applicationContext, cartProductDao)
         componentRegister.initialize()
-    }
-
-    companion object {
-        lateinit var dependencyContainer: DependencyContainer
-            private set
     }
 }

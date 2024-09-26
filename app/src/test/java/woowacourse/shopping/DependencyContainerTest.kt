@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import android.os.Looper
 import com.google.common.truth.Truth.assertThat
+import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.RoomDB
 import org.junit.Assert.assertEquals
@@ -14,7 +15,6 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
-import woowacourse.shopping.ShoppingApplication.Companion.dependencyContainer
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.DateFormatter
 
@@ -41,7 +41,7 @@ class DependencyContainerTest {
     @Test
     fun `인터페이스 1개, 구현체 1개일 때 적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeProductRepository::class,
             fakeProductRepository,
             qualifier = InMemory::class,
@@ -56,7 +56,7 @@ class DependencyContainerTest {
     @Test(expected = IllegalArgumentException::class)
     fun `인터페이스 1개, 구현체 2개일 때 Qualifier를 명시하지 않으면 ViewModel 의존성 주입에 실패한다`() {
         // given
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeCartRepository::class,
             fakeCartRepository,
             qualifier = RoomDB::class,
@@ -71,7 +71,7 @@ class DependencyContainerTest {
     @Test
     fun `인터페이스 1개, 구현체 2개일 때 Qualifier를 명시하면 적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다`() {
         // given
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeCartRepository::class,
             fakeCartRepository,
             qualifier = RoomDB::class,
@@ -86,12 +86,12 @@ class DependencyContainerTest {
     @Test
     fun `인터페이스 1개, 구현체 2개인 프로퍼티가 두 개이고, Qualifier를 명시하면 적절한 객체 인스턴스를 찾아 ViewModel 의존성을 주입한다 `() {
         // given
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeProductRepository::class,
             fakeProductRepository,
             InMemory::class,
         )
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeCartRepository::class,
             fakeCartRepository,
             RoomDB::class,
@@ -115,7 +115,6 @@ class DependencyContainerTest {
         activity.firstSuccessCaseViewModel
     }
 
-    // 작성 중인 테스트 - 정상 동작 하지 않음
     @Test
     fun `DateFormatter의 인스턴스는 Activity LifeCycle 동안 유지되어야 한다`() {
         val cartActivity =
@@ -124,13 +123,13 @@ class DependencyContainerTest {
                 .create()
                 .get()
 
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             FakeCartRepository::class,
             fakeCartRepository,
             qualifier = RoomDB::class,
         )
 
-        dependencyContainer.addInstance(
+        DependencyContainer.addInstance(
             DateFormatter::class,
             DIModule.provideDateFormatter(cartActivity.applicationContext),
         )
@@ -142,7 +141,7 @@ class DependencyContainerTest {
 
         val firstDateFormatter = firstController.get().dateFormatter
 
-        firstController.recreate() // TODO: 예외발생 해결
+        firstController.resume()
         shadowOf(Looper.getMainLooper()).idle()
 
         val secondDateFormatter = firstController.get().dateFormatter
