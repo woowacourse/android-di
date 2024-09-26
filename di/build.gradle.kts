@@ -15,12 +15,6 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    sourceSets {
-        getByName("test") {
-            manifest.srcFile("src/test/AndroidManifest.xml")
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = false
