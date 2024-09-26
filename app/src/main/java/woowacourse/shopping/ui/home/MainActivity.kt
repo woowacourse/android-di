@@ -12,9 +12,7 @@ import woowacourse.shopping.di.ViewModelModule
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : DIActivity(ActivityModule(), ViewModelModule()) {
-    private val viewModel: MainViewModel by lazy {
-        createViewModel()
-    }
+    private val viewModel: MainViewModel by createViewModel()
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

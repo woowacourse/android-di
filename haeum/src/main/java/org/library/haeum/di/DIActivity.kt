@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import org.library.haeum.Container
@@ -34,14 +35,20 @@ abstract class DIActivity(
             }
     }
 
-    inline fun <reified T : ViewModel> ComponentActivity.createViewModel(): T {
-        val viewModel: T by viewModels {
+    inline fun <reified T : ViewModel> ComponentActivity.createViewModel(): Lazy<T> {
+        val viewModelFactory = {
             viewModelFactory {
                 initializer {
                     Container(viewModelModule).injectTo(T::class)
                 }
             }
         }
-        return viewModel
+
+        return ViewModelLazy(
+            T::class,
+            { viewModelStore },
+            viewModelFactory,
+            { this.defaultViewModelCreationExtras }
+        )
     }
 }

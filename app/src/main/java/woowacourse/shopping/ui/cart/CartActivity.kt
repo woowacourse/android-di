@@ -10,9 +10,8 @@ import woowacourse.shopping.di.ActivityModule
 import woowacourse.shopping.di.ViewModelModule
 
 class CartActivity : DIActivity(ActivityModule(), ViewModelModule()) {
-    private val viewModel: CartViewModel by lazy {
-        createViewModel()
-    }
+    private val viewModel: CartViewModel by createViewModel()
+
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     @HaeumInject
