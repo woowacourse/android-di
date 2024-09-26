@@ -34,11 +34,11 @@ class DIContainer(
         functions.forEach { function ->
             val type = function.toReturnType()
             val instanceProvider = InstanceProvider { function.calledInstance(this) }
-            if (hasAnnotation<ActivityScope>()) {
+            if (function.hasAnnotation<ActivityScope>()) {
                 activityInstances[type] = instanceProvider
                 return@forEach
             }
-            if (hasAnnotation<ViewModelScope>()) {
+            if (function.hasAnnotation<ViewModelScope>()) {
                 viewModelInstances[type] = instanceProvider
                 return@forEach
             }
