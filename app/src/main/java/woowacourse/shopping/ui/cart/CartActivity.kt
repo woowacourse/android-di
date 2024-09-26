@@ -2,22 +2,16 @@ package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.annotation.ActivityLifecycleAware
 import woowacourse.shopping.di.DependencyInjectedActivity
-import woowacourse.shopping.ui.ShoppingApplication
-import woowacourse.shopping.ui.util.ReflectiveViewModelFactory
+import woowacourse.shopping.di.annotation.ActivityLifecycleAware
+import woowacourse.shopping.di.injectViewModels
 
-class CartActivity : DependencyInjectedActivity(ShoppingApplication.getApplication()) {
+class CartActivity : DependencyInjectedActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels {
-        ReflectiveViewModelFactory(
-            dependencyInjector
-        )
-    }
+    private val viewModel: CartViewModel by injectViewModels<CartViewModel>()
 
     @ActivityLifecycleAware
     private val dateFormatter: DateFormatter by lazy {
