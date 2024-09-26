@@ -1,17 +1,14 @@
 package woowacourse.shopping
 
-import android.app.Application
-import woowacourse.shopping.data.di.LocalModule
-import woowacourse.shopping.data.di.RepositoryModule
+import com.android.diandroid.ApplicationInjector
+import woowacourse.shopping.data.di.ApplicationLifeModule
+import woowacourse.shopping.data.di.ApplicationModule
 
-class ShoppingApplication : Application() {
+class ShoppingApplication : ApplicationInjector() {
     override fun onCreate() {
         super.onCreate()
-        initializeDi()
-    }
 
-    private fun initializeDi() {
-        LocalModule.install(this@ShoppingApplication)
-        RepositoryModule.install()
+        injectModule(ApplicationModule(applicationContext))
+        injectModule(ApplicationLifeModule())
     }
 }

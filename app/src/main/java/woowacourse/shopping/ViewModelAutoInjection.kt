@@ -6,13 +6,17 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.android.di.component.DiSingletonComponent
-import com.android.di.component.DiViewModelComponent
+import com.android.di.component.DiComponent
+import com.android.diandroid.ActivityInjector
+import woowacourse.shopping.data.di.ViewModelLifeModule
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.viewModelsWithAutoInject(
+    activityInjector: ActivityInjector,
     noinline extrasProducer: (() -> CreationExtras)? = null,
-    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = { inject() },
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = {
+        inject(activityInjector)
+    },
 ): Lazy<VM> {
     return viewModels(
         extrasProducer = extrasProducer,
@@ -20,24 +24,31 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModelsWithAutoInject(
     )
 }
 
-fun inject(): ViewModelProvider.Factory = ViewModelComponent()
+fun inject(activityInjector: ActivityInjector): ViewModelProvider.Factory = ViewModelComponent(activityInjector)
 
-private class ViewModelComponent : ViewModelProvider.Factory {
+class ViewModelComponent(
+    private val activityInjector: ActivityInjector,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (!DiViewModelComponent.hasAnnotation(modelClass.kotlin)) {
+        val diInjector = activityInjector.diInjector
+        activityInjector.diInjector.addModule(ViewModelLifeModule())
+
+        if (!DiComponent.hasViewModelAnnotation(modelClass.kotlin)) {
             throw IllegalArgumentException(ERROR_ANNOTATION)
         }
+
         val constructor =
             modelClass.constructors.firstOrNull()
                 ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR.format(modelClass))
 
         val parameters =
-            constructor.parameters.mapIndexed { index, parameter ->
-                DiSingletonComponent.match(parameter.type.kotlin)
+            constructor.parameters.map { parameter ->
+                diInjector.diContainer.match(parameter.type.kotlin)
             }.toTypedArray()
 
         val viewModel = constructor.newInstance(*parameters) as T
-        DiViewModelComponent.injectFields(viewModel)
+        DiComponent.injectFields(diInjector.diContainer, viewModel)
+
         return viewModel
     }
 

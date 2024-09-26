@@ -1,29 +1,25 @@
 package woowacourse.shopping.data.di
 
 import android.content.Context
-import com.android.di.component.DiSingletonComponent
+import com.android.di.component.DiContainer
+import com.android.di.component.Module
 import woowacourse.shopping.data.createInMemoryDatabase
 import woowacourse.shopping.data.createRoomDatabase
 import woowacourse.shopping.data.di.annotation.InMemoryDatabase
 import woowacourse.shopping.data.di.annotation.RoomDatabase
 
-object LocalModule {
-    fun install(context: Context) {
-        provideShoppingDatabase(context)
-        provideInMemoryShoppingDatabase(context)
-    }
-
-    private fun provideShoppingDatabase(context: Context) {
+class ApplicationModule(private val context: Context) : Module {
+    fun provideShoppingDatabase(diContainer: DiContainer) {
         val database = createRoomDatabase(context)
-        DiSingletonComponent.provide(
+        diContainer.provide(
             RoomDatabase::class,
             database.cartProductDao(),
         )
     }
 
-    private fun provideInMemoryShoppingDatabase(context: Context) {
+    fun provideInMemoryShoppingDatabase(diContainer: DiContainer) {
         val database = createInMemoryDatabase(context)
-        DiSingletonComponent.provide(
+        diContainer.provide(
             InMemoryDatabase::class,
             database.cartProductDao(),
         )

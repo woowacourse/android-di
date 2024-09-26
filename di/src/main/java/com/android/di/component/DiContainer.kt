@@ -7,22 +7,26 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-object DiSingletonComponent {
+class DiContainer(private val parentContainer: DiContainer? = null) {
     private val binds: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val qualifierBinds: MutableMap<KClass<out Annotation>, Any> = mutableMapOf()
-
-    private const val ERROR_DI_MATCH = "No binding Singleton Component %s"
-    private const val ERROR_INSTANCE_MATCH = "No matching Instance %s"
-    private const val ERROR_CONSTRUCTOR_MATCH = "No find Constructor %s"
-    private const val ERROR_PARAM_MATCH = "No find parameter %s"
-    private const val ERROR_QUALIFIER_MATCH = "No find Qualifier %s"
-    private const val ERROR_INJECT_MATCH = "No find inject %s"
 
     fun <T : Any, I : T> bind(
         bindClassType: KClass<T>,
         implClassType: KClass<I>,
     ) {
         binds[bindClassType] = createInstance(implClassType)
+    }
+
+    fun <T : Any> remove(bindClassType: KClass<T>) {
+        binds.remove(bindClassType)
+    }
+
+    fun <T : Any> bind(
+        bindClassType: KClass<T>,
+        instance: T,
+    ) {
+        binds[bindClassType] = instance
     }
 
     fun <T : Any> provide(
@@ -33,17 +37,19 @@ object DiSingletonComponent {
             instance ?: throw IllegalArgumentException(ERROR_QUALIFIER_MATCH.format(bindClassType))
     }
 
-    fun <T : Any> match(bindClassType: KClass<T>): T {
+    fun <T : Any> match(bindClassType: KClass<T>): T? {
         val instance =
             binds[bindClassType]
+                ?: parentContainer?.match(bindClassType)
                 ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
         return instance as? T
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
     }
 
-    fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T {
+    fun <T : Any> matchByQualifier(bindClassType: KClass<out Annotation>): T? {
         val instance =
             qualifierBinds[bindClassType]
+                ?: parentContainer?.matchByQualifier(bindClassType)
                 ?: throw IllegalArgumentException(ERROR_DI_MATCH.format(bindClassType))
         return instance as? T
             ?: throw IllegalArgumentException(ERROR_INSTANCE_MATCH.format(bindClassType))
@@ -76,5 +82,14 @@ object DiSingletonComponent {
             }
 
         return constructor.call(*parameters.toTypedArray())
+    }
+
+    companion object {
+        private const val ERROR_DI_MATCH = "No binding Singleton Component %s"
+        private const val ERROR_INSTANCE_MATCH = "No matching Instance %s"
+        private const val ERROR_CONSTRUCTOR_MATCH = "No find Constructor %s"
+        private const val ERROR_PARAM_MATCH = "No find parameter %s"
+        private const val ERROR_QUALIFIER_MATCH = "No find Qualifier %s"
+        private const val ERROR_INJECT_MATCH = "No find inject %s"
     }
 }
