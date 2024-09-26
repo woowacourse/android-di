@@ -1,12 +1,11 @@
 package olive.di.fixture
 
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import olive.di.DIActivity
 import olive.di.DIModule
 import olive.di.DIViewModel
-import olive.di.ViewModelFactory
 import olive.di.annotation.Inject
 import olive.di.annotation.ViewModelScope
+import olive.di.injectViewModel
 
 class Baz
 
@@ -20,9 +19,8 @@ class ViewModelScopeTestViewModel1 : DIViewModel() {
     lateinit var baz: Baz
 }
 
-class ViewModelScopeTestActivity1 : AppCompatActivity() {
-    private val application: TestApplication by lazy { applicationContext as TestApplication }
-    val viewModel: ViewModelScopeTestViewModel1 by viewModels { ViewModelFactory(application.diContainer) }
+class ViewModelScopeTestActivity1 : DIActivity() {
+    val viewModel: ViewModelScopeTestViewModel1 by injectViewModel()
 }
 
 class ViewModelScopeTestViewModel2 : DIViewModel() {
@@ -30,7 +28,6 @@ class ViewModelScopeTestViewModel2 : DIViewModel() {
     lateinit var baz: Baz
 }
 
-class ViewModelScopeTestActivity2 : AppCompatActivity() {
-    private val application: TestApplication by lazy { applicationContext as TestApplication }
-    val viewModel: ViewModelScopeTestViewModel2 by viewModels { ViewModelFactory(application.diContainer) }
+class ViewModelScopeTestActivity2 : DIActivity() {
+    val viewModel: ViewModelScopeTestViewModel2 by injectViewModel()
 }
