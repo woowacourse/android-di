@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import olive.di.DIActivity
 import olive.di.annotation.Inject
+import olive.di.injectViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 

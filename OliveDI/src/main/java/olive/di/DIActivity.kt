@@ -13,21 +13,21 @@ abstract class DIActivity : AppCompatActivity() {
         lifecycle.addObserver(DIActivityLifecycleTracker())
         DIContainer.injectFieldDependency(this)
     }
+}
 
-    inline fun <reified VM : ViewModel> injectViewModel(): Lazy<VM> {
-        val viewModelFactory = {
-            viewModelFactory {
-                initializer {
-                    DIContainer.instance(VM::class)
-                }
+inline fun <reified VM : ViewModel> DIActivity.injectViewModel(): Lazy<VM> {
+    val viewModelFactory = {
+        viewModelFactory {
+            initializer {
+                DIContainer.instance(VM::class)
             }
         }
-
-        return ViewModelLazy(
-            VM::class,
-            { viewModelStore },
-            viewModelFactory,
-            { this.defaultViewModelCreationExtras }
-        )
     }
+
+    return ViewModelLazy(
+        VM::class,
+        { viewModelStore },
+        viewModelFactory,
+        { this.defaultViewModelCreationExtras }
+    )
 }
