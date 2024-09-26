@@ -1,8 +1,9 @@
 package woowacourse.shopping.hilt.data
 
 import woowacourse.shopping.hilt.model.Product
+import javax.inject.Inject
 
-class ProductRepositoryImpl : ProductRepository {
+class ProductRepositoryImpl @Inject constructor() : ProductRepository {
     fun dummyProducts() =
         listOf(
             Product(

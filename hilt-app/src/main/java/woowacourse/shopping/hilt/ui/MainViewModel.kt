@@ -12,9 +12,10 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.hilt.data.CartRepository
 import woowacourse.shopping.hilt.data.ProductRepository
 import woowacourse.shopping.hilt.model.Product
+import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel(
+class MainViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {

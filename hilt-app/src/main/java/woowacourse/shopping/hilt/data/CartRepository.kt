@@ -2,8 +2,9 @@ package woowacourse.shopping.hilt.data
 
 import woowacourse.shopping.hilt.data.mapper.toEntity
 import woowacourse.shopping.hilt.model.Product
+import javax.inject.Inject
 
-class DefaultCartRepository(
+class DefaultCartRepository @Inject constructor(
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

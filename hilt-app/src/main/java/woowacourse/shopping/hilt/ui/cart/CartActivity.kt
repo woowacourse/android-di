@@ -12,12 +12,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import woowacourse.shopping.hilt.R
 import woowacourse.shopping.hilt.databinding.ActivityCartBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<CartViewModel>()
 
+    @Inject
     lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
