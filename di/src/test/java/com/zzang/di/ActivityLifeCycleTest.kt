@@ -71,7 +71,7 @@ class ActivityLifeCycleTest {
         assertThat(activity.fakeService).isSameInstanceAs(originalFakeService)
     }
 
-    //onPause
+    // onPause
     @Test
     fun `Activity가 onPause될 때 fakeService가 유지된다`() {
         // GIVEN
@@ -85,7 +85,7 @@ class ActivityLifeCycleTest {
         assertThat(activity.fakeService).isSameInstanceAs(originalFakeService)
     }
 
-    //onRestart
+    // onRestart
     @Test
     fun `Activity가 onRestart될 때 fakeService가 유지된다`() {
         // GIVEN
@@ -112,4 +112,3 @@ class ActivityLifeCycleTest {
         assertThat(activity.fakeService).isSameInstanceAs(originalFakeService)
     }
 }
-
