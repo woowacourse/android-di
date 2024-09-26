@@ -10,6 +10,8 @@ import com.woowa.di.fixture.component.ComponentTestViewModel2
 import com.woowa.di.fixture.component.FailComponentTestViewModel
 import com.woowa.di.fixture.component.TestActivity
 import com.woowa.di.fixture.component.TestActivityComponent
+import com.woowa.di.fixture.component.TestSingletonComponent
+import com.woowa.di.singleton.SingletonComponent
 import com.woowa.di.test.DIActivityTestRule
 import com.woowa.di.viewmodel.getDIViewModelFactory
 import org.junit.Before
@@ -92,6 +94,28 @@ class ComponentTest {
                 getDIViewModelFactory<ComponentTestViewModel2>(),
             )[ComponentTestViewModel2::class.java]
         }
+    }
+
+    @Test
+    fun `activity가 소멸되어도 SingletonComponent 객체는 유지된다`() {
+        // given
+        val diInstance = ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        assertThat(diInstance).isNotNull()
+        val beforeDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
+            TestSingletonComponent::class)
+        assertThat(beforeDISingletonInstance).isNotNull()
+
+        // when
+        activity.finish()
+        diRule.getController().destroy()
+
+        // then
+        assertThrows<IllegalStateException> {
+            ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        }
+        val afterDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
+            TestSingletonComponent::class)
+        assertThat(afterDISingletonInstance).isNotNull()
     }
 
     @Test
