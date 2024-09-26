@@ -9,13 +9,20 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 
 object DependencyInjector {
-    fun <T : Any> inject(targetClass: KClass<T>): T {
-        val instance = DIContainer.resolve(targetClass)
-        injectDependencies(instance)
+    fun <T : Any> inject(
+        targetClass: KClass<T>,
+        qualifier: QualifierType? = null,
+        owner: Any? = null,
+    ): T {
+        val instance = DIContainer.resolve(type = targetClass, qualifier = qualifier, owner = owner)
+        injectDependencies(instance, owner)
         return instance
     }
 
-    fun <T : Any> injectDependencies(target: T) {
+    fun <T : Any> injectDependencies(
+        target: T,
+        owner: Any?,
+    ) {
         val kClass = target::class
 
         kClass.declaredMemberProperties
@@ -23,17 +30,23 @@ object DependencyInjector {
             .filter { property -> property.javaField?.isAnnotationPresent(Inject::class.java) == true }
             .forEach { property ->
                 val injectAnnotation = property.javaField!!.getAnnotation(Inject::class.java)
-                val qualifier = injectAnnotation.qualifier
-                injectProperty(target, property, qualifier)
+                val qualifier = injectAnnotation?.qualifier
+                injectProperty(target, property, qualifier, owner)
             }
     }
 
     private fun injectProperty(
         target: Any,
         property: KMutableProperty<*>,
-        qualifier: QualifierType,
+        qualifier: QualifierType? = null,
+        owner: Any?,
     ) {
-        val instance = DIContainer.resolve(property.returnType.classifier as KClass<*>, qualifier)
+        val instance =
+            DIContainer.resolve(
+                type = property.returnType.classifier as KClass<*>,
+                qualifier = qualifier,
+                owner = owner,
+            )
         property.isAccessible = true
         property.setter.call(target, instance)
     }

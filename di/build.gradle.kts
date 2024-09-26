@@ -31,6 +31,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        dataBinding = true
+    }
 }
 
 dependencies {
@@ -42,6 +46,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("javax.inject:javax.inject:1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
@@ -52,4 +58,5 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.23")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.test:core:1.4.0")
 }

@@ -1,56 +1,157 @@
 package com.zzang.di
 
+import android.content.Context
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModel
 import com.zzang.di.annotation.QualifierType
+import com.zzang.di.annotation.lifecycle.ActivityComponent
+import com.zzang.di.annotation.lifecycle.ApplicationComponent
+import com.zzang.di.annotation.lifecycle.ViewModelComponent
 import com.zzang.di.module.DIModule
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    private val singletonInstances = mutableMapOf<String, Any>()
-    private val interfaceMappings = mutableMapOf<String, KClass<*>>()
+    private val moduleInstances = mutableMapOf<Dependency, Any>()
+    private val applicationScopedInstances = mutableMapOf<Dependency, Any>()
+    private val activityScopedInstances = mutableMapOf<ComponentActivity, MutableMap<Dependency, Any>>()
+    private val viewModelScopedInstances = mutableMapOf<ViewModel, MutableMap<Dependency, Any>>()
 
     fun loadModule(module: DIModule) {
         module.register(this)
     }
 
-    private fun buildKey(
+    private fun buildDependency(
         type: KClass<*>,
-        qualifier: QualifierType,
-    ): String {
-        return "${type.qualifiedName}_${qualifier.name}"
+        qualifier: QualifierType? = null,
+    ): Dependency {
+        return Dependency(type, qualifier)
     }
 
-    fun <T : Any> registerInstance(
+    fun <T : Any> registerModuleInstance(
+        type: KClass<T>,
+        instance: T,
+        qualifier: QualifierType? = null,
+    ) {
+        val key = buildDependency(type, qualifier)
+        if(!moduleInstances.containsKey(key)) {
+            moduleInstances[key] = instance
+        }
+    }
+
+    private fun <T : Any> registerComponentScopedInstance(
+        type: KClass<T>,
+        instance: T,
+        qualifier: QualifierType? = null,
+        owner: Any? = null,
+    ) {
+        when {
+            type.findAnnotation<ApplicationComponent>() != null -> {
+                registerSingletonInstance(type, instance, qualifier)
+            }
+
+            type.findAnnotation<ActivityComponent>() != null && owner is ComponentActivity -> {
+                registerActivityScopedInstance(owner, type, instance)
+            }
+
+            type.findAnnotation<ViewModelComponent>() != null && owner is ViewModel -> {
+                registerViewModelScopedInstance(owner, type, instance)
+            }
+
+            else -> {
+                registerSingletonInstance(type, instance, qualifier)
+            }
+        }
+    }
+
+    private fun <T : Any> registerSingletonInstance(
         interfaceClass: KClass<T>,
         instance: T,
-        qualifier: QualifierType = QualifierType.DATABASE,
+        qualifier: QualifierType? = null,
     ) {
-        val key = buildKey(interfaceClass, qualifier)
-        singletonInstances[key] = instance
+        val key = buildDependency(interfaceClass, qualifier)
+        applicationScopedInstances[key] = instance
+    }
+
+    private fun <T : Any> registerActivityScopedInstance(
+        activity: ComponentActivity,
+        type: KClass<T>,
+        instance: T,
+    ) {
+        val key = buildDependency(type)
+        activityScopedInstances.getOrPut(activity) { mutableMapOf() }[key] = instance
+    }
+
+    private fun <T : Any> registerViewModelScopedInstance(
+        viewModel: ViewModel,
+        type: KClass<T>,
+        instance: T,
+    ) {
+        val key = buildDependency(type)
+        viewModelScopedInstances.getOrPut(viewModel) { mutableMapOf() }[key] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> resolve(
         type: KClass<T>,
-        qualifier: QualifierType = QualifierType.DATABASE,
+        qualifier: QualifierType? = null,
+        owner: Any? = null,
     ): T {
-        val key = buildKey(type, qualifier)
-        singletonInstances[key]?.let { return it as T }
+        val key = buildDependency(type, qualifier)
 
-        val implementationType = interfaceMappings[key] ?: type
+        if (type == Context::class) {
+            return owner as T
+        }
 
-        val constructor =
-            implementationType.primaryConstructor
-                ?: throw IllegalArgumentException("${implementationType.simpleName} 클래스의 인스턴스를 생성할 수 없습니다. 생성자가 없습니다.")
+        moduleInstances[key]?.let { instance ->
+            registerComponentScopedInstance(type, instance as T, qualifier, owner)
+            return instance
+        }
 
-        val parameters =
-            constructor.parameters.map { parameter ->
-                val parameterType = parameter.type.classifier as KClass<*>
-                resolve(parameterType)
-            }
+        return createInstance(type, qualifier, owner).also {
+            registerComponentScopedInstance(type, it, qualifier, owner)
+        }
+    }
 
-        val instance = constructor.call(*parameters.toTypedArray()) as T
-        registerInstance(type, instance, qualifier)
-        return instance
+    private fun <T : Any> createInstance(
+        type: KClass<T>,
+        qualifier: QualifierType? = null,
+        owner: Any? = null,
+    ): T {
+        val constructor = type.primaryConstructor
+        if (constructor != null) {
+            val parameters =
+                constructor.parameters.map { parameter ->
+                    val parameterType = parameter.type.classifier as KClass<*>
+                    resolve(parameterType, qualifier = qualifier, owner = owner)
+                }
+            return constructor.call(*parameters.toTypedArray())
+        }
+
+        throw IllegalArgumentException("${type.simpleName} 클래스에 사용할 수 있는 생성자가 없습니다. 이미 등록된 인스턴스를 사용하십시오.")
+    }
+
+    fun clearActivityScopedInstances(activity: ComponentActivity) {
+        activityScopedInstances.remove(activity)
+    }
+
+    fun clearViewModelScopedInstances(viewModel: ViewModel) {
+        viewModelScopedInstances.remove(viewModel)
+    }
+
+    fun activityScopedInstanceSize(): Int {
+        return activityScopedInstances.size
+    }
+
+    fun viewModelScopedInstanceSize(): Int {
+        return viewModelScopedInstances.size
+    }
+
+    fun clearAll() {
+        moduleInstances.clear()
+        applicationScopedInstances.clear()
+        activityScopedInstances.clear()
+        viewModelScopedInstances.clear()
     }
 }

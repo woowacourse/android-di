@@ -14,22 +14,22 @@ class RepositoryModule : DIModule {
     override fun register(container: DIContainer) {
         val cartProductDao = container.resolve(CartProductDao::class, QualifierType.DATABASE)
 
-        container.registerInstance(
-            ProductRepository::class,
-            DefaultProductRepository(),
-            QualifierType.IN_MEMORY,
+        container.registerModuleInstance(
+            type = ProductRepository::class,
+            instance = DefaultProductRepository(),
+            qualifier = QualifierType.IN_MEMORY,
         )
 
-        container.registerInstance(
-            CartRepository::class,
-            DefaultCartRepository(cartProductDao),
-            QualifierType.DATABASE,
+        container.registerModuleInstance(
+            type = CartRepository::class,
+            instance = DefaultCartRepository(cartProductDao),
+            qualifier = QualifierType.DATABASE,
         )
 
-        container.registerInstance(
-            CartRepository::class,
-            InMemoryCartRepository(),
-            QualifierType.IN_MEMORY,
+        container.registerModuleInstance(
+            type = CartRepository::class,
+            instance = InMemoryCartRepository(),
+            qualifier = QualifierType.IN_MEMORY,
         )
     }
 }

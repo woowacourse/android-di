@@ -2,15 +2,15 @@ package woowacourse.shopping.ui.cart
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zzang.di.annotation.Inject
 import com.zzang.di.annotation.QualifierType
+import com.zzang.di.base.DIViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.CartProduct
 
-class CartViewModel : ViewModel() {
+class CartViewModel : DIViewModel() {
     @Inject(qualifier = QualifierType.DATABASE)
     lateinit var cartRepository: CartRepository
 
