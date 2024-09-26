@@ -41,7 +41,7 @@ class ActivityScopeTest {
         val activityController =
             Robolectric
                 .buildActivity(ActivityScopeTestActivity1::class.java)
-                .setup()
+                .create()
 
         // when
         activityController.destroy()

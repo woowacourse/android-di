@@ -41,7 +41,7 @@ class ViewModelScopeTest {
         val activityController =
             Robolectric
                 .buildActivity(ViewModelScopeTestActivity1::class.java)
-                .setup()
+                .create()
 
         // when
         activityController.destroy()
