@@ -3,7 +3,7 @@ package com.woowa.di.injection
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
-import com.woowa.di.activity.ActivityComponentManager
+import com.woowa.di.activity.ActivityRetainedComponentManager
 import com.woowa.di.fixture.TestApplication
 import com.woowa.di.fixture.component.ComponentTestViewModel
 import com.woowa.di.fixture.component.ComponentTestViewModel2
@@ -99,7 +99,7 @@ class ComponentTest {
     @Test
     fun `activity가 소멸되어도 SingletonComponent 객체는 유지된다`() {
         // given
-        val diInstance = ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         assertThat(diInstance).isNotNull()
         val beforeDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
             TestSingletonComponent::class)
@@ -111,7 +111,7 @@ class ComponentTest {
 
         // then
         assertThrows<IllegalStateException> {
-            ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         }
         val afterDISingletonInstance = SingletonComponent.getInstance().getDIInstance(
             TestSingletonComponent::class)
@@ -121,7 +121,7 @@ class ComponentTest {
     @Test
     fun `activity가 소멸되면, 주입된 객체는 제거되기 때문에, 객체를 호출하면 에러가 발생한다`() {
         // given
-        val diInstance = ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         assertThat(diInstance).isNotNull()
 
         // when
@@ -130,14 +130,14 @@ class ComponentTest {
 
         // then
         assertThrows<IllegalStateException> {
-            ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         }
     }
 
     @Test
     fun `acitivity의 configuration change가 발생해도, DI 객체는 유지된다`() {
         // given
-        val diInstance = ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+        val diInstance = ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         assertThat(diInstance).isNotNull()
 
         // when
@@ -145,7 +145,7 @@ class ComponentTest {
 
         // then
         assertDoesNotThrow {
-            ActivityComponentManager.getDIInstance(TestActivityComponent::class)
+            ActivityRetainedComponentManager.getDIInstance(TestActivityComponent::class)
         }
     }
 }

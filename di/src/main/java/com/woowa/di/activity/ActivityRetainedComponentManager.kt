@@ -8,7 +8,7 @@ import com.woowa.di.singleton.SingletonComponentManager
 import kotlin.reflect.KClass
 
 @ParentManager(SingletonComponentManager::class)
-object ActivityComponentManager : ComponentManager() {
+object ActivityRetainedComponentManager : ComponentManager() {
     override fun <T : Any> getComponentInstance(componentType: KClass<out T>): Component =
-        ActivityComponent.getInstance(componentType as KClass<out ComponentActivity>)
+        ActivityRetainedComponent.getInstance(componentType as KClass<out ComponentActivity>)
 }

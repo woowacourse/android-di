@@ -14,7 +14,7 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
     ) {
         if (activity::class.hasAnnotation<DIActivity>() && activity is ComponentActivity) {
             val component =
-                ActivityComponentManager.createComponent(activity::class) as ActivityComponent<*>
+                ActivityRetainedComponentManager.createComponent(activity::class) as ActivityRetainedComponent<*>
             activity.lifecycle.addObserver(component)
         }
     }
@@ -23,8 +23,8 @@ class ActivityLifecycleListener : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityDestroyed(activity: Activity) {
         if (activity is ComponentActivity && activity.isFinishing && activity::class.hasAnnotation<DIActivity>()) {
-            ActivityComponent.getInstance(activity::class as KClass<out ComponentActivity>).deleteAllDIInstance()
-            ActivityComponent.deleteInstance(activity::class)
+            ActivityRetainedComponent.getInstance(activity::class as KClass<out ComponentActivity>).deleteAllDIInstance()
+            ActivityRetainedComponent.deleteInstance(activity::class)
         }
     }
 

@@ -17,7 +17,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.jvmErasure
 
-class ActivityComponent<T : ComponentActivity> private constructor(private val targetClazz: KClass<T>) :
+class ActivityRetainedComponent<T : ComponentActivity> private constructor(private val targetClazz: KClass<T>) :
     Component, DefaultLifecycleObserver {
     private val diFunc: MutableMap<KFunction<*>, Any> = mutableMapOf()
     private val diInstances: MutableMap<String, Any?> = mutableMapOf()
@@ -27,7 +27,7 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val t
         super.onCreate(owner)
         context = (owner as? ComponentActivity)?.baseContext
             ?: error("ComponentActivity에서만 DI를 주입할 수 있습니다.")
-        injectFieldFromComponent<ActivityComponentManager>(owner)
+        injectFieldFromComponent<ActivityRetainedComponentManager>(owner)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -92,20 +92,20 @@ class ActivityComponent<T : ComponentActivity> private constructor(private val t
             }
 
         instance?.let {
-            injectFieldFromComponent<ActivityComponentManager>(it)
+            injectFieldFromComponent<ActivityRetainedComponentManager>(it)
         }
         return instance
     }
 
     companion object {
-        private val instances = mutableMapOf<KClass<*>, ActivityComponent<*>>()
+        private val instances = mutableMapOf<KClass<*>, ActivityRetainedComponent<*>>()
 
-        fun <binder : ComponentActivity> getInstance(binderClazz: KClass<binder>): ActivityComponent<binder> {
+        fun <binder : ComponentActivity> getInstance(binderClazz: KClass<binder>): ActivityRetainedComponent<binder> {
             return instances.getOrPut(binderClazz) {
-                val newInstance = ActivityComponent(binderClazz)
+                val newInstance = ActivityRetainedComponent(binderClazz)
                 instances[binderClazz] = newInstance
                 newInstance
-            } as ActivityComponent<binder>
+            } as ActivityRetainedComponent<binder>
         }
 
         fun deleteInstance(binderClazz: KClass<*>) {
