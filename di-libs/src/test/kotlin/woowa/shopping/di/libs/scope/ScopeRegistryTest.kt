@@ -11,16 +11,16 @@ import woowa.shopping.di.libs.qualify.named
 
 @OptIn(InternalApi::class)
 class ScopeRegistryTest {
-
     @Test
     fun `Scope 와 Scope의 생명주기를 따르는 InstanceFactory 를 등록한다`() {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val instanceFactory = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val instanceFactory =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when & then
         shouldNotThrow<IllegalArgumentException> {
             scopeRegistry.registerInstanceFactory(scopeQualifier, instanceFactory)
@@ -32,10 +32,11 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val instanceFactory = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val instanceFactory =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when & then
         scopeRegistry.registerInstanceFactory(scopeQualifier, instanceFactory)
         shouldThrow<IllegalArgumentException> {
@@ -48,13 +49,14 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val factories = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val factories =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when & then
         scopeRegistry.registerInstanceFactory(scopeQualifier, factories)
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             scopeRegistry.resolve(scopeQualifier, String::class)
         }
     }
@@ -64,10 +66,11 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val factories = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val factories =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when
         scopeRegistry.registerInstanceFactory(scopeQualifier, factories)
         scopeRegistry.unlockScope(scopeQualifier)
@@ -82,10 +85,11 @@ class ScopeRegistryTest {
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
         val scopeQualifer2 = named("scope2")
-        val factories = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val factories =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when
         scopeRegistry.registerInstanceFactory(scopeQualifier, factories)
         scopeRegistry.unlockScope(scopeQualifier)
@@ -99,10 +103,11 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val factories = ScopedInstanceFactory(
-            instanceClazz = String::class,
-            factory = { "string" }
-        )
+        val factories =
+            ScopedInstanceFactory(
+                instanceClazz = String::class,
+                factory = { "string" },
+            )
         // when
         scopeRegistry.registerInstanceFactory(scopeQualifier, factories)
         scopeRegistry.unlockScope(scopeQualifier)
@@ -116,18 +121,19 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val factories = listOf(
-            ScopedInstanceFactory(
-                qualifier = named("string1"),
-                instanceClazz = String::class,
-                factory = { "string1" }
-            ),
-            ScopedInstanceFactory(
-                qualifier = named("string2"),
-                instanceClazz = String::class,
-                factory = { "string2" }
-            ),
-        )
+        val factories =
+            listOf(
+                ScopedInstanceFactory(
+                    qualifier = named("string1"),
+                    instanceClazz = String::class,
+                    factory = { "string1" },
+                ),
+                ScopedInstanceFactory(
+                    qualifier = named("string2"),
+                    instanceClazz = String::class,
+                    factory = { "string2" },
+                ),
+            )
         // when
         scopeRegistry.registerInstanceFactories(scopeQualifier, factories)
         scopeRegistry.unlockScope(scopeQualifier)
@@ -143,24 +149,25 @@ class ScopeRegistryTest {
         // given
         val scopeRegistry = ScopeRegistry()
         val scopeQualifier = named("scope")
-        val factories = listOf(
-            ScopedInstanceFactory(
-                qualifier = named("string1"),
-                instanceClazz = String::class,
-                factory = { "string1" }
-            ),
-            ScopedInstanceFactory(
-                qualifier = named("string2"),
-                instanceClazz = String::class,
-                factory = { "string2" }
-            ),
-        )
+        val factories =
+            listOf(
+                ScopedInstanceFactory(
+                    qualifier = named("string1"),
+                    instanceClazz = String::class,
+                    factory = { "string1" },
+                ),
+                ScopedInstanceFactory(
+                    qualifier = named("string2"),
+                    instanceClazz = String::class,
+                    factory = { "string2" },
+                ),
+            )
         // when
         val scope = scopeRegistry.registerInstanceFactories(scopeQualifier, factories)
         scopeRegistry.unlockScope(scopeQualifier)
         scopeRegistry.clearScope(scopeQualifier)
         // then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             scopeRegistry.resolve(scopeQualifier, String::class, named("string1"))
         }
     }

@@ -81,7 +81,7 @@ class ScopedContainersTest {
         val scope = startScope(named("scope"))
         scope.cancel()
         // then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             scope.get<Service>()
         }
     }

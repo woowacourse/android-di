@@ -43,14 +43,14 @@ class ScopeRegistry {
 
     fun registerInstanceFactories(
         scopeQualifier: Qualifier,
-        factories: List<ScopedInstanceFactory<*>>
+        factories: List<ScopedInstanceFactory<*>>,
     ) {
         factories.forEach { registerInstanceFactory(scopeQualifier, it) }
     }
 
     fun <T : Any> registerInstanceFactory(
         scopeQualifier: Qualifier,
-        factory: ScopedInstanceFactory<T>
+        factory: ScopedInstanceFactory<T>,
     ) {
         lockedScope.add(scopeQualifier) // Lock
         val factories = scopedFactoriesMap[scopeQualifier]
@@ -76,7 +76,7 @@ class ScopeRegistry {
         require(factories != null) {
             "$scopeQualifier 에 해당하는 Scope 가 없습니다"
         }
-        require(isUnLocked(scopeQualifier)) {
+        check(isUnLocked(scopeQualifier)) {
             "$scopeQualifier 는 Lock 상태입니다"
         }
         val factory: ScopedInstanceFactory<*>? = factories[factoryKey]
