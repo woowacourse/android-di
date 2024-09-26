@@ -3,13 +3,12 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import olive.di.DIContainer
-import olive.di.DIModule
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.module.DaoDIModule
 import woowacourse.shopping.module.DateFormatterDIModule
 import woowacourse.shopping.module.RepositoryDIModule
 
-class ShoppingApplication : Application(), DIModule {
+class ShoppingApplication : Application() {
     val shoppingDatabase: ShoppingDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
