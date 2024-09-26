@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.alsonglibrary2.di.ActivityLifecycleObserver
 import com.example.alsonglibrary2.di.createAutoDIViewModel
-import woowacourse.shopping.MainViewModelLifecycleObserver
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        lifecycle.addObserver(MainViewModelLifecycleObserver)
+        lifecycle.addObserver(ActivityLifecycleObserver())
     }
 
     override fun onStart() {

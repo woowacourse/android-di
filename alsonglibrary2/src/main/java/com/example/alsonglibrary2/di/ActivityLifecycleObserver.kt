@@ -10,7 +10,7 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-class CartActivityLifecycleObserver : DefaultLifecycleObserver {
+class ActivityLifecycleObserver : DefaultLifecycleObserver {
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         injectDependencies(owner)
@@ -37,8 +37,7 @@ class CartActivityLifecycleObserver : DefaultLifecycleObserver {
 
     private fun deleteDependencies(owner: LifecycleOwner) {
         val properties =
-            owner::class.declaredMemberProperties
-                .filter { it.hasAnnotation<ActivityScope>() }
+            owner::class.declaredMemberProperties.filter { it.hasAnnotation<ActivityScope>() }
 
         properties.forEach { property ->
             AutoDIManager.removeDependency(property.returnType.jvmErasure)

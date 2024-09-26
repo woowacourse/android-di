@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.alsonglibrary2.di.anotations.ActivityScope
 import com.example.alsonglibrary2.di.anotations.FieldInject
 import com.example.alsonglibrary2.di.createAutoDIViewModel
-import com.example.alsonglibrary2.di.CartActivityLifecycleObserver
+import com.example.alsonglibrary2.di.ActivityLifecycleObserver
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
@@ -22,7 +22,7 @@ class CartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(CartActivityLifecycleObserver())
+        lifecycle.addObserver(ActivityLifecycleObserver())
     }
 
     override fun onStart() {

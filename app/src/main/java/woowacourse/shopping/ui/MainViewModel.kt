@@ -2,16 +2,17 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.alsonglibrary2.di.anotations.FieldInject
+import com.example.alsonglibrary2.di.anotations.ViewModelScope
 import kotlinx.coroutines.launch
+import com.example.alsonglibrary2.di.LifecycleViewModel
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.util.QualifiedCartRepository
 
-class MainViewModel : ViewModel() {
+class MainViewModel : LifecycleViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -19,6 +20,7 @@ class MainViewModel : ViewModel() {
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     @FieldInject
+    @ViewModelScope
     private lateinit var productRepository: ProductRepository
 
     @FieldInject

@@ -57,19 +57,4 @@ class MainActivityTest {
         // then
         assertThat(AutoDIManager.dependencies[ProductRepository::class]).isNotNull()
     }
-
-    @Test
-    fun `MainActivity가 destroy 되면 ProductRepository의 인스턴스가 사라진다`() {
-        // given
-        activity =
-            Robolectric
-                .buildActivity(MainActivity::class.java)
-                .create()
-                .destroy()
-                .get()
-
-        // then
-        val actual = AutoDIManager.dependencies[ProductRepository::class]
-        assertThat(actual).isNull()
-    }
 }
