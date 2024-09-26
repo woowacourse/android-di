@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.lifecycle
 
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
