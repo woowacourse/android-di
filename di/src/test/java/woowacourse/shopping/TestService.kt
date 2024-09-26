@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import shopping.di.Inject
 import shopping.di.Qualifier
+import shopping.di.QualifierType
 
 interface TestService {
     fun getMessage(): String
@@ -16,11 +17,10 @@ class AnotherTestServiceImpl : TestService {
 }
 
 class TestClass {
-
     @Inject
     lateinit var testService: TestService
 
     @Inject
-    @Qualifier("another")
+    @Qualifier(QualifierType.IN_MEMORY)
     lateinit var anotherTestService: TestService
 }
