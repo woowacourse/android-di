@@ -2,17 +2,16 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zzang.di.DIContainer
 import com.zzang.di.annotation.Inject
 import com.zzang.di.annotation.QualifierType
+import com.zzang.di.base.DIViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel : ViewModel() {
+class MainViewModel : DIViewModel() {
     @Inject(qualifier = QualifierType.IN_MEMORY)
     lateinit var productRepository: ProductRepository
 
@@ -34,10 +33,5 @@ class MainViewModel : ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        DIContainer.clearViewModelScopedInstances(this)
     }
 }

@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.zzang.di.DIContainer
+import com.zzang.di.base.DIActivity
 import com.zzang.di.provideViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DIActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by provideViewModel()
@@ -68,10 +67,5 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToCart() {
         startActivity(Intent(this, CartActivity::class.java))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        DIContainer.clearActivityScopedInstances(this)
     }
 }

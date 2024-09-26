@@ -63,7 +63,7 @@ object DIContainer {
         }
     }
 
-    fun <T : Any> registerSingletonInstance(
+    private fun <T : Any> registerSingletonInstance(
         interfaceClass: KClass<T>,
         instance: T,
         qualifier: QualifierType? = null,
