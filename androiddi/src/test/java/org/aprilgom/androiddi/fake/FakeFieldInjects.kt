@@ -7,4 +7,4 @@ class FakeFieldInjectClass {
     lateinit var fakeField: FakeField
 }
 
-class FakeField(val intValue: Int)
+data class FakeField(val intValue: Int)

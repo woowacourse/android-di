@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmName
 
 class DIContainer(
-    private val providers: Map<NamedKClass, Provider<*>>,
+    val providers: MutableMap<NamedKClass, Provider<*>>,
 ) {
     fun provide(clazz: KClass<*>): Any {
         val namedKClass = NamedKClass(clazz)

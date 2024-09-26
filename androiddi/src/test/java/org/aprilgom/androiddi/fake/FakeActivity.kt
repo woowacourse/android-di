@@ -1,8 +1,8 @@
 package org.aprilgom.androiddi.fake
 
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import org.aprilgom.androiddi.viewModel
 
-class FakeActivity : AppCompatActivity() {
-    val viewModel by viewModel<FakeViewModel>()
+class FakeActivity : ComponentActivity() {
+    val fakeViewModel by viewModel<FakeViewModel>()
 }

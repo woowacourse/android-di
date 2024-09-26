@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import kotlin.reflect.KClass
 
 object GlobalContext {
-    private var diContainer: DIContainer? = null
+    var diContainer: DIContainer? = null
+    val scopeMap = mutableMapOf<String, Scope>()
 
     fun register(diContainer: DIContainer) {
         this.diContainer = diContainer
@@ -26,7 +27,16 @@ object GlobalContext {
         diContainer?.provideViewModelFactory(clazz)
             ?: throw IllegalStateException("DIContainer is not initialized")
 
-    fun clear()  {
+    fun clear() {
         diContainer = null
+    }
+
+    fun deleteScopeInstance(scopeId: String) {
+        diContainer?.providers?.filter {
+            it.value is ScopedProvider && (it.value as ScopedProvider<*>).scopeId == scopeId
+        }?.forEach {
+            val scopedProvider = it.value as ScopedProvider<*>
+            scopedProvider.drop()
+        }
     }
 }
