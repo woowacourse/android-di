@@ -6,7 +6,6 @@ package com.woowacourse.di.annotation
     AnnotationTarget.PROPERTY,
     AnnotationTarget.FUNCTION,
 )
-@Retention(AnnotationRetention.RUNTIME)
 annotation class Inject
 
 @Target(
@@ -15,5 +14,4 @@ annotation class Inject
     AnnotationTarget.PROPERTY,
     AnnotationTarget.FUNCTION,
 )
-@Retention(AnnotationRetention.RUNTIME)
 annotation class Qualifier(val value: String)
