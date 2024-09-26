@@ -12,7 +12,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.lang.IllegalArgumentException
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class)
@@ -35,7 +34,7 @@ class ActivityScopeTest {
         assertThat(actual).isInstanceOf(Bar::class.java)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `액티비티가 소멸되면 인스턴스가 소멸된다`() {
         // given
         val activityController =
@@ -47,7 +46,7 @@ class ActivityScopeTest {
         activityController.destroy()
 
         // then
-        assertThat(instances[Bar::class])
+        assertThat(instances[Bar::class]).isNull()
     }
 
     @Test

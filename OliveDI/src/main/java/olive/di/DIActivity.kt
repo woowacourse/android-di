@@ -10,8 +10,26 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 abstract class DIActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(DIActivityLifecycleTracker())
+        addActivityScopeInstance()
         DIContainer.injectFieldDependency(this)
+    }
+
+    private fun addActivityScopeInstance() {
+        activityInstances.forEach { (type, instanceProvider) ->
+            val instance = instanceProvider.get()
+            instances[type] = instance
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeActivityScopeInstance()
+    }
+
+    private fun removeActivityScopeInstance() {
+        activityInstances.forEach { (type, _) ->
+            instances.remove(type)
+        }
     }
 }
 
