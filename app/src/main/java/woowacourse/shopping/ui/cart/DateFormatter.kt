@@ -2,7 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import android.content.Context
 import woowacourse.shopping.R
-import woowacourse.shopping.di.ApplicationContext
+import woowacourse.shopping.di.annotation.ApplicationContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

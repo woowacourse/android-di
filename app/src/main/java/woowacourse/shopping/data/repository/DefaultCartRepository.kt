@@ -3,7 +3,7 @@ package woowacourse.shopping.data.repository
 import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.FieldInject
+import woowacourse.shopping.di.annotation.FieldInject
 import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository

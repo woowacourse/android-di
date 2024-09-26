@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.ActivityLifecycleAware
+import woowacourse.shopping.di.annotation.ActivityLifecycleAware
 import woowacourse.shopping.di.DependencyInjectedActivity
 import woowacourse.shopping.ui.ShoppingApplication
 import woowacourse.shopping.ui.util.ReflectiveViewModelFactory

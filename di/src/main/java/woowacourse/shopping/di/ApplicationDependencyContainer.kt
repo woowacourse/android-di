@@ -2,6 +2,10 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import woowacourse.shopping.di.annotation.ActivityLifecycleAware
+import woowacourse.shopping.di.annotation.ApplicationLifecycleAware
+import woowacourse.shopping.di.annotation.FragmentLifecycleAware
+import woowacourse.shopping.di.annotation.ViewModelLifecycleAware
 
 class ApplicationDependencyContainer(
     private val dependencyStorage: HashMap<ClassQualifier, DependencyProvider> = hashMapOf(),

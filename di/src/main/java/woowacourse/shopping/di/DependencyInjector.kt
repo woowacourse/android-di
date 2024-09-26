@@ -1,5 +1,7 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.ParamInject
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

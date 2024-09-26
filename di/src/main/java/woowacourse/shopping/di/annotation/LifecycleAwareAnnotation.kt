@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.annotation
 
 // 우선 내 코드에서 lifecycle에 aware한 의존성을 주입시키려면,
 // lifecycleOwner의 생성자 파라미터가 아니라 내부 프로퍼티이어야 한다.

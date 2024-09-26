@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.InMemory
 import woowacourse.shopping.data.RoomDB
-import woowacourse.shopping.di.ApplicationLifecycleAware
-import woowacourse.shopping.di.FieldInject
-import woowacourse.shopping.di.ViewModelLifecycleAware
+import woowacourse.shopping.di.annotation.ApplicationLifecycleAware
+import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.ViewModelLifecycleAware
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
