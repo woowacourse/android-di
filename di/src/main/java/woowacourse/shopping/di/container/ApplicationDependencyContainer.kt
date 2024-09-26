@@ -2,10 +2,9 @@ package woowacourse.shopping.di.container
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import woowacourse.shopping.di.ClassQualifier
-import woowacourse.shopping.di.ComponentDependencyProvider
+import woowacourse.shopping.di.provider.ComponentDependencyProvider
 import woowacourse.shopping.di.lifecycle.ComponentLifecycleObserver
-import woowacourse.shopping.di.DependencyProvider
+import woowacourse.shopping.di.provider.DependencyProvider
 import woowacourse.shopping.di.lifecycle.ViewModelLifecycleObserver
 import woowacourse.shopping.di.annotation.ActivityLifecycleAware
 import woowacourse.shopping.di.annotation.ApplicationLifecycleAware

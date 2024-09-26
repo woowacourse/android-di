@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.provider
 
 import woowacourse.shopping.di.container.DependencyInstance
 import woowacourse.shopping.di.container.ImplementationClass
