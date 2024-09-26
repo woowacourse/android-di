@@ -7,6 +7,7 @@ import com.woowacourse.di.DiViewModel
 import com.woowacourse.di.Module
 import com.woowacourse.di.annotation.Inject
 import com.woowacourse.di.annotation.Qualifier
+import com.woowacourse.di.annotation.QualifierType
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -20,7 +21,7 @@ class MainViewModel : DiViewModel() {
     private lateinit var productRepository: ProductRepository
 
     @Inject
-    @Qualifier("InMemory")
+    @Qualifier(QualifierType.IN_MEMORY)
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

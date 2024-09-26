@@ -3,12 +3,13 @@ package com.woowacourse.di
 import com.google.common.truth.Truth.assertThat
 import com.woowacourse.di.annotation.Inject
 import com.woowacourse.di.annotation.Qualifier
+import com.woowacourse.di.annotation.QualifierType
 import org.junit.After
 import org.junit.Test
 
 class FakeCartRepository {
     @Inject
-    @Qualifier("field")
+    @Qualifier(QualifierType.IN_MEMORY)
     val fakeFieldRepository: FakeFieldRepository? = null
 }
 
@@ -46,11 +47,11 @@ class DependencyContainerTest {
     fun `Container에 qualifier와 일치하는 instance가 있으면 instance를 반환해야 한다`() {
         // given
         val cartRepository = FakeCartRepository()
-        DependencyContainer.addInstance(FakeCartRepository::class, cartRepository, "field")
+        DependencyContainer.addInstance(FakeCartRepository::class, cartRepository, QualifierType.IN_MEMORY)
 
         // when
         val actual =
-            DependencyContainer.instance<FakeCartRepository>(FakeCartRepository::class, "field")
+            DependencyContainer.instance<FakeCartRepository>(FakeCartRepository::class, QualifierType.IN_MEMORY)
 
         // then
         assertThat(actual).isEqualTo(cartRepository)

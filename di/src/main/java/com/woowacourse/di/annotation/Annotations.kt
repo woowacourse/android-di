@@ -14,4 +14,4 @@ annotation class Inject
     AnnotationTarget.PROPERTY,
     AnnotationTarget.FUNCTION,
 )
-annotation class Qualifier(val value: String)
+annotation class Qualifier(val value: QualifierType)

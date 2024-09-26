@@ -1,6 +1,7 @@
 import com.google.common.truth.Truth.assertThat
 import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.annotation.Qualifier
+import com.woowacourse.di.annotation.QualifierType
 import org.junit.After
 import org.junit.Test
 
@@ -19,14 +20,14 @@ class ConstructorTestViewModel2(
 )
 
 class ConstructorTestViewModel3(
-    @Qualifier("foo")
+    @Qualifier(QualifierType.DATABASE)
     val fooDependency: FakeRepository,
 )
 
 class ConstructorTestViewModel4(
-    @Qualifier("foo")
+    @Qualifier(QualifierType.DATABASE)
     val fooDependency: FakeRepository,
-    @Qualifier("bar")
+    @Qualifier(QualifierType.IN_MEMORY)
     val barDependency: FakeRepository,
 )
 
@@ -65,13 +66,13 @@ class QualifierInjectorTest {
         // given
         val repository1 = DefaultRepository1()
         val repository2 = DefaultRepository2()
-        DependencyContainer.addInstance(FakeRepository::class, repository1, "foo")
-        DependencyContainer.addInstance(FakeRepository::class, repository2, "bar")
+        DependencyContainer.addInstance(FakeRepository::class, repository1, QualifierType.DATABASE)
+        DependencyContainer.addInstance(FakeRepository::class, repository2, QualifierType.IN_MEMORY)
 
         // when
         val viewModel =
             ConstructorTestViewModel3(
-                DependencyContainer.instance(FakeRepository::class, "foo"),
+                DependencyContainer.instance(FakeRepository::class, QualifierType.DATABASE),
             )
 
         // then
@@ -83,14 +84,14 @@ class QualifierInjectorTest {
         // given
         val repository1 = DefaultRepository1()
         val repository2 = DefaultRepository2()
-        DependencyContainer.addInstance(FakeRepository::class, repository1, "foo")
-        DependencyContainer.addInstance(FakeRepository::class, repository2, "bar")
+        DependencyContainer.addInstance(FakeRepository::class, repository1, QualifierType.DATABASE)
+        DependencyContainer.addInstance(FakeRepository::class, repository2, QualifierType.IN_MEMORY)
 
         // when
         val viewModel =
             ConstructorTestViewModel4(
-                DependencyContainer.instance(FakeRepository::class, "foo"),
-                DependencyContainer.instance(FakeRepository::class, "bar"),
+                DependencyContainer.instance(FakeRepository::class, QualifierType.DATABASE),
+                DependencyContainer.instance(FakeRepository::class, QualifierType.IN_MEMORY),
             )
 
         // then
