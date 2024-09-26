@@ -12,9 +12,7 @@ import com.example.seogi.di.util.findDependencyFunctions
 import java.lang.reflect.Field
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.jvmErasure
 
 open class DiActivity : AppCompatActivity() {
     private val injectProperties =
@@ -24,16 +22,9 @@ open class DiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        injectActivityField()
-        injectViewModelInstance(findViewModelField())
-    }
+        diContainer.inject(this@DiActivity)
 
-    private fun injectActivityField() {
-        injectProperties.forEach {
-            val instance = diContainer.instance(it.returnType.jvmErasure)
-            it.isAccessible = true
-            it.setter.call(this@DiActivity, instance)
-        }
+        injectViewModelInstance(findViewModelField())
     }
 
     private fun findViewModelField() =

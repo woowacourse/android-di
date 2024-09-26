@@ -104,7 +104,7 @@ class DiContainer(
         inject(instance)
     }
 
-    private fun inject(instance: Any) {
+    fun inject(instance: Any) {
         val fields = instance::class.fieldsToInject().map { it as KMutableProperty1 }
         fields.forEach { field ->
             val qualifierAnnotation = field.getAnnotationIncludeQualifier()
