@@ -10,7 +10,6 @@ data class ComponentKey private constructor(
 ) {
     companion object {
         private val cache = mutableMapOf<Pair<KClass<*>, Qualifier?>, ComponentKey>()
-
         fun of(
             clazz: KClass<*>,
             qualifier: Qualifier? = null,

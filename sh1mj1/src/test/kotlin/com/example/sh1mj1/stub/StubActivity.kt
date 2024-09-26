@@ -2,9 +2,6 @@ package com.example.sh1mj1.stub
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.example.sh1mj1.annotation.Inject
 import com.example.sh1mj1.annotation.Qualifier

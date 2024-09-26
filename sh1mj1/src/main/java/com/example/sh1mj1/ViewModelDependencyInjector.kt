@@ -1,9 +1,13 @@
 package com.example.sh1mj1
 
+import androidx.lifecycle.ViewModel
 import com.example.sh1mj1.annotation.Inject
 import com.example.sh1mj1.annotation.Qualifier
-import com.example.sh1mj1.annotation.ViewModelScope
 import com.example.sh1mj1.component.singleton.ComponentKey
+import com.example.sh1mj1.component.viewmodelscope.ViewModelScopedInstanceWithKeys
+import com.example.sh1mj1.component.viewmodelscope.annotatedWithInject
+import com.example.sh1mj1.component.viewmodelscope.viewModelScopeParameterKeys
+import com.example.sh1mj1.component.viewmodelscope.viewModelScopePropertyKeys
 import com.example.sh1mj1.container.AppContainer
 import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
 import com.example.sh1mj1.extension.withQualifier
@@ -17,40 +21,41 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class DependencyInjector(
+class ViewModelDependencyInjector(
     private val appContainer: AppContainer,
 ) {
     // TODO: nunu createInstance가 많은 역할을 하고 있는 것 같아요! 메서드를 분리해봐도 좋을 것 같습니다.
-    fun <T : Any> createInstance(modelClass: Class<T>): Pair<T, List<Pair<KClass<*>, Qualifier?>>> {
+    fun <VM : ViewModel> createInstance(modelClass: Class<VM>): ViewModelScopedInstanceWithKeys<VM> {
         val kClass = modelClass.kotlin
 
         val constructor =
             kClass.primaryConstructor
                 ?: throw IllegalArgumentException("ViewModel must have a primary constructor: ${kClass.simpleName}")
 
-        val injectedArgs =
-            constructor.parameters.filter { kParameter ->
-                kParameter.hasAnnotation<Inject>()
-            }
+        val injectedArgs = constructor.annotatedWithInject()
+
 
         val instance = calledConstructor(injectedArgs, constructor)
-        val injectedFields = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
+        val injectedFields: List<KProperty1<VM, *>> = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
         setField(injectedFields, instance)
 
-        val viewModelScopeConstructorParam =
-            injectedArgs.filter { it.hasAnnotation<ViewModelScope>() }.map { it.type.classifier as KClass<*> to it.withQualifier() }
-        val viewModelScopeFields =
-            injectedFields.filter { it.hasAnnotation<ViewModelScope>() }.map { it.returnType.classifier as KClass<*> to it.withQualifier() }
 
-        val viewModelScopeComponents = viewModelScopeConstructorParam + viewModelScopeFields
+        val componentConstructorParam = injectedArgs.viewModelScopeParameterKeys()
+        val componentFields: List<ComponentKey> = injectedFields.viewModelScopePropertyKeys()
 
-        return instance to viewModelScopeComponents
+
+        val viewModelScopeComponents = componentConstructorParam + componentFields
+
+        return ViewModelScopedInstanceWithKeys(
+            instance = instance,
+            instanceScopeComponentsKeys = viewModelScopeComponents,
+        )
     }
 
-    private fun <T : Any> calledConstructor(
+    private fun <VM : Any> calledConstructor(
         injectedArgs: List<KParameter>,
-        constructor: KFunction<T>,
-    ): T {
+        constructor: KFunction<VM>,
+    ): VM {
         val constructorArgs =
             injectedArgs.map { kParameter ->
                 val componentKey =
@@ -67,9 +72,9 @@ class DependencyInjector(
 
     private fun foundDependency(componentKey: ComponentKey): Any = appContainer.find(componentKey)
 
-    private fun <T : Any> setField(
-        injectedFields: List<KProperty1<T, *>>,
-        viewModel: T,
+    private fun <VM : ViewModel> setField(
+        injectedFields: List<KProperty1<VM, *>>,
+        viewModel: VM,
     ) {
         injectedFields.forEach { field ->
             field.isAccessible = true

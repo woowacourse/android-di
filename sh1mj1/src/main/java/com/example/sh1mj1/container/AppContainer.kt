@@ -19,16 +19,4 @@ interface AppContainer {
     ): Any
 
     fun find(componentKey: ComponentKey): Any
-
-    fun <T : Any> findVMS(
-        clazz: KClass<T>,
-        qualifier: Qualifier?,
-    ): Any?
-
-    fun removeVMS(
-        clazz: KClass<*>,
-        qualifier: Qualifier?,
-    )
-
-    fun clearActivityScopedObjects()
 }
