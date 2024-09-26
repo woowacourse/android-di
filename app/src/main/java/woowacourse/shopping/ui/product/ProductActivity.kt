@@ -4,16 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.example.di.DIActivity
+import com.example.di.DIModule
 import com.example.di.viewmodel.provideViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityProductBinding
+import woowacourse.shopping.module.ProductModule
 import woowacourse.shopping.ui.cart.CartActivity
 
-class ProductActivity : AppCompatActivity() {
+class ProductActivity : DIActivity() {
     private val binding by lazy { ActivityProductBinding.inflate(layoutInflater) }
 
-    private val viewModel: ProductViewModel by provideViewModel()
+    private val viewModel: ProductViewModel by provideViewModel(ProductModule::class)
+
+    override val module: DIModule = ProductModule()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
