@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import olive.di.DIViewModel
 import olive.di.annotation.Inject
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.module.RoomCart
 
-class CartViewModel : ViewModel() {
+class CartViewModel : DIViewModel() {
     @Inject
     @RoomCart
     private lateinit var cartRepository: CartRepository

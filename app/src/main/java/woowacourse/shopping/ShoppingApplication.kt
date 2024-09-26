@@ -6,9 +6,11 @@ import olive.di.DIContainer
 import olive.di.DIModule
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.module.DaoDIModule
+import woowacourse.shopping.module.DateFormatterDIModule
 import woowacourse.shopping.module.RepositoryDIModule
+import kotlin.reflect.KClass
 
-class ShoppingApplication : Application(), DIModule {
+class ShoppingApplication : Application() {
     val shoppingDatabase: ShoppingDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -16,12 +18,13 @@ class ShoppingApplication : Application(), DIModule {
             "shopping-database",
         ).build()
     }
-    private val diModules = listOf(DaoDIModule::class, RepositoryDIModule::class)
-    val diContainer: DIContainer by lazy {
-        DIContainer(
-            this,
-            ShoppingApplication::class,
-            diModules,
-        )
+    private val diModules: List<KClass<out DIModule>> by lazy {
+        listOf(DaoDIModule::class, RepositoryDIModule::class, DateFormatterDIModule::class)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        DIContainer.injectApplication(this, ShoppingApplication::class)
+        DIContainer.injectModules(diModules)
     }
 }

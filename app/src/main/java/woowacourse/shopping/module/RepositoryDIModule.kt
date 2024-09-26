@@ -2,6 +2,7 @@ package woowacourse.shopping.module
 
 import olive.di.DIModule
 import olive.di.annotation.Qualifier
+import olive.di.annotation.ViewModelScope
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.RoomCartRepository
@@ -21,5 +22,6 @@ abstract class RepositoryDIModule : DIModule {
     @RoomCart
     abstract fun bindRoomCartRepository(roomCartRepository: RoomCartRepository): CartRepository
 
+    @ViewModelScope
     abstract fun bindProductRepository(defaultProductRepository: DefaultProductRepository): ProductRepository
 }
