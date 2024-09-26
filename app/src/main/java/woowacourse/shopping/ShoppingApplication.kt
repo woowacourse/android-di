@@ -3,6 +3,8 @@ package woowacourse.shopping
 import android.app.Application
 import android.content.Context
 import shopping.di.DIContainer
+import shopping.di.QualifierType
+import shopping.di.Scope
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DatabaseProvider
@@ -17,11 +19,23 @@ class ShoppingApplication : Application() {
 
     private fun setupDI(context: Context) {
         val database = DatabaseProvider.getDatabase(context)
-        DIContainer.register(CartProductDao::class.java, database.cartProductDao(), "RoomDB")
-        DIContainer.register(CartProductDao::class.java, InMemoryCartProductDao(), "InMemory")
+        DIContainer.register(
+            clazz = CartProductDao::class.java,
+            instance = database.cartProductDao(),
+            qualifier = QualifierType.ROOM_DB,
+            scope = Scope.APP
+        )
+        DIContainer.register(
+            clazz = CartProductDao::class.java,
+            instance = InMemoryCartProductDao(),
+            qualifier = QualifierType.IN_MEMORY,
+            scope = Scope.APP
+        )
 
-        DIContainer.register(ProductRepository::class.java, ProductRepository())
-        DIContainer.register(CartRepository::class.java, CartRepository(database.cartProductDao()))
+        DIContainer.register(
+            clazz = CartRepository::class.java,
+            instance = CartRepository(database.cartProductDao()),
+            scope = Scope.APP
+        )
     }
-
 }

@@ -1,50 +1,27 @@
 package woowacourse.shopping
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Test
 import shopping.di.DIContainer
-import shopping.di.Inject
-import shopping.di.Qualifier
-
-interface TestService {
-    fun getMessage(): String
-}
-
-class TestServiceImpl : TestService {
-    override fun getMessage(): String = "Test Service Implementation"
-}
-
-class AnotherTestServiceImpl : TestService {
-    override fun getMessage(): String = "Another Test Service Implementation"
-}
-
-class TestClass {
-
-    @Inject
-    lateinit var testService: TestService
-
-    @Inject
-    @Qualifier("another")
-    lateinit var anotherTestService: TestService
-}
+import shopping.di.QualifierType
+import shopping.di.Scope
 
 class DITest {
-
     @Test
     fun `DI 컨테이너가 의존성을 제대로 주입하는지 테스트`() {
-        DIContainer.register(TestService::class.java, TestServiceImpl())
-        DIContainer.register(TestService::class.java, AnotherTestServiceImpl(), "another")
+        // 의존성 등록 시 qualifier와 scope를 명시적으로 지정
+        DIContainer.register(TestService::class.java, TestServiceImpl(), scope = Scope.APP)
+        DIContainer.register(TestService::class.java, AnotherTestServiceImpl(), qualifier = QualifierType.IN_MEMORY, scope = Scope.APP)
 
+        // 의존성을 주입받을 객체 생성
         val testClass = DIContainer.resolve(TestClass::class.java)
 
+        // 주입된 의존성 확인
         assertNotNull(testClass.testService)
         assertEquals("Test Service Implementation", testClass.testService.getMessage())
 
         assertNotNull(testClass.anotherTestService)
-        assertEquals(
-            "Another Test Service Implementation",
-            testClass.anotherTestService.getMessage()
-        )
+        assertEquals("Another Test Service Implementation", testClass.anotherTestService.getMessage())
     }
 }

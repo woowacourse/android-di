@@ -62,6 +62,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("com.google.truth:truth:1.1.3")
@@ -79,11 +80,19 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.13")
-
-    //Mockk
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("androidx.test.ext:junit:1.1.3")
+    // Mockk
     testImplementation("org.mockito:mockito-core:3.9.0")
     androidTestImplementation("org.mockito:mockito-android:3.9.0")
+    // JUnit 5 의존성
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 
+    // JUnit Vintage Engine (JUnit 4 테스트 실행을 위해 필요)
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.9.0")
+
+    // Robolectric 의존성
+    testImplementation("org.robolectric:robolectric:4.8")
     // DILibrary
     implementation(project(":di"))
 }
