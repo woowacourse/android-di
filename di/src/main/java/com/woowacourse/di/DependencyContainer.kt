@@ -14,53 +14,19 @@ typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
 class DependencyContainer {
     private val instances = mutableMapOf<ClassWithQualifier, Instance>()
-    private val singletonInstances = mutableMapOf<ClassWithQualifier, Instance>()
-    private val viewModelScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
-    private val activityScopeInstances = mutableMapOf<ClassWithQualifier, Instance>()
 
-    // TODO: 매개변수 줄이기
     fun <T : Any> addInstance(
         clazz: KClass<T>,
         instance: T,
         qualifier: KClass<*>? = null,
-        scope: Any? = null,
     ) {
-        when (scope) {
-            Singleton::class -> {
-                singletonInstances[clazz to qualifier] = instance
-            }
-            ViewModelScope::class -> {
-                viewModelScopeInstances[clazz to qualifier] = instance
-            }
-            ActivityScope::class -> {
-                activityScopeInstances[clazz to qualifier] = instance
-            }
-            else -> {
-                instances[clazz to qualifier] = instance
-            }
-        }
+        instances[clazz to qualifier] = instance
     }
 
-    fun <T : Any> findInstance(
+    private fun <T : Any> findInstance(
         clazz: KClass<T>,
         qualifier: KClass<*>? = null,
-        scope: KClass<*>? = null,
-    ): T {
-        return when (scope) {
-            Singleton::class -> {
-                singletonInstances[clazz to qualifier] as? T ?: createInstance(clazz)
-            }
-            ViewModelScope::class -> {
-                viewModelScopeInstances[clazz to qualifier] as? T ?: createInstance(clazz)
-            }
-            ActivityScope::class -> {
-                activityScopeInstances[clazz to qualifier] as? T ?: createInstance(clazz)
-            }
-            else -> {
-                instances[clazz to qualifier] as? T ?: createInstance(clazz)
-            }
-        }
-    }
+    ): T = instances[clazz to qualifier] as? T ?: createInstance(clazz)
 
     fun <T : Any> createInstance(clazz: KClass<T>): T {
         val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException(CONSTRUCTOR_NOT_FOUND)
@@ -90,26 +56,24 @@ class DependencyContainer {
             val qualifier: Annotation? = kProperty.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
             val qualifierClass: KClass<out Annotation>? = qualifier?.annotationClass
 
-            val scope: KClass<*>? =
-                when {
-                    kProperty.hasAnnotation<Singleton>() -> Singleton::class
-                    kProperty.hasAnnotation<ViewModelScope>() -> ViewModelScope::class
-                    kProperty.hasAnnotation<ActivityScope>() -> ActivityScope::class
-                    else -> null
-                }
-
-            val dependency = findInstance(classifier, qualifierClass, scope)
+            val dependency = findInstance(classifier, qualifierClass)
             kProperty as KMutableProperty1
             kProperty.setter.call(instance, dependency)
         }
     }
 
     fun clearViewModelInstances() {
-        viewModelScopeInstances.clear()
+        val viewmodelInstances = instances.filter { it.key.first.hasAnnotation<ViewModelScope>() }
+        viewmodelInstances.forEach {
+            instances.remove(it.key)
+        }
     }
 
     fun clearActivityInstances() {
-        activityScopeInstances.clear()
+        val activityInstances = instances.filter { it.key.first.hasAnnotation<ActivityScope>() }
+        activityInstances.forEach {
+            instances.remove(it.key)
+        }
     }
 
     companion object {

@@ -4,12 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
-import com.woowacourse.di.Singleton
-import com.woowacourse.di.ViewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.CartRepository
@@ -19,12 +16,10 @@ import woowacourse.shopping.model.ProductRepository
 class MainViewModel : ViewModel() {
     @Inject
     @InMemory
-    @ViewModelScope
     lateinit var productRepository: ProductRepository
 
     @Inject
     @RoomDB
-    @Singleton
     lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

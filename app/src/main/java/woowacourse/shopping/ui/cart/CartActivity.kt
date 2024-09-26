@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.woowacourse.di.ActivityScope
-import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.Inject
 import woowacourse.shopping.GlobalViewModelFactory
 import woowacourse.shopping.LifecycleTracker
 import woowacourse.shopping.R
-import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
@@ -20,7 +17,6 @@ class CartActivity : AppCompatActivity() {
     private lateinit var adapter: CartProductAdapter
 
     @Inject
-    @ActivityScope
     lateinit var dateFormatter: DateFormatter
 
     private lateinit var lifecycleTracker: LifecycleTracker
@@ -47,7 +43,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = ShoppingApplication.dependencyContainer.findInstance(DateFormatter::class, scope = ActivityScope::class)
+        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
