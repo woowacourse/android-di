@@ -16,7 +16,7 @@ class DependencyContainer {
     fun <T : Any> addInstance(
         kClass: KClass<T>,
         instance: T,
-        qualifier: KClass<*>? = null,
+        qualifier: KClass<out Annotation>? = null,
     ) {
         val classWithQualifier = ClassQualifier(kClass, qualifier)
         instances[classWithQualifier] = instance
@@ -24,7 +24,7 @@ class DependencyContainer {
 
     private fun <T : Any> findInstance(
         kClass: KClass<T>,
-        qualifier: KClass<*>? = null,
+        qualifier: KClass<out Annotation>? = null,
     ): T {
         val classWithQualifier = ClassQualifier(kClass, qualifier)
         return instances[classWithQualifier] as? T ?: createInstance(kClass)
