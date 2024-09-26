@@ -37,7 +37,7 @@ class Container(
         return instance
     }
 
-    fun resolveDependency(property: KProperty1<*, *>): Any {
+    internal fun resolveDependency(property: KProperty1<*, *>): Any {
         instances[property.returnType::class]?.let {
             return instances
         }
