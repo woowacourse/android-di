@@ -137,4 +137,15 @@ object DIContainer {
     fun clearViewModelScopedInstances(viewModel: ViewModel) {
         viewModelScopedInstances.remove(viewModel)
     }
+
+    fun activityScopedInstanceSize(): Int {
+        return activityScopedInstances.size
+    }
+
+    fun clearAll() {
+        moduleInstances.clear()
+        applicationScopedInstances.clear()
+        activityScopedInstances.clear()
+        viewModelScopedInstances.clear()
+    }
 }
