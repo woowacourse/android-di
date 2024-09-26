@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.container
 
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass

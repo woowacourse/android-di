@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import woowacourse.shopping.di.container.LifecycleDependencyContainer
 
 abstract class DependencyInjectedActivity(application: DependencyInjectedApplication) :
     AppCompatActivity() {

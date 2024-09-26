@@ -1,7 +1,8 @@
 package woowacourse.shopping.di
 
 import android.app.Application
-import android.util.Log
+import woowacourse.shopping.di.container.ApplicationDependencyContainer
+import woowacourse.shopping.di.container.LifecycleDependencyContainer
 
 abstract class DependencyInjectedApplication : Application() {
     lateinit var applicationDependencyContainer: LifecycleDependencyContainer

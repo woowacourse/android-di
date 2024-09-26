@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.container
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner

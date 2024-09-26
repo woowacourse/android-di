@@ -5,6 +5,10 @@ import woowacourse.shopping.di.annotation.ApplicationContext
 import woowacourse.shopping.di.annotation.FieldInject
 import woowacourse.shopping.di.annotation.LifecycleAware
 import woowacourse.shopping.di.annotation.ParamInject
+import woowacourse.shopping.di.container.AnnotationQualifier
+import woowacourse.shopping.di.container.DependencyInstance
+import woowacourse.shopping.di.container.LifecycleAwareAnnotation
+import woowacourse.shopping.di.container.LifecycleDependencyContainer
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

@@ -4,6 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.di.container.ApplicationDependencyContainer
+import woowacourse.shopping.di.container.DependencyContainer
 
 class DependencyAutoInjectTest {
     private lateinit var dependencyContainer: DependencyContainer

@@ -1,5 +1,8 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.container.DependencyInstance
+import woowacourse.shopping.di.container.ImplementationClass
+
 class ComponentDependencyProvider : DependencyProvider {
     private var implementationClass: ImplementationClass<*>? = null
     private var dependencyInstance: DependencyInstance? = null
