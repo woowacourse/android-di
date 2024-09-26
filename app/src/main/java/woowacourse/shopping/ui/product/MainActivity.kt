@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.woowacourse.di.DIViewModelFactory
+import woowacourse.shopping.LifecycleTracker
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
@@ -14,10 +15,12 @@ import woowacourse.shopping.ui.cart.CartActivity
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel by viewModels<MainViewModel> { DIViewModelFactory() }
+    private lateinit var lifecycleTracker: LifecycleTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setupLifecycleTracker()
         setupBinding()
         setupToolbar()
         setupView()
@@ -29,6 +32,11 @@ class MainActivity : AppCompatActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
+    }
+
+    private fun setupLifecycleTracker() {
+        lifecycleTracker = LifecycleTracker(viewModel)
+        lifecycle.addObserver(lifecycleTracker)
     }
 
     private fun setupBinding() {

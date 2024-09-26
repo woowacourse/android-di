@@ -38,7 +38,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupLifecycleTracker() {
-        lifecycleTracker = LifecycleTracker()
+        lifecycleTracker = LifecycleTracker(viewModel)
         lifecycle.addObserver(lifecycleTracker)
     }
 

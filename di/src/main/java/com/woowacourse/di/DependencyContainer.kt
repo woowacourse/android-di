@@ -23,7 +23,7 @@ object DependencyContainer {
         instances[classWithQualifier] = instance
     }
 
-    private fun <T : Any> findInstance(
+    fun <T : Any> findInstance(
         kClass: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T {

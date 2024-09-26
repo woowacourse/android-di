@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.woowacourse.di.DependencyContainer
 import com.woowacourse.di.InMemory
 import com.woowacourse.di.Inject
 import com.woowacourse.di.RoomDB
@@ -27,11 +26,6 @@ class MainViewModel : ViewModel() {
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
-
-    override fun onCleared() {
-        super.onCleared()
-        DependencyContainer.clearViewModelInstances()
-    }
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
