@@ -8,28 +8,30 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-typealias QualifierClass = KClass<*>?
 typealias Instance = Any
-typealias ClassWithQualifier = Pair<KClass<*>, QualifierClass>
 
 class DependencyContainer {
-    private val instances = mutableMapOf<ClassWithQualifier, Instance>()
+    private val instances = mutableMapOf<ClassQualifier, Instance>()
 
     fun <T : Any> addInstance(
-        clazz: KClass<T>,
+        kClass: KClass<T>,
         instance: T,
         qualifier: KClass<*>? = null,
     ) {
-        instances[clazz to qualifier] = instance
+        val classWithQualifier = ClassQualifier(kClass, qualifier)
+        instances[classWithQualifier] = instance
     }
 
     private fun <T : Any> findInstance(
-        clazz: KClass<T>,
+        kClass: KClass<T>,
         qualifier: KClass<*>? = null,
-    ): T = instances[clazz to qualifier] as? T ?: createInstance(clazz)
+    ): T {
+        val classWithQualifier = ClassQualifier(kClass, qualifier)
+        return instances[classWithQualifier] as? T ?: createInstance(kClass)
+    }
 
-    fun <T : Any> createInstance(clazz: KClass<T>): T {
-        val constructor = clazz.primaryConstructor ?: throw IllegalArgumentException(CONSTRUCTOR_NOT_FOUND)
+    fun <T : Any> createInstance(kClass: KClass<T>): T {
+        val constructor = kClass.primaryConstructor ?: throw IllegalArgumentException(CONSTRUCTOR_NOT_FOUND)
         val dependencies: List<Any?> = constructor.extractDependencies()
         val instance = constructor.call(*dependencies.toTypedArray())
 
@@ -63,14 +65,14 @@ class DependencyContainer {
     }
 
     fun clearViewModelInstances() {
-        val viewmodelInstances = instances.filter { it.key.first.hasAnnotation<ViewModelScope>() }
+        val viewmodelInstances = instances.filter { it.key.kClass.hasAnnotation<ViewModelScope>() }
         viewmodelInstances.forEach {
             instances.remove(it.key)
         }
     }
 
     fun clearActivityInstances() {
-        val activityInstances = instances.filter { it.key.first.hasAnnotation<ActivityScope>() }
+        val activityInstances = instances.filter { it.key.kClass.hasAnnotation<ActivityScope>() }
         activityInstances.forEach {
             instances.remove(it.key)
         }
