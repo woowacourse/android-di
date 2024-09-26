@@ -5,7 +5,6 @@ import woowa.shopping.di.libs.container.Containers
 import woowa.shopping.di.libs.factory.Lifecycle
 import woowa.shopping.di.libs.qualify.Qualifier
 
-
 data class Scope(
     val scopeQualifier: Qualifier? = null,
     val lifecycle: Lifecycle,

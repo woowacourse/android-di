@@ -6,13 +6,15 @@ import kotlin.reflect.KClass
 class ScopedInstanceFactory<T : Any>(
     override val qualifier: Qualifier? = null,
     val instanceClazz: KClass<T>,
-    private val factory: () -> T
+    private val factory: () -> T,
 ) : InstanceFactory<T>() {
     private var cachedInstance: T? = null
+
     override fun instance(): T {
-        val instance = cachedInstance ?: return factory().also {
-            this.cachedInstance = it
-        }
+        val instance =
+            cachedInstance ?: return factory().also {
+                this.cachedInstance = it
+            }
         return instance
     }
 

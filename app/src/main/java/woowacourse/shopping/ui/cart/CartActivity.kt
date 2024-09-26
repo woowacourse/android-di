@@ -20,7 +20,7 @@ class CartActivity : ScopeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("dateFormatter", "$dateFormatter");
+        Log.d("dateFormatter", "$dateFormatter")
         setupBinding()
         setupToolbar()
         setupView()

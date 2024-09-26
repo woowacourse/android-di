@@ -21,7 +21,6 @@ object Containers {
     internal fun init(containers: List<Container>) {
         check(!isLocked) {
             "Containers 가 이미 초기화 되었습니다."
-
         }
         containers.flatMap { it.instanceRegistry.entries }
             .forEach { (key, factory) ->

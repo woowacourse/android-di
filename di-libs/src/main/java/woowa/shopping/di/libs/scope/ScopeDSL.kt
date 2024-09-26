@@ -6,7 +6,6 @@ import woowa.shopping.di.libs.factory.ScopedInstanceFactory
 import woowa.shopping.di.libs.qualify.Qualifier
 
 class ScopeDSL(val scope: Scope, val scopeQualifier: Qualifier) {
-
     @OptIn(InternalApi::class)
     inline fun <reified T : Any> scoped(
         qualifier: Qualifier? = null,
@@ -15,10 +14,12 @@ class ScopeDSL(val scope: Scope, val scopeQualifier: Qualifier) {
         Containers.scopeInstanceRegistry.registerInstanceFactory(
             scopeQualifier,
             ScopedInstanceFactory<T>(
-                qualifier, T::class, factory = {
+                qualifier,
+                T::class,
+                factory = {
                     scope.factory()
-                }
-            )
+                },
+            ),
         )
     }
 }
