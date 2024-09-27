@@ -12,6 +12,10 @@ class CartProductAdapter(
     private val items: MutableList<Product> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
+        println("CartProductAdapter.onClickDelete: $position")
+        println("CartProductAdapter: ${items[position]}")
+        println("CartProductAdapter: items: $items")
+        println("CartProductAdapter: size: ${items.size}")
         onClickDelete(items[position].id.toInt())
         removeItem(position)
     }

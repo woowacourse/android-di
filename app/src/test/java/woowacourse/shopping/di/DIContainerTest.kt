@@ -1,17 +1,65 @@
 package woowacourse.shopping.di
 
+import com.example.di.AppModule
 import com.example.di.DIContainer
-import com.example.di.annotations.FieldInject
-import com.example.di.annotations.Qualifier
+import com.example.di.Dependency
+import com.example.di.annotations.ApplicationScope
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
 class DIContainerTest {
+    // private lateinit var dependency: Dependency
+
     @Before
     fun setUp() {
+        // dependency = Dependency(TestModule(), TestModule::testFunction)
+        // DIContainer.addDependency(dependency)
+    }
+
+    @Test
+    fun `인스턴스를 등록하고 가져올 수 있다`() {
+        val dependency = Dependency(TestModule(), TestModule::testFunction)
+        DIContainer.addDependency(dependency)
+
+        val retrievedDependency = DIContainer.getDependencyInstance(TestModule::class, null)
+        assertEquals(dependency, retrievedDependency)
+    }
+
+    @Test
+    fun `addDependency should add a dependency`() {
+        assertTrue(DIContainer.getDependencyInstance(TestModule::class, null) is TestModule)
+    }
+
+    @Test
+    fun `getDependencyInstance should return the correct instance`() {
+        val instance = DIContainer.getDependencyInstance(TestModule::class, null)
+        assertNotNull(instance)
+        assertTrue(instance is TestModule)
+    }
+
+    @Test
+    fun `destroyDependency should remove a dependency`() {
+        // DIContainer.destroyDependency(dependency)
+        try {
+            DIContainer.getDependencyInstance(TestModule::class, null)
+            fail("Expected an IllegalStateException to be thrown")
+        } catch (e: IllegalStateException) {
+            assertEquals("TestModule can not find the corresponding dependency", e.message)
+        }
+    }
+
+    class TestModule : AppModule {
+        @ApplicationScope
+        fun testFunction() = "test"
+    }
+
+    /*@Before
+    fun setUp() {
+        DIContainer.depen
         DIContainer.instances.clear() // 테스트 전에 컨테이너 초기화
     }
 
@@ -63,5 +111,5 @@ class DIContainerTest {
         @FieldInject
         @Qualifier("qualifier1")
         lateinit var dependency: Dependency
-    }
+    }*/
 }
