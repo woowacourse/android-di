@@ -8,6 +8,7 @@ import kotlin.reflect.full.hasAnnotation
 
 fun KParameter.typeToKClass(): KClass<*> = this.type.classifier as KClass<*>
 
-fun KFunction<Any>.injectableProperties(): List<KParameter> = this.parameters.filter { kParameter ->
-    kParameter.hasAnnotation<Inject>()
-}
+fun KFunction<Any>.injectableProperties(): List<KParameter> =
+    this.parameters.filter { kParameter ->
+        kParameter.hasAnnotation<Inject>()
+    }

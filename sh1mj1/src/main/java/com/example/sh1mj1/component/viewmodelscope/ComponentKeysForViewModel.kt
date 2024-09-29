@@ -21,28 +21,24 @@ data class ComponentKeysForViewModel<VM : ViewModel>(
     private val viewModelScopeComponents = ViewModelScopeComponentContainer.instance()
 
     init {
-        println("$TAG Created viewModel: $viewModel keys $componentKeys")
-
         viewModel.addCloseable {
-            println("$TAG Closed viewModel: $viewModel keys $componentKeys")
             componentKeys.forEach { componentKey ->
                 viewModelScopeComponents.remove(
                     componentKey.clazz,
-                    componentKey.qualifier
-                ).also {
-                    println("$TAG Removed ${componentKey.javaClass.simpleName} viewModel: $viewModel key $componentKey")
-                }
+                    componentKey.qualifier,
+                )
             }
         }
     }
 }
 
-fun List<KParameter>.viewModelScopeParameterKeys(): List<ComponentKey> = this.map { kParameter ->
-    ComponentKey.of(
-        clazz = kParameter.typeToKClass(),
-        qualifier = kParameter.withQualifier(),
-    )
-}
+fun List<KParameter>.viewModelScopeParameterKeys(): List<ComponentKey> =
+    this.map { kParameter ->
+        ComponentKey.of(
+            clazz = kParameter.typeToKClass(),
+            qualifier = kParameter.withQualifier(),
+        )
+    }
 
 fun <VM : Any> List<KProperty1<VM, *>>.viewModelScopePropertyKeys(): List<ComponentKey> =
     this.filter { it.hasAnnotation<ViewModelScope>() }
@@ -52,6 +48,3 @@ fun <VM : Any> List<KProperty1<VM, *>>.viewModelScopePropertyKeys(): List<Compon
                 qualifier = kProperty.withQualifier(),
             )
         }
-
-private const val TAG = "ViewModelScopedInstance"
-

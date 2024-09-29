@@ -38,7 +38,7 @@ class ShoppingApplication : DiApplication() {
         )
 
         activityContainer.add(
-            activityScopeComponent<DateFormatter>({context ->  KoreaLocaleDateFormatter(context) }),
+            activityScopeComponent<DateFormatter>({ context -> KoreaLocaleDateFormatter(context) }),
         )
     }
 }

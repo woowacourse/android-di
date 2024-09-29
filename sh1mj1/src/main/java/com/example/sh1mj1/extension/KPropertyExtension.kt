@@ -8,5 +8,4 @@ import kotlin.reflect.full.memberProperties
 
 fun KProperty1<*, *>.typeToKClass(): KClass<*> = this.returnType.classifier as KClass<*>
 
-fun <T : Any> injectableProperties(kClass: KClass<T>) =
-    kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
+fun <T : Any> injectableProperties(kClass: KClass<T>) = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }

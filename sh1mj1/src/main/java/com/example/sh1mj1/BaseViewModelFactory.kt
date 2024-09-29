@@ -12,7 +12,7 @@ import com.example.sh1mj1.container.AppContainer
 class BaseViewModelFactory(
     appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
-    private val dependencyInjector = ViewModelDependencyInjector(appContainer)
+    private val dependencyInjector = ViewModelCreator(appContainer)
 
     override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
         val viewModelScopedInstanceWithKeys = dependencyInjector.viewModelScopedInstanceWithKeys(modelClass)
@@ -20,7 +20,6 @@ class BaseViewModelFactory(
     }
 }
 
-// TODO: appContainer를 외부에서 주입하는 방식?
 inline fun <reified VM : ViewModel> injectedViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
@@ -33,5 +32,3 @@ inline fun <reified VM : ViewModel> ComponentActivity.injectedSh1mj1ViewModel():
     viewModels<VM> {
         injectedViewModelFactory<VM>()
     }
-
-private const val TAG = "BaseViewModelFactory"

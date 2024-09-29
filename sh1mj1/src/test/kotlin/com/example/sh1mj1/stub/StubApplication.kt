@@ -19,8 +19,10 @@ class StubApplication : DiApplication() {
         )
 
         activityContainer.add(
-            activityScopeComponent<DateFormatter>({ context ->
-                StubDateFormatter(context) }
+            activityScopeComponent<DateFormatter>(
+                { context ->
+                    StubDateFormatter(context)
+                },
             ),
         )
     }

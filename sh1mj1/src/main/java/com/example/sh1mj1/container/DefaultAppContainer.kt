@@ -36,5 +36,4 @@ class DefaultAppContainer(
         singletonComponentContainer.find(componentKey)
             ?: viewModelScopeComponentContainer.find(componentKey)
             ?: throw IllegalStateException("${componentKey.clazz.simpleName} not found in AppContainer")
-
 }

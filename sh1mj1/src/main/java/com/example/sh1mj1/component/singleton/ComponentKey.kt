@@ -14,6 +14,7 @@ data class ComponentKey private constructor(
 ) {
     companion object {
         private val cache = mutableMapOf<Pair<KClass<*>, Qualifier?>, ComponentKey>()
+
         fun of(
             clazz: KClass<*>,
             qualifier: Qualifier? = null,
@@ -24,15 +25,16 @@ data class ComponentKey private constructor(
             }
         }
 
-        fun fromParameter(parameter: KParameter): ComponentKey = of(
-            clazz = parameter.typeToKClass(),
-            qualifier = parameter.withQualifier()
-        )
+        fun fromParameter(parameter: KParameter): ComponentKey =
+            of(
+                clazz = parameter.typeToKClass(),
+                qualifier = parameter.withQualifier(),
+            )
 
-        fun fromProperty(property: KProperty1<*, *>): ComponentKey = of(
-            clazz = property.typeToKClass(),
-            qualifier = property.withQualifier()
-        )
+        fun fromProperty(property: KProperty1<*, *>): ComponentKey =
+            of(
+                clazz = property.typeToKClass(),
+                qualifier = property.withQualifier(),
+            )
     }
 }
-

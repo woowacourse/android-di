@@ -11,16 +11,13 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
         components.add(component)
     }
 
-    fun findComponent(
-        injectedClass: KClass<*>,
-    ): ActivityScopeComponent<*>? = components.firstOrNull { it.injectedClass == injectedClass }
+    fun findComponent(injectedClass: KClass<*>): ActivityScopeComponent<*>? = components.firstOrNull { it.injectedClass == injectedClass }
 
     fun <T : Any> findComponentInstance(
         injectedClass: KClass<T>,
         context: Context,
     ): T? {
         val component = components.firstOrNull { it.injectedClass == injectedClass }
-        println("$TAG components: $components")
         return component?.instanceProvider?.invoke(context) as? T
     }
 
@@ -37,5 +34,3 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
 }
 
 interface ActivityComponentContainer
-
-private const val TAG = "DefaultActivityComponentContainer"

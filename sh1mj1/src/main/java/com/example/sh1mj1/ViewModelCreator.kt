@@ -14,7 +14,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-class ViewModelDependencyInjector(
+class ViewModelCreator(
     private val appContainer: AppContainer,
 ) {
     fun <VM : ViewModel> viewModelScopedInstanceWithKeys(modelClass: Class<VM>): ComponentKeysForViewModel<VM> {
@@ -60,13 +60,11 @@ class ViewModelDependencyInjector(
             field.isAccessible = true
 
             val dependency = foundDependency(ComponentKey.fromProperty(field))
-            val kMutableProperty = field as? KMutableProperty<*>
-                ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
+            val kMutableProperty =
+                field as? KMutableProperty<*>
+                    ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
 
             kMutableProperty.setter.call(viewModel, dependency)
         }
     }
 }
-
-private const val TAG = "ViewModelDependencyInjector"
-

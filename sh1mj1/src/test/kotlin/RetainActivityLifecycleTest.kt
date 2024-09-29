@@ -24,7 +24,6 @@ class RetainActivityLifecycleTest {
                 .setup()
 
         // then
-        // TODO: 프로퍼티에 접근했을 때 인스턴스가 할당되지 않았다는 예외를 던지는 UninitializedPropertyAccessException 를 던지지 않는다는 assertion 만으로 충분할까?
         shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
     }
 
@@ -88,29 +87,8 @@ class RetainActivityLifecycleTest {
         controller.destroy()
 
         // then
-        val find = DefaultActivityComponentContainer.instance().findComponentInstance(DateFormatter::class, activityContext)
+        val find =
+            DefaultActivityComponentContainer.instance().findComponentInstance(DateFormatter::class, activityContext)
         find shouldBe null
     }
-
-//    TODO: 액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다
-//    @Test
-//    fun `액티비티의 구성 변경이 일어나도 dateFormatter 인스턴스는 같은 인스턴스이다`() {
-//        // given
-//        val controller = Robolectric
-//            .buildActivity(StubActivity::class.java)
-//        controller.setup()
-//
-//        val original = controller.get().dateFormatter
-//
-//        // when
-//        controller.configurationChange()
-//
-//        val recreated = controller.get().dateFormatter
-//
-//        // then
-//        shouldNotThrow<Exception> { controller.get().dateFormatter }
-//        shouldNotThrow<UninitializedPropertyAccessException> { controller.get().dateFormatter }
-//
-//        original shouldBeSameInstanceAs recreated
-//    }
 }

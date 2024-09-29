@@ -24,5 +24,3 @@ fun List<CartProductEntity>.toData(): List<Product> =
     map {
         Product(it.id, it.name, it.price, it.imageUrl, it.createdAt)
     }
-
-private const val TAG = "DefaultCartRepository"

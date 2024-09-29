@@ -9,8 +9,7 @@ import kotlin.reflect.KProperty
 
 class ActivityScopeComponentFactory<T : Any>(
     private val injectedClass: KClass<T>,
-    ) : ReadOnlyProperty<Activity, T> {
-
+) : ReadOnlyProperty<Activity, T> {
     private var cachedValue: T? = null
 
     override fun getValue(
@@ -20,11 +19,13 @@ class ActivityScopeComponentFactory<T : Any>(
         cachedValue?.let { return it }
 
         val container = (thisRef.application as DiApplication).activityContainer
-        val component = container.findComponent(injectedClass)
-            ?: throw IllegalStateException("${injectedClass.simpleName} not found in container")
+        val component =
+            container.findComponent(injectedClass)
+                ?: throw IllegalArgumentException("${injectedClass.simpleName} not found in container")
 
-        val componentInstance = container.findComponentInstance(injectedClass, thisRef)
-            ?: throw IllegalStateException("${injectedClass.simpleName} not found in container")
+        val componentInstance =
+            container.findComponentInstance(injectedClass, thisRef)
+                ?: throw IllegalArgumentException("${injectedClass.simpleName} not found in container")
 
         if (thisRef is LifecycleOwner) {
             component.attachToLifecycle(thisRef)
@@ -36,5 +37,3 @@ class ActivityScopeComponentFactory<T : Any>(
 }
 
 inline fun <reified T : Any> injectActivityScopeComponent() = ActivityScopeComponentFactory(T::class)
-
-private const val TAG = "ActivityScopeComponentFactory"

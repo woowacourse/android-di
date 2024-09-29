@@ -77,7 +77,7 @@ class RetainViewModelLifecycleTest {
     }
 
     @Test
-    fun `뷰모델이 clear 되었을 때 뷰모델이 가진 뷰모델 스코프 레포지토리는 삭제된다`()  {
+    fun `뷰모델이 clear 되었을 때 뷰모델이 가진 뷰모델 스코프 레포지토리는 삭제된다`() {
         // given
         val activityController =
             Robolectric

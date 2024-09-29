@@ -19,5 +19,3 @@ class KoreaLocaleDateFormatter(context: Context) : DateFormatter {
 interface DateFormatter {
     fun formatDate(timestamp: Long): String
 }
-
-private const val TAG = "KoreaLocaleDateFormatte"

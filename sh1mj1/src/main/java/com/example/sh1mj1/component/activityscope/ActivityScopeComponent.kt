@@ -6,12 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.sh1mj1.annotation.Qualifier
 import kotlin.reflect.KClass
 
-data class ActivityScopeComponent<T: Any>(
+data class ActivityScopeComponent<T : Any>(
     val injectedClass: KClass<T>,
     val instanceProvider: (Context) -> T?,
     val qualifier: Qualifier? = null,
 ) : DefaultLifecycleObserver {
-
     /**
      * Provided instance
      * This instance is provided by instanceProvider
@@ -20,9 +19,7 @@ data class ActivityScopeComponent<T: Any>(
      */
     private var providedInstance: Any? = null
 
-    fun attachToLifecycle(
-        lifecycleOwner: LifecycleOwner,
-    ) {
+    fun attachToLifecycle(lifecycleOwner: LifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(this)
         providedInstance = instanceProvider(lifecycleOwner as Context)
     }
@@ -43,5 +40,3 @@ inline fun <reified T : Any> activityScopeComponent(
         instanceProvider = instanceProvider,
         qualifier = qualifier,
     )
-
-private const val TAG = "ActivityScopeComponent"
