@@ -1,47 +1,49 @@
 package woowacourse.shopping.ui
 
-import android.app.Application
 import woowacourse.shopping.data.InMemory
 import woowacourse.shopping.data.RoomDB
 import woowacourse.shopping.data.local.CartProductDao
 import woowacourse.shopping.data.local.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.DefaultDependencyContainer
-import woowacourse.shopping.di.DependencyContainer
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.DependencyInjectedApplication
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
-class ShoppingApplication : Application() {
-    val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
+class ShoppingApplication : DependencyInjectedApplication() {
+    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()
-        defaultDependencyContainer.setDependency(
+        instance = this
+        applicationDependencyContainer.setDependency(
             ProductRepository::class,
             DefaultProductRepository::class,
             InMemory::class,
         )
-        defaultDependencyContainer.setDependency(
+        applicationDependencyContainer.setDependency(
             CartRepository::class,
             DefaultCartRepository::class,
             RoomDB::class,
         )
-        defaultDependencyContainer.setDependency(
+        applicationDependencyContainer.setDependency(
             CartProductDao::class,
             database.cartProductDao()::class,
         )
-        defaultDependencyContainer.setInstance(
+        applicationDependencyContainer.setInstance(
             CartProductDao::class,
             database.cartProductDao(),
         )
-        DependencyInjector.initDependencyContainer(defaultDependencyContainer)
     }
 
     companion object {
-        val defaultDependencyContainer: DependencyContainer by lazy {
-            DefaultDependencyContainer()
+        private var instance: ShoppingApplication? = null
+
+        fun getApplication(): ShoppingApplication {
+            if (instance == null) {
+                instance = ShoppingApplication()
+            }
+            return instance!!
         }
     }
 }

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping.di.container
 
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
@@ -15,18 +15,20 @@ interface DependencyContainer {
         qualifier: AnnotationQualifier = null,
     ): T?
 
-    fun <T : Any> getImplement(
+    fun <T : Any> getImplementation(
         dependency: DependencyType,
         qualifier: AnnotationQualifier = null,
     ): ImplementationClass<T>?
 
     fun <T : Any> setDependency(
+//        vararg dependencies: Pair<ClassQualifier, ImplementationClass<out T>>,
         dependency: DependencyType,
         implementation: ImplementationClass<T>,
         qualifier: AnnotationQualifier = null,
     )
 
     fun setInstance(
+//        vararg instances: Pair<ClassQualifier, DependencyInstance>,
         dependency: DependencyType,
         instance: DependencyInstance,
         qualifier: AnnotationQualifier = null,

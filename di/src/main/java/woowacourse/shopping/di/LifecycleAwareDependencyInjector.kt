@@ -1,10 +1,14 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.LifecycleOwner
+import woowacourse.shopping.di.annotation.ApplicationContext
 import woowacourse.shopping.di.annotation.FieldInject
+import woowacourse.shopping.di.annotation.LifecycleAware
 import woowacourse.shopping.di.annotation.ParamInject
 import woowacourse.shopping.di.container.AnnotationQualifier
-import woowacourse.shopping.di.container.DependencyContainer
 import woowacourse.shopping.di.container.DependencyInstance
+import woowacourse.shopping.di.container.LifecycleAwareAnnotation
+import woowacourse.shopping.di.container.LifecycleDependencyContainer
 import javax.inject.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -16,35 +20,70 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-object DependencyInjector {
-    private const val ERROR_DEPENDENCY_NOT_FOUND =
-        "Couldn't find dependency from Dependency Container :"
+class LifecycleAwareDependencyInjector {
+    private var lifecycleOwner: LifecycleOwner? = null
 
-    lateinit var dependencyContainer: DependencyContainer
+    lateinit var dependencyContainer: LifecycleDependencyContainer
         private set
 
-    fun initDependencyContainer(container: DependencyContainer) {
+    fun initDependencyContainer(container: LifecycleDependencyContainer) {
         dependencyContainer = container
+    }
+
+    fun initLifecycleOwner(lifecycleOwner: LifecycleOwner) {
+        this.lifecycleOwner = lifecycleOwner
+    }
+
+    fun <T : Any> createInstanceOfProperty(modelProperty: KProperty<T>): T {
+        val modelClass = modelProperty.returnType.classifier as KClass<T>
+        val qualifier: Annotation? = modelProperty.checkAnnotation<Qualifier>()
+        val lifecycleAware: Annotation? = modelProperty.checkAnnotation<LifecycleAware>()
+        return createInstance(
+            modelClass,
+            qualifier?.annotationClass,
+            lifecycleAware?.annotationClass,
+        )
     }
 
     fun <T : Any> createInstance(
         modelClass: KClass<T>,
-        qualifier: AnnotationQualifier = null
+        qualifier: AnnotationQualifier = null,
+        lifecycleAware: LifecycleAwareAnnotation = null,
     ): T {
-        val targetInstance: T = checkClassTypeThenGetInstance(modelClass, qualifier)
+        val targetInstance: T = checkClassTypeThenGetInstance(modelClass, qualifier, lifecycleAware)
+        setLifecycleOwner(modelClass, targetInstance)
         setDependencyOfProperties(modelClass, targetInstance)
-        dependencyContainer.setInstance(modelClass, targetInstance, qualifier)
+        if (lifecycleAware == null) {
+            dependencyContainer.setInstance(modelClass, targetInstance, qualifier)
+        } else {
+            dependencyContainer.setInstanceWithinLifecycle(
+                modelClass,
+                targetInstance,
+                qualifier,
+                lifecycleOwner,
+                lifecycleAware,
+            )
+        }
         return targetInstance
+    }
+
+    private fun <T : Any> setLifecycleOwner(modelClass: KClass<T>, targetInstance: T) {
+        if (lifecycleOwner == null) {
+            if (LifecycleOwner::class.java.isAssignableFrom(modelClass.java)) {
+                lifecycleOwner = (targetInstance as LifecycleOwner)
+            }
+        }
     }
 
     private fun <T : Any> checkClassTypeThenGetInstance(
         modelClass: KClass<T>,
         qualifier: AnnotationQualifier,
+        lifecycleAware: LifecycleAwareAnnotation,
     ): T {
         val objectInstance: T? = modelClass.objectInstance
         val primaryConstructor: KFunction<T>? = modelClass.primaryConstructor
         return if (primaryConstructor == null) {
-            getInstanceFromDependencyContainer(modelClass, qualifier)
+            getInstanceFromDependencyContainer(modelClass, qualifier, lifecycleAware)
         } else if (objectInstance != null) {
             objectInstance
         } else {
@@ -56,6 +95,7 @@ object DependencyInjector {
     private fun <T : Any> getInstanceFromDependencyContainer(
         modelClass: KClass<T>,
         qualifier: AnnotationQualifier,
+        lifecycleAware: LifecycleAwareAnnotation,
     ): T {
         val instanceFromContainer = dependencyContainer.getInstance<T>(modelClass, qualifier)
         return if (instanceFromContainer != null) {
@@ -65,7 +105,7 @@ object DependencyInjector {
                 requireNotNull(dependencyContainer.getImplementation<T>(modelClass, qualifier)) {
                     "$ERROR_DEPENDENCY_NOT_FOUND $modelClass to $qualifier"
                 }
-            createInstance(implementKClass, qualifier)
+            createInstance(implementKClass, qualifier, lifecycleAware)
         }
     }
 
@@ -79,6 +119,10 @@ object DependencyInjector {
             val classifier = parameter.type.classifier as KClass<*>
             if (parameter.hasAnnotation<ParamInject>()) {
                 createInstance(classifier)
+            } else if (parameter.hasAnnotation<ApplicationContext>()) {
+                dependencyContainer.getApplicationContext()
+            } else {
+
             }
         }.toTypedArray()
     }
@@ -91,10 +135,14 @@ object DependencyInjector {
             if (checkNeedsDependencyInject(property)) {
                 property.isAccessible = true
                 val classifier = property.returnType.classifier as KClass<*>
-                val qualifier: Annotation? =
-                    property.annotations.find { it.annotationClass.hasAnnotation<Qualifier>() }
+                val qualifier: Annotation? = property.checkAnnotation<Qualifier>()
+                val lifecycleAware: Annotation? = property.checkAnnotation<LifecycleAware>()
                 val dependency: DependencyInstance =
-                    createInstance(classifier, qualifier?.annotationClass)
+                    createInstance(
+                        classifier,
+                        qualifier?.annotationClass,
+                        lifecycleAware?.annotationClass,
+                    )
                 (property as KMutableProperty<*>).setter.call(targetInstance, dependency)
             }
         }
@@ -102,4 +150,13 @@ object DependencyInjector {
 
     private fun checkNeedsDependencyInject(kProperty: KProperty<*>): Boolean =
         kProperty.hasAnnotation<FieldInject>() && kProperty.isLateinit && kProperty is KMutableProperty
+
+    private inline fun <reified T : Annotation> KProperty<*>.checkAnnotation(): Annotation? {
+        return this.annotations.find { it.annotationClass.hasAnnotation<T>() }
+    }
+
+    companion object {
+        private const val ERROR_DEPENDENCY_NOT_FOUND =
+            "Couldn't find dependency from Dependency Container :"
+    }
 }

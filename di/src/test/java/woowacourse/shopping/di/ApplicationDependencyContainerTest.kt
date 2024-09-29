@@ -3,13 +3,15 @@ package woowacourse.shopping.di
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.di.container.ApplicationDependencyContainer
+import woowacourse.shopping.di.container.DependencyContainer
 
-class DefaultDependencyContainerTest {
+class ApplicationDependencyContainerTest {
     private lateinit var dependencyContainer: DependencyContainer
 
     @Before
     fun setUp() {
-        dependencyContainer = DefaultDependencyContainer()
+        dependencyContainer = ApplicationDependencyContainer()
     }
 
     @Test
@@ -18,10 +20,14 @@ class DefaultDependencyContainerTest {
         dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
-            "first",
+            FirstQualifier::class,
         )
 
-        val actual = dependencyContainer.getImplement<FirstDependency>(ToBeInjected::class, "second")
+        val actual =
+            dependencyContainer.getImplementation<FirstDependency>(
+                ToBeInjected::class,
+                SecondQualifier::class,
+            )
 
         assertThat(actual).isNull()
     }

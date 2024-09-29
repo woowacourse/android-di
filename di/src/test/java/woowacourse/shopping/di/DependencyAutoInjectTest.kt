@@ -4,13 +4,16 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.di.container.ApplicationDependencyContainer
+import woowacourse.shopping.di.container.DependencyContainer
+import javax.inject.Qualifier
 
 class DependencyAutoInjectTest {
     private lateinit var dependencyContainer: DependencyContainer
 
     @Before
     fun setUp() {
-        dependencyContainer = DefaultDependencyContainer()
+        dependencyContainer = ApplicationDependencyContainer()
         DependencyInjector.initDependencyContainer(dependencyContainer)
     }
 
@@ -20,18 +23,18 @@ class DependencyAutoInjectTest {
         dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
-            "first",
+            FirstQualifier::class,
         )
 
         dependencyContainer.setDependency(
             ToBeInjected::class,
             SecondDependency::class,
-            "second",
+            SecondQualifier::class,
         )
 
         // when
         val actualInstance =
-            DependencyInjector.createInstanceFromConstructor(InjectOwner::class.java)
+            DependencyInjector.createInstance(InjectOwner::class)
 
         // then
         assertThat(actualInstance).isInstanceOf(InjectOwner::class.java)
@@ -45,12 +48,12 @@ class DependencyAutoInjectTest {
         dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
-            "first",
+            FirstQualifier::class,
         )
 
         // then
         assertThrows(IllegalArgumentException::class.java) {
-            DependencyInjector.createInstanceFromConstructor(InjectOwner::class.java)
+            DependencyInjector.createInstance(InjectOwner::class)
         }
     }
 
@@ -60,18 +63,18 @@ class DependencyAutoInjectTest {
         dependencyContainer.setDependency(
             ToBeInjected::class,
             FirstDependency::class,
-            "third",
+            ThirdQualifier::class,
         )
 
         dependencyContainer.setDependency(
             ToBeInjected::class,
             SecondDependency::class,
-            "second",
+            SecondQualifier::class,
         )
 
         // then
         assertThrows(IllegalArgumentException::class.java) {
-            DependencyInjector.createInstanceFromConstructor(InjectOwner::class.java)
+            DependencyInjector.createInstance(InjectOwner::class)
         }
     }
 }
