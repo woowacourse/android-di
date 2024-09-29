@@ -56,11 +56,7 @@ class ViewModelDependencyInjector(
     ): VM {
         val constructorArgs =
             injectedArgs.map { kParameter ->
-                val componentKey =
-                    ComponentKey.of(
-                        clazz = kParameter.type.classifier as KClass<*>,
-                        qualifier = kParameter.withQualifier(),
-                    )
+                val componentKey = ComponentKey.fromParameter(kParameter)
                 foundDependency(componentKey)
             }.toTypedArray()
 
@@ -77,11 +73,7 @@ class ViewModelDependencyInjector(
         injectedFields.forEach { field ->
             field.isAccessible = true
 
-            val componentKey =
-                ComponentKey.of(
-                    clazz = field.returnType.classifier as KClass<*>,
-                    qualifier = field.withQualifier(),
-                )
+            val componentKey = ComponentKey.fromProperty(field)
 
             val dependency = foundDependency(componentKey)
             val kMutableProperty =
