@@ -1,6 +1,7 @@
 package com.example.sh1mj1.component.singleton
 
 import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.extension.typeToKClass
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -24,12 +25,12 @@ data class ComponentKey private constructor(
         }
 
         fun fromParameter(parameter: KParameter): ComponentKey = of(
-            clazz = parameter.type.classifier as KClass<*>,
+            clazz = parameter.typeToKClass(),
             qualifier = parameter.withQualifier()
         )
 
         fun fromProperty(property: KProperty1<*, *>): ComponentKey = of(
-            clazz = property.returnType.classifier as KClass<*>,
+            clazz = property.typeToKClass(),
             qualifier = property.withQualifier()
         )
     }

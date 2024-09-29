@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.example.sh1mj1.annotation.Inject
 import com.example.sh1mj1.annotation.ViewModelScope
 import com.example.sh1mj1.component.singleton.ComponentKey
+import com.example.sh1mj1.extension.typeToKClass
 import com.example.sh1mj1.extension.withQualifier
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
@@ -26,7 +26,7 @@ fun KFunction<ViewModel>.annotatedWithInject(): List<KParameter> = this.paramete
 
 fun List<KParameter>.viewModelScopeParameterKeys(): List<ComponentKey> = this.map { kParameter ->
     ComponentKey.of(
-        clazz = kParameter.type.classifier as KClass<*>,
+        clazz = kParameter.typeToKClass(),
         qualifier = kParameter.withQualifier(),
     )
 }
@@ -35,7 +35,7 @@ fun <VM : Any> List<KProperty1<VM, *>>.viewModelScopePropertyKeys(): List<Compon
     this.filter { it.hasAnnotation<ViewModelScope>() }
         .map { kProperty ->
             ComponentKey.of(
-                clazz = kProperty.returnType.classifier as KClass<*>,
+                clazz = kProperty.typeToKClass(),
                 qualifier = kProperty.withQualifier(),
             )
         }
