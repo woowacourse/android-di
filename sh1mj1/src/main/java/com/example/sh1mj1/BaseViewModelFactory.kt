@@ -16,8 +16,8 @@ class BaseViewModelFactory(
 
     override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
         val viewModelScopedInstanceWithKeys = dependencyInjector.viewModelScopedInstanceWithKeys(modelClass)
-        val viewModel = viewModelScopedInstanceWithKeys.instance
-        val componentKeys = viewModelScopedInstanceWithKeys.instanceScopeComponentsKeys
+        val viewModel = viewModelScopedInstanceWithKeys.viewModel
+        val componentKeys = viewModelScopedInstanceWithKeys.viewModelScopeComponentsKeys
 
         viewModel.addCloseable {
             componentKeys.forEach {

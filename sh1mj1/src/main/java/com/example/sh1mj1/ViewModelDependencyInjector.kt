@@ -1,15 +1,14 @@
 package com.example.sh1mj1
 
 import androidx.lifecycle.ViewModel
-import com.example.sh1mj1.annotation.Inject
 import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.annotation.ViewModelScope
 import com.example.sh1mj1.component.singleton.ComponentKey
 import com.example.sh1mj1.component.viewmodelscope.ViewModelScopedInstanceWithKeys
-import com.example.sh1mj1.component.viewmodelscope.annotatedWithInject
-import com.example.sh1mj1.component.viewmodelscope.viewModelScopeParameterKeys
-import com.example.sh1mj1.component.viewmodelscope.viewModelScopePropertyKeys
 import com.example.sh1mj1.container.AppContainer
 import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
+import com.example.sh1mj1.extension.injectableProperties
+import com.example.sh1mj1.extension.typeToKClass
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -17,7 +16,6 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -31,24 +29,40 @@ class ViewModelDependencyInjector(
         val constructor =
             kClass.primaryConstructor
                 ?: throw IllegalArgumentException("ViewModel must have a primary constructor: ${kClass.simpleName}")
+        val injectedArgs = constructor.injectableProperties()
 
-        val injectedArgs = constructor.annotatedWithInject()
+        val viewModel = calledConstructor(injectedArgs, constructor)
+        val injectedFields: List<KProperty1<VM, *>> = injectableProperties(kClass)
 
-        val instance = calledConstructor(injectedArgs, constructor)
-        val injectedFields: List<KProperty1<VM, *>> = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
-        setField(injectedFields, instance)
+        setField(injectedFields, viewModel)
 
-
-        val componentConstructorParam = injectedArgs.viewModelScopeParameterKeys()
-        val componentFields: List<ComponentKey> = injectedFields.viewModelScopePropertyKeys()
-
-        val viewModelScopeComponents = componentConstructorParam + componentFields
-
+        val viewModelScopeComponents =
+            viewModelScopeComponentKeysWithParameters(injectedArgs) +
+                    viewModelScopeComponentKeysWithProperties(injectedFields)
         return ViewModelScopedInstanceWithKeys(
-            instance = instance,
-            instanceScopeComponentsKeys = viewModelScopeComponents,
+            viewModel = viewModel,
+            viewModelScopeComponentsKeys = viewModelScopeComponents,
         )
     }
+
+    private fun viewModelScopeComponentKeysWithParameters(kParameters: List<KParameter>): List<ComponentKey> =
+        kParameters.map { kParameter ->
+            ComponentKey.of(
+                clazz = kParameter.typeToKClass(),
+                qualifier = kParameter.withQualifier(),
+            )
+        }
+
+
+    private fun <VM : Any> viewModelScopeComponentKeysWithProperties(kProperties: List<KProperty1<VM, *>>): List<ComponentKey> =
+        kProperties.filter { it.hasAnnotation<ViewModelScope>() }
+            .map { kProperty ->
+                ComponentKey.of(
+                    clazz = kProperty.typeToKClass(),
+                    qualifier = kProperty.withQualifier(),
+                )
+            }
+
 
     private fun <VM : Any> calledConstructor(
         injectedArgs: List<KParameter>,
@@ -56,12 +70,10 @@ class ViewModelDependencyInjector(
     ): VM {
         val constructorArgs =
             injectedArgs.map { kParameter ->
-                val componentKey = ComponentKey.fromParameter(kParameter)
-                foundDependency(componentKey)
+                foundDependency(ComponentKey.fromParameter(kParameter))
             }.toTypedArray()
 
-        val viewModel = constructor.call(*constructorArgs)
-        return viewModel
+        return constructor.call(*constructorArgs)
     }
 
     private fun foundDependency(componentKey: ComponentKey): Any = appContainer.find(componentKey)
@@ -73,12 +85,10 @@ class ViewModelDependencyInjector(
         injectedFields.forEach { field ->
             field.isAccessible = true
 
-            val componentKey = ComponentKey.fromProperty(field)
+            val dependency = foundDependency(ComponentKey.fromProperty(field))
+            val kMutableProperty = field as? KMutableProperty<*>
+                ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
 
-            val dependency = foundDependency(componentKey)
-            val kMutableProperty =
-                field as? KMutableProperty<*>
-                    ?: throw IllegalArgumentException("Field must be mutable but not: ${field.name}")
             kMutableProperty.setter.call(viewModel, dependency)
         }
     }
@@ -90,3 +100,6 @@ class ViewModelDependencyInjector(
         ViewModelComponentContainer.instance().remove(kClass, qualifier)
     }
 }
+
+private const val TAG = "ViewModelDependencyInjector"
+
