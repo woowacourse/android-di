@@ -16,18 +16,7 @@ class BaseViewModelFactory(
 
     override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
         val viewModelScopedInstanceWithKeys = dependencyInjector.viewModelScopedInstanceWithKeys(modelClass)
-        val viewModel = viewModelScopedInstanceWithKeys.viewModel
-        val componentKeys = viewModelScopedInstanceWithKeys.viewModelScopeComponentsKeys
-
-        viewModel.addCloseable {
-            componentKeys.forEach {
-                dependencyInjector.removeViewModelScopeComponent(
-                    it.clazz,
-                    it.qualifier,
-                )
-            }
-        }
-        return viewModel
+        return viewModelScopedInstanceWithKeys.viewModel
     }
 }
 
@@ -44,3 +33,5 @@ inline fun <reified VM : ViewModel> ComponentActivity.injectedSh1mj1ViewModel():
     viewModels<VM> {
         injectedViewModelFactory<VM>()
     }
+
+private const val TAG = "BaseViewModelFactory"
