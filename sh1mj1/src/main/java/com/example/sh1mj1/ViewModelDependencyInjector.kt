@@ -25,7 +25,7 @@ class ViewModelDependencyInjector(
     private val appContainer: AppContainer,
 ) {
     // TODO: nunu createInstance가 많은 역할을 하고 있는 것 같아요! 메서드를 분리해봐도 좋을 것 같습니다.
-    fun <VM : ViewModel> createInstance(modelClass: Class<VM>): ViewModelScopedInstanceWithKeys<VM> {
+    fun <VM : ViewModel> viewModelScopedInstanceWithKeys(modelClass: Class<VM>): ViewModelScopedInstanceWithKeys<VM> {
         val kClass = modelClass.kotlin
 
         val constructor =
@@ -34,7 +34,6 @@ class ViewModelDependencyInjector(
 
         val injectedArgs = constructor.annotatedWithInject()
 
-
         val instance = calledConstructor(injectedArgs, constructor)
         val injectedFields: List<KProperty1<VM, *>> = kClass.memberProperties.filter { it.hasAnnotation<Inject>() }
         setField(injectedFields, instance)
@@ -42,7 +41,6 @@ class ViewModelDependencyInjector(
 
         val componentConstructorParam = injectedArgs.viewModelScopeParameterKeys()
         val componentFields: List<ComponentKey> = injectedFields.viewModelScopePropertyKeys()
-
 
         val viewModelScopeComponents = componentConstructorParam + componentFields
 

@@ -11,7 +11,10 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 
-// instance 와 그 인스턴스 스코프 컴포넌트들의 키.
+/**
+ * @param instance Instance of ViewModel
+ * @param instanceScopeComponentsKeys List of ComponentKey of ViewModel's scope
+ */
 data class ViewModelScopedInstanceWithKeys<VM : ViewModel>(
     val instance: VM,
     val instanceScopeComponentsKeys: List<ComponentKey>,

@@ -14,23 +14,20 @@ class BaseViewModelFactory(
 ) : ViewModelProvider.Factory {
     private val dependencyInjector = ViewModelDependencyInjector(appContainer)
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        // TODO: 메서드 이름을 createInstance 가 아닌 componentKeys 로
-        val componentKeys = dependencyInjector.createInstance(modelClass)
+    override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
+        val viewModelScopedInstanceWithKeys = dependencyInjector.viewModelScopedInstanceWithKeys(modelClass)
+        val viewModel = viewModelScopedInstanceWithKeys.instance
+        val componentKeys = viewModelScopedInstanceWithKeys.instanceScopeComponentsKeys
 
-        val vm = componentKeys.instance
-
-        val keys = componentKeys.instanceScopeComponentsKeys
-
-        componentKeys.instance.addCloseable{
-            keys.forEach {
+        viewModel.addCloseable {
+            componentKeys.forEach {
                 dependencyInjector.removeViewModelScopeComponent(
                     it.clazz,
                     it.qualifier,
                 )
             }
         }
-        return vm
+        return viewModel
     }
 }
 
