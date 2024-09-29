@@ -11,7 +11,6 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
         components.add(component)
     }
 
-    // activityComponent 를 리턴하는 함수
     fun <T : Any> findComponent(
         injectedClass: KClass<T>,
     ): ActivityScopeComponent? = components.firstOrNull { it.injectedClass == injectedClass }
@@ -23,16 +22,6 @@ class DefaultActivityComponentContainer private constructor() : ActivityComponen
         val component = components.firstOrNull { it.injectedClass == injectedClass }
         println("$TAG components: $components")
         return component?.instanceProvider?.invoke(context) as? T
-    }
-
-    fun remove(injectedClass: KClass<*>) {
-        components.removeIf {
-            println("$TAG it.injectedClass: ${it.injectedClass}")
-            println("$TAG injectedClass: $injectedClass")
-            val canRemove = it.injectedClass == injectedClass
-            println("$TAG canRemove: $canRemove")
-            canRemove
-        }
     }
 
     companion object {

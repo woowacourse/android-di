@@ -5,8 +5,6 @@ import com.example.sh1mj1.annotation.Qualifier
 import com.example.sh1mj1.component.activityscope.activityScopeComponent
 import com.example.sh1mj1.component.singleton.singletonComponent
 import com.example.sh1mj1.component.viewmodelscope.viewModelScopeComponent
-import com.example.sh1mj1.container.DefaultAppContainer
-import com.example.sh1mj1.container.activityscope.DefaultActivityComponentContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -25,7 +23,6 @@ class ShoppingApplication : DiApplication() {
         )
 
         container.add(
-//            singletonComponent<ProductRepository>(InMemoryProductRepository(), Qualifier("InMemory")),
             singletonComponent<CartRepository>(InMemoryCartRepository(), Qualifier("InMemory")),
             singletonComponent<CartRepository>(
                 DefaultCartRepository(),
