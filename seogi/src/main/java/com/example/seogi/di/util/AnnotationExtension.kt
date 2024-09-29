@@ -1,11 +1,13 @@
 package com.example.seogi.di.util
 
+import com.example.seogi.di.annotation.FieldInject
+import com.example.seogi.di.annotation.Provides
 import com.example.seogi.di.annotation.Qualifier
-import com.example.seogi.di.annotation.SingleTone
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 
 internal fun KParameter.getAnnotationIncludeQualifier() = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
@@ -17,6 +19,8 @@ internal fun KClass<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull
 
 internal fun KFunction<*>.getAnnotationIncludeQualifier() = annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
 
-internal fun KClass<*>.hasSingleToneAnnotation() = annotations.any { it.annotationClass.hasAnnotation<SingleTone>() }
+internal fun KFunction<*>.hasProvidesAnnotation() = annotations.contains(Provides())
 
-internal fun KFunction<*>.hasSingleToneAnnotation() = annotations.contains(SingleTone())
+internal fun KClass<*>.fieldsToInject(): List<KProperty1<*, *>> =
+    declaredMemberProperties
+        .filter { it.annotations.contains(FieldInject()) }

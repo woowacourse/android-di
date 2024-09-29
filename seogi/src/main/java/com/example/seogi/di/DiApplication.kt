@@ -2,8 +2,9 @@ package com.example.seogi.di
 
 import android.app.Application
 
-abstract class DiApplication(private val module: Module) : Application() {
-    override fun onCreate() {
-        super.onCreate()
+open class DiApplication : Application() {
+    companion object {
+        lateinit var diContainer: DiContainer
+        lateinit var module: Module
     }
 }

@@ -1,24 +1,32 @@
 package com.example.seogi.fixture
 
-import androidx.lifecycle.ViewModel
+import com.example.seogi.di.DiViewModel
 import com.example.seogi.di.annotation.FieldInject
 
-class FakeViewModel(
-    @Child1 val childFoo: ParentFoo,
-) : ViewModel() {
+class FakeViewModel : DiViewModel() {
     @FieldInject
-    private lateinit var foo1: String
+    @Child1
+    lateinit var childFoo: ParentFoo
+
+    @FieldInject
+    @Child2
+    lateinit var childFoo2: ParentFoo
 
     private lateinit var foo2: String
 
     private val foo3: String = "foo2"
+
+    fun onClearedViewModel() {
+        super.onCleared()
+    }
 }
 
 class FakeViewModel2(
-    @Child2 val childFoo: ParentFoo,
-) : ViewModel() {
+    @Child1 val childFoo1: ParentFoo,
+) : DiViewModel() {
     @FieldInject
-    private lateinit var foo1: String
+    @Child2
+    lateinit var childFoo2: ParentFoo
 
     private lateinit var foo2: String
 

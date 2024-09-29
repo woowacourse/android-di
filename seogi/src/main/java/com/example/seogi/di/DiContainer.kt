@@ -1,14 +1,14 @@
 package com.example.seogi.di
 
-import com.example.seogi.di.annotation.FieldInject
+import android.content.Context
+import com.example.seogi.di.util.fieldsToInject
 import com.example.seogi.di.util.getAnnotationIncludeQualifier
-import com.example.seogi.di.util.hasSingleToneAnnotation
+import com.example.seogi.di.util.hasProvidesAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
@@ -17,6 +17,7 @@ import kotlin.reflect.jvm.jvmErasure
 @Suppress("UNCHECKED_CAST")
 class DiContainer(
     private val diModule: Module,
+    context: Context,
 ) {
     private val dependencies: MutableMap<DependencyKey, Any> = mutableMapOf()
     private val functions: Collection<KFunction<*>> by lazy {
@@ -24,6 +25,8 @@ class DiContainer(
     }
 
     init {
+        dependencies[DependencyKey(Context::class, null)] = context
+
         functions.forEach {
             addDependency(it.returnType.jvmErasure, it.getAnnotationIncludeQualifier())
         }
@@ -40,6 +43,24 @@ class DiContainer(
         val instance = constructor.call(*params.toTypedArray())
         inject(instance)
         return instance
+    }
+
+    fun removeDependency(func: KFunction<*>) {
+        val returnTypeClass = func.returnType.jvmErasure
+        val annotation = func.getAnnotationIncludeQualifier()
+        val key = DependencyKey(returnTypeClass, annotation)
+
+        if (dependencies.containsKey(key)) {
+            dependencies.remove(key)
+        }
+    }
+
+    fun hasDependency(
+        clazz: KClass<*>,
+        annotation: Annotation? = null,
+    ): Boolean {
+        val key = DependencyKey(clazz, annotation)
+        return dependencies.containsKey(key)
     }
 
     private fun <T : Any> getInstance(
@@ -79,15 +100,12 @@ class DiContainer(
     }
 
     private fun KFunction<*>.injectFields(instance: Any) {
-        if (!hasSingleToneAnnotation()) return
+        if (hasProvidesAnnotation()) return
         inject(instance)
     }
 
-    private fun inject(instance: Any) {
-        val fields =
-            instance::class.declaredMemberProperties.filter {
-                it.annotations.contains(FieldInject())
-            }.map { it as KMutableProperty1 }
+    fun inject(instance: Any) {
+        val fields = instance::class.fieldsToInject().map { it as KMutableProperty1 }
         fields.forEach { field ->
             val qualifierAnnotation = field.getAnnotationIncludeQualifier()
             val value = getInstance(field.returnType.jvmErasure, qualifierAnnotation)
