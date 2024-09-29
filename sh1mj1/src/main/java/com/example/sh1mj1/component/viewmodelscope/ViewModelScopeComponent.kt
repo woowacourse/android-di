@@ -16,17 +16,8 @@ data class ViewModelScopeComponent<T : Any>(
         instance::class.memberProperties.filter {
             it.hasAnnotation<Inject>()
         }
-}
 
-data class ViewModelScopeComponent2<T : Any>(
-    val injectedClass: KClass<T>,
-    val instance: T,
-    val qualifier: Qualifier? = null,
-) {
-    fun injectableProperties(): List<KProperty1<out Any, *>> =
-        instance::class.memberProperties.filter {
-            it.hasAnnotation<Inject>()
-        }
+    fun canConstructorInject(): Boolean = qualifier?.generate == false
 }
 
 inline fun <reified T : Any> viewModelScopeComponent(

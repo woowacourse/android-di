@@ -1,29 +1,23 @@
 package com.example.sh1mj1
 
 import androidx.lifecycle.ViewModel
-import com.example.sh1mj1.annotation.Qualifier
-import com.example.sh1mj1.annotation.ViewModelScope
 import com.example.sh1mj1.component.singleton.ComponentKey
-import com.example.sh1mj1.component.viewmodelscope.ViewModelScopedInstanceWithKeys
+import com.example.sh1mj1.component.viewmodelscope.ComponentKeysForViewModel
+import com.example.sh1mj1.component.viewmodelscope.viewModelScopeParameterKeys
+import com.example.sh1mj1.component.viewmodelscope.viewModelScopePropertyKeys
 import com.example.sh1mj1.container.AppContainer
-import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
 import com.example.sh1mj1.extension.injectableProperties
-import com.example.sh1mj1.extension.typeToKClass
-import com.example.sh1mj1.extension.withQualifier
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class ViewModelDependencyInjector(
     private val appContainer: AppContainer,
 ) {
-    // TODO: nunu createInstance가 많은 역할을 하고 있는 것 같아요! 메서드를 분리해봐도 좋을 것 같습니다.
-    fun <VM : ViewModel> viewModelScopedInstanceWithKeys(modelClass: Class<VM>): ViewModelScopedInstanceWithKeys<VM> {
+    fun <VM : ViewModel> viewModelScopedInstanceWithKeys(modelClass: Class<VM>): ComponentKeysForViewModel<VM> {
         val kClass = modelClass.kotlin
 
         val constructor =
@@ -37,32 +31,12 @@ class ViewModelDependencyInjector(
         setField(injectedFields, viewModel)
 
         val viewModelScopeComponents =
-            viewModelScopeComponentKeysWithParameters(injectedArgs) +
-                    viewModelScopeComponentKeysWithProperties(injectedFields)
-        return ViewModelScopedInstanceWithKeys(
+            injectedArgs.viewModelScopeParameterKeys() + injectedFields.viewModelScopePropertyKeys()
+        return ComponentKeysForViewModel(
             viewModel = viewModel,
-            viewModelScopeComponentsKeys = viewModelScopeComponents,
+            componentKeys = viewModelScopeComponents,
         )
     }
-
-    private fun viewModelScopeComponentKeysWithParameters(kParameters: List<KParameter>): List<ComponentKey> =
-        kParameters.map { kParameter ->
-            ComponentKey.of(
-                clazz = kParameter.typeToKClass(),
-                qualifier = kParameter.withQualifier(),
-            )
-        }
-
-
-    private fun <VM : Any> viewModelScopeComponentKeysWithProperties(kProperties: List<KProperty1<VM, *>>): List<ComponentKey> =
-        kProperties.filter { it.hasAnnotation<ViewModelScope>() }
-            .map { kProperty ->
-                ComponentKey.of(
-                    clazz = kProperty.typeToKClass(),
-                    qualifier = kProperty.withQualifier(),
-                )
-            }
-
 
     private fun <VM : Any> calledConstructor(
         injectedArgs: List<KParameter>,
@@ -91,13 +65,6 @@ class ViewModelDependencyInjector(
 
             kMutableProperty.setter.call(viewModel, dependency)
         }
-    }
-
-    fun removeViewModelScopeComponent(
-        kClass: KClass<*>,
-        qualifier: Qualifier?,
-    ) {
-        ViewModelComponentContainer.instance().remove(kClass, qualifier)
     }
 }
 

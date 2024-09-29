@@ -6,12 +6,12 @@ import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
 import com.example.sh1mj1.component.viewmodelscope.ViewModelScopeComponent
 import com.example.sh1mj1.container.singleton.DefaultInjectedSingletonContainer
 import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
-import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
+import com.example.sh1mj1.container.viewmodelscope.ViewModelScopeComponentContainer
 import kotlin.reflect.KClass
 
 class DefaultAppContainer(
-    private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer.instance,
-    private val viewModelScopeComponentContainer: ViewModelComponentContainer = ViewModelComponentContainer.instance(),
+    private val singletonComponentContainer: InjectedSingletonContainer = DefaultInjectedSingletonContainer.instance(),
+    private val viewModelScopeComponentContainer: ViewModelScopeComponentContainer = ViewModelScopeComponentContainer.instance(),
 ) : AppContainer {
     override fun <T : Any> add(component: InjectedSingletonComponent<T>) {
         singletonComponentContainer.add(component)

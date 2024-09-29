@@ -7,7 +7,7 @@ import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 
-class ViewModelComponentContainer private constructor() {
+class ViewModelScopeComponentContainer private constructor() {
     private val components = mutableMapOf<ComponentKey, ViewModelScopeComponent<*>>()
 
     fun add(component: ViewModelScopeComponent<*>) {
@@ -33,10 +33,9 @@ class ViewModelComponentContainer private constructor() {
 
     fun find(componentKey: ComponentKey): Any? {
         val foundComponent = components[componentKey]
-        val foundInstance =
-            foundComponent?.instance
+        val foundInstance = foundComponent?.instance
 
-        if (foundComponent?.qualifier?.generate == true) {
+        if (foundComponent?.canConstructorInject() == true) {
             return foundInstance
         }
 
@@ -56,11 +55,11 @@ class ViewModelComponentContainer private constructor() {
     }
 
     companion object {
-        private var instance: ViewModelComponentContainer? = null
+        private var instance: ViewModelScopeComponentContainer? = null
 
-        fun instance(): ViewModelComponentContainer {
+        fun instance(): ViewModelScopeComponentContainer {
             if (instance == null) {
-                instance = ViewModelComponentContainer()
+                instance = ViewModelScopeComponentContainer()
             }
             return instance!!
         }

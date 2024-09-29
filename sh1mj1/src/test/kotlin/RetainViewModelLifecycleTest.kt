@@ -1,7 +1,7 @@
 package com.example.sh1mj1
 
 import com.example.sh1mj1.annotation.Qualifier
-import com.example.sh1mj1.container.viewmodelscope.ViewModelComponentContainer
+import com.example.sh1mj1.container.viewmodelscope.ViewModelScopeComponentContainer
 import com.example.sh1mj1.stub.StubActivity
 import com.example.sh1mj1.stub.StubApplication
 import com.example.sh1mj1.stub.StubRepo
@@ -91,7 +91,7 @@ class RetainViewModelLifecycleTest {
         activityController.destroy()
 
         // then
-        ViewModelComponentContainer.instance().find(
+        ViewModelScopeComponentContainer.instance().find(
             clazz = StubRepo::class,
             qualifier = Qualifier("viewModelScope"),
         ) shouldBe null
