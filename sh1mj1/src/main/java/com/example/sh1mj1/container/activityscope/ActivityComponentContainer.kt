@@ -5,15 +5,15 @@ import com.example.sh1mj1.component.activityscope.ActivityScopeComponent
 import kotlin.reflect.KClass
 
 class DefaultActivityComponentContainer private constructor() : ActivityComponentContainer {
-    private val components = mutableListOf<ActivityScopeComponent>()
+    private val components = mutableListOf<ActivityScopeComponent<*>>()
 
-    fun add(component: ActivityScopeComponent) {
+    fun <T : Any> add(component: ActivityScopeComponent<T>) {
         components.add(component)
     }
 
-    fun <T : Any> findComponent(
-        injectedClass: KClass<T>,
-    ): ActivityScopeComponent? = components.firstOrNull { it.injectedClass == injectedClass }
+    fun findComponent(
+        injectedClass: KClass<*>,
+    ): ActivityScopeComponent<*>? = components.firstOrNull { it.injectedClass == injectedClass }
 
     fun <T : Any> findComponentInstance(
         injectedClass: KClass<T>,

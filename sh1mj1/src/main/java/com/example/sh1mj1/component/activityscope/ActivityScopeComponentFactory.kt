@@ -20,16 +20,11 @@ class ActivityScopeComponentFactory<T : Any>(
         cachedValue?.let { return it }
 
         val container = (thisRef.application as DiApplication).activityContainer
-        println("$TAG thisRef: $thisRef") // 이거 왜 출력 안댐
-
         val component = container.findComponent(injectedClass)
             ?: throw IllegalStateException("${injectedClass.simpleName} not found in container")
-        println("$TAG component: $component")
-
 
         val componentInstance = container.findComponentInstance(injectedClass, thisRef)
             ?: throw IllegalStateException("${injectedClass.simpleName} not found in container")
-        println("$TAG componentInstance: $componentInstance")
 
         if (thisRef is LifecycleOwner) {
             component.attachToLifecycle(thisRef)

@@ -6,9 +6,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.sh1mj1.annotation.Qualifier
 import kotlin.reflect.KClass
 
-data class ActivityScopeComponent(
-    val injectedClass: KClass<*>,
-    val instanceProvider: (Context) -> Any?,
+data class ActivityScopeComponent<T: Any>(
+    val injectedClass: KClass<T>,
+    val instanceProvider: (Context) -> T?,
     val qualifier: Qualifier? = null,
 ) : DefaultLifecycleObserver {
 
@@ -29,19 +29,19 @@ data class ActivityScopeComponent(
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-//        container.remove(injectedClass)
-        // 인스턴스 정리
         providedInstance = null
         owner.lifecycle.removeObserver(this)
     }
 }
 
-inline fun <reified T : Any?> activityScopeComponent(
+inline fun <reified T : Any> activityScopeComponent(
     noinline instanceProvider: (Context) -> T?,
     qualifier: Qualifier? = null,
-): ActivityScopeComponent =
+): ActivityScopeComponent<T> =
     ActivityScopeComponent(
         injectedClass = T::class,
         instanceProvider = instanceProvider,
         qualifier = qualifier,
     )
+
+private const val TAG = "ActivityScopeComponent"
