@@ -1,5 +1,7 @@
 package com.example.sh1mj1
 
+import com.example.sh1mj1.annotation.Inject
+import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -28,7 +30,7 @@ class InjectedComponentTest {
     fun `자전거는 주입할 수 있는 프로퍼티가 없다`() {
         // given & when
         val bike =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 injectedClass = StubVehicle::class,
                 instance = StubVehicle.Bike(),
             )
@@ -42,7 +44,7 @@ class InjectedComponentTest {
     fun `자동차는 주입해야 하는 프로퍼티가 두개 있다`() {
         // given & when
         val car =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 injectedClass = StubVehicle::class,
                 instance = StubVehicle.Car(),
             )
@@ -56,7 +58,7 @@ class InjectedComponentTest {
     fun `자동차는 inject 애노테이션이 있는 엔진을 주입해야 한다`() {
         // given & when
         val car =
-            InjectedComponent.InjectedSingletonComponent(
+            InjectedSingletonComponent(
                 injectedClass = StubVehicle::class,
                 instance = StubVehicle.Car(),
             )

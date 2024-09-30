@@ -1,23 +1,22 @@
 package woowacourse.shopping
 
-import com.example.sh1mj1.AppContainer
-import com.example.sh1mj1.InjectedActivityContainer
-import com.example.sh1mj1.InjectedComponent.InjectedSingletonComponent
-import com.example.sh1mj1.InjectedSingletonContainer
-import com.example.sh1mj1.Qualifier
+import com.example.sh1mj1.BaseViewModelFactory
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
+import com.example.sh1mj1.container.AppContainer
+import com.example.sh1mj1.container.DefaultAppContainer
+import com.example.sh1mj1.container.singleton.InjectedSingletonContainer
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.FakeInjectedActivityContainer
 import woowacourse.shopping.di.FakeInjectedSingletonContainer
 import woowacourse.shopping.ui.MainViewModel
 
 class BaseViewModelFactoryTest {
     private lateinit var injectedSingletonContainer: InjectedSingletonContainer
-    private lateinit var injectedActivityContainer: InjectedActivityContainer
     private lateinit var appContainer: AppContainer
 
     @Test
@@ -39,8 +38,7 @@ class BaseViewModelFactoryTest {
                         ),
                     ),
             )
-        injectedActivityContainer = FakeInjectedActivityContainer()
-        appContainer = DefaultAppContainer(injectedSingletonContainer, injectedActivityContainer)
+        appContainer = DefaultAppContainer(injectedSingletonContainer)
         val baseViewModelFactory = BaseViewModelFactory(appContainer)
 
         assertDoesNotThrow { (baseViewModelFactory.create(MainViewModel::class.java)) }

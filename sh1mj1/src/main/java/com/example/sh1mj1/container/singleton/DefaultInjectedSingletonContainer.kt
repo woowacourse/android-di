@@ -1,27 +1,31 @@
-package com.example.sh1mj1
+package com.example.sh1mj1.container.singleton
 
+import com.example.sh1mj1.annotation.Qualifier
+import com.example.sh1mj1.component.singleton.ComponentKey
+import com.example.sh1mj1.component.singleton.InjectedSingletonComponent
 import com.example.sh1mj1.extension.withQualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 
 class DefaultInjectedSingletonContainer private constructor() : InjectedSingletonContainer {
-    private val components: MutableMap<ComponentKey, InjectedComponent.InjectedSingletonComponent> =
+    private val components: MutableMap<ComponentKey, InjectedSingletonComponent<*>> =
         mutableMapOf()
 
-    override fun add(component: InjectedComponent.InjectedSingletonComponent) {
+    override fun <T : Any> add(component: InjectedSingletonComponent<T>) {
         val componentKey =
             ComponentKey.of(
                 clazz = component.injectedClass,
                 qualifier = component.qualifier,
             )
-        check(!components.containsKey(componentKey)) { "There is already a component for $componentKey" }
+        if (components.containsKey(componentKey)) return
+
         components[componentKey] = component
     }
 
     override fun find(
         clazz: KClass<*>,
         qualifier: Qualifier?,
-    ): Any =
+    ): Any? =
         find(
             ComponentKey.of(
                 clazz = clazz,
@@ -29,16 +33,16 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
             ),
         )
 
-    override fun find(componentKey: ComponentKey): Any {
+    override fun find(componentKey: ComponentKey): Any? {
         val foundComponent = components[componentKey]
         val foundInstance =
-            foundComponent?.instance ?: throw IllegalStateException("There is no component for $componentKey")
+            foundComponent?.instance
 
-        if (foundComponent.qualifier?.generate == true) {
+        if (foundComponent?.qualifier?.generate == true) {
             return foundInstance
         }
 
-        foundComponent.injectableProperties().forEach { kProperty ->
+        foundComponent?.injectableProperties()?.forEach { kProperty ->
             val dependency =
                 find(
                     ComponentKey.of(
@@ -58,6 +62,13 @@ class DefaultInjectedSingletonContainer private constructor() : InjectedSingleto
     }
 
     companion object {
-        val instance = DefaultInjectedSingletonContainer()
+        var instance: InjectedSingletonContainer? = null
+
+        fun instance(): InjectedSingletonContainer {
+            if (instance == null) {
+                instance = DefaultInjectedSingletonContainer()
+            }
+            return instance ?: throw IllegalStateException("InjectedSingletonContainer is not initialized")
+        }
     }
 }

@@ -40,5 +40,3 @@ class CartProductAdapter(
         notifyDataSetChanged()
     }
 }
-
-private const val TAG = "CartProductAdapter"

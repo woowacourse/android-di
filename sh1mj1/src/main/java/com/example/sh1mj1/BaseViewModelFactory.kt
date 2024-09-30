@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package com.example.sh1mj1
 
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -7,23 +7,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.sh1mj1.AppContainer
-import com.example.sh1mj1.DependencyInjector
+import com.example.sh1mj1.container.AppContainer
 
 class BaseViewModelFactory(
     appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
-    private val dependencyInjector = DependencyInjector(appContainer)
+    private val dependencyInjector = ViewModelCreator(appContainer)
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return dependencyInjector.createInstance(modelClass)
+    override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
+        val viewModelScopedInstanceWithKeys = dependencyInjector.viewModelScopedInstanceWithKeys(modelClass)
+        return viewModelScopedInstanceWithKeys.viewModel
     }
 }
 
 inline fun <reified VM : ViewModel> injectedViewModelFactory(): ViewModelProvider.Factory =
     viewModelFactory {
         initializer {
-            val appContainer = (this[APPLICATION_KEY] as ShoppingApplication).container
+            val appContainer = (this[APPLICATION_KEY] as DiApplication).container
             BaseViewModelFactory(appContainer).create(VM::class.java)
         }
     }
