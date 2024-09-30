@@ -16,3 +16,4 @@ rootProject.name = "android-di"
 include(":app")
 include(":di-libs")
 include(":di-android")
+include(":hilt-app")
