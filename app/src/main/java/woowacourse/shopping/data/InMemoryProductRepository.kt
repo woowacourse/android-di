@@ -1,9 +1,16 @@
 package woowacourse.shopping.data
 
+import android.util.Log
 import woowacourse.shopping.model.Product
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class InMemoryProductRepository @Inject constructor(): ProductRepository {
+@Singleton
+class InMemoryProductRepository @Inject constructor() : ProductRepository {
+
+    init {
+        Log.d(TAG, "init: InMemoryProductRepository created")
+    }
 
     private val products: List<Product> = listOf(
         Product(
@@ -35,3 +42,5 @@ class InMemoryProductRepository @Inject constructor(): ProductRepository {
 interface ProductRepository {
     fun getAllProducts(): List<Product>
 }
+
+private const val TAG = "InMemoryProductRepository"
