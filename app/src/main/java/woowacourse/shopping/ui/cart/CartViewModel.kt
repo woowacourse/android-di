@@ -3,13 +3,14 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.InMemoryCartRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.BaseViewModelFactory
+import javax.inject.Inject
 
-class CartViewModel(
-    private val cartRepository: InMemoryCartRepository,
+@HiltViewModel
+class CartViewModel @Inject constructor(
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _cartProducts: MutableLiveData<List<Product>> =
@@ -26,16 +27,5 @@ class CartViewModel(
     fun deleteCartProduct(id: Int) {
         cartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
-    }
-
-    companion object {
-        fun factory(
-            cartRepository: InMemoryCartRepository,
-        ): ViewModelProvider.Factory =
-            BaseViewModelFactory {
-                CartViewModel(
-                    cartRepository,
-                )
-            }
     }
 }
