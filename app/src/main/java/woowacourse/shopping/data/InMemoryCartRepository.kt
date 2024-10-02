@@ -16,23 +16,39 @@ class InMemoryCartRepository @Inject constructor() : CartRepository {
     }
 
     private val cartProducts: MutableList<Product> = mutableListOf()
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         cartProducts.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<Product> {
         return cartProducts.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
+    override suspend fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)
     }
 }
 
+@Singleton
+class LocalCartRepository @Inject constructor(
+    private val dao: CartProductDao,
+) : CartRepository {
+    override suspend fun addCartProduct(product: Product) {
+        dao.insert(product.toEntity())
+    }
+
+    override suspend fun getAllCartProducts(): List<Product> = dao.getAll().map(CartProductEntity::toDomain)
+
+    override suspend fun deleteCartProduct(id: Int) {
+        dao.delete(id.toLong())
+    }
+}
+
+
 interface CartRepository {
-    fun addCartProduct(product: Product)
-    fun getAllCartProducts(): List<Product>
-    fun deleteCartProduct(id: Int)
+    suspend fun addCartProduct(product: Product)
+    suspend fun getAllCartProducts(): List<Product>
+    suspend fun deleteCartProduct(id: Int)
 }
 
 private const val TAG = "InMemoryCartRepository"

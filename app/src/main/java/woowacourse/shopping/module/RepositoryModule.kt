@@ -2,7 +2,6 @@ package woowacourse.shopping.module
 
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import woowacourse.shopping.data.CartRepository
