@@ -8,6 +8,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
@@ -20,7 +21,8 @@ class CartActivity : AppCompatActivity() {
         )
     }
 
-    private lateinit var dateFormatter: DateFormatter
+    @Inject
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +39,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
+        dateFormatter = KoreanLocaleDateFormatter(this)
     }
 
     private fun setupToolbar() {
