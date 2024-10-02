@@ -27,7 +27,6 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupView()
@@ -38,9 +37,6 @@ class CartActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupDateFormatter() {
-        dateFormatter = KoreanLocaleDateFormatter(this)
-    }
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)

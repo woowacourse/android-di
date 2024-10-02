@@ -202,6 +202,14 @@ abstract class AnalyticsModule {
 힐트 모듈 AnalyticsModule @InstallIn(ActivityComponent.class)로 주석이 달려 있습니다. 왜냐하면 ExampleActivity에 의존성을 주입하려고 하기 때문입니다.
 이 주석은 AnalyticsModule의 모든 의존성이 앱의 모든 액티비티에서 사용할 수 있음을 의미합니다.
 
+```kotlin
+class KoreanLocaleDateFormatter(context: Context) : DateFormatter {
+    ...
+}
+
+interface DateFormatter { ... }
+```
+
 
 
 
