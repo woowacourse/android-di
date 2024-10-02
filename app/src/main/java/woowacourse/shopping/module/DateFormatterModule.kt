@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.qualifiers.ActivityContext
 import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.cart.KoreanLocaleDateFormatter
 

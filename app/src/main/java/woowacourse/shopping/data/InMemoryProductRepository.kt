@@ -1,8 +1,9 @@
 package woowacourse.shopping.data
 
 import woowacourse.shopping.model.Product
+import javax.inject.Inject
 
-class ProductRepository {
+class InMemoryProductRepository @Inject constructor(): ProductRepository {
 
     private val products: List<Product> = listOf(
         Product(
@@ -25,7 +26,12 @@ class ProductRepository {
         ),
     )
 
-    fun getAllProducts(): List<Product> {
+    override fun getAllProducts(): List<Product> {
         return products
     }
+}
+
+
+interface ProductRepository {
+    fun getAllProducts(): List<Product>
 }

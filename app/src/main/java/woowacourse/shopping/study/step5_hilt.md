@@ -242,5 +242,26 @@ KoreanLocaleDateFormatter의 생성자 주입 미설정:
 
 
 
+```kotlin
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    @Inject
+    var productRepository: InMemoryProductRepository,
+    @Inject
+    var cartRepository: InMemoryCartRepository
+) : ViewModel() { /*...*/ }
 
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+    private val viewModel by lazy {
+        ViewModelProvider(this)[MainViewModel::class.java]
+    }
+    /*...*/
+}
+```
+이렇게 해도 터지는 구나
+근데 에러 메시지가
+> Dagger does not support injection into private fields
+private woowacourse.shopping.data.InMemoryProductRepository productRepository;
+이렇게 뜨네
 

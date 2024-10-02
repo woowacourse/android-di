@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.databinding.ActivityCartBinding
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<CartViewModel> {
         CartViewModel.factory(
-            cartRepository = CartRepository()
+            cartRepository = InMemoryCartRepository()
         )
     }
 

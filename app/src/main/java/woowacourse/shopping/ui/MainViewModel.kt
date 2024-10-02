@@ -4,14 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.model.Product
+import javax.inject.Inject
 
-class MainViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
+@HiltViewModel
+class MainViewModel @Inject constructor(
 ) : ViewModel() {
+
+    @Inject
+    lateinit var productRepository: InMemoryProductRepository
+
+    @Inject
+    lateinit var cartRepository: InMemoryCartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
@@ -29,16 +36,4 @@ class MainViewModel(
         _products.value = productRepository.getAllProducts()
     }
 
-    companion object {
-        fun factory(
-            productRepository: ProductRepository,
-            cartRepository: CartRepository,
-        ): ViewModelProvider.Factory =
-            BaseViewModelFactory {
-                MainViewModel(
-                    productRepository,
-                    cartRepository,
-                )
-            }
-    }
 }
