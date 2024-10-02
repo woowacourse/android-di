@@ -196,20 +196,44 @@ abstract class AnalyticsModule {
 }
 ```
 
-> The Hilt module AnalyticsModule is annotated with @InstallIn(ActivityComponent.class) because you want Hilt to inject that dependency into ExampleActivity.
+> The Hilt module AnalyticsModule is annotated with @InstallIn(ActivityComponent.class) because you want Hilt to inject
+> that dependency into ExampleActivity.
 > This annotation means that all of the dependencies in AnalyticsModule are available in all of the app's activities.
 
 힐트 모듈 AnalyticsModule @InstallIn(ActivityComponent.class)로 주석이 달려 있습니다. 왜냐하면 ExampleActivity에 의존성을 주입하려고 하기 때문입니다.
 이 주석은 AnalyticsModule의 모든 의존성이 앱의 모든 액티비티에서 사용할 수 있음을 의미합니다.
 
 ```kotlin
-class KoreanLocaleDateFormatter(context: Context) : DateFormatter {
-    ...
+class KoreanLocaleDateFormatter @Inject constructor(context: Context) : DateFormatter {
+    // ...
 }
 
-interface DateFormatter { ... }
+interface DateFormatter { /*...*/ }
+
+@AndroidEntryPoint
+class CartActivity : AppCompatActivity() {
+    // ...
+    @Inject
+    lateinit var dateFormatter: DateFormatter
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+abstract class DateFormatterModule {
+    @Binds
+    abstract fun dateFormatter(
+        dateFormatter: KoreanLocaleDateFormatter
+    ): DateFormatter
+}
+
 ```
 
+왜 터지지?
+![img_2.png](img_2.png)
+KoreanLocaleDateFormatter의 생성자 주입 미설정:
+
+* KoreanLocaleDateFormatter는 Context를 생성자 인자로 받습니다.
+  Hilt가 Context를 제공하기 위해서는 적절한 컴포넌트 범위에서 의존성을 해결해야 합니다.
 
 
 
