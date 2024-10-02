@@ -3,9 +3,7 @@ package woowacourse.shopping.data
 import android.util.Log
 import woowacourse.shopping.model.Product
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class InMemoryProductRepository @Inject constructor() : ProductRepository {
 
     init {
