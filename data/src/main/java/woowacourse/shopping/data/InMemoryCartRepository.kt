@@ -4,6 +4,7 @@ import android.util.Log
 import woowacourse.shopping.data.model.Product
 import javax.inject.Inject
 
+
 class InMemoryCartRepository @Inject constructor() : CartRepository {
 
     init {

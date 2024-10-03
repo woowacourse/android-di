@@ -11,9 +11,6 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val cartFragment by lazy { CartFragment() }
-    private val todayFragment by lazy { TodayFragment() }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

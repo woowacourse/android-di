@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "android-di"
 include(":app")
+include(":data")
+include(":local")

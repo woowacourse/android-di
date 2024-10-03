@@ -90,4 +90,6 @@ dependencies {
     // fragment
     implementation("androidx.fragment:fragment-ktx:1.5.6")
 
+    implementation(project(":data"))
+    implementation(project(":local"))
 }
