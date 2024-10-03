@@ -1,32 +1,45 @@
 package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.commit
 import dagger.hilt.android.AndroidEntryPoint
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
-    }
-
-    @Inject
-    lateinit var dateFormatter: DateFormatter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupBinding()
+        setContentView(binding.root)
         setupToolbar()
-        setupView()
+        initFragments(savedInstanceState)
+
+    }
+
+    private fun initFragments(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, CartFragment::class.java, null)
+            }
+        }
+
+        with(binding) {
+            btnCart.setOnClickListener {
+                supportFragmentManager.commit {
+                    replace(R.id.fragment_container, CartFragment::class.java, null)
+                }
+            }
+            btnToday.setOnClickListener {
+                supportFragmentManager.commit {
+                    replace(R.id.fragment_container, TodayFragment::class.java, null)
+                }
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -40,33 +53,4 @@ class CartActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun setupBinding() {
-        binding.lifecycleOwner = this
-        binding.vm = viewModel
-        setContentView(binding.root)
-    }
-
-    private fun setupView() {
-        setupCartProductData()
-        setupCartProductList()
-    }
-
-    private fun setupCartProductData() {
-        viewModel.getAllCartProducts()
-    }
-
-    private fun setupCartProductList() {
-        viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
-            binding.rvCartProducts.adapter = adapter
-        }
-        viewModel.onCartProductDeleted.observe(this) {
-            if (!it) return@observe
-            Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,10 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
+
+    init {
+        Log.d(TAG, "init: created")
+    }
 
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
@@ -35,3 +40,5 @@ class CartViewModel @Inject constructor(
         }
     }
 }
+
+private const val TAG = "CartViewModel"

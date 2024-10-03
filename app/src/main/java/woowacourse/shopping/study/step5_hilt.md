@@ -235,13 +235,6 @@ KoreanLocaleDateFormatter의 생성자 주입 미설정:
 * KoreanLocaleDateFormatter는 Context를 생성자 인자로 받습니다.
   Hilt가 Context를 제공하기 위해서는 적절한 컴포넌트 범위에서 의존성을 해결해야 합니다.
 
-
-
-
-
-
-
-
 ```kotlin
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -259,9 +252,50 @@ class MainActivity : AppCompatActivity() {
     /*...*/
 }
 ```
+
 이렇게 해도 터지는 구나
 근데 에러 메시지가
 > Dagger does not support injection into private fields
-private woowacourse.shopping.data.InMemoryProductRepository productRepository;
-이렇게 뜨네
+> private woowacourse.shopping.data.InMemoryProductRepository productRepository;
+> 이렇게 뜨네
 
+@Singleton 을 어디에 선언해야 할까?
+Module VS 구현체
+
+* Module
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun productRepository(
+        productRepository: InMemoryProductRepository
+    ): ProductRepository
+}
+
+class InMemoryProductRepository @Inject constructor() : ProductRepository {
+    /*...*/
+}
+```
+
+* 구현체
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    abstract fun productRepository(
+        productRepository: InMemoryProductRepository
+    ): ProductRepository
+}
+
+@Singleton
+class InMemoryProductRepository @Inject constructor() : ProductRepository {
+    /*...*/
+}
+```
