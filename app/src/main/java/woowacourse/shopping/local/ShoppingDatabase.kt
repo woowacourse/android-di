@@ -1,4 +1,4 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

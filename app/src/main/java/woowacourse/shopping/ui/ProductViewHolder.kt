@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemProductBinding
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.model.Product
 
 class ProductViewHolder(
     private val binding: ItemProductBinding,

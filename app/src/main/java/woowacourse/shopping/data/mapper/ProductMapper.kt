@@ -1,7 +1,7 @@
 package woowacourse.shopping.data.mapper
 
-import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.local.CartProductEntity
+import woowacourse.shopping.data.model.Product
 
 fun Product.toEntity(): CartProductEntity = CartProductEntity(
     name = name,

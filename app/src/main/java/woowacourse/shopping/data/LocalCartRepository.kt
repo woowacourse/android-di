@@ -3,7 +3,9 @@ package woowacourse.shopping.data
 import android.util.Log
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.local.CartProductDao
+import woowacourse.shopping.local.CartProductEntity
+import woowacourse.shopping.data.model.Product
 import javax.inject.Inject
 
 class LocalCartRepository @Inject constructor(

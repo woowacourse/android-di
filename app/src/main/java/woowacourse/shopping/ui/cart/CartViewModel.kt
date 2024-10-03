@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.model.Product
 import javax.inject.Inject
 
 @HiltViewModel

@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
 import android.util.Log
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.model.Product
 import javax.inject.Inject
 
 class InMemoryProductRepository @Inject constructor() : ProductRepository {
@@ -37,8 +37,6 @@ class InMemoryProductRepository @Inject constructor() : ProductRepository {
 }
 
 
-interface ProductRepository {
-    fun getAllProducts(): List<Product>
-}
+
 
 private const val TAG = "InMemoryProductRepository"

@@ -1,10 +1,9 @@
 package woowacourse.shopping.data
 
 import android.util.Log
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.model.Product
 import javax.inject.Inject
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
 class InMemoryCartRepository @Inject constructor() : CartRepository {
 
     init {
@@ -23,12 +22,6 @@ class InMemoryCartRepository @Inject constructor() : CartRepository {
     override suspend fun deleteCartProduct(id: Int) {
         cartProducts.removeAt(id)
     }
-}
-
-interface CartRepository {
-    suspend fun addCartProduct(product: Product)
-    suspend fun getAllCartProducts(): List<Product>
-    suspend fun deleteCartProduct(id: Int)
 }
 
 private const val TAG = "InMemoryCartRepository"
