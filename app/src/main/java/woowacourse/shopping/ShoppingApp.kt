@@ -1,12 +1,15 @@
 package woowacourse.shopping
 
 import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
@@ -17,6 +20,7 @@ import woowacourse.shopping.presentation.MainViewModel
 import woowacourse.shopping.presentation.cart.CartViewModel
 import woowacourse.shopping.presentation.cart.DateFormatter
 import woowacourse.shopping.presentation.cart.KoreanLocaleDateFormatter
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Private
 
 class ShoppingApp : Application() {
     override fun onCreate() {
@@ -29,15 +33,12 @@ class ShoppingApp : Application() {
     }
 }
 
-// 아래는 koin
-
-// TODO:  ProductRepository 를 ViewModelScope 로 변경.
 val myAppModules = module {
     // DB & DAO (local)
     single {
         Room.databaseBuilder(
             get(),
-            ShoppingDatabase::class.java, "shopping.db"
+            ShoppingDatabase::class.java, ShoppingDatabase.NAME
         ).build()
     }
     single { get<ShoppingDatabase>().cartProductDao() }
@@ -46,10 +47,8 @@ val myAppModules = module {
     single<CartRepository> { LocalCartRepository(get()) }
     single<ProductRepository> { InMemoryProductRepository() }
 
-
-    // viewModel (presentation)
-    viewModel { MainViewModel(get(), get()) }
-    viewModel { CartViewModel(get()) }
+    viewModelOf(::MainViewModel)
+    viewModelOf(::CartViewModel)
 
     // dateFormat (presentation)
     single<DateFormatter> { KoreanLocaleDateFormatter(get()) }

@@ -68,7 +68,41 @@ DI 컨테이너에 타입과 구현체가 등록되는 것인데,
 ```kotlin
 singleOf(::InMemoryProductRepository) { bind<ProductRepository>() }
 ```
-이렇게 할 바에 차라리 single 을 사용하는게 나을 것 같다.
+이렇게 할 바에 차라리 single 을 사용하는 게 나을 것 같다.
+
+viewModelOf 와 viewModel 도 똑같다!
+
+일반적으로 ViewModel 은 인터페이스와 구현체를 직접 따로 만들지 않는 경우가 많다.
+그래서 viewModelOf 를 쓰는 건 더 간편할 지도?
+
+
+신기한 점:
+singleOf(::InMemoryProductRepository)
+이렇게 했을 InMemoryProductRepository 의 생성자 파라미터가 0개 이면
+```kotlin
+inline fun <reified R> Module.singleOf(
+    crossinline constructor: () -> R,
+): KoinDefinition<R> = single { new(constructor) }
+```
+
+1개이면
+```kotlin
+inline fun <reified R, reified T1> Module.singleOf(
+  crossinline constructor: (T1) -> R,
+): Pair<Module, InstanceFactory<R>> = single { new(constructor) }
+```
+
+3 개이면,
+```kotlin
+inline fun <reified R, reified T1, reified T2, reified T3, reified T4> Module.singleOf(
+    crossinline constructor: (T1, T2, T3, T4) -> R,
+    options: BeanDefinition<R>.() -> Unit
+): KoinDefinition<R> {
+    return setupInstance(_singleInstanceFactory(definition = { new(constructor) }), options)
+}
+```
+일로 Declaration(cmd + B) 이 연결된다.
+
 
 ```kotlin
 single<ProductRepository> { InMemoryProductRepository() }
@@ -85,6 +119,7 @@ val repositoryModule = module {
     single<ProductRepository> { InMemoryProductRepository() }
 }
 ```
+
 
 
 
