@@ -14,6 +14,6 @@ abstract class DateFormatterModule {
     @Binds
     @ActivityScoped
     abstract fun dateFormatter(
-        dateFormatter: woowacourse.shopping.presentation.cart.KoreanLocaleDateFormatter
-    ): woowacourse.shopping.presentation.cart.DateFormatter
+        dateFormatter: KoreanLocaleDateFormatter
+    ): DateFormatter
 }
