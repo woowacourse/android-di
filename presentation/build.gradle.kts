@@ -1,31 +1,24 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "woowacourse.shopping"
+    namespace = "woowacourse.shopping.presentation"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "woowacourse.shopping"
+//        applicationId = "woowacourse.shopping"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -38,16 +31,13 @@ android {
     dataBinding {
         enable = true
     }
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
 }
-
 kapt {
     correctErrorTypes = true
 }
 
 dependencies {
+
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -86,5 +76,4 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":local"))
-    implementation(project(":presentation"))
 }

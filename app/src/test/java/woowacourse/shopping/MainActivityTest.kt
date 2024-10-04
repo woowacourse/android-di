@@ -8,8 +8,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.presentation.MainActivity
+import woowacourse.shopping.presentation.MainViewModel
 
 
 @RunWith(RobolectricTestRunner::class)
@@ -22,7 +22,7 @@ class MainActivityTest {
     fun `Activity 실행 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(woowacourse.shopping.presentation.MainActivity::class.java)
             .create()
             .get()
 
@@ -34,10 +34,10 @@ class MainActivityTest {
     fun `ViewModel 주입 테스트`() {
         // given
         val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
+            .buildActivity(woowacourse.shopping.presentation.MainActivity::class.java)
             .create()
             .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity)[woowacourse.shopping.presentation.MainViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
