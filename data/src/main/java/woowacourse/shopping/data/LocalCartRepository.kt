@@ -6,9 +6,8 @@ import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.model.Product
 import woowacourse.shopping.local.CartProductDao
 import woowacourse.shopping.local.CartProductEntity
-import javax.inject.Inject
 
-class LocalCartRepository @Inject constructor(
+class LocalCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
 

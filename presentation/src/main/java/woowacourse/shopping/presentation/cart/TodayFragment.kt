@@ -6,11 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.android.ext.android.inject
 import woowacourse.shopping.presentation.databinding.FragmentTodayBinding
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class TodayFragment : Fragment() {
     private var _binding: FragmentTodayBinding? = null
     private val binding get() = _binding!!
@@ -19,13 +17,13 @@ class TodayFragment : Fragment() {
         Log.d(TAG, "init")
     }
 
-    @Inject
-    lateinit var dateFormatter: DateFormatter
+    private val dateFormatter by inject<DateFormatter>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -5,19 +5,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import woowacourse.shopping.presentation.cart.CartActivity
 import woowacourse.shopping.presentation.databinding.ActivityMainBinding
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
-    }
+    val viewModel: MainViewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

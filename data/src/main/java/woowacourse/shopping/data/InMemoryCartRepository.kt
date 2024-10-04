@@ -2,10 +2,9 @@ package woowacourse.shopping.data
 
 import android.util.Log
 import woowacourse.shopping.data.model.Product
-import javax.inject.Inject
 
 
-class InMemoryCartRepository @Inject constructor() : CartRepository {
+class InMemoryCartRepository: CartRepository {
 
     init {
         Log.d(TAG, "init InMemoryCartRepository created")

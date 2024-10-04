@@ -2,16 +2,12 @@ package woowacourse.shopping.presentation.cart
 
 import android.content.Context
 import android.util.Log
-import dagger.hilt.android.qualifiers.ActivityContext
 import woowacourse.shopping.presentation.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import javax.inject.Inject
 
-class KoreanLocaleDateFormatter @Inject constructor(
-    @ActivityContext context: Context
-) : DateFormatter {
+class KoreanLocaleDateFormatter(context: Context) : DateFormatter {
 
     init {
         Log.d(TAG, "init: KoreanLocaleDateFormatter created")

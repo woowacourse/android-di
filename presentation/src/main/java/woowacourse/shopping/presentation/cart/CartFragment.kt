@@ -7,23 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import woowacourse.shopping.presentation.R
 import woowacourse.shopping.presentation.databinding.FragmentCartBinding
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var dateFormatter: DateFormatter
+    private val dateFormatter by inject<DateFormatter>()
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
-    }
+    val viewModel: CartViewModel by viewModel<CartViewModel>()
 
     init {
         Log.d(TAG, "init: ")
