@@ -76,4 +76,12 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":local"))
+
+    // koin
+    implementation("io.insert-koin:koin-android:3.2.0")
+
+
+    // Works with test libraries too!
+    testImplementation("io.insert-koin:koin-test-junit4")
+    testImplementation("io.insert-koin:koin-android-test")
 }
