@@ -1,40 +1,33 @@
 package woowacourse.shopping.hilt
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import woowacourse.shopping.hilt.ui.MainActivity
 
-@RunWith(RobolectricTestRunner::class)
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
+@Config(application = HiltTestApplication::class)
 class MainActivityTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-//    @Test
-//    fun `Activity 실행 테스트`() {
-//        // given
-//        val activity =
-//            Robolectric
-//                .buildActivity(MainActivity::class.java)
-//                .create()
-//                .get()
-//
-//        // then
-//        activity.shouldNotBeNull()
-//    }
-//
-//    @Test
-//    fun `ViewModel 주입 테스트`() {
-//        // given
-//        val activity =
-//            Robolectric
-//                .buildActivity(MainActivity::class.java)
-//                .create()
-//                .get()
-//        // when & then
-//        shouldNotThrow<IllegalStateException> {
-//            activity.getViewModel<MainViewModel>()
-//        }
-//    }
-//
+    @get:Rule(order = 0)
+    var hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
+    val scenarioRule = activityScenarioRule<MainActivity>()
+    private val scenario get() = scenarioRule.scenario
+
+    @Test
+    fun `Activity 실행 테스트`() {
+        scenario.onActivity { activity ->
+            activity.shouldNotBeNull()
+        }
+    }
 }
