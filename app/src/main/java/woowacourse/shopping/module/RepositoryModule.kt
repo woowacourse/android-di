@@ -1,22 +1,18 @@
 package woowacourse.shopping.module
 
-abstract class RepositoryModule {
-//    @Binds
-//    @Singleton
-//    abstract fun cartRepository(
-//        cartRepository: LocalCartRepository
-//    ): CartRepository
+import org.koin.dsl.module
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
+import woowacourse.shopping.data.LocalCartRepository
+import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.presentation.MainViewModel
 
+val singletonRepositoryModule = module {
+    single<CartRepository> { LocalCartRepository(get()) }
 }
 
-//@Module
-//@InstallIn(ViewModelComponent::class)
-abstract class ViewModelRepositoryModule {
-//    @Binds
-//    @ViewModelScoped
-//    abstract fun productRepository(
-//        productRepository: InMemoryProductRepository
-//    ): ProductRepository
-
+val viewModelScopeRepositoryModule = module {
+    scope<MainViewModel> {
+        scoped<ProductRepository> { InMemoryProductRepository() }
+    }
 }
-

@@ -1,19 +1,17 @@
 package woowacourse.shopping.module
 
-object DatabaseModule {
+import androidx.room.Room
+import org.koin.dsl.module
+import woowacourse.shopping.local.ShoppingDatabase
 
-//    @Provides
-//    fun provideLogDao(database: ShoppingDatabase): CartProductDao {
-//        return database.cartProductDao()
-//    }
+val databaseModule = module {
+    // DB & DAO (local)
+    single(createdAtStart = true) {
+        Room.databaseBuilder(
+            get(),
+            ShoppingDatabase::class.java, ShoppingDatabase.NAME
+        ).build()
+    }
+    single { get<ShoppingDatabase>().cartProductDao() }
 
-//    @Provides
-//    @Singleton
-//    fun provideDatabase(@ApplicationContext appContext: Context): ShoppingDatabase {
-//        return Room.databaseBuilder(
-//            appContext,
-//            ShoppingDatabase::class.java,
-//            "shopping.db"
-//        ).build()
-//    }
 }
