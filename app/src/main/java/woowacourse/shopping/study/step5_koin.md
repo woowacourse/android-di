@@ -37,6 +37,7 @@ createdAtStart: 언제 생성할지
 definition: 실제 구현체
 
 단순히 작성하면
+
 ```kotlin
 val repositoryModule = module {
     single { InMemoryProductRepository() }
@@ -46,11 +47,13 @@ val repositoryModule = module {
 이런 식으로 할 수 있다.
 
 더 단순히 작성도 가능
+
 ```kotlin
 val repositoryModule = module {
     singleOf(::InMemoryProductRepository)
 }
 ```
+
 ![img_4.png](img_4.png)
 
 ---
@@ -65,9 +68,11 @@ DI 컨테이너에 타입과 구현체가 등록되는 것인데,
 
 그렇다면 singleOf 를 사용하면서 타입은 인터페이스로 사용하려면?
 아쉽게도 아래처럼 써야 함.
+
 ```kotlin
 singleOf(::InMemoryProductRepository) { bind<ProductRepository>() }
 ```
+
 이렇게 할 바에 차라리 single 을 사용하는 게 나을 것 같다.
 
 viewModelOf 와 viewModel 도 똑같다!
@@ -75,10 +80,10 @@ viewModelOf 와 viewModel 도 똑같다!
 일반적으로 ViewModel 은 인터페이스와 구현체를 직접 따로 만들지 않는 경우가 많다.
 그래서 viewModelOf 를 쓰는 건 더 간편할 지도?
 
-
 신기한 점:
 singleOf(::InMemoryProductRepository)
 이렇게 했을 InMemoryProductRepository 의 생성자 파라미터가 0개 이면
+
 ```kotlin
 inline fun <reified R> Module.singleOf(
     crossinline constructor: () -> R,
@@ -86,13 +91,15 @@ inline fun <reified R> Module.singleOf(
 ```
 
 1개이면
+
 ```kotlin
 inline fun <reified R, reified T1> Module.singleOf(
-  crossinline constructor: (T1) -> R,
+    crossinline constructor: (T1) -> R,
 ): Pair<Module, InstanceFactory<R>> = single { new(constructor) }
 ```
 
 3 개이면,
+
 ```kotlin
 inline fun <reified R, reified T1, reified T2, reified T3, reified T4> Module.singleOf(
     crossinline constructor: (T1, T2, T3, T4) -> R,
@@ -101,14 +108,13 @@ inline fun <reified R, reified T1, reified T2, reified T3, reified T4> Module.si
     return setupInstance(_singleInstanceFactory(definition = { new(constructor) }), options)
 }
 ```
-일로 Declaration(cmd + B) 이 연결된다.
 
+일로 Declaration(cmd + B) 이 연결된다.
 
 ```kotlin
 single<ProductRepository> { InMemoryProductRepository() }
 
 ```
-
 
 그런데 만약 생성자 파라미터가 필요한 모듈이라면?
 레포지토리가 dao 를 생성자 파라미터로 갖는다면?
@@ -120,6 +126,38 @@ val repositoryModule = module {
 }
 ```
 
+액티비티 스코프 dateFormatter
 
+```kotlin
+class CartActivity : AppCompatActivity() {
+    private val scope = getKoin().createScope("CartActivityScope", named<CartActivity>())
+    //...
 
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.close()
+    }
+}
+class TodayFragment : Fragment() {
+    private val dateFormatter: DateFormatter by lazy {
+        getKoin().getScope("CartActivityScope").get()
+    }
+    // ...
+}
+class CartFragment : Fragment() {
+    private val dateFormatter: DateFormatter by lazy {
+        getKoin().getScope("CartActivityScope").get()
+    }
+    // ...
+}
+
+val myAppModules = module {
+    scope<CartActivity> {
+        scoped<DateFormatter> { KoreanLocaleDateFormatter(get()) }
+    }
+}
+```
+
+이렇게 하면 KoreanLocaleDateFormatter 가 CartActivity 의 스코프에 등록된다.
+그리고 각 두 프래그먼트는 CartActivity 의 스코프에서 dateFormatter 를 가져올 수 있다.
 

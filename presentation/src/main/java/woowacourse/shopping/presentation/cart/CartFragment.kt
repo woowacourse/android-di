@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import woowacourse.shopping.presentation.R
 import woowacourse.shopping.presentation.databinding.FragmentCartBinding
@@ -16,9 +16,11 @@ class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val dateFormatter by inject<DateFormatter>()
+    private val dateFormatter: DateFormatter by lazy {
+        getKoin().getScope("CartActivityScope").get()
+    }
 
-    val viewModel: CartViewModel by viewModel<CartViewModel>()
+    private val viewModel: CartViewModel by viewModel<CartViewModel>()
 
     init {
         Log.d(TAG, "init: ")

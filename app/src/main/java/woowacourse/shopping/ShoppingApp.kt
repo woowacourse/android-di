@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
@@ -17,6 +18,7 @@ import woowacourse.shopping.data.LocalCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.local.ShoppingDatabase
 import woowacourse.shopping.presentation.MainViewModel
+import woowacourse.shopping.presentation.cart.CartActivity
 import woowacourse.shopping.presentation.cart.CartViewModel
 import woowacourse.shopping.presentation.cart.DateFormatter
 import woowacourse.shopping.presentation.cart.KoreanLocaleDateFormatter
@@ -35,7 +37,7 @@ class ShoppingApp : Application() {
 
 val myAppModules = module {
     // DB & DAO (local)
-    single {
+    single(createdAtStart = true) {
         Room.databaseBuilder(
             get(),
             ShoppingDatabase::class.java, ShoppingDatabase.NAME
@@ -51,6 +53,18 @@ val myAppModules = module {
     viewModelOf(::CartViewModel)
 
     // dateFormat (presentation)
-    single<DateFormatter> { KoreanLocaleDateFormatter(get()) }
+//    scope<CartActivity> {
+//        scoped<DateFormatter> { KoreanLocaleDateFormatter(get()) }
+//    }
+
+//    scope<CartActivity> {
+//        scoped<DateFormatter> { (activityContext: Context) -> KoreanLocaleDateFormatter(activityContext) }
+//    }
+
+    scope<CartActivity> {
+        scoped<DateFormatter> { KoreanLocaleDateFormatter(get()) }
+    }
+
+
 }
 
