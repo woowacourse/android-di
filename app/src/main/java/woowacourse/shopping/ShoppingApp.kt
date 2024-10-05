@@ -7,7 +7,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import org.koin.core.module.dsl.scopedOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
@@ -43,13 +45,19 @@ val myAppModules = module {
 
     // Repository (data)
     single<CartRepository> { LocalCartRepository(get()) }
-    single<ProductRepository> { InMemoryProductRepository() }
+
+    // TODO: viewModelScope 로
+//    single<ProductRepository> { InMemoryProductRepository() }
 
     viewModelOf(::MainViewModel)
     viewModelOf(::CartViewModel)
 
-    // dateFormat (presentation)
+    scope<MainViewModel> {
+//        scoped<ProductRepository> { InMemoryProductRepository() }
+        scopedOf(::InMemoryProductRepository).bind<ProductRepository>()
+    }
 
+    // dateFormat (presentation)
     scope<CartActivity> {
         scoped<DateFormatter> { (activityContext: Context) -> KoreanLocaleDateFormatter(activityContext) }
     }
