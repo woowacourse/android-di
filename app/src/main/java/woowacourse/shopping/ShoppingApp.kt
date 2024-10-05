@@ -64,7 +64,5 @@ val myAppModules = module {
     scope<CartActivity> {
         scoped<DateFormatter> { KoreanLocaleDateFormatter(get()) }
     }
-
-
 }
 

@@ -161,3 +161,64 @@ val myAppModules = module {
 이렇게 하면 KoreanLocaleDateFormatter 가 CartActivity 의 스코프에 등록된다.
 그리고 각 두 프래그먼트는 CartActivity 의 스코프에서 dateFormatter 를 가져올 수 있다.
 
+issue: 카트 액티비티를 나갔다 들어오면 터짐.
+Scope with id 'CartActivityScope' is already created
+
+fix: onDestroy 에서 scope 를 닫기
+
+그런데 액티비티 구성변경이 일어나도 scope 가 닫히네
+DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
+이건 어떻게 해결하면 좋지?
+
+```kotlin
+override fun onDestroy() {
+    super.onDestroy()
+    if (isFinishing) {
+        scope.close()
+    }
+}
+```
+
+이렇게 하면 되지 않을까?
+
+이거 해서 화면 회전해보자.
+그런데 하면 에러 발생한다.
+
+``` 
+java.lang.RuntimeException: Unable to instantiate activity ComponentInfo{woowacourse.shopping/woowacourse.shopping.presentation.cart.CartActivity}: org.koin.core.error.ScopeAlreadyCreatedException: Scope with id 'CartActivityScope' is already created
+```
+
+그러면 어카지.
+`getOrCreateScope` 라는 메서드가 있더라
+
+```kotlin
+class CartActivity : AppCompatActivity() {
+    private val scope = getKoin().getOrCreateScope("CartActivityScope", named<CartActivity>())
+    // ...
+}
+```
+
+이렇게 하니까, 화면 회전해도 에러가 발생하지 않는다!!!
+
+```kotlin
+class TodayFragment : Fragment() {
+    private val dateFormatter: DateFormatter by lazy {
+        getKoin().getScope("CartActivityScope").get()
+    }
+}
+
+class CartFragment : Fragment() {
+    private val dateFormatter: DateFormatter by lazy {
+        getKoin().getScope("CartActivityScope").get()
+    }
+}
+class CartActivity : AppCompatActivity() {
+    private val scope = getKoin().getOrCreateScope("CartActivityScope", named<CartActivity>())
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) scope.close()
+    }
+}
+```
+

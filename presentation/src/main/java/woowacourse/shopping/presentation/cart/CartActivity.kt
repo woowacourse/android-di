@@ -11,7 +11,7 @@ import woowacourse.shopping.presentation.databinding.ActivityCartBinding
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val scope = getKoin().createScope("CartActivityScope", named<CartActivity>())
+    private val scope =  getKoin().getOrCreateScope("CartActivityScope", named<CartActivity>())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +64,6 @@ class CartActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        scope.close()
+        if (isFinishing) scope.close()
     }
 }
