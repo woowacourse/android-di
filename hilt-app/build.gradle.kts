@@ -58,7 +58,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt")
     kapt("com.google.dagger:hilt-android-compiler:$hilt")
     testImplementation("com.google.dagger:hilt-android-testing:$hilt")
-    testImplementation("com.google.dagger:hilt-android-compiler:$hilt")
+    kaptTest("com.google.dagger:hilt-android-compiler:$hilt")
     // android
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -87,7 +87,11 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
     // Robolectric
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    testImplementation("androidx.test:core-ktx:1.6.1")
     // junit5 & kotest
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
