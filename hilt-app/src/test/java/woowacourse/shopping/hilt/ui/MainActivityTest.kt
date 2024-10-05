@@ -1,4 +1,4 @@
-package woowacourse.shopping.hilt
+package woowacourse.shopping.hilt.ui
 
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -6,11 +6,17 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.types.shouldBeTypeOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
-import woowacourse.shopping.hilt.ui.MainActivity
+import woowacourse.shopping.hilt.data.CartRepository
+import woowacourse.shopping.hilt.data.ProductRepository
+import woowacourse.shopping.hilt.fake.StubCartRepository
+import woowacourse.shopping.hilt.fake.StubProductRepository
+import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -24,10 +30,29 @@ class MainActivityTest {
     val scenarioRule = activityScenarioRule<MainActivity>()
     private val scenario get() = scenarioRule.scenario
 
+    // ProductRepository 및 CartRepository 주입
+    @Inject
+    lateinit var productRepository: ProductRepository
+
+    @Inject
+    lateinit var cartRepository: CartRepository
+
+    @Before
+    fun init() {
+        // Hilt로 의존성 주입 실행
+        hiltRule.inject()
+    }
+
     @Test
     fun `Activity 실행 테스트`() {
         scenario.onActivity { activity ->
             activity.shouldNotBeNull()
         }
+    }
+
+    @Test
+    fun `Stub Repository 주입 테스트`() {
+        productRepository.shouldBeTypeOf<StubProductRepository>()
+        cartRepository.shouldBeTypeOf<StubCartRepository>()
     }
 }
