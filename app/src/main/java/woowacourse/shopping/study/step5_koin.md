@@ -222,3 +222,29 @@ class CartActivity : AppCompatActivity() {
 }
 ```
 
+그런데 액티비티에서 직접 스코프를 만들고 닫는 게 번거로워...
+어떻게 하면 더 쉬울까?
+
+```kotlin
+val myAppModules = module {
+    scope<CartActivity> {
+        scoped<DateFormatter> { (activityContext: Context) -> KoreanLocaleDateFormatter(activityContext) }
+    }
+}
+
+class CartActivity : RetainedScopeActivity() {
+}
+
+class CartFragment : ScopeFragment() {
+    private val dateFormatter: DateFormatter by inject { parametersOf(requireContext()) }
+}
+class TodayFragment : ScopeFragment() {
+    private val dateFormatter: DateFormatter by inject { parametersOf(requireContext()) }
+}
+```
+
+일케하면 내가 직접 안 닫아도 된다.
+Koin offers ScopeActivity, RetainedScopeActivity and ScopeFragment classes to let you use directly a declared scope for
+Activity or Fragment
+
+코인은 

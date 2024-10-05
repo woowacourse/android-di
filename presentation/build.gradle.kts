@@ -78,10 +78,9 @@ dependencies {
     implementation(project(":local"))
 
     // koin
-    implementation("io.insert-koin:koin-android:3.2.0")
-
-
-    // Works with test libraries too!
-    testImplementation("io.insert-koin:koin-test-junit4")
+    val koin = "4.0.0"
+    implementation(platform("io.insert-koin:koin-bom:$koin"))
+    implementation("io.insert-koin:koin-android")
+    testImplementation("io.insert-koin:koin-test-junit5")
     testImplementation("io.insert-koin:koin-android-test")
 }

@@ -94,4 +94,9 @@ dependencies {
     testImplementation("io.insert-koin:koin-test-junit4")
     testImplementation("io.insert-koin:koin-android-test")
 
+    val koin = "4.0.0"
+    implementation(platform("io.insert-koin:koin-bom:$koin"))
+    implementation("io.insert-koin:koin-android")
+    testImplementation("io.insert-koin:koin-test-junit5")
+    testImplementation("io.insert-koin:koin-android-test")
 }

@@ -6,19 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import woowacourse.shopping.presentation.R
 import woowacourse.shopping.presentation.databinding.FragmentCartBinding
 
-class CartFragment : Fragment() {
+class CartFragment : ScopeFragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val dateFormatter: DateFormatter by lazy {
-        getKoin().getScope("CartActivityScope").get()
-    }
+    private val dateFormatter: DateFormatter by inject { parametersOf(requireContext()) }
 
     private val viewModel: CartViewModel by viewModel<CartViewModel>()
 

@@ -1,17 +1,13 @@
 package woowacourse.shopping.presentation.cart
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import org.koin.android.ext.android.getKoin
-import org.koin.core.qualifier.named
+import org.koin.androidx.scope.RetainedScopeActivity
 import woowacourse.shopping.presentation.R
 import woowacourse.shopping.presentation.databinding.ActivityCartBinding
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : RetainedScopeActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-
-    private val scope =  getKoin().getOrCreateScope("CartActivityScope", named<CartActivity>())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
