@@ -62,4 +62,8 @@ class CartActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.close()
+    }
 }
