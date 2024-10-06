@@ -1,7 +1,6 @@
 package woowacourse.shopping.hilt.ui.cart
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,14 +16,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val viewModel by viewModels<CartViewModel>()
+    val viewModel by viewModels<CartViewModel>()
 
     @Inject
     lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("dateFormatter", "$dateFormatter")
         setupBinding()
         setupToolbar()
         setupView()

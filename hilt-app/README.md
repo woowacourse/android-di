@@ -23,7 +23,8 @@ Pure Java/Kotlin 환경에서는 [Dagger2](https://dagger.dev/dev-guide/) 를 �
 - [x] 액티비티 컨택스트를 활용해서 DateFormatter 를 생성하도록 구현한다. (Application Context 사용이 더 바람직하나 연습을 위해~)
 - [x] DateFormatter 는 ActivityRetainedScoped LifeCycle 동안 유지되도록 구현한다.
 - [x] DateFormatter 는 Configuration Changes 에도 살아남을 수 있도록 구현한다.
-- [] CartRepository 는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [x] CartViewModel 에서는 ViewModelScope 생명주기를 따르는 CartRepository 를 주입받아 사용한다.
+- [x] MainViewModel 에서는 SingleTone 생명주기를 따르는 ProductRepository 를 주입받아 사용한다.
 
 ## Learn
 

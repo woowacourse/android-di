@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import woowacourse.shopping.hilt.data.CartRepository
 import woowacourse.shopping.hilt.data.ProductRepository
+import woowacourse.shopping.hilt.di.qualifier.SingleCartQualifier
 import woowacourse.shopping.hilt.fake.StubCartRepository
 import woowacourse.shopping.hilt.fake.StubProductRepository
 import javax.inject.Inject
@@ -35,6 +36,7 @@ class MainActivityTest {
     lateinit var productRepository: ProductRepository
 
     @Inject
+    @SingleCartQualifier
     lateinit var cartRepository: CartRepository
 
     @Before

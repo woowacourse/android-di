@@ -6,6 +6,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import woowacourse.shopping.hilt.data.CartRepository
 import woowacourse.shopping.hilt.data.ProductRepository
+import woowacourse.shopping.hilt.di.qualifier.SingleCartQualifier
 import woowacourse.shopping.hilt.fake.StubCartRepository
 import woowacourse.shopping.hilt.fake.StubProductRepository
 import javax.inject.Singleton
@@ -13,9 +14,9 @@ import javax.inject.Singleton
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
-    replaces = [RepositoryModule::class]
+    replaces = [SingleRepositoryModule::class]
 )
-abstract class TestRepositoryModule {
+abstract class TestSingleRepositoryModule {
 
     @Binds
     @Singleton
@@ -23,5 +24,8 @@ abstract class TestRepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindCartRepository(repository: StubCartRepository): CartRepository
+    @SingleCartQualifier
+    abstract fun bindCartRepository(
+        repository: StubCartRepository
+    ): CartRepository
 }

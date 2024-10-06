@@ -8,11 +8,12 @@ import woowacourse.shopping.hilt.data.CartRepository
 import woowacourse.shopping.hilt.data.DefaultCartRepository
 import woowacourse.shopping.hilt.data.ProductRepository
 import woowacourse.shopping.hilt.data.ProductRepositoryImpl
+import woowacourse.shopping.hilt.di.qualifier.SingleCartQualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+abstract class SingleRepositoryModule {
 
     @Binds
     @Singleton
@@ -20,5 +21,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindCartRepository(repository: DefaultCartRepository): CartRepository
+    @SingleCartQualifier
+    abstract fun bindCartRepository(
+        repository: DefaultCartRepository
+    ): CartRepository
 }
+

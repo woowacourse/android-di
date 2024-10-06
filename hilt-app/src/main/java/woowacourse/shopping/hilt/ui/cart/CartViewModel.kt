@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import woowacourse.shopping.hilt.data.CartRepository
+import woowacourse.shopping.hilt.di.qualifier.ViewModelScopeCartQualifier
 import woowacourse.shopping.hilt.model.Product
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository,
+    @ViewModelScopeCartQualifier val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val cartProducts: StateFlow<List<Product>> = _cartProducts.asStateFlow()
