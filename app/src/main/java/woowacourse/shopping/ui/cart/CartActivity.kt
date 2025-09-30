@@ -8,9 +8,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
@@ -18,8 +17,8 @@ class CartActivity : AppCompatActivity() {
 
     private val factory by lazy {
         ViewModelFactory(
-            cartRepository = CartRepositoryImpl(),
-            productRepository = ProductRepositoryImpl(), // 안 쓰는데 Factory 때문에 객체 생성..
+            cartRepository = AppContainer.cartRepository,
+            productRepository = AppContainer.productRepository, // 안 쓰는데 Factory 때문에 객체 생성..
         )
     }
 

@@ -1,6 +1,4 @@
-package woowacourse.shopping.data
-
-import woowacourse.shopping.domain.Product
+package woowacourse.shopping.domain
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
 interface CartRepository {

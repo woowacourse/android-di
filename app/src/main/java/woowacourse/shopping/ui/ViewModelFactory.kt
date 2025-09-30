@@ -2,7 +2,7 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 

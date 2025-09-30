@@ -10,9 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private val factory by lazy {
         ViewModelFactory(
-            cartRepository = CartRepositoryImpl(),
-            productRepository = ProductRepositoryImpl(),
+            cartRepository = AppContainer.cartRepository,
+            productRepository = AppContainer.productRepository,
         )
     }
 
