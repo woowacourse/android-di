@@ -22,12 +22,11 @@ private fun <VM : ViewModel> viewModelFactory(viewModelKClass: KClass<VM>): View
             modelClass: Class<T>,
             extras: CreationExtras,
         ): T {
-            val application: Application = checkNotNull(extras[APPLICATION_KEY])
-
             val primaryConstructor: KFunction<VM> =
                 viewModelKClass.primaryConstructor
                     ?: error("${viewModelKClass.qualifiedName} doesn't have primary constructor")
 
+            val application: Application = checkNotNull(extras[APPLICATION_KEY])
             val appContainer: AppContainer = application as AppContainer
 
             val parameters: List<Any> =
