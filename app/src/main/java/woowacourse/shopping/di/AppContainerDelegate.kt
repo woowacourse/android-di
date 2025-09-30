@@ -6,16 +6,16 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmErasure
 
 class AppContainerDelegate<T>(
-    private val appContainer: AppContainer,
+    private val appContainerStore: AppContainerStore,
 ) {
     @Suppress("UNCHECKED_CAST")
     operator fun getValue(
         thisRef: Any?,
         property: KProperty<*>,
-    ): T = appContainer.instantiate(property.returnType.jvmErasure) as T
+    ): T = appContainerStore.instantiate(property.returnType.jvmErasure) as T
 }
 
 inline fun <reified T> Application.containerProvider(): AppContainerDelegate<T> {
-    val store = (this as MainApplication).appContainer
+    val store = (this as MainApplication).appContainerStore
     return AppContainerDelegate(store)
 }
