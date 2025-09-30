@@ -64,10 +64,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {

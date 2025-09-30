@@ -17,10 +17,11 @@ class MainActivityTest {
     @Test
     fun `Activity 실행 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
 
         // then
         Truth.assertThat(activity).isNotNull()
@@ -29,10 +30,11 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .create()
-            .get()
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .create()
+                .get()
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
