@@ -4,14 +4,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
-import org.junit.experimental.theories.suppliers.TestedOn
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.containerProvider
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainApplication
 import woowacourse.shopping.ui.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)

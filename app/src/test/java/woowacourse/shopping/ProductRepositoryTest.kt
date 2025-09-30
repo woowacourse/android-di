@@ -9,7 +9,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.containerProvider
-import woowacourse.shopping.model.Product
 
 @RunWith(RobolectricTestRunner::class)
 class ProductRepositoryTest {

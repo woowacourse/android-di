@@ -13,19 +13,21 @@ class AppContainer {
 
     operator fun get(clazz: KClass<*>): Any? = cache[clazz]
 
-    fun instantiate(clazz: KClass<*>):Any? {
+    fun instantiate(clazz: KClass<*>): Any? {
         if (cache.containsKey(clazz)) return this[clazz]
         return clazz.primaryConstructor?.let { constructor ->
-            val arguments = constructor.parameters
-                .filter { !it.isOptional }
-                .associateWith { parameter ->
-                    instantiate(parameter.type.jvmErasure)
-                }
+            val arguments =
+                constructor.parameters
+                    .filter { !it.isOptional }
+                    .associateWith { parameter ->
+                        instantiate(parameter.type.jvmErasure)
+                    }
             cache[clazz] = constructor.callBy(arguments)
             cache[clazz]
-        }?: clazz.createInstance()
+        } ?: clazz.createInstance()
     }
 }
+
 fun CreationExtras.containerProvider(clazz: KClass<*>): Any? {
     val store = (this[APPLICATION_KEY] as MainApplication).appContainer
     return store.instantiate(clazz)
