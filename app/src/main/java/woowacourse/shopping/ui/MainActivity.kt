@@ -14,7 +14,6 @@ import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
@@ -68,10 +67,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupProductList() {
         viewModel.products.observe(this) {
-            val adapter = ProductAdapter(
-                items = it,
-                onClickProduct = viewModel::addCartProduct
-            )
+            val adapter =
+                ProductAdapter(
+                    items = it,
+                    onClickProduct = viewModel::addCartProduct,
+                )
             binding.rvProducts.adapter = adapter
         }
         viewModel.onProductAdded.observe(this) {
