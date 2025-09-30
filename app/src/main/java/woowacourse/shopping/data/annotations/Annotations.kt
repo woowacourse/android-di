@@ -1,0 +1,5 @@
+package woowacourse.shopping.data.annotations
+
+annotation class ProductRepositoryAnnotation
+
+annotation class CartRepositoryAnnotation
