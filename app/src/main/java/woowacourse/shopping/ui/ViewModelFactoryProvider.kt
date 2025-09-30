@@ -13,9 +13,11 @@ object ViewModelFactoryProvider {
         val parameters: Array<Repository> =
             viewModel.primaryConstructor
                 ?.parameters
-                ?.flatMap { parameter: KParameter ->
-                    parameter.annotations.mapNotNull { annotation: Annotation ->
-                        RepositoryProvider.repositories[annotation]
+                ?.mapNotNull { parameter: KParameter ->
+                    if (parameter is Repository) {
+                        RepositoryProvider.repositories[parameter::class.java]
+                    } else {
+                        null
                     }
                 }.orEmpty()
                 .toTypedArray()

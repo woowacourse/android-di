@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.annotations.CartRepositoryAnnotation
 import woowacourse.shopping.model.Product
 
 class CartViewModel(
-    @CartRepositoryAnnotation private val cartRepository: CartRepository,
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
