@@ -7,15 +7,14 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.AppContainer
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
 
-fun <VM : ViewModel> ViewModelStoreOwner.viewModel(clazz: KClass<VM>): Lazy<VM> =
-    lazy { ViewModelProvider(this, viewModelFactory(clazz))[clazz.java] }
+inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
+    lazy { ViewModelProvider(this, viewModelFactory<VM>())[VM::class.java] }
 
-private fun <VM : ViewModel> viewModelFactory(viewModelKClass: KClass<VM>): ViewModelProvider.Factory =
+inline fun <reified VM : ViewModel> viewModelFactory(): ViewModelProvider.Factory =
     object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(
@@ -23,8 +22,8 @@ private fun <VM : ViewModel> viewModelFactory(viewModelKClass: KClass<VM>): View
             extras: CreationExtras,
         ): T {
             val primaryConstructor: KFunction<VM> =
-                viewModelKClass.primaryConstructor
-                    ?: error("${viewModelKClass.qualifiedName} doesn't have primary constructor")
+                VM::class.primaryConstructor
+                    ?: error("${VM::class.qualifiedName} doesn't have primary constructor")
 
             val application: Application = checkNotNull(extras[APPLICATION_KEY])
             val appContainer: AppContainer = application as AppContainer

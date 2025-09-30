@@ -13,7 +13,7 @@ import woowacourse.shopping.ui.viewModel
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModel(CartViewModel::class)
+    private val viewModel: CartViewModel by viewModel()
 
     private lateinit var dateFormatter: DateFormatter
 
