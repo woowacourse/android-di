@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.ui.MainApplication
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
@@ -12,6 +13,11 @@ class AppContainer {
     private val cache: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     operator fun get(clazz: KClass<*>): Any? = cache[clazz]
+
+    fun instantiate(clazz: KClass<*>): Any? {
+        val inProgress = mutableSetOf<KClass<*>>()
+        return instantiate(clazz, inProgress)
+    }
 
     private fun instantiate(
         clazz: KClass<*>,
@@ -27,22 +33,24 @@ class AppContainer {
 
         return clazz.primaryConstructor?.let { constructor ->
             inProgress.add(clazz)
-            val arguments =
-                constructor.parameters
-                    .filter { !it.isOptional }
-                    .associateWith { parameter ->
-                        val instance = instantiate(parameter.type.jvmErasure, inProgress)
-                        instance
-                    }
+            cache[clazz] = reflect(constructor, inProgress)
             inProgress.remove(clazz)
-            cache[clazz] = constructor.callBy(arguments)
             cache[clazz]
         } ?: clazz.createInstance()
     }
 
-    fun instantiate(clazz: KClass<*>): Any? {
-        val inProgress = mutableSetOf<KClass<*>>()
-        return instantiate(clazz, inProgress)
+    private fun reflect(
+        constructor: KFunction<Any>,
+        inProgress: MutableSet<KClass<*>> = mutableSetOf(),
+    ): Any {
+        val arguments =
+            constructor.parameters
+                .filter { !it.isOptional }
+                .associateWith { parameter ->
+                    val instance = instantiate(parameter.type.jvmErasure, inProgress)
+                    instance
+                }
+        return constructor.callBy(arguments)
     }
 
     companion object {
