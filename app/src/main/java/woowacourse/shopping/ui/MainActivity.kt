@@ -24,10 +24,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupContentView()
-        setupBinding()
-        setupToolbar()
-        setupViewData()
+        setUpContentView()
+        setUpBinding()
+        setUpToolbar()
+        setUpViewData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupContentView() {
+    private fun setUpContentView() {
         enableEdgeToEdge()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -48,25 +48,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupBinding() {
+    private fun setUpBinding() {
         binding.lifecycleOwner = this
         binding.vm = viewModel
     }
 
-    private fun setupToolbar() {
+    private fun setUpToolbar() {
         setSupportActionBar(binding.toolbar)
     }
 
-    private fun setupViewData() {
-        setupProductData()
-        setupProductList()
+    private fun setUpViewData() {
+        setUpProductData()
+        setUpProductList()
     }
 
-    private fun setupProductData() {
+    private fun setUpProductData() {
         viewModel.getAllProducts()
     }
 
-    private fun setupProductList() {
+    private fun setUpProductList() {
         viewModel.products.observe(this) {
             val adapter = ProductAdapter(
                 items = it,

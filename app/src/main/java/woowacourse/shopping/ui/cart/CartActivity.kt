@@ -23,11 +23,11 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupContentView()
-        setupDateFormatter()
-        setupBinding()
-        setupToolbar()
-        setupViewData()
+        setUpContentView()
+        setUpDateFormatter()
+        setUpBinding()
+        setUpToolbar()
+        setUpViewData()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -35,7 +35,7 @@ class CartActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupContentView() {
+    private fun setUpContentView() {
         enableEdgeToEdge()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -45,30 +45,30 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupDateFormatter() {
+    private fun setUpDateFormatter() {
         dateFormatter = DateFormatter(this)
     }
 
-    private fun setupToolbar() {
+    private fun setUpToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun setupBinding() {
+    private fun setUpBinding() {
         binding.lifecycleOwner = this
         binding.vm = viewModel
     }
 
-    private fun setupViewData() {
-        setupCartProductData()
-        setupCartProductList()
+    private fun setUpViewData() {
+        setUpCartProductData()
+        setUpCartProductList()
     }
 
-    private fun setupCartProductData() {
+    private fun setUpCartProductData() {
         viewModel.getAllCartProducts()
     }
 
-    private fun setupCartProductList() {
+    private fun setUpCartProductList() {
         viewModel.cartProducts.observe(this) {
             val adapter = CartProductAdapter(
                 items = it,
