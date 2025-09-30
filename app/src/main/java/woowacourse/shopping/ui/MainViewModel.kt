@@ -32,14 +32,4 @@ class MainViewModel(
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
     }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val productRepository by containerProvider<ProductRepository>()
-                val cartRepository by containerProvider<CartRepository>()
-                MainViewModel(productRepository, cartRepository)
-            }
-        }
-    }
 }

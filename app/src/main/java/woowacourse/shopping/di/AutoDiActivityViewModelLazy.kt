@@ -20,13 +20,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
 ): Lazy<VM> {
     val factory = viewModelFactory {
         initializer {
-            VM::class.primaryConstructor?.let{ constructor ->
-                val parameters = constructor.parameters
-                val arguments = parameters
-                    .filter { !it.isOptional }
-                    .associateWith { parameter -> containerProvider(parameter) }
-                constructor.callBy(arguments)
-            }?: VM::class.createInstance()
+            containerProvider(VM::class) as VM
         }
     }
 
