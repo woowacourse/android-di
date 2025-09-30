@@ -9,16 +9,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.ViewModelFactoryProvider
+import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels {
-        ViewModelFactoryProvider.factory(
-            CartViewModel::class,
-        )
-    }
+    private val viewModel: CartViewModel by viewModels { ViewModelFactory }
 
     private lateinit var dateFormatter: DateFormatter
 

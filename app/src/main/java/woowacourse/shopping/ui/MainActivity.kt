@@ -16,11 +16,7 @@ import woowacourse.shopping.ui.cart.CartActivity
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels {
-        ViewModelFactoryProvider.factory(
-            MainViewModel::class,
-        )
-    }
+    private val viewModel: MainViewModel by viewModels { ViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
