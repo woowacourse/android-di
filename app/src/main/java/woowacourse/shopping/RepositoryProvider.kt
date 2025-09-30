@@ -8,7 +8,7 @@ import woowacourse.shopping.data.Repository
 import kotlin.reflect.KClass
 
 object RepositoryProvider {
-    val repositories: Map<KClass<out Repository>, Repository> =
+    val Repositories: Map<KClass<out Repository>, Repository> =
         mapOf(
             ProductRepository::class to DefaultProductRepository(),
             CartRepository::class to DefaultCartRepository(),
