@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.main
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val repositoryModule = container.repositoryModule
         MainViewModelFactory(
             repositoryModule.productRepository,
-            repositoryModule.cartRepository
+            repositoryModule.cartRepository,
         )
     }
 
