@@ -18,18 +18,15 @@ import kotlin.reflect.jvm.jvmErasure
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
     noinline extrasProducer: (() -> CreationExtras)? = null,
 ): Lazy<VM> {
-    val arguments = mutableMapOf<KParameter, Any?>()
     val factory = viewModelFactory {
         initializer {
             VM::class.primaryConstructor?.let{ constructor ->
                 val parameters = constructor.parameters
-                parameters.forEach { parameter ->
-                    if (parameter.isOptional) return@forEach
-                    val instance = containerProvider(parameter.type)
-                    arguments[parameter] = instance
-                }
+                val arguments = parameters
+                    .filter { !it.isOptional }
+                    .associateWith { parameter -> containerProvider(parameter) }
                 constructor.callBy(arguments)
-            }?:VM::class.createInstance()
+            }?: VM::class.createInstance()
         }
     }
 
