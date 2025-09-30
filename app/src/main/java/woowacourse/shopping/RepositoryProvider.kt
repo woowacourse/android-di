@@ -5,11 +5,12 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.Repository
+import kotlin.reflect.KClass
 
 object RepositoryProvider {
-    val repositories: Map<Class<out Repository>, Repository> =
+    val repositories: Map<KClass<out Repository>, Repository> =
         mapOf(
-            ProductRepository::class.java to DefaultProductRepository(),
-            CartRepository::class.java to DefaultCartRepository(),
+            ProductRepository::class to DefaultProductRepository(),
+            CartRepository::class to DefaultCartRepository(),
         )
 }

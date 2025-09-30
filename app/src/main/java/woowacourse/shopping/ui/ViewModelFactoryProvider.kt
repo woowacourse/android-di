@@ -14,11 +14,7 @@ object ViewModelFactoryProvider {
             viewModel.primaryConstructor
                 ?.parameters
                 ?.mapNotNull { parameter: KParameter ->
-                    if (parameter is Repository) {
-                        RepositoryProvider.repositories[parameter::class.java]
-                    } else {
-                        null
-                    }
+                    RepositoryProvider.repositories[(parameter.type.classifier as? KClass<*>)]
                 }.orEmpty()
                 .toTypedArray()
 
