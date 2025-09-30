@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.product
 
 import android.content.Intent
 import android.os.Bundle
