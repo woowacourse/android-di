@@ -1,16 +1,14 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.cart.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -31,7 +29,7 @@ class CartActivityTest {
     @Test
     fun `Activity 실행 테스트`() {
         // then
-        assertThat(activity).isNotNull()
+        Assertions.assertThat(activity).isNotNull()
     }
 
     @Test
@@ -40,6 +38,6 @@ class CartActivityTest {
         val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        Assertions.assertThat(viewModel).isNotNull()
     }
 }
