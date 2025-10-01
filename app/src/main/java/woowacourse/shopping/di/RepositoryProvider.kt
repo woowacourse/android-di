@@ -1,0 +1,30 @@
+package woowacourse.shopping.di
+
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
+
+object RepositoryProvider {
+    private val instances = mutableMapOf<KClass<*>, Any>()
+
+    init {
+        registerModule(woowacourse.shopping.data.repository.RepositoryModule)
+    }
+
+    private fun registerModule(module: Any) {
+        module::class.memberProperties.forEach { property ->
+            property.isAccessible = true
+            val instance = property.getter.call(module) ?: return@forEach
+
+            val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
+            instances[propertyType] = instance
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> get(kClass: KClass<T>): T =
+        instances[kClass] as? T
+            ?: throw IllegalStateException("Dependency not found for ${kClass.simpleName}")
+
+    inline fun <reified T : Any> get(): T = get(T::class)
+}
