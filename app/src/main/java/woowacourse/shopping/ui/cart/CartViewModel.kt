@@ -7,7 +7,7 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
 class CartViewModel(
-    private val cartRepository: CartRepository,
+    private val defaultCartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
@@ -17,11 +17,11 @@ class CartViewModel(
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     fun getAllCartProducts() {
-        _cartProducts.value = cartRepository.getAllCartProducts()
+        _cartProducts.value = defaultCartRepository.getAllCartProducts()
     }
 
     fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
+        defaultCartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
     }
 }
