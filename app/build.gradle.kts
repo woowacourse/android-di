@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.google.material)
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
+    testImplementation(libs.junit.jupiter)
     testImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
