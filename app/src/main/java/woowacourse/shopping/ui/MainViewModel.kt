@@ -6,10 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -19,13 +15,11 @@ class MainViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
     private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
-
 
     fun addCartProduct(product: Product) {
         cartRepository.addCartProduct(product)
@@ -48,7 +42,7 @@ class MainViewModel(
                 override fun <T : ViewModel> create(
                     key: String,
                     modelClass: Class<T>,
-                    handle: SavedStateHandle
+                    handle: SavedStateHandle,
                 ): T {
                     return MainViewModel(productRepository, cartRepository) as T
                 }
