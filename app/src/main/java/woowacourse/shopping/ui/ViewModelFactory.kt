@@ -10,7 +10,7 @@ import kotlin.reflect.full.primaryConstructor
 object ViewModelFactory : ViewModelProvider.Factory {
     override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
         val constructor: KFunction<VM>? = modelClass.kotlin.primaryConstructor
-        val parameters =
+        val parameters: Array<Any> =
             constructor
                 ?.parameters
                 ?.mapNotNull { parameter: KParameter ->
