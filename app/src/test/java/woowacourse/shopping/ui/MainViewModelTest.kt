@@ -31,7 +31,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getAllProducts 호출 시 products가 업데이트된다`() {
+    fun `상품 전체 목록 조회 시 products가 업데이트된다`() {
         // Given
         val testProducts =
             listOf(
@@ -50,7 +50,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `addCartProduct 호출 시 CartRepository와 onProductAdded가 업데이트된다`() {
+    fun `장바구니 상품 추가 성공 시 onProductAdded가 업데이트된다`() {
         // Given
         val product = Product("테스트상품", 1000, "")
 
