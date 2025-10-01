@@ -4,7 +4,7 @@ import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class ProductRepositoryImpl : ProductRepository {
-    override val products: List<Product> =
+    private val products: List<Product> =
         listOf(
             Product(
                 name = "우테코 과자",
