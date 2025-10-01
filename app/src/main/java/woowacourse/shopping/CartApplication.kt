@@ -8,7 +8,6 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
 class CartApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         postInstances()
