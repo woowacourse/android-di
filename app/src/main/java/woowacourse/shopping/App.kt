@@ -14,7 +14,7 @@ class App : Application() {
     }
 
     private fun registerRepository() {
-        DependencyInjector.register(ProductRepository::class) { RepositoryModule.provideProductRepository() }
-        DependencyInjector.register(CartRepository::class) { RepositoryModule.provideCartRepository() }
+        DependencyInjector.register(ProductRepository::class) { RepositoryModule.productRepository }
+        DependencyInjector.register(CartRepository::class) { RepositoryModule.cartRepository }
     }
 }
