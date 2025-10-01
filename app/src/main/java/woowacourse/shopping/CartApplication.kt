@@ -1,9 +1,8 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.DiContainer
+import woowacourse.shopping.di.RepositoryModule
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
@@ -14,7 +13,7 @@ class CartApplication : Application() {
     }
 
     private fun postInstances() {
-        DiContainer.postInstance(CartRepository::class, DefaultCartRepository())
-        DiContainer.postInstance(ProductRepository::class, DefaultProductRepository())
+        DiContainer.postInstance(CartRepository::class, RepositoryModule.cartRepository)
+        DiContainer.postInstance(ProductRepository::class, RepositoryModule.productRepository)
     }
 }
