@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.model.Product
 
 // TODO: Step2 - CartProductDao를 참조하도록 변경
 class CartRepositoryImpl : CartRepository {
