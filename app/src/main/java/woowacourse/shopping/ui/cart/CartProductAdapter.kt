@@ -2,7 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
 
 class CartProductAdapter(
     items: List<Product>,
@@ -19,9 +19,7 @@ class CartProductAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
-    }
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,

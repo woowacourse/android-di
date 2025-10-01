@@ -1,9 +1,10 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.repository.ProductRepository
 
-class ProductRepository {
-    private val products: List<Product> =
+class ProductRepositoryImpl : ProductRepository {
+    override val products: List<Product> =
         listOf(
             Product(
                 name = "우테코 과자",
@@ -22,5 +23,5 @@ class ProductRepository {
             ),
         )
 
-    fun getAllProducts(): List<Product> = products
+    override fun getAllProducts(): List<Product> = products
 }
