@@ -1,15 +1,15 @@
-package woowacourse.shopping.ui.main
+package woowacourse.shopping.ui.main.vm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.data.repository.ProductRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.domain.model.Product
 
 class MainViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
+    private val defaultProductRepository: ProductRepository,
+    private val defaultCartRepository: CartRepository,
 ) : ViewModel() {
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
@@ -18,11 +18,11 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
+        defaultCartRepository.addCartProduct(product)
         _onProductAdded.value = true
     }
 
     fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
+        _products.value = defaultProductRepository.getAllProducts()
     }
 }

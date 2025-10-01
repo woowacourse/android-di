@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.ui.main.MainActivity
-import woowacourse.shopping.ui.main.MainViewModel
+import woowacourse.shopping.ui.main.vm.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -37,6 +37,8 @@ class MainActivityTest {
                 .buildActivity(MainActivity::class.java)
                 .create()
                 .get()
+
+        // when
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then

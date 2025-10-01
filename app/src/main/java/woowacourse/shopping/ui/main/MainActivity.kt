@@ -9,23 +9,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import woowacourse.shopping.App
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.ViewModelFactoryInjector
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.main.vm.MainViewModelFactory
+import woowacourse.shopping.ui.main.vm.MainViewModel
 import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<MainViewModel> {
-        val container = (application as App).container
-        val repositoryModule = container.repositoryModule
-        MainViewModelFactory(
-            repositoryModule.productRepository,
-            repositoryModule.cartRepository,
-        )
+    private val viewModel: MainViewModel by viewModels {
+        ViewModelFactoryInjector.create(MainViewModel::class)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
