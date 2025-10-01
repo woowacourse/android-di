@@ -1,10 +1,10 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
 
 class ShoppingApplication : Application() {
-    val productRepository by lazy { ProductRepository() }
-    val cartRepository by lazy { CartRepository() }
+    val productRepository by lazy { ProductRepositoryImpl() }
+    val cartRepository by lazy { CartRepositoryImpl() }
 }

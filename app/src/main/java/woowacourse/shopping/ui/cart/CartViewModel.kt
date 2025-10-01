@@ -41,9 +41,7 @@ class CartViewModel(
                     key: String,
                     modelClass: Class<T>,
                     handle: SavedStateHandle,
-                ): T {
-                    return CartViewModel(cartRepository) as T
-                }
+                ): T = CartViewModel(cartRepository) as T
             }
     }
 }

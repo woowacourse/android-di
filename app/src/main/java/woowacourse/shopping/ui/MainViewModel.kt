@@ -43,9 +43,7 @@ class MainViewModel(
                     key: String,
                     modelClass: Class<T>,
                     handle: SavedStateHandle,
-                ): T {
-                    return MainViewModel(productRepository, cartRepository) as T
-                }
+                ): T = MainViewModel(productRepository, cartRepository) as T
             }
     }
 }
