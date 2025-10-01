@@ -21,11 +21,12 @@ class CartViewModelTest {
 
     @Before
     fun setUp() {
-        cartRepository = FakeCartRepository().apply {
-            addCartProduct(TONKATSU)
-            addCartProduct(MALATANG)
-            addCartProduct(GOBCHANG)
-        }
+        cartRepository =
+            FakeCartRepository().apply {
+                addCartProduct(TONKATSU)
+                addCartProduct(MALATANG)
+                addCartProduct(GOBCHANG)
+            }
         viewModel = CartViewModel(cartRepository)
     }
 
