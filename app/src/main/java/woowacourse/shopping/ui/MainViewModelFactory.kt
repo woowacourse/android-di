@@ -10,7 +10,5 @@ class MainViewModelFactory(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MainViewModel(productRepository, cartRepository) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = MainViewModel(productRepository, cartRepository) as T
 }
