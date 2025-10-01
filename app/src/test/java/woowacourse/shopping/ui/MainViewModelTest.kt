@@ -4,6 +4,7 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContain
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +40,9 @@ class MainViewModelTest {
 
         // then
         viewModel.onProductAdded.getOrAwaitValue().shouldBeTrue()
+
+        // verify
+        coVerify(exactly = 1) { cartRepository.addCartProduct(product) }
     }
 
     @DisplayName("상품 목록을 가져온다")
@@ -54,5 +58,8 @@ class MainViewModelTest {
 
         // then
         products.shouldContain(product)
+
+        // verify
+        coVerify(exactly = 1) { productRepository.getAllProducts() }
     }
 }
