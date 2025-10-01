@@ -6,7 +6,7 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 
-object AppContainer {
+class AppContainer {
     private val providers = mutableMapOf<KClass<*>, Any>()
 
     init {
