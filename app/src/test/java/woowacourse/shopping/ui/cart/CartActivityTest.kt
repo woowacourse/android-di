@@ -8,7 +8,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.util.diViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
