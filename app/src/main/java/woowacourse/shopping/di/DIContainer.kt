@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
-class DIContainer {
+object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
     private val providers = mutableMapOf<KClass<*>, () -> Any>()
 

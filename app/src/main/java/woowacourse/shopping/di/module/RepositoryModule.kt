@@ -7,8 +7,8 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class RepositoryModule : Module {
-    override fun register(container: DIContainer) {
-        container.register(ProductRepository::class) { ProductRepositoryImpl() }
-        container.register(CartRepository::class) { CartRepositoryImpl() }
+    override fun register() {
+        DIContainer.register(ProductRepository::class) { ProductRepositoryImpl() }
+        DIContainer.register(CartRepository::class) { CartRepositoryImpl() }
     }
 }
