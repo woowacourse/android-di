@@ -6,7 +6,7 @@ import org.junit.Test
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.textfixture.TEST_PRODUCT
+import woowacourse.shopping.fixture.TEST_PRODUCT
 
 class CartRepositoryTest {
     private lateinit var cartRepository: CartRepository

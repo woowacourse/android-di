@@ -9,8 +9,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.fixture.TEST_PRODUCTS
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.textfixture.TEST_PRODUCTS
 import woowacourse.shopping.ui.cart.CartViewModel
 
 class CartViewModelTest {

@@ -5,7 +5,7 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.textfixture.TEST_PRODUCTS
+import woowacourse.shopping.fixture.TEST_PRODUCTS
 
 class ProductRepositoryTest {
     private lateinit var productRepository: ProductRepository

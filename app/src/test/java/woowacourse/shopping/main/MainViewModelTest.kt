@@ -10,9 +10,9 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.fixture.TEST_PRODUCT
+import woowacourse.shopping.fixture.TEST_PRODUCTS
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.textfixture.TEST_PRODUCT
-import woowacourse.shopping.textfixture.TEST_PRODUCTS
 import woowacourse.shopping.ui.main.MainViewModel
 
 class MainViewModelTest {

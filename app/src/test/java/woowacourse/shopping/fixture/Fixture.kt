@@ -1,4 +1,4 @@
-package woowacourse.shopping.textfixture
+package woowacourse.shopping.fixture
 
 import woowacourse.shopping.domain.model.Product
 
