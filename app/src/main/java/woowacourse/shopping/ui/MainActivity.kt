@@ -5,26 +5,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
-import woowacourse.shopping.data.repository.CartDefaultRepository
-import woowacourse.shopping.data.repository.ProductDefaultRepository
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.myDiViewModels
 import woowacourse.shopping.ui.cart.CartActivity
 import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory(
-            productRepository = ProductDefaultRepository(),
-            cartRepository = CartDefaultRepository(),
-        )
-    }
+    private val viewModel: MainViewModel by myDiViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
