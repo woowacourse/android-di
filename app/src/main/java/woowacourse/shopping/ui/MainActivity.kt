@@ -18,7 +18,12 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
+        val application = application as ShoppingApplication
+        val factory = MainViewModelFactory(
+            productRepository = application.container.productRepository,
+            cartRepository = application.container.cartRepository
+        )
+        ViewModelProvider(this, factory)[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
