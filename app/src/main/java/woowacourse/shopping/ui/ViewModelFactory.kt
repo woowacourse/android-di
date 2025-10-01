@@ -3,7 +3,6 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.DependencyProvider
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
@@ -15,7 +14,7 @@ object ViewModelFactory : ViewModelProvider.Factory {
             constructor
                 ?.parameters
                 ?.mapNotNull { parameter: KParameter ->
-                    DependencyProvider.Dependencies[(parameter.type.classifier as KClass<*>)]
+                    DependencyProvider.Dependencies[parameter.type]
                 }.orEmpty()
                 .toTypedArray()
         return constructor?.call(*parameters) as VM
