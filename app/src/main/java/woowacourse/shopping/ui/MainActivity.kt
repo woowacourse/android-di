@@ -18,11 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel by lazy {
         val application = application as ShoppingApplication
-        val factory =
-            MainViewModelFactory(
-                productRepository = application.container.productRepository,
-                cartRepository = application.container.cartRepository,
-            )
+        val factory = DIViewModelFactory(application.container)
         ViewModelProvider(this, factory)[MainViewModel::class.java]
     }
 
