@@ -1,8 +1,5 @@
 package woowacourse.shopping.di
 
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.ui.MainApplication
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
@@ -30,14 +27,18 @@ class AppContainerStore(
         }
     }
 
-    fun instantiate(clazz: KClass<*>): Any? {
+    fun instantiate(
+        clazz: KClass<*>,
+        saveToCache: Boolean = true,
+    ): Any? {
         val inProgress = mutableSetOf<KClass<*>>()
-        return instantiate(clazz, inProgress)
+        return instantiate(clazz, inProgress, saveToCache)
     }
 
     private fun instantiate(
         clazz: KClass<*>,
         inProgress: MutableSet<KClass<*>>,
+        saveToCache: Boolean = true,
     ): Any? {
         if (cache.containsKey(clazz)) return this[clazz]
 
@@ -49,9 +50,10 @@ class AppContainerStore(
 
         return clazz.primaryConstructor?.let { constructor ->
             inProgress.add(clazz)
-            cache[clazz] = reflect(constructor, inProgress)
+            val instance = reflect(constructor, inProgress)
+            if (saveToCache) cache[clazz] = instance
             inProgress.remove(clazz)
-            cache[clazz]
+            instance
         } ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${clazz.simpleName}")
     }
 
@@ -75,9 +77,4 @@ class AppContainerStore(
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
             "주 생성자를 찾을 수 없습니다. 인터페이스, 추상 클래스의 경우 AppContainer에 구현체를 등록해주세요"
     }
-}
-
-fun CreationExtras.containerProvider(clazz: KClass<*>): Any? {
-    val store = (this[APPLICATION_KEY] as MainApplication).appContainerStore
-    return store.instantiate(clazz)
 }
