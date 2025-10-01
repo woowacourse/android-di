@@ -9,7 +9,10 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
 
 class DiViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         val kClass = modelClass.kotlin
 
         val instances: Map<KParameter, Any>? =
