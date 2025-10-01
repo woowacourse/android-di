@@ -3,8 +3,8 @@ package woowacourse.shopping.ui.cart.vm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.data.repository.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.repository.DefaultCartRepository
+import woowacourse.shopping.domain.model.Product
 
 class CartViewModel(
     private val cartRepository: CartRepository,
