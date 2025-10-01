@@ -6,17 +6,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.AutoViewModelFactory
+import woowacourse.shopping.ui.viewModel
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by lazy {
-        ViewModelProvider(this, AutoViewModelFactory())[CartViewModel::class.java]
-    }
+    private val viewModel: CartViewModel by viewModel()
 
     private lateinit var dateFormatter: DateFormatter
 
