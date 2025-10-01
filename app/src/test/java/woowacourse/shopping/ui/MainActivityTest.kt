@@ -1,5 +1,6 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
+import androidx.appcompat.widget.Toolbar
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
@@ -9,8 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.R
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
@@ -44,7 +44,7 @@ class MainActivityTest {
 
     @Test
     fun `툴바가_설정되어_있는지_확인`() {
-        val toolbar = activity.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
         assertThat(toolbar).isNotNull()
         assertThat(activity.supportActionBar).isNotNull()
     }

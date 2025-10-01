@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
@@ -6,7 +6,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.domain.Product
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.fixture.FakeCartRepository
+import woowacourse.shopping.fixture.FakeProductRepository
+import woowacourse.shopping.getOrAwaitValue
 
 class MainViewModelTest {
     @get:Rule

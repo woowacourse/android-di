@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.fixture
 
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.domain.ProductRepository
