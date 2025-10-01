@@ -8,9 +8,9 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 object DependencyProvider {
-    val Dependencies: Map<KType, Any> =
+    val Dependencies: Map<KType, Lazy<Any>> =
         mapOf(
-            typeOf<ProductRepository>() to DefaultProductRepository(),
-            typeOf<CartRepository>() to DefaultCartRepository(),
+            typeOf<ProductRepository>() to lazy { DefaultProductRepository() },
+            typeOf<CartRepository>() to lazy { DefaultCartRepository() },
         )
 }

@@ -14,7 +14,7 @@ object ViewModelFactory : ViewModelProvider.Factory {
             constructor
                 ?.parameters
                 ?.mapNotNull { parameter: KParameter ->
-                    DependencyProvider.Dependencies[parameter.type]
+                    DependencyProvider.Dependencies[parameter.type]?.value
                 }.orEmpty()
                 .toTypedArray()
         return constructor?.call(*parameters) as VM
