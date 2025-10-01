@@ -3,19 +3,22 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
+import kotlin.getValue
 
 class CartActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
+    private val viewModel: CartViewModel by viewModels {
+        CartViewModel.provideFactory((application as ShoppingApplication).cartRepository, this)
     }
 
     private lateinit var dateFormatter: DateFormatter
