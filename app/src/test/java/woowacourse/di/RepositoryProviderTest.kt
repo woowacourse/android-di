@@ -16,7 +16,7 @@ import kotlin.reflect.jvm.isAccessible
 
 class RepositoryProviderTest {
     @Test
-    fun `읜터페이스 타입으로 객체를 가져온다`() {
+    fun `인터페이스 타입으로 객체를 가져온다`() {
         val productRepository = RepositoryProvider.get<ProductRepository>()
         val cartRepository = RepositoryProvider.get<CartRepository>()
 

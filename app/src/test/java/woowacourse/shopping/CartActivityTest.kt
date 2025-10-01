@@ -9,39 +9,26 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.di.ViewModelFactoryInjector
-import woowacourse.shopping.ui.main.MainActivity
-import woowacourse.shopping.ui.main.vm.MainViewModel
+import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.vm.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
-class MainActivityTest {
+class CartActivityTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Test
-    fun `Activity 실행 테스트`() {
+    fun `CartViewModel 주입 테스트`() {
         // given
         val activity =
-            Robolectric
-                .buildActivity(MainActivity::class.java)
+            Robolectric.buildActivity(CartActivity::class.java)
                 .create()
                 .get()
 
-        // then
-        assertThat(activity).isNotNull()
-    }
-
-    @Test
-    fun `MainViewModel 주입 테스트`() {
-        // given
-        val activity =
-            Robolectric.buildActivity(MainActivity::class.java)
-                .create()
-                .get()
-
-        val factory = ViewModelFactoryInjector.create(MainViewModel::class)
+        val factory = ViewModelFactoryInjector.create(CartViewModel::class)
 
         // when
-        val viewModel = ViewModelProvider(activity, factory)[MainViewModel::class.java]
+        val viewModel = ViewModelProvider(activity, factory)[CartViewModel::class.java]
 
         // then
         assertThat(viewModel).isNotNull()
