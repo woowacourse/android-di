@@ -11,12 +11,13 @@ object DIFactory {
         return if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
             kClass.createInstance()
         } else {
-            val args = primaryConstructor.parameters.associateWith { param ->
-                val typeKClass =
-                    param.type.classifier as? KClass<*>
-                        ?: throw IllegalArgumentException("Unsupported parameter type: ${param.type}")
-                DIContainer.get(typeKClass)
-            }
+            val args =
+                primaryConstructor.parameters.associateWith { param ->
+                    val typeKClass =
+                        param.type.classifier as? KClass<*>
+                            ?: throw IllegalArgumentException("Unsupported parameter type: ${param.type}")
+                    DIContainer.get(typeKClass)
+                }
             primaryConstructor.callBy(args)
         }
     }
