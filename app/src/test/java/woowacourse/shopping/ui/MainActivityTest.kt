@@ -2,7 +2,7 @@ package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,7 @@ class MainActivityTest {
                 .get()
 
         // then
-        Truth.assertThat(activity).isNotNull()
+        assertThat(activity).isNotNull()
     }
 
     @Test
@@ -38,6 +38,6 @@ class MainActivityTest {
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
-        Truth.assertThat(viewModel).isNotNull()
+        assertThat(viewModel).isNotNull()
     }
 }
