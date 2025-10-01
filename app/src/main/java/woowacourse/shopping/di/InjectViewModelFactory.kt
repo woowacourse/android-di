@@ -18,15 +18,17 @@ class InjectViewModelFactory(
         extras: CreationExtras,
     ): VM {
         val kClass = modelClass.kotlin
-        val constructor = kClass.primaryConstructor
-            ?: throw IllegalArgumentException("${kClass.qualifiedName} 클래스에 생성자가 존재하지 않습니다.")
+        val constructor =
+            kClass.primaryConstructor
+                ?: throw IllegalArgumentException("${kClass.qualifiedName} 클래스에 생성자가 존재하지 않습니다.")
 
-        val args = constructor.parameters.map { param ->
-            when (param.type.classifier) {
-                SavedStateHandle::class -> extras.createSavedStateHandle()
-                else -> container.getInstance(param.type.classifier as KClass<*>)
-            }
-        }.toTypedArray()
+        val args =
+            constructor.parameters.map { param ->
+                when (param.type.classifier) {
+                    SavedStateHandle::class -> extras.createSavedStateHandle()
+                    else -> container.getInstance(param.type.classifier as KClass<*>)
+                }
+            }.toTypedArray()
 
         return constructor.call(*args)
     }

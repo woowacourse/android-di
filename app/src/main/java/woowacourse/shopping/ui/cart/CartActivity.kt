@@ -66,11 +66,12 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
+            val adapter =
+                CartProductAdapter(
+                    items = it,
+                    dateFormatter = dateFormatter,
+                    onClickDelete = viewModel::deleteCartProduct,
+                )
             binding.rvCartProducts.adapter = adapter
         }
         viewModel.onCartProductDeleted.observe(this) {
