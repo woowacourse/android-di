@@ -1,10 +1,10 @@
-package woowacourse.shopping.common
+package woowacourse.shopping.di
 
-import java.util.concurrent.ConcurrentHashMap
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
+import java.util.concurrent.ConcurrentHashMap
 
 object AppInjectionModule {
     private val instances = ConcurrentHashMap<Class<*>, Any>()
