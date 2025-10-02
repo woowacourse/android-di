@@ -25,12 +25,4 @@ class DefaultProductRepository : ProductRepository {
     override fun getAllProducts(): List<Product> {
         return products
     }
-
-    companion object {
-        private var instance: ProductRepository? = null
-
-        fun getInstance(): ProductRepository {
-            return instance ?: DefaultProductRepository().also { instance = it }
-        }
-    }
 }
