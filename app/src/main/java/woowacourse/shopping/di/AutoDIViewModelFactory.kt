@@ -9,6 +9,8 @@ import kotlin.reflect.KFunction
 class AutoDIViewModelFactory(
     private val dependencies: Map<KClass<*>, Any>,
 ) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = create(modelClass, CreationExtras.Empty)
+
     override fun <T : ViewModel> create(
         modelClass: Class<T>,
         extras: CreationExtras,
