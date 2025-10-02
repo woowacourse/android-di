@@ -10,8 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartDefaultRepository
-import woowacourse.shopping.data.ProductDefaultRepository
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
@@ -21,8 +21,8 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by lazy {
-        val productRepository: ProductRepository = ProductDefaultRepository()
-        val cartRepository: CartRepository = CartDefaultRepository()
+        val productRepository: ProductRepository = ProductRepositoryImpl()
+        val cartRepository: CartRepository = CartRepositoryImpl()
         val viewModelFactory = MainViewModelFactory(productRepository, cartRepository)
         ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
     }
