@@ -4,6 +4,7 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -11,9 +12,9 @@ import kotlin.reflect.cast
 import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
-    private val instancePool: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
 
-    private val implementationMappings: MutableMap<KClass<*>, KClass<*>> = mutableMapOf(
+    private val implementationMappings: Map<KClass<*>, KClass<*>> = mutableMapOf(
         CartRepository::class to DefaultCartRepository::class,
         ProductRepository::class to DefaultProductRepository::class,
     )
