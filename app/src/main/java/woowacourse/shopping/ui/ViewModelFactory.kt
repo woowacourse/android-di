@@ -10,10 +10,13 @@ class ViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructor = modelClass.constructors.first()
+
         val params =
             constructor.parameters
-                .map { param -> appContainer.resolve(param.type.kotlin) }
-                .toTypedArray()
+                .map { param ->
+                    appContainer.resolve(param.type.kotlin)
+                        ?: throw IllegalArgumentException("AppContainer에 ${param.type} 의존성이 없습니다")
+                }.toTypedArray()
 
         return constructor.newInstance(*params) as T
     }
