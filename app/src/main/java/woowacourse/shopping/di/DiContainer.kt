@@ -5,11 +5,12 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.cast
+import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
-    private const val ERROR_MESSAGE = "%s 인스턴스가 생성되지 않았습니다"
-
     private val instancePool: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     private val implementationMappings: MutableMap<KClass<*>, KClass<*>> = mutableMapOf(
@@ -17,12 +18,21 @@ object DiContainer {
         ProductRepository::class to DefaultProductRepository::class,
     )
 
-    @Suppress("UNCHECKED_CAST")
     fun <T : Any> getInstance(kClass: KClass<T>): T {
-        return instancePool.getOrPut(kClass) {
-            val implClass: KClass<*> = implementationMappings[kClass]
-                ?: throw IllegalArgumentException(ERROR_MESSAGE.format(kClass.simpleName))
-            implClass.createInstance()
-        } as T
+        instancePool[kClass]?.let {
+            return kClass.cast(it) as T
+        }
+
+        val implementClass: KClass<out Any> = implementationMappings[kClass] ?: kClass
+        val constructor: KFunction<Any> = implementClass.primaryConstructor ?: error("")
+
+        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
+            getInstance(param.type.classifier as? KClass<*> ?: error(""))
+        }
+
+        val instance = constructor.callBy(arguments)
+        instancePool[kClass] = instance
+
+        return kClass.cast(instance) as T
     }
 }
