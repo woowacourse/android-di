@@ -10,10 +10,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.viewModelsWithAutoInject(
     noinline extrasProducer: (() -> CreationExtras)? = null,
-    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = { inject() }
-): Lazy<VM> {
-    return viewModels(
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = { inject() },
+): Lazy<VM> =
+    viewModels(
         extrasProducer = extrasProducer,
-        factoryProducer = factoryProducer
+        factoryProducer = factoryProducer,
     )
-}
