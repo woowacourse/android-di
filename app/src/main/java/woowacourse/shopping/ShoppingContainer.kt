@@ -13,6 +13,7 @@ class ShoppingContainer {
         makers[type] = make
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(type: KClass<T>): T {
         instances[type]?.let { return it as T }
 

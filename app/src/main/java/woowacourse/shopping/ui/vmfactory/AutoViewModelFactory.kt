@@ -10,6 +10,7 @@ import kotlin.reflect.full.primaryConstructor
 class AutoViewModelFactory(
     private val container: ShoppingContainer,
 ) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: KClass<T> = modelClass.kotlin
         val constructor =
