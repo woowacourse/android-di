@@ -1,8 +1,8 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.products
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,7 @@ class MainActivityTest {
                 .get()
 
         // then
-        assertThat(activity).isNotNull()
+        Assertions.assertThat(activity).isNotNull()
     }
 
     @Test
@@ -38,6 +38,6 @@ class MainActivityTest {
         val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        Assertions.assertThat(viewModel).isNotNull()
     }
 }
