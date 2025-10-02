@@ -13,18 +13,19 @@ import woowacourse.shopping.R
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.viewModelsWithAutoInject
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModelsWithAutoInject()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupViewModel()
         setupContentView()
         setupBinding()
         setupToolbar()
@@ -37,14 +38,6 @@ class MainActivity : AppCompatActivity() {
             view.setOnClickListener { navigateToCart() }
         }
         return true
-    }
-
-    private fun setupViewModel() {
-        val productRepository = ProductRepositoryImpl()
-        val cartRepository = CartRepositoryImpl()
-        viewModel = MainViewModel.factory(productRepository, cartRepository)
-            .create(MainViewModel::class.java)
-
     }
 
     private fun setupContentView() {
