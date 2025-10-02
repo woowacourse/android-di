@@ -1,7 +1,9 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.data.repository.CartDefaultRepository
+import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
+import woowacourse.shopping.data.repository.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -33,15 +35,13 @@ class DIContainer {
     }
 
     private fun setupRepositories() {
-        registerRepository("ProductRepository", ProductDefaultRepository())
-        registerRepository("CartRepository", CartDefaultRepository())
+        registerRepository<ProductRepository>(ProductDefaultRepository())
+        registerRepository<CartRepository>(CartDefaultRepository())
     }
 
-    private fun registerRepository(
-        typeName: String,
-        instance: Any,
-    ) {
-        instances[typeName] = instance
+    private inline fun <reified T> registerRepository(instance: T) {
+        val interfaceName = T::class.simpleName!!
+        instances[interfaceName] = instance as Any
     }
 
     companion object {
