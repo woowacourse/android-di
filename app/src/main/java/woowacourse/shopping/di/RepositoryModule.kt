@@ -6,7 +6,6 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
 object RepositoryModule {
-    val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
-
-    val cartRepository: CartRepository by lazy { CartRepositoryImpl() }
+    private val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
+    private val cartRepository: CartRepository by lazy { CartRepositoryImpl() }
 }

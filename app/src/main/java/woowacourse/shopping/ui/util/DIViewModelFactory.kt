@@ -5,7 +5,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.AppContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -36,6 +36,6 @@ class DIViewModelFactory(
         when (paramClass) {
             null -> error("타입 정보를 알 수 없습니다.")
             SavedStateHandle::class -> handle
-            else -> DependencyInjector.resolve(paramClass)
+            else -> AppContainer.resolve(paramClass)
         }
 }
