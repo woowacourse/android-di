@@ -1,12 +1,8 @@
 package woowacourse.shopping.ui
 
-import android.os.Bundle
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.savedstate.SavedStateRegistryOwner
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
@@ -28,22 +24,5 @@ class MainViewModel(
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
-    }
-
-    companion object {
-        fun provideFactory(
-            productRepository: ProductRepository,
-            cartRepository: CartRepository,
-            owner: SavedStateRegistryOwner,
-            defaultArgs: Bundle? = null,
-        ): AbstractSavedStateViewModelFactory =
-            object : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    key: String,
-                    modelClass: Class<T>,
-                    handle: SavedStateHandle,
-                ): T = MainViewModel(productRepository, cartRepository) as T
-            }
     }
 }
