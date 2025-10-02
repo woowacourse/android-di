@@ -15,7 +15,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    fun `getAllProducts 호출 시 모든 상품이 반환된다`() {
+    fun `getAllProducts_호출_시_모든_상품이_반환된다`() {
         // Given
         val expectedProducts =
             listOf(

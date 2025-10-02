@@ -15,7 +15,7 @@ class CartRepositoryTest {
     }
 
     @Test
-    fun `addCartProduct 호출 시 장바구니에 상품이 추가된다`() {
+    fun `addCartProduct_호출_시_장바구니에_상품이_추가된다`() {
         // Given
         val product = Product("상품1", 1000, "")
 
@@ -29,7 +29,7 @@ class CartRepositoryTest {
     }
 
     @Test
-    fun `getAllCartProducts 호출 시 모든 장바구니 상품이 호출된다`() {
+    fun `getAllCartProducts_호출_시_모든_장바구니_상품이_호출된다`() {
         // Given
         val product1 = Product("상품1", 1000, "")
         val product2 = Product("상품2", 2000, "")
@@ -44,7 +44,7 @@ class CartRepositoryTest {
     }
 
     @Test
-    fun `deleteCartProduct 호출 시 해당 상품이 삭제된다`() {
+    fun `deleteCartProduct_호출_시_해당_상품이_삭제된다`() {
         // Given
         val product1 = Product("상품1", 1000, "")
         val product2 = Product("상품2", 2000, "")
