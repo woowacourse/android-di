@@ -6,7 +6,10 @@ import kotlin.reflect.full.primaryConstructor
 object AppContainer {
     private val providers = mutableMapOf<KClass<*>, Any>()
 
-    fun <T : Any> addProviders(kClazz: KClass<T>, instance: T) {
+    fun <T : Any> addProviders(
+        kClazz: KClass<T>,
+        instance: T,
+    ) {
         providers[kClazz] = instance
     }
 
@@ -14,9 +17,10 @@ object AppContainer {
 
     private fun <T : Any> createInstance(kClazz: KClass<T>): T {
         val constructor = kClazz.primaryConstructor ?: throw IllegalArgumentException()
-        val arguments = constructor.parameters.associateWith {
-            getProvider(it.type.classifier as KClass<*>)
-        }
+        val arguments =
+            constructor.parameters.associateWith {
+                getProvider(it.type.classifier as KClass<*>)
+            }
         return constructor.callBy(arguments)
     }
 }
