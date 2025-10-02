@@ -1,9 +1,9 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.model.repository.CartRepository
+import woowacourse.shopping.model.repository.ProductRepository
 import kotlin.reflect.KClass
 
 class AppContainer {
