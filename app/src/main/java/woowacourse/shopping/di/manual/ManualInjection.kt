@@ -1,9 +1,9 @@
 package woowacourse.shopping.di.manual
 
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
 
 object ManualInjection {
-    val cartRepository: CartRepository by lazy { CartRepository() }
-    val productRepository: ProductRepository by lazy { ProductRepository() }
+    val cartRepository: CartRepositoryImpl by lazy { CartRepositoryImpl() }
+    val productRepository: ProductRepositoryImpl by lazy { ProductRepositoryImpl() }
 }
