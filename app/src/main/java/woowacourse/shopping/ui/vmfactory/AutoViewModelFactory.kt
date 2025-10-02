@@ -12,19 +12,21 @@ class AutoViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: KClass<T> = modelClass.kotlin
-        val constructor = viewModel.primaryConstructor
-            ?: viewModel.constructors.firstOrNull()
-            ?: error("${viewModel.simpleName} 생성자를 찾을 수 없습니다")
+        val constructor =
+            viewModel.primaryConstructor
+                ?: viewModel.constructors.firstOrNull()
+                ?: error("${viewModel.simpleName} 생성자를 찾을 수 없습니다")
 
         val constructorArguments: Array<Any?> =
             constructor.parameters.map { parameter: KParameter ->
-                val requiredType = parameter.type.classifier as? KClass<*>
-                    ?: error("${parameter.type} 지원하지 않는 파라미터 입니다.")
+                val requiredType =
+                    parameter.type.classifier as? KClass<*>
+                        ?: error("${parameter.type} 지원하지 않는 파라미터 입니다.")
 
                 try {
                     container.get(requiredType)
                 } catch (e: Throwable) {
-                    error("의존성을 주입할 수 없습니다.")
+                    throw IllegalStateException("의존성을 주입할 수 없습니다.", e)
                 }
             }.toTypedArray()
         return constructor.call(*constructorArguments) as T
