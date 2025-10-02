@@ -6,7 +6,7 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.RepositoryModule.cartRepository
 import woowacourse.shopping.di.RepositoryModule.productRepository
 
-object DependencyFactory {
+object DependencyProvider {
     val viewModelFactory: ViewModelProvider.Factory by lazy {
         AutoDIViewModelFactory(
             dependencies =
