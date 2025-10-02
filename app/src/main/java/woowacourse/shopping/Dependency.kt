@@ -9,11 +9,10 @@ import kotlin.reflect.KClass
 object Dependency {
     private val dependencies by lazy {
         mapOf<KClass<*>, Any>(
-        ProductRepository::class to DefaultProductRepository(),
-        CartRepository::class to DefaultCartRepository(),
-    )
+            ProductRepository::class to DefaultProductRepository(),
+            CartRepository::class to DefaultCartRepository(),
+        )
     }
 
-    fun get(type: KClass<*>): Any =
-        dependencies[type] ?: throw IllegalArgumentException("No dependency for $type")
+    fun get(type: KClass<*>): Any = dependencies[type] ?: throw IllegalArgumentException("No dependency for $type")
 }

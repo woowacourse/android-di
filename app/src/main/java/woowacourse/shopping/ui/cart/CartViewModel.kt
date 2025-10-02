@@ -9,7 +9,6 @@ import woowacourse.shopping.model.Product
 class CartViewModel(
     private val defaultCartRepository: CartRepository,
 ) : ViewModel() {
-
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
     val cartProducts: LiveData<List<Product>> get() = _cartProducts

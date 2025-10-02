@@ -7,12 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.ViewModelFactory
 import woowacourse.shopping.R
+import woowacourse.shopping.ViewModelFactory
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel by lazy {
@@ -71,11 +70,12 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
+            val adapter =
+                CartProductAdapter(
+                    items = it,
+                    dateFormatter = dateFormatter,
+                    onClickDelete = viewModel::deleteCartProduct,
+                )
             binding.rvCartProducts.adapter = adapter
         }
         viewModel.onCartProductDeleted.observe(this) {
