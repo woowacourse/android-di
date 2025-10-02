@@ -1,15 +1,13 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.di.RepositoryModule.cartRepository
+import woowacourse.shopping.di.RepositoryModule.productRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DefaultAppContainer : AppContainer {
-    private val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
-    private val cartRepository: CartRepository by lazy { CartRepositoryImpl() }
     private val instances: Map<KClass<*>, Any> =
         mapOf(
             ProductRepository::class to productRepository,
