@@ -31,10 +31,10 @@
 
 ## 🛠️ 구현할 기능 (1단계)
 
-- [ ] 자동 주입 로직을 구현한다.
-- [ ] MainViewModel, CartViewModel에서 동일한 로직을 통해 Repository가 주입되도록 한다.
-- [ ] 범용적으로 확장 가능한 ViewModel 자동 주입 구조를 만든다.
-- [ ] CartRepository를 싱글 오브젝트로 관리한다.
+- [x] 자동 주입 로직을 구현한다.
+- [x] MainViewModel, CartViewModel에서 동일한 로직을 통해 Repository가 주입되도록 한다.
+- [x] 범용적으로 확장 가능한 ViewModel 자동 주입 구조를 만든다.
+- [x] CartRepository를 싱글 오브젝트로 관리한다.
 
 ---
 
