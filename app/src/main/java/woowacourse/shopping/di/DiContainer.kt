@@ -15,7 +15,7 @@ object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
 
     private val implementationMappings: Map<KClass<*>, KClass<*>> =
-        mutableMapOf(
+        mapOf(
             CartRepository::class to DefaultCartRepository::class,
             ProductRepository::class to DefaultProductRepository::class,
         )
