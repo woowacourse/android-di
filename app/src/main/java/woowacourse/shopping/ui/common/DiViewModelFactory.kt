@@ -9,7 +9,5 @@ class DiViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(
         modelClass: Class<T>,
         extras: CreationExtras,
-    ): T {
-        return DiContainer.getInstance(modelClass.kotlin)
-    }
+    ): T = DiContainer.getInstance(modelClass.kotlin)
 }

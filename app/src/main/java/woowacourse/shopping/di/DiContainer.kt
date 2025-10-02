@@ -14,10 +14,11 @@ import kotlin.reflect.full.primaryConstructor
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
 
-    private val implementationMappings: Map<KClass<*>, KClass<*>> = mutableMapOf(
-        CartRepository::class to DefaultCartRepository::class,
-        ProductRepository::class to DefaultProductRepository::class,
-    )
+    private val implementationMappings: Map<KClass<*>, KClass<*>> =
+        mutableMapOf(
+            CartRepository::class to DefaultCartRepository::class,
+            ProductRepository::class to DefaultProductRepository::class,
+        )
 
     fun <T : Any> getInstance(kClass: KClass<T>): T {
         instancePool[kClass]?.let {
@@ -27,9 +28,10 @@ object DiContainer {
         val implementClass: KClass<out Any> = implementationMappings[kClass] ?: kClass
         val constructor: KFunction<Any> = implementClass.primaryConstructor ?: error("")
 
-        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
-            getInstance(param.type.classifier as? KClass<*> ?: error(""))
-        }
+        val arguments: Map<KParameter, Any> =
+            constructor.parameters.associateWith { param ->
+                getInstance(param.type.classifier as? KClass<*> ?: error(""))
+            }
 
         val instance = constructor.callBy(arguments)
         instancePool[kClass] = instance
