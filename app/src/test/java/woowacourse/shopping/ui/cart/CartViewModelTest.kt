@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.fake.CARTS
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
 
@@ -28,6 +29,7 @@ class CartViewModelTest {
         // then:
         val products = cartViewModel.cartProducts.getOrAwaitValue()
         assertThat(products.size).isEqualTo(2)
+        assertThat(products).isEqualTo(CARTS)
     }
 
     @Test
