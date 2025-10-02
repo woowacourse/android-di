@@ -5,26 +5,20 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by lazy {
-        val productRepository: ProductRepository = ProductRepositoryImpl()
-        val cartRepository: CartRepository = CartRepositoryImpl()
-        val viewModelFactory = MainViewModelFactory(productRepository, cartRepository)
-        ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+    private val viewModel: MainViewModel by viewModels {
+        ViewModelFactory(AppContainer.repositories)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
