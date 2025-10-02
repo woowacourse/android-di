@@ -12,7 +12,7 @@ object AppContainer {
 
     val recipe: MutableList<Pair<KClass<*>, KClass<*>>> = mutableListOf()
 
-    val repositories : MutableList<KClass<*>> = mutableListOf()
+    val repositories: MutableList<Pair<KClass<*>, Any>> = mutableListOf()
 
 
     init {
@@ -26,12 +26,20 @@ object AppContainer {
 
 
     inline fun <reified T : Any> get(): T {
-        val constructor = T::class.primaryConstructor?: throw IllegalArgumentException()
+        val constructor = T::class.primaryConstructor ?: throw IllegalArgumentException()
 
-        val args = constructor.parameters.map{ parameter ->
+        val args = constructor.parameters.map { parameter ->
             val paramType = parameter.type.classifier as? KClass<*>
-            val impl = recipe.find{ it.first == paramType}?: throw IllegalArgumentException()
-            return@map impl.second.primaryConstructor?.call()
+            val impl = recipe.find { it.first == paramType }?.second ?: throw IllegalArgumentException()
+            val repository = repositories.find { it.first == impl }?.second
+            if(repository != null) return@map repository
+
+            val implClazz = impl.primaryConstructor?.call()
+            if(implClazz != null){
+                repositories.add(impl to implClazz)
+                return@map implClazz
+            }
+            else throw IllegalArgumentException()
         }
         return constructor.call(*args.toTypedArray())
     }
