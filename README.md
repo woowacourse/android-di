@@ -41,13 +41,13 @@
 ## 🧱 선택 요구 사항
 
 - [ ] TDD로 DI 구현
-- [ ] Robolectric 기능 테스트
-- [ ] ViewModel 테스트
-- [ ] 도메인 로직, Repository 단위 테스트
+- [x] Robolectric 기능 테스트
+- [x] ViewModel 테스트
+- [x] 도메인 로직, Repository 단위 테스트
 
 ---
 
 ## 🛠️ 프로그래밍 요구 사항
 
-- [ ] 제공된 테스트 코드 모두 성공해야 한다.
-- [ ] Annotation은 사용하지 않는다.
+- [x] 제공된 테스트 코드 모두 성공해야 한다.
+- [x] Annotation은 사용하지 않는다.
