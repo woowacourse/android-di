@@ -18,6 +18,6 @@ inline fun <reified VM : ViewModel> ComponentActivity.viewModels(
         viewModelClass = VM::class,
         storeProducer = { viewModelStore },
         factoryProducer = factoryPromise,
-        extrasProducer = { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras }
+        extrasProducer = { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
     )
 }
