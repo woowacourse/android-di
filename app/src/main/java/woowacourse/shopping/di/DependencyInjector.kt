@@ -26,6 +26,7 @@ class DependencyInjector(
         }
     }
 
+    // Parameter에 해당하는 Instance를 주입
     fun injectInstance(kParameter: KParameter): Any? =
         when (kParameter.type.classifier) {
             ProductRepository::class -> appContainer.productRepository
