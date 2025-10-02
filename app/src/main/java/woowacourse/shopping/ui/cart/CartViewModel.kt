@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ class CartViewModel(
 
     fun getAllCartProducts() {
         _cartProducts.value = cartRepository.getAllCartProducts()
+        Log.d("test",cartRepository.getAllCartProducts().toString())
     }
 
     fun deleteCartProduct(id: Int) {
