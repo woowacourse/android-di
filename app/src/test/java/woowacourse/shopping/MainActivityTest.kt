@@ -2,12 +2,14 @@ package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.shadows.ShadowToast
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
@@ -41,5 +43,27 @@ class MainActivityTest {
 
         // then
         assertThat(viewModel).isNotNull()
+    }
+
+    @Test
+    fun `상품 클릭 시 장바구니에 담겼다는 토스트가 노출된다`() {
+        // given
+        val activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .setup()
+                .get()
+        val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
+        val firstProduct =
+            recyclerView.layoutManager
+                ?.findViewByPosition(0)
+                ?: error("No items found")
+
+        // when
+        firstProduct.performClick()
+
+        // then
+        val toastMessage = ShadowToast.getTextOfLatestToast()
+        assertThat(toastMessage).isEqualTo("장바구니에 추가되었습니다.")
     }
 }
