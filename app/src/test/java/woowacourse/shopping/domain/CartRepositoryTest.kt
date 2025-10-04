@@ -1,12 +1,12 @@
-package woowacourse.domain
+package woowacourse.shopping.domain
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import woowacourse.fixture.FakeCartRepository
-import woowacourse.fixture.PRODUCT_A_1000
-import woowacourse.shopping.domain.CartRepository
+import org.mockito.Mockito.`when`
+import woowacourse.shopping.fixture.FakeCartRepository
+import woowacourse.shopping.fixture.PRODUCT_A_1000
 
 class CartRepositoryTest :
     BehaviorSpec({

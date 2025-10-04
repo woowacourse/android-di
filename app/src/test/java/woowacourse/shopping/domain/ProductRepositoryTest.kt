@@ -1,9 +1,9 @@
-package woowacourse.domain
+package woowacourse.shopping.domain
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
-import woowacourse.fixture.FakeProductRepository
-import woowacourse.shopping.domain.ProductRepository
+import org.mockito.Mockito.`when`
+import woowacourse.shopping.fixture.FakeProductRepository
 
 class ProductRepositoryTest :
     BehaviorSpec({

@@ -1,4 +1,4 @@
-package woowacourse.shopping.cart
+package woowacourse.shopping.ui
 
 import android.widget.ImageView
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -12,7 +12,6 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowToast
 import woowacourse.shopping.R
-import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
 
