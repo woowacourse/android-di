@@ -7,9 +7,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.di.containerProvider
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.ui.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
@@ -37,7 +37,7 @@ class MainViewModelTest {
     fun `모든 상품을 조회할 수 있다`() {
         // given
         val viewModel by application.containerProvider<MainViewModel>()
-        val productRepository by application.containerProvider<ProductRepository>()
+        val productRepository by application.containerProvider<DefaultProductRepository>()
         val expected = productRepository.getAllProducts()
 
         // when

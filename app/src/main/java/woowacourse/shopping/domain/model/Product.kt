@@ -1,4 +1,4 @@
-package woowacourse.shopping.model
+package woowacourse.shopping.domain.model
 
 class Product(
     val name: String,

@@ -7,9 +7,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.di.containerProvider
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
 
 @RunWith(RobolectricTestRunner::class)
 class CartRepositoryTest {
@@ -21,7 +21,7 @@ class CartRepositoryTest {
     @Test
     fun `상품을 삭제할 수 있다`() {
         // given
-        val cartRepository by application.containerProvider<CartRepository>()
+        val cartRepository by application.containerProvider<DefaultCartRepository>()
         cartRepository.addCartProduct(Product("상품명", 1000, "이미지URL"))
         val target = cartRepository.getAllCartProducts().first()
         val id = 0
@@ -37,7 +37,7 @@ class CartRepositoryTest {
     @Test
     fun `상품을 추가할 수 있다`() {
         // given
-        val cartRepository by application.containerProvider<CartRepository>()
+        val cartRepository by application.containerProvider<DefaultCartRepository>()
         val product = Product("상품명", 1000, "이미지URL")
 
         // when
@@ -51,7 +51,7 @@ class CartRepositoryTest {
     @Test
     fun `상품을 조회할 수 있다`() {
         // given
-        val cartRepository by application.containerProvider<CartRepository>()
+        val cartRepository by application.containerProvider<DefaultCartRepository>()
         val product = Product("상품명", 1000, "이미지URL")
         cartRepository.addCartProduct(product)
         val expected = listOf("상품명")

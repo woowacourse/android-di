@@ -7,7 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.di.containerProvider
 
 @RunWith(RobolectricTestRunner::class)
@@ -20,7 +20,7 @@ class ProductRepositoryTest {
     @Test
     fun `모든 상품을 불러올 수 있다`() {
         // given
-        val productRepository by application.containerProvider<ProductRepository>()
+        val productRepository by application.containerProvider<DefaultProductRepository>()
         val expected =
             listOf(
                 "우테코 과자",
