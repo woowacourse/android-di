@@ -2,30 +2,16 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 class AppContainerStore(
-    appContainer: AppContainer,
+    factories: List<DependencyFactory<*>>,
 ) {
     private val cache: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val factory = factories.associateBy { it.type }
 
-    operator fun get(clazz: KClass<*>): Any? = (cache[clazz] as? Lazy<*>)?.value ?: cache[clazz]
-
-    init {
-        appContainer::class.memberProperties.forEach { property ->
-            property.isAccessible = true
-            val editableProperty = property as? KProperty1<AppContainer, *>
-            cache[property.returnType.jvmErasure] =
-                editableProperty?.getDelegate(appContainer) ?: editableProperty?.get(appContainer)
-                    ?: throw IllegalStateException(
-                        "$ERR_PROPERTY_NOT_INITIALIZED : ${property.returnType}",
-                    )
-        }
-    }
+    operator fun get(clazz: KClass<*>): Any? = cache[clazz]
 
     fun instantiate(
         clazz: KClass<*>,
@@ -48,13 +34,15 @@ class AppContainerStore(
             )
         }
 
-        return clazz.primaryConstructor?.let { constructor ->
-            inProgress.add(clazz)
-            val instance = reflect(constructor, inProgress)
-            if (saveToCache) cache[clazz] = instance
-            inProgress.remove(clazz)
-            instance
-        } ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${clazz.simpleName}")
+        inProgress.add(clazz)
+        val instance =
+            factory[clazz]?.invoke() ?: clazz.primaryConstructor?.let {
+                reflect(it, inProgress)
+            } ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${clazz.simpleName}")
+
+        if (saveToCache) cache[clazz] = instance
+        inProgress.remove(clazz)
+        return instance
     }
 
     private fun reflect(
@@ -72,7 +60,6 @@ class AppContainerStore(
     }
 
     companion object {
-        private const val ERR_PROPERTY_NOT_INITIALIZED = "프로퍼티가 초기화되지 않았습니다"
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
             "주 생성자를 찾을 수 없습니다. 인터페이스, 추상 클래스의 경우 AppContainer에 구현체를 등록해주세요"
