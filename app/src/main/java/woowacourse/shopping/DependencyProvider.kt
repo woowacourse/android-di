@@ -1,9 +1,9 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
