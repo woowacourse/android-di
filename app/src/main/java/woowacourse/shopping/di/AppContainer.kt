@@ -7,4 +7,8 @@ class AppContainer {
     val cartRepository: CartRepository by lazy {
         CartRepository()
     }
+
+    val productRepository: ProductRepository by lazy {
+        ProductRepository()
+    }
 }
