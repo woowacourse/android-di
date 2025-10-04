@@ -44,7 +44,8 @@ class CartViewModelTest {
         viewModel.deleteCartProduct(1) // B 삭제
         viewModel.getAllCartProducts()
 
-        assertThat(viewModel.cartProducts.value!!.map { it.name }).containsExactly("A", "C")
+        val products = viewModel.cartProducts.getOrAwaitValue()
+        assertThat(products.map { it.name }).containsExactly("A", "C")
         assertThat(viewModel.onCartProductDeleted.value).isTrue()
     }
 }
