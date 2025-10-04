@@ -9,14 +9,14 @@ import kotlin.reflect.full.primaryConstructor
 
 object ViewModelFactory : ViewModelProvider.Factory {
     override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
-        val constructor: KFunction<VM>? = modelClass.kotlin.primaryConstructor
+        val constructor: KFunction<VM> =
+            modelClass.kotlin.primaryConstructor ?: error("${modelClass.name}의 주 생성자를 찾을 수 없습니다.")
         val parameters: Array<Any> =
-            constructor
-                ?.parameters
-                ?.mapNotNull { parameter: KParameter ->
+            constructor.parameters
+                .map { parameter: KParameter ->
                     DependencyProvider.Dependencies[parameter.type]?.value
-                }.orEmpty()
-                .toTypedArray()
-        return constructor?.call(*parameters) as VM
+                        ?: error("${parameter.type}에 대한 의존성이 정의되지 않았습니다.")
+                }.toTypedArray()
+        return constructor.call(*parameters)
     }
 }
