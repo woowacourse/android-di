@@ -14,8 +14,7 @@ object ViewModelFactory : ViewModelProvider.Factory {
         val parameters: Array<Any> =
             constructor.parameters
                 .map { parameter: KParameter ->
-                    DependencyProvider.Dependencies[parameter.type]?.value
-                        ?: error("${parameter.type}에 대한 의존성이 정의되지 않았습니다.")
+                    DependencyProvider.dependency(parameter.type)
                 }.toTypedArray()
         return constructor.call(*parameters)
     }
