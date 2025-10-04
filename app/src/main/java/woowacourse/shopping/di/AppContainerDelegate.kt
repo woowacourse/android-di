@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import android.app.Application
-import woowacourse.shopping.ui.MainApplication
+import woowacourse.shopping.MainApplication
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmErasure
 

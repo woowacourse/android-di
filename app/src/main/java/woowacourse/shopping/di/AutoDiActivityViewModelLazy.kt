@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import woowacourse.shopping.ui.MainApplication
+import woowacourse.shopping.MainApplication
 import kotlin.reflect.KClass
 
 @MainThread

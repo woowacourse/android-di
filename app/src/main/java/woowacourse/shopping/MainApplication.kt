@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping
 
 import android.app.Application
 import woowacourse.shopping.di.AppContainer
