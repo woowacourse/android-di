@@ -45,13 +45,13 @@ class CartViewModelTest {
     @Test
     fun `상품을 제거할 수 있다`() {
         // given
-        every { cartRepository.deleteCartProduct(any()) } returns Unit
+        every { cartRepository.deleteCartProduct(0) } returns Unit
 
         // when
         cartViewModel.deleteCartProduct(0)
 
         // then
-        verify { cartRepository.deleteCartProduct(any()) }
+        verify { cartRepository.deleteCartProduct(0) }
         Assert.assertTrue(cartViewModel.onCartProductDeleted.getOrAwaitValue())
     }
 }
