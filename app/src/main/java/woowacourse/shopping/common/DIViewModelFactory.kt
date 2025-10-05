@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
@@ -56,8 +56,8 @@ class DIViewModelFactory(
 fun AppContainer.resolve(requestedType: KType): Any? {
     val kClass = requestedType.classifier as? KClass<*> ?: return null
     return when (kClass) {
-        ProductRepository::class, ProductRepositoryImpl::class -> productRepository
-        CartRepository::class, CartRepositoryImpl::class -> cartRepository
+        ProductRepository::class, DefaultProductRepository::class -> productRepository
+        CartRepository::class, DefaultCartRepository::class -> cartRepository
         else -> null
     }
 }
