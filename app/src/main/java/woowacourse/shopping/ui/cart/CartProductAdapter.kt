@@ -19,9 +19,7 @@ class CartProductAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
-    }
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,

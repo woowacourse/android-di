@@ -9,7 +9,8 @@ fun loadImage(
     view: ImageView,
     url: String,
 ) {
-    Glide.with(view.context)
+    Glide
+        .with(view.context)
         .load(url)
         .into(view)
 }
