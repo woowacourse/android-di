@@ -12,6 +12,7 @@ fun Product.toEntity(): CartProductEntity =
 
 fun CartProductEntity.toDomain(): Product =
     Product(
+        id = this.id,
         name = this.name,
         price = this.price,
         imageUrl = this.imageUrl,
