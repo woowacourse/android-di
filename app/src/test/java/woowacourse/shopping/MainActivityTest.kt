@@ -62,8 +62,8 @@ class MainActivityTest {
         firstItem.performClick()
 
         // then
-        val expected = "장바구니에 추가되었습니다."
         val actual: String = ShadowToast.getTextOfLatestToast()
-        assertThat(expected).isEqualTo(actual)
+        val expected = "장바구니에 추가되었습니다."
+        assertThat(actual).isEqualTo(expected)
     }
 }

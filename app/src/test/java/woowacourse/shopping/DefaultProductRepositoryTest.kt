@@ -12,6 +12,7 @@ class DefaultProductRepositoryTest {
         val repository = DefaultProductRepository()
 
         // then
+        val actual: List<Product> = repository.getAllProducts()
         val expected: List<Product> =
             listOf(
                 Product(
@@ -30,8 +31,6 @@ class DefaultProductRepositoryTest {
                     imageUrl = "https://cdn-mart.baemin.com/sellergoods/main/e703c53e-5d01-4b20-bd33-85b5e778e73f.jpg?h=700&w=700",
                 ),
             )
-
-        val actual: List<Product> = repository.getAllProducts()
-        assertThat(expected).isEqualTo(actual)
+        assertThat(actual).isEqualTo(expected)
     }
 }

@@ -19,9 +19,9 @@ class DefaultCartRepositoryTest {
         repository.addCartProduct(product)
 
         // then
-        val expected: List<Product> = listOf(product)
         val actual: List<Product> = repository.getAllCartProducts()
-        assertThat(expected).isEqualTo(actual)
+        val expected: List<Product> = listOf(product)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -38,8 +38,8 @@ class DefaultCartRepositoryTest {
         repository.deleteCartProduct(1)
 
         // then
-        val expected: List<Product> = listOf(PRODUCT_1, PRODUCT_3)
         val actual: List<Product> = repository.getAllCartProducts()
-        assertThat(expected).isEqualTo(actual)
+        val expected: List<Product> = listOf(PRODUCT_1, PRODUCT_3)
+        assertThat(actual).isEqualTo(expected)
     }
 }
