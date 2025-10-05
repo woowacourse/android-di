@@ -2,7 +2,7 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.DependencyProvider
+import woowacourse.shopping.di.DependencyProvider
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
