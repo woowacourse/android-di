@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
@@ -7,7 +7,7 @@ import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.PRODUCT_1
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.getOrAwaitValue
 
 class CartViewModelTest {
     @get:Rule

@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.product
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,9 +11,7 @@ class ProductAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): ProductViewHolder {
-        return ProductViewHolder.from(parent, onClickProduct)
-    }
+    ): ProductViewHolder = ProductViewHolder.from(parent, onClickProduct)
 
     override fun onBindViewHolder(
         holder: ProductViewHolder,

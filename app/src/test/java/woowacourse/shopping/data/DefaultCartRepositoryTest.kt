@@ -1,8 +1,7 @@
-package woowacourse.shopping
+package woowacourse.shopping.data
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.fixture.PRODUCT_1
 import woowacourse.shopping.fixture.PRODUCT_2
 import woowacourse.shopping.fixture.PRODUCT_3

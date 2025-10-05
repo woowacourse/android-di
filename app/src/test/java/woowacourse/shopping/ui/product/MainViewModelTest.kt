@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui.product
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
@@ -10,7 +10,7 @@ import woowacourse.shopping.fixture.PRODUCT_1
 import woowacourse.shopping.fixture.PRODUCT_2
 import woowacourse.shopping.fixture.PRODUCT_3
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainViewModel
+import woowacourse.shopping.ui.getOrAwaitValue
 
 class MainViewModelTest {
     @get:Rule
