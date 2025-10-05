@@ -75,7 +75,9 @@ class CartActivity : AppCompatActivity() {
                 CartProductAdapter(
                     items = it,
                     dateFormatter = dateFormatter,
-                    onClickDelete = { viewModel::deleteCartProduct },
+                    onClickDelete = { id ->
+                        viewModel.deleteCartProduct(id)
+                    },
                 )
             binding.rvCartProducts.adapter = adapter
         }
