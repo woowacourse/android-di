@@ -5,7 +5,7 @@ import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
-class AppContainer {
+object AppContainer {
     val productRepository: ProductRepository by lazy {
         ProductRepositoryImpl()
     }
