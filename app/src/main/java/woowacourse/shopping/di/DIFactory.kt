@@ -3,13 +3,20 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 object DIFactory {
     fun <T : Any> create(kClass: KClass<T>): T {
         val primaryConstructor = kClass.primaryConstructor
 
-        return if (primaryConstructor == null || primaryConstructor.parameters.isEmpty()) {
-            kClass.createInstance()
+        if (primaryConstructor == null) {
+            return kClass.createInstance()
+        }
+
+        primaryConstructor.isAccessible = true
+
+        return if (primaryConstructor.parameters.isEmpty()) {
+            primaryConstructor.call()
         } else {
             val args =
                 primaryConstructor.parameters.associateWith { param ->
