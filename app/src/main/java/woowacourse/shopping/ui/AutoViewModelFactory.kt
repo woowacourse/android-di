@@ -23,7 +23,7 @@ class AutoViewModelFactory : Factory {
 }
 
 @MainThread
-inline fun <reified VM : ViewModel> ComponentActivity.viewModel(
+inline fun <reified VM : ViewModel> ComponentActivity.autoViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> Factory)? = { AutoViewModelFactory() },
 ): Lazy<VM> =
