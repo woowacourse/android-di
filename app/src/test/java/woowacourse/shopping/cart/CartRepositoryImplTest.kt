@@ -8,7 +8,7 @@ import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fixture.TEST_PRODUCT
 
-class CartRepositoryTest {
+class CartRepositoryImplTest {
     private lateinit var cartRepository: CartRepository
 
     @Before

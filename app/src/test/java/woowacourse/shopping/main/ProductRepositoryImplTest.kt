@@ -7,7 +7,7 @@ import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.fixture.TEST_PRODUCTS
 
-class ProductRepositoryTest {
+class ProductRepositoryImplTest {
     private lateinit var productRepository: ProductRepository
 
     @Before
