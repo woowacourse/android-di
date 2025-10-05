@@ -49,7 +49,6 @@ class MainActivityTest {
     @Test
     fun `상품을 클릭하면 토스트 메세지가 표시된다`() {
         // given
-        val expected = "장바구니에 추가되었습니다."
         val activity: MainActivity =
             Robolectric
                 .buildActivity(MainActivity::class.java)
@@ -63,6 +62,7 @@ class MainActivityTest {
         firstItem.performClick()
 
         // then
+        val expected = "장바구니에 추가되었습니다."
         val actual: String = ShadowToast.getTextOfLatestToast()
         assertThat(expected).isEqualTo(actual)
     }
