@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.DEFAULT_PRODUCT
 import woowacourse.shopping.domain.repository.CartRepository
 
 class CartRepositoryImplTest {
@@ -22,16 +22,14 @@ class CartRepositoryImplTest {
     @Test
     fun addAndGetAllCartProductsTest() {
         // given
-        val product = Product(name = "name", price = 1000, imageUrl = "")
-
         // when
-        repository.addCartProduct(product)
+        repository.addCartProduct(DEFAULT_PRODUCT)
         val products = repository.getAllCartProducts()
 
         // then
         assertSoftly(products) {
             size shouldBe 1
-            shouldContain(product)
+            shouldContain(DEFAULT_PRODUCT)
         }
     }
 
@@ -39,15 +37,14 @@ class CartRepositoryImplTest {
     @Test
     fun deleteCartProductTest() {
         // given
-        val product = Product(name = "name", price = 1000, imageUrl = "")
-        repository.addCartProduct(product)
+        repository.addCartProduct(DEFAULT_PRODUCT)
 
         // when
         val products = repository.getAllCartProducts()
-        val index = products.indexOf(product)
+        val index = products.indexOf(DEFAULT_PRODUCT)
         repository.deleteCartProduct(index)
 
         // then
-        repository.getAllCartProducts().shouldNotContain(product)
+        repository.getAllCartProducts().shouldNotContain(DEFAULT_PRODUCT)
     }
 }

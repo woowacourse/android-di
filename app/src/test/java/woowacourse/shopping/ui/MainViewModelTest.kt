@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.DEFAULT_PRODUCT
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
@@ -32,34 +32,28 @@ class MainViewModelTest {
     @Test
     fun addCartProductTest() {
         // given
-        val product = Product(name = "name", price = 1000, imageUrl = "")
-        coEvery { cartRepository.addCartProduct(product) } just Runs
+        coEvery { cartRepository.addCartProduct(DEFAULT_PRODUCT) } just Runs
 
         // when
-        viewModel.addCartProduct(product)
+        viewModel.addCartProduct(DEFAULT_PRODUCT)
 
         // then
         viewModel.onProductAdded.getOrAwaitValue().shouldBeTrue()
-
-        // verify
-        coVerify(exactly = 1) { cartRepository.addCartProduct(product) }
+        coVerify(exactly = 1) { cartRepository.addCartProduct(DEFAULT_PRODUCT) }
     }
 
     @DisplayName("상품 목록을 가져온다")
     @Test
     fun getAllProductsTest() {
         // given
-        val product = Product(name = "name", price = 1000, imageUrl = "")
-        coEvery { productRepository.getAllProducts() } returns listOf(product)
+        coEvery { productRepository.getAllProducts() } returns listOf(DEFAULT_PRODUCT)
 
         // when
         viewModel.getAllProducts()
         val products = viewModel.products.getOrAwaitValue()
 
         // then
-        products.shouldContain(product)
-
-        // verify
+        products.shouldContain(DEFAULT_PRODUCT)
         coVerify(exactly = 1) { productRepository.getAllProducts() }
     }
 }

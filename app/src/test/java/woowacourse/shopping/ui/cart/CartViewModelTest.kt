@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.DEFAULT_PRODUCT
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.ui.InstantTaskExecutorExtension
 import woowacourse.shopping.ui.getOrAwaitValue
@@ -31,17 +31,14 @@ class CartViewModelTest {
     @Test
     fun getAllCartProductsTest() {
         // given
-        val product = Product(name = "name", price = 1000, imageUrl = "")
-        coEvery { cartRepository.getAllCartProducts() } returns listOf(product)
+        coEvery { cartRepository.getAllCartProducts() } returns listOf(DEFAULT_PRODUCT)
 
         // when
         viewModel.getAllCartProducts()
         val products = viewModel.cartProducts.getOrAwaitValue()
 
         // then
-        products shouldContain product
-
-        // verify
+        products shouldContain DEFAULT_PRODUCT
         coVerify(exactly = 1) { cartRepository.getAllCartProducts() }
     }
 
@@ -58,8 +55,6 @@ class CartViewModelTest {
 
         // then
         deleted.shouldBeTrue()
-
-        // verify
         coVerify(exactly = 1) { cartRepository.deleteCartProduct(id) }
     }
 }
