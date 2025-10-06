@@ -35,10 +35,16 @@ class DIViewModelFactory(
     }
 }
 
-inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(): Lazy<VM> =
-    ViewModelLazy(
+inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(
+    noinline extrasProducer: (() -> CreationExtras)? = null,
+    noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null,
+): Lazy<VM> {
+    val factoryPromise = factoryProducer ?: { DIViewModelFactory(DefaultAppContainer) }
+
+    return ViewModelLazy(
         viewModelClass = VM::class,
         storeProducer = { viewModelStore },
-        factoryProducer = { DIViewModelFactory(DefaultAppContainer) },
-        extrasProducer = { defaultViewModelCreationExtras },
+        factoryProducer = factoryPromise,
+        extrasProducer = { extrasProducer?.invoke() ?: defaultViewModelCreationExtras },
     )
+}
