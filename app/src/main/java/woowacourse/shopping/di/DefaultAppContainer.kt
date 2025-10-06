@@ -1,18 +1,10 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.di.RepositoryModule.cartRepository
-import woowacourse.shopping.di.RepositoryModule.productRepository
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DefaultAppContainer : AppContainer {
-    private val instances: Map<KClass<*>, Any> =
-        mapOf(
-            ProductRepository::class to productRepository,
-            CartRepository::class to cartRepository,
-        )
+    private val instances = mutableMapOf<KClass<*>, Any>()
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> getInstance(clazz: KClass<T>): T {
@@ -35,4 +27,9 @@ object DefaultAppContainer : AppContainer {
 
         return constructor.call(*args)
     }
+
+    fun <T : Any> bind(
+        clazz: KClass<T>,
+        instance: T,
+    ) = instances.putIfAbsent(clazz, instance)
 }
