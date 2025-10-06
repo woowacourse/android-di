@@ -2,7 +2,7 @@ package woowacourse.shopping
 
 import android.app.Application
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.ShoppingAppContainer
+import woowacourse.shopping.di.ContainerBuilder
 import woowacourse.shopping.di.installAllBindings
 
 class ShoppingApplication : Application() {
@@ -11,8 +11,8 @@ class ShoppingApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val appContainer = ShoppingAppContainer()
-        installAllBindings(appContainer)
-        container = appContainer
+        val builder = ContainerBuilder()
+        installAllBindings(builder)
+        container = builder.build()
     }
 }
