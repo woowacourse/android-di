@@ -19,8 +19,9 @@ class DIViewModelFactory(
     ): VM {
         val kClass = modelClass.kotlin
         val constructor =
-            kClass.primaryConstructor
-                ?: throw IllegalArgumentException("${kClass.qualifiedName} 클래스에 생성자가 존재하지 않습니다.")
+            requireNotNull(kClass.primaryConstructor) {
+                "${kClass.qualifiedName} 클래스에 생성자가 존재하지 않습니다."
+            }
 
         val args =
             constructor.parameters
