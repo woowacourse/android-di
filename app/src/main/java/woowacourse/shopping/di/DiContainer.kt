@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.CartRepository
@@ -21,10 +22,21 @@ object DiContainer {
         )
 
     fun <T : Any> getInstance(kClass: KClass<T>): T {
+        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
+            return createInstance(kClass)
+        }
+
         instancePool[kClass]?.let {
             return kClass.cast(it) as T
         }
 
+        val newInstance = createInstance(kClass)
+        instancePool[kClass] = newInstance
+
+        return kClass.cast(newInstance) as T
+    }
+
+    private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val implementClass: KClass<out Any> = implementationMappings[kClass] ?: kClass
         val constructor: KFunction<Any> = implementClass.primaryConstructor ?: error("")
 
@@ -33,9 +45,6 @@ object DiContainer {
                 getInstance(param.type.classifier as? KClass<*> ?: error(""))
             }
 
-        val instance = constructor.callBy(arguments)
-        instancePool[kClass] = instance
-
-        return kClass.cast(instance) as T
+        return kClass.cast(constructor.callBy(arguments)) as T
     }
 }
