@@ -27,13 +27,13 @@ object DiContainer {
         }
 
         instancePool[kClass]?.let {
-            return kClass.cast(it) as T
+            return kClass.cast(it)
         }
 
         val newInstance = createInstance(kClass)
         instancePool[kClass] = newInstance
 
-        return kClass.cast(newInstance) as T
+        return kClass.cast(newInstance)
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
@@ -45,6 +45,6 @@ object DiContainer {
                 getInstance(param.type.classifier as? KClass<*> ?: error(""))
             }
 
-        return kClass.cast(constructor.callBy(arguments)) as T
+        return kClass.cast(constructor.callBy(arguments))
     }
 }
