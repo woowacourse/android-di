@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,8 +14,8 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by lazy {
-        (application as ShoppingApplication).dependencyInjector.inject<CartViewModel>()
+    private val viewModel: CartViewModel by viewModels {
+        (application as ShoppingApplication).injectorViewModelFactory
     }
 
     private lateinit var dateFormatter: DateFormatter

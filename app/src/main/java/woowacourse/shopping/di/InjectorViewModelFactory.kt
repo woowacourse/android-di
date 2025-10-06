@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KParameter
@@ -9,11 +10,11 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-class DependencyInjector(
+class InjectorViewModelFactory(
     private val appContainer: AppContainer,
-) {
-    inline fun <reified VM : ViewModel> inject(): VM {
-        val viewModelKClass: KClass<VM> = VM::class
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val viewModelKClass: KClass<T> = modelClass.kotlin
         val primaryConstructor = viewModelKClass.primaryConstructor
 
         // 생성자 파라미터 → 의존성 주입
@@ -28,17 +29,21 @@ class DependencyInjector(
     }
 
     // Parameter에 해당하는 Instance를 appContainer에서 찾아 반환
-    fun injectInstance(kParameter: KParameter): Any? {
+    private fun injectInstance(kParameter: KParameter): Any? {
         val classifier: KClassifier = kParameter.type.classifier ?: return null
         val paramKClass = classifier as? KClass<*> ?: return null
+        val matchedProperty: KProperty1<out AppContainer, *>? = getMatchedProperty(paramKClass)
 
-        // appContainer의 모든 프로퍼티를 탐색
+        // 매칭되는 프로퍼티의 값 반환
+        return matchedProperty?.getter?.call(appContainer)
+    }
+
+    // appContainer의 모든 프로퍼티를 탐색
+    private fun getMatchedProperty(paramKClass: KClass<*>): KProperty1<out AppContainer, *>? {
         val matchedProperty: KProperty1<out AppContainer, *>? =
             appContainer::class
                 .memberProperties
                 .firstOrNull { prop -> prop.returnType.classifier == paramKClass }
-
-        // 매칭되는 프로퍼티의 값 반환
-        return matchedProperty?.getter?.call(appContainer)
+        return matchedProperty
     }
 }
