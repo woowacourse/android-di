@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
@@ -16,24 +17,27 @@ class ContainerBuilder {
         }
 
     fun build(): AppContainer {
+        val providersSnapShot: Map<KClass<*>, () -> Any> = providers.toMap()
+
         return object : AppContainer {
-            private val cache = mutableMapOf<KType, Any>()
+            private val concreteCache = ConcurrentHashMap<KType, Any>()
+            private val abstractCache = ConcurrentHashMap<KClass<*>, Any>()
 
             override fun resolve(type: KType): Any {
-                cache[type]?.let { return it }
-
                 val kClass =
                     type.classifier as? KClass<*>
                         ?: error("지원하지 않는 타입: $type")
 
-                val instance: Any =
-                    if (kClass.isAbstract || kClass.isSealed || kClass.java.isInterface) {
-                        val provider = providers[kClass] ?: error("바인딩 누락: $kClass")
+                return if (kClass.isAbstract || kClass.isSealed || kClass.java.isInterface) {
+                    abstractCache.computeIfAbsent(kClass) {
+                        val provider =
+                            providersSnapShot[kClass]
+                                ?: error("바인딩 누락: $kClass")
                         provider()
-                    } else {
-                        createByConstructorInjection(kClass)
                     }
-                return instance.also { cache[type] = it }
+                } else {
+                    concreteCache.computeIfAbsent(type) { createByConstructorInjection(kClass) }
+                }
             }
 
             private fun createByConstructorInjection(target: KClass<*>): Any {
