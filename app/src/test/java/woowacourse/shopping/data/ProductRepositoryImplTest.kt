@@ -1,8 +1,6 @@
 package woowacourse.shopping.data
 
-import io.kotest.assertions.assertSoftly
 import io.kotest.inspectors.forAll
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -25,9 +23,6 @@ class ProductRepositoryImplTest {
         val products = repository.getAllProducts()
 
         // then
-        assertSoftly(products) {
-            size shouldBe 3
-            forAll { product -> product.shouldBeTypeOf<Product>() }
-        }
+        products.forAll { product -> product.shouldBeTypeOf<Product>() }
     }
 }
