@@ -25,7 +25,7 @@ class MainViewModelTest {
         viewModel.getAllProducts()
 
         // then
-        assertEquals(ProductFixture.AllProducts, viewModel.products.value)
+        assertEquals(ProductFixture.AllProducts, viewModel.products.getOrAwaitValue())
     }
 
     @Test
@@ -40,7 +40,7 @@ class MainViewModelTest {
         viewModel.addCartProduct(item)
 
         // then
-        assertTrue(viewModel.onProductAdded.value == true)
+        assertTrue(viewModel.onProductAdded.getOrAwaitValue())
         assertEquals(listOf(item), cartRepo.getAllCartProducts())
     }
 }

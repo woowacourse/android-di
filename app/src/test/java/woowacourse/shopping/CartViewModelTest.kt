@@ -26,7 +26,7 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        val names = viewModel.cartProducts.value?.map { it.name }
+        val names = viewModel.cartProducts.getOrAwaitValue().map { it.name }
         assertEquals(
             listOf(ProductFixture.Snack.name, ProductFixture.Juice.name),
             names,
@@ -50,7 +50,7 @@ class CartViewModelTest {
         assertTrue(viewModel.onCartProductDeleted.value == true)
 
         viewModel.getAllCartProducts()
-        val names = viewModel.cartProducts.value?.map { it.name }
+        val names = viewModel.cartProducts.getOrAwaitValue().map { it.name }
         assertEquals(
             listOf(ProductFixture.Snack.name),
             names,
