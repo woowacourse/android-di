@@ -17,16 +17,28 @@ class InjectorViewModelFactory(
         val viewModelKClass: KClass<T> = modelClass.kotlin
         val primaryConstructor = viewModelKClass.primaryConstructor
 
-        // 생성자 파라미터 → 의존성 주입
         return if (primaryConstructor != null) {
             val constructorParams: List<KParameter> = primaryConstructor.parameters
             val parameters: List<Any?> = constructorParams.map(::injectInstance)
+
+            // 생성자 파라미터 → 의존성 주입
+            constructorParams.forEachIndexed { index, param ->
+                val value: Any? = parameters[index]
+                val isNullable: Boolean = param.type.isMarkedNullable
+                val isOptional: Boolean = param.isOptional
+
+                // nullable, optional 하지 않은 필수 인자가 null일 경우 예외 발생
+                if (value == null && !isNullable && !isOptional) {
+                    throw IllegalStateException("${modelClass.simpleName} ViewModel ${param.type}의 ${param.name} 파라미터의 필요한 의존성이 없습니다.")
+                }
+            }
             primaryConstructor.call(*parameters.toTypedArray())
         } else {
             // 기본 생성자가 있는 경우
             viewModelKClass.createInstance()
         }
     }
+
 
     // Parameter에 해당하는 Instance를 appContainer에서 찾아 반환
     private fun injectInstance(kParameter: KParameter): Any? {
