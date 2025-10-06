@@ -8,6 +8,6 @@ import androidx.lifecycle.ViewModel
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.diViewModels() =
     viewModels<VM> {
-        DiViewModelFactory()
+        DiViewModelFactory
     }
 
