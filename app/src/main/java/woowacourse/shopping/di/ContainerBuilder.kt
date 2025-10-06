@@ -1,6 +1,6 @@
 package woowacourse.shopping.di
 
-import java.util.concurrent.ConcurrentHashMap
+import kotlin.concurrent.getOrSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
@@ -17,28 +17,30 @@ class ContainerBuilder {
         }
 
     fun build(): AppContainer {
-        val providersSnapShot: Map<KClass<*>, () -> Any> = providers.toMap()
+        val providersSnap: Map<KClass<*>, () -> Any> = providers.toMap()
 
         return object : AppContainer {
-            private val concreteCache = ConcurrentHashMap<KType, Any>()
-            private val abstractCache = ConcurrentHashMap<KClass<*>, Any>()
+            private val cache = mutableMapOf<KType, Any>()
+            private val resolving = ThreadLocal<MutableSet<KType>>()
 
-            override fun resolve(type: KType): Any {
-                val kClass =
-                    type.classifier as? KClass<*>
-                        ?: error("지원하지 않는 타입: $type")
+            override fun resolve(type: KType): Any =
+                cache.computeIfAbsent(type) { key ->
+                    val kClass =
+                        key.classifier as? KClass<*>
+                            ?: error("지원하지 않는 타입: $key")
 
-                return if (kClass.isAbstract || kClass.isSealed || kClass.java.isInterface) {
-                    abstractCache.computeIfAbsent(kClass) {
-                        val provider =
-                            providersSnapShot[kClass]
-                                ?: error("바인딩 누락: $kClass")
-                        provider()
+                    val seen = resolving.getOrSet { mutableSetOf() }
+                    seen.withElement(key) {
+                        if (kClass.isAbstract || kClass.isSealed || kClass.java.isInterface) {
+                            val provider =
+                                providersSnap[kClass]
+                                    ?: error("바인딩 누락: $kClass")
+                            provider()
+                        } else {
+                            createByConstructorInjection(kClass)
+                        }
                     }
-                } else {
-                    concreteCache.computeIfAbsent(type) { createByConstructorInjection(kClass) }
                 }
-            }
 
             private fun createByConstructorInjection(target: KClass<*>): Any {
                 val constructor =
