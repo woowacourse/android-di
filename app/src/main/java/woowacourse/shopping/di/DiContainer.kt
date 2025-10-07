@@ -32,13 +32,7 @@ object DiContainer {
             return kClass.cast(it)
         }
 
-        instancePool[kClass]?.let {
-            return kClass.cast(it)
-        }
-
         val newInstance = createInstance(kClass)
-
-        instancePool[kClass] = newInstance
         instancePool[implementClass] = newInstance
 
         return kClass.cast(newInstance)
