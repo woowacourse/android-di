@@ -34,4 +34,13 @@ class DiContainerTest {
             DiContainer.getInstance(NoPublicConstructor::class)
         }
     }
+
+    @Test
+    fun `지원하지 않는 파라미터 형식 클래스는 에러가 발생한다`() {
+        class DisApplyClass(val callback: () -> Unit)
+
+        shouldThrow<IllegalStateException> {
+            DiContainer.getInstance(DisApplyClass::class)
+        }
+    }
 }
