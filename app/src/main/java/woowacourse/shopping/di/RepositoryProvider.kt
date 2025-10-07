@@ -2,7 +2,6 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 object RepositoryProvider {
     private val instances = mutableMapOf<KClass<*>, Any>()
@@ -13,7 +12,6 @@ object RepositoryProvider {
 
     private fun registerModule(module: Any) {
         module::class.memberProperties.forEach { property ->
-            property.isAccessible = true
             val instance = property.getter.call(module) ?: return@forEach
 
             val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
