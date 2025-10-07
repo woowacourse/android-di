@@ -24,7 +24,13 @@ object DiContainer {
         val constructor = kClazz.primaryConstructor ?: throw IllegalArgumentException()
         val arguments =
             constructor.parameters.associateWith {
-                getProvider(it.type.classifier as KClass<*>)
+                val parameterClass = it.type.classifier as KClass<*>
+                val instanceLazy =
+                    lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
+                providers.computeIfPresent(parameterClass) { _, _ ->
+                    instanceLazy
+                }
+                instanceLazy.value
             }
         return constructor.callBy(arguments)
     }
