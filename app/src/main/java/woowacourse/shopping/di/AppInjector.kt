@@ -16,6 +16,8 @@ object AppInjector {
     private var singletons: ConcurrentHashMap<DefinitionKey, Any> = ConcurrentHashMap()
 
     fun init(modules: List<InjectionModule>) {
+        definitions.clear()
+
         modules.forEach { module: InjectionModule ->
             val definitions = module.provideDefinitions()
             registerDefinitions(definitions)
