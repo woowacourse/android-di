@@ -20,6 +20,7 @@ class ViewModelFactory(
                         .members
                         .first { it.name == parameter.name }
                         .call(container)
+                        ?: throw IllegalArgumentException("No matching dependency for parameter: ${parameter.name}")
                 }.toTypedArray()
 
         return constructor.call(*parameters)
