@@ -47,8 +47,8 @@ class MainActivityTest {
         val firstItem =
             activity.findViewById<RecyclerView>(R.id.rv_products)
                 .layoutManager?.findViewByPosition(
-                0
-            )
+                    0
+                )
         //when
         firstItem?.performClick()
 
