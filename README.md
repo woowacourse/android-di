@@ -43,3 +43,20 @@
 
 - [x] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
 - [x] Annotation은 이 단계에서 활용하지 않는다.
+
+### 접근 방향
+
+```
+DefinitionInformation : 클래스 생성을 위한 정보들을 담고 있는 클래스
+DefinitionKey : 리플렉션으로 얻어 올 정보를 DefinitionInformation과 매핑하기 위한 클래스 
+Kind : 매번 생성할 지, 최초 1회만 생성할 지를 담당하는 클래스
+Qualifier : 동일 인터페이스를 구분 담당 클래스
+
+Module : 매핑해놓기 위한 정보들을 관리 (최초 앱 실행 시 제공)
+
+AppInjector: 매핑 해놓은 정보를 인스턴스화 시키고 관리하는 클래스 
+
+Provider: 사용 시점에 인스턴스화 하기 위한 SAM 인터페이스
+
+Application 실행 -> Module 들에 기록해놓은 정보들을 Injector에 기록 -> 사용할 때는 리플렉션으로 생성자를 분석 후, Injector의 get 메서드를 통해 실제 인스턴스 주입 
+```
