@@ -1,12 +1,10 @@
 package woowacourse.shopping
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object ViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+object DependencyFactory {
+    fun <T : Any> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         val constructor =
             kClass.primaryConstructor

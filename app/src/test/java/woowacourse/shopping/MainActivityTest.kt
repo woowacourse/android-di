@@ -1,7 +1,6 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -32,12 +31,7 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val activity =
-            Robolectric
-                .buildActivity(MainActivity::class.java)
-                .create()
-                .get()
-        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+        val viewModel = DependencyFactory.create(MainViewModel::class.java)
 
         // then
         assertThat(viewModel).isNotNull()
