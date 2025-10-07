@@ -6,11 +6,14 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import kotlin.reflect.KClass
 
+private val defaultProductRepository by lazy { DefaultProductRepository() }
+private val defaultCartRepository by lazy { DefaultCartRepository() }
+
 object Dependency {
     private val dependencies by lazy {
         mapOf<KClass<*>, Any>(
-            ProductRepository::class to DefaultProductRepository(),
-            CartRepository::class to DefaultCartRepository(),
+            ProductRepository::class to defaultProductRepository,
+            CartRepository::class to defaultCartRepository,
         )
     }
 
