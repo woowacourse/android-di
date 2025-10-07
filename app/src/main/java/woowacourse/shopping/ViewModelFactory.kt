@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class ViewModelFactory : ViewModelProvider.Factory {
+object ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass = modelClass.kotlin
         val constructor =

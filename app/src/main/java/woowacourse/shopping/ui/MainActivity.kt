@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, ViewModelFactory())[MainViewModel::class.java]
+        ViewModelProvider(this, ViewModelFactory)[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
