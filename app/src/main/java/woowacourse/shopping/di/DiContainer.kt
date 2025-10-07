@@ -3,17 +3,22 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object AppContainer {
-    private val providers = mutableMapOf<KClass<*>, Any>()
+object DiContainer {
+    private val providers = mutableMapOf<KClass<*>, Lazy<Any>>()
 
     fun <T : Any> addProviders(
         kClazz: KClass<T>,
-        instance: T,
+        provider: () -> T,
     ) {
-        providers[kClazz] = instance
+        providers[kClazz] = lazy(LazyThreadSafetyMode.SYNCHRONIZED) { provider() }
     }
 
-    fun <T : Any> getProvider(kClazz: KClass<T>) = providers[kClazz] ?: createInstance(kClazz)
+    fun <T : Any> getProvider(kClazz: KClass<T>): T {
+        val lazyProvider = providers.getOrPut(kClazz) {
+            lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
+        }
+        return lazyProvider.value as T
+    }
 
     private fun <T : Any> createInstance(kClazz: KClass<T>): T {
         val constructor = kClazz.primaryConstructor ?: throw IllegalArgumentException()
