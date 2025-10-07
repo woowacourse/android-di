@@ -15,9 +15,7 @@ import woowacourse.shopping.ui.cart.vm.CartViewModel
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by viewModels<CartViewModel> {
-        ViewModelFactoryInjector.create(CartViewModel::class)
-    }
+    private val viewModel by viewModels<CartViewModel> { ViewModelFactoryInjector }
 
     private lateinit var dateFormatter: DateFormatter
 

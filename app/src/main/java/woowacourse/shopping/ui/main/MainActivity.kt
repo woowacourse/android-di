@@ -19,9 +19,7 @@ import kotlin.getValue
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels {
-        ViewModelFactoryInjector.create(MainViewModel::class)
-    }
+    private val viewModel: MainViewModel by viewModels { ViewModelFactoryInjector }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
