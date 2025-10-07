@@ -26,12 +26,20 @@ object DiContainer {
             return createInstance(kClass)
         }
 
+        val implementClass: KClass<out Any> = implementationMappings[kClass] ?: kClass
+
+        instancePool[implementClass]?.let {
+            return kClass.cast(it)
+        }
+
         instancePool[kClass]?.let {
             return kClass.cast(it)
         }
 
         val newInstance = createInstance(kClass)
+
         instancePool[kClass] = newInstance
+        instancePool[implementClass] = newInstance
 
         return kClass.cast(newInstance)
     }
