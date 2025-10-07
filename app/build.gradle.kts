@@ -40,6 +40,9 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
     packaging {
         resources {
             excludes += "META-INF/**"
@@ -54,9 +57,17 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.material)
+
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.mockk)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
