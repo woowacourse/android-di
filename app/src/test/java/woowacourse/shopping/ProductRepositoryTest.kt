@@ -1,19 +1,11 @@
 package woowacourse.shopping
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.containerProvider
 
 class ProductRepositoryTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
     private lateinit var productRepository: DefaultProductRepository
 
     @Before
