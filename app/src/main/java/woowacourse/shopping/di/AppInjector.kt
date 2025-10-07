@@ -9,6 +9,7 @@ import woowacourse.shopping.di.definition.Qualifier
 import woowacourse.shopping.di.module.InjectionModule
 
 private const val ERROR_NOT_FOUND_KEY = "자동 주입할 데이터를 찾을 수 없습니다. kclass = %s"
+private const val ERROR_EXIST_KEY = "이미 등록된 Definition 입니다, key = %s"
 
 object AppInjector {
     private val definitions: MutableMap<DefinitionKey, DefinitionInformation<*>> = mutableMapOf()
@@ -21,15 +22,16 @@ object AppInjector {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun registerDefinitions(definitions: List<DefinitionInformation<*>>) {
         definitions.forEach { definitionInformation: DefinitionInformation<*> ->
-            register(definitionInformation)
+            register(
+                definitionInformation.kclass as KClass<Any>,
+                definitionInformation.qualifier,
+                definitionInformation.kind,
+                definitionInformation.provider as (AppInjector) -> Provider<Any>,
+            )
         }
-    }
-
-    private fun register(definitionInformation: DefinitionInformation<*>) {
-        val key = DefinitionKey(definitionInformation.kclass, definitionInformation.qualifier)
-        definitions[key] = definitionInformation
     }
 
     inline fun <reified T : Any> registerSingleton(
@@ -53,6 +55,9 @@ object AppInjector {
         provider: (AppInjector) -> Provider<T>,
     ) {
         val key = DefinitionKey(kclass, qualifier)
+
+        check(!definitions.containsKey(key)) { ERROR_EXIST_KEY.format(key.toString()) }
+
         definitions[key] = DefinitionInformation(kclass, qualifier, kind, provider)
     }
 
