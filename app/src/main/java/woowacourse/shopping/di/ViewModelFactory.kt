@@ -22,6 +22,6 @@ class ViewModelFactory(
                         .call(container)
                 }.toTypedArray()
 
-        return constructor.call(*parameters) as T
+        return constructor.call(*parameters)
     }
 }
