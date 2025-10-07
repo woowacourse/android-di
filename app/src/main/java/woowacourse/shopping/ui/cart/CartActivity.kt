@@ -7,21 +7,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.MeepleApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
-    }
+    private lateinit var viewModel: CartViewModel
 
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val appContainer = (application as MeepleApplication).appContainer
+        val factory = ViewModelFactory(appContainer)
+        viewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
 
         setupContentView()
         setupDateFormatter()
@@ -70,11 +73,12 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
+            val adapter =
+                CartProductAdapter(
+                    items = it,
+                    dateFormatter = dateFormatter,
+                    onClickDelete = viewModel::deleteCartProduct,
+                )
             binding.rvCartProducts.adapter = adapter
         }
         viewModel.onCartProductDeleted.observe(this) {

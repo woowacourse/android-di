@@ -7,13 +7,14 @@
 
         <variable
             name="item"
-            type="woowacourse.shopping.model.Product" />
+            type="woowacourse.shopping.domain.Product" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/border_black"
         android:padding="20dp">
 
         <TextView
