@@ -14,8 +14,8 @@ object RepositoryProvider {
         module::class.memberProperties.forEach { property ->
             val instance = property.getter.call(module) ?: return@forEach
 
-            val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
-            instances[propertyType] = instance
+            val kClass = property.returnType.classifier as? KClass<*> ?: return@forEach
+            instances[kClass] = instance
         }
     }
 
