@@ -1,18 +1,18 @@
 package woowacourse.shopping.di
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.ShoppingApplication
 
-class ViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val instance = DIContainer.instance.getInstance(modelClass.kotlin)
-
-        @Suppress("UNCHECKED_CAST")
-        return instance as T
-    }
-
-    companion object {
-        val instance: ViewModelProvider.Factory by lazy { ViewModelFactory() }
+object ViewModelFactory {
+    fun create(application: Application): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val diContainer = (application as ShoppingApplication).diContainer
+                return diContainer.getInstance(modelClass.kotlin) as T
+            }
+        }
     }
 }

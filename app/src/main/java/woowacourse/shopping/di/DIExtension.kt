@@ -6,5 +6,5 @@ import androidx.lifecycle.ViewModel
 
 inline fun <reified T : ViewModel> ComponentActivity.myDiViewModels() =
     viewModels<T> {
-        ViewModelFactory.instance
+        ViewModelFactory.create(application)
     }
