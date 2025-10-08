@@ -1,5 +1,6 @@
 package woowacourse.shopping.data.repository
 
+import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
 class ProductDefaultRepository : ProductRepository {

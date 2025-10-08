@@ -2,10 +2,10 @@ package woowacourse.shopping
 
 import android.app.Application
 import woowacourse.shopping.data.repository.CartDefaultRepository
-import woowacourse.shopping.data.repository.CartRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
-import woowacourse.shopping.data.repository.ProductRepository
 import woowacourse.shopping.di.DIContainer
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 
 class ShoppingApplication : Application() {
