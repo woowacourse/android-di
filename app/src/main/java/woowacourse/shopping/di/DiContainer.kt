@@ -1,10 +1,17 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
     private val providers = mutableMapOf<KClass<*>, Lazy<Any>>()
+
+    init {
+        addProviders(CartRepository::class) { RepositoryModule.cartRepository }
+        addProviders(ProductRepository::class) { RepositoryModule.productRepository }
+    }
 
     fun <T : Any> addProviders(
         kClazz: KClass<T>,
