@@ -22,15 +22,14 @@ class DIContainer(private val interfaceMapping: Map<KClass<*>, KClass<*>>) {
 
     private fun createNewInstance(kClass: KClass<*>): Any {
         val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
-        val parameters = mutableListOf<Any>()
 
-        constructor.parameters.forEach { param ->
-            val paramTypeName = param.type.classifier as KClass<*>
-            val paramInstance = getInstance(paramTypeName)
-            parameters.add(paramInstance)
-        }
-
-        return constructor.call(*parameters.toTypedArray())
+        val parameterMap = constructor.parameters
+            .filterNot { it.isOptional }
+            .associateWith { param ->
+                val paramType = param.type.classifier as KClass<*>
+                getInstance(paramType)
+            }
+        return constructor.callBy(parameterMap)
     }
 
     private inline fun <reified T> registerRepository(instance: T) {
