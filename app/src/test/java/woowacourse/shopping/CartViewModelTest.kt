@@ -33,6 +33,6 @@ class CartViewModelTest {
     @Test
     fun `카트에_담긴_상품을_삭제할_수_있다`() {
         viewModel.deleteCartProduct(0)
-        assertThat(fakeCartRepository.cartProducts.size).isEqualTo(fakeProducts.size - 1)
+        assertThat(fakeCartRepository.getAllCartProducts()).isEqualTo(fakeProducts.size - 1)
     }
 }

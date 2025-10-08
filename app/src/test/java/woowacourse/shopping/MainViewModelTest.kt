@@ -38,7 +38,7 @@ class MainViewModelTest {
     @Test
     fun `상품을_카트에_담을_수_있다`() {
         viewModel.addCartProduct(fakeProduct)
-        assertThat(fakeCartRepository.cartProducts.contains(fakeProduct)).isTrue
+        assertThat(fakeCartRepository.getAllCartProducts().contains(fakeProduct)).isTrue
     }
 
     @Test
