@@ -20,7 +20,6 @@ class CartViewModelTest {
     private lateinit var viewModel: CartViewModel
     private lateinit var cartRepository: CartRepository
 
-
     @Before
     fun setup() {
         cartRepository = FakeCartRepository()
@@ -29,19 +28,19 @@ class CartViewModelTest {
 
     @Test
     fun `모든 장바구니를 가져오는지 테스트`() {
-        //given
+        // given
         val expected = listOf(POTATO)
-        //when
+        // when
         viewModel.getAllCartProducts()
-        //then
+        // then
         assertThat(viewModel.cartProducts.getOrAwaitValue()).isEqualTo(expected)
     }
 
     @Test
     fun `카트에서 제품이 제거될 경우 _onCartProductDeleted가 true가 되는지 테스트`() {
-        //when
+        // when
         viewModel.deleteCartProduct(0)
-        //then
+        // then
         assertTrue(viewModel.onCartProductDeleted.getOrAwaitValue())
     }
 }

@@ -18,10 +18,11 @@ class CartActivityTest {
 
     @Before
     fun setup() {
-        activity = Robolectric
-            .buildActivity(CartActivity::class.java)
-            .setup()
-            .get()
+        activity =
+            Robolectric
+                .buildActivity(CartActivity::class.java)
+                .setup()
+                .get()
     }
 
     @Test

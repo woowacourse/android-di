@@ -25,7 +25,6 @@ class MainViewModelTest {
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
 
-
     @Before
     fun setup() {
         productRepository = FakeProductRepository()
@@ -35,19 +34,19 @@ class MainViewModelTest {
 
     @Test
     fun `카트가 추가되면 onProductAdded가 true가 되는지 테스트`() {
-        //when
+        // when
         viewModel.addCartProduct(POTATO)
-        //then
+        // then
         assertTrue(viewModel.onProductAdded.getOrAwaitValue())
     }
 
     @Test
     fun `모든 제품을 가져오는지 테스트`() {
-        //given
+        // given
         val expected = listOf(POTATO, CHICKEN_BREAST, EGG)
-        //when
+        // when
         viewModel.getAllProducts()
-        //then
+        // then
         assertThat(viewModel.products.getOrAwaitValue()).isEqualTo(expected)
     }
 }

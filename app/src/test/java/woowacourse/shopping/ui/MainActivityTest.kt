@@ -21,10 +21,11 @@ class MainActivityTest {
 
     @Before
     fun setup() {
-        activity = Robolectric
-            .buildActivity(MainActivity::class.java)
-            .setup()
-            .get()
+        activity =
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .setup()
+                .get()
     }
 
     @Test
@@ -43,13 +44,13 @@ class MainActivityTest {
 
     @Test
     fun `상품 클릭시 상품 추가 토스트바가 출력 된다`() {
-        //given
+        // given
         val firstItem =
             activity.findViewById<RecyclerView>(R.id.rv_products)
                 .layoutManager?.findViewByPosition(
-                    0
+                    0,
                 )
-        //when
+        // when
         firstItem?.performClick()
 
         // then: 토스트 메시지 검증

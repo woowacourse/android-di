@@ -1,13 +1,12 @@
 package woowacourse.shopping.data
 
+import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
-import com.google.common.truth.Truth.assertThat
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
 class DefaultCartRepositoryTest {
-
     private lateinit var cartRepository: CartRepository
 
     @Before

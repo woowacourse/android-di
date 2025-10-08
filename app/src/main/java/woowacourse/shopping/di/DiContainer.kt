@@ -14,9 +14,10 @@ object DiContainer {
     }
 
     fun <T : Any> getProvider(kClazz: KClass<T>): T {
-        val lazyProvider = providers.getOrPut(kClazz) {
-            lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
-        }
+        val lazyProvider =
+            providers.getOrPut(kClazz) {
+                lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
+            }
         return lazyProvider.value as T
     }
 
