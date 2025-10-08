@@ -38,6 +38,6 @@ class CartViewModelTest {
         // when
         viewModel.deleteCartProduct(0)
         // then
-        assertThat(fakeCartRepository.getAllCartProducts()).isEqualTo(fakeProducts.size - 1)
+        assertThat(fakeCartRepository.getAllCartProducts().size).isEqualTo(fakeProducts.size - 1)
     }
 }
