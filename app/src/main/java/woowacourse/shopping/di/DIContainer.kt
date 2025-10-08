@@ -8,12 +8,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class DIContainer {
-    private val instances = mutableMapOf<String, Any>()
+    private val instances = mutableMapOf<KClass<*>, Any>()
 
     fun getInstance(kClass: KClass<*>): Any {
-        val typeName = kClass.simpleName!!
-
-        val existingInstance = instances[typeName]
+        val existingInstance = instances[kClass]
         if (existingInstance != null) {
             return existingInstance
         }
@@ -40,8 +38,7 @@ class DIContainer {
     }
 
     private inline fun <reified T> registerRepository(instance: T) {
-        val interfaceName = T::class.simpleName!!
-        instances[interfaceName] = instance as Any
+        instances[T::class] = instance as Any
     }
 
     companion object {
