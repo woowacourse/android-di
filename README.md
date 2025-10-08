@@ -1,1 +1,62 @@
 # android-di
+
+## 🚀만들면서 배우는 DI - 0.5단계 생성자 주입(수동)
+
+### 기능 요구 사항
+
+- [x] 테스트하기 어렵다.
+- [x] Repository 객체를 교체하기 위해 또다른 객체를 만들어 바꿔줘야 한다. 즉, ViewModel에 직접적인 변경사항이 발생한다.
+
+### 접근 방향
+
+```
+테스트 하기 어렵다. & Repository 객체를 교체하기 위해 또다른 객체를 만들어 바꿔줘야 한다.
+- Repository 내부에서 사용중인 데이터를 제어할 수 없어서 테스트하기 어렵다.
+- Repository를 interface로 추상화하고, ViewModel에서는 추상화된 Repository 타입을 생성자 파라미터로 받는다. 
+  -> interface를 구현하는 테스트용 Repository를 생성 후 넣어준다.
+  -> ViewModel에서는 직접적인 변경사항 없이 외부에서 해당 Repository 인터페이스를 구현한 객체들을 자유롭게 변경할 수 있다. 
+```
+
+---
+
+## 🚀만들면서 배우는 DI - 1단계 생성자 주입(자동)
+
+### 기능 요구 사항
+
+- [x] ViewModel에서 참조하는 Repository가 정상적으로 주입되지 않는다.
+- Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 만들어줘야 한다.
+    - [x] ViewModel에 수동으로 주입되고 있는 의존성들을 자동으로 주입되도록 바꿔본다.
+    - [x] 특정 ViewModel에서만이 아닌, 범용적으로 활용될 수 있는 자동 주입 로직을 작성한다.(`MainViewModel`, `CartViewModel` 모두
+      하나의 로직만 참조한다)
+    - [x] 100개의 ViewModel이 생긴다고 가정했을 때, 자동 주입 로직 100개가 생기는 것이 아니다. 하나의 자동 주입 로직을 재사용할 수 있어야 한다.
+- 장바구니에 접근할 때마다 매번 `CartRepository` 인스턴스를 새로 만들고 있다.
+    - [x] 여러 번 인스턴스화 할 필요 없는 객체는 최초 한 번만 인스턴스화한다.
+
+### 선택 요구 사항
+
+- [ ] TDD로 DI 구현
+- [x] Robolectric으로 기능 테스트
+- [x] ViewModel 테스트
+- [x] 모든 도메인 로직, Repository 단위 테스트
+
+### 프로그래밍 요구 사항
+
+- [x] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
+- [x] Annotation은 이 단계에서 활용하지 않는다.
+
+### 접근 방향
+
+```
+DefinitionInformation : 클래스 생성을 위한 정보들을 담고 있는 클래스
+DefinitionKey : 리플렉션으로 얻어 올 정보를 DefinitionInformation과 매핑하기 위한 클래스 
+Kind : 매번 생성할 지, 최초 1회만 생성할 지를 담당하는 클래스
+Qualifier : 동일 인터페이스를 구분 담당 클래스
+
+Module : 매핑해놓기 위한 정보들을 관리 (최초 앱 실행 시 제공)
+
+AppInjector: 매핑 해놓은 정보를 인스턴스화 시키고 관리하는 클래스 
+
+Provider: 사용 시점에 인스턴스화 하기 위한 SAM 인터페이스
+
+Application 실행 -> Module 들에 기록해놓은 정보들을 Injector에 기록 -> 사용할 때는 리플렉션으로 생성자를 분석 후, Injector의 get 메서드를 통해 실제 인스턴스 주입 
+```
