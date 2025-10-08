@@ -29,6 +29,7 @@ class MainViewModelTest {
 
     @Before
     fun setup() {
+        // given
         fakeCartRepository = FakeCardRepository(emptyList())
         fakeProductRepository = FakeProductRepository(fakeProducts)
         viewModel =
@@ -37,13 +38,17 @@ class MainViewModelTest {
 
     @Test
     fun `상품을_카트에_담을_수_있다`() {
+        // when
         viewModel.addCartProduct(fakeProduct)
+        // then
         assertThat(fakeCartRepository.getAllCartProducts().contains(fakeProduct)).isTrue
     }
 
     @Test
     fun `상품을_가져올_수_있다`() {
+        // when
         viewModel.getAllProducts()
+        // then
         assertThat(viewModel.products.value).isEqualTo(fakeProducts)
     }
 }
