@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.data.repository.RepositoryModule
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
@@ -7,7 +8,7 @@ object RepositoryProvider {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     init {
-        registerModule(woowacourse.shopping.data.repository.RepositoryModule)
+        registerModule(RepositoryModule)
     }
 
     private fun registerModule(module: Any) {
