@@ -1,8 +1,7 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.di.AppContainer
 
 class ViewModelFactory(
     private val appContainer: AppContainer,

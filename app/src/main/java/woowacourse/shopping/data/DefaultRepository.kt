@@ -3,7 +3,7 @@ package woowacourse.shopping.data
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.domain.ProductRepository
 
-class DefaultRepositoryImpl : ProductRepository {
+class DefaultRepository : ProductRepository {
     private val products: List<Product> =
         listOf(
             Product(
