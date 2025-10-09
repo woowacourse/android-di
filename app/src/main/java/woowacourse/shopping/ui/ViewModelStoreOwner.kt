@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.AppContainer
-import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
-import kotlin.reflect.full.primaryConstructor
+import woowacourse.shopping.di.instance
 
 inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
     lazy {
@@ -22,19 +20,10 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                         modelClass: Class<T>,
                         extras: CreationExtras,
                     ): T {
-                        val primaryConstructor: KFunction<VM> =
-                            VM::class.primaryConstructor
-                                ?: error("${VM::class.qualifiedName} doesn't have primary constructor")
-
                         val application: Application = checkNotNull(extras[APPLICATION_KEY])
                         val appContainer: AppContainer = application as AppContainer
 
-                        val parameters: List<Any> =
-                            primaryConstructor.parameters.map { parameter: KParameter ->
-                                appContainer.dependency(parameter.type)
-                            }
-
-                        return primaryConstructor.call(*parameters.toTypedArray()) as T
+                        return appContainer.instance<VM>() as T
                     }
                 },
         )[VM::class.java]
