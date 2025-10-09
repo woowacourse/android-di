@@ -3,15 +3,15 @@ package woowacourse.shopping.repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DefaultRepositoryImpl
 import woowacourse.shopping.domain.Product
 
 class ProductRepositoryTest {
-    private lateinit var productRepository: ProductRepositoryImpl
+    private lateinit var productRepository: DefaultRepositoryImpl
 
     @Before
     fun setUp() {
-        productRepository = ProductRepositoryImpl()
+        productRepository = DefaultRepositoryImpl()
     }
 
     @Test

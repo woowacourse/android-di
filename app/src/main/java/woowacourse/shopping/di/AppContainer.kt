@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultRepositoryImpl
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
@@ -10,8 +10,8 @@ class AppContainer {
     private val providers = mutableMapOf<KClass<*>, Any>()
 
     init {
-        providers[CartRepository::class] = CartRepositoryImpl()
-        providers[ProductRepository::class] = ProductRepositoryImpl()
+        providers[CartRepository::class] = DefaultCartRepository()
+        providers[ProductRepository::class] = DefaultRepositoryImpl()
     }
 
     @Suppress("UNCHECKED_CAST")
