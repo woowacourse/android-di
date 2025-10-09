@@ -8,6 +8,7 @@ import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
 import woowacourse.shopping.fixture.productsFixture
+import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 
@@ -32,18 +33,17 @@ class MainViewModelTest {
         viewModel.getAllProducts()
 
         // Then
-        assertThat(viewModel.products.value).isEqualTo(productsFixture)
+        val loadedProducts = viewModel.products.getOrAwaitValue()
+        assertThat(loadedProducts).isEqualTo(productsFixture)
     }
 
     @Test
-    fun `장바구니에 상품을 추가할 수 있다`() {
-        // Given
-
+    fun `장바구니에 상품을 추가하면 onProductAdded 이벤트가 발생한다`() {
         // When
         viewModel.addCartProduct(productsFixture[0])
 
         // Then
-        val cartProducts = cartRepository.getAllCartProducts()
-        assertThat(cartProducts).isEqualTo(listOf(productsFixture[0]))
+        val isAdded = viewModel.onProductAdded.getOrAwaitValue()
+        assertThat(isAdded).isTrue()
     }
 }

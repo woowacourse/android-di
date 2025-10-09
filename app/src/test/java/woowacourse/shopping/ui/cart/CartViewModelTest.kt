@@ -7,6 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.productsFixture
+import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.repository.CartRepository
 
 class CartViewModelTest {
@@ -32,7 +33,8 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // Then
-        assertThat(viewModel.cartProducts.value).isEqualTo(
+        val loadedProducts = viewModel.cartProducts.getOrAwaitValue()
+        assertThat(loadedProducts).isEqualTo(
             listOf(
                 productsFixture[0],
                 productsFixture[1],
@@ -41,17 +43,16 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `장바구니에 담긴 상품을 삭제할 수 있다`() {
+    fun `장바구니 상품을 삭제하면 onCartProductDeleted 이벤트가 발생한다`() {
         // Given
         cartRepository.addCartProduct(productsFixture[0])
-        cartRepository.addCartProduct(productsFixture[1])
-        viewModel.getAllCartProducts()
+        assertThat(viewModel.onCartProductDeleted.getOrAwaitValue()).isFalse()
 
         // When
         viewModel.deleteCartProduct(0)
-        viewModel.getAllCartProducts()
 
         // Then
-        assertThat(viewModel.cartProducts.value).isEqualTo(listOf(productsFixture[1]))
+        val isDeleted = viewModel.onCartProductDeleted.getOrAwaitValue()
+        assertThat(isDeleted).isTrue()
     }
 }
