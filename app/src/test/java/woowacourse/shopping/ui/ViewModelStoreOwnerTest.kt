@@ -1,0 +1,119 @@
+package woowacourse.shopping.ui
+
+import android.app.Application
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModel
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertThrows
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import woowacourse.shopping.di.AppContainer
+import kotlin.reflect.KType
+import kotlin.reflect.full.createType
+
+@RunWith(RobolectricTestRunner::class)
+@Config(application = FakeApplication::class)
+class ViewModelStoreOwnerTest {
+    @Test
+    fun `ViewModel에 의존성이 불필요한 경우 - 성공`() {
+        // given
+        class TestActivity : ComponentActivity() {
+            val viewModel: NoDependencyViewModel by viewModel()
+        }
+
+        val activity =
+            Robolectric
+                .buildActivity(TestActivity::class.java)
+                .create()
+                .get()
+
+        // then
+        assertThat(activity.viewModel).isNotNull
+    }
+
+    @Test
+    fun `ViewModel에 선언된 의존성이 필요한 경우 - 성공`() {
+        // given
+        class TestActivity : ComponentActivity() {
+            val viewModel: DeclaredDependenciesViewModel by viewModel()
+        }
+
+        val activity =
+            Robolectric
+                .buildActivity(TestActivity::class.java)
+                .create()
+                .get()
+
+        // then
+        assertThat(activity.viewModel.declaredDependency).isNotNull
+    }
+
+    @Test
+    fun `ViewModel에 선언되지 않은 의존성이 필요한 경우 - 실패`() {
+        // given
+        class TestActivity : ComponentActivity() {
+            val viewModel: UnknownDependenciesViewModel by viewModel()
+        }
+
+        val activity =
+            Robolectric
+                .buildActivity(TestActivity::class.java)
+                .create()
+                .get()
+
+        // then
+        assertThrows(IllegalStateException::class.java) { activity.viewModel }
+    }
+
+    @Test
+    fun `ViewModel에 선언된 의존성이 필요하며, 파라미터 기본값이 존재하는 경우 - 선언된 의존성 사용`() {
+        // given
+        class TestActivity : ComponentActivity() {
+            val viewModel: DeclaredDependenciesWithDefaultParameterViewModel by viewModel()
+        }
+
+        val activity =
+            Robolectric
+                .buildActivity(TestActivity::class.java)
+                .create()
+                .get()
+
+        // then
+        assertThat(activity.viewModel.declaredDependency).isInstanceOf(DefaultDeclaredDependency::class.java)
+    }
+}
+
+class FakeApplication :
+    Application(),
+    AppContainer {
+    override fun dependency(type: KType): Any =
+        when (type) {
+            DeclaredDependency::class.createType() -> DefaultDeclaredDependency()
+            else -> error("")
+        }
+}
+
+interface DeclaredDependency
+
+class DefaultDeclaredDependency : DeclaredDependency
+
+class DefaultParameterDependency : DeclaredDependency
+
+class UnknownDependency
+
+class NoDependencyViewModel : ViewModel()
+
+class DeclaredDependenciesViewModel(
+    val declaredDependency: DeclaredDependency,
+) : ViewModel()
+
+class UnknownDependenciesViewModel(
+    unknownDependency: UnknownDependency,
+) : ViewModel()
+
+class DeclaredDependenciesWithDefaultParameterViewModel(
+    val declaredDependency: DeclaredDependency = DefaultParameterDependency(),
+) : ViewModel()
