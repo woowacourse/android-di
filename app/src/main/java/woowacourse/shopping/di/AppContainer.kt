@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
@@ -11,7 +11,7 @@ class AppContainer {
 
     init {
         providers[CartRepository::class] = DefaultCartRepository()
-        providers[ProductRepository::class] = DefaultRepository()
+        providers[ProductRepository::class] = DefaultProductRepository()
     }
 
     @Suppress("UNCHECKED_CAST")
