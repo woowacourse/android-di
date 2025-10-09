@@ -43,8 +43,8 @@ class DependencyContainerTest {
             }
 
         // then
-        val expected = exception.message
-        val actual = "NotRegisteredRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "NotRegisteredRepository 타입의 의존성이 등록되어있지 않습니다."
+        val actual = exception.message
         assertEquals(expected, actual)
     }
 

@@ -49,8 +49,8 @@ class ViewModelFactoryInjectorTest {
             }
 
         // then
-        val expected = exception.message
-        val actual = "CartRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "CartRepository 타입의 의존성이 등록되어있지 않습니다."
+        val actual = exception.message
         assertEquals(expected, actual)
     }
 }
