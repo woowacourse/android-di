@@ -1,6 +1,6 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.domain.DependencyModule
+import woowacourse.shopping.core.DependencyModule
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties

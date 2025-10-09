@@ -7,10 +7,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import woowacourse.fake.NotRegisteredRepository
+import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.data.repository.RepositoryModule
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.DependencyModule
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.typeOf
 
