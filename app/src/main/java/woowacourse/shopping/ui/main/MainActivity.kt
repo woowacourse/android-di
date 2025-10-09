@@ -10,16 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels {
-        ViewModelFactory(AppContainer.repositories)
+        (application as ShoppingApplication).viewModelFactory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
