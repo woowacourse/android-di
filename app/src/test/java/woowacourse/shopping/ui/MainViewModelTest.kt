@@ -8,13 +8,15 @@ import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
 import woowacourse.shopping.fixture.productsFixture
+import woowacourse.shopping.model.repository.CartRepository
+import woowacourse.shopping.model.repository.ProductRepository
 
 class MainViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var productRepository: FakeProductRepository
-    private lateinit var cartRepository: FakeCartRepository
+    private lateinit var productRepository: ProductRepository
+    private lateinit var cartRepository: CartRepository
     private lateinit var viewModel: MainViewModel
 
     @Before

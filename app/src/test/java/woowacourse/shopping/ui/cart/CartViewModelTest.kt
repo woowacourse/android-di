@@ -7,12 +7,13 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.productsFixture
+import woowacourse.shopping.model.repository.CartRepository
 
 class CartViewModelTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var cartRepository: FakeCartRepository
+    private lateinit var cartRepository: CartRepository
     private lateinit var viewModel: CartViewModel
 
     @Before
