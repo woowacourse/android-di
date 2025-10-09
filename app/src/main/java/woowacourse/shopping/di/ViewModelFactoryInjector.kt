@@ -6,7 +6,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
 
-object ViewModelFactoryInjector : ViewModelProvider.Factory {
+class ViewModelFactoryInjector(
+    private val dependencyInjector: DependencyInjector,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass: KClass<T> = modelClass.kotlin
         val constructor = getValidPrimaryConstructor(kClass, kClass.primaryConstructor)
@@ -24,10 +26,7 @@ object ViewModelFactoryInjector : ViewModelProvider.Factory {
 
     private fun resolveConstructorParameters(constructor: KFunction<*>): Array<Any> =
         constructor.parameters.map { param ->
-            val paramClass =
-                param.type.classifier as? KClass<*>
-                    ?: error(ERROR_INVALID_PARAM_TYPE.format(param.name))
-            RepositoryProvider.get(paramClass)
+            dependencyInjector.get(param.type)
         }.toTypedArray()
 
     private fun <T> createInstance(
@@ -35,6 +34,7 @@ object ViewModelFactoryInjector : ViewModelProvider.Factory {
         params: Array<Any>,
     ): T = constructor.call(*params)
 
-    private const val ERROR_NO_CONSTRUCTOR = "%s 클래스에 기본 생성자가 존재하지 않습니다."
-    private const val ERROR_INVALID_PARAM_TYPE = "%s 파라미터의 타입을 확인할 수 없습니다."
+    companion object {
+        private const val ERROR_NO_CONSTRUCTOR = "%s 클래스에 기본 생성자가 존재하지 않습니다."
+    }
 }

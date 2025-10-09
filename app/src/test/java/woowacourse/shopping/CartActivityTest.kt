@@ -25,7 +25,8 @@ class CartActivityTest {
                 .create()
                 .get()
 
-        val factory = ViewModelFactoryInjector.create(CartViewModel::class)
+        val appContainer = (activity.application as App).container
+        val factory = ViewModelFactoryInjector(appContainer.dependencyInjector)
 
         // when
         val viewModel = ViewModelProvider(activity, factory)[CartViewModel::class.java]
