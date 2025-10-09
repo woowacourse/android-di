@@ -38,7 +38,8 @@ class MainActivityTest {
                 .create()
                 .get()
 
-        val factory = ViewModelFactoryInjector.create(MainViewModel::class)
+        val appContainer = (activity.application as App).container
+        val factory = ViewModelFactoryInjector(appContainer.dependencyInjector)
 
         // when
         val viewModel = ViewModelProvider(activity, factory)[MainViewModel::class.java]

@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.shopping.App
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.ViewModelFactoryInjector
@@ -18,8 +19,11 @@ import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    private val viewModel: MainViewModel by viewModels { ViewModelFactoryInjector }
+    private val viewModel: MainViewModel by viewModels<MainViewModel> {
+        val appContainer = (application as App).container
+        val dependencyContainer = appContainer.dependencyInjector
+        ViewModelFactoryInjector(dependencyContainer)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
