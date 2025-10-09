@@ -12,11 +12,16 @@ import kotlin.reflect.full.createType
 class ShoppingApplication :
     Application(),
     AppContainer {
-    private val dependencies: Map<KType, Any> =
-        mapOf(
-            ProductRepository::class.createType() to DefaultProductRepository(),
-            CartRepository::class.createType() to DefaultCartRepository(),
-        )
+    private val dependencies: MutableMap<KType, Any> = mutableMapOf()
 
-    override fun dependency(type: KType): Any = dependencies[type] ?: error("Don't know how to inject $type")
+    override fun dependency(type: KType): Any =
+        dependencies.getOrPut(
+            type,
+        ) {
+            when (type) {
+                ProductRepository::class.createType() -> DefaultProductRepository()
+                CartRepository::class.createType() -> DefaultCartRepository()
+                else -> error("Don't know how to inject $type")
+            }
+        }
 }
