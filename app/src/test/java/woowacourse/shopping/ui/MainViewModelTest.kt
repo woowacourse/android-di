@@ -8,7 +8,7 @@ import org.junit.Test
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
-import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.fixture.getOrAwaitValue
 
 class MainViewModelTest {
     @get:Rule

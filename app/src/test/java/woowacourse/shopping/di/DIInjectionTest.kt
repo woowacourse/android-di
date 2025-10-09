@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -30,14 +31,21 @@ class DIInjectionTest {
         assertThat(vm.repository).isEqualTo(container.fakeRepository)
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `AppContainer에 없는 의존성은 생성 실패`() {
-        factory.create(ConstructorTestViewModelWithDefaultDependency::class.java)
-    }
-
     @Test
-    fun `AppContainer에 선언되고 default parameter가 있으면 주입됨`() {
+    fun `AppContainer에 선언되고 default parameter가 있으면 Container 것 주입됨`() {
         val vm = factory.create(ConstructorTestViewModelWithDefaultDependency::class.java)
+        // Default 값 무시하고 Container의 인스턴스 사용
         assertThat(vm.repository).isEqualTo(container.fakeRepository)
     }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `AppContainer에 없는 의존성은 생성 실패`() {
+        factory.create(ViewModelWithUnregisteredDependency::class.java)
+    }
 }
+
+class UnregisteredRepository
+
+class ViewModelWithUnregisteredDependency(
+    val repository: UnregisteredRepository,
+) : ViewModel()

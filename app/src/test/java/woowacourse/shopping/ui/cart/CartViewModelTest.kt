@@ -7,7 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.fixture.FakeCartRepository
-import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.fixture.getOrAwaitValue
 
 class CartViewModelTest {
     @get:Rule

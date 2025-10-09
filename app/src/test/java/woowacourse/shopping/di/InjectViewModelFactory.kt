@@ -3,19 +3,28 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.fixture.TestAppContainer
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 class InjectViewModelFactory(
     private val container: TestAppContainer,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor = modelClass.constructors.first()
-        val params =
-            constructor.parameters
-                .map { param ->
-                    container.resolve(param.type.kotlin)
-                }.toTypedArray()
+        val kClazz = modelClass.kotlin
 
-        return constructor.newInstance(*params) as T
+        val constructor =
+            kClazz.primaryConstructor
+                ?: throw IllegalArgumentException("${modelClass.simpleName}에 기본 생성자가 없습니다")
+
+        val args =
+            constructor.parameters.associateWith { param ->
+                val clazz =
+                    param.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException("${param.name} 타입 정보를 가져올 수 없습니다")
+                container.resolve(clazz)
+            }
+
+        return constructor.callBy(args)
     }
 }
