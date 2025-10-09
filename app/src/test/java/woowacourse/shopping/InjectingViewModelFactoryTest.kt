@@ -10,6 +10,7 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
+import woowacourse.shopping.fake.FakeViewModel
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
 import kotlin.reflect.KClass
@@ -63,6 +64,16 @@ class InjectingViewModelFactoryTest {
 
         // when
         factory.create(MainViewModel::class.java)
+    }
+
+    @Test
+    fun `@Inject가 붙은 필드만 주입된다`() {
+        // when
+        val viewModel = factory.create(FakeViewModel::class.java)
+
+        // then
+        assertThat(viewModel.productRepository).isSameAs(productRepository)
+        assertThat(viewModel.notInjected).isNull()
     }
 
     private class MapBackedContainer(

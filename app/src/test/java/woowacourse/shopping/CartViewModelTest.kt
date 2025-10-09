@@ -20,7 +20,10 @@ class CartViewModelTest {
                 addCartProduct(ProductFixture.Snack)
                 addCartProduct(ProductFixture.Juice)
             }
-        val viewModel = CartViewModel(fakeRepo)
+        val viewModel =
+            CartViewModel().apply {
+                cartRepository = fakeRepo
+            }
 
         // when
         viewModel.getAllCartProducts()
@@ -41,7 +44,10 @@ class CartViewModelTest {
                 addCartProduct(ProductFixture.Snack)
                 addCartProduct(ProductFixture.Juice)
             }
-        val viewModel = CartViewModel(fakeRepo)
+        val viewModel =
+            CartViewModel().apply {
+                cartRepository = fakeRepo
+            }
 
         // when
         viewModel.deleteCartProduct(1)

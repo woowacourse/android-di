@@ -19,7 +19,11 @@ class MainViewModelTest {
         // given
         val productRepo = FakeProductRepository(ProductFixture.AllProducts)
         val cartRepo = FakeCartRepository()
-        val viewModel = MainViewModel(productRepo, cartRepo)
+        val viewModel =
+            MainViewModel().apply {
+                productRepository = productRepo
+                cartRepository = cartRepo
+            }
 
         // when
         viewModel.getAllProducts()
@@ -33,7 +37,11 @@ class MainViewModelTest {
         // given
         val productRepo = FakeProductRepository()
         val cartRepo = FakeCartRepository()
-        val viewModel = MainViewModel(productRepo, cartRepo)
+        val viewModel =
+            MainViewModel().apply {
+                productRepository = productRepo
+                cartRepository = cartRepo
+            }
         val item = Product("웨이퍼 초코바", 1000, "")
 
         // when
