@@ -2,7 +2,9 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlin.jvm.java
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.primaryConstructor
 
 @Suppress("UNCHECKED_CAST")
@@ -21,7 +23,21 @@ class InjectingViewModelFactory(
                 .map { parameter ->
                     container.resolve(parameter.type)
                 }.toTypedArray()
+        val instance = constructor.call(*args) as T
 
-        return constructor.call(*args) as T
+        injectAnnotatedFields(instance)
+
+        return instance
+    }
+
+    private fun injectAnnotatedFields(target: Any) {
+        target::class.java.declaredFields
+            .filter { it.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                field.isAccessible = true
+                val kType = field.type.kotlin.createType()
+                val value = container.resolve(kType)
+                field.set(target, value)
+            }
     }
 }
