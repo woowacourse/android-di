@@ -22,4 +22,4 @@
     - [x] Annotation을 붙여서 필요한 요소에만 의존성을 주입
     - [ ] 작성한 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성
 - [x] CartRepository가 DAO 객체를 참조하도록 변경
-- [ ] CartProductViewHolder의 bind 함수를 수정하여 뷰에서도 날짜 정보를 확인할 수 있도록 변경
+- [x] CartProductViewHolder의 bind 함수를 수정하여 뷰에서도 날짜 정보를 확인할 수 있도록 변경
