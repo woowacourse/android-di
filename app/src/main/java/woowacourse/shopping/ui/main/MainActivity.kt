@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setupContentView()
         setupBinding()
         setupToolbar()
-        setupViewData()
+        setupProductList()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -52,15 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
-    }
-
-    private fun setupViewData() {
-        setupProductData()
-        setupProductList()
-    }
-
-    private fun setupProductData() {
-        viewModel.getAllProducts()
     }
 
     private fun setupProductList() {
