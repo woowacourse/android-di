@@ -3,25 +3,25 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object DiContainer {
+object DependencyInjectorImpl : DependencyInjector {
     private val instances = mutableMapOf<KClass<*>, Any>()
     private val creating = mutableSetOf<KClass<*>>()
 
-    fun <T : Any> setInstance(
+    override fun <T : Any> setInstance(
         kClass: KClass<T>,
         instance: T,
     ) {
         instances[kClass] = instance
     }
 
-    fun <T : Any> getInstance(kClass: KClass<T>): T {
+    override fun <T : Any> getInstance(kClass: KClass<T>): T {
         return instances[kClass] as? T ?: run {
             createInstance(kClass)
             return instances[kClass] as T
         }
     }
 
-    private fun createInstance(kClass: KClass<*>) {
+    override fun createInstance(kClass: KClass<*>) {
         if (creating.contains(kClass)) throw IllegalStateException("순환 참조")
         creating.add(kClass)
 
