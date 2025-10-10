@@ -88,4 +88,7 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.junit.vintage.engine)
     testImplementation(libs.androidx.core.testing)
+
+    // mockk
+    testImplementation(libs.mockk.android)
 }
