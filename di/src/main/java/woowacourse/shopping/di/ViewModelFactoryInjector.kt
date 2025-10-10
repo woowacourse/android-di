@@ -2,8 +2,10 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelFactoryInjector(
@@ -26,7 +28,9 @@ class ViewModelFactoryInjector(
 
     private fun resolveConstructorParameters(constructor: KFunction<*>): Array<Any> =
         constructor.parameters.map { param ->
-            dependencyInjector.get(param.type)
+            val qualifier = param.findAnnotation<Qualifier>()?.name
+            qualifier?.let { dependencyInjector.get(param.type, it) }
+                ?: dependencyInjector.get(param.type)
         }.toTypedArray()
 
     private fun <T> createInstance(
