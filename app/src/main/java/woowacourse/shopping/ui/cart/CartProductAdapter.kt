@@ -6,14 +6,15 @@ import woowacourse.shopping.model.Product
 
 class CartProductAdapter(
     items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    onClickDelete: (id: Long) -> Unit,
     private val dateFormatter: DateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
     private val items: MutableList<Product> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
-        onClickDelete(position)
+        val deleteItemId = items[position].id
         removeItem(position)
+        onClickDelete(deleteItemId)
     }
 
     override fun onCreateViewHolder(
