@@ -43,7 +43,7 @@ class AppInjectorTest :
             first shouldNotBeSameInstanceAs second
         }
 
-        "quailfier 로 동일 타입을 구분할 수 있다" {
+        "qualifier 로 동일 타입을 구분할 수 있다" {
             // given
             AppInjector.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("engine")) { _ ->
                 Provider { EngineFixtureCarImpl("engineCarName") }
