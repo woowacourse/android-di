@@ -1,5 +1,9 @@
 package woowacourse.shopping.fixture
 
+import androidx.lifecycle.ViewModel
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
+
 interface FixtureCar
 
 data class ElectricFixtureCarImpl(
@@ -17,3 +21,8 @@ data class SingletonFixtureCar(
 data class FactoryFixtureCar(
     val name: String,
 )
+
+class ViewModelFieldInjectFixture : ViewModel() {
+    lateinit var productRepository: ProductRepository
+    lateinit var cartRepository: CartRepository
+}
