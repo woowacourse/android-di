@@ -46,7 +46,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun `상품을 클릭하면 토스트 메세지가 표시된다`() {
+    fun `상품을 클릭하면 토스트 메시지가 표시된다`() {
         // given
         val activity: MainActivity =
             Robolectric
