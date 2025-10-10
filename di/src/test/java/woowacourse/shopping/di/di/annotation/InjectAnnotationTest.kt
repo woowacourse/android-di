@@ -1,12 +1,12 @@
-package woowacourse.di.annotation
+package woowacourse.shopping.di.di.annotation
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import woowacourse.fake.FakeDependencyModule
-import woowacourse.fake.FakeViewModel
 import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.fake.FakeDependencyModule
+import woowacourse.shopping.di.fake.FakeViewModel
 
 class InjectAnnotationTest {
     private lateinit var dependencyModule: FakeDependencyModule

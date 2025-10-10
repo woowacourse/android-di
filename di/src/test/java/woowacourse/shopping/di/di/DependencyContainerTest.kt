@@ -1,8 +1,5 @@
-package woowacourse.di
+package woowacourse.shopping.di.di
 
-import android.content.Context
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -14,33 +11,26 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import woowacourse.fake.NotRegisteredRepository
 import woowacourse.shopping.core.DependencyModule
-import woowacourse.shopping.data.db.DatabaseModule
-import woowacourse.shopping.data.db.ShoppingDatabase
-import woowacourse.shopping.data.repository.RepositoryModule
 import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.fake.FakeDependencyModule
+import woowacourse.shopping.di.fake.FakeRepositoryModule
+import woowacourse.shopping.di.fake.repository.FakeNotRegisteredProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
+import kotlin.collections.get
 import kotlin.reflect.typeOf
 
 @RunWith(RobolectricTestRunner::class)
 class DependencyContainerTest {
-    private lateinit var db: ShoppingDatabase
-    private lateinit var databaseModule: DatabaseModule
+    private lateinit var databaseModule: DependencyModule
     private lateinit var repositoryModule: DependencyModule
     private lateinit var diContainer: DependencyInjector
 
     @Before
     fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db =
-            Room.inMemoryDatabaseBuilder(context, ShoppingDatabase::class.java)
-                .allowMainThreadQueries()
-                .build()
-
-        databaseModule = DatabaseModule(db)
-        repositoryModule = RepositoryModule(databaseModule)
+        databaseModule = FakeDependencyModule()
+        repositoryModule = FakeRepositoryModule()
         diContainer = DependencyInjector(listOf(databaseModule, repositoryModule))
     }
 
@@ -59,11 +49,11 @@ class DependencyContainerTest {
         val exception =
             assertThrows(IllegalArgumentException::class.java) {
                 // when
-                diContainer.get(typeOf<NotRegisteredRepository>())
+                diContainer.get(typeOf<FakeNotRegisteredProductRepository>())
             }
 
         // then
-        val expected = "NotRegisteredRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "FakeNotRegisteredProductRepository 타입의 의존성이 등록되어있지 않습니다."
         val actual = exception.message
         assertEquals(expected, actual)
     }

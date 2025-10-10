@@ -1,15 +1,7 @@
-package woowacourse.fake
+package woowacourse.shopping.di.fake.repository
 
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.model.Product
-
-interface FakeRepository {
-    fun getValue(): String
-}
-
-class NotRegisteredRepository : FakeRepository {
-    override fun getValue(): String = "NotRegistered"
-}
 
 class FakeCartRepository : CartRepository {
     override suspend fun addCartProduct(product: Product) {}

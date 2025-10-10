@@ -20,3 +20,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "android-di"
 include(":app")
+include(":core")
+include(":di")
+include(":domain")
