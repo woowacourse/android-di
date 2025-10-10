@@ -9,3 +9,10 @@ fun Product.toEntity(): CartProductEntity =
         price = price,
         imageUrl = imageUrl,
     )
+
+fun CartProductEntity.toDomain(): Product =
+    Product(
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+    )

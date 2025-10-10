@@ -6,7 +6,9 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 
 object RepositoryModule {
-    val cartRepository: CartRepository by lazy { DefaultCartRepository() }
+    val cartRepository: CartRepository by lazy {
+        DefaultCartRepository(DatabaseModule.cartDao)
+    }
 
     val productRepository: ProductRepository by lazy { DefaultProductRepository() }
 }
