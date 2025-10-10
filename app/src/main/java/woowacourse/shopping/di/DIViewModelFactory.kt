@@ -3,8 +3,6 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
@@ -37,9 +35,14 @@ class DIViewModelFactory(
             }.forEach { property ->
                 if (property is KMutableProperty1<*, *>) {
                     val requestedType: KType = property.returnType
-
+                    val qualifierAnnotation: Annotation? =
+                        property.annotations.find {
+                            it.annotationClass.annotations.any { meta ->
+                                meta.annotationClass.simpleName == "Qualifier"
+                            }
+                        }
                     val dependency =
-                        appContainer.resolve(requestedType)
+                        appContainer.resolve(requestedType, qualifierAnnotation)
                             ?: throw IllegalStateException(
                                 "필드 타입 ${requestedType}에 대한 제공자가 AppContainer에 없습니다.",
                             )
@@ -56,11 +59,26 @@ class DIViewModelFactory(
     }
 }
 
-fun AppContainer.resolve(requestedType: KType): Any? {
+fun AppContainer.resolve(
+    requestedType: KType,
+    qualifier: Annotation?,
+): Any? {
     val kClass = requestedType.classifier as? KClass<*> ?: return null
+    val qualifierKClass = qualifier?.annotationClass
+
     return when (kClass) {
-        ProductRepository::class, DefaultProductRepository::class -> productRepository
-        CartRepository::class, DefaultCartRepository::class -> cartRepository
+        ProductRepository::class -> {
+            when (qualifierKClass?.simpleName) {
+                "Database" -> productRepository
+                else -> productRepository
+            }
+        }
+        CartRepository::class -> {
+            when (qualifierKClass?.simpleName) {
+                "Database" -> cartRepository
+                else -> cartRepository
+            }
+        }
         else -> null
     }
 }
