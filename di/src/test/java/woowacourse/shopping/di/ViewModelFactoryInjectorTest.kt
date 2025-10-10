@@ -1,12 +1,10 @@
-package woowacourse.shopping.di.di
+package woowacourse.shopping.di
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.ViewModelFactoryInjector
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeViewModel
 import woowacourse.shopping.domain.CartRepository

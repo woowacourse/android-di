@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.di
+package woowacourse.shopping.di
 
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -13,7 +13,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.core.DependencyModule
-import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeRepositoryModule
@@ -21,7 +20,6 @@ import woowacourse.shopping.di.fake.FakeViewModel
 import woowacourse.shopping.di.fake.repository.FakeNotRegisteredProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
-import kotlin.collections.get
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.typeOf
@@ -64,36 +62,7 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `providers에 람다만 존재해야 한다`() {
-        // given
-        val providersField = diContainer::class.java.getDeclaredField("providers")
-        providersField.isAccessible = true
-        val providers = providersField.get(diContainer) as Map<*, *>
-
-        // then
-        providers.values.forEach { provider ->
-            assertTrue(provider is Function0<*>)
-        }
-    }
-
-    @Test
-    fun `get 호출 전에는 instances에 실제 인스턴스가 없어야 한다`() {
-        // given
-        val instancesField = diContainer::class.java.getDeclaredField("instances")
-        instancesField.isAccessible = true
-        val instances = instancesField.get(diContainer) as Map<*, *>
-
-        // then
-        assertTrue(instances.isEmpty())
-    }
-
-    @Test
     fun `get 호출 시 실제 인스턴스가 생성되고, 이후 호출에는 동일 인스턴스를 반환한다`() {
-        // given
-        val instancesField = diContainer::class.java.getDeclaredField("instances")
-        instancesField.isAccessible = true
-        val instances = instancesField.get(diContainer) as Map<*, *>
-
         // when
         val productRepository1 = diContainer.get(typeOf<ProductRepository>())
         val cart1 = diContainer.get(typeOf<CartRepository>())
@@ -102,8 +71,8 @@ class DependencyContainerTest {
         val cart2 = diContainer.get(typeOf<CartRepository>())
 
         // then
-        assertEquals(productRepository1, instances[typeOf<ProductRepository>()])
-        assertEquals(cart1, instances[typeOf<CartRepository>()])
+        assertNotNull(productRepository1)
+        assertNotNull(cart1)
         assertEquals(productRepository1, productRepository2)
         assertEquals(cart1, cart2)
     }

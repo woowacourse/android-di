@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.di.annotation
+package woowacourse.shopping.di.annotation
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
