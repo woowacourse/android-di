@@ -66,27 +66,28 @@ class DependencyInjector(
     fun inject(target: Any) {
         target::class.declaredMemberProperties.forEach { property ->
             if (!hasInjectAnnotation(property)) return@forEach
+            val qualifierName: String? = property.findAnnotation<Qualifier>()?.name
 
-            val qualifierName = property.findAnnotation<Qualifier>()?.name
-
-            property.javaField?.let { field ->
-                val dependency =
-                    qualifierName?.let { get(property.returnType, qualifierName) }
-                        ?: run {
-                            get(property.returnType)
-                        }
-
-                field.set(target, dependency)
-            }
+            injectDependency(target, property, qualifierName)
         }
     }
 
-    private fun hasInjectAnnotation(property: KProperty1<out Any, *>): Boolean {
-        val javaField = property.javaField
-        val hasInjectAnnotation =
-            property.findAnnotation<Inject>() != null ||
-                javaField?.getAnnotation(Inject::class.java) != null
-        return hasInjectAnnotation
+    private fun hasInjectAnnotation(property: KProperty1<out Any, *>): Boolean = property.findAnnotation<Inject>() != null
+
+    private fun injectDependency(
+        target: Any,
+        property: KProperty1<out Any, *>,
+        qualifierName: String?,
+    )  {
+        property.javaField?.let { field ->
+            val dependency =
+                qualifierName?.let { get(property.returnType, qualifierName) }
+                    ?: run {
+                        get(property.returnType)
+                    }
+
+            field.set(target, dependency)
+        }
     }
 
     companion object {
