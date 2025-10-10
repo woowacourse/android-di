@@ -19,7 +19,7 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         fakeCartRepository = FakeCartRepository()
-        viewModel = CartViewModel(cartRepository = fakeCartRepository)
+        viewModel = CartViewModel()
     }
 
     @Test

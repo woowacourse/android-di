@@ -23,11 +23,7 @@ class MainViewModelTest {
         fakeProductRepository = FakeProductRepository()
         fakeCartRepository = FakeCartRepository()
 
-        viewModel =
-            MainViewModel(
-                cartRepository = fakeCartRepository,
-                productRepository = fakeProductRepository,
-            )
+        viewModel = MainViewModel()
     }
 
     @Test

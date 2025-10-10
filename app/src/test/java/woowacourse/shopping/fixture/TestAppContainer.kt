@@ -3,12 +3,12 @@ package woowacourse.shopping.fixture
 import kotlin.reflect.KClass
 
 class TestAppContainer {
-    val fakeRepository = FakeProductRepository()
+    val fakeProductRepository = FakeProductRepository()
 
     private val providers = mutableMapOf<KClass<*>, Any>()
 
     init {
-        providers[FakeProductRepository::class] = fakeRepository
+        providers[FakeProductRepository::class] = fakeProductRepository
     }
 
     @Suppress("UNCHECKED_CAST")
