@@ -10,9 +10,17 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.staticFunctions
 
-class Person(var firstName: String, val lastName: String, private var age: Int) {
+abstract class Woowacourse {
+    protected val buildingAddress: String = "Seolleung"
+}
+
+class Person(var firstName: String, val lastName: String, private var age: Int) : Woowacourse() {
+    private val nickName: String = "Jerry"
+    private val address: String = "Anyang"
+
     fun greeting() {}
     private fun fullName() {}
     private fun Int.isAdult() {}
@@ -45,7 +53,13 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 프로퍼티`() {
         val declaredMemberProperties = Person::class.declaredMemberProperties
-        assertThat(declaredMemberProperties.size).isEqualTo(3)
+        assertThat(declaredMemberProperties.size).isEqualTo(5)
+    }
+
+    @Test
+    fun `클래스 내에서 선언된 프로퍼티(상속된 거 포함)`() {
+        val declaredMemberProperties = Person::class.memberProperties
+        assertThat(declaredMemberProperties.size).isEqualTo(6)
     }
 
     @Test
