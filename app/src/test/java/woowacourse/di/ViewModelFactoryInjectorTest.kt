@@ -25,10 +25,11 @@ class ViewModelFactoryInjectorTest {
 
     @Test
     fun `ViewModel이 DI를 통해 정상적으로 생성되고 필요한 의존성이 주입된다`() {
-        // when
+        // given
         val viewModel = viewModelFactory.create(CartViewModel::class.java)
         val field = viewModel::class.java.getDeclaredField("cartRepository")
-        field.isAccessible = true
+
+        // when
         val injectedRepository = field.get(viewModel)
 
         // then

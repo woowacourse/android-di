@@ -22,7 +22,6 @@ import woowacourse.shopping.data.repository.RepositoryModule
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.typeOf
 
 @RunWith(RobolectricTestRunner::class)
