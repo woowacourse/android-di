@@ -11,19 +11,17 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
+private typealias LazyProvider = () -> Any?
+private typealias Instance = Any
+
 class DependencyInjector(
     modules: List<DependencyModule>,
 ) {
-    private val providers = mutableMapOf<KType, () -> Any?>()
-    private val qualifierProviders = mutableMapOf<Pair<KType, String>, () -> Any?>()
-
-    private val instances = mutableMapOf<KType, Any>()
-    private val qualifierInstances = mutableMapOf<Pair<KType, String>, Any>()
+    private val providers = mutableMapOf<DependencyKey, LazyProvider>()
+    private val instances = mutableMapOf<DependencyKey, Instance>()
 
     init {
-        modules.forEach {
-            registerModule(it)
-        }
+        modules.forEach(::registerModule)
     }
 
     private fun registerModule(module: DependencyModule) {
@@ -31,39 +29,30 @@ class DependencyInjector(
             val kType = property.returnType
             val qualifier = property.findAnnotation<Qualifier>()?.name
             val provider = { property.getter.call(module) }
-
-            qualifier?.let {
-                qualifierProviders[kType to it] = provider
-            } ?: run {
-                providers[kType] = provider
-            }
+            providers[DependencyKey(kType, qualifier)] = provider
         }
     }
 
-    fun get(type: KType): Any =
-        instances[type] ?: run {
-            val instance =
-                requireNotNull(providers[type]?.invoke()) {
-                    val className = (type.classifier as? KClass<*>)?.simpleName ?: type
-                    DEPENDENCY_NOT_FOUND.format(className)
-                }
-
-            instances[type] = instance
-            return instance
-        }
+    fun get(type: KType): Instance = get(DependencyKey(type))
 
     fun get(
         type: KType,
         qualifier: String,
-    ): Any =
-        qualifierInstances[type to qualifier] ?: run {
-            requireNotNull(qualifierProviders[type to qualifier]?.invoke()) {
-                val className = (type.classifier as? KClass<*>)?.simpleName ?: type
-                DEPENDENCY_NOT_FOUND.format("$className('$qualifier')")
+    ): Instance = get(DependencyKey(type, qualifier))
+
+    private fun get(key: DependencyKey): Instance {
+        return instances.getOrPut(key) {
+            val provider = providers[key]
+            requireNotNull(provider?.invoke()) {
+                val className = (key.type.classifier as? KClass<*>)?.simpleName ?: key.type
+                val dependencyName =
+                    key.qualifier?.let { "$className('$it')" } ?: className.toString()
+                DEPENDENCY_NOT_FOUND.format(dependencyName)
             }
         }
+    }
 
-    fun inject(target: Any) {
+    fun inject(target: Instance) {
         target::class.declaredMemberProperties.forEach { property ->
             if (!hasInjectAnnotation(property)) return@forEach
             val qualifierName: String? = property.findAnnotation<Qualifier>()?.name
@@ -75,16 +64,14 @@ class DependencyInjector(
     private fun hasInjectAnnotation(property: KProperty1<out Any, *>): Boolean = property.findAnnotation<Inject>() != null
 
     private fun injectDependency(
-        target: Any,
+        target: Instance,
         property: KProperty1<out Any, *>,
         qualifierName: String?,
-    )  {
+    ) {
         property.javaField?.let { field ->
             val dependency =
-                qualifierName?.let { get(property.returnType, qualifierName) }
-                    ?: run {
-                        get(property.returnType)
-                    }
+                qualifierName?.let { get(property.returnType, it) }
+                    ?: get(property.returnType)
 
             field.set(target, dependency)
         }
