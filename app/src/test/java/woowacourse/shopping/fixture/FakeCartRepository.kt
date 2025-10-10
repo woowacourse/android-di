@@ -1,18 +1,20 @@
 package woowacourse.shopping.fixture
 
+import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
 class FakeCartRepository : CartRepository {
     private val storage = mutableListOf<Product>()
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         storage.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> = storage.toList()
+    override suspend fun getAllCartProducts(): List<CartProductEntity> = storage.map { it.toEntity() }.toList()
 
-    override fun deleteCartProduct(id: Int) {
-        storage.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        storage.removeAt(id.toInt())
     }
 }
