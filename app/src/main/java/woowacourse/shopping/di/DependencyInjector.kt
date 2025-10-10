@@ -1,14 +1,40 @@
 package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
-interface DependencyInjector {
+object DependencyInjector {
+    private val instances = mutableMapOf<KClass<*>, Any>()
+    private val creating = mutableSetOf<KClass<*>>()
+
     fun <T : Any> setInstance(
         kClass: KClass<T>,
         instance: T,
-    )
+    ) {
+        instances[kClass] = instance
+    }
 
-    fun <T : Any> getInstance(kClass: KClass<T>): T
+    fun <T : Any> getInstance(kClass: KClass<T>): T {
+        return instances[kClass] as? T ?: run {
+            createInstance(kClass)
+            return instances[kClass] as T
+        }
+    }
 
-    fun createInstance(kClass: KClass<*>)
+    fun createInstance(kClass: KClass<*>) {
+        if (creating.contains(kClass)) throw IllegalStateException("순환 참조")
+        creating.add(kClass)
+
+        val primaryConstructor =
+            requireNotNull(kClass.primaryConstructor) { "${kClass.java.simpleName}주 생성자 없음" }
+
+        val params =
+            primaryConstructor.parameters.associateWith { param ->
+                val paramClass = requireNotNull(param.type.classifier as? KClass<*>)
+                getInstance(paramClass)
+            }
+        val instance = primaryConstructor.callBy(params)
+        instances[kClass] = instance
+        creating.remove(kClass)
+    }
 }

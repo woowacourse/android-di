@@ -10,13 +10,12 @@ import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
 import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.DependencyInjectorImpl
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.primaryConstructor
 
 class AutoViewModelFactory(
     owner: SavedStateRegistryOwner,
-    private val dependencyInjector: DependencyInjector,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel> create(
         key: String,
@@ -29,10 +28,23 @@ class AutoViewModelFactory(
             constructor.parameters.associateWith { param ->
                 when (param.type.classifier) {
                     SavedStateHandle::class -> handle
-                    else -> dependencyInjector.getInstance(param.type.classifier as KClass<*>)
+                    else -> DependencyInjector.getInstance(param.type.classifier as KClass<*>)
                 }
             }
-        return constructor.callBy(params)
+        val instance = constructor.callBy(params)
+
+        kClass.members
+            .filterIsInstance<KMutableProperty1<Any, Any>>()
+            .forEach { property ->
+                val dependencyClass = property.returnType.classifier as? KClass<*>
+                dependencyClass?.let {
+                    property.setter.call(
+                        instance,
+                        DependencyInjector.getInstance(it),
+                    )
+                }
+            }
+        return instance
     }
 }
 
@@ -40,7 +52,7 @@ class AutoViewModelFactory(
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> Factory)? = {
-        AutoViewModelFactory(this, DependencyInjectorImpl)
+        AutoViewModelFactory(this)
     },
 ): Lazy<VM> =
     ViewModelLazy(
