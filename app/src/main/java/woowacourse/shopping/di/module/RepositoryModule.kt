@@ -1,7 +1,9 @@
 package woowacourse.shopping.di.module
 
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.di.AppInjector
 import woowacourse.shopping.di.Provider
 import woowacourse.shopping.di.definition.DefinitionInformation
 import woowacourse.shopping.di.definition.Kind
@@ -21,7 +23,12 @@ class RepositoryModule : InjectionModule {
                 kclass = CartRepository::class,
                 qualifier = null,
                 kind = Kind.SINGLETON,
-                provider = { _ -> Provider { CartRepositoryImpl() } },
+                provider = { injector: AppInjector ->
+                    Provider {
+                        val dao: CartProductDao = injector.get()
+                        CartRepositoryImpl(dao)
+                    }
+                },
             ),
         )
 
