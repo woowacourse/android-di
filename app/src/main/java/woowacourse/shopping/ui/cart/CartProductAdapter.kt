@@ -1,37 +1,39 @@
 package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import woowacourse.shopping.model.Product
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
     private val dateFormatter: DateFormatter,
-) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
-
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
-    }
-
+    private val listener: CartProductClickListener,
+) : ListAdapter<Product, CartProductViewHolder>(diffUtil) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,
         position: Int,
     ) {
-        holder.bind(items[position])
+        val item = getItem(position)
+        holder.bind(item, listener)
     }
 
-    override fun getItemCount(): Int = items.size
+    companion object {
+        private val diffUtil =
+            object : DiffUtil.ItemCallback<Product>() {
+                override fun areItemsTheSame(
+                    oldItem: Product,
+                    newItem: Product,
+                ): Boolean = oldItem.id == newItem.id
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+                override fun areContentsTheSame(
+                    oldItem: Product,
+                    newItem: Product,
+                ): Boolean = oldItem == newItem
+            }
     }
 }

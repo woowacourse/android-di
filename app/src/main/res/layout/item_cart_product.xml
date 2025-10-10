@@ -8,6 +8,10 @@
         <variable
             name="item"
             type="woowacourse.shopping.model.Product" />
+
+        <variable
+            name="listener"
+            type="woowacourse.shopping.ui.cart.CartProductClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +35,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:src="@drawable/ic_delete"
+            android:onClick="@{() -> listener.onDeleteClicked(item.id)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
