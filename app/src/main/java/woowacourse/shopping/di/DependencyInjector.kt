@@ -21,7 +21,7 @@ object DependencyInjector {
         }
     }
 
-    fun createInstance(kClass: KClass<*>) {
+    private fun createInstance(kClass: KClass<*>) {
         if (creating.contains(kClass)) throw IllegalStateException("순환 참조")
         creating.add(kClass)
 

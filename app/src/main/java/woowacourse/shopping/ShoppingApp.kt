@@ -4,7 +4,7 @@ import android.app.Application
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DependencyInjectorImpl
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
@@ -15,8 +15,8 @@ class ShoppingApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        DependencyInjectorImpl.setInstance(ProductRepository::class, ProductRepositoryImpl())
-        DependencyInjectorImpl.setInstance(
+        DependencyInjector.setInstance(ProductRepository::class, ProductRepositoryImpl())
+        DependencyInjector.setInstance(
             CartRepository::class,
             CartRepositoryImpl(database.cartProductDao()),
         )
