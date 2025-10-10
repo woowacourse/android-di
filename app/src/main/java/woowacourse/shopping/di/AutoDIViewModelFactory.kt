@@ -1,7 +1,9 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -18,18 +20,28 @@ class AutoDIViewModelFactory(
         extras: CreationExtras,
     ): T {
         val constructor: KFunction<T> =
-            modelClass.kotlin.primaryConstructor ?: return super.create(modelClass)
+            modelClass.kotlin.primaryConstructor
+                ?: return super.create(modelClass)
+
         val args: Map<KParameter, Any?> =
             constructor.parameters
                 .associateWith { param ->
-                    dependencies[param.type.classifier]
-                        ?: if (param.isOptional) {
-                            return@associateWith null
-                        } else {
-                            throw IllegalArgumentException("주입 불가: ${param.name} (${param.type})")
+                    when {
+                        param.type.classifier == SavedStateHandle::class -> {
+                            extras.savedStateHandle()
                         }
+
+                        dependencies[param.type.classifier] != null -> {
+                            dependencies[param.type.classifier]
+                        }
+
+                        param.isOptional -> null
+                        else -> throw IllegalArgumentException("주입 불가: ${param.name}")
+                    }
                 }.filterValues { it != null }
 
         return constructor.callBy(args)
     }
+
+    private fun CreationExtras.savedStateHandle(): SavedStateHandle = createSavedStateHandle()
 }

@@ -78,4 +78,6 @@ dependencies {
     implementation(libs.glide)
     // Robolectric
     testImplementation(libs.robolectric)
+    // SavedState
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 }
