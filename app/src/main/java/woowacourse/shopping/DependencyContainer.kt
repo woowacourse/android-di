@@ -12,7 +12,7 @@ class DependencyContainer(
     context: Context,
 ) : Container {
     val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.getInstance(context)
-    val databaseModule: DatabaseModule = DatabaseModule(shoppingDatabase)
+    val databaseModule = DatabaseModule(shoppingDatabase)
     val repositoryModule: DependencyModule = RepositoryModule(databaseModule)
 
     val dependencyInjector: DependencyInjector =
