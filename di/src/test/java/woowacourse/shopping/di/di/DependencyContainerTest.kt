@@ -4,6 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -13,12 +14,16 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeRepositoryModule
+import woowacourse.shopping.di.fake.FakeViewModel
 import woowacourse.shopping.di.fake.repository.FakeNotRegisteredProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.collections.get
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.typeOf
 
 @RunWith(RobolectricTestRunner::class)
@@ -122,4 +127,30 @@ class DependencyContainerTest {
             // then
             assertTrue(results.all { it === results.first() })
         }
+
+    @Test
+    fun `Qualifier가 붙은 동일 타입 의존성이 올바르게 주입된다`() {
+        // given
+        val viewModel = FakeViewModel()
+
+        // when
+        diContainer.inject(viewModel)
+        val myCartProperties =
+            viewModel::class.declaredMemberProperties
+                .first { it.name == "myCartRepository" }
+        val othersCartProperties =
+            viewModel::class.declaredMemberProperties
+                .first { it.name == "othersCartRepository" }
+
+        val myCartQualifier = myCartProperties.findAnnotation<Qualifier>()?.name
+        val othersCartQualifier = othersCartProperties.findAnnotation<Qualifier>()?.name
+
+        val myCartInstance = myCartProperties.getter.call(viewModel)
+        val othersCartInstance = othersCartProperties.getter.call(viewModel)
+
+        // then
+        assertNotEquals(myCartInstance, othersCartInstance)
+        assertEquals("myCart", myCartQualifier)
+        assertEquals("othersCart", othersCartQualifier)
+    }
 }

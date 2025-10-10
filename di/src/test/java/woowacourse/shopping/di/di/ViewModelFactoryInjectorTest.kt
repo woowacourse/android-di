@@ -25,7 +25,7 @@ class ViewModelFactoryInjectorTest {
     fun `ViewModel이 DI를 통해 정상적으로 생성되고 필요한 의존성이 주입된다`() {
         // given
         val viewModel = viewModelFactory.create(FakeViewModel::class.java)
-        val field = viewModel::class.java.getDeclaredField("fakeCartRepository")
+        val field = viewModel::class.java.getDeclaredField("myCartRepository")
 
         // when
         val injectedRepository = field.get(viewModel)
@@ -47,7 +47,7 @@ class ViewModelFactoryInjectorTest {
             }
 
         // then
-        val expected = "CartRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "String 타입의 의존성이 등록되어있지 않습니다."
         val actual = exception.message
         assertEquals(expected, actual)
     }

@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
@@ -14,7 +15,10 @@ class DependencyInjector(
     modules: List<DependencyModule>,
 ) {
     private val providers = mutableMapOf<KType, () -> Any?>()
+    private val qualifierProviders = mutableMapOf<Pair<KType, String>, () -> Any?>()
+
     private val instances = mutableMapOf<KType, Any>()
+    private val qualifierInstances = mutableMapOf<Pair<KType, String>, Any>()
 
     init {
         modules.forEach {
@@ -25,7 +29,14 @@ class DependencyInjector(
     private fun registerModule(module: DependencyModule) {
         module::class.memberProperties.forEach { property ->
             val kType = property.returnType
-            providers[kType] = { property.getter.call(module) }
+            val qualifier = property.findAnnotation<Qualifier>()?.name
+            val provider = { property.getter.call(module) }
+
+            qualifier?.let {
+                qualifierProviders[kType to it] = provider
+            } ?: run {
+                providers[kType] = provider
+            }
         }
     }
 
@@ -41,12 +52,30 @@ class DependencyInjector(
             return instance
         }
 
+    fun get(
+        type: KType,
+        qualifier: String,
+    ): Any =
+        qualifierInstances[type to qualifier] ?: run {
+            requireNotNull(qualifierProviders[type to qualifier]?.invoke()) {
+                val className = (type.classifier as? KClass<*>)?.simpleName ?: type
+                DEPENDENCY_NOT_FOUND.format("$className('$qualifier')")
+            }
+        }
+
     fun inject(target: Any) {
         target::class.declaredMemberProperties.forEach { property ->
             if (!hasInjectAnnotation(property)) return@forEach
 
+            val qualifierName = property.findAnnotation<Qualifier>()?.name
+
             property.javaField?.let { field ->
-                val dependency = get(property.returnType)
+                val dependency =
+                    qualifierName?.let { get(property.returnType, qualifierName) }
+                        ?: run {
+                            get(property.returnType)
+                        }
+
                 field.set(target, dependency)
             }
         }

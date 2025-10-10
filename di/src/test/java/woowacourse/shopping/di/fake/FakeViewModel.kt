@@ -2,6 +2,7 @@ package woowacourse.shopping.di.fake
 
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.domain.CartRepository
 
 class FakeViewModel : ViewModel() {
@@ -11,5 +12,10 @@ class FakeViewModel : ViewModel() {
     lateinit var nonInjectedString: String
 
     @Inject
-    lateinit var fakeCartRepository: CartRepository
+    @Qualifier("myCart")
+    lateinit var myCartRepository: CartRepository
+
+    @Inject
+    @Qualifier("othersCart")
+    lateinit var othersCartRepository: CartRepository
 }
