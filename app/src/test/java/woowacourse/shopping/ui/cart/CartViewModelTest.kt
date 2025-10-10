@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
@@ -12,13 +13,16 @@ import woowacourse.shopping.ui.getOrAwaitValue
 class CartViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+    lateinit var viewModel: CartViewModel
+
+    @Before
+    fun setUp() {
+        val cartRepository = FakeCartRepository().apply { addCartProduct(PRODUCT_1) }
+        viewModel = CartViewModel(cartRepository)
+    }
 
     @Test
     fun `장바구니 데이터를 불러올 수 있다`() {
-        // given
-        val cartRepository = FakeCartRepository().apply { addCartProduct(PRODUCT_1) }
-        val viewModel = CartViewModel(cartRepository)
-
         // when
         viewModel.getAllCartProducts()
 
@@ -30,10 +34,6 @@ class CartViewModelTest {
 
     @Test
     fun `장바구니에서 특정 인덱스에 있는 상품을 제거할 수 있다`() {
-        // given
-        val cartRepository = FakeCartRepository().apply { addCartProduct(PRODUCT_1) }
-        val viewModel = CartViewModel(cartRepository)
-
         // when
         viewModel.deleteCartProduct(0)
         viewModel.getAllCartProducts()
@@ -46,10 +46,6 @@ class CartViewModelTest {
 
     @Test
     fun `장바구니에 담긴 상품을 제거하면 상품 제거 이벤트가 발생한다`() {
-        // given
-        val cartRepository = FakeCartRepository().apply { addCartProduct(PRODUCT_1) }
-        val viewModel = CartViewModel(cartRepository)
-
         // when
         viewModel.deleteCartProduct(0)
 
