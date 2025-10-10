@@ -5,13 +5,14 @@ import androidx.room.PrimaryKey
 import woowacourse.shopping.domain.model.Product
 
 @Entity(tableName = "cart_products")
-data class CartProductEntity(val name: String, val price: Int, val imageUrl: String) {
+data class CartProductEntity(
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-
+    val id: Long = 0,
+    val name: String,
+    val price: Int,
+    val imageUrl: String,
+) {
     var createdAt: Long = System.currentTimeMillis()
 }
 
-fun CartProductEntity.toDomain(): Product {
-    return Product(name, price, imageUrl, createdAt)
-}
+fun CartProductEntity.toDomain(): Product = Product(id, name, price, imageUrl, createdAt)

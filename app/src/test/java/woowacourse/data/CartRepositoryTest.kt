@@ -24,6 +24,7 @@ class CartRepositoryTest {
             // given
             val product =
                 Product(
+                    id = 0,
                     name = "사과",
                     price = 3000,
                     imageUrl = "",
@@ -44,6 +45,7 @@ class CartRepositoryTest {
             // given
             val product =
                 Product(
+                    id = 0,
                     name = "사과",
                     price = 3000,
                     imageUrl = "",
@@ -56,6 +58,7 @@ class CartRepositoryTest {
 
             // then
             val cartItems = repository.getAllCartProducts()
+            print("$cartItems")
             assertTrue(cartItems.isEmpty())
         }
 }
