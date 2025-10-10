@@ -1,9 +1,7 @@
 package woowacourse.shopping.di
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -11,8 +9,9 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KType
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.memberProperties
 
 class DIViewModelFactory(
     private val appContainer: AppContainer,
@@ -23,32 +22,37 @@ class DIViewModelFactory(
         extras: CreationExtras,
     ): T {
         val viewModelKClass = modelClass.kotlin
-        val primaryConstructor: KFunction<*> =
-            viewModelKClass.primaryConstructor
+
+        val constructor: KFunction<*> =
+            viewModelKClass.constructors.find { it.parameters.isEmpty() }
                 ?: throw IllegalArgumentException(
-                    "${viewModelKClass.qualifiedName} 클래스는 기본 생성자를 선언해야 합니다.",
+                    "${viewModelKClass.qualifiedName} 클래스는 필드 주입을 위해 기본 생성자를 선언해야 합니다.",
                 )
 
-        val application: Application? = extras[APPLICATION_KEY]
+        val instance = constructor.call() as T
 
-        val args =
-            primaryConstructor.parameters.associateWith { parameter ->
-                val parameterType: KType = parameter.type
-                val classifier = parameterType.classifier
+        viewModelKClass.memberProperties
+            .filter { property ->
+                property.annotations.any { it.annotationClass == Inject::class }
+            }.forEach { property ->
+                if (property is KMutableProperty1<*, *>) {
+                    val requestedType: KType = property.returnType
 
-                when (classifier) {
-                    Application::class ->
-                        requireNotNull(application) { "CreationExtras 안에 Application이 없습니다." }
-
-                    else ->
-                        appContainer.resolve(parameterType)
+                    val dependency =
+                        appContainer.resolve(requestedType)
                             ?: throw IllegalStateException(
-                                "타입에 대한 제공자가 없습니다",
+                                "필드 타입 ${requestedType}에 대한 제공자가 AppContainer에 없습니다.",
                             )
+
+                    property.setter.call(instance, dependency)
+                } else {
+                    throw IllegalStateException(
+                        "${property.name} 필드는 필드 주입을 위해 lateinit var로 선언해야 합니다.",
+                    )
                 }
             }
 
-        return primaryConstructor.callBy(args) as T
+        return instance
     }
 }
 
