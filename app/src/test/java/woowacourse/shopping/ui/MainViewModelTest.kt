@@ -2,6 +2,7 @@ package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +49,9 @@ class MainViewModelTest {
 
         // then:
         val products = mainViewModel.products.getOrAwaitValue()
-        assertThat(products.size).isEqualTo(2)
-        assertThat(products).isEqualTo(PRODUCTS)
+        assertSoftly {
+            assertThat(products.size).isEqualTo(2)
+            assertThat(products).isEqualTo(PRODUCTS)
+        }
     }
 }

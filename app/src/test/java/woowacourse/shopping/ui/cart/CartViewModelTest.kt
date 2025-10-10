@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,8 +29,10 @@ class CartViewModelTest {
 
         // then:
         val products = cartViewModel.cartProducts.getOrAwaitValue()
-        assertThat(products.size).isEqualTo(2)
-        assertThat(products).isEqualTo(CARTS)
+        assertSoftly {
+            assertThat(products.size).isEqualTo(2)
+            assertThat(products).isEqualTo(CARTS)
+        }
     }
 
     @Test
