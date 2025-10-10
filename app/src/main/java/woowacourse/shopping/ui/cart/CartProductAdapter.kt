@@ -1,37 +1,36 @@
 package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.ui.ProductClickListener
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    private val productClickListener: ProductClickListener,
     private val dateFormatter: DateFormatter,
-) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
+) : ListAdapter<Product, CartProductViewHolder>(
+        object : DiffUtil.ItemCallback<Product>() {
+            override fun areItemsTheSame(
+                oldItem: Product,
+                newItem: Product,
+            ): Boolean = oldItem.id == newItem.id
 
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
-    }
-
+            override fun areContentsTheSame(
+                oldItem: Product,
+                newItem: Product,
+            ): Boolean = oldItem == newItem
+        },
+    ) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, productClickListener)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,
         position: Int,
     ) {
-        holder.bind(items[position])
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+        holder.bind(getItem(position))
     }
 }
