@@ -23,12 +23,13 @@ class DIContainer(private val interfaceMapping: Map<KClass<*>, KClass<*>>) {
     private fun createNewInstance(kClass: KClass<*>): Any {
         val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
 
-        val parameterMap = constructor.parameters
-            .filterNot { it.isOptional }
-            .associateWith { param ->
-                val paramType = param.type.classifier as KClass<*>
-                getInstance(paramType)
-            }
+        val parameterMap =
+            constructor.parameters
+                .filterNot { it.isOptional }
+                .associateWith { param ->
+                    val paramType = param.type.classifier as KClass<*>
+                    getInstance(paramType)
+                }
         return constructor.callBy(parameterMap)
     }
 

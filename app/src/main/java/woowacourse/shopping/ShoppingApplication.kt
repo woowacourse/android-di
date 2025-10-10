@@ -16,7 +16,7 @@ class ShoppingApplication : Application() {
     private fun createInterfaceMapping(): Map<KClass<*>, KClass<*>> {
         return mapOf(
             ProductRepository::class to ProductDefaultRepository::class,
-            CartRepository::class to CartDefaultRepository::class
+            CartRepository::class to CartDefaultRepository::class,
         )
     }
 }
