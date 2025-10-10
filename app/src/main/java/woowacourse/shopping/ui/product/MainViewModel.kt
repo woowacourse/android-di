@@ -12,11 +12,28 @@ class MainViewModel(
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
+    private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+    val products: LiveData<List<Product>> get() = _products
+
+    private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
+    val onProductAdded: LiveData<Boolean> get() = _onProductAdded
+
+    fun addCartProduct(product: Product) {
+        cartRepository.addCartProduct(product)
+        _onProductAdded.value = true
+    }
+
+    fun getAllProducts() {
+        _products.value = productRepository.getAllProducts()
+    }
+}
+
+class MainViewModel2 : ViewModel() {
     @Inject
-    lateinit var productRepository2: ProductRepository
+    lateinit var productRepository: ProductRepository
 
     @Inject
-    lateinit var cartRepository2: CartRepository
+    lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

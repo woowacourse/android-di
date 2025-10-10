@@ -9,7 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.InjectableViewModel
 import woowacourse.shopping.ui.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
@@ -17,8 +17,8 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel: CartViewModel by viewModels { ViewModelFactory }
 
-    @Inject
-    lateinit var viewModel2: CartViewModel
+    @InjectableViewModel
+    lateinit var viewModel2: CartViewModel2
 
     private lateinit var dateFormatter: DateFormatter
 
