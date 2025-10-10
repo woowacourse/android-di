@@ -7,10 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 import woowacourse.shopping.di.AppInjector
 import woowacourse.shopping.di.common.castKclassOrThrow
-import woowacourse.shopping.di.common.getPrimaryConstructorOrThrow
 import woowacourse.shopping.di.definition.Qualifier
 
 class AppViewModelFactory(
@@ -23,8 +27,17 @@ class AppViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        val constructor: KFunction<T> = modelClass.getPrimaryConstructorOrThrow()
+        val constructor: KFunction<T>? = modelClass.kotlin.primaryConstructor
 
+        var instance: T? = null
+        if (constructor != null) instance = constructorInjection(constructor, handle)
+        return fieldInjection(modelClass.kotlin, instance)
+    }
+
+    private fun <T : ViewModel> constructorInjection(
+        constructor: KFunction<T>,
+        handle: SavedStateHandle,
+    ): T {
         val arguments: Map<KParameter, Any> =
             constructor.parameters
                 .mapNotNull { parameter: KParameter ->
@@ -32,7 +45,6 @@ class AppViewModelFactory(
                     val value: Any? = resolveInjectValue(kclass, handle, parameter)
                     if (value != null) parameter to value else null
                 }.toMap()
-
         return constructor.callBy(arguments)
     }
 
@@ -58,6 +70,29 @@ class AppViewModelFactory(
     }
 
     private fun hasDefaultValue(kParameter: KParameter) = kParameter.isOptional
+
+    private fun <T : ViewModel> fieldInjection(
+        modelClass: KClass<T>,
+        instance: T?,
+    ): T {
+        val newInstance: T = instance ?: modelClass.createInstance()
+
+        modelClass.memberProperties
+            .filterIsInstance<KMutableProperty1<T, Any?>>()
+            .filter { it.isLateinit }
+            .forEach { field ->
+                val kclass: KClass<*> = field.returnType.classifier as? KClass<*> ?: return@forEach
+
+                if (AppInjector.hasDefinition(kclass, qualifiers[kclass])) {
+                    field.apply {
+                        isAccessible = true
+                        setter.call(newInstance, AppInjector.get(kclass, qualifiers[kclass]))
+                    }
+                }
+            }
+
+        return newInstance
+    }
 
     companion object {
         private const val ERROR_NO_DEFINITION_INFORMATION = "주입된 정보가 존재하지 않습니다, parameterName = %s"

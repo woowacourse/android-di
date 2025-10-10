@@ -69,7 +69,7 @@ Application 실행 -> Module 들에 기록해놓은 정보들을 Injector에 기
 
 필드 주입
 
-- [ ] ViewModel 내 필드 주입을 구현한다.
+- [x] ViewModel 내 필드 주입을 구현한다.
 
 Annotation
 
