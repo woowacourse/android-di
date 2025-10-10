@@ -1,27 +1,48 @@
 package woowacourse.di
 
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import woowacourse.fake.NotRegisteredRepository
 import woowacourse.shopping.core.DependencyModule
+import woowacourse.shopping.data.db.DatabaseModule
+import woowacourse.shopping.data.db.ShoppingDatabase
 import woowacourse.shopping.data.repository.RepositoryModule
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.typeOf
 
+@RunWith(RobolectricTestRunner::class)
 class DependencyContainerTest {
+    private lateinit var db: ShoppingDatabase
+    private lateinit var databaseModule: DatabaseModule
     private lateinit var repositoryModule: DependencyModule
     private lateinit var diContainer: DependencyInjector
 
     @Before
     fun setup() {
-        repositoryModule = RepositoryModule()
-        diContainer = DependencyInjector(listOf(repositoryModule))
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        db =
+            Room.inMemoryDatabaseBuilder(context, ShoppingDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
+
+        databaseModule = DatabaseModule(db)
+        repositoryModule = RepositoryModule(databaseModule)
+        diContainer = DependencyInjector(listOf(databaseModule, repositoryModule))
     }
 
     @Test
@@ -92,4 +113,24 @@ class DependencyContainerTest {
         assertEquals(productRepository1, productRepository2)
         assertEquals(cart1, cart2)
     }
+
+    @Test
+    fun `멀티스레드 환경에서도 동일 인스턴스를 반환한다`() =
+        runTest {
+            // given
+            val results = mutableListOf<ProductRepository>()
+
+            // when
+            coroutineScope {
+                repeat(10_000_0) {
+                    launch {
+                        val repo = diContainer.get(typeOf<ProductRepository>()) as ProductRepository
+                        results.add(repo)
+                    }
+                }
+            }
+
+            // then
+            assertTrue(results.all { it === results.first() })
+        }
 }

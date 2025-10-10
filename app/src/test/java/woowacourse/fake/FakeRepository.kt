@@ -12,9 +12,9 @@ class NotRegisteredRepository : FakeRepository {
 }
 
 class FakeCartRepository : CartRepository {
-    override fun addCartProduct(product: Product) {}
+    override suspend fun addCartProduct(product: Product) {}
 
-    override fun getAllCartProducts(): List<Product> = emptyList()
+    override suspend fun getAllCartProducts(): List<Product> = emptyList()
 
-    override fun deleteCartProduct(id: Int) {}
+    override suspend fun deleteCartProduct(id: Long) {}
 }
