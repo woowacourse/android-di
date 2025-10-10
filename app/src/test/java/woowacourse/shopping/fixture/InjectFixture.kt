@@ -1,6 +1,7 @@
 package woowacourse.shopping.fixture
 
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
@@ -23,6 +24,9 @@ data class FactoryFixtureCar(
 )
 
 class ViewModelFieldInjectFixture : ViewModel() {
+    @Inject
     lateinit var productRepository: ProductRepository
+
+    @Inject
     lateinit var cartRepository: CartRepository
 }
