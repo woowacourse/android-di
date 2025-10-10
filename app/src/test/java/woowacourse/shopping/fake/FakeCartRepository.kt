@@ -1,32 +1,39 @@
 package woowacourse.shopping.fake
 
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.mapper.toDomain
+import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class FakeCartRepository : CartRepository {
-    val carts: MutableList<Product> = CARTS.toMutableList()
+    val carts: MutableList<CartProductEntity> = CARTS_ENTITY.toMutableList()
 
-    override fun addCartProduct(product: Product) {
-        carts.add(product)
+    override suspend fun addCartProduct(product: Product) {
+        carts.add(product.toEntity())
     }
 
-    override fun getAllCartProducts(): List<Product> = carts
+    override suspend fun getAllCartProducts(): List<CartProduct> = carts.map(CartProductEntity::toDomain)
 
-    override fun deleteCartProduct(id: Int) {
-        carts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        carts.filter { it.id != id }
     }
 }
 
-val CARTS =
+val CARTS_ENTITY =
     listOf(
-        Product(
+        CartProductEntity(
             name = "떡뻥",
             price = 2000,
             imageUrl = "",
         ),
-        Product(
+        CartProductEntity(
             name = "떡뻥",
             price = 2000,
             imageUrl = "",
         ),
     )
+
+val CART_PRODUCTS =
+    CARTS_ENTITY.map(CartProductEntity::toDomain)
