@@ -23,7 +23,7 @@ class CartViewModel : ViewModel() {
         viewModelScope.launch {
             _cartProducts.value =
                 cartRepository.getAllCartProducts().map {
-                    Product(it.name, it.price, it.imageUrl, it.createdAt)
+                    Product(it.id.toInt(), it.name, it.price, it.imageUrl, it.createdAt)
                 }
         }
     }
@@ -31,6 +31,7 @@ class CartViewModel : ViewModel() {
     fun deleteCartProduct(id: Int) {
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
+            _cartProducts.value = _cartProducts.value?.filter { it.id != id }
             _onCartProductDeleted.value = true
         }
     }
