@@ -26,6 +26,7 @@ class DatabaseModule : InjectionModule {
         )
 
     companion object {
+        private const val DATABASE_NAME = "shopping_db"
         lateinit var localDatabase: ShoppingDatabase
             private set
 
@@ -35,7 +36,7 @@ class DatabaseModule : InjectionModule {
                     .databaseBuilder(
                         context,
                         ShoppingDatabase::class.java,
-                        "shopping_db",
+                        DATABASE_NAME,
                     ).build()
         }
     }

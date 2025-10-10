@@ -5,16 +5,22 @@ import androidx.arch.core.executor.TaskExecutor
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
-import woowacourse.shopping.fixture.PRODUCT_A_1000
-import woowacourse.shopping.fixture.PRODUCT_B_2000
+import woowacourse.shopping.fixture.PRODUCT_1L_A_1000
+import woowacourse.shopping.fixture.PRODUCT_2L_B_2000
 import woowacourse.shopping.getOrAwaitValue
 
 class MainViewModelTest :
     FunSpec({
+        val testDispatcher = StandardTestDispatcher()
+
         lateinit var viewModel: MainViewModel
         lateinit var productRepository: ProductRepository
         lateinit var cartRepository: CartRepository
@@ -29,6 +35,9 @@ class MainViewModelTest :
                     override fun isMainThread(): Boolean = true
                 },
             )
+
+            Dispatchers.setMain(testDispatcher)
+
             productRepository = FakeProductRepository()
             cartRepository = FakeCartRepository()
             viewModel = MainViewModel(productRepository, cartRepository)
@@ -36,14 +45,16 @@ class MainViewModelTest :
 
         afterTest {
             ArchTaskExecutor.getInstance().setDelegate(null)
+            Dispatchers.resetMain()
         }
 
         test("상품을 조회한다") {
             // given
-            val expected = listOf(PRODUCT_A_1000, PRODUCT_B_2000)
+            val expected = listOf(PRODUCT_1L_A_1000, PRODUCT_2L_B_2000)
 
             // when
             viewModel.getAllProducts()
+            testDispatcher.scheduler.advanceUntilIdle()
 
             // then
             val actual = viewModel.products.getOrAwaitValue()
@@ -55,7 +66,8 @@ class MainViewModelTest :
             val expected = true
 
             // when
-            viewModel.addCartProduct(PRODUCT_B_2000)
+            viewModel.addCartProduct(PRODUCT_2L_B_2000)
+            testDispatcher.scheduler.advanceUntilIdle()
 
             // then
             val actual = viewModel.onProductAdded.getOrAwaitValue()
