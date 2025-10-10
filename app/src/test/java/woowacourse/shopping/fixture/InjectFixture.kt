@@ -30,3 +30,10 @@ class ViewModelFieldInjectFixture : ViewModel() {
     @Inject
     lateinit var cartRepository: CartRepository
 }
+
+class ViewModelConstructorInjectFixture
+    @Inject
+    constructor(
+        val productRepository: ProductRepository,
+        val cartRepository: CartRepository,
+    ) : ViewModel()

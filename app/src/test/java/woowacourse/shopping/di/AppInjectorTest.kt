@@ -17,6 +17,7 @@ import woowacourse.shopping.fixture.FakeProductRepository
 import woowacourse.shopping.fixture.FakeSavedStateOwner
 import woowacourse.shopping.fixture.FixtureCar
 import woowacourse.shopping.fixture.SingletonFixtureCar
+import woowacourse.shopping.fixture.ViewModelConstructorInjectFixture
 import woowacourse.shopping.fixture.ViewModelFieldInjectFixture
 import woowacourse.shopping.ui.common.AppViewModelFactory
 
@@ -24,6 +25,22 @@ class AppInjectorTest :
     StringSpec({
         beforeTest {
             AppInjector.init(emptyList())
+        }
+
+        fun setUpArchTaskExecutor() {
+            ArchTaskExecutor.getInstance().setDelegate(
+                object : TaskExecutor() {
+                    override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
+
+                    override fun postToMainThread(runnable: Runnable) = runnable.run()
+
+                    override fun isMainThread(): Boolean = true
+                },
+            )
+        }
+
+        fun tearDownArchTaskExecutor() {
+            ArchTaskExecutor.getInstance().setDelegate(null)
         }
 
         "singleton 은 동일한 인스턴스를 반환한다" {
@@ -72,16 +89,7 @@ class AppInjectorTest :
         }
 
         "ViewModel의 경우 필드 주입으로 의존성을 주입할 수 있다" {
-            // setup
-            ArchTaskExecutor.getInstance().setDelegate(
-                object : TaskExecutor() {
-                    override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
-
-                    override fun postToMainThread(runnable: Runnable) = runnable.run()
-
-                    override fun isMainThread(): Boolean = true
-                },
-            )
+            setUpArchTaskExecutor()
 
             // given
             AppInjector.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
@@ -100,7 +108,29 @@ class AppInjectorTest :
             viewModel.productRepository.shouldBeInstanceOf<ProductRepository>()
             viewModel.productRepository.shouldBeInstanceOf<FakeProductRepository>()
 
-            // teardown
-            ArchTaskExecutor.getInstance().setDelegate(null)
+            tearDownArchTaskExecutor()
+        }
+
+        "ViewModel의 경우 생성자 주입으로 의존성을 주입할 수 있다" {
+            setUpArchTaskExecutor()
+
+            // given
+            AppInjector.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
+            AppInjector.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
+
+            // when
+            val viewModel =
+                AppViewModelFactory(owner = FakeSavedStateOwner()).create(
+                    ViewModelConstructorInjectFixture::class.java,
+                )
+
+            // then
+            viewModel.shouldBeInstanceOf<ViewModelConstructorInjectFixture>()
+            viewModel.cartRepository.shouldBeInstanceOf<CartRepository>()
+            viewModel.cartRepository.shouldBeInstanceOf<FakeCartRepository>()
+            viewModel.productRepository.shouldBeInstanceOf<ProductRepository>()
+            viewModel.productRepository.shouldBeInstanceOf<FakeProductRepository>()
+
+            tearDownArchTaskExecutor()
         }
     })
