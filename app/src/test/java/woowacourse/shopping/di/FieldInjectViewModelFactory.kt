@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.fixture.TestAppContainer
 
-class TestViewModelFactory(
+class FieldInjectViewModelFactory(
     private val appContainer: TestAppContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

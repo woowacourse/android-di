@@ -8,12 +8,12 @@ import woowacourse.shopping.fixture.TestAppContainer
 
 class FieldDIInjectionTest {
     private lateinit var container: TestAppContainer
-    private lateinit var factory: TestViewModelFactory
+    private lateinit var factory: FieldInjectViewModelFactory
 
     @Before
     fun setup() {
         container = TestAppContainer()
-        factory = TestViewModelFactory(container)
+        factory = FieldInjectViewModelFactory(container)
     }
 
     @Test
