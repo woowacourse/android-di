@@ -12,7 +12,7 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         val builder = ContainerBuilder()
-        installAllBindings(builder)
+        installAllBindings(builder, this)
         container = builder.build()
     }
 }

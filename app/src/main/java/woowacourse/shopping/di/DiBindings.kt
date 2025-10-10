@@ -1,11 +1,19 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
-fun installAllBindings(builder: ContainerBuilder) {
+fun installAllBindings(
+    builder: ContainerBuilder,
+    appContext: Context,
+) {
+    val db = ShoppingDatabase.getInstance(appContext)
+    val cartDao = db.cartProductDao()
+
     builder.register(ProductRepository::class) { ProductRepositoryImpl() }
-    builder.register(CartRepository::class) { CartRepositoryImpl() }
+    builder.register(CartRepository::class) { CartRepositoryImpl(cartDao) }
 }
