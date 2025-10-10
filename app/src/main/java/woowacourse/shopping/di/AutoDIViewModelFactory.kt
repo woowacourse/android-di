@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.primaryConstructor
 
 class AutoDIViewModelFactory(
     private val dependencies: Map<KClass<*>, Any>,
@@ -15,7 +16,8 @@ class AutoDIViewModelFactory(
         modelClass: Class<T>,
         extras: CreationExtras,
     ): T {
-        val constructor: KFunction<T> = modelClass.kotlin.constructors.first()
+        val constructor: KFunction<T> =
+            modelClass.kotlin.primaryConstructor ?: return super.create(modelClass)
         val args: Array<Any> =
             constructor.parameters
                 .map { param ->
