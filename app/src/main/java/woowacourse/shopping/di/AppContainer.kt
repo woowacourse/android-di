@@ -1,16 +1,27 @@
 package woowacourse.shopping.di
 
+import android.content.Context
+import androidx.room.Room
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 
-class AppContainer {
+class AppContainer(
+    private val context: Context,
+) {
     private val providers = mutableMapOf<KClass<*>, () -> Any>()
 
     init {
-        providers[CartRepository::class] = { DefaultCartRepository() }
+        val database =
+            Room
+                .inMemoryDatabaseBuilder(context, ShoppingDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
+
+        providers[CartRepository::class] = { DefaultCartRepository(database.cartProductDao()) }
         providers[ProductRepository::class] = { DefaultProductRepository() }
     }
 
