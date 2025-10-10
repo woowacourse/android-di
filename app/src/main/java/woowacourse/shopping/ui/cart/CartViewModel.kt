@@ -23,7 +23,7 @@ class CartViewModel : ViewModel() {
         viewModelScope.launch {
             _cartProducts.value =
                 cartRepository.getAllCartProducts().map {
-                    Product(it.name, it.price, it.imageUrl)
+                    Product(it.name, it.price, it.imageUrl, it.createdAt)
                 }
         }
     }
