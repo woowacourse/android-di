@@ -27,7 +27,7 @@
 - [ ] ViewModel 테스트
 - [ ] 모든 도메인 로직, Repository 단위 테스트 
 
-### 2단계 - 기능 요구 사항
+### 2단계 기능 요구 사항
 - [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
 - [x] 장바구니 상품의 추가된 날짜 정보를 확인할 수 있도록 한다.
 - [x] 필드 주입
@@ -41,3 +41,6 @@
 - [x] 현재는 장바구니 아이템 삭제 버튼을 누르면 RecyclerView의 position에 해당하는 상품이 지워진다.
   상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
 - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
+
+### 3단계 기능 요구 사항
+- [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
