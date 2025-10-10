@@ -1,29 +1,40 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.createInstance
 
 class ViewModelFactory(
     private val appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor =
-            modelClass.kotlin.primaryConstructor
-                ?: throw IllegalArgumentException(
-                    "${modelClass.simpleName}에 주 생성자가 없습니다",
-                )
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
+        val kClass = modelClass.kotlin
+        val vm = kClass.createInstance()
+        val savedStateHandle = extras.createSavedStateHandle()
 
-        val args =
-            constructor.parameters.associateWith { param ->
-                val clazz =
-                    param.type.classifier as? KClass<*>
-                        ?: throw IllegalArgumentException("${param.name} 타입 정보를 가져올 수 없습니다")
-                appContainer.resolve(clazz)
+        // 3. 필드 주입 (lateinit var, var)
+        kClass.members
+            .filterIsInstance<KMutableProperty1<T, Any?>>()
+            .forEach { prop ->
+                val clazz = prop.returnType.classifier as? KClass<*>
+                val dependency =
+                    when (clazz) {
+                        SavedStateHandle::class -> savedStateHandle
+                        else -> clazz?.let { appContainer.resolve(it) }
+                    }
+                if (dependency != null) {
+                    prop.setter.call(vm, dependency)
+                }
             }
 
-        return constructor.callBy(args)
+        return vm
     }
 }
