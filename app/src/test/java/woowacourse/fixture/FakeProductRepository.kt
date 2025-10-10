@@ -1,8 +1,10 @@
 package woowacourse.fixture
 
+import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
+@InMemory
 class FakeProductRepository : ProductRepository {
     private val currentTime = System.currentTimeMillis()
 
