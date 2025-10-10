@@ -1,9 +1,14 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.core.DependencyModule
+import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
 class DependencyInjector(
     modules: List<DependencyModule>,
@@ -35,6 +40,25 @@ class DependencyInjector(
             instances[type] = instance
             return instance
         }
+
+    fun inject(target: Any) {
+        target::class.declaredMemberProperties.forEach { property ->
+            if (!checkHasInjectAnnotation(property)) return@forEach
+
+            property.javaField?.let { field ->
+                val dependency = get(property.returnType)
+                field.set(target, dependency)
+            }
+        }
+    }
+
+    private fun checkHasInjectAnnotation(property: KProperty1<out Any, *>): Boolean {
+        val javaField = property.javaField
+        val hasInjectAnnotation =
+            property.findAnnotation<Inject>() != null ||
+                javaField?.getAnnotation(Inject::class.java) != null
+        return hasInjectAnnotation
+    }
 
     companion object {
         private const val DEPENDENCY_NOT_FOUND = "%s 타입의 의존성이 등록되어있지 않습니다."

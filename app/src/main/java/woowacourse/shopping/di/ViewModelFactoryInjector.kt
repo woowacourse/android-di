@@ -32,7 +32,11 @@ class ViewModelFactoryInjector(
     private fun <T> createInstance(
         constructor: KFunction<T>,
         params: Array<Any>,
-    ): T = constructor.call(*params)
+    ): T {
+        val instance = constructor.call(*params)
+        dependencyInjector.inject(instance as Any)
+        return instance
+    }
 
     companion object {
         private const val ERROR_NO_CONSTRUCTOR = "%s 클래스에 기본 생성자가 존재하지 않습니다."
