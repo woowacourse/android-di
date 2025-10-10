@@ -1,23 +1,40 @@
 package woowacourse.shopping.di
 
+import androidx.room.RoomDatabase
+import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class DIContainer(private val interfaceMapping: Map<KClass<*>, KClass<*>>) {
+class DIContainer(
+    private val interfaceMapping: Map<KClass<*>, KClass<*>>,
+    private val database: RoomDatabase,
+) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
     fun getInstance(kClass: KClass<*>): Any {
+        instances[kClass]?.let { return it }
+
+        resolveFromDatabase(kClass)?.let { dao ->
+            instances[kClass] = dao
+            return dao
+        }
+
         interfaceMapping[kClass]?.let {
             return getInstance(it)
         }
-        val existingInstance = instances[kClass]
-        if (existingInstance != null) {
-            return existingInstance
-        }
 
         val createdInstance = createNewInstance(kClass)
-        registerRepository(createdInstance)
+        registerRepository(kClass, createdInstance)
         return createdInstance
+    }
+
+    private fun resolveFromDatabase(kClass: KClass<*>): Any? {
+        val dbClass: Class<RoomDatabase> = database.javaClass
+        val method: Method =
+            dbClass.methods.firstOrNull { m: Method ->
+                m.parameterCount == 0 && kClass.java.isAssignableFrom(m.returnType)
+            } ?: return null
+        return method.invoke(database)
     }
 
     private fun createNewInstance(kClass: KClass<*>): Any {
@@ -33,7 +50,10 @@ class DIContainer(private val interfaceMapping: Map<KClass<*>, KClass<*>>) {
         return constructor.callBy(parameterMap)
     }
 
-    private inline fun <reified T> registerRepository(instance: T) {
-        instances[T::class] = instance as Any
+    private fun registerRepository(
+        kClass: KClass<*>,
+        instance: Any,
+    ) {
+        instances[kClass] = instance
     }
 }

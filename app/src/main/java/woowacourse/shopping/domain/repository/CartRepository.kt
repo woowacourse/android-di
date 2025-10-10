@@ -1,12 +1,12 @@
 package woowacourse.shopping.domain.repository
 
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
 interface CartRepository {
-    fun addCartProduct(product: Product)
+    suspend fun addCartProduct(product: Product)
 
-    fun getAllCartProducts(): List<Product>
+    suspend fun getAllCartProducts(): List<CartProductEntity>
 
-    fun deleteCartProduct(id: Int)
+    suspend fun deleteCartProduct(id: Int)
 }
