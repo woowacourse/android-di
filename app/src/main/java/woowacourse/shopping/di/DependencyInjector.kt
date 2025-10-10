@@ -43,7 +43,7 @@ class DependencyInjector(
 
     fun inject(target: Any) {
         target::class.declaredMemberProperties.forEach { property ->
-            if (!checkHasInjectAnnotation(property)) return@forEach
+            if (!hasInjectAnnotation(property)) return@forEach
 
             property.javaField?.let { field ->
                 val dependency = get(property.returnType)
@@ -52,7 +52,7 @@ class DependencyInjector(
         }
     }
 
-    private fun checkHasInjectAnnotation(property: KProperty1<out Any, *>): Boolean {
+    private fun hasInjectAnnotation(property: KProperty1<out Any, *>): Boolean {
         val javaField = property.javaField
         val hasInjectAnnotation =
             property.findAnnotation<Inject>() != null ||
