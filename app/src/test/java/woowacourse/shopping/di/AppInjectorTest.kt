@@ -86,7 +86,6 @@ class AppInjectorTest :
             // given
             AppInjector.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
             AppInjector.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
-            AppInjector.registerFactory<ViewModelFieldInjectFixture> { _ -> Provider { ViewModelFieldInjectFixture() } }
 
             // when
             val viewModel =
