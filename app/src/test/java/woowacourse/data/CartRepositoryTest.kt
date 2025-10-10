@@ -6,12 +6,11 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.fake.FakeCartProductDao
 import woowacourse.shopping.data.repository.DefaultCartRepository
-import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.model.Product
 
 class CartRepositoryTest {
-    private lateinit var repository: CartRepository
     private val cartDao = FakeCartProductDao()
+    private lateinit var repository: DefaultCartRepository
 
     @Before
     fun setUp() {
@@ -36,7 +35,7 @@ class CartRepositoryTest {
 
             // then
             val cartItems = repository.getAllCartProducts()
-            assertTrue(cartItems.contains(product))
+            assertTrue(cartItems.any { it.id == product.id })
         }
 
     @Test
