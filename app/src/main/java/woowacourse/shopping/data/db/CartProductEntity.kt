@@ -13,5 +13,5 @@ data class CartProductEntity(val name: String, val price: Int, val imageUrl: Str
 }
 
 fun CartProductEntity.toDomain(): Product {
-    return Product(name, price, imageUrl)
+    return Product(name, price, imageUrl, createdAt)
 }

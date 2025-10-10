@@ -22,7 +22,13 @@ class CartRepositoryTest {
     fun `상품을 장바구니에 추가하면 목록에 추가되고 장바구니 상품을 가져온다`() =
         runTest {
             // given
-            val product = Product(name = "사과", price = 3000, imageUrl = "")
+            val product =
+                Product(
+                    name = "사과",
+                    price = 3000,
+                    imageUrl = "",
+                    createdAt = System.currentTimeMillis(),
+                )
 
             // when
             repository.addCartProduct(product)
@@ -36,7 +42,13 @@ class CartRepositoryTest {
     fun `상품을 삭제하면 장바구니에서 제거된다`() =
         runTest {
             // given
-            val product = Product(name = "사과", price = 3000, imageUrl = "")
+            val product =
+                Product(
+                    name = "사과",
+                    price = 3000,
+                    imageUrl = "",
+                    createdAt = System.currentTimeMillis(),
+                )
             repository.addCartProduct(product)
 
             // when
