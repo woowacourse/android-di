@@ -11,8 +11,8 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(
-    private val interfaceMapping: Map<KClass<*>, KClass<*>>,
-    private val database: RoomDatabase,
+    private val interfaceMapping: Map<KClass<*>, KClass<*>>? = null,
+    private val database: RoomDatabase? = null,
 ) {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
@@ -38,7 +38,7 @@ class DIContainer(
             return dao
         }
 
-        interfaceMapping[kClass]?.let {
+        interfaceMapping?.get(kClass)?.let {
             return getInstance(it)
         }
 
@@ -66,6 +66,7 @@ class DIContainer(
     }
 
     private fun resolveFromDatabase(kClass: KClass<*>): Any? {
+        if (database == null) return null
         val dbClass: Class<RoomDatabase> = database.javaClass
         val method: Method =
             dbClass.methods.firstOrNull { m: Method ->
