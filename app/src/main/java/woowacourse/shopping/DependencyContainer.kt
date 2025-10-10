@@ -11,9 +11,9 @@ import woowacourse.shopping.di.DependencyInjector
 class DependencyContainer(
     context: Context,
 ) : Container {
-    val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.getInstance(context)
-    val databaseModule = DatabaseModule(shoppingDatabase)
-    val repositoryModule: DependencyModule = RepositoryModule(databaseModule)
+    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.getInstance(context)
+    private val databaseModule = DatabaseModule(shoppingDatabase)
+    private val repositoryModule: DependencyModule = RepositoryModule(databaseModule)
 
     val dependencyInjector: DependencyInjector =
         DependencyInjector(
