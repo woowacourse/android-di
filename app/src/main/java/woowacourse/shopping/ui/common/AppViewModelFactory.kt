@@ -5,11 +5,12 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.di.AppInjector
-import woowacourse.shopping.di.definition.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
+import woowacourse.shopping.di.AppInjector
+import woowacourse.shopping.di.definition.Qualifier
 
 class AppViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -21,12 +22,12 @@ class AppViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        val constructor =
+        val constructor: KFunction<T> =
             requireNotNull(modelClass.kotlin.primaryConstructor) {
                 ERROR_NO_PRIMARY_CONSTRUCTOR.format(modelClass.name)
             }
 
-        val arguments =
+        val arguments: Map<KParameter, Any> =
             constructor.parameters
                 .mapNotNull { parameter: KParameter ->
                     val kclass: KClass<*> =
@@ -34,7 +35,7 @@ class AppViewModelFactory(
                             ERROR_CAN_NOT_CONVERT_CLASS.format(parameter.name)
                         }
 
-                    val value =
+                    val value: Any? =
                         when {
                             kclass == SavedStateHandle::class -> handle
                             else -> getValueOrThrow(kclass, parameter)
@@ -52,7 +53,7 @@ class AppViewModelFactory(
     ): Any? {
         if (kParameter.isOptional) return null
 
-        val qualifier = qualifiers[kclass]
+        val qualifier: Qualifier? = qualifiers[kclass]
         if (AppInjector.hasDefinition(kclass, qualifier)) return AppInjector.get(kclass, qualifier)
 
         throw IllegalArgumentException(ERROR_NO_DEFINITION_INFORMATION.format(kParameter.name))
