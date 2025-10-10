@@ -8,7 +8,10 @@ fun Product.toEntity(): CartProductEntity =
         name = name,
         price = price,
         imageUrl = imageUrl,
-    )
+    ).apply {
+        id = this@toEntity.id
+        createdAt = this@toEntity.createdAt
+    }
 
 fun CartProductEntity.toDomain(): Product =
     Product(
@@ -16,4 +19,5 @@ fun CartProductEntity.toDomain(): Product =
         name = name,
         price = price,
         imageUrl = imageUrl,
+        createdAt = createdAt,
     )
