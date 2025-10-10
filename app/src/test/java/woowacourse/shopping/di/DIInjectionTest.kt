@@ -11,12 +11,12 @@ import woowacourse.shopping.fixture.ViewModelWithUnregisteredDependency
 
 class DIInjectionTest {
     private lateinit var container: TestAppContainer
-    private lateinit var factory: InjectViewModelFactory
+    private lateinit var factory: TestViewModelFactory
 
     @Before
     fun setup() {
         container = TestAppContainer()
-        factory = InjectViewModelFactory(container)
+        factory = TestViewModelFactory(container)
     }
 
     @Test
