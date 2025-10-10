@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
@@ -26,6 +27,10 @@ class DIContainer(
     }
 
     fun getInstance(kClass: KClass<*>): Any {
+        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
+            return createNewInstance(kClass)
+        }
+
         instances[kClass]?.let { return it }
 
         resolveFromDatabase(kClass)?.let { dao ->
@@ -38,7 +43,7 @@ class DIContainer(
         }
 
         val createdInstance = createNewInstance(kClass)
-        registerRepository(kClass, createdInstance)
+        registerInstance(kClass, createdInstance)
         return createdInstance
     }
 
@@ -82,7 +87,7 @@ class DIContainer(
         return constructor.callBy(parameterMap)
     }
 
-    private fun registerRepository(
+    private fun registerInstance(
         kClass: KClass<*>,
         instance: Any,
     ) {
