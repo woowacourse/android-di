@@ -20,16 +20,19 @@ class ViewModelFactory(
         val vm = kClass.createInstance()
         val savedStateHandle = extras.createSavedStateHandle()
 
-        // 3. 필드 주입 (lateinit var, var)
         kClass.members
             .filterIsInstance<KMutableProperty1<T, Any?>>()
             .forEach { prop ->
+                val javaField = kClass.java.getDeclaredField(prop.name)
+                if (!javaField.isAnnotationPresent(Inject::class.java)) return@forEach
+
                 val clazz = prop.returnType.classifier as? KClass<*>
                 val dependency =
                     when (clazz) {
                         SavedStateHandle::class -> savedStateHandle
                         else -> clazz?.let { appContainer.resolve(it) }
                     }
+
                 if (dependency != null) {
                     prop.setter.call(vm, dependency)
                 }
