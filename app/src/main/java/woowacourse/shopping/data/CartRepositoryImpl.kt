@@ -15,7 +15,8 @@ class CartRepositoryImpl(
 
     override suspend fun getAllCartProducts(): List<Product> = dao.getAll().map { it.toDomain() }
 
-    override suspend fun deleteCartProduct(id: Long) {
-        dao.delete(id)
-    }
+    override suspend fun deleteCartProduct(id: Long): Result<Unit> =
+        runCatching {
+            dao.delete(id)
+        }
 }

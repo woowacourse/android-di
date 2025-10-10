@@ -3,25 +3,43 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
 class CartViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
-    private val _cartProducts: MutableLiveData<List<Product>> =
-        MutableLiveData(emptyList())
+    private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData()
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    fun getAllCartProducts() {
-        _cartProducts.value = cartRepository.getAllCartProducts()
+    private val cachedCartProducts: MutableList<Product> = mutableListOf()
+
+    init {
+        getAllCartProducts()
     }
 
-    fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        _onCartProductDeleted.value = true
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            val result = cartRepository.deleteCartProduct(id)
+            result.onSuccess {
+                val product = cachedCartProducts.find { it.id == id } ?: return@launch
+                cachedCartProducts.remove(product)
+                _onCartProductDeleted.value = true
+            }
+
+            _cartProducts.value = cachedCartProducts.toList()
+        }
+    }
+
+    private fun getAllCartProducts() {
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.getAllCartProducts()
+            cachedCartProducts.addAll(cartProducts.value ?: emptyList())
+        }
     }
 }
