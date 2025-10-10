@@ -11,7 +11,9 @@ object ViewModelFactory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 val diContainer = (application as ShoppingApplication).diContainer
-                return diContainer.getInstance(modelClass.kotlin) as T
+                val viewModel: T = modelClass.getDeclaredConstructor().newInstance()
+                diContainer.injectFields(viewModel)
+                return viewModel
             }
         }
     }

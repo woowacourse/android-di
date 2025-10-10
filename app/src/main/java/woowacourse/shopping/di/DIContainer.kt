@@ -3,13 +3,27 @@ package woowacourse.shopping.di
 import androidx.room.RoomDatabase
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(
     private val interfaceMapping: Map<KClass<*>, KClass<*>>,
     private val database: RoomDatabase,
 ) {
     private val instances = mutableMapOf<KClass<*>, Any>()
+
+    fun injectFields(target: Any) {
+        target::class
+            .memberProperties
+            .filterIsInstance<KMutableProperty1<Any, Any?>>()
+            .filter { it.hasAnnotation<InjectField>() }
+            .forEach { property ->
+                injectSingleField(target, property)
+            }
+    }
 
     fun getInstance(kClass: KClass<*>): Any {
         instances[kClass]?.let { return it }
@@ -26,6 +40,24 @@ class DIContainer(
         val createdInstance = createNewInstance(kClass)
         registerRepository(kClass, createdInstance)
         return createdInstance
+    }
+
+    private fun injectSingleField(
+        target: Any,
+        property: KMutableProperty1<Any, Any?>,
+    ) {
+        try {
+            val fieldType = property.returnType.classifier as KClass<*>
+            val dependency = getInstance(fieldType)
+
+            property.isAccessible = true
+            property.set(target, dependency)
+        } catch (e: Exception) {
+            throw IllegalStateException(
+                "${target::class.simpleName}의 '${property.name}필드 주입 실패 : ${e.message}",
+                e,
+            )
+        }
     }
 
     private fun resolveFromDatabase(kClass: KClass<*>): Any? {
