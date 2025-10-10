@@ -75,7 +75,9 @@ class DIContainer(
     }
 
     private fun createNewInstance(kClass: KClass<*>): Any {
-        val constructor = kClass.primaryConstructor ?: throw IllegalStateException()
+        val constructor =
+            kClass.primaryConstructor
+                ?: throw IllegalStateException("주 생성자가 존재하지 않아 객체를 생성할 수 없습니다")
 
         val parameterMap =
             constructor.parameters
