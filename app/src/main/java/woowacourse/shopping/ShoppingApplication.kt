@@ -3,7 +3,7 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.data.repository.CartDefaultRepository
+import woowacourse.shopping.data.repository.CartRoomRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
 import woowacourse.shopping.di.DIContainer
 
@@ -20,7 +20,7 @@ class ShoppingApplication : Application() {
     val diContainer by lazy {
         DIContainer(
             ProductDefaultRepository::class,
-            CartDefaultRepository::class,
+            CartRoomRepository::class,
         ).registerSingleton(database)
     }
 }
