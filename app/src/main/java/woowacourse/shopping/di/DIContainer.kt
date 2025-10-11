@@ -12,10 +12,30 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(
-    private val interfaceMapping: Map<KClass<*>, KClass<*>>? = null,
     private val database: RoomDatabase? = null,
 ) {
     private val instances = mutableMapOf<KClass<*>, Any>()
+    private val registeredClasses = mutableSetOf<KClass<*>>()
+
+    private val interfaceMapping: Map<KClass<*>, KClass<*>> by lazy {
+        val mapping = mutableMapOf<KClass<*>, KClass<*>>()
+        registeredClasses
+            .forEach { implClass ->
+                val interfaces =
+                    implClass.supertypes
+                        .mapNotNull { it.classifier as? KClass<*> }
+                        .filter { it.java.isInterface }
+                interfaces.forEach { interfaceClass ->
+                    mapping[interfaceClass] = implClass
+                }
+            }
+        mapping
+    }
+
+    fun registerAutoImplClasses(vararg classes: KClass<*>): DIContainer {
+        registeredClasses.addAll(classes)
+        return this
+    }
 
     fun injectFields(target: Any) {
         target::class
