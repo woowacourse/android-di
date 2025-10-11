@@ -23,3 +23,9 @@
     - [x] 작성한 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성
 - [x] CartRepository가 DAO 객체를 참조하도록 변경
 - [x] CartProductViewHolder의 bind 함수를 수정하여 뷰에서도 날짜 정보를 확인할 수 있도록 변경
+
+### step3
+
+- [ ] DIContainer의 수동 매핑 생성자를 제거하고 인터페이스를 통해 구현체를 자동 연동
+- [ ] 하나의 인터페이스의 여러 구현체가 DIContainer에 등록된 경우를 Qualifier로 개선
+- [ ] DI 라이브러리를 모듈로 분리
