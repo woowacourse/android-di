@@ -6,6 +6,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.Test
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.di.DiContainer
+import woowacourse.shopping.di.MyInjector
 import woowacourse.shopping.model.CartRepository
 
 class DiContainerTest {
@@ -40,6 +41,38 @@ class DiContainerTest {
         class DisApplyClass(val callback: () -> Unit)
 
         shouldThrow<IllegalStateException> {
+            DiContainer.getInstance(DisApplyClass::class)
+        }
+    }
+
+    @Test
+    fun `어노테이션을 붙이면 필드 주입이 가능하다`() {
+        class DisApplyClass() {
+            @MyInjector
+            lateinit var cartRepository: CartRepository
+        }
+
+        val instance = DiContainer.getInstance(DisApplyClass::class)
+        instance.cartRepository.shouldBeInstanceOf<DefaultCartRepository>()
+    }
+
+    @Test
+    fun `어노테이션을 붙이면 필드 주입이 안된다`() {
+        class DisApplyClass() {
+            lateinit var cartRepository: CartRepository
+        }
+
+        val instance = DiContainer.getInstance(DisApplyClass::class)
+        shouldThrow<UninitializedPropertyAccessException> {
+            instance.cartRepository
+        }
+    }
+
+    @Test
+    fun `val값은 어노테이션을 붙이더라도 에러가 발생한다`() {
+        class DisApplyClass(@MyInjector val cartRepository: CartRepository)
+
+        shouldThrow<ClassCastException> {
             DiContainer.getInstance(DisApplyClass::class)
         }
     }
