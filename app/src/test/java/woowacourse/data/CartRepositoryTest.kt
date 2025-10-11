@@ -57,7 +57,6 @@ class CartRepositoryTest {
 
             // then
             val cartItems = repository.getAllCartProducts()
-            print("$cartItems")
             assertTrue(cartItems.isEmpty())
         }
 }
