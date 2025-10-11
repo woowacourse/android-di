@@ -3,6 +3,7 @@ package woowacourse.study
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
 import kotlin.reflect.full.declaredMemberFunctions
@@ -13,13 +14,24 @@ import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.staticFunctions
 
+annotation class Hi
+
 abstract class Woowacourse {
     protected val buildingAddress: String = "Seolleung"
 }
 
+class Job(
+    val name: String,
+    val money: Int,
+)
+
 class Person(var firstName: String, val lastName: String, private var age: Int) : Woowacourse() {
-    private val nickName: String = "Jerry"
+    val nickName: String = "Jerry"
+
+    @Hi
     private val address: String = "Anyang"
+
+    private lateinit var job: Job
 
     fun greeting() {}
     private fun fullName() {}
@@ -53,13 +65,22 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 프로퍼티`() {
         val declaredMemberProperties = Person::class.declaredMemberProperties
-        assertThat(declaredMemberProperties.size).isEqualTo(5)
+
+        declaredMemberProperties.forEach { properties: KProperty1<out Any, *> ->
+            println("parameters : ${properties.parameters}")
+            println("name : ${properties.name}")
+            println("annotations : ${properties.annotations}")
+            println("isLateinit : ${properties.isLateinit}")
+            println("returnType: ${properties.returnType}")
+            println("-------------------")
+        }
+        assertThat(declaredMemberProperties.size).isEqualTo(6)
     }
 
     @Test
     fun `클래스 내에서 선언된 프로퍼티(상속된 거 포함)`() {
         val declaredMemberProperties = Person::class.memberProperties
-        assertThat(declaredMemberProperties.size).isEqualTo(6)
+        assertThat(declaredMemberProperties.size).isEqualTo(7)
     }
 
     @Test
