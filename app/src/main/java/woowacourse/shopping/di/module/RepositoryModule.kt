@@ -1,5 +1,6 @@
 package woowacourse.shopping.di.module
 
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.di.DIContainer
@@ -9,6 +10,9 @@ import woowacourse.shopping.domain.repository.ProductRepository
 class RepositoryModule : Module {
     override fun register() {
         DIContainer.register(ProductRepository::class) { ProductRepositoryImpl() }
-        DIContainer.register(CartRepository::class) { CartRepositoryImpl() }
+        DIContainer.register(CartRepository::class) {
+            val cartProductDao = DIContainer.get(CartProductDao::class)
+            CartRepositoryImpl(cartProductDao)
+        }
     }
 }
