@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.shopping.di.annotation.InjectField
 
 class DIContainerTest {
     data class Brand(

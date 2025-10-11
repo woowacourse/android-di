@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
+import woowacourse.shopping.di.annotation.InjectField
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
