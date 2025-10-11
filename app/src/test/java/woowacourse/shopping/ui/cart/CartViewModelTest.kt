@@ -1,13 +1,11 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
-import woowacourse.shopping.fixture.ProductFixture
 import woowacourse.shopping.fixture.ProductsFixture
 import woowacourse.shopping.getOrAwaitValue
 
@@ -49,6 +47,11 @@ class CartViewModelTest {
 
         // then
         val onCartProductDeleted = viewModel.onCartProductDeleted.getOrAwaitValue()
-        assertThat(onCartProductDeleted).isTrue
+        val cartProducts = viewModel.cartProducts.getOrAwaitValue()
+
+        assertSoftly { softly ->
+            softly.assertThat(onCartProductDeleted).isTrue
+            softly.assertThat(cartProducts).doesNotContain(ProductsFixture[0])
+        }
     }
 }
