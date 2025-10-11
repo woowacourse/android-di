@@ -10,7 +10,7 @@ import woowacourse.shopping.ui.ProductClickListener
 class CartProductViewHolder private constructor(
     private val binding: ItemCartProductBinding,
     private val dateFormatter: DateFormatter,
-    productClickListener: ProductClickListener,
+    private val productClickListener: ProductClickListener,
 ) : RecyclerView.ViewHolder(binding.root) {
     private var product: Product? = null
 
@@ -23,6 +23,9 @@ class CartProductViewHolder private constructor(
     fun bind(product: Product) {
         this.product = product
         binding.item = product
+        product.createdAt?.let {
+            binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt)
+        }
         // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
     }
 
