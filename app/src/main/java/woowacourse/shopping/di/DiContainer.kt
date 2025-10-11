@@ -8,9 +8,13 @@ import woowacourse.shopping.model.ProductRepository
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
 import kotlin.reflect.cast
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
@@ -43,20 +47,40 @@ object DiContainer {
         val constructor: KFunction<Any> = implementClass.primaryConstructor
             ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(implementClass.simpleName))
 
-        val arguments: Map<KParameter, Any> =
-            constructor.parameters.associateWith { param ->
-                getInstance(
-                    param.type.classifier as? KClass<*>
-                        ?: error(
-                            ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
-                                implementClass.simpleName,
-                                param
-                            )
+        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
+            getInstance(
+                param.type.classifier as? KClass<*>
+                    ?: error(
+                        ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
+                            implementClass.simpleName,
+                            param
                         )
-                )
-            }
+                    )
+            )
+        }
 
-        return kClass.cast(constructor.callBy(arguments))
+        val instance = kClass.cast(constructor.callBy(arguments))
+
+        injectFieldProperties(implementClass, instance)
+
+        return instance
+    }
+
+    private fun <T : Any> injectFieldProperties(
+        implementClass: KClass<out Any>,
+        instance: T,
+    ) {
+        implementClass.declaredMemberProperties
+            .filter { it.hasAnnotation<MyInjector>() }
+            .forEach { prop ->
+                val mutableProp: KMutableProperty1<T, Any> = prop as KMutableProperty1<T, Any>
+                mutableProp.isAccessible = true
+                val propInstance = getInstance(
+                    prop.returnType.classifier as? KClass<*>
+                        ?: error("")
+                )
+                mutableProp.setter.call(instance, propInstance)
+            }
     }
 
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
