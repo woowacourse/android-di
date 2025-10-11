@@ -13,8 +13,14 @@ import kotlin.reflect.jvm.isAccessible
 object AppContainer {
     private val providers = mutableMapOf<KClass<*>, Any>()
 
-    init {
-        provideModule(RepositoryModule::class)
+    fun <T : Any> provideModule(moduleKClazz: KClass<T>) {
+        val module = moduleKClazz.objectInstance ?: return
+
+        moduleKClazz.memberProperties.forEach { property ->
+            property.isAccessible = true
+            val instance = property.get(module) ?: return@forEach
+            providers[property.returnType.classifier as KClass<*>] = instance
+        }
     }
 
     fun <T : Any> resolve(
@@ -53,14 +59,4 @@ object AppContainer {
             val mutableProperty = requireNotNull(property as KMutableProperty1<T, Any>)
             mutableProperty.set(instance, propertyInstance)
         }
-
-    private fun <T : Any> provideModule(moduleKClazz: KClass<T>) {
-        val module = moduleKClazz.objectInstance ?: return
-
-        moduleKClazz.memberProperties.forEach { property ->
-            property.isAccessible = true
-            val instance = property.get(module) ?: return@forEach
-            providers[property.returnType.classifier as KClass<*>] = instance
-        }
-    }
 }
