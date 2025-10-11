@@ -6,6 +6,9 @@ import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
 import woowacourse.shopping.fixture.ProductFixture
@@ -20,11 +23,9 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel =
-            MainViewModel(
-                cartRepository = FakeCartRepository(),
-                productRepository = FakeProductRepository(ProductsFixture),
-            )
+        AppContainer.provide(CartRepository::class, FakeCartRepository())
+        AppContainer.provide(ProductRepository::class, FakeProductRepository(ProductsFixture))
+        viewModel = AppContainer.resolve(MainViewModel::class)
     }
 
     @Test
