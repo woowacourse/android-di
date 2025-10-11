@@ -1,18 +1,20 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import woowacourse.shopping.di.DependencyProvider
 
-class DiApplication : Application() {
-    val lifeCycleCallbacks =
+class ShoppingApplication : Application() {
+    val dependencyProvider by lazy { DependencyProvider(this) }
+
+    private val lifeCycleCallbacks =
         object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(
                 activity: Activity,
                 bundle: Bundle?,
             ) {
-                DependencyProvider.injectToActivity(activity)
+                dependencyProvider.injectToActivity(activity)
             }
 
             override fun onActivityDestroyed(activity: Activity) = Unit
