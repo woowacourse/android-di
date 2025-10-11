@@ -3,11 +3,11 @@ package woowacourse.shopping
 import android.app.Application
 
 class App : Application() {
-    lateinit var container: DependencyContainer
+    lateinit var container: AppContainer
         private set
 
     override fun onCreate() {
         super.onCreate()
-        container = DependencyContainer(this)
+        container = AppContainer(this)
     }
 }

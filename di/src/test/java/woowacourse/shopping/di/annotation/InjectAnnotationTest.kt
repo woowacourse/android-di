@@ -4,20 +4,20 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeViewModel
 
 class InjectAnnotationTest {
     private lateinit var fakeDependencyModule: FakeDependencyModule
-    private lateinit var diContainer: DependencyInjector
+    private lateinit var diContainer: DependencyContainer
     private lateinit var vm: FakeViewModel
 
     @Before
     fun setup() {
         vm = FakeViewModel()
         fakeDependencyModule = FakeDependencyModule()
-        diContainer = DependencyInjector(listOf(fakeDependencyModule))
+        diContainer = DependencyContainer(listOf(fakeDependencyModule))
     }
 
     @Test

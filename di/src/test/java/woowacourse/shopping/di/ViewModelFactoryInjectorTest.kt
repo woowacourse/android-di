@@ -10,13 +10,13 @@ import woowacourse.shopping.di.fake.FakeViewModel
 import woowacourse.shopping.di.fake.repository.cart.CartRepository
 
 class ViewModelFactoryInjectorTest {
-    private lateinit var dependencyInjector: DependencyInjector
+    private lateinit var dependencyContainer: DependencyContainer
     private lateinit var viewModelFactory: ViewModelFactoryInjector
 
     @Before
     fun setup() {
-        dependencyInjector = DependencyInjector(listOf(FakeDependencyModule()))
-        viewModelFactory = ViewModelFactoryInjector(dependencyInjector)
+        dependencyContainer = DependencyContainer(listOf(FakeDependencyModule()))
+        viewModelFactory = ViewModelFactoryInjector(dependencyContainer)
     }
 
     @Test
@@ -35,7 +35,7 @@ class ViewModelFactoryInjectorTest {
     @Test
     fun `등록되지 않은 의존성을 가진 ViewModel 생성 시 예외가 발생한다`() {
         // given
-        val emptyContainer = DependencyInjector(emptyList())
+        val emptyContainer = DependencyContainer(emptyList())
         val factory = ViewModelFactoryInjector(emptyContainer)
 
         // when

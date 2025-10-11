@@ -3,16 +3,16 @@ package woowacourse.shopping.di.annotation
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeViewModel
 
 class QualifierAnnotationTest {
-    private lateinit var dependencyInjector: DependencyInjector
+    private lateinit var dependencyContainer: DependencyContainer
 
     @Before
     fun setup() {
-        dependencyInjector = DependencyInjector(listOf(FakeDependencyModule()))
+        dependencyContainer = DependencyContainer(listOf(FakeDependencyModule()))
     }
 
     @Test
@@ -21,7 +21,7 @@ class QualifierAnnotationTest {
         val viewModel = FakeViewModel()
 
         // when
-        dependencyInjector.inject(viewModel)
+        dependencyContainer.inject(viewModel)
 
         // then
         assertNotEquals(viewModel.myCartRepository, viewModel.othersCartRepository)

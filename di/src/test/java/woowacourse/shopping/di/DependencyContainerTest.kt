@@ -29,13 +29,13 @@ import kotlin.reflect.typeOf
 class DependencyContainerTest {
     private lateinit var databaseModule: DependencyModule
     private lateinit var repositoryModule: DependencyModule
-    private lateinit var diContainer: DependencyInjector
+    private lateinit var diContainer: DependencyContainer
 
     @Before
     fun setup() {
         databaseModule = FakeDependencyModule()
         repositoryModule = FakeRepositoryModule()
-        diContainer = DependencyInjector(listOf(databaseModule, repositoryModule))
+        diContainer = DependencyContainer(listOf(databaseModule, repositoryModule))
     }
 
     @Test

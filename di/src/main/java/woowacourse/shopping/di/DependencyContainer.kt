@@ -14,7 +14,7 @@ import kotlin.reflect.jvm.javaField
 private typealias LazyProvider = () -> Any?
 private typealias Instance = Any
 
-class DependencyInjector(
+class DependencyContainer(
     modules: List<DependencyModule>,
 ) {
     private val providers = ConcurrentHashMap<DependencyKey, LazyProvider>()
