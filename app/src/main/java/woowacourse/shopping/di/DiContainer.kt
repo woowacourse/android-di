@@ -1,17 +1,12 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.di.Injector.inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
     private val providers = mutableMapOf<KClass<*>, Lazy<Any>>()
-
-    init {
-        addProviders(CartRepository::class) { RepositoryModule.cartRepository }
-        addProviders(ProductRepository::class) { RepositoryModule.productRepository }
-    }
+    private val bindings = mutableMapOf<KClass<*>, KClass<*>>()
 
     fun <T : Any> addProviders(
         kClazz: KClass<T>,
@@ -20,26 +15,42 @@ object DiContainer {
         providers[kClazz] = lazy(LazyThreadSafetyMode.SYNCHRONIZED) { provider() }
     }
 
+    internal inline fun <reified T : Any, reified R : T> bind() {
+        bindings[T::class] = R::class
+    }
+
     fun <T : Any> getProvider(kClazz: KClass<T>): T {
-        val lazyProvider =
-            providers.getOrPut(kClazz) {
-                lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
-            }
+        providers[kClazz]?.let {
+            return it.value as T
+        }
+
+        val concreteClazz = bindings[kClazz] ?: kClazz
+
+        if (concreteClazz.java.isInterface) {
+            throw IllegalArgumentException()
+        }
+
+        val lazyProvider = providers.getOrPut(concreteClazz) {
+            lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(concreteClazz) }
+        }
+
+        if (kClazz != concreteClazz) {
+            providers[kClazz] = lazyProvider
+        }
+
         return lazyProvider.value as T
     }
 
     private fun <T : Any> createInstance(kClazz: KClass<T>): T {
-        val constructor = kClazz.primaryConstructor ?: throw IllegalArgumentException()
+        val constructor = kClazz.primaryConstructor
+            ?: throw IllegalArgumentException()
         val arguments =
-            constructor.parameters.associateWith {
-                val parameterClass = it.type.classifier as KClass<*>
-                val instanceLazy =
-                    lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(kClazz) }
-                providers.computeIfPresent(parameterClass) { _, _ ->
-                    instanceLazy
-                }
-                instanceLazy.value
+            constructor.parameters.associateWith { parameter ->
+                val parameterClass = parameter.type.classifier as KClass<*>
+                getProvider(parameterClass)
             }
-        return constructor.callBy(arguments)
+        val instance = constructor.callBy(arguments)
+        inject(instance)
+        return instance
     }
 }

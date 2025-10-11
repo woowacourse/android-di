@@ -31,8 +31,8 @@
     - [x] 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분할 수 없다.
     - [x] Annotation을 붙여서 필요한 요소에만 의존성을 주입한다.
     - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
-- [ ] Recursive DI
-    - [ ] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
+- [x] Recursive DI
+    - [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
 - [ ] 선택 요구 사항
     - [ ] 현재는 장바구니 아이템 삭제 버튼을 누르면 RecyclerView의 position에 해당하는 상품이 지워진다.
     - [ ] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
