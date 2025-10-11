@@ -3,6 +3,7 @@ package woowacourse.shopping.di
 import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
@@ -17,8 +18,8 @@ private typealias Instance = Any
 class DependencyInjector(
     modules: List<DependencyModule>,
 ) {
-    private val providers = mutableMapOf<DependencyKey, LazyProvider>()
-    private val instances = mutableMapOf<DependencyKey, Instance>()
+    private val providers = ConcurrentHashMap<DependencyKey, LazyProvider>()
+    private val instances = ConcurrentHashMap<DependencyKey, Instance>()
 
     init {
         modules.forEach(::registerModule)
@@ -41,7 +42,7 @@ class DependencyInjector(
     ): Instance = get(DependencyKey(type, qualifier))
 
     private fun get(key: DependencyKey): Instance {
-        return instances.getOrPut(key) {
+        return instances.computeIfAbsent(key) {
             val provider = providers[key]
             requireNotNull(provider?.invoke()) {
                 val className = (key.type.classifier as? KClass<*>)?.simpleName ?: key.type

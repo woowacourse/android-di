@@ -1,8 +1,9 @@
 package woowacourse.shopping.di
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -20,6 +21,7 @@ import woowacourse.shopping.di.fake.FakeViewModel
 import woowacourse.shopping.di.fake.repository.FakeNotRegisteredProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
+import java.util.Collections.synchronizedSet
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.typeOf
@@ -79,22 +81,24 @@ class DependencyContainerTest {
 
     @Test
     fun `멀티스레드 환경에서도 동일 인스턴스를 반환한다`() =
-        runTest {
-            // given
-            val results = mutableListOf<ProductRepository>()
+        runBlocking {
+            val iterations = 100
+            val concurrentCalls = 100_000
 
-            // when
-            coroutineScope {
-                repeat(10_000_0) {
-                    launch {
-                        val repo = diContainer.get(typeOf<ProductRepository>()) as ProductRepository
-                        results.add(repo)
+            repeat(iterations) { round ->
+                val results = synchronizedSet(mutableSetOf<ProductRepository>())
+
+                coroutineScope {
+                    repeat(concurrentCalls) {
+                        launch(Dispatchers.Default) {
+                            val repo = diContainer.get(typeOf<ProductRepository>()) as ProductRepository
+                            results.add(repo)
+                        }
                     }
                 }
-            }
 
-            // then
-            assertTrue(results.all { it === results.first() })
+                assertTrue("동일 인스턴스가 아닙니다", results.size == 1)
+            }
         }
 
     @Test
