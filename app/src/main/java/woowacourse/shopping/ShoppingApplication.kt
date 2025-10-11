@@ -17,9 +17,11 @@ class ShoppingApplication : Application() {
             ).build()
     }
 
-    val diContainer =
-        DIContainer(database).registerAutoImplClasses(
+    val diContainer by lazy {
+        DIContainer(
+            database,
             ProductDefaultRepository::class,
             CartDefaultRepository::class,
         )
+    }
 }
