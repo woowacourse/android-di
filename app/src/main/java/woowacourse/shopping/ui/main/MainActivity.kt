@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.App
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.ViewModelFactoryInjector
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.main.vm.MainViewModel
 import kotlin.getValue
@@ -20,9 +19,7 @@ import kotlin.getValue
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val viewModel: MainViewModel by viewModels<MainViewModel> {
-        val appContainer = (application as App).container
-        val dependencyContainer = appContainer.dependencyInjector
-        ViewModelFactoryInjector(dependencyContainer)
+        (application as App).container.viewModelFactory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

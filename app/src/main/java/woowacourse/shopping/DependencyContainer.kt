@@ -1,12 +1,14 @@
 package woowacourse.shopping
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.core.Container
 import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.data.db.DatabaseModule
 import woowacourse.shopping.data.db.ShoppingDatabase
 import woowacourse.shopping.data.repository.RepositoryModule
 import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.ViewModelFactoryInjector
 
 class DependencyContainer(
     context: Context,
@@ -22,4 +24,5 @@ class DependencyContainer(
                 repositoryModule,
             ),
         )
+    val viewModelFactory: ViewModelProvider.Factory = ViewModelFactoryInjector(dependencyInjector)
 }
