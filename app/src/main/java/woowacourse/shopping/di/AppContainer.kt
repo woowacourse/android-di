@@ -12,10 +12,7 @@ object AppContainer {
         provideModule(RepositoryModule::class)
     }
 
-    fun <T : Any> resolve(clazz: KClass<T>): T =
-        (providers[clazz] as? T) ?: createInstance(clazz).also { instance ->
-            providers[clazz] = { instance }
-        }
+    fun <T : Any> resolve(clazz: KClass<T>): T = providers[clazz] as? T ?: createInstance(clazz)
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
         val constructor =
