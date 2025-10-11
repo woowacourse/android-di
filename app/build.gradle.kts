@@ -79,4 +79,6 @@ dependencies {
     implementation(libs.glide)
     // Robolectric
     testImplementation(libs.robolectric)
+    // 직접 만든 di 모듈
+    implementation(project(":meda-di"))
 }

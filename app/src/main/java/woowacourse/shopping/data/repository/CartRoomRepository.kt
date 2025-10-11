@@ -1,9 +1,9 @@
 package woowacourse.shopping.data.repository
 
+import com.medandro.di.annotation.RoomDB
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.annotation.RoomDB
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
