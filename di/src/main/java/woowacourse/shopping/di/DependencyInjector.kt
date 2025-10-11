@@ -1,6 +1,5 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import java.util.concurrent.ConcurrentHashMap

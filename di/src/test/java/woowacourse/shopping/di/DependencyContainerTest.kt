@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeRepositoryModule

@@ -1,7 +1,7 @@
 package woowacourse.shopping.data.repository
 
-import woowacourse.shopping.core.DependencyModule
 import woowacourse.shopping.data.db.DatabaseProvider
+import woowacourse.shopping.di.DependencyModule
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository

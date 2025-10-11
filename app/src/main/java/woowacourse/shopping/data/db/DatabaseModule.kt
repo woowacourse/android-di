@@ -1,6 +1,6 @@
 package woowacourse.shopping.data.db
 
-import woowacourse.shopping.core.DependencyModule
+import woowacourse.shopping.di.DependencyModule
 
 class DatabaseModule(
     private val database: ShoppingDatabase,
