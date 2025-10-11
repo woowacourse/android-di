@@ -1,41 +1,41 @@
 package woowacourse.shopping.ui.util
 
-import android.os.Bundle
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.savedstate.SavedStateRegistryOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.AppContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class DIViewModelFactory(
-    owner: SavedStateRegistryOwner,
-    defaultArgs: Bundle? = null,
-) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+class DIViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(
-        key: String,
         modelClass: Class<T>,
-        handle: SavedStateHandle,
+        extras: CreationExtras,
     ): T {
+        val kClass = modelClass.kotlin
         val constructor =
-            requireNotNull(modelClass.kotlin.primaryConstructor) {
-                "${modelClass.simpleName}에 Public 생성자가 없습니다."
+            requireNotNull(kClass.primaryConstructor) {
+                NO_PUBLIC_CONSTRUCTOR_ERROR_MESSAGE.format(kClass.simpleName ?: "Anonymous")
             }
 
         return constructor.parameters
             .associateWith { param ->
-                resolveConstructorParam(param.type.classifier as? KClass<*>, handle)
+                resolveDependency(param.type.classifier as KClass<*>, extras)
             }.let(constructor::callBy)
     }
 
-    private fun resolveConstructorParam(
-        paramClass: KClass<*>?,
-        handle: SavedStateHandle,
+    private fun resolveDependency(
+        clazz: KClass<*>,
+        extras: CreationExtras,
     ): Any =
-        when (paramClass) {
-            null -> error("타입 정보를 알 수 없습니다.")
-            SavedStateHandle::class -> handle
-            else -> AppContainer.resolve(paramClass)
+        when (clazz) {
+            SavedStateHandle::class -> extras.createSavedStateHandle()
+            else -> AppContainer.resolve(clazz)
         }
+
+    private companion object {
+        const val NO_PUBLIC_CONSTRUCTOR_ERROR_MESSAGE = "%s에 public 기본 생성자가 없습니다."
+    }
 }
