@@ -5,7 +5,7 @@ import woowacourse.shopping.domain.model.Product
 interface CartRepository {
     suspend fun addCartProduct(product: Product)
 
-    suspend fun getAllCartProducts(): List<Product>
+    suspend fun getAllCartProducts(): Result<List<Product>>
 
     suspend fun deleteCartProduct(id: Long): Result<Unit>
 }

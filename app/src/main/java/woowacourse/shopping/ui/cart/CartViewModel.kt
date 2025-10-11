@@ -24,20 +24,25 @@ class CartViewModel : ViewModel() {
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             val result = cartRepository.deleteCartProduct(id)
-            result.onSuccess {
-                val product = cachedCartProducts.find { it.id == id } ?: return@launch
-                cachedCartProducts.remove(product)
-                _onCartProductDeleted.value = true
-            }
-
-            _cartProducts.value = cachedCartProducts.toList()
+            result
+                .onSuccess {
+                    val product =
+                        cachedCartProducts.find { it.id == id } ?: return@launch
+                    cachedCartProducts.remove(product)
+                    _onCartProductDeleted.value = true
+                    _cartProducts.value = cachedCartProducts.toList()
+                }
         }
     }
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
-            cachedCartProducts.addAll(cartProducts.value ?: emptyList())
+            val result = cartRepository.getAllCartProducts()
+            result.onSuccess { cartProducts ->
+                _cartProducts.value = cartProducts
+                cachedCartProducts.clear()
+                cachedCartProducts.addAll(cartProducts)
+            }
         }
     }
 }

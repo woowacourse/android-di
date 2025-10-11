@@ -13,7 +13,7 @@ class CartRepositoryImpl(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> = dao.getAll().map { it.toDomain() }
+    override suspend fun getAllCartProducts(): Result<List<Product>> = runCatching { dao.getAll().map { it.toDomain() } }
 
     override suspend fun deleteCartProduct(id: Long): Result<Unit> =
         runCatching {

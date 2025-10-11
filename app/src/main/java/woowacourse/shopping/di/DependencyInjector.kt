@@ -25,7 +25,7 @@ object DependencyInjector {
         return instances[kClass] as? T ?: run {
             val instance = createInstance(kClass, savedStateHandle)
             instances[kClass] = instance
-            return instances[kClass] as T
+            return (instances[kClass] as T).also { instances.remove(kClass) }
         }
     }
 
@@ -74,6 +74,7 @@ object DependencyInjector {
             return kClass.java.getDeclaredConstructor().newInstance()
         } finally {
             creating.remove(kClass)
+            instances.remove(kClass)
         }
     }
 }
