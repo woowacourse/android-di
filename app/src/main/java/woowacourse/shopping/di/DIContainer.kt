@@ -2,7 +2,9 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
+import woowacourse.shopping.di.annotation.InMemory
 import woowacourse.shopping.di.annotation.InjectField
+import woowacourse.shopping.di.annotation.RoomDB
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -14,8 +16,8 @@ import kotlin.reflect.jvm.isAccessible
 class DIContainer(
     vararg registerClasses: KClass<*>,
 ) {
-    private val instances = mutableMapOf<KClass<*>, Any>()
-    private val interfaceMapping = mutableMapOf<KClass<*>, KClass<*>>()
+    private val instances = mutableMapOf<DependencyKey, Any>()
+    private val interfaceMapping = mutableMapOf<DependencyKey, KClass<*>>()
     private val externalSingletons = mutableMapOf<KClass<*>, Any>()
 
     init {
@@ -27,32 +29,40 @@ class DIContainer(
         return this
     }
 
-    fun getInstance(kClass: KClass<*>): Any {
-        // ViewModel은 DIContainer 내부에서 관리하지 않고 바로 생성 및 반환
+    fun getInstance(
+        kClass: KClass<*>,
+        qualifier: String? = null,
+    ): Any {
+        val dependencyKey = DependencyKey(kClass, qualifier)
+
+        // ViewModel은 매번 새로 생성
         if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
             return createNewInstance(kClass)
         }
 
         // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
-        instances[kClass]?.let { return it }
+        instances[dependencyKey]?.let { return it }
 
         // 외부에서 등록된 싱글턴 인스턴스에서 반환
         externalSingletons[kClass]?.let { return it }
 
         // Room Database에서 Dao 인스턴스 반환
-        resolveFromDatabase(kClass)?.let { dao ->
-            instances[kClass] = dao
+
+        resolveFromDatabase(kClass, qualifier)?.let { dao ->
+            instances[dependencyKey] = dao
             return dao
         }
 
         // 인터페이스일 경우 매핑된 클래스로 반환
-        interfaceMapping[kClass]?.let {
-            return getInstance(it)
+        interfaceMapping[dependencyKey]?.let { implClass ->
+            val instance = createNewInstance(implClass)
+            instances[dependencyKey] = instance
+            return instance
         }
 
         // 인스턴스가 존재하지 않을 경우 생성
         val createdInstance = createNewInstance(kClass)
-        registerInstance(kClass, createdInstance)
+        instances[dependencyKey] = createdInstance
         return createdInstance
     }
 
@@ -67,16 +77,18 @@ class DIContainer(
     }
 
     private fun generateInterfaceMapping(registerClasses: Array<out KClass<*>>) {
-        registerClasses
-            .forEach { implClass ->
-                val interfaces =
-                    implClass.supertypes
-                        .mapNotNull { it.classifier as? KClass<*> }
-                        .filter { it.java.isInterface }
-                interfaces.forEach { interfaceClass ->
-                    interfaceMapping[interfaceClass] = implClass
-                }
+        registerClasses.forEach { implClass ->
+            val qualifier = getQualifier(implClass)
+            val interfaces =
+                implClass.supertypes
+                    .mapNotNull { it.classifier as? KClass<*> }
+                    .filter { it.java.isInterface }
+
+            interfaces.forEach { interfaceClass ->
+                val key = DependencyKey(interfaceClass, qualifier)
+                interfaceMapping[key] = implClass
             }
+        }
     }
 
     private fun injectSingleField(
@@ -85,19 +97,29 @@ class DIContainer(
     ) {
         try {
             val fieldType = property.returnType.classifier as KClass<*>
-            val dependency = getInstance(fieldType)
+            val qualifier = getFieldQualifier(property)
+            val dependency = getInstance(fieldType, qualifier)
 
             property.isAccessible = true
             property.set(target, dependency)
         } catch (e: Exception) {
             throw IllegalStateException(
-                "${target::class.simpleName}의 '${property.name}필드 주입 실패 : ${e.message}",
+                "${target::class.simpleName}의 '${property.name}, ${getFieldQualifier(property)}필드 주입 실패 : ${e.message}",
                 e,
             )
         }
     }
 
-    private fun resolveFromDatabase(kClass: KClass<*>): Any? {
+    private fun resolveFromDatabase(
+        kClass: KClass<*>,
+        qualifier: String?,
+    ): Any? {
+        if (qualifier != "RoomDB") {
+            if (qualifier != null) {
+                return null
+            }
+        }
+
         val database =
             externalSingletons.values.find { it is RoomDatabase } as? RoomDatabase
                 ?: return null
@@ -125,10 +147,17 @@ class DIContainer(
         return constructor.callBy(parameterMap)
     }
 
-    private fun registerInstance(
-        kClass: KClass<*>,
-        instance: Any,
-    ) {
-        instances[kClass] = instance
-    }
+    private fun getQualifier(kClass: KClass<*>): String? =
+        when {
+            kClass.hasAnnotation<RoomDB>() -> "RoomDB"
+            kClass.hasAnnotation<InMemory>() -> "InMemory"
+            else -> null
+        }
+
+    private fun getFieldQualifier(property: KMutableProperty1<Any, Any?>): String? =
+        when {
+            property.hasAnnotation<RoomDB>() -> "RoomDB"
+            property.hasAnnotation<InMemory>() -> "InMemory"
+            else -> null
+        }
 }
