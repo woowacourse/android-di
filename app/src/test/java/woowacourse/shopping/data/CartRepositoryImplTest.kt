@@ -4,7 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.fixture.ProductFixture
+import woowacourse.shopping.fixture.ProductsFixture
 
 class CartRepositoryImplTest {
     private lateinit var cartRepository: CartRepositoryImpl
@@ -16,36 +17,29 @@ class CartRepositoryImplTest {
 
     @Test
     fun `장바구니에 단일 상품 추가`() {
-        // given
-        val apple = Product("사과", 1000, "url://apple")
-
-        // when
-        cartRepository.addCartProduct(apple)
+        cartRepository.addCartProduct(ProductFixture)
 
         // then
-        assertThat(cartRepository.getAllCartProducts()).containsExactly(apple)
+        assertThat(cartRepository.getAllCartProducts()).containsExactly(ProductFixture)
     }
 
     @Test
     fun `상품 삭제`() {
         // given
-        val apple = Product("사과", 1000, "url://apple")
-        val banana = Product("바나나", 2000, "url://banana")
-        cartRepository.addCartProduct(apple)
-        cartRepository.addCartProduct(banana)
+        cartRepository.addCartProduct(ProductsFixture[0])
+        cartRepository.addCartProduct(ProductsFixture[1])
 
         // when
         cartRepository.deleteCartProduct(0)
 
         // then
-        assertThat(cartRepository.getAllCartProducts()).doesNotContain(apple)
+        assertThat(cartRepository.getAllCartProducts()).doesNotContain(ProductsFixture[0])
     }
 
     @Test
     fun `존재하지 않는 인덱스 삭제 시 예외 발생`() {
         // given
-        val apple = Product("사과", 1000, "url://apple")
-        cartRepository.addCartProduct(apple)
+        cartRepository.addCartProduct(ProductFixture)
 
         // when & then
         assertThatThrownBy { cartRepository.deleteCartProduct(5) }
@@ -55,17 +49,17 @@ class CartRepositoryImplTest {
     @Test
     fun `추가와 삭제를 반복하여 일관성 유지`() {
         // given
-        val apple = Product("사과", 1000, "url://apple")
-        val banana = Product("바나나", 2000, "url://banana")
-        val orange = Product("오렌지", 1500, "url://orange")
-
         // when
-        cartRepository.addCartProduct(apple)
-        cartRepository.addCartProduct(banana)
-        cartRepository.deleteCartProduct(0) // 사과 삭제
-        cartRepository.addCartProduct(orange)
+        cartRepository.addCartProduct(ProductsFixture[0])
+        cartRepository.addCartProduct(ProductsFixture[1])
+        cartRepository.deleteCartProduct(0)
+        cartRepository.addCartProduct(ProductsFixture[2])
 
         // then
-        assertThat(cartRepository.getAllCartProducts()).containsExactly(banana, orange)
+        assertThat(cartRepository.getAllCartProducts())
+            .containsExactly(
+                ProductsFixture[1],
+                ProductsFixture[2],
+            )
     }
 }
