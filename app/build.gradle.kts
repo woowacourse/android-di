@@ -58,6 +58,7 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.assertj.core)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
