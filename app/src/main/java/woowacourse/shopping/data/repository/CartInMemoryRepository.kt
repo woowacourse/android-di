@@ -1,9 +1,11 @@
 package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.di.annotation.InMemory
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
+@InMemory
 class CartInMemoryRepository : CartRepository {
     private val cartItems = mutableListOf<CartProductEntity>()
     private var currentId = 1L
