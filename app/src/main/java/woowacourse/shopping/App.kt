@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import woowacourse.shopping.di.DependencyInjector
 
 class App : Application() {
     lateinit var container: AppContainer
@@ -9,5 +10,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        DependencyInjector.init(container.dependencyContainer)
     }
 }

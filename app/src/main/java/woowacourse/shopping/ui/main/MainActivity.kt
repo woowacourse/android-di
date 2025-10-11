@@ -5,22 +5,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import woowacourse.shopping.App
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.petoViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.main.vm.MainViewModel
 import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val viewModel: MainViewModel by viewModels<MainViewModel> {
-        (application as App).container.viewModelFactory
-    }
+    private val viewModel: MainViewModel by petoViewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

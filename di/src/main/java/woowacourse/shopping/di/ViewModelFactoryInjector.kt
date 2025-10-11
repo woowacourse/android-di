@@ -1,7 +1,13 @@
 package woowacourse.shopping.di
 
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
+import androidx.annotation.MainThread
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -45,4 +51,28 @@ class ViewModelFactoryInjector(
     companion object {
         private const val ERROR_NO_CONSTRUCTOR = "%s 클래스에 기본 생성자가 존재하지 않습니다."
     }
+}
+
+@MainThread
+inline fun <reified VM : ViewModel> ComponentActivity.petoViewModel(noinline extrasProducer: (() -> CreationExtras)? = null): Lazy<VM> {
+    val factoryProducer: () -> ViewModelProvider.Factory = {
+        ViewModelFactoryInjector(DependencyInjector.dependencyContainer)
+    }
+
+    return viewModels(
+        extrasProducer = extrasProducer,
+        factoryProducer = factoryProducer,
+    )
+}
+
+@MainThread
+inline fun <reified VM : ViewModel> Fragment.petoViewModel(noinline extrasProducer: (() -> CreationExtras)? = null): Lazy<VM> {
+    val factoryProducer: () -> ViewModelProvider.Factory = {
+        ViewModelFactoryInjector(DependencyInjector.dependencyContainer)
+    }
+
+    return viewModels(
+        extrasProducer = extrasProducer,
+        factoryProducer = factoryProducer,
+    )
 }
