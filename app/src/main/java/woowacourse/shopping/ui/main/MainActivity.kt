@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupProductList() {
+        viewModel.getAllProducts()
         viewModel.products.observe(this) {
             val adapter =
                 ProductAdapter(

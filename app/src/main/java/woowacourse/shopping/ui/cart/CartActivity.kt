@@ -60,6 +60,7 @@ class CartActivity :
 
     private fun setupCartProductList() {
         binding.rvCartProducts.adapter = cartProductAdapter
+        viewModel.getAllCartProducts()
         viewModel.cartProducts.observe(this) {
             cartProductAdapter.submitList(it)
         }

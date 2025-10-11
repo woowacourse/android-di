@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.RequireInjection
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
-class CartViewModel(
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class CartViewModel : ViewModel() {
+    @RequireInjection
+    lateinit var cartRepository: CartRepository
+
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData()
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
@@ -18,10 +20,6 @@ class CartViewModel(
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
     private val cachedCartProducts: MutableList<Product> = mutableListOf()
-
-    init {
-        getAllCartProducts()
-    }
 
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
@@ -36,7 +34,7 @@ class CartViewModel(
         }
     }
 
-    private fun getAllCartProducts() {
+    fun getAllCartProducts() {
         viewModelScope.launch {
             _cartProducts.value = cartRepository.getAllCartProducts()
             cachedCartProducts.addAll(cartProducts.value ?: emptyList())
