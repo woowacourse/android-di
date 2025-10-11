@@ -6,23 +6,34 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.DiContainer
+import woowacourse.shopping.di.Injector
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelDIFactory() : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(
-        modelClass: Class<T>,
-        extras: CreationExtras,
-    ): T {
-        val constructor =
-            modelClass.kotlin.primaryConstructor ?: return create(modelClass)
-        val args =
-            constructor.parameters.associateWith { parameter ->
-                when (val clazz = parameter.type.classifier as KClass<*>) {
-                    SavedStateHandle::class -> extras.createSavedStateHandle()
-                    else -> DiContainer.getProvider(clazz)
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        val kClass = modelClass.kotlin
+        val constructor = kClass.primaryConstructor
+            ?: return create(modelClass)
+
+        if (constructor is ViewModel) {
+            Injector.inject(constructor)
+            return constructor as T
+        }
+
+        val args = constructor.parameters.associateWith { parameter ->
+            val clazz = parameter.type.classifier as KClass<*>
+            when (clazz) {
+                SavedStateHandle::class -> extras.createSavedStateHandle()
+                else -> {
+                    DiContainer.getProvider(clazz)
                 }
             }
-        return constructor.callBy(args) as T
+        }
+
+        val vm = constructor.callBy(args)
+        Injector.inject(vm)
+        return vm
     }
 }
