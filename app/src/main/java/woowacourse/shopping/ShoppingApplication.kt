@@ -19,9 +19,8 @@ class ShoppingApplication : Application() {
 
     val diContainer by lazy {
         DIContainer(
-            database,
             ProductDefaultRepository::class,
             CartDefaultRepository::class,
-        )
+        ).registerSingleton(database)
     }
 }

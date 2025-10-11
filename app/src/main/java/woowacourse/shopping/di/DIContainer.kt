@@ -12,23 +12,48 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(
-    private val database: RoomDatabase? = null,
     vararg registerClasses: KClass<*>,
 ) {
     private val instances = mutableMapOf<KClass<*>, Any>()
     private val interfaceMapping = mutableMapOf<KClass<*>, KClass<*>>()
+    private val externalSingletons = mutableMapOf<KClass<*>, Any>()
 
     init {
-        registerClasses
-            .forEach { implClass ->
-                val interfaces =
-                    implClass.supertypes
-                        .mapNotNull { it.classifier as? KClass<*> }
-                        .filter { it.java.isInterface }
-                interfaces.forEach { interfaceClass ->
-                    interfaceMapping[interfaceClass] = implClass
-                }
-            }
+        generateInterfaceMapping(registerClasses)
+    }
+
+    fun registerSingleton(instance: Any): DIContainer {
+        externalSingletons[instance::class] = instance
+        return this
+    }
+
+    fun getInstance(kClass: KClass<*>): Any {
+        // ViewModel은 DIContainer 내부에서 관리하지 않고 바로 생성 및 반환
+        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
+            return createNewInstance(kClass)
+        }
+
+        // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
+        instances[kClass]?.let { return it }
+
+        // 외부에서 등록된 싱글턴 인스턴스에서 반환
+        externalSingletons[kClass]?.let { return it }
+
+        // Room Database에서 Dao 인스턴스 반환
+        resolveFromDatabase(kClass)?.let { dao ->
+            instances[kClass] = dao
+            return dao
+        }
+
+        // 인터페이스일 경우 매핑된 클래스로 반환
+        interfaceMapping[kClass]?.let {
+            return getInstance(it)
+        }
+
+        // 인스턴스가 존재하지 않을 경우 생성
+        val createdInstance = createNewInstance(kClass)
+        registerInstance(kClass, createdInstance)
+        return createdInstance
     }
 
     fun injectFields(target: Any) {
@@ -41,25 +66,17 @@ class DIContainer(
             }
     }
 
-    fun getInstance(kClass: KClass<*>): Any {
-        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
-            return createNewInstance(kClass)
-        }
-
-        instances[kClass]?.let { return it }
-
-        resolveFromDatabase(kClass)?.let { dao ->
-            instances[kClass] = dao
-            return dao
-        }
-
-        interfaceMapping?.get(kClass)?.let {
-            return getInstance(it)
-        }
-
-        val createdInstance = createNewInstance(kClass)
-        registerInstance(kClass, createdInstance)
-        return createdInstance
+    private fun generateInterfaceMapping(registerClasses: Array<out KClass<*>>) {
+        registerClasses
+            .forEach { implClass ->
+                val interfaces =
+                    implClass.supertypes
+                        .mapNotNull { it.classifier as? KClass<*> }
+                        .filter { it.java.isInterface }
+                interfaces.forEach { interfaceClass ->
+                    interfaceMapping[interfaceClass] = implClass
+                }
+            }
     }
 
     private fun injectSingleField(
@@ -81,7 +98,10 @@ class DIContainer(
     }
 
     private fun resolveFromDatabase(kClass: KClass<*>): Any? {
-        if (database == null) return null
+        val database =
+            externalSingletons.values.find { it is RoomDatabase } as? RoomDatabase
+                ?: return null
+
         val dbClass: Class<RoomDatabase> = database.javaClass
         val method: Method =
             dbClass.methods.firstOrNull { m: Method ->
@@ -100,7 +120,7 @@ class DIContainer(
                 .filterNot { it.isOptional }
                 .associateWith { param ->
                     val paramType = param.type.classifier as KClass<*>
-                    getInstance(paramType)
+                    externalSingletons[paramType] ?: getInstance(paramType)
                 }
         return constructor.callBy(parameterMap)
     }
