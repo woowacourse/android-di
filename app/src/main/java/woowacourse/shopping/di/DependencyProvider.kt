@@ -1,10 +1,12 @@
 package woowacourse.shopping.di
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
@@ -17,14 +19,18 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.typeOf
 
-object DependencyProvider {
-    private val Dependencies: Map<KType, Lazy<Any>> =
+class DependencyProvider(
+    context: Context,
+) {
+    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
+
+    private val dependencies: Map<KType, Lazy<Any>> =
         mapOf(
             typeOf<ProductRepository>() to lazy { DefaultProductRepository() },
-            typeOf<CartRepository>() to lazy { DefaultCartRepository() },
+            typeOf<CartRepository>() to lazy { DefaultCartRepository(shoppingDatabase.cartProductDao()) },
         )
 
-    fun dependency(key: KType): Any = Dependencies[key]?.value ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
+    fun dependency(key: KType): Any = dependencies[key]?.value ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
 
     fun injectToActivity(activity: Activity) {
         activity::class.memberProperties.forEach { property: KProperty1<out Activity, *> ->
