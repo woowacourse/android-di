@@ -5,10 +5,9 @@ import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.fake.repository.cart.CartRepository
 
-class FakeViewModel : ViewModel() {
-    @Inject
-    lateinit var injectedString: String
-
+class FakeViewModel(
+    @Inject private val injectedString: String,
+) : ViewModel() {
     lateinit var nonInjectedString: String
 
     @Inject

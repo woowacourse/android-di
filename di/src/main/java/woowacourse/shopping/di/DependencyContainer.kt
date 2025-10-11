@@ -69,6 +69,7 @@ class DependencyContainer(
         qualifierName: String?,
     ) {
         property.javaField?.let { field ->
+            field.isAccessible = true
             val dependency =
                 qualifierName?.let { get(property.returnType, it) }
                     ?: get(property.returnType)

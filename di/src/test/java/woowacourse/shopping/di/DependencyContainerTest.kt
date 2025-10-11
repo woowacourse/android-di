@@ -103,7 +103,7 @@ class DependencyContainerTest {
     @Test
     fun `Qualifier가 붙은 동일 타입 의존성이 올바르게 주입된다`() {
         // given
-        val viewModel = FakeViewModel()
+        val viewModel = ViewModelFactoryInjector(diContainer).create(FakeViewModel::class.java)
 
         // when
         diContainer.inject(viewModel)
