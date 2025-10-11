@@ -5,12 +5,12 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.fixture.productsFixture
 
-class CartRepositoryImplTest {
-    private lateinit var repository: CartRepositoryImpl
+class DefaultCartRepositoryTest {
+    private lateinit var repository: DefaultCartRepository
 
     @Before
     fun setup() {
-        repository = CartRepositoryImpl()
+        repository = DefaultCartRepository()
     }
 
     @Test

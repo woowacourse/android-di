@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 import kotlin.reflect.KClass
@@ -10,8 +10,8 @@ class AppContainer {
     private val providers = mutableMapOf<KClass<*>, Any>()
 
     init {
-        providers[CartRepository::class] = CartRepositoryImpl()
-        providers[ProductRepository::class] = ProductRepositoryImpl()
+        providers[CartRepository::class] = DefaultCartRepository()
+        providers[ProductRepository::class] = DefaultProductRepository()
     }
 
     fun <T : Any> get(clazz: KClass<T>): T =
