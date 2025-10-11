@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -26,8 +27,9 @@ object DependencyProvider {
     fun dependency(key: KType): Any = Dependencies[key]?.value ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
 
     fun injectToActivity(activity: Activity) {
-        activity::class.memberProperties.forEach { property ->
+        activity::class.memberProperties.forEach { property: KProperty1<out Activity, *> ->
             if (property.findAnnotation<InjectableViewModel>() != null && property is KMutableProperty1) {
+                Log.wtf("asdf", "${property.returnType}")
                 if (!property.returnType.isSubtypeOf(typeOf<ViewModel>())) error("${property.returnType}은(는) ViewModel이 아닙니다.")
                 val kClass: KClass<*> = property.returnType.classifier as KClass<*>
                 val viewModel: Any = kClass.createInstance()
@@ -39,7 +41,7 @@ object DependencyProvider {
 
     fun inject(target: Any) {
         val kClass = target::class
-        kClass.memberProperties.forEach { property: KProperty1<*, *> ->
+        kClass.memberProperties.forEach { property: KProperty1<out Any, *> ->
             if (property.findAnnotation<Inject>() != null && property is KMutableProperty1) {
                 property.setter.call(target, dependency(property.returnType))
             }
