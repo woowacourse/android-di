@@ -1,9 +1,9 @@
 package woowacourse.shopping.di.fake
 
 import woowacourse.shopping.core.DependencyModule
-import woowacourse.shopping.di.fake.repository.FakeCartRepository
-import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.di.fake.repository.cart.CartRepository
+import woowacourse.shopping.di.fake.repository.cart.DefaultCartRepository
 
 class FakeRepositoryModule : DependencyModule {
-    val fakeCartRepository: CartRepository = FakeCartRepository()
+    val defaultCartRepository: CartRepository = DefaultCartRepository()
 }

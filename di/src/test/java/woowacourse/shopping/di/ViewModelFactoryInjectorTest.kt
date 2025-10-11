@@ -7,7 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeViewModel
-import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.di.fake.repository.cart.CartRepository
 
 class ViewModelFactoryInjectorTest {
     private lateinit var dependencyInjector: DependencyInjector

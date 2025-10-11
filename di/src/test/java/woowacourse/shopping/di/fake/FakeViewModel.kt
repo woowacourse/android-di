@@ -3,7 +3,7 @@ package woowacourse.shopping.di.fake
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.di.fake.repository.cart.CartRepository
 
 class FakeViewModel : ViewModel() {
     @Inject

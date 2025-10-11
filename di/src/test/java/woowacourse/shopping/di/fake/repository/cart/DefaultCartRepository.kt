@@ -1,9 +1,8 @@
-package woowacourse.shopping.di.fake.repository
+package woowacourse.shopping.di.fake.repository.cart
 
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.di.fake.Product
 
-class FakeCartRepository : CartRepository {
+class DefaultCartRepository : CartRepository {
     override suspend fun addCartProduct(product: Product) {}
 
     override suspend fun getAllCartProducts(): List<Product> = emptyList()

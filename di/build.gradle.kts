@@ -35,10 +35,11 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.google.material)
     implementation(libs.kotlin.reflect)
     implementation(libs.core.ktx)

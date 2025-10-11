@@ -18,9 +18,9 @@ import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeRepositoryModule
 import woowacourse.shopping.di.fake.FakeViewModel
-import woowacourse.shopping.di.fake.repository.FakeNotRegisteredProductRepository
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.di.fake.repository.cart.CartRepository
+import woowacourse.shopping.di.fake.repository.product.NotRegisteredProductRepository
+import woowacourse.shopping.di.fake.repository.product.ProductRepository
 import java.util.Collections.synchronizedSet
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -54,11 +54,11 @@ class DependencyContainerTest {
         val exception =
             assertThrows(IllegalArgumentException::class.java) {
                 // when
-                diContainer.get(typeOf<FakeNotRegisteredProductRepository>())
+                diContainer.get(typeOf<NotRegisteredProductRepository>())
             }
 
         // then
-        val expected = "FakeNotRegisteredProductRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "NotRegisteredProductRepository 타입의 의존성이 등록되어있지 않습니다."
         val actual = exception.message
         assertEquals(expected, actual)
     }

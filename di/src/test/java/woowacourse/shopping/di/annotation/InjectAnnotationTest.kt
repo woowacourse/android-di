@@ -9,15 +9,15 @@ import woowacourse.shopping.di.fake.FakeDependencyModule
 import woowacourse.shopping.di.fake.FakeViewModel
 
 class InjectAnnotationTest {
-    private lateinit var dependencyModule: FakeDependencyModule
+    private lateinit var fakeDependencyModule: FakeDependencyModule
     private lateinit var diContainer: DependencyInjector
     private lateinit var vm: FakeViewModel
 
     @Before
     fun setup() {
         vm = FakeViewModel()
-        dependencyModule = FakeDependencyModule()
-        diContainer = DependencyInjector(listOf(dependencyModule))
+        fakeDependencyModule = FakeDependencyModule()
+        diContainer = DependencyInjector(listOf(fakeDependencyModule))
     }
 
     @Test
