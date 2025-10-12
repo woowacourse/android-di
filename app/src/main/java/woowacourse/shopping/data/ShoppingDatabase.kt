@@ -10,12 +10,18 @@ abstract class ShoppingDatabase : RoomDatabase() {
     abstract fun cartProductDao(): CartProductDao
 
     companion object {
+        @Volatile
+        private var instance: ShoppingDatabase? = null
+
         fun getInstance(context: Context): ShoppingDatabase =
-            Room
-                .databaseBuilder(
-                    context.applicationContext,
-                    ShoppingDatabase::class.java,
-                    "shopping_db",
-                ).build()
+            instance ?: synchronized(this) {
+                instance ?: Room
+                    .databaseBuilder(
+                        context.applicationContext,
+                        ShoppingDatabase::class.java,
+                        "shopping_db",
+                    ).build()
+                    .also { instance = it }
+            }
     }
 }
