@@ -8,11 +8,13 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.di.annotation.InjectClass
 import woowacourse.shopping.di.annotation.InjectField
+import woowacourse.shopping.di.annotation.RoomDb
 import woowacourse.shopping.model.CartProduct
 
 @InjectClass
 class CartViewModel : ViewModel() {
     @InjectField
+    @RoomDb
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

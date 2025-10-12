@@ -5,7 +5,8 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 
 interface AppDependencies {
-    val cartRepository: CartRepository
+    val roomCartRepository: CartRepository
     val productRepository: ProductRepository
     val cartDao: CartProductDao
+    val inMemoryCartRepository: CartRepository
 }
