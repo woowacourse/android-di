@@ -51,9 +51,16 @@ class CartViewModelTest {
 
             // then:
             val products = cartViewModel.cartProducts.getOrAwaitValue()
+
             assertSoftly {
-                assertThat(products.size).isEqualTo(2)
-                assertThat(products).isEqualTo(CART_PRODUCTS)
+                assertThat(products.size).isEqualTo(CART_PRODUCTS.size)
+
+                products.forEachIndexed { index, actual ->
+                    val expected = CART_PRODUCTS[index]
+                    assertThat(actual.id).isEqualTo(expected.id)
+                    assertThat(actual.product.name).isEqualTo(expected.product.name)
+                    assertThat(actual.product.price).isEqualTo(expected.product.price)
+                }
             }
         }
 

@@ -4,14 +4,13 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertSame
-import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.fake.FakeApplication
-import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.fake.FakeRoomCartRepository
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
 import kotlin.reflect.KClass
@@ -68,7 +67,7 @@ class AutoDIViewModelFactoryTest {
         val expectedDependencies: Map<KClass<*>, Any> =
             mapOf(
                 ProductRepository::class to fakeApp.productRepository,
-                CartRepository::class to fakeApp.cartRepository,
+                CartRepository::class to fakeApp.roomCartRepository,
             )
         // when:
         val viewModel = autoDIViewModelFactory.create(MainViewModel::class.java, extras)
@@ -94,6 +93,7 @@ class AutoDIViewModelFactoryTest {
             MutableCreationExtras().apply {
                 this[APPLICATION_KEY] = FakeApplication()
             }
+
         // when:
         val viewModel = autoDIViewModelFactory.create(CartViewModel::class.java, extras)
 
@@ -106,9 +106,7 @@ class AutoDIViewModelFactoryTest {
                 .getter
                 .call(viewModel)
 
-        assertSoftly {
-            assertNotNull(injectedRepository)
-            assertTrue(injectedRepository is FakeCartRepository)
-        }
+        assertNotNull(injectedRepository)
+        assertTrue(injectedRepository is FakeRoomCartRepository)
     }
 }
