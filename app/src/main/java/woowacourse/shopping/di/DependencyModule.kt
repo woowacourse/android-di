@@ -1,7 +1,5 @@
 package woowacourse.shopping.di
 
-import kotlin.reflect.KClass
-
 data class DependencyModule(
     val factories: List<DependencyFactory<*>>,
 )
@@ -11,11 +9,15 @@ class DependencyModuleBuilder(
 ) {
     val factories = mutableListOf<DependencyFactory<*>>()
 
-    inline fun <reified T : Any> factory(noinline create: () -> T) {
-        factories.add(DependencyFactory(T::class, create))
+    inline fun <reified T : Any> factory(
+        name: String? = null,
+        noinline create: () -> T,
+    ) {
+        factories.add(DependencyFactory(Qualifier(T::class, name), create))
     }
 
-    inline fun <reified T : Any> get(): T = appContainerStore.instantiate(T::class, saveToCache = false) as T
+    inline fun <reified T : Any> get(name: String? = null): T =
+        appContainerStore.instantiate(Qualifier(T::class, name), saveToCache = false) as T
 
     fun build(): DependencyModule = DependencyModule(factories)
 }

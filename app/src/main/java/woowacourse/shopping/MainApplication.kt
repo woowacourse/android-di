@@ -23,8 +23,8 @@ class MainApplication : DiApplication() {
                         ).build()
                 }
                 factory { get<ShoppingDatabase>().cartProductDao() }
-                factory<CartRepository> { DefaultCartRepository(get()) }
-                factory<ProductRepository> {
+                factory<CartRepository>(name = "cartRepository") { DefaultCartRepository(get()) }
+                factory<ProductRepository>(name = "productRepository") {
                     DefaultProductRepository()
                 }
             },

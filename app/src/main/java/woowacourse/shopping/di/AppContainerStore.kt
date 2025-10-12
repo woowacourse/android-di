@@ -1,60 +1,73 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-class AppContainerStore(
-    vararg factories: DependencyFactory<*>,
-) {
-    private val cache: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val factory = factories.associateBy { it.type }
+class AppContainerStore {
+    private val cache: MutableMap<Qualifier, Any> = mutableMapOf()
+    private val factory = mutableMapOf<Qualifier, DependencyFactory<*>>()
 
-    operator fun get(clazz: KClass<*>): Any? = cache[clazz]
+    operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
 
     fun instantiate(
-        clazz: KClass<*>,
+        qualifier: Qualifier,
         saveToCache: Boolean = true,
     ): Any? {
-        val inProgress = mutableSetOf<KClass<*>>()
-        return instantiate(clazz, inProgress, saveToCache)
+        val inProgress = mutableSetOf<Qualifier>()
+        return instantiate(qualifier, inProgress, saveToCache)
+    }
+
+    fun registerFactory(vararg factories: DependencyFactory<*>) {
+        factory.putAll(factories.associateBy { it.qualifier })
     }
 
     private fun instantiate(
-        clazz: KClass<*>,
-        inProgress: MutableSet<KClass<*>>,
+        qualifier: Qualifier,
+        inProgress: MutableSet<Qualifier>,
         saveToCache: Boolean = true,
     ): Any? {
-        if (cache.containsKey(clazz)) return this[clazz]
+        if (cache.containsKey(qualifier)) return cache[qualifier]
 
-        if (inProgress.contains(clazz)) {
+        if (inProgress.contains(qualifier)) {
             throw IllegalArgumentException(
-                "$ERR_CIRCULAR_DEPENDENCY_DETECTED : ${clazz.simpleName}",
+                "$ERR_CIRCULAR_DEPENDENCY_DETECTED : ${qualifier.type.simpleName}",
             )
         }
 
-        inProgress.add(clazz)
+        inProgress.add(qualifier)
         val instance =
-            factory[clazz]?.invoke() ?: clazz.primaryConstructor?.let {
+            factory[qualifier]?.invoke() ?: qualifier.type.primaryConstructor?.let {
                 reflect(it, inProgress)
-            } ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${clazz.simpleName}")
+            }
+                ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}")
 
-        if (saveToCache) cache[clazz] = instance
-        inProgress.remove(clazz)
+        if (saveToCache) cache[qualifier] = instance
+        inProgress.remove(qualifier)
         return instance
     }
 
     private fun reflect(
         constructor: KFunction<Any>,
-        inProgress: MutableSet<KClass<*>>,
+        inProgress: MutableSet<Qualifier>,
     ): Any {
         val arguments =
             constructor.parameters
                 .filter { !it.isOptional }
                 .associateWith { parameter ->
-                    val instance = instantiate(parameter.type.jvmErasure, inProgress)
-                    instance
+                    val childQualifier =
+                        Qualifier(
+                            parameter.type.jvmErasure,
+                            parameter.findAnnotation<Inject>()?.name,
+                        )
+
+                    instantiate(
+                        childQualifier,
+                        inProgress,
+                    )
                 }
         return constructor.callBy(arguments)
     }
@@ -62,6 +75,6 @@ class AppContainerStore(
     companion object {
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
-            "주 생성자를 찾을 수 없습니다. 인터페이스, 추상 클래스의 경우 AppContainer에 구현체를 등록해주세요"
+            "등록된 팩토리, 또는 주 생성자를 찾을 수 없습니다"
     }
 }
