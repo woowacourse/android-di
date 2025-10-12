@@ -6,6 +6,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.bibi_di.ContainerBuilder
+import woowacourse.bibi_di.Remote
+import woowacourse.shopping.di.InjectingViewModelFactory
+import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 
@@ -25,10 +29,7 @@ class CartViewModelTest {
                     addCartProduct(ProductFixture.Snack)
                     addCartProduct(ProductFixture.Juice)
                 }
-            val viewModel =
-                CartViewModel().apply {
-                    cartRepository = fakeRepo
-                }
+            val viewModel = createViewModelWith(fakeRepo)
 
             // when
             viewModel.getAllCartProducts()
@@ -50,10 +51,7 @@ class CartViewModelTest {
                     addCartProduct(ProductFixture.Snack)
                     addCartProduct(ProductFixture.Juice)
                 }
-            val viewModel =
-                CartViewModel().apply {
-                    cartRepository = fakeRepo
-                }
+            val viewModel = createViewModelWith(fakeRepo)
 
             // when
             viewModel.deleteCartProduct(1L)
@@ -68,4 +66,14 @@ class CartViewModelTest {
                 names,
             )
         }
+
+    private fun createViewModelWith(fakeRepo: CartRepository): CartViewModel {
+        val container =
+            ContainerBuilder()
+                .apply { register(CartRepository::class, Remote::class) { fakeRepo } }
+                .build()
+        val factory = InjectingViewModelFactory(container)
+
+        return factory.create(CartViewModel::class.java)
+    }
 }

@@ -6,6 +6,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.bibi_di.ContainerBuilder
+import woowacourse.bibi_di.Remote
+import woowacourse.shopping.di.InjectingViewModelFactory
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.model.Product
@@ -23,11 +28,7 @@ class MainViewModelTest {
         // given
         val productRepo = FakeProductRepository(ProductFixture.AllProducts)
         val cartRepo = FakeCartRepository()
-        val viewModel =
-            MainViewModel().apply {
-                productRepository = productRepo
-                cartRepository = cartRepo
-            }
+        val viewModel = createViewModelWith(productRepo, cartRepo)
 
         // when
         viewModel.getAllProducts()
@@ -42,11 +43,7 @@ class MainViewModelTest {
             // given
             val productRepo = FakeProductRepository()
             val cartRepo = FakeCartRepository()
-            val viewModel =
-                MainViewModel().apply {
-                    productRepository = productRepo
-                    cartRepository = cartRepo
-                }
+            val viewModel = createViewModelWith(productRepo, cartRepo)
             val item = Product(0L, "웨이퍼 초코바", 1000, "")
 
             // when
@@ -56,4 +53,19 @@ class MainViewModelTest {
             assertTrue(viewModel.onProductAdded.getOrAwaitValue())
             assertEquals(listOf(item), cartRepo.getAllCartProducts())
         }
+
+    private fun createViewModelWith(
+        fakeProductRepo: ProductRepository,
+        fakeCartRepo: CartRepository,
+    ): MainViewModel {
+        val container =
+            ContainerBuilder()
+                .apply {
+                    register(ProductRepository::class, Remote::class) { fakeProductRepo }
+                    register(CartRepository::class, Remote::class) { fakeCartRepo }
+                }.build()
+        val factory = InjectingViewModelFactory(container)
+
+        return factory.create(MainViewModel::class.java)
+    }
 }
