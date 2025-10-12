@@ -7,12 +7,12 @@ import woowacourse.shopping.fixture.PRODUCT_2
 import woowacourse.shopping.fixture.PRODUCT_3
 import woowacourse.shopping.model.Product
 
-class DefaultCartRepositoryTest {
+class DatabaseCartRepositoryTest {
     @Test
     fun `장바구니에 상품을 추가할 수 있다`() {
         // given
         val product = Product("Test product", 1, "Test product image URL")
-        val repository = DefaultCartRepository()
+        val repository = DatabaseCartRepository()
 
         // when
         repository.addCartProduct(product)
@@ -27,7 +27,7 @@ class DefaultCartRepositoryTest {
     fun `장바구니에서 특정 인덱스에 있는 상품을 제거할 수 있다`() {
         // given
         val repository =
-            DefaultCartRepository().apply {
+            DatabaseCartRepository().apply {
                 addCartProduct(PRODUCT_1)
                 addCartProduct(PRODUCT_2)
                 addCartProduct(PRODUCT_3)

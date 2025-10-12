@@ -17,4 +17,8 @@ class DependencyModule(
 
     @Dependency
     val cartRepository: CartRepository by lazy { DefaultCartRepository(shoppingDatabase.cartProductDao()) }
+    val databaseCartRepository: CartRepository by lazy { DatabaseCartRepository(shoppingDatabase.cartProductDao()) }
+
+    @Dependency
+    val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
 }
