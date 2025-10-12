@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.room.fixture
+package com.medandro.di.fixture
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,7 +1,10 @@
-package woowacourse.shopping.di
+package com.medandro.di
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.medandro.di.annotation.InjectField
+import com.medandro.di.fixture.TestDao
+import com.medandro.di.fixture.TestDatabase
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
@@ -9,9 +12,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.di.annotation.InjectField
-import woowacourse.shopping.di.room.fixture.TestDao
-import woowacourse.shopping.di.room.fixture.TestDatabase
 
 @RunWith(RobolectricTestRunner::class)
 class DIContainerRoomTest {

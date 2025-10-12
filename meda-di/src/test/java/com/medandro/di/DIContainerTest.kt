@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package com.medandro.di
 
+import com.medandro.di.annotation.InjectField
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import woowacourse.shopping.di.annotation.InjectField
 
 class DIContainerTest {
     data class Brand(

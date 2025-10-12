@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.room.fixture
+package com.medandro.di.fixture
 
 import androidx.room.Dao
 import androidx.room.Insert
