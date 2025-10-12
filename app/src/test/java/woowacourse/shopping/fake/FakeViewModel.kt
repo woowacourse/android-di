@@ -1,7 +1,7 @@
 package woowacourse.shopping.fake
 
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.di.Inject
+import woowacourse.bibi_di.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 

@@ -12,7 +12,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowToast
-import woowacourse.shopping.di.ContainerBuilder
+import woowacourse.bibi_di.ContainerBuilder
+import woowacourse.bibi_di.Remote
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
@@ -74,8 +75,8 @@ class MainActivityTest {
         val testContainer =
             ContainerBuilder()
                 .apply {
-                    register(CartRepository::class) { FakeCartRepository() }
-                    register(ProductRepository::class) { FakeProductRepository(ProductFixture.AllProducts) }
+                    register(CartRepository::class, Remote::class) { FakeCartRepository() }
+                    register(ProductRepository::class, Remote::class) { FakeProductRepository(ProductFixture.AllProducts) }
                 }.build()
 
         val app = ApplicationProvider.getApplicationContext<Context>() as ShoppingApplication

@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.di.AppContainer
+import woowacourse.bibi_di.AppContainer
 import woowacourse.shopping.di.InjectingViewModelFactory
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
@@ -79,7 +79,10 @@ class InjectingViewModelFactoryTest {
     private class MapBackedContainer(
         private val map: Map<KClass<*>, Any>,
     ) : AppContainer {
-        override fun resolve(type: KType): Any {
+        override fun resolve(
+            type: KType,
+            qualifier: KClass<out Annotation>?,
+        ): Any {
             val kClass =
                 type.classifier as? KClass<*>
                     ?: error("Unsupported type: $type")
