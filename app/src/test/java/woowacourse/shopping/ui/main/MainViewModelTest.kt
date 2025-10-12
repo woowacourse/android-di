@@ -1,33 +1,48 @@
 package woowacourse.shopping.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.fixture.FakeAppContainer
-import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
-import woowacourse.shopping.fixture.PRODUCT_FIXTURE
+import woowacourse.shopping.fixture.model.PRODUCTS_FIXTURE
+import woowacourse.shopping.fixture.model.PRODUCT_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.fixture.repository.FakeProductRepository
 import woowacourse.shopping.getOrAwaitValue
 
+@ExperimentalCoroutinesApi
 class MainViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: MainViewModel
 
     @Before
     fun setup() {
+        Dispatchers.setMain(testDispatcher)
+
         val productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
         val cartRepository = FakeCartRepository(mutableListOf())
 
         val appContainer = FakeAppContainer(productRepository, cartRepository)
         val viewModelFactory = ViewModelFactory(appContainer)
         viewModel = viewModelFactory.create(MainViewModel::class.java)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

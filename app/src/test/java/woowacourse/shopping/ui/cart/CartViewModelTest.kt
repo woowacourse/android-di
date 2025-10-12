@@ -1,31 +1,45 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.ViewModelFactory
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.fixture.FakeAppContainer
-import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
+import woowacourse.shopping.fixture.model.CART_PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
 
+@ExperimentalCoroutinesApi
 class CartViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: CartViewModel
 
     @Before
     fun setup() {
-        val cartRepository = FakeCartRepository(PRODUCTS_FIXTURE.toMutableList())
+        Dispatchers.setMain(testDispatcher)
 
+        val cartRepository = FakeCartRepository(CART_PRODUCTS_FIXTURE.toMutableList())
         val appContainer: AppContainer = FakeAppContainer(cartRepository = cartRepository)
         val viewModelFactory = ViewModelFactory(appContainer)
         viewModel = viewModelFactory.create(CartViewModel::class.java)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
@@ -34,9 +48,9 @@ class CartViewModelTest {
         viewModel.getAllCartProducts()
 
         // then
-        val products: List<Product> = viewModel.cartProducts.getOrAwaitValue()
+        val products: List<CartProduct> = viewModel.cartProducts.getOrAwaitValue()
         assertThat(products).hasSize(3)
-        assertThat(products).isEqualTo(PRODUCTS_FIXTURE)
+        assertThat(products).isEqualTo(CART_PRODUCTS_FIXTURE)
     }
 
     @Test
