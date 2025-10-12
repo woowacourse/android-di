@@ -121,6 +121,9 @@ class AppInjectorTest :
             setUpArchTaskExecutor()
 
             // given
+            InjectContainer.registerFactory<ViewModelConstructorInjectFixture> { injector ->
+                Provider { ViewModelConstructorInjectFixture(injector.get(), injector.get()) }
+            }
             InjectContainer.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
             InjectContainer.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
 
