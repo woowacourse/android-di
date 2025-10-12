@@ -6,32 +6,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.mapper.toModel
-import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
-class CartViewModel
-    @Inject
-    constructor(
-        private val cartRepository: CartRepository,
-    ) : ViewModel() {
-        private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-        val cartProducts: LiveData<List<Product>> get() = _cartProducts
+class CartViewModel(
+    private val cartRepository: CartRepository,
+) : ViewModel() {
+    private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+    val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
-        private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
-        val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
+    private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
+    val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-        fun getAllCartProducts() {
-            viewModelScope.launch {
-                _cartProducts.value = cartRepository.getAllCartProducts().map { it.toModel() }
-            }
-        }
-
-        fun deleteCartProduct(id: Long) {
-            viewModelScope.launch {
-                cartRepository.deleteCartProduct(id)
-                _cartProducts.value = cartProducts.value?.filter { it.id != id }
-                _onCartProductDeleted.value = true
-            }
+    fun getAllCartProducts() {
+        viewModelScope.launch {
+            _cartProducts.value = cartRepository.getAllCartProducts().map { it.toModel() }
         }
     }
+
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            _cartProducts.value = cartProducts.value?.filter { it.id != id }
+            _onCartProductDeleted.value = true
+        }
+    }
+}
