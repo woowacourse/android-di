@@ -80,6 +80,13 @@ class CartActivity :
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+
+        viewModel.errorMessage.observe(this) { message ->
+            if (!message.isNullOrBlank()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                viewModel.consumeError()
+            }
+        }
     }
 
     override fun onDeleteClicked(id: Long) {

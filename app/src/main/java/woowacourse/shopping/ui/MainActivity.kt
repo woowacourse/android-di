@@ -12,6 +12,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.di.injectedViewModel
 import woowacourse.shopping.ui.cart.CartActivity
+import kotlin.math.PI
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
@@ -72,9 +73,17 @@ class MainActivity : AppCompatActivity() {
                 )
             binding.rvProducts.adapter = adapter
         }
+
         viewModel.onProductAdded.observe(this) {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.errorMessage.observe(this) { message ->
+            if (!message.isNullOrBlank()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                viewModel.consumeError()
+            }
         }
     }
 
