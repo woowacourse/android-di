@@ -1,8 +1,11 @@
 package woowacourse.shopping.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import woowacourse.shopping.di.MyInjector
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
@@ -22,9 +25,17 @@ class MainViewModel : ViewModel() {
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        _onProductAdded.value = true
+        viewModelScope.launch {
+            runCatching {
+                cartRepository.addCartProduct(product)
+            }.onSuccess {
+                _onProductAdded.value = true
+            }.onFailure {
+                Log.e("TAG", "addCartProduct: 추가됨 실패", it)
+            }
+        }
     }
+
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
