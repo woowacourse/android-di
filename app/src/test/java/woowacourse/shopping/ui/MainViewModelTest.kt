@@ -1,6 +1,8 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -14,11 +16,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.di.AutoDIViewModelFactory
-import woowacourse.shopping.fake.FakeCartRepository
-import woowacourse.shopping.fake.FakeProductRepository
+import woowacourse.shopping.fake.FakeApplication
 import woowacourse.shopping.fake.PRODUCTS
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
@@ -34,14 +33,12 @@ class MainViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        val dependencies =
-            mapOf(
-                CartRepository::class to FakeCartRepository(),
-                ProductRepository::class to FakeProductRepository(),
-            )
-
-        val factory = AutoDIViewModelFactory(dependencies)
-        mainViewModel = factory.create(MainViewModel::class.java)
+        val factory = AutoDIViewModelFactory()
+        val extras =
+            MutableCreationExtras().apply {
+                this[APPLICATION_KEY] = FakeApplication()
+            }
+        mainViewModel = factory.create(MainViewModel::class.java, extras)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
