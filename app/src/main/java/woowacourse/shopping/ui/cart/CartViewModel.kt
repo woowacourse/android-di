@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.di.DatabaseLogger
+import com.example.di.RequireInjection
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.DatabaseLogger
-import woowacourse.shopping.di.RequireInjection
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 

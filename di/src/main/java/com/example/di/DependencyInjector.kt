@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import androidx.lifecycle.SavedStateHandle
 import kotlin.reflect.KClass

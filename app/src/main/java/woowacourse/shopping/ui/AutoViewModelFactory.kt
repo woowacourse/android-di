@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.di.DependencyInjector
+import com.example.di.DependencyInjector
 
 class AutoViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -20,9 +20,12 @@ class AutoViewModelFactory(
         handle: SavedStateHandle,
     ): T {
         val kClass = modelClass.kotlin
-        val instance = DependencyInjector.getInstance(kClass, handle)
+        val instance =
+            DependencyInjector
+                .getInstance(kClass, handle)
 
-        DependencyInjector.injectAnnotatedProperties(kClass, instance)
+        DependencyInjector
+            .injectAnnotatedProperties(kClass, instance)
         return instance
     }
 }

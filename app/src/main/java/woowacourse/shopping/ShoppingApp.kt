@@ -1,10 +1,9 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.DatabaseLogger
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.InMemoryLogger
+import com.example.di.DatabaseLogger
+import com.example.di.DependencyInjector
+import com.example.di.InMemoryLogger
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 

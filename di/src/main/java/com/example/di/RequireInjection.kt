@@ -1,5 +1,5 @@
-package woowacourse.shopping.di
+package com.example.di
 
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DatabaseLogger
+annotation class RequireInjection

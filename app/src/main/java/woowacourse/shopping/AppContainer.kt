@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
 import android.content.Context
 import woowacourse.shopping.data.CartRepositoryImpl
