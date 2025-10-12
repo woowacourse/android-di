@@ -7,6 +7,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.di.auto.Container
+import woowacourse.di.auto.Database
+import woowacourse.di.auto.FieldInjector
 import woowacourse.shopping.MainDispatcherRule
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -31,13 +34,12 @@ class MainViewModelTest {
     fun `상품_조회시_상품이_순서대로_조회된다`() =
         runTest {
             // given
-            val productRepository: ProductRepository = FakeProductRepository()
-            val cartRepository: CartRepository = mockk(relaxed = true)
-            val viewModel =
-                MainViewModel(
-                    productRepository = productRepository,
-                    cartRepository = cartRepository,
-                )
+            val container =
+                Container().apply {
+                    bindSingleton(ProductRepository::class) { FakeProductRepository() }
+                    bindSingleton(CartRepository::class, qualifier = Database::class) { mockk(relaxed = true) }
+                }
+            val viewModel = MainViewModel().also { FieldInjector.inject(it, container) }
 
             // when
             viewModel.getAllProducts()
@@ -51,13 +53,13 @@ class MainViewModelTest {
     fun `상품을_추가하면_추가_이벤트가_발생한다`() =
         runTest {
             // given
-            val productRepository: ProductRepository = FakeProductRepository()
             val cartRepository: CartRepository = mockk(relaxed = true)
-            val viewModel =
-                MainViewModel(
-                    productRepository = productRepository,
-                    cartRepository = cartRepository,
-                )
+            val container =
+                Container().apply {
+                    bindSingleton(ProductRepository::class) { FakeProductRepository() }
+                    bindSingleton(CartRepository::class, qualifier = Database::class) { cartRepository }
+                }
+            val viewModel = MainViewModel().also { FieldInjector.inject(it, container) }
             val product = Product("Z", 3, "z")
 
             // when

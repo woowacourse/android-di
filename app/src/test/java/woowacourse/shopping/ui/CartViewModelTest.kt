@@ -8,6 +8,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.di.auto.Container
+import woowacourse.di.auto.Database
+import woowacourse.di.auto.FieldInjector
 import woowacourse.shopping.MainDispatcherRule
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.getOrAwaitValue
@@ -32,7 +35,12 @@ class CartViewModelTest {
                     CartProduct(2L, "B", 20, "b", 222L),
                 )
             coEvery { repository.getAllCartProducts() } returns cartProducts
-            val viewModel = CartViewModel(repository)
+
+            val container =
+                Container().apply {
+                    bindSingleton(CartRepository::class, qualifier = Database::class) { repository }
+                }
+            val viewModel = CartViewModel().also { FieldInjector.inject(it, container) }
 
             // when
             viewModel.getAllCartProducts()
@@ -50,7 +58,12 @@ class CartViewModelTest {
             // given
             val repository = mockk<CartRepository>(relaxed = true)
             coEvery { repository.getAllCartProducts() } returns emptyList()
-            val viewModel = CartViewModel(repository)
+
+            val container =
+                Container().apply {
+                    bindSingleton(CartRepository::class, qualifier = Database::class) { repository }
+                }
+            val viewModel = CartViewModel().also { FieldInjector.inject(it, container) }
 
             // when
             viewModel.deleteCartProduct(1L)
