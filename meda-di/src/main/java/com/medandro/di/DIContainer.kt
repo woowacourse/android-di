@@ -46,8 +46,8 @@ class DIContainer(
         // 외부에서 등록된 싱글턴 인스턴스에서 반환
         externalSingletons[kClass]?.let { return it }
 
-        // Room Database에서 Dao 인스턴스 반환
-        resolveFromDatabase(kClass, qualifier)?.let { dao ->
+        // Room의 Dao 요쳥일 경우 externalSingletons의 Room 인스턴스 에서 Dao 인스턴스 반환
+        resolveDaoFromRoomDB(kClass)?.let { dao ->
             instances[dependencyKey] = dao
             return dao
         }
@@ -109,14 +109,9 @@ class DIContainer(
         }
     }
 
-    private fun resolveFromDatabase(
-        kClass: KClass<*>,
-        qualifier: String?,
-    ): Any? {
-        if (qualifier != "RoomDB") {
-            if (qualifier != null) {
-                return null
-            }
+    private fun resolveDaoFromRoomDB(kClass: KClass<*>): Any? {
+        if (!kClass.java.isInterface || kClass.simpleName?.endsWith("Dao") != true) {
+            return null
         }
 
         val database =
