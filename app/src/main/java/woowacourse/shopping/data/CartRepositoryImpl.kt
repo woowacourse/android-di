@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
+import woowacourse.di.annotation.Inject
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.Inject
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product

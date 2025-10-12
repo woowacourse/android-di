@@ -1,5 +1,8 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
+import woowacourse.di.annotation.InMemory
+import woowacourse.di.annotation.Inject
+import woowacourse.di.annotation.RoomDB
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
