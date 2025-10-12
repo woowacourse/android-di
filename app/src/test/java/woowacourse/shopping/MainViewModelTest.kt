@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -13,6 +14,9 @@ import woowacourse.shopping.ui.MainViewModel
 class MainViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `getAllProducts 호출 시 products LiveData가 업데이트된다`() {
@@ -33,22 +37,23 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `addCartProduct 호출 시 장바구니에 추가되고 onProductAdded가 true로 바뀐다`() {
-        // given
-        val productRepo = FakeProductRepository()
-        val cartRepo = FakeCartRepository()
-        val viewModel =
-            MainViewModel().apply {
-                productRepository = productRepo
-                cartRepository = cartRepo
-            }
-        val item = Product("웨이퍼 초코바", 1000, "")
+    fun `addCartProduct 호출 시 장바구니에 추가되고 onProductAdded가 true로 바뀐다`() =
+        runTest {
+            // given
+            val productRepo = FakeProductRepository()
+            val cartRepo = FakeCartRepository()
+            val viewModel =
+                MainViewModel().apply {
+                    productRepository = productRepo
+                    cartRepository = cartRepo
+                }
+            val item = Product(0L, "웨이퍼 초코바", 1000, "")
 
-        // when
-        viewModel.addCartProduct(item)
+            // when
+            viewModel.addCartProduct(item)
 
-        // then
-        assertTrue(viewModel.onProductAdded.getOrAwaitValue())
-        assertEquals(listOf(item), cartRepo.getAllCartProducts())
-    }
+            // then
+            assertTrue(viewModel.onProductAdded.getOrAwaitValue())
+            assertEquals(listOf(item), cartRepo.getAllCartProducts())
+        }
 }
