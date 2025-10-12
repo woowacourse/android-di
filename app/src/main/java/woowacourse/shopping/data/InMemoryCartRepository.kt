@@ -1,9 +1,9 @@
-package woowacourse.shopping.fixture
+package woowacourse.shopping.data
 
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository(
+class InMemoryCartRepository(
     initialProducts: List<Product> = emptyList(),
 ) : CartRepository {
     private val cartProducts: MutableList<Product> = initialProducts.toMutableList()
