@@ -7,29 +7,28 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 class ViewModelFactory(
-    private val dependencies: Map<KClass<*>, Any>,
+    private val appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val kClass: KClass<T> = modelClass.kotlin
         val constructor: KFunction<T> =
             kClass.constructors.firstOrNull { constructor: KFunction<T> ->
                 constructor.parameters.all { param: KParameter ->
-                    dependencies.containsKey(param.type.classifier)
+                    val paramClass = param.type.classifier as? KClass<*>
+                    paramClass != null && appContainer.canResolve(paramClass)
                 }
-            } ?: throw IllegalArgumentException(ERROR_CONSTRUCTOR_NOT_FOUND)
+            }
+                ?: throw IllegalArgumentException("${kClass.simpleName}에 주입 가능한 생성자가 없습니다.")
 
         val args: Array<Any> =
             constructor.parameters
                 .map { param: KParameter ->
-                    dependencies[param.type.classifier]
-                        ?: throw IllegalArgumentException(ERROR_DEPENDENCY_NOT_FOUND)
+                    val paramClass: KClass<*> =
+                        param.type.classifier as? KClass<*>
+                            ?: throw IllegalArgumentException("${param}의 타입을 확인할 수 없습니다.")
+                    appContainer.get(paramClass)
                 }.toTypedArray()
 
         return constructor.call(*args)
-    }
-
-    companion object {
-        private const val ERROR_CONSTRUCTOR_NOT_FOUND = "주입 가능한 생성자를 찾을 수 없습니다."
-        private const val ERROR_DEPENDENCY_NOT_FOUND = "주입 가능한 의존성을 찾을 수 없습니다."
     }
 }
