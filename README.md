@@ -67,16 +67,16 @@
 
 ## 🛠️ 구현할 기능 (2단계)
 
-- [ ] @InjectField(가칭) Annotation 정의
-- [ ] ViewModel 내 필드 주입 로직 구현
-- [ ] 의존성 주입 라이브러리의 필드 주입 기능 테스트
-- [ ] CartRepository 내부에 CartProductDao 의존성 추가
-- [ ] CartProductEntity의 createdAt을 UI(ViewHolder)에 표시
-- [ ] position 기반 삭제 로직을 id 기반으로 개선
+- [x] @InjectField(가칭) Annotation 정의
+- [x] ViewModel 내 필드 주입 로직 구현
+- [x] 의존성 주입 라이브러리의 필드 주입 기능 테스트
+- [x] CartRepository 내부에 CartProductDao 의존성 추가
+- [x] CartProductEntity의 createdAt을 UI(ViewHolder)에 표시
+- [x] position 기반 삭제 로직을 id 기반으로 개선
 
 ---
 
 ## 🛠️ 프로그래밍 요구 사항 (2단계)
 
-- [ ] 사전에 주어진 테스트 코드 모두 성공해야 한다.
-- [ ] Annotation을 활용해 필드 주입을 구현한다.
+- [x] 사전에 주어진 테스트 코드 모두 성공해야 한다.
+- [x] Annotation을 활용해 필드 주입을 구현한다.
