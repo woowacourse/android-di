@@ -57,13 +57,15 @@ object AppContainer {
         return instance
     }
 
-    private fun <T : Any> KFunction<T>.resolveConstructorParameters(overrides: Map<KClass<out Any>, Any>): Map<KParameter, Any?> =
-        parameters
-            .filter { parameter -> parameter.hasAnnotation<MyInjector>() }
-            .associateWith { param ->
-                val kClazz = param.type.classifier as KClass<out Any>
-                overrides[kClazz] ?: resolve(kClazz, overrides)
-            }
+    private fun <T : Any> KFunction<T>.resolveConstructorParameters(overrides: Map<KClass<out Any>, Any>): Map<KParameter, Any> {
+        isAccessible = true
+        if (hasAnnotation<MyInjector>().not()) return emptyMap()
+
+        return parameters.associateWith { param ->
+            val kClazz = param.type.classifier as KClass<out Any>
+            overrides[kClazz] ?: resolve(kClazz, overrides)
+        }
+    }
 
     private fun <T : Any> KClass<T>.createPropertyInstance(
         instance: T,
