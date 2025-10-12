@@ -1,8 +1,8 @@
 package com.example.di
 
-import com.example.di.fixture.FakeCartRepositoryImpl
-import com.example.di.fixture.FakeCartViewModel
-import com.example.di.fixture.FakeProductRepositoryImpl
+import com.example.di.test.fixture.FakeCartRepositoryImpl
+import com.example.di.test.fixture.FakeCartViewModel
+import com.example.di.test.fixture.FakeProductRepositoryImpl
 import org.assertj.core.api.SoftAssertions
 import org.junit.Assert
 import org.junit.Before
