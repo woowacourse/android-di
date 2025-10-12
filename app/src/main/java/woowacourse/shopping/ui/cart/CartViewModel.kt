@@ -24,9 +24,7 @@ class CartViewModel : ViewModel() {
     fun getAllCartProducts() {
         viewModelScope.launch {
             _cartProducts.value =
-                cartRepository.getAllCartProducts().map {
-                    Product(it.id.toInt(), it.name, it.price, it.imageUrl, it.createdAt)
-                }
+                cartRepository.getAllCartProducts()
         }
     }
 

@@ -2,6 +2,7 @@ package woowacourse.shopping.data.repository
 
 import com.medandro.di.annotation.Qualifier
 import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -24,7 +25,7 @@ class CartInMemoryRepository : CartRepository {
         cartItems.add(cartEntity)
     }
 
-    override suspend fun getAllCartProducts(): List<CartProductEntity> = cartItems.toList()
+    override suspend fun getAllCartProducts(): List<Product> = cartItems.map { it.toDomain() }
 
     override suspend fun deleteCartProduct(id: Int) {
         cartItems.removeAll { it.id == id.toLong() }
