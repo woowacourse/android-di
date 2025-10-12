@@ -20,7 +20,7 @@
 
 ### 2단계 - Annotation
 #### 필드 주입
-- [ ] ViewModel 내 필드 주입을 구현한다.
+- [x] ViewModel 내 필드 주입을 구현한다.
 
 #### Annotation
 다음 문제점을 해결한다.
