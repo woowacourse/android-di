@@ -1,15 +1,22 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.AppInjector
+import woowacourse.shopping.di.InjectContainer
 import woowacourse.shopping.di.module.DatabaseModule
 import woowacourse.shopping.di.module.RepositoryModule
+import woowacourse.shopping.di.module.ViewModelModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        DatabaseModule.init(applicationContext)
-        AppInjector.init(modules = listOf(RepositoryModule(), DatabaseModule()))
+        InjectContainer.init(
+            modules =
+                listOf(
+                    RepositoryModule(),
+                    DatabaseModule(applicationContext),
+                    ViewModelModule(),
+                ),
+        )
     }
 }
