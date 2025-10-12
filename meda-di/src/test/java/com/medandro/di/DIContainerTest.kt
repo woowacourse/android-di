@@ -1,6 +1,7 @@
 package com.medandro.di
 
 import com.medandro.di.annotation.InjectField
+import com.medandro.di.annotation.Qualifier
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -13,8 +14,18 @@ class DIContainerTest {
         val count: Int
     }
 
+    class ThreeWheels : Wheels {
+        override val count: Int = 3
+    }
+
+    @Qualifier("FourWheels")
     class FourWheels : Wheels {
         override val count: Int = 4
+    }
+
+    @Qualifier("SixWheels")
+    class SixWheels : Wheels {
+        override val count: Int = 6
     }
 
     class Driver(
@@ -27,7 +38,7 @@ class DIContainerTest {
     )
 
     @Test
-    fun `어노테이션이 붙은 필드는 자동 주입된다`() {
+    fun `InjectField 어노테이션이 붙은 필드는 자동 생성되어 주입된다`() {
         // given
         class TestCar {
             @InjectField
@@ -43,7 +54,7 @@ class DIContainerTest {
     }
 
     @Test
-    fun `어노테이션이 없는 필드는 주입되지 않는다`() {
+    fun `InjectField 어노테이션이 없는 필드는 주입되지 않는다`() {
         class TestCar {
             lateinit var brand: Brand
 
@@ -60,7 +71,7 @@ class DIContainerTest {
     }
 
     @Test
-    fun `필드의 인자는 재귀적으로 자동 주입된다`() {
+    fun `주입된 필드의 인자는 재귀적으로 자동 주입된다`() {
         // given
         class TestCar {
             @InjectField
@@ -94,7 +105,7 @@ class DIContainerTest {
     }
 
     @Test
-    fun `인터페이스 구현체 등록시 자동으로 주입된다`() {
+    fun `Qualifier가 없는 구현체 등록시 Qualifier가 없는 필드에 자동으로 주입된다`() {
         // given
         class TestCar {
             @InjectField
@@ -102,12 +113,39 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer(FourWheels::class)
+        val diContainer = DIContainer(ThreeWheels::class)
         val car = TestCar()
         diContainer.injectFields(car)
 
         // then
-        assertThat(car.wheels.count).isEqualTo(4)
+        assertThat(car.wheels.count).isEqualTo(3)
+    }
+
+    @Test
+    fun `Qualifier 어노테이션을 통해 의존성을 구분하여 주입한다`() {
+        // given
+        class TestCar {
+            @InjectField
+            lateinit var threeWheels: Wheels
+
+            @InjectField
+            @Qualifier("FourWheels")
+            lateinit var fourWheels: Wheels
+
+            @InjectField
+            @Qualifier("SixWheels")
+            lateinit var sixWheels: Wheels
+        }
+
+        // when
+        val diContainer = DIContainer(ThreeWheels::class, FourWheels::class, SixWheels::class)
+        val car = TestCar()
+        diContainer.injectFields(car)
+
+        // then
+        assertThat(car.threeWheels.count).isEqualTo(3)
+        assertThat(car.fourWheels.count).isEqualTo(4)
+        assertThat(car.sixWheels.count).isEqualTo(6)
     }
 
     @Test
