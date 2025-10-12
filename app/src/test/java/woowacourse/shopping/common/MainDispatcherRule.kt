@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.common
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

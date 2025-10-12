@@ -8,6 +8,8 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.bibi_di.ContainerBuilder
 import woowacourse.bibi_di.Remote
+import woowacourse.shopping.common.MainDispatcherRule
+import woowacourse.shopping.common.getOrAwaitValue
 import woowacourse.shopping.di.InjectingViewModelFactory
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository

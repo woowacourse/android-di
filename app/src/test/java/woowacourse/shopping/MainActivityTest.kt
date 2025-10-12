@@ -14,6 +14,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowToast
 import woowacourse.bibi_di.ContainerBuilder
 import woowacourse.bibi_di.Remote
+import woowacourse.shopping.common.withOverriddenContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
@@ -72,6 +73,8 @@ class MainActivityTest {
     }
 
     private fun launchMainWithFakes(): MainActivity {
+        val app = ApplicationProvider.getApplicationContext<Context>() as ShoppingApplication
+
         val testContainer =
             ContainerBuilder()
                 .apply {
@@ -79,12 +82,11 @@ class MainActivityTest {
                     register(ProductRepository::class, Remote::class) { FakeProductRepository(ProductFixture.AllProducts) }
                 }.build()
 
-        val app = ApplicationProvider.getApplicationContext<Context>() as ShoppingApplication
-        app.overrideContainerForTest(testContainer)
-
-        return Robolectric
-            .buildActivity(MainActivity::class.java)
-            .setup()
-            .get()
+        return withOverriddenContainer(app, testContainer) {
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .setup()
+                .get()
+        }
     }
 }
