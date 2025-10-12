@@ -12,9 +12,14 @@ import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.AutoDIViewModelFactory
 import woowacourse.shopping.fake.CART_PRODUCTS
 import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.getOrAwaitValue
+import woowacourse.shopping.ui.MainViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
@@ -28,7 +33,14 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        cartViewModel = CartViewModel(cartRepository = FakeCartRepository())
+        val dependencies =
+            mapOf(
+                CartRepository::class to FakeCartRepository(),
+                ProductRepository::class to FakeProductRepository(),
+            )
+
+        val factory = AutoDIViewModelFactory(dependencies)
+        cartViewModel = factory.create(CartViewModel::class.java)
     }
 
     @Test

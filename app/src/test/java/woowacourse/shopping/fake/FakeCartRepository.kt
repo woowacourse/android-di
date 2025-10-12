@@ -17,7 +17,7 @@ class FakeCartRepository : CartRepository {
     override suspend fun getAllCartProducts(): List<CartProduct> = carts.map(CartProductEntity::toDomain)
 
     override suspend fun deleteCartProduct(id: Long) {
-        carts.filter { it.id != id }
+        carts.removeAt(0)
     }
 }
 

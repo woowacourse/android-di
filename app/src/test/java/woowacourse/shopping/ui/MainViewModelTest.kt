@@ -14,6 +14,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.AutoDIViewModelFactory
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.fake.PRODUCTS
@@ -31,7 +34,14 @@ class MainViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        mainViewModel = MainViewModel(FakeProductRepository(), FakeCartRepository())
+        val dependencies =
+            mapOf(
+                CartRepository::class to FakeCartRepository(),
+                ProductRepository::class to FakeProductRepository(),
+            )
+
+        val factory = AutoDIViewModelFactory(dependencies)
+        mainViewModel = factory.create(MainViewModel::class.java)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
