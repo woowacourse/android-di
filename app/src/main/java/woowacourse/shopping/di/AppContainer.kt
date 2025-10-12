@@ -20,6 +20,21 @@ object AppContainer {
         providers[clazz] = instance
     }
 
+    fun <K : Any, V : Any> provide(
+        key: KClass<K>,
+        value: KClass<V>,
+    ) {
+        providers[key] = resolve(value)
+    }
+
+    inline fun <reified K : Any> provide(instanceClazz: KClass<*>) {
+        provide(K::class, instanceClazz)
+    }
+
+    inline fun <reified T : Any> provide(instance: T) {
+        provide(T::class, instance)
+    }
+
     fun <T : Any> provideModule(moduleKClazz: KClass<T>) {
         val module = moduleKClazz.objectInstance ?: return
 
