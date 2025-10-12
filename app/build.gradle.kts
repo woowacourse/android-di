@@ -80,4 +80,6 @@ dependencies {
     testImplementation(libs.robolectric)
 
     testImplementation(libs.mockk)
+
+    implementation(project(":di"))
 }

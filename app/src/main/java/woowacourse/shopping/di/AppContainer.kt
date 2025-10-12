@@ -1,7 +1,8 @@
-package woowacourse.shopping.di.auto
+package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
+import woowacourse.di.auto.Container
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.CartRepositoryImpl

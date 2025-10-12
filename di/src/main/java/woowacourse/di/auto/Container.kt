@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.auto
+package woowacourse.di.auto
 
 import kotlin.reflect.KClass
 

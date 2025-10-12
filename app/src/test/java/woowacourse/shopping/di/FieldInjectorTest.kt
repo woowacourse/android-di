@@ -2,9 +2,9 @@ package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import woowacourse.shopping.di.auto.Container
-import woowacourse.shopping.di.auto.FieldInjector
-import woowacourse.shopping.di.auto.InjectField
+import woowacourse.di.auto.Container
+import woowacourse.di.auto.FieldInjector
+import woowacourse.di.auto.InjectField
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
