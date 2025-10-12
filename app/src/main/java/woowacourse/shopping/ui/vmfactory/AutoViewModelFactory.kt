@@ -30,6 +30,6 @@ class AutoViewModelFactory(
                     throw IllegalStateException("의존성을 주입할 수 없습니다.", e)
                 }
             }.toTypedArray()
-        return constructor.call(*constructorArguments) as T
+        return constructor.call(*constructorArguments)
     }
 }
