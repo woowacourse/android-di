@@ -12,9 +12,9 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fake.FakeProductRepository
-import woowacourse.shopping.fixture.CHICKEN_BREAST
-import woowacourse.shopping.fixture.EGG
-import woowacourse.shopping.fixture.POTATO
+import woowacourse.shopping.fixture.CHICKEN_BREAST_PRODUCT
+import woowacourse.shopping.fixture.EGG_PRODUCT
+import woowacourse.shopping.fixture.POTATO_PRODUCT
 import woowacourse.shopping.ui.utils.getOrAwaitValue
 
 @RunWith(RobolectricTestRunner::class)
@@ -35,7 +35,7 @@ class MainViewModelTest {
     @Test
     fun `카트가 추가되면 onProductAdded가 true가 되는지 테스트`() {
         // when
-        viewModel.addCartProduct(POTATO)
+        viewModel.addCartProduct(POTATO_PRODUCT)
         // then
         assertTrue(viewModel.onProductAdded.getOrAwaitValue())
     }
@@ -43,7 +43,7 @@ class MainViewModelTest {
     @Test
     fun `모든 제품을 가져오는지 테스트`() {
         // given
-        val expected = listOf(POTATO, CHICKEN_BREAST, EGG)
+        val expected = listOf(POTATO_PRODUCT, CHICKEN_BREAST_PRODUCT, EGG_PRODUCT)
         // when
         viewModel.getAllProducts()
         // then

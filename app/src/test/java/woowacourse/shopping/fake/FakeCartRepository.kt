@@ -1,21 +1,26 @@
 package woowacourse.shopping.fake
 
+import woowacourse.shopping.data.mapper.toCartEntity
+import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.fixture.POTATO
+import woowacourse.shopping.fixture.POTATO_CART_PRODUCT
+import woowacourse.shopping.fixture.POTATO_PRODUCT
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class FakeCartRepository : CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf(POTATO)
+    private val cartProducts: MutableList<CartProduct> = mutableListOf(POTATO_CART_PRODUCT)
 
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+
+    override suspend fun addCartProduct(product: Product) {
+        cartProducts.add(product.toCartEntity().toCartProduct())
     }
 
-    override fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return cartProducts.toList()
     }
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProducts.removeAll { it.id == id }
     }
 }
