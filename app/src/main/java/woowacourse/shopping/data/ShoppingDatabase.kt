@@ -23,8 +23,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
                         context.applicationContext,
                         ShoppingDatabase::class.java,
                         DATABASE_NAME,
-                    ).createFromAsset("database/shopping_products.db")
-                    .build()
+                    ).build()
                     .also { INSTANCE = it }
             }
     }
