@@ -25,7 +25,7 @@ class MainViewModelTest {
     fun setUp() {
         AppContainer.provide(CartRepository::class, FakeCartRepository())
         AppContainer.provide(ProductRepository::class, FakeProductRepository(ProductsFixture))
-        viewModel = AppContainer.resolve(MainViewModel::class)
+        viewModel = AppContainer.resolve()
     }
 
     @Test

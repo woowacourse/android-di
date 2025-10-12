@@ -20,7 +20,7 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         AppContainer.provide(CartRepository::class, FakeCartRepository(ProductsFixture))
-        viewModel = AppContainer.resolve(CartViewModel::class)
+        viewModel = AppContainer.resolve()
     }
 
     @Test
