@@ -5,8 +5,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.fixture.FakeAppContainer
 import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.PRODUCT_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
@@ -19,14 +19,15 @@ class MainViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setup() {
-        productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
-        cartRepository = FakeCartRepository(mutableListOf())
-        viewModel = MainViewModel(productRepository, cartRepository)
+        val productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
+        val cartRepository = FakeCartRepository(mutableListOf())
+
+        val appContainer = FakeAppContainer(productRepository, cartRepository)
+        val viewModelFactory = ViewModelFactory(appContainer)
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
     }
 
     @Test

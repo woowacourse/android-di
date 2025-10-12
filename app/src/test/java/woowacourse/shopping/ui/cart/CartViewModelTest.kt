@@ -5,7 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.fixture.FakeAppContainer
 import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
@@ -16,12 +18,14 @@ class CartViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var viewModel: CartViewModel
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setup() {
-        cartRepository = FakeCartRepository(PRODUCTS_FIXTURE.toMutableList())
-        viewModel = CartViewModel(cartRepository)
+        val cartRepository = FakeCartRepository(PRODUCTS_FIXTURE.toMutableList())
+
+        val appContainer: AppContainer = FakeAppContainer(cartRepository = cartRepository)
+        val viewModelFactory = ViewModelFactory(appContainer)
+        viewModel = viewModelFactory.create(CartViewModel::class.java)
     }
 
     @Test
