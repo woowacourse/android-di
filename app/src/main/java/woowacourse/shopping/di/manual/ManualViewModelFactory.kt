@@ -1,11 +1,9 @@
 package woowacourse.shopping.di.manual
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.cart.CartViewModel
 
 class ManualViewModelFactory : ViewModelProvider.Factory {
+    /*
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         when (modelClass) {
@@ -22,4 +20,5 @@ class ManualViewModelFactory : ViewModelProvider.Factory {
 
             else -> error("Unknown ViewModel: ${modelClass.name}")
         }
+     */
 }

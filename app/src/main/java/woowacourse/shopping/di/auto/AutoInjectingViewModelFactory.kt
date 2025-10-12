@@ -33,7 +33,10 @@ class AutoInjectingViewModelFactory(
                     }
                 }.toTypedArray()
 
-        return constructor.call(*parameterValues)
+        val viewModel = constructor.call(*parameterValues)
+        FieldInjector.inject(viewModel, container)
+
+        return viewModel
     }
 
     @Suppress("UNCHECKED_CAST")
