@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.Inject
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.DatabaseRepository
+import woowacourse.shopping.data.DatabaseRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product

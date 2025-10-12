@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import com.example.di.DependencyProvider
-import woowacourse.shopping.di.RepositoryModule
+import woowacourse.shopping.data.RepositoryModule
 
 class ShoppingApplication : Application() {
     val dependencyProvider by lazy { DependencyProvider(RepositoryModule(this)) }
