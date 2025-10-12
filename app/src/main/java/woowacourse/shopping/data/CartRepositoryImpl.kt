@@ -1,12 +1,13 @@
 package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.di.Inject
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class CartRepositoryImpl(
-    private val dao: CartProductDao,
+    @Inject private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
