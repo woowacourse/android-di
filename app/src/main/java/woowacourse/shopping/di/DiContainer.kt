@@ -1,8 +1,11 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import java.util.concurrent.ConcurrentHashMap
@@ -16,7 +19,9 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
-object DiContainer {
+class DiContainer(
+    private val context: Context,
+) {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
 
     private val implementationMappings: Map<KClass<*>, KClass<*>> =
@@ -34,6 +39,12 @@ object DiContainer {
 
         instancePool[implementClass]?.let {
             return kClass.cast(it)
+        }
+
+        if (kClass == CartProductDao::class) {
+            val dao = ShoppingDatabase.getDataBase(context).cartProductDao()
+            instancePool[kClass] = dao
+            return kClass.cast(dao)
         }
 
         val newInstance = createInstance(kClass)
@@ -83,6 +94,8 @@ object DiContainer {
             }
     }
 
-    private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
-    private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."
+    companion object {
+        private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
+        private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."
+    }
 }
