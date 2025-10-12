@@ -9,8 +9,8 @@ import woowacourse.shopping.data.ProductRepository
 class ShoppingApplication : Application() {
     val container: ShoppingContainer by lazy {
         val container = ShoppingContainer()
-        container.make(ProductRepository::class) { DefaultProductRepository() }
-        container.make(CartRepository::class) { DefaultCartRepository() }
+        container.register(ProductRepository::class) { DefaultProductRepository() }
+        container.register(CartRepository::class) { DefaultCartRepository() }
         container
     }
 }

@@ -6,11 +6,11 @@ class ShoppingContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
     private val makers = mutableMapOf<KClass<*>, () -> Any>()
 
-    fun <T : Any> make(
+    fun <T : Any> register(
         type: KClass<T>,
-        make: () -> T,
+        creator: () -> T,
     ) {
-        makers[type] = make
+        makers[type] = creator
     }
 
     @Suppress("UNCHECKED_CAST")
