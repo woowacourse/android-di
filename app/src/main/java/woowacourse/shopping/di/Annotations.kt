@@ -8,3 +8,6 @@ annotation class InjectableViewModel
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Dependency
+
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+annotation class Qualifier
