@@ -8,7 +8,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
 class InjectorViewModelFactory(
@@ -24,7 +23,7 @@ class InjectorViewModelFactory(
             val field: Field? = prop.javaField
             if (field?.isAnnotationPresent(Inject::class.java) == true) {
                 // appContainer에서 실제 프로퍼티 인스턴스를 찾아 주입
-                val dependencyInstance: Any? = injectInstance(field.type)
+                val dependencyInstance: Any? = appContainer.getInstance(field.type.kotlin)
                 dependencyInstance?.let {
                     field.isAccessible = true
                     field.set(viewModelInstance, dependencyInstance)
@@ -32,20 +31,5 @@ class InjectorViewModelFactory(
             }
         }
         return viewModelInstance
-    }
-
-    // Class에 해당하는 Instance를 appContainer에서 찾아 반환
-    private fun injectInstance(clazz: Class<*>): Any? {
-        val matchedProperty: KProperty1<out AppContainer, *>? = getMatchedProperty(clazz)
-        return matchedProperty?.getter?.call(appContainer)
-    }
-
-    // appContainer의 모든 프로퍼티를 탐색
-    private fun getMatchedProperty(clazz: Class<*>): KProperty1<out AppContainer, *>? {
-        val matchedProperty: KProperty1<out AppContainer, *>? =
-            appContainer::class
-                .memberProperties
-                .firstOrNull { prop -> (prop.returnType.classifier as? KClass<*>)?.java == clazz }
-        return matchedProperty
     }
 }

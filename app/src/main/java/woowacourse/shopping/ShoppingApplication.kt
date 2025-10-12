@@ -5,6 +5,6 @@ import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.InjectorViewModelFactory
 
 class ShoppingApplication : Application() {
-    val appContainer = AppContainer()
+    val appContainer = AppContainer(this)
     val injectorViewModelFactory by lazy { InjectorViewModelFactory(appContainer) }
 }
