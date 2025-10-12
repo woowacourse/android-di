@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import woowacourse.shopping.di.ApplicationContextProvider
 import woowacourse.shopping.di.DiContainer
 
 class MyApplication : Application() {
@@ -8,5 +9,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        ApplicationContextProvider.setupApplicationContext(this)
     }
 }

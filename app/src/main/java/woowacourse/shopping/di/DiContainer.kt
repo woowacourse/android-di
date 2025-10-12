@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import java.util.concurrent.ConcurrentHashMap
@@ -42,9 +41,9 @@ class DiContainer(
         }
 
         if (kClass == CartProductDao::class) {
-            val dao = ShoppingDatabase.getDataBase(context).cartProductDao()
-            instancePool[kClass] = dao
-            return kClass.cast(dao)
+            val cartProductDao = LocalStorageModule.cartProductDao
+            instancePool[kClass] = cartProductDao
+            return kClass.cast(cartProductDao)
         }
 
         val newInstance = createInstance(kClass)
