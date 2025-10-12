@@ -4,8 +4,8 @@ import android.content.Context
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 
 class AppContainerImpl(

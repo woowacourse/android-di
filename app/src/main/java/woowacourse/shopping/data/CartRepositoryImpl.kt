@@ -2,9 +2,9 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.CartProduct
+import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.repository.CartRepository
 
 class CartRepositoryImpl(
     private val dao: CartProductDao,

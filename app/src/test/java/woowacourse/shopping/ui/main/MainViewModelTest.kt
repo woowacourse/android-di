@@ -6,13 +6,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.fixture.FakeAppContainer
 import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.PRODUCT_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.fixture.repository.FakeProductRepository
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.model.Product
 
 class MainViewModelTest {
     @get:Rule

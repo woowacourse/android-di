@@ -1,6 +1,6 @@
 package woowacourse.shopping.fixture
 
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
 
 val PRODUCT_FIXTURE =
     Product(

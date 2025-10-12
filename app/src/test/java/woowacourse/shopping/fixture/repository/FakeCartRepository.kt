@@ -1,7 +1,7 @@
 package woowacourse.shopping.fixture.repository
 
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.repository.CartRepository
 
 class FakeCartRepository(
     private val cartProducts: MutableList<Product> = mutableListOf(),

@@ -1,7 +1,7 @@
 package woowacourse.shopping.fixture.repository
 
-import woowacourse.shopping.domain.ProductRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.repository.ProductRepository
 
 class FakeProductRepository(
     private val products: List<Product> = listOf(),

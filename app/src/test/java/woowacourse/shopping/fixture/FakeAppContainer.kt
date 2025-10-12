@@ -1,8 +1,8 @@
 package woowacourse.shopping.fixture
 
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.fixture.repository.FakeProductRepository
 import kotlin.reflect.KClass
