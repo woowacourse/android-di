@@ -27,6 +27,8 @@ class MainViewModel(
     }
 
     fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
+        viewModelScope.launch {
+            _products.value = productRepository.getAllProducts()
+        }
     }
 }
