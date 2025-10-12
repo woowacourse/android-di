@@ -1,8 +1,8 @@
 package woowacourse.shopping.di.definition
 
-import kotlin.reflect.KClass
 import woowacourse.shopping.di.InjectContainer
 import woowacourse.shopping.di.Provider
+import kotlin.reflect.KClass
 
 /**
  * 클래스 타입을 어떻게 생성할지에 대한 정보 담는 클래스

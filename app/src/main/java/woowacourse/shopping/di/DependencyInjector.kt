@@ -1,14 +1,14 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.QualifierTag
+import woowacourse.shopping.di.definition.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
-import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.di.annotation.QualifierTag
-import woowacourse.shopping.di.definition.Qualifier
 
 object DependencyInjector {
     fun <T : Any> injectConstructor(modelClass: Class<T>): T =
