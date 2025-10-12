@@ -2,6 +2,9 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import com.m6z1.moongdi.AutoDIViewModelFactory
+import com.m6z1.moongdi.annotation.InMemory
+import com.m6z1.moongdi.annotation.RoomDb
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -23,15 +26,21 @@ class ShoppingApplication :
             ).build()
             .cartProductDao()
     }
+
+    @InMemory
     override val inMemoryCartRepository: CartRepository by lazy {
         InMemoryCartRepository()
     }
 
+    @RoomDb
     override val roomCartRepository: CartRepository by lazy {
         DefaultCartRepository(cartDao)
     }
 
+    @InMemory
     override val productRepository: ProductRepository by lazy {
         DefaultProductRepository()
     }
+
+    val viewModelFactory = AutoDIViewModelFactory<AppDependencies>()
 }

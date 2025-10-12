@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.m6z1.moongdi.annotation.InjectClass
+import com.m6z1.moongdi.annotation.InjectField
+import com.m6z1.moongdi.annotation.RoomDb
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.annotation.InjectClass
-import woowacourse.shopping.di.annotation.InjectField
-import woowacourse.shopping.di.annotation.RoomDb
 import woowacourse.shopping.model.CartProduct
 
 @InjectClass

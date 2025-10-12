@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.m6z1.moongdi.annotation
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)

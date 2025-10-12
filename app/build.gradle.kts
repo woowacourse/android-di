@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":moongdi"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
