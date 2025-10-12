@@ -10,10 +10,11 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel(
-    @Inject private val cartRepository: CartRepository,
-    @Inject private val productRepository: ProductRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
+    @Inject lateinit var cartRepository: CartRepository
+
+    @Inject lateinit var productRepository: ProductRepository
+
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
