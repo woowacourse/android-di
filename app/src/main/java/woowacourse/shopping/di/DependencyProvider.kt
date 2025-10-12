@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
-import kotlin.reflect.KType
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubtypeOf
@@ -15,12 +14,13 @@ import kotlin.reflect.typeOf
 class DependencyProvider(
     private val module: DependencyModule,
 ) {
-    private val dependencyGetters: MutableMap<KType, () -> Any> = mutableMapOf()
+    private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
 
     init {
         module::class.memberProperties.forEach { property: KProperty1<out DependencyModule, *> ->
             if (property.findAnnotation<Dependency>() == null) return@forEach
-            dependencyGetters[property.returnType] = {
+            val identifier = Identifier.of(property)
+            dependencyGetters[identifier] = {
                 property.getter.call(module) ?: error("${property}의 getter가 null을 반환했습니다.")
             }
         }
@@ -38,13 +38,14 @@ class DependencyProvider(
         }
     }
 
-    private fun dependency(key: KType): Any = dependencyGetters[key]?.invoke() ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
+    private fun dependency(identifier: Identifier): Any =
+        dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
 
     private fun inject(target: Any) {
-        val kClass = target::class
-        kClass.memberProperties.forEach { property: KProperty1<out Any, *> ->
+        target::class.memberProperties.forEach { property: KProperty1<out Any, *> ->
             if (property.findAnnotation<Inject>() != null && property is KMutableProperty1) {
-                property.setter.call(target, dependency(property.returnType))
+                val identifier = Identifier.of(property)
+                property.setter.call(target, dependency(identifier))
             }
         }
     }
