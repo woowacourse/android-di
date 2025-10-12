@@ -3,13 +3,17 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.Inject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel: ViewModel() {
 
-    lateinit var productRepository: ProductRepository
+    @Inject
+    private lateinit var productRepository: ProductRepository
+
+    @Inject
     lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
