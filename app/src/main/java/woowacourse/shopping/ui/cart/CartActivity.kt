@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.injectedViewModel
+import kotlin.getValue
 
 class CartActivity :
     AppCompatActivity(),

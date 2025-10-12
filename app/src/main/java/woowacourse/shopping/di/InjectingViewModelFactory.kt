@@ -2,6 +2,9 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.bibi_di.AppContainer
+import woowacourse.bibi_di.Inject
+import woowacourse.bibi_di.Qualifier
 import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType

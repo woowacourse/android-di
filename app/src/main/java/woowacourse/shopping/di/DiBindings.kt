@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import woowacourse.bibi_di.ContainerBuilder
+import woowacourse.bibi_di.Remote
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
