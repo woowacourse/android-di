@@ -10,7 +10,7 @@ import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 
 class AppContainer(
-    private val context: Context,
+    context: Context,
 ) {
     private val providers = mutableMapOf<KClass<*>, () -> Any>()
 
