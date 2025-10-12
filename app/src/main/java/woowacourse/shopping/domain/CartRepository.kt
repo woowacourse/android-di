@@ -7,5 +7,5 @@ interface CartRepository {
 
     suspend fun getAllCartProducts(): List<CartUiModel>
 
-    suspend fun deleteCartProduct(id: Int)
+    suspend fun deleteCartProduct(id: Long)
 }

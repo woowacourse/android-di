@@ -13,5 +13,5 @@ class DefaultCartRepository(
 
     override suspend fun getAllCartProducts(): List<CartUiModel> = dao.getAll().map { it.toPresentation() }
 
-    override suspend fun deleteCartProduct(id: Int) = dao.delete(id.toLong())
+    override suspend fun deleteCartProduct(id: Long) = dao.delete(id)
 }

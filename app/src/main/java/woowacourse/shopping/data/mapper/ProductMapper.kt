@@ -21,6 +21,7 @@ fun CartProductEntity.toDomain(): Product =
 
 fun CartProductEntity.toPresentation(): CartUiModel =
     CartUiModel(
+        id = this.id,
         product = this.toDomain(),
         createdAt = this.createdAt,
     )
