@@ -3,10 +3,11 @@ package woowacourse.shopping
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import woowacourse.shopping.di.DependencyModule
 import woowacourse.shopping.di.DependencyProvider
 
 class ShoppingApplication : Application() {
-    val dependencyProvider by lazy { DependencyProvider(this) }
+    val dependencyProvider by lazy { DependencyProvider(DependencyModule(this)) }
 
     private val lifeCycleCallbacks =
         object : ActivityLifecycleCallbacks {
@@ -14,7 +15,7 @@ class ShoppingApplication : Application() {
                 activity: Activity,
                 bundle: Bundle?,
             ) {
-                dependencyProvider.injectToActivity(activity)
+                dependencyProvider.injectViewModels(activity)
             }
 
             override fun onActivityDestroyed(activity: Activity) = Unit

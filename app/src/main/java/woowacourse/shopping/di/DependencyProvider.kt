@@ -1,13 +1,7 @@
 package woowacourse.shopping.di
 
 import android.app.Activity
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
@@ -19,19 +13,20 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.typeOf
 
 class DependencyProvider(
-    context: Context,
+    private val module: DependencyModule,
 ) {
-    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
+    private val dependencyGetters: MutableMap<KType, () -> Any> = mutableMapOf()
 
-    private val dependencies: Map<KType, Lazy<Any>> =
-        mapOf(
-            typeOf<ProductRepository>() to lazy { DefaultProductRepository() },
-            typeOf<CartRepository>() to lazy { DefaultCartRepository(shoppingDatabase.cartProductDao()) },
-        )
+    init {
+        module::class.memberProperties.forEach { property: KProperty1<out DependencyModule, *> ->
+            if (property.findAnnotation<Dependency>() == null) return@forEach
+            dependencyGetters[property.returnType] = {
+                property.getter.call(module) ?: error("${property}의 getter가 null을 반환했습니다.")
+            }
+        }
+    }
 
-    fun dependency(key: KType): Any = dependencies[key]?.value ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
-
-    fun injectToActivity(activity: Activity) {
+    fun injectViewModels(activity: Activity) {
         activity::class.memberProperties.forEach { property: KProperty1<out Activity, *> ->
             if (property.findAnnotation<InjectableViewModel>() != null && property is KMutableProperty1) {
                 if (!property.returnType.isSubtypeOf(typeOf<ViewModel>())) error("${property.returnType}은(는) ViewModel이 아닙니다.")
@@ -43,7 +38,9 @@ class DependencyProvider(
         }
     }
 
-    fun inject(target: Any) {
+    private fun dependency(key: KType): Any = dependencyGetters[key]?.invoke() ?: error("${key}에 대한 의존성이 정의되지 않았습니다.")
+
+    private fun inject(target: Any) {
         val kClass = target::class
         kClass.memberProperties.forEach { property: KProperty1<out Any, *> ->
             if (property.findAnnotation<Inject>() != null && property is KMutableProperty1) {
