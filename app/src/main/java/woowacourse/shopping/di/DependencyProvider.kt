@@ -2,7 +2,6 @@ package woowacourse.shopping.di
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -35,7 +34,6 @@ class DependencyProvider(
     fun injectToActivity(activity: Activity) {
         activity::class.memberProperties.forEach { property: KProperty1<out Activity, *> ->
             if (property.findAnnotation<InjectableViewModel>() != null && property is KMutableProperty1) {
-                Log.wtf("asdf", "${property.returnType}")
                 if (!property.returnType.isSubtypeOf(typeOf<ViewModel>())) error("${property.returnType}은(는) ViewModel이 아닙니다.")
                 val kClass: KClass<*> = property.returnType.classifier as KClass<*>
                 val viewModel: Any = kClass.createInstance()
