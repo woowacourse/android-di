@@ -3,7 +3,7 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -24,18 +24,19 @@ object DIFactory {
 
         val args =
             primaryConstructor.parameters.associateWith { param ->
-                val isAnnotated = param.findAnnotation<Inject>() != null
+                val isAnnotated = param.hasAnnotation<Inject>()
+                val qualifierAnnotation =
+                    param.annotations.firstOrNull { it is RoomDB || it is InMemory }?.annotationClass
 
                 if (isAnnotated) {
                     val typeKClass =
                         param.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("Unsupported parameter type: ${param.type}")
-                    DIContainer.get(typeKClass)
+                    DIContainer.get(typeKClass, qualifierAnnotation)
                 } else {
                     null
                 }
             }
-
         return primaryConstructor.callBy(args.filterValues { it != null })
     }
 
@@ -44,7 +45,7 @@ object DIFactory {
 
         kClass.memberProperties
             .filterIsInstance<KMutableProperty1<T, Any?>>()
-            .filter { it.findAnnotation<Inject>() != null }
+            .filter { it.hasAnnotation<Inject>() }
             .forEach { property ->
                 property.isAccessible = true
 
@@ -54,7 +55,11 @@ object DIFactory {
                             "Unsupported field type for injection: ${property.returnType}",
                         )
 
-                val dependency = DIContainer.get(dependencyClass)
+                val dependency =
+                    DIContainer.get(
+                        dependencyClass,
+                        property.annotations.firstOrNull { it is RoomDB || it is InMemory }?.annotationClass,
+                    )
                 property.set(instance, dependency)
             }
     }

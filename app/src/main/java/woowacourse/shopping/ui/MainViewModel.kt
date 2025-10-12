@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.RoomDB
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {
-    @Inject lateinit var cartRepository: CartRepository
+    @Inject
+    @RoomDB
+    lateinit var cartRepository: CartRepository
 
     @Inject lateinit var productRepository: ProductRepository
 
