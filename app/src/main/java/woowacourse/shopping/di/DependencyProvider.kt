@@ -12,12 +12,16 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.typeOf
 
 class DependencyProvider(
-    private val module: DependencyModule,
+    vararg module: Module,
 ) {
     private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
 
     init {
-        module::class.memberProperties.forEach { property: KProperty1<out DependencyModule, *> ->
+        module.forEach(::initialize)
+    }
+
+    private fun initialize(module: Module) {
+        module::class.memberProperties.forEach { property: KProperty1<out Module, *> ->
             if (property.findAnnotation<Dependency>() == null) return@forEach
             val identifier = Identifier.of(property)
             dependencyGetters[identifier] = {
@@ -38,9 +42,6 @@ class DependencyProvider(
         }
     }
 
-    private fun dependency(identifier: Identifier): Any =
-        dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
-
     private fun inject(target: Any) {
         target::class.memberProperties.forEach { property: KProperty1<out Any, *> ->
             if (property.findAnnotation<Inject>() != null && property is KMutableProperty1) {
@@ -49,4 +50,7 @@ class DependencyProvider(
             }
         }
     }
+
+    private fun dependency(identifier: Identifier): Any =
+        dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
 }

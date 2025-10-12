@@ -3,11 +3,11 @@ package woowacourse.shopping
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import woowacourse.shopping.di.DependencyModule
 import woowacourse.shopping.di.DependencyProvider
+import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {
-    val dependencyProvider by lazy { DependencyProvider(DependencyModule(this)) }
+    val dependencyProvider by lazy { DependencyProvider(RepositoryModule(this)) }
 
     private val lifeCycleCallbacks =
         object : ActivityLifecycleCallbacks {

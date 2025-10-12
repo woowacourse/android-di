@@ -16,9 +16,9 @@ annotation class DatabaseRepository
 @Qualifier
 annotation class InMemoryRepository
 
-class DependencyModule(
+class RepositoryModule(
     context: Context,
-) {
+) : Module {
     private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
 
     @Dependency
