@@ -14,6 +14,6 @@ fun installAllBindings(
     val db = ShoppingDatabase.getInstance(appContext)
     val cartDao = db.cartProductDao()
 
-    builder.register(ProductRepository::class) { ProductRepositoryImpl() }
-    builder.register(CartRepository::class) { CartRepositoryImpl(cartDao) }
+    builder.register(ProductRepository::class, Remote::class) { ProductRepositoryImpl() }
+    builder.register(CartRepository::class, Remote::class) { CartRepositoryImpl(cartDao) }
 }

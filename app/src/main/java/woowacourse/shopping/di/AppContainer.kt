@@ -1,7 +1,13 @@
 package woowacourse.shopping.di
 
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 interface AppContainer {
-    fun resolve(type: KType): Any
+    fun resolve(type: KType): Any = resolve(type, null)
+
+    fun resolve(
+        type: KType,
+        qualifier: KClass<out Annotation>?,
+    ): Any
 }

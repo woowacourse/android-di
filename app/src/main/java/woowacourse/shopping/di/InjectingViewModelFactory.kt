@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 @Suppress("UNCHECKED_CAST")
@@ -21,12 +22,13 @@ class InjectingViewModelFactory(
         val args =
             constructor.parameters
                 .map { parameter ->
-                    container.resolve(parameter.type)
+                    val qualifier =
+                        parameter.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
+                    container.resolve(parameter.type, qualifier)
                 }.toTypedArray()
+
         val instance = constructor.call(*args) as T
-
         injectAnnotatedFields(instance)
-
         return instance
     }
 
@@ -36,7 +38,12 @@ class InjectingViewModelFactory(
             .forEach { field ->
                 field.isAccessible = true
                 val kType = field.type.kotlin.createType()
-                val value = container.resolve(kType)
+                val qualifier =
+                    field.annotations
+                        .firstOrNull {
+                            it.annotationClass.hasAnnotation<Qualifier>()
+                        }?.annotationClass
+                val value = container.resolve(kType, qualifier)
                 field.set(target, value)
             }
     }
