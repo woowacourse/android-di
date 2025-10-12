@@ -16,11 +16,11 @@ class CartViewModel(
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    fun getAllCartProducts() {
+    suspend fun getAllCartProducts() {
         _cartProducts.value = cartRepository.getAllCartProducts()
     }
 
-    fun deleteCartProduct(id: Int) {
+    suspend fun deleteCartProduct(id: Long) {
         cartRepository.deleteCartProduct(id)
         _onCartProductDeleted.value = true
     }

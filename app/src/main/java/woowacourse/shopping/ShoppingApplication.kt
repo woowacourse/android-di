@@ -3,5 +3,10 @@ package woowacourse.shopping
 import android.app.Application
 
 class ShoppingApplication : Application() {
-    val appContainer = AppContainer()
+    lateinit var appContainer: AppContainer
+
+    override fun onCreate() {
+        super.onCreate()
+        appContainer = AppContainer(this)
+    }
 }
