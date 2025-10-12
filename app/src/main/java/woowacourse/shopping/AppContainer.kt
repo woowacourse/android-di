@@ -23,11 +23,13 @@ class AppContainer(
             ).build()
     }
     private val providers = mutableMapOf<KClass<*>, Any>()
+    private val typeBindings: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
 
     init {
         providers[CartProductDao::class] = database.cartProductDao()
-        providers[CartRepository::class] = DefaultCartRepository(get(CartProductDao::class))
-        providers[ProductRepository::class] = DefaultProductRepository()
+
+        typeBindings[CartRepository::class] = DefaultCartRepository::class
+        typeBindings[ProductRepository::class] = DefaultProductRepository::class
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -35,20 +37,28 @@ class AppContainer(
         // 이미 생성된 인스턴스 반환
         providers[clazz]?.let { return it as T }
 
-        // 생성자 확인
-        val constructor =
-            clazz.primaryConstructor
-                ?: throw IllegalArgumentException("${clazz.simpleName}은 주 생성자가 없습니다")
+        // 2. 실제 생성할 구현체 클래스를 결정
+        val implementationClass: KClass<T> =
+            (typeBindings[clazz] ?: clazz) as KClass<T>
 
-        // 생성자 파라미터 재귀 DI
+        // 3. 생성자 확인
+        val constructor =
+            implementationClass.primaryConstructor // implementationClass의 생성자를 찾음
+                ?: throw IllegalArgumentException("${implementationClass.simpleName}은 주 생성자가 없습니다")
+
+        // 4. 생성자 파라미터 재귀 DI
         val args =
             constructor.parameters
-                .associateWith { param ->
+                .associate { param ->
                     val dependencyClass = param.type.classifier as KClass<*>
-                    param to get(dependencyClass) // 재귀 호출
-                }.toMap()
+                    val dependencyInstance = get(dependencyClass) // 재귀 호출
+
+                    param to dependencyInstance
+                }
 
         val instance = constructor.callBy(args)
+
+        // 5. 생성된 인스턴스 캐싱
         providers[clazz] = instance
 
         return instance
