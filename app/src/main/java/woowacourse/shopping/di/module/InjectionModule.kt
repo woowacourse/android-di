@@ -1,7 +1,7 @@
 package woowacourse.shopping.di.module
 
-import woowacourse.shopping.di.definition.DefinitionInformation
+import woowacourse.shopping.di.InjectContainer
 
 interface InjectionModule {
-    fun provideDefinitions(): List<DefinitionInformation<*>>
+    fun provideDefinitions(container: InjectContainer)
 }

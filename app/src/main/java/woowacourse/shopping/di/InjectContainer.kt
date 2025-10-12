@@ -1,12 +1,12 @@
 package woowacourse.shopping.di
 
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
 import woowacourse.shopping.di.definition.DefinitionInformation
 import woowacourse.shopping.di.definition.DefinitionKey
 import woowacourse.shopping.di.definition.Kind
 import woowacourse.shopping.di.definition.Qualifier
 import woowacourse.shopping.di.module.InjectionModule
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 private const val ERROR_NOT_FOUND_KEY = "자동 주입할 데이터를 찾을 수 없습니다. kclass = %s"
 private const val ERROR_EXIST_KEY = "이미 등록된 Definition 입니다, key = %s"
@@ -15,25 +15,11 @@ object InjectContainer {
     private val definitions: MutableMap<DefinitionKey, DefinitionInformation<*>> = mutableMapOf()
     private var singletons: ConcurrentHashMap<DefinitionKey, Any> = ConcurrentHashMap()
 
-    fun init(modules: List<InjectionModule>) {
+    fun init(vararg modules: InjectionModule) {
         definitions.clear()
+        singletons.clear()
 
-        modules.forEach { module: InjectionModule ->
-            val definitions = module.provideDefinitions()
-            registerDefinitions(definitions)
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun registerDefinitions(definitions: List<DefinitionInformation<*>>) {
-        definitions.forEach { definitionInformation: DefinitionInformation<*> ->
-            register(
-                definitionInformation.kclass as KClass<Any>,
-                definitionInformation.qualifier,
-                definitionInformation.kind,
-                definitionInformation.provider as (InjectContainer) -> Provider<Any>,
-            )
-        }
+        modules.forEach { module: InjectionModule -> module.provideDefinitions(this) }
     }
 
     inline fun <reified T : Any> registerSingleton(
