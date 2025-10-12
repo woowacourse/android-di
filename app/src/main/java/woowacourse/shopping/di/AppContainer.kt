@@ -3,11 +3,14 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.room.Room
 import woowacourse.di.auto.Container
+import woowacourse.di.auto.Database
+import woowacourse.di.auto.InMemory
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 object AppContainer : Container() {
@@ -27,11 +30,20 @@ object AppContainer : Container() {
             get(ShoppingDatabase::class).cartProductDao()
         }
 
-        bindSingleton(CartRepository::class) {
-            CartRepositoryImpl(get(CartProductDao::class))
+        bindSingleton(CartRepository::class, qualifier = Database::class) {
+            RoomCartRepository(get(CartProductDao::class))
         }
+
+        bindSingleton(CartRepository::class, qualifier = InMemory::class) {
+            InMemoryCartRepository()
+        }
+
+        bindSingleton(CartRepository::class) {
+            get(CartRepository::class)
+        }
+
         bindSingleton(ProductRepository::class) {
-            ProductRepositoryImpl()
+            DefaultProductRepository()
         }
     }
 }

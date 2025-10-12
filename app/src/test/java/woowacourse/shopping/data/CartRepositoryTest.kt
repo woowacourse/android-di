@@ -15,7 +15,7 @@ class CartRepositoryTest {
         runTest {
             // given
             val dao = mockk<CartProductDao>(relaxed = true)
-            val repository: CartRepository = CartRepositoryImpl(dao)
+            val repository: CartRepository = RoomCartRepository(dao)
             val product = Product("A", 1000, "a")
 
             // when
@@ -41,7 +41,7 @@ class CartRepositoryTest {
             val a = CartProductEntity("A", 1000, "a").apply { id = 1L }
             val b = CartProductEntity("B", 2000, "b").apply { id = 2L }
             coEvery { dao.getAll() } returns listOf(a, b)
-            val repository: CartRepository = CartRepositoryImpl(dao)
+            val repository: CartRepository = RoomCartRepository(dao)
 
             // when
             val result = repository.getAllCartProducts()
@@ -56,7 +56,7 @@ class CartRepositoryTest {
         runTest {
             // given
             val dao = mockk<CartProductDao>(relaxed = true)
-            val repository: CartRepository = CartRepositoryImpl(dao)
+            val repository: CartRepository = RoomCartRepository(dao)
 
             // when
             repository.deleteCartProduct(1L)

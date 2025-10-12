@@ -12,6 +12,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.getOrAwaitValue
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.main.MainViewModel
 
 private class FakeProductRepository : ProductRepository {
     private val data = listOf(Product("X", 1, "x"), Product("Y", 2, "y"))

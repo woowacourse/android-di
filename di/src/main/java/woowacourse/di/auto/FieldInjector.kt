@@ -12,15 +12,16 @@ object FieldInjector {
         target: Any,
         container: Container,
     ) {
-        val kClass = target::class
-        kClass.memberProperties
+        target::class
+            .memberProperties
             .filterIsInstance<KMutableProperty1<Any, Any?>>()
             .filter { it.findAnnotation<InjectField>() != null }
             .forEach { property ->
-                val kParameter =
-                    property.returnType.classifier as? KClass<*>
+                val type =
+                    (property.returnType.classifier as? KClass<*>)
                         ?: error("Unsupported field type: ${property.returnType}")
-                val value = container.get(kParameter)
+                val qualifier = findQualifier(property)
+                val value = container.get(type, qualifier)
                 property.isAccessible = true
                 property.set(target, value)
             }

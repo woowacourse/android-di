@@ -5,26 +5,36 @@ import kotlin.reflect.KClass
 typealias Provider<T> = () -> T
 
 open class Container {
-    private val providers: MutableMap<KClass<*>, Provider<*>> = mutableMapOf()
-    private val singletons: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private data class Key(
+        val type: KClass<*>,
+        val qualifier: KClass<out Annotation>?,
+    )
+
+    private val providers: MutableMap<Key, Provider<*>> = mutableMapOf()
+    private val singletons: MutableMap<Key, Any> = mutableMapOf()
 
     fun <T : Any> bindSingleton(
         type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
         creator: Provider<T>,
     ) {
-        providers[type] = {
-            singletons.getOrPut(type) { creator() }
+        val key = Key(type, qualifier)
+        providers[key] = {
+            singletons.getOrPut(key) { creator() }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(type: KClass<T>): T {
+    fun <T : Any> get(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val key = Key(type, qualifier)
         val provider =
-            providers[type]
-                ?: error("No provider registered for ${type.qualifiedName}")
-        return provider.invoke() as? T
-            ?: error("Provider returned incorrect type for ${type.qualifiedName}")
+            providers[key]
+                ?: error("No provider for ${type.qualifiedName} with qualifier=${qualifier?.qualifiedName}")
+        return provider.invoke() as T
     }
 
-    inline fun <reified T : Any> get(): T = get(T::class)
+    inline fun <reified T : Any> get(qualifier: KClass<out Annotation>? = null): T = get(T::class, qualifier)
 }

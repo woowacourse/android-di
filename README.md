@@ -99,10 +99,10 @@
 
 ## 🛠️ 구현할 기능 (3단계)
 
-- [ ] `@Qualifier` 어노테이션 정의 (예: `@InMemory`, `@Database`)
-- [ ] `Container` 또는 `AppContainer`에서 동일 인터페이스의 다중 구현체를 구분 주입하도록 변경
-- [ ] Repository 구현체를 `InMemoryCartRepository`, `RoomCartRepository`로 분리
-- [ ] AppContainer에서 사용할 구현체를 선택적으로 주입
+- [x] `@Qualifier` 어노테이션 정의 (예: `@InMemory`, `@Database`)
+- [x] `Container` 또는 `AppContainer`에서 동일 인터페이스의 다중 구현체를 구분 주입하도록 변경
+- [x] Repository 구현체를 `InMemoryCartRepository`, `RoomCartRepository`로 분리
+- [x] AppContainer에서 사용할 구현체를 선택적으로 주입
 - [x] DI 라이브러리를 독립 모듈로 분리 (`core-di` 등)
 - [ ] 선택: DSL 기반 의존성 등록 문법 추가 (예: `container.bind<T> { ... }`)
 - [ ] 선택: Jitpack을 활용해 라이브러리 배포 및 적용 테스트

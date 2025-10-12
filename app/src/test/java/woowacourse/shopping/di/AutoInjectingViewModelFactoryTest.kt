@@ -10,9 +10,9 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.di.auto.AutoInjectingViewModelFactory
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.main.MainActivity
+import woowacourse.shopping.ui.main.MainViewModel
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
