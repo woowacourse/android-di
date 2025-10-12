@@ -30,4 +30,4 @@
 
 #### Recursive DI
 - [x] CartRepository가 DAO 객체를 참조하도록 변경한다.
-- [ ] CartProductViewHolder의 bind 함수에 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+- [x] CartProductViewHolder의 bind 함수에 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
