@@ -14,8 +14,8 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.fixture.FakeCartRepository
 import woowacourse.fixture.FakeProductRepository
+import woowacourse.shopping.app.ui.MainViewModel
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {

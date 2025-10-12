@@ -79,4 +79,8 @@ dependencies {
     // Robolectric
     testImplementation(libs.robolectric)
     testImplementation(kotlin("test"))
+
+    implementation(project(":domain"))
+    implementation(project(":di"))
+    implementation(project(":data"))
 }

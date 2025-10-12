@@ -4,7 +4,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -14,8 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.fixture.FakeCartRepository
+import woowacourse.shopping.app.ui.cart.CartViewModel
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.cart.CartViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
@@ -31,7 +30,7 @@ class CartViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         cartRepository = FakeCartRepository()
-        viewModel = CartViewModel().also { it.cartRepository = cartRepository }
+        viewModel = CartViewModel()
     }
 
     @After
