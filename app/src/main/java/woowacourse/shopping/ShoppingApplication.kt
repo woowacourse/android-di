@@ -6,6 +6,6 @@ import woowacourse.shopping.di.ViewModelFactory
 
 class ShoppingApplication : Application() {
     val viewModelFactory: ViewModelFactory by lazy {
-        ViewModelFactory(AppContainerImpl)
+        ViewModelFactory(AppContainerImpl(this))
     }
 }

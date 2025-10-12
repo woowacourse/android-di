@@ -1,16 +1,21 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 
-object AppContainerImpl : AppContainer {
+class AppContainerImpl(
+    context: Context,
+) : AppContainer {
+    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
     private val providers: Map<KClass<*>, Any> =
         mapOf(
             ProductRepository::class to ProductRepositoryImpl(),
-            CartRepository::class to CartRepositoryImpl(),
+            CartRepository::class to CartRepositoryImpl(database.cartProductDao()),
         )
 
     @Suppress("UNCHECKED_CAST")
