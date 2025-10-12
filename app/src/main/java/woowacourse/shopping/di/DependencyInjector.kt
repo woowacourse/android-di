@@ -39,8 +39,8 @@ object DependencyInjector {
     ) {
         kClass.members
             .filterIsInstance<KMutableProperty1<Any, Any>>()
-            .filter { property -> property.findAnnotation<RequireInjection>() != null }
             .forEach { property ->
+                if (property.findAnnotation<RequireInjection>() == null) return@forEach
                 property.isAccessible = true
                 val dependencyClass = property.returnType.classifier as? KClass<*>
 
