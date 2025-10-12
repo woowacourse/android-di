@@ -18,14 +18,25 @@ class DIContainer(
 ) {
     private val instances = mutableMapOf<DependencyKey, Any>()
     private val interfaceMapping = mutableMapOf<DependencyKey, KClass<*>>()
-    private val externalSingletons = mutableMapOf<KClass<*>, Any>()
 
     init {
         generateInterfaceMapping(registerClasses)
     }
 
-    fun registerSingleton(instance: Any): DIContainer {
-        externalSingletons[instance::class] = instance
+    fun registerSingleton(
+        instance: Any,
+        qualifier: String? = null,
+    ): DIContainer {
+        // 구현체 자신의 타입으로 등록
+        instances[DependencyKey(instance::class, qualifier)] = instance
+
+        // 상위 타입들(인터페이스 포함)도 같이 등록
+        instance::class.supertypes.forEach { superType ->
+            val superClass = superType.classifier as? KClass<*>
+            if (superClass != null && superClass != Any::class) {
+                instances[DependencyKey(superClass, qualifier)] = instance
+            }
+        }
         return this
     }
 
@@ -42,9 +53,6 @@ class DIContainer(
 
         // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
         instances[dependencyKey]?.let { return it }
-
-        // 외부에서 등록된 싱글턴 인스턴스에서 반환
-        externalSingletons[kClass]?.let { return it }
 
         // Room의 Dao 요쳥일 경우 externalSingletons의 Room 인스턴스 에서 Dao 인스턴스 반환
         resolveDaoFromRoomDB(kClass)?.let { dao ->
@@ -115,7 +123,7 @@ class DIContainer(
         }
 
         val database =
-            externalSingletons.values.find { it is RoomDatabase } as? RoomDatabase
+            instances.values.find { it is RoomDatabase } as? RoomDatabase
                 ?: return null
 
         val dbClass: Class<RoomDatabase> = database.javaClass
@@ -136,7 +144,7 @@ class DIContainer(
                 .filterNot { it.isOptional }
                 .associateWith { param ->
                     val paramType = param.type.classifier as KClass<*>
-                    externalSingletons[paramType] ?: getInstance(paramType)
+                    getInstance(paramType)
                 }
         return constructor.callBy(parameterMap)
     }
