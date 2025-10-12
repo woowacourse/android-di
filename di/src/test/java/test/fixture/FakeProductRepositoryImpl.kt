@@ -1,3 +1,3 @@
-package com.example.di.test.fixture
+package test.fixture
 
 class FakeProductRepositoryImpl

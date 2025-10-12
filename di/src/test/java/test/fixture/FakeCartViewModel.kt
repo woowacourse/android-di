@@ -1,4 +1,4 @@
-package com.example.di.test.fixture
+package test.fixture
 
 import androidx.lifecycle.ViewModel
 import com.example.di.DatabaseLogger

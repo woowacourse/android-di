@@ -1,12 +1,15 @@
-package com.example.di
+package test
 
-import com.example.di.test.fixture.FakeCartRepositoryImpl
-import com.example.di.test.fixture.FakeCartViewModel
-import com.example.di.test.fixture.FakeProductRepositoryImpl
+import com.example.di.DatabaseLogger
+import com.example.di.DependencyInjector
+import com.example.di.InMemoryLogger
 import org.assertj.core.api.SoftAssertions
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import test.fixture.FakeCartRepositoryImpl
+import test.fixture.FakeCartViewModel
+import test.fixture.FakeProductRepositoryImpl
 
 class DependencyInjectorTest {
     private lateinit var fakeCartRepository: FakeCartRepositoryImpl
@@ -29,10 +32,8 @@ class DependencyInjectorTest {
 
         // when
         val viewModel =
-            DependencyInjector
-                .getInstance(FakeCartViewModel::class)
-        DependencyInjector
-            .injectAnnotatedProperties(FakeCartViewModel::class, viewModel)
+            DependencyInjector.getInstance(FakeCartViewModel::class)
+        DependencyInjector.injectAnnotatedProperties(FakeCartViewModel::class, viewModel)
 
         // then
         val field = viewModel::class.java.getDeclaredField("fakeCartRepository")
