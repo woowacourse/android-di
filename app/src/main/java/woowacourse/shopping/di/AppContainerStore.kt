@@ -6,7 +6,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 class AppContainerStore(
-    factories: List<DependencyFactory<*>>,
+    vararg factories: DependencyFactory<*>,
 ) {
     private val cache: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val factory = factories.associateBy { it.type }

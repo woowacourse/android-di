@@ -16,7 +16,8 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline ex
     val factory =
         viewModelFactory {
             initializer {
-                containerProvider(VM::class) as VM
+                val store = (this[APPLICATION_KEY] as DiApplication).appContainerStore
+                store.instantiate(VM::class, saveToCache = false) as VM
             }
         }
 
@@ -26,9 +27,4 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline ex
         { factory },
         { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
     )
-}
-
-fun CreationExtras.containerProvider(clazz: KClass<*>): Any? {
-    val store = (this[APPLICATION_KEY] as MainApplication).appContainerStore
-    return store.instantiate(clazz, saveToCache = false)
 }
