@@ -2,6 +2,7 @@ package woowacourse.shopping.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import woowacourse.shopping.model.Product
 
 @Entity(tableName = "cart_products")
 data class CartProductEntity(
@@ -13,4 +14,12 @@ data class CartProductEntity(
     var id: Long = 0
 
     var createdAt: Long = System.currentTimeMillis()
+
+    fun toDomain(): Product =
+        Product(
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+            id = id,
+        )
 }
