@@ -16,8 +16,7 @@ class DependencyModuleBuilder(
         factories.add(DependencyFactory(Qualifier(T::class, name), create))
     }
 
-    inline fun <reified T : Any> get(name: String? = null): T =
-        appContainerStore.instantiate(Qualifier(T::class, name), saveToCache = false) as T
+    inline fun <reified T : Any> get(name: String? = null): T = appContainerStore.instantiate(Qualifier(T::class, name)) as T
 
     fun build(): DependencyModule = DependencyModule(factories)
 }
