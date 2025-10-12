@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType

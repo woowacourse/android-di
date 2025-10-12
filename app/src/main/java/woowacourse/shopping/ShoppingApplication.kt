@@ -3,7 +3,7 @@ package woowacourse.shopping
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import woowacourse.shopping.di.DependencyProvider
+import com.example.di.DependencyProvider
 import woowacourse.shopping.di.RepositoryModule
 
 class ShoppingApplication : Application() {

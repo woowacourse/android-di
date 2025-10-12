@@ -1,6 +1,9 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import com.example.di.Dependency
+import com.example.di.Module
+import com.example.di.Qualifier
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository

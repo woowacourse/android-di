@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.example.di
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
