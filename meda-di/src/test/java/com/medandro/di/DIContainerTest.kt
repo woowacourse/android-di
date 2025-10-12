@@ -94,7 +94,7 @@ class DIContainerTest {
     }
 
     @Test
-    fun `인터페이스 매핑을 추가시 자동으로 주입된다`() {
+    fun `인터페이스 구현체 등록시 자동으로 주입된다`() {
         // given
         class TestCar {
             @InjectField
@@ -102,7 +102,7 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer(interfaceMapping = mapOf(Wheels::class to FourWheels::class))
+        val diContainer = DIContainer(FourWheels::class)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -122,7 +122,7 @@ class DIContainerTest {
 
         // when
         val diContainer = DIContainer()
-        val car = diContainer.getInstance(TestCar::class) as TestCar
+        val car = TestCar(Driver(Person()))
         diContainer.injectFields(car)
 
         // then

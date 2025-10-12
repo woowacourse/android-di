@@ -34,7 +34,7 @@ class DIContainerRoomTest {
     }
 
     @Test
-    fun `데이터베이스에서 DAO를 자동 주입한다`() {
+    fun `Room 데이터베이스에서 DAO를 자동 주입한다`() {
         // given
         class TestService {
             @InjectField
@@ -42,7 +42,7 @@ class DIContainerRoomTest {
         }
 
         // when
-        val diContainer = DIContainer(database = database)
+        val diContainer = DIContainer().registerSingleton(database)
         val service = TestService()
         diContainer.injectFields(service)
 
@@ -67,7 +67,7 @@ class DIContainerRoomTest {
         }
 
         // when
-        val diContainer = DIContainer(database = database)
+        val diContainer = DIContainer().registerSingleton(database)
         val service = TestService()
         diContainer.injectFields(service)
 
@@ -85,7 +85,7 @@ class DIContainerRoomTest {
         }
 
         // when
-        val diContainer = DIContainer(database = null)
+        val diContainer = DIContainer()
         val service = TestService()
 
         // then
@@ -94,6 +94,6 @@ class DIContainerRoomTest {
                 diContainer.injectFields(service)
             }.isInstanceOf(IllegalStateException::class.java)
 
-        exception.hasMessageContaining("testDao필드 주입 실패")
+        exception.hasMessageContaining("필드 주입 실패")
     }
 }
