@@ -9,13 +9,10 @@ import woowacourse.shopping.model.Product
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
     private val dateFormatter: DateFormatter,
-    onClickDelete: (position: Int) -> Unit,
+    private val onClickDelete: (id: Long) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
-        binding.ivCartProductDelete.setOnClickListener {
-            val position = adapterPosition
-            onClickDelete(position)
-        }
+        binding.onClickDelete = onClickDelete
     }
 
     fun bind(product: Product) {
@@ -27,7 +24,7 @@ class CartProductViewHolder(
         fun from(
             parent: ViewGroup,
             dateFormatter: DateFormatter,
-            onClickDelete: (position: Int) -> Unit,
+            onClickDelete: (id: Long) -> Unit,
         ): CartProductViewHolder {
             val binding =
                 ItemCartProductBinding
