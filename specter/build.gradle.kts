@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    `maven-publish`
 }
 
 android {
@@ -46,4 +47,22 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.chanho0908"
+                artifactId = "specter"
+                version = "1.0.0"
+
+                pom {
+                    name.set("specter")
+                    description.set("페토의 DI 라이브러리")
+                }
+            }
+        }
+    }
 }
