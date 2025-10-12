@@ -1,11 +1,11 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.example.di.AppContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 

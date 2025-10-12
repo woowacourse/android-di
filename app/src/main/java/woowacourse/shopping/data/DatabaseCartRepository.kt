@@ -1,8 +1,8 @@
 package woowacourse.shopping.data
 
+import com.example.di.MyInjector
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
-import woowacourse.shopping.di.MyInjector
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 

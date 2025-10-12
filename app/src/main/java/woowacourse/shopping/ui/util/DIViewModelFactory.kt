@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.di.AppContainer
+import com.example.di.AppContainer
 
 object DIViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(

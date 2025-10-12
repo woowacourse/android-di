@@ -1,6 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.di.AppContainer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -9,7 +10,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.MainDispatcherRule
-import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.ProductsFixture
