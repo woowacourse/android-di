@@ -30,7 +30,7 @@ class CartViewModel() : ViewModel() {
         }
     }
 
-    fun deleteCartProduct(id: Int) {
+    fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             runCatching {
                 cartRepository.deleteCartProduct(id)
