@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.SavedStateHandle
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -23,8 +24,7 @@ object DependencyInjector {
         savedStateHandle: SavedStateHandle? = null,
     ): T {
         return instances[kClass] as? T ?: run {
-            val instance = createInstance(kClass, savedStateHandle)
-            instances[kClass] = instance
+            instances[kClass] = createInstance(kClass, savedStateHandle)
             return (instances[kClass] as T).also { instances.remove(kClass) }
         }
     }
@@ -57,17 +57,7 @@ object DependencyInjector {
 
         try {
             val primaryConstructor = kClass.primaryConstructor
-
-            primaryConstructor?.let {
-                val params =
-                    it.parameters.associateWith { param ->
-                        when (param.type.classifier) {
-                            SavedStateHandle::class -> requireNotNull(handle) { "SavedStateHandle 필요" }
-                            else -> getInstance(param.type.classifier as KClass<*>)
-                        }
-                    }
-                return it.callBy(params)
-            }
+            primaryConstructor?.let { return createPrimaryConstructor(it, handle) }
 
             kClass.objectInstance?.let { obj -> return obj }
 
@@ -76,5 +66,19 @@ object DependencyInjector {
             creating.remove(kClass)
             instances.remove(kClass)
         }
+    }
+
+    private fun createPrimaryConstructor(
+        primaryConstructor: KFunction<Any>,
+        handle: SavedStateHandle?,
+    ): Any {
+        val params =
+            primaryConstructor.parameters.associateWith { param ->
+                when (param.type.classifier) {
+                    SavedStateHandle::class -> requireNotNull(handle) { "SavedStateHandle 필요" }
+                    else -> getInstance(param.type.classifier as KClass<*>)
+                }
+            }
+        return primaryConstructor.callBy(params)
     }
 }
