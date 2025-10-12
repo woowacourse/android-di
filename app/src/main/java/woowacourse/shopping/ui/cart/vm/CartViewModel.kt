@@ -8,16 +8,16 @@ import kotlinx.coroutines.launch
 import woowacourse.peto.di.annotation.Inject
 import woowacourse.peto.di.annotation.Qualifier
 import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartViewModel : ViewModel() {
     @Inject
     @Qualifier("default")
     lateinit var cartRepository: CartRepository
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
+    private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted

@@ -4,6 +4,7 @@ import woowacourse.shopping.data.inmemory.CartProductEntity
 import woowacourse.shopping.data.inmemory.toDomain
 import woowacourse.shopping.data.mapper.toInMemoryEntity
 import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 
 class InMemoryCartRepository : CartRepository {
@@ -13,7 +14,7 @@ class InMemoryCartRepository : CartRepository {
         cartProducts.add(product.toInMemoryEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> = cartProducts.map { it.toDomain() }
+    override suspend fun getAllCartProducts(): List<CartProduct> = cartProducts.map { it.toDomain() }
 
     override suspend fun deleteCartProduct(id: Long) {
         cartProducts.removeIf { it.id == id }

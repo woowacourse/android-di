@@ -1,4 +1,4 @@
-package woowacourse.shopping.domain.model
+package woowacourse.peto.di.fake.model
 
 data class Product(
     val name: String,

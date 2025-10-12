@@ -1,6 +1,6 @@
 package woowacourse.shopping.data.inmemory
 
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 import java.util.UUID
 
 data class CartProductEntity(
@@ -11,4 +11,4 @@ data class CartProductEntity(
     val createdAt: Long = System.currentTimeMillis(),
 )
 
-fun CartProductEntity.toDomain(): Product = Product(id, name, price, imageUrl, createdAt)
+fun CartProductEntity.toDomain(): CartProduct = CartProduct(id, name, price, imageUrl, createdAt)

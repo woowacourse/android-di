@@ -1,6 +1,6 @@
-package woowacourse.peto.di.fake
+package woowacourse.peto.di.fake.model
 
-data class Product(
+data class CartProduct(
     val id: Long,
     val name: String,
     val price: Int,
