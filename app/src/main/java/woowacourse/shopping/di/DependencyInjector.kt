@@ -21,10 +21,10 @@ object DependencyInjector {
                     field.returnType.classifier as? KClass<*> ?: return@forEach
                 val qualifier: Qualifier? = field.getQualifierOrNull()
 
-                if (AppInjector.hasDefinition(fieldClass, qualifier)) {
+                if (InjectContainer.hasDefinition(fieldClass, qualifier)) {
                     field.apply {
                         isAccessible = true
-                        setter.call(instance, AppInjector.get(fieldClass, qualifier))
+                        setter.call(instance, InjectContainer.get(fieldClass, qualifier))
                     }
                 }
             }

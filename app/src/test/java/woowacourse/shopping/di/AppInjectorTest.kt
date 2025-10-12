@@ -24,7 +24,7 @@ import woowacourse.shopping.ui.common.AppViewModelFactory
 class AppInjectorTest :
     StringSpec({
         beforeTest {
-            AppInjector.init(emptyList())
+            InjectContainer.init(emptyList())
         }
 
         fun setUpArchTaskExecutor() {
@@ -46,13 +46,13 @@ class AppInjectorTest :
         "singleton 은 동일한 인스턴스를 반환한다" {
             // given
             val name = "singleton"
-            AppInjector.registerSingleton<SingletonFixtureCar> { _ ->
+            InjectContainer.registerSingleton<SingletonFixtureCar> { _ ->
                 Provider { SingletonFixtureCar(name) }
             }
 
             // when
-            val first = AppInjector.get<SingletonFixtureCar>()
-            val second = AppInjector.get<SingletonFixtureCar>()
+            val first = InjectContainer.get<SingletonFixtureCar>()
+            val second = InjectContainer.get<SingletonFixtureCar>()
 
             first shouldBeSameInstanceAs second
         }
@@ -60,28 +60,34 @@ class AppInjectorTest :
         "factory 는 매번 새로운 인스턴스를 반환한다" {
             // given
             val name = "factory"
-            AppInjector.registerFactory<FactoryFixtureCar> { _ -> Provider { FactoryFixtureCar(name) } }
+            InjectContainer.registerFactory<FactoryFixtureCar> { _ ->
+                Provider {
+                    FactoryFixtureCar(
+                        name,
+                    )
+                }
+            }
 
             // when
-            val first = AppInjector.get<FactoryFixtureCar>()
-            val second = AppInjector.get<FactoryFixtureCar>()
+            val first = InjectContainer.get<FactoryFixtureCar>()
+            val second = InjectContainer.get<FactoryFixtureCar>()
 
             first shouldNotBeSameInstanceAs second
         }
 
         "qualifier 로 동일 타입을 구분할 수 있다" {
             // given
-            AppInjector.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("engine")) { _ ->
+            InjectContainer.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("engine")) { _ ->
                 Provider { EngineFixtureCarImpl("engineCarName") }
             }
-            AppInjector.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("electric")) { _ ->
+            InjectContainer.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("electric")) { _ ->
                 Provider { ElectricFixtureCarImpl("electricCarName") }
             }
 
             // when
-            val engineCar = AppInjector.get<FixtureCar>(qualifier = Qualifier.Named("engine"))
+            val engineCar = InjectContainer.get<FixtureCar>(qualifier = Qualifier.Named("engine"))
             val electricCar =
-                AppInjector.get<FixtureCar>(qualifier = Qualifier.Named("electric"))
+                InjectContainer.get<FixtureCar>(qualifier = Qualifier.Named("electric"))
 
             // then
             engineCar.shouldBeInstanceOf<EngineFixtureCarImpl>()
@@ -92,8 +98,8 @@ class AppInjectorTest :
             setUpArchTaskExecutor()
 
             // given
-            AppInjector.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
-            AppInjector.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
+            InjectContainer.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
+            InjectContainer.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
 
             // when
             val viewModel =
@@ -115,8 +121,8 @@ class AppInjectorTest :
             setUpArchTaskExecutor()
 
             // given
-            AppInjector.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
-            AppInjector.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
+            InjectContainer.registerSingleton<CartRepository> { _ -> Provider { FakeCartRepository() } }
+            InjectContainer.registerSingleton<ProductRepository> { _ -> Provider { FakeProductRepository() } }
 
             // when
             val viewModel =

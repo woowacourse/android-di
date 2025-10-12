@@ -1,8 +1,8 @@
 package woowacourse.shopping.di.definition
 
-import woowacourse.shopping.di.AppInjector
-import woowacourse.shopping.di.Provider
 import kotlin.reflect.KClass
+import woowacourse.shopping.di.InjectContainer
+import woowacourse.shopping.di.Provider
 
 /**
  * 클래스 타입을 어떻게 생성할지에 대한 정보 담는 클래스
@@ -17,5 +17,5 @@ data class DefinitionInformation<T : Any>(
     val kclass: KClass<T>,
     val qualifier: Qualifier? = null,
     val kind: Kind = Kind.FACTORY,
-    val provider: (AppInjector) -> Provider<T>,
+    val provider: (InjectContainer) -> Provider<T>,
 )

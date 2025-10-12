@@ -1,17 +1,17 @@
 package woowacourse.shopping.di
 
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
 import woowacourse.shopping.di.definition.DefinitionInformation
 import woowacourse.shopping.di.definition.DefinitionKey
 import woowacourse.shopping.di.definition.Kind
 import woowacourse.shopping.di.definition.Qualifier
 import woowacourse.shopping.di.module.InjectionModule
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 private const val ERROR_NOT_FOUND_KEY = "자동 주입할 데이터를 찾을 수 없습니다. kclass = %s"
 private const val ERROR_EXIST_KEY = "이미 등록된 Definition 입니다, key = %s"
 
-object AppInjector {
+object InjectContainer {
     private val definitions: MutableMap<DefinitionKey, DefinitionInformation<*>> = mutableMapOf()
     private var singletons: ConcurrentHashMap<DefinitionKey, Any> = ConcurrentHashMap()
 
@@ -31,21 +31,21 @@ object AppInjector {
                 definitionInformation.kclass as KClass<Any>,
                 definitionInformation.qualifier,
                 definitionInformation.kind,
-                definitionInformation.provider as (AppInjector) -> Provider<Any>,
+                definitionInformation.provider as (InjectContainer) -> Provider<Any>,
             )
         }
     }
 
     inline fun <reified T : Any> registerSingleton(
         qualifier: Qualifier? = null,
-        noinline provider: (AppInjector) -> Provider<T>,
+        noinline provider: (InjectContainer) -> Provider<T>,
     ) {
         register(T::class, qualifier, Kind.SINGLETON, provider)
     }
 
     inline fun <reified T : Any> registerFactory(
         qualifier: Qualifier? = null,
-        noinline provider: (AppInjector) -> Provider<T>,
+        noinline provider: (InjectContainer) -> Provider<T>,
     ) {
         register(T::class, qualifier, Kind.FACTORY, provider)
     }
@@ -54,7 +54,7 @@ object AppInjector {
         kclass: KClass<T>,
         qualifier: Qualifier?,
         kind: Kind,
-        provider: (AppInjector) -> Provider<T>,
+        provider: (InjectContainer) -> Provider<T>,
     ) {
         val key = DefinitionKey(kclass, qualifier)
 
@@ -76,19 +76,19 @@ object AppInjector {
         return when (information.kind) {
             Kind.SINGLETON -> {
                 singletons.computeIfAbsent(key) {
-                    (information.provider as (AppInjector) -> Provider<T>)(this).get()
+                    (information.provider as (InjectContainer) -> Provider<T>)(this).get()
                 } as T
             }
 
             Kind.FACTORY -> {
-                (information.provider as (AppInjector) -> Provider<T>)(this).get()
+                (information.provider as (InjectContainer) -> Provider<T>)(this).get()
             }
         }
     }
 
     fun hasDefinition(
         kClass: KClass<*>,
-        qualifier: Qualifier?,
+        qualifier: Qualifier? = null,
     ): Boolean {
         val key = DefinitionKey(kClass, qualifier)
         return definitions[key] != null
