@@ -9,32 +9,7 @@ import woowacourse.shopping.di.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
-class CartViewModel(
-    private val cartRepository: CartRepository,
-) : ViewModel() {
-    @Inject
-    lateinit var cartRepository2: CartRepository
-    private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
-
-    private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
-    val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
-
-    fun getAllCartProducts() {
-        viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
-        }
-    }
-
-    fun deleteCartProduct(id: Long) {
-        viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
-            _onCartProductDeleted.value = true
-        }
-    }
-}
-
-class CartViewModel2 : ViewModel() {
+class CartViewModel : ViewModel() {
     @Inject
     lateinit var cartRepository: CartRepository
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

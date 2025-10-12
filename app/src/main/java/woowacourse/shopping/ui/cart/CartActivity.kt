@@ -14,7 +14,7 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     @InjectableViewModel
-    lateinit var viewModel: CartViewModel2
+    lateinit var viewModel: CartViewModel
 
     private lateinit var dateFormatter: DateFormatter
 
