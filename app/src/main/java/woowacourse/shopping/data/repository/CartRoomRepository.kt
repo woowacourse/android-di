@@ -1,13 +1,13 @@
 package woowacourse.shopping.data.repository
 
-import com.medandro.di.annotation.RoomDB
+import com.medandro.di.annotation.Qualifier
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
-@RoomDB
+@Qualifier("RoomDB")
 class CartRoomRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

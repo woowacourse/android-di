@@ -1,5 +1,7 @@
 package com.medandro.di.annotation
 
-@Target(AnnotationTarget.ANNOTATION_CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier
+annotation class Qualifier(
+    val value: String,
+)

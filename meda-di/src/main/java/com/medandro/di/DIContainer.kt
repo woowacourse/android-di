@@ -2,12 +2,12 @@ package com.medandro.di
 
 import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
-import com.medandro.di.annotation.InMemory
 import com.medandro.di.annotation.InjectField
-import com.medandro.di.annotation.RoomDB
+import com.medandro.di.annotation.Qualifier
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -147,17 +147,7 @@ class DIContainer(
         return constructor.callBy(parameterMap)
     }
 
-    private fun getQualifier(kClass: KClass<*>): String? =
-        when {
-            kClass.hasAnnotation<RoomDB>() -> "RoomDB"
-            kClass.hasAnnotation<InMemory>() -> "InMemory"
-            else -> null
-        }
+    private fun getFieldQualifier(property: KMutableProperty1<Any, Any?>): String? = property.findAnnotation<Qualifier>()?.value
 
-    private fun getFieldQualifier(property: KMutableProperty1<Any, Any?>): String? =
-        when {
-            property.hasAnnotation<RoomDB>() -> "RoomDB"
-            property.hasAnnotation<InMemory>() -> "InMemory"
-            else -> null
-        }
+    private fun getQualifier(kClass: KClass<*>): String? = kClass.findAnnotation<Qualifier>()?.value
 }

@@ -1,11 +1,11 @@
 package woowacourse.shopping.data.repository
 
-import com.medandro.di.annotation.InMemory
+import com.medandro.di.annotation.Qualifier
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
-@InMemory
+@Qualifier("InMemory")
 class CartInMemoryRepository : CartRepository {
     private val cartItems = mutableListOf<CartProductEntity>()
     private var currentId = 1L
