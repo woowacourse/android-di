@@ -22,4 +22,6 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.truth)
 }

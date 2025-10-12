@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -13,7 +13,7 @@ class FieldInjectorTest {
 
     private class Target {
         @InjectField
-        lateinit var service: TestService
+        lateinit var testService: TestService
 
         val untouched: String = "keep"
     }
@@ -31,16 +31,15 @@ class FieldInjectorTest {
         FieldInjector.inject(target, container)
 
         // then
-        assertThat(this::class).isNotNull()
-        assertThat(::Target).isNotNull()
-        assertThat(
+        val injectedService =
             target::class
                 .declaredMemberProperties
-                .first { it.name == "service" }
+                .first { it.name == "testService" }
                 .apply { isAccessible = true }
                 .getter
-                .call(target),
-        ).isInstanceOf(TestService::class.java)
+                .call(target)
+
+        assertThat(injectedService).isInstanceOf(TestService::class.java)
         assertThat(target.untouched).isEqualTo("keep")
     }
 
@@ -53,7 +52,7 @@ class FieldInjectorTest {
         // when
         FieldInjector.inject(target, container)
 
-        // then
-        assertThat(this::class)
+        // then (예외 발생)
+        Unit
     }
 }

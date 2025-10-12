@@ -38,10 +38,6 @@ object AppContainer : Container() {
             InMemoryCartRepository()
         }
 
-        bindSingleton(CartRepository::class) {
-            get(CartRepository::class)
-        }
-
         bindSingleton(ProductRepository::class) {
             DefaultProductRepository()
         }
