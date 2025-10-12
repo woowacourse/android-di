@@ -31,6 +31,8 @@ class CartViewModelTest {
         Dispatchers.setMain(testDispatcher)
         cartRepository = FakeCartRepository()
         viewModel = CartViewModel()
+
+        viewModel.cartRepository = cartRepository
     }
 
     @After
