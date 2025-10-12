@@ -50,7 +50,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":di"))
+    implementation(project(":specter"))
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)

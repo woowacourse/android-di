@@ -2,12 +2,12 @@ package woowacourse.shopping
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.peto.di.DependencyContainer
+import woowacourse.peto.di.DependencyModule
+import woowacourse.peto.di.ViewModelFactoryInjector
 import woowacourse.shopping.data.db.DatabaseModule
 import woowacourse.shopping.data.db.ShoppingDatabase
 import woowacourse.shopping.data.repository.RepositoryModule
-import woowacourse.shopping.di.DependencyContainer
-import woowacourse.shopping.di.DependencyModule
-import woowacourse.shopping.di.ViewModelFactoryInjector
 
 class AppContainer(
     context: Context,

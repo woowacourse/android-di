@@ -8,7 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.di.ViewModelFactoryInjector
+import woowacourse.peto.di.ViewModelFactoryInjector
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 

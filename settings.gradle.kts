@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "android-di"
 include(":app")
-include(":di")
+include(":specter")
 include(":domain")

@@ -6,15 +6,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.peto.di.specterViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.petoViewModel
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 import kotlin.getValue
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val viewModel by petoViewModel<CartViewModel>()
+    private val viewModel by specterViewModel<CartViewModel>()
 
     private lateinit var dateFormatter: DateFormatter
 

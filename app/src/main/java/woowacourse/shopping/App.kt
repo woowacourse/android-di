@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.DependencyInjector
+import woowacourse.peto.di.DependencyInjector
 
 class App : Application() {
     lateinit var container: AppContainer

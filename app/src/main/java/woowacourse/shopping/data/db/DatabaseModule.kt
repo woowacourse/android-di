@@ -1,9 +1,9 @@
 package woowacourse.shopping.data.db
 
-import woowacourse.shopping.di.DependencyModule
+import woowacourse.peto.di.DependencyModule
 
 class DatabaseModule(
     private val database: ShoppingDatabase,
-) : DependencyModule, DatabaseProvider {
-    override val cartDao: CartProductDao by lazy { database.cartProductDao() }
+) : DependencyModule {
+    val cartDao: CartProductDao by lazy { database.cartProductDao() }
 }
