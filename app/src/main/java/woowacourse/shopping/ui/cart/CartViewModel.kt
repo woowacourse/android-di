@@ -13,7 +13,7 @@ import woowacourse.shopping.model.Product
 class CartViewModel : ViewModel() {
     @Inject
     @Remote
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
