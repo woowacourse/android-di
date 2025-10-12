@@ -11,7 +11,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 
 class CartViewModel : ViewModel() {
     @RequireInjection
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData()
     val cartProducts: LiveData<List<Product>> get() = _cartProducts
