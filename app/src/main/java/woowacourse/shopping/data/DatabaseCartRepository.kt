@@ -9,7 +9,7 @@ import woowacourse.shopping.model.Product
 class DatabaseCartRepository
     @MyInjector
     constructor(
-        private val cartDao: CartProductDao,
+        @MyInjector private val cartDao: CartProductDao,
     ) : CartRepository {
         override suspend fun addCartProduct(product: Product) = cartDao.insert(product.toEntity())
 

@@ -14,6 +14,6 @@ object DIViewModelFactory : ViewModelProvider.Factory {
     ): T =
         AppContainer.resolve(
             clazz = modelClass.kotlin,
-            overrides = mapOf(SavedStateHandle::class to extras.createSavedStateHandle()),
+            overrides = mapOf(AppContainer.Key(SavedStateHandle::class) to extras.createSavedStateHandle()),
         )
 }
