@@ -15,5 +15,5 @@ class DatabaseCartRepository
 
         override suspend fun getAllCartProducts(): List<Product> = cartDao.getAll().map { it.toDomain() }
 
-        override suspend fun deleteCartProduct(id: Int) = cartDao.delete(id.toLong())
+        override suspend fun deleteCartProduct(id: Long) = cartDao.delete(id)
     }
