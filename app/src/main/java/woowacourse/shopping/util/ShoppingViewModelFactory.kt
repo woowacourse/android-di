@@ -21,23 +21,31 @@ class ShoppingViewModelFactory(
         return createViewModel(viewModelKClass as KClass<T>)
     }
 
-    private fun <T : ViewModel> createViewModel(viewModelKClass: KClass<T>): T {
-        // 생성할 ViewModel 클래스의 주 생성자 정보
+    private fun <T : ViewModel> createViewModel(kClass: KClass<T>): T {
         val primaryConstructor =
-            viewModelKClass.primaryConstructor
-                ?: throw IllegalArgumentException("ViewModel은 주 생성자를 가지고 있지 않습니다")
+            kClass.primaryConstructor
+                ?: throw IllegalArgumentException("ViewModel은 주 생성자가 있어야 합니다")
 
-        // 생성자 파라미터 타입에 맞춰 AppContainer에서 가져오기
-        val parameterTypes = primaryConstructor.parameters.map { it.type.classifier as KClass<*> }
+        // 생성자 파라미터별로 Qualifier 감지
+        val constructorArgs =
+            primaryConstructor.parameters.associateWith { param ->
+                val paramType = param.type.classifier as KClass<*>
 
-        // appContainer에서 생성된 의존성 인스턴스 가져오기
-        val dependencyInstances = parameterTypes.map { appContainer.get(it) }
-        val constructorArguments = primaryConstructor.parameters.zip(dependencyInstances).toMap()
+                val qualifierAnnotation =
+                    param.annotations.firstOrNull { ann ->
+                        ann.annotationClass.annotations.any { meta ->
+                            meta.annotationClass.simpleName == "Qualifier"
+                        }
+                    }
 
-        // 리플랙션을 이용해 ViewModel 인스턴스 생성 및 반환
-        val viewModel = primaryConstructor.callBy(constructorArguments)
+                if (qualifierAnnotation != null) {
+                    appContainer.get(paramType, qualifierAnnotation.annotationClass)
+                } else {
+                    appContainer.get(paramType)
+                }
+            }
 
-        // 필드 주입
+        val viewModel = primaryConstructor.callBy(constructorArgs)
         injectField(viewModel)
 
         return viewModel
