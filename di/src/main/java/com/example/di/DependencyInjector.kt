@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -12,13 +13,18 @@ object DependencyInjector {
     private val instances = mutableMapOf<DependencyKey<*>, Any>()
     private val creating = mutableSetOf<KClass<*>>()
 
-    fun <T : Any> setInstance(
-        kClass: KClass<T>,
-        instance: T,
-        qualifier: KClass<out Annotation>? = null,
-    ) {
-        val key = DependencyKey(kClass, qualifier)
-        instances[key] = instance
+    fun setInstance(container: Any) {
+        container::class
+            .members
+            .filterIsInstance<KProperty1<Any, *>>()
+            .forEach { property ->
+                property.isAccessible = true
+                val instance = property.get(container) ?: return@forEach
+                val kClass = property.returnType.classifier as KClass<*>
+                val qualifier = findAnnotation(property)
+                val key = DependencyKey(kClass, qualifier)
+                instances[key] = instance
+            }
     }
 
     fun <T : Any> getInstance(
@@ -44,12 +50,8 @@ object DependencyInjector {
                 property.isAccessible = true
                 val dependencyClass = property.returnType.classifier as? KClass<*>
 
-                val qualifier =
-                    when {
-                        property.findAnnotation<InMemoryLogger>() != null -> InMemoryLogger::class
-                        property.findAnnotation<DatabaseLogger>() != null -> DatabaseLogger::class
-                        else -> null
-                    }
+                val qualifier = findAnnotation(property)
+
                 dependencyClass?.let {
                     property.setter.call(
                         instance,
@@ -58,6 +60,13 @@ object DependencyInjector {
                 }
             }
     }
+
+    private fun findAnnotation(property: KProperty1<Any, *>) =
+        when {
+            property.findAnnotation<InMemoryLogger>() != null -> InMemoryLogger::class
+            property.findAnnotation<DatabaseLogger>() != null -> DatabaseLogger::class
+            else -> null
+        }
 
     private fun createInstance(
         kClass: KClass<*>,

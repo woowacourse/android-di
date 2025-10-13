@@ -7,5 +7,5 @@ import com.example.di.RequireInjection
 class FakeCartViewModel : ViewModel() {
     @RequireInjection
     @DatabaseLogger
-    private lateinit var fakeCartRepository: FakeCartRepositoryImpl
+    lateinit var fakeCartRepository: FakeCartRepositoryImpl
 }

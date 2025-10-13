@@ -7,6 +7,7 @@ import org.assertj.core.api.SoftAssertions
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import test.fixture.FakeAppContainer
 import test.fixture.FakeCartRepositoryImpl
 import test.fixture.FakeCartViewModel
 import test.fixture.FakeProductRepositoryImpl
@@ -14,21 +15,19 @@ import test.fixture.FakeProductRepositoryImpl
 class DependencyInjectorTest {
     private lateinit var fakeCartRepository: FakeCartRepositoryImpl
     private lateinit var fakeProductRepository: FakeProductRepositoryImpl
+    private lateinit var fakeAppContainer: FakeAppContainer
 
     @Before
     fun setUp() {
-        fakeCartRepository = FakeCartRepositoryImpl()
-        fakeProductRepository = FakeProductRepositoryImpl()
+        fakeAppContainer = FakeAppContainer()
+        fakeCartRepository = fakeAppContainer.cartRepository
+        fakeProductRepository = fakeAppContainer.productRepository
     }
 
     @Test
     fun `인스턴스 생성 시 필드가 주입된다`() {
         // given
-        DependencyInjector.setInstance(
-            FakeCartRepositoryImpl::class,
-            fakeCartRepository,
-            DatabaseLogger::class,
-        )
+        DependencyInjector.setInstance(fakeAppContainer)
 
         // when
         val viewModel =
@@ -36,27 +35,14 @@ class DependencyInjectorTest {
         DependencyInjector.injectAnnotatedProperties(FakeCartViewModel::class, viewModel)
 
         // then
-        val field = viewModel::class.java.getDeclaredField("fakeCartRepository")
-        field.isAccessible = true
-        val actual = field.get(viewModel)
-        Assert.assertEquals(fakeCartRepository, actual)
+        Assert.assertEquals(fakeCartRepository, viewModel.fakeCartRepository)
     }
 
     @Test
     fun `어노테이션에 따라 올바른 구현체를 주입 받는다`() {
         // given
         val softly = SoftAssertions()
-
-        DependencyInjector.setInstance(
-            FakeCartRepositoryImpl::class,
-            fakeCartRepository,
-            DatabaseLogger::class,
-        )
-        DependencyInjector.setInstance(
-            FakeProductRepositoryImpl::class,
-            fakeProductRepository,
-            InMemoryLogger::class,
-        )
+        DependencyInjector.setInstance(fakeAppContainer)
 
         // when
         val databaseLogger =
