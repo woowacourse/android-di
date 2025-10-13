@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.shopping.DIContainer
 import woowacourse.shopping.DependencyFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -16,12 +17,12 @@ import woowacourse.shopping.ui.cart.CartActivity
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by lazy {
-        DependencyFactory.create(MainViewModel::class.java)
-    }
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DIContainer.registerDependencies(applicationContext)
+        viewModel = DependencyFactory.create(MainViewModel::class.java)
 
         setupContentView()
         setupBinding()
