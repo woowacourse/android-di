@@ -1,43 +1,53 @@
 package woowacourse.shopping.di
 
-import android.content.Context
-import androidx.room.Room
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.ShoppingDatabase
+import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.primaryConstructor
 
-class AppContainer(
-    private val context: Context,
-) {
+class AppContainer {
     // 인스턴스 캐싱
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    private val shoppingDatabase: ShoppingDatabase by lazy {
-        Room.databaseBuilder(
-            context,
-            ShoppingDatabase::class.java,
-            "shopping-database"
-        ).build()
+    fun <T : Any> registerSingleton(singleton: T) {
+        // Database와 같은 싱글턴 객체 캐싱
+        val clazz = singleton::class
+        instances[clazz] = singleton
+
+        // DAO 함수 탐색
+        clazz.declaredFunctions
+            .filter { function: KFunction<*> ->
+                function.name.endsWith("Dao") && function.parameters.size == 1
+            }
+            .forEach { daoFunction: KFunction<*> ->
+                // returnType: Dao의 interface
+                val returnType = daoFunction.returnType.classifier as? KClass<*>
+                    ?: throw IllegalStateException("유효하지 않은 반환 타입입니다.")
+                val daoInstance: Any? = daoFunction.call(singleton)
+                if (daoInstance != null) {
+                    Log.d("AppContainer", "${daoInstance::class}에 $daoInstance 캐싱")
+                    instances[returnType] = daoInstance
+                }
+            }
     }
 
     fun <T : Any> getInstance(clazz: KClass<T>): T {
         // 이미 있는 인스턴스면 반환
-        instances[clazz]?.let { return it as T }
-
-        // RoomDB의 Dao는 따로 정의
-        val instance: Any = when (clazz) {
-            CartProductDao::class -> shoppingDatabase.cartProductDao()
-            else -> createInstance(clazz)
+        instances[clazz]?.let {
+            Log.d("AppContainer", "캐싱 반환 $it")
+            return it as T
         }
 
         // 없으면 인스턴스 생성
+        val instance = createInstance(clazz)
         instances[clazz] = instance
-        return instance as T
+
+        return instance
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
+        Log.d("createInstance", "$clazz")
         val constructor: KFunction<T> =
             clazz.primaryConstructor ?: throw IllegalStateException("주생성자를 찾을 수 없습니다.")
         val args: List<Any> = constructor.parameters.map { param ->
