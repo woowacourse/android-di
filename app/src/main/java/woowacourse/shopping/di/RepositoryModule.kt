@@ -13,7 +13,4 @@ object RepositoryModule {
 
     @MyProvider
     fun productRepository(): DefaultProductRepository = DefaultProductRepository()
-
-    @MyProvider
-    fun cartProductDao(): CartProductDao = LocalStorageModule.cartProductDao
 }
