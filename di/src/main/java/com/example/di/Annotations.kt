@@ -4,9 +4,6 @@ package com.example.di
 annotation class Inject
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class InjectableViewModel
-
-@Target(AnnotationTarget.PROPERTY)
 annotation class Dependency
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
