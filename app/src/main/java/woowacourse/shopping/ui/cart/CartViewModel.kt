@@ -3,9 +3,9 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import woowacourse.shopping.Inject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.vmfactory.Inject
 
 class CartViewModel : ViewModel() {
     @Inject
