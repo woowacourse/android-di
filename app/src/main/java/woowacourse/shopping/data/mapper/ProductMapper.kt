@@ -11,6 +11,13 @@ fun Product.toEntity(): CartProductEntity =
         imageUrl = imageUrl,
     )
 
+fun CartProduct.toEntity(): CartProductEntity =
+    CartProductEntity(
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+    )
+
 fun CartProductEntity.toModel(): CartProduct =
     CartProduct(
         id = id,
