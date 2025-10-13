@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.vmfactory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.FieldInjector
 import woowacourse.shopping.ShoppingContainer
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -18,12 +19,7 @@ class AutoViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel = modelClass.getDeclaredConstructor().newInstance()
 
-        if (viewModel is CartViewModel) {
-            viewModel.cartRepository = container.get(CartRepository::class)
-        } else if (viewModel is MainViewModel) {
-            viewModel.productRepository = container.get(ProductRepository::class)
-            viewModel.cartRepository = container.get(CartRepository::class)
-        }
+        FieldInjector.inject(viewModel, container)
 
         return viewModel
     }

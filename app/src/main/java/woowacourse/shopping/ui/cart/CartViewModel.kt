@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.vmfactory.Inject
 
 class CartViewModel : ViewModel() {
+    @Inject
     lateinit var cartRepository: CartRepository
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
