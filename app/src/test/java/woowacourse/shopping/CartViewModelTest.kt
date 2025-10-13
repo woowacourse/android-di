@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -21,7 +22,7 @@ class CartViewModelTest {
     @Before
     fun setup() {
         // given
-        fakeCartRepository = FakeCardRepository(fakeProducts)
+        fakeCartRepository = FakeCardRepository(fakeCartProducts)
         viewModel = CartViewModel(fakeCartRepository)
     }
 
@@ -34,10 +35,11 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `카트에_담긴_상품을_삭제할_수_있다`() {
-        // when
-        viewModel.deleteCartProduct(0)
-        // then
-        assertThat(fakeCartRepository.getAllCartProducts().size).isEqualTo(fakeProducts.size - 1)
-    }
+    fun `카트에_담긴_상품을_삭제할_수_있다`() =
+        runTest {
+            // when
+            viewModel.deleteCartProduct(0)
+            // then
+            assertThat(fakeCartRepository.getAllCartProducts().size).isEqualTo(fakeCartProducts.size - 1)
+        }
 }

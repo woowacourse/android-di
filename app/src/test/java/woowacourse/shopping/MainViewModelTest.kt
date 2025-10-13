@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -37,12 +38,16 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `상품을_카트에_담을_수_있다`() {
-        // when
-        viewModel.addCartProduct(fakeProduct)
-        // then
-        assertThat(fakeCartRepository.getAllCartProducts().contains(fakeProduct)).isTrue
-    }
+    fun `상품을_카트에_담을_수_있다`() =
+        runTest {
+            // when
+            viewModel.addCartProduct(fakeProduct)
+
+            // then
+            val cartProducts = fakeCartRepository.getAllCartProducts()
+
+            assertThat(cartProducts.map { it -> it.name }.contains(fakeProduct.name))
+        }
 
     @Test
     fun `상품을_가져올_수_있다`() {
