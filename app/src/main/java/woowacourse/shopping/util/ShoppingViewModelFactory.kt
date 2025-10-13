@@ -60,7 +60,17 @@ class ShoppingViewModelFactory(
                 val dependencyClass =
                     property.returnType.classifier as? KClass<*>
                         ?: return@forEach
-                val dependency = appContainer.get(dependencyClass)
+                val qualifierKClass =
+                    property.annotations
+                        .map { it.annotationClass }
+                        .firstOrNull { it.hasAnnotation<Qualifier>() }
+
+                val dependency =
+                    if (qualifierKClass != null) {
+                        appContainer.get(dependencyClass, qualifierKClass)
+                    } else {
+                        appContainer.get(dependencyClass)
+                    }
 
                 // isAccessible: 프로퍼티의 접근 지시자를 변경할 수 있는 속성
                 property.isAccessible = true
