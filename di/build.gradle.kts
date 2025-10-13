@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "woowacourse.shopping"
+    namespace = "woowacourse.jiyuneel"
     compileSdk = 36
 
     defaultConfig {
