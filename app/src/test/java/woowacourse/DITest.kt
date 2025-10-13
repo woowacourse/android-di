@@ -9,11 +9,21 @@ import org.junit.Test
 import woowacourse.shopping.FieldInjector
 import woowacourse.shopping.Inject
 import woowacourse.shopping.ShoppingContainer
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.jvm.java
+
+class FakeCartProductDao : CartProductDao {
+    private val items = mutableListOf<CartProductEntity>()
+    override suspend fun insert(entity: CartProductEntity) { items += entity }
+    override suspend fun getAll(): List<CartProductEntity> = items.toList()
+    override suspend fun delete(id: Long) { items.removeIf { it.id == id } }
+}
 
 private class TestMainVm : ViewModel() {
     @field:Inject
@@ -38,8 +48,9 @@ class DiBasicsTests {
 
     private fun container(): ShoppingContainer =
         ShoppingContainer().apply {
+            register(CartProductDao::class) { FakeCartProductDao() }
             register(ProductRepository::class) { DefaultProductRepository() }
-            register(CartRepository::class) { DefaultCartRepository() }
+            register(CartRepository::class) { DefaultCartRepository(get(CartProductDao::class)) }
         }
 
     @Test
