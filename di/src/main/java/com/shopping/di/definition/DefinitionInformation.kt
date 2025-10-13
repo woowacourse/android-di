@@ -1,7 +1,7 @@
-package woowacourse.shopping.di.definition
+package com.shopping.di.definition
 
-import woowacourse.shopping.di.InjectContainer
-import woowacourse.shopping.di.Provider
+import com.shopping.di.InjectContainer
+import com.shopping.di.Provider
 import kotlin.reflect.KClass
 
 /**

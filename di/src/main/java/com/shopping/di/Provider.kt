@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.shopping.di
 
 /**
  * @param T 반환할 객체 타입

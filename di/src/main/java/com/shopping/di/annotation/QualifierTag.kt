@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.shopping.di.annotation
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
