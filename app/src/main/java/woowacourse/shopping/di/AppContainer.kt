@@ -6,7 +6,10 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 
 interface AppContainer {
-    fun dependency(type: KType): Any
+    fun dependency(
+        type: KType,
+        annotations: List<Annotation> = emptyList(),
+    ): Any
 }
 
 inline fun <reified T : Any> AppContainer.instance(): T {
@@ -16,7 +19,7 @@ inline fun <reified T : Any> AppContainer.instance(): T {
 
     val parameters: List<Any> =
         primaryConstructor.parameters.map { parameter: KParameter ->
-            dependency(parameter.type)
+            dependency(parameter.type, parameter.annotations)
         }
 
     return primaryConstructor.call(*parameters.toTypedArray())

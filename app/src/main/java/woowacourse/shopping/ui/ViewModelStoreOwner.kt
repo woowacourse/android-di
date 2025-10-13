@@ -35,7 +35,10 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                         fieldsToBeInjected.forEach { property: KProperty1<out T, *> ->
                             property.apply {
                                 isAccessible = true
-                                javaField?.set(viewModel, appContainer.dependency(returnType))
+                                javaField?.set(
+                                    viewModel,
+                                    appContainer.dependency(returnType, property.annotations),
+                                )
                             }
                         }
 

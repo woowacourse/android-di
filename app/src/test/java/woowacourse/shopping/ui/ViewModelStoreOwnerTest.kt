@@ -158,7 +158,10 @@ class ViewModelStoreOwnerTest {
 class FakeApplication :
     Application(),
     AppContainer {
-    override fun dependency(type: KType): Any =
+    override fun dependency(
+        type: KType,
+        annotations: List<Annotation>,
+    ): Any =
         when (type) {
             DeclaredDependency::class.createType() -> DefaultDeclaredDependency()
             else -> error("")
