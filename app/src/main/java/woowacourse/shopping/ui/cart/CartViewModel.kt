@@ -9,7 +9,7 @@ import woowacourse.shopping.di.MyInjector
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
-class CartViewModel() : ViewModel() {
+class CartViewModel : ViewModel() {
     @MyInjector
     private lateinit var cartRepository: CartRepository
 

@@ -5,11 +5,9 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 
 object RepositoryModule {
-    fun cartRepository(dao: CartProductDao): DefaultCartRepository =
-        DefaultCartRepository(dao)
+    fun cartRepository(dao: CartProductDao): DefaultCartRepository = DefaultCartRepository(dao)
 
-    fun productRepository(): DefaultProductRepository =
-        DefaultProductRepository()
+    fun productRepository(): DefaultProductRepository = DefaultProductRepository()
 
     fun cartProductDao(): CartProductDao = LocalStorageModule.cartProductDao
 }

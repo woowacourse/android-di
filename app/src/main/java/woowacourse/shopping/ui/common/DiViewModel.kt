@@ -10,4 +10,3 @@ inline fun <reified VM : ViewModel> ComponentActivity.diViewModels() =
     viewModels<VM> {
         DiViewModelFactory
     }
-

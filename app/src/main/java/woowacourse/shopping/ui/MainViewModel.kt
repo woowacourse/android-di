@@ -36,7 +36,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
     }

@@ -40,10 +40,11 @@ object DiContainer {
             .forEach { prop ->
                 val mutableProp: KMutableProperty1<T, Any> = prop as KMutableProperty1<T, Any>
                 mutableProp.isAccessible = true
-                val propInstance = getInstance(
-                    prop.returnType.classifier as? KClass<*>
-                        ?: error("")
-                )
+                val propInstance =
+                    getInstance(
+                        prop.returnType.classifier as? KClass<*>
+                            ?: error(""),
+                    )
                 mutableProp.setter.call(instance, propInstance)
             }
     }
@@ -68,15 +69,17 @@ object DiContainer {
         function: KFunction<*>,
         kClass: KClass<T>,
     ): T {
-        val constructorArguments = function.parameters.associateWith { parameter ->
-            if (parameter.kind == KParameter.Kind.INSTANCE) {
-                RepositoryModule
-            } else {
-                val parameterClass = parameter.type.classifier as? KClass<*>
-                    ?: error("")
-                getInstance(parameterClass)
+        val constructorArguments =
+            function.parameters.associateWith { parameter ->
+                if (parameter.kind == KParameter.Kind.INSTANCE) {
+                    RepositoryModule
+                } else {
+                    val parameterClass =
+                        parameter.type.classifier as? KClass<*>
+                            ?: error("")
+                    getInstance(parameterClass)
+                }
             }
-        }
 
         val instance = kClass.cast(function.callBy(constructorArguments))
         injectFieldProperties(kClass, instance)
@@ -84,20 +87,22 @@ object DiContainer {
     }
 
     private fun <T : Any> createFromConstructor(kClass: KClass<T>): T {
-        val constructor: KFunction<Any> = kClass.primaryConstructor
-            ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(kClass.simpleName))
+        val constructor: KFunction<Any> =
+            kClass.primaryConstructor
+                ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(kClass.simpleName))
 
-        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
-            getInstance(
-                param.type.classifier as? KClass<*>
-                    ?: error(
-                        ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
-                            kClass.simpleName,
-                            param
-                        )
-                    )
-            )
-        }
+        val arguments: Map<KParameter, Any> =
+            constructor.parameters.associateWith { parameter ->
+                getInstance(
+                    parameter.type.classifier as? KClass<*>
+                        ?: error(
+                            ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
+                                kClass.simpleName,
+                                parameter,
+                            ),
+                        ),
+                )
+            }
 
         val instance = kClass.cast(constructor.callBy(arguments))
 
