@@ -12,7 +12,6 @@ open class AppContainer {
         clazz: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T {
-        println("class: $clazz, qualifier: $qualifier")
         val qualifierKey = QualifierKey(clazz, qualifier)
         instances[qualifierKey]?.let { return it as T }
 
