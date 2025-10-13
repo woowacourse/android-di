@@ -6,7 +6,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import org.junit.Test
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.di.DiContainer
-import woowacourse.shopping.di.MyInjector
+import woowacourse.shopping.di.annotation.MyInjector
 import woowacourse.shopping.model.CartRepository
 
 class DiContainerTest {

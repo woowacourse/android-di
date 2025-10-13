@@ -3,6 +3,9 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import dalvik.system.DexFile
+import woowacourse.shopping.di.annotation.MyInjector
+import woowacourse.shopping.di.annotation.MyModule
+import woowacourse.shopping.di.annotation.MyProvider
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
