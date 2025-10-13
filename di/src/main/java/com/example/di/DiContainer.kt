@@ -1,7 +1,5 @@
-package woowacourse.shopping.di
+package com.example.di
 
-import woowacourse.shopping.data.annotation.Qualifier
-import woowacourse.shopping.di.Injector.inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -38,7 +36,6 @@ object DiContainer {
         providers[key]?.let {
             return it.value as T
         }
-
         val concreteClazz = bindings[key] ?: kClazz
 
         if (concreteClazz.java.isInterface) {
@@ -71,7 +68,7 @@ object DiContainer {
                 getProvider(parameterClass, qualifier)
             }
         val instance = constructor.callBy(arguments)
-        inject(instance)
+        Injector.inject(instance)
         return instance
     }
 }

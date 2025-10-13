@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.di.DiContainer
-import woowacourse.shopping.di.Injector
+import com.example.di.DiContainer
+import com.example.di.Injector
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
