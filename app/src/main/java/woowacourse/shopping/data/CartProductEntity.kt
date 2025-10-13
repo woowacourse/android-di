@@ -12,6 +12,6 @@ data class CartProductEntity(val name: String, val price: Int, val imageUrl: Str
     var createdAt: Long = System.currentTimeMillis()
 
     fun toProduct(): Product {
-        return Product(name, price, imageUrl, createdAt)
+        return Product(id.toInt(), name, price, imageUrl, createdAt)
     }
 }

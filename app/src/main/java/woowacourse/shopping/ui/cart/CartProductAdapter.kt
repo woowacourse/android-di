@@ -11,8 +11,8 @@ class CartProductAdapter(
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
     private val items: MutableList<Product> = items.toMutableList()
 
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
+    private val onClickDelete = { id:Int, position: Int ->
+        onClickDelete(id)
         removeItem(position)
     }
 
