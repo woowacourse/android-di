@@ -1,9 +1,12 @@
 package com.shopping.di
 
 import com.shopping.di.definition.Qualifier
+import com.shopping.fixture.ConstructorInjectFixtureCar
 import com.shopping.fixture.ElectricFixtureCarImpl
 import com.shopping.fixture.EngineFixtureCarImpl
 import com.shopping.fixture.FactoryFixtureCar
+import com.shopping.fixture.FieldInjectFixtureCar
+import com.shopping.fixture.FieldInjectQualifierEngineFixtureCar
 import com.shopping.fixture.FixtureCar
 import com.shopping.fixture.SingletonFixtureCar
 import io.kotest.core.spec.style.StringSpec
@@ -17,11 +20,10 @@ class AppInjectorTest :
             InjectContainer.init()
         }
 
-        "singleton 은 동일한 인스턴스를 반환한다" {
+        "singleton은 동일한 인스턴스를 반환한다" {
             // given
-            val name = "singleton"
             InjectContainer.registerSingleton<SingletonFixtureCar> { _ ->
-                Provider { SingletonFixtureCar(name) }
+                Provider { SingletonFixtureCar() }
             }
 
             // when
@@ -31,7 +33,7 @@ class AppInjectorTest :
             first shouldBeSameInstanceAs second
         }
 
-        "factory 는 매번 새로운 인스턴스를 반환한다" {
+        "factory는 매번 새로운 인스턴스를 반환한다" {
             // given
             val name = "factory"
             InjectContainer.registerFactory<FactoryFixtureCar> { _ ->
@@ -45,13 +47,13 @@ class AppInjectorTest :
             first shouldNotBeSameInstanceAs second
         }
 
-        "qualifier 로 동일 타입을 구분할 수 있다" {
+        "생성자 주입은 qualifier로 동일 타입을 구분할 수 있다" {
             // given
             InjectContainer.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("engine")) { _ ->
-                Provider { EngineFixtureCarImpl("engineCarName") }
+                Provider { EngineFixtureCarImpl() }
             }
             InjectContainer.registerSingleton<FixtureCar>(qualifier = Qualifier.Named("electric")) { _ ->
-                Provider { ElectricFixtureCarImpl("electricCarName") }
+                Provider { ElectricFixtureCarImpl() }
             }
 
             // when
@@ -64,11 +66,52 @@ class AppInjectorTest :
             electricCar.shouldBeInstanceOf<ElectricFixtureCarImpl>()
         }
 
-        "ViewModel의 경우 필드 주입으로 의존성을 주입할 수 있다" {
-            // TODO: 재작성 필요
+        "필드 주입으로 의존성을 주입할 수 있다" {
+            // given
+            InjectContainer.apply {
+                registerSingleton<FixtureCar> { Provider { ElectricFixtureCarImpl() } }
+                registerSingleton<FieldInjectFixtureCar> { Provider { FieldInjectFixtureCar() } }
+            }
+
+            // when
+            val car: FieldInjectFixtureCar = InjectContainer.get<FieldInjectFixtureCar>()
+            val injectedCar: FixtureCar = car.fixtureCar
+
+            // then
+            injectedCar.shouldBeInstanceOf<ElectricFixtureCarImpl>()
         }
 
-        "ViewModel의 경우 생성자 주입으로 의존성을 주입할 수 있다" {
-            // TODO: 재작성 필요
+        "필드 주입도 QualifierTag 어노테이션을 활용해서 의존성을 주입할 수 있다" {
+            // given
+            InjectContainer.apply {
+                registerSingleton<FixtureCar>(Qualifier.Named("engine")) { Provider { EngineFixtureCarImpl() } }
+                registerSingleton<FixtureCar>(Qualifier.Named("electric")) { Provider { ElectricFixtureCarImpl() } }
+                registerSingleton<FieldInjectQualifierEngineFixtureCar> { Provider { FieldInjectQualifierEngineFixtureCar() } }
+            }
+
+            // when
+            val car: FieldInjectQualifierEngineFixtureCar =
+                InjectContainer.get<FieldInjectQualifierEngineFixtureCar>()
+            val injectedCar: FixtureCar = car.fixtureCar
+
+            // then
+            injectedCar.shouldBeInstanceOf<EngineFixtureCarImpl>()
+        }
+
+        "생성자 주입으로 의존성을 주입할 수 있다" {
+            InjectContainer.apply {
+                registerSingleton<FixtureCar> { Provider { EngineFixtureCarImpl() } }
+                registerSingleton<ConstructorInjectFixtureCar> {
+                    Provider { ConstructorInjectFixtureCar(get()) }
+                }
+            }
+
+            // when
+            val car: ConstructorInjectFixtureCar =
+                InjectContainer.get<ConstructorInjectFixtureCar>()
+            val injectedCar: FixtureCar = car.fixtureCar
+
+            // then
+            injectedCar.shouldBeInstanceOf<EngineFixtureCarImpl>()
         }
     })
