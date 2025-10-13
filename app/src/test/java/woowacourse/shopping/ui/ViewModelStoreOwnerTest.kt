@@ -11,7 +11,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.InjectedProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
@@ -188,7 +188,7 @@ class DeclaredDependenciesWithDefaultParameterViewModel(
 ) : ViewModel()
 
 class PropertyInjectViewModel : ViewModel() {
-    @Inject
+    @InjectedProperty
     lateinit var declaredDependency: DeclaredDependency
 }
 
@@ -197,11 +197,11 @@ class PropertyWithoutInjectViewModel : ViewModel() {
 }
 
 class UnknownPropertyInjectViewModel : ViewModel() {
-    @Inject
+    @InjectedProperty
     lateinit var declaredDependency: UnknownDependency
 }
 
 class PropertyInjectWithDefaultValueViewModel : ViewModel() {
-    @Inject
+    @InjectedProperty
     var declaredDependency: DeclaredDependency = object : DeclaredDependency {}
 }

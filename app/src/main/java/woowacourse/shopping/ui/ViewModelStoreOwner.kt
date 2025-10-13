@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.di.InjectedProperty
 import woowacourse.shopping.di.instance
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
@@ -30,7 +30,7 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                         val appContainer: AppContainer = application as AppContainer
                         val viewModel = appContainer.instance<VM>() as T
                         val fieldsToBeInjected: List<KProperty1<out T, *>> =
-                            viewModel::class.memberProperties.filter { it.hasAnnotation<Inject>() }
+                            viewModel::class.memberProperties.filter { it.hasAnnotation<InjectedProperty>() }
 
                         fieldsToBeInjected.forEach { property: KProperty1<out T, *> ->
                             property.apply {
