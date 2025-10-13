@@ -35,8 +35,20 @@ object DefaultAppContainer : AppContainer {
         return constructor.call(*args)
     }
 
+    override fun injectField(instance: Any) {
+        instance::class.java
+            .declaredFields
+            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val depClass = field.type.kotlin
+                val dependency = getInstance(depClass)
+                field.isAccessible = true
+                field.set(instance, dependency)
+            }
+    }
+
     fun init(context: Context) {
-        bind(ShoppingDatabase::class, ShoppingDatabase.getInstance(context))
+        bind(ShoppingDatabase::class, ShoppingDatabase.getInstance(context.applicationContext))
         bind(CartProductDao::class, getInstance(ShoppingDatabase::class).cartProductDao())
         bind(ProductRepository::class, getInstance(ProductRepositoryImpl::class))
         bind(CartRepository::class, getInstance(DefaultCartRepository::class))

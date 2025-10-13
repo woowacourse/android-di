@@ -32,7 +32,9 @@ class DIViewModelFactory(
                     }
                 }.toTypedArray()
 
-        return constructor.call(*args)
+        val instance = constructor.call(*args)
+        container.injectField(instance)
+        return instance
     }
 }
 
