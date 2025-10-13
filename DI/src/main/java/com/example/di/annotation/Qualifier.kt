@@ -1,4 +1,4 @@
-package woowacourse.shopping.annotation
+package com.example.di.annotation
 
 import kotlin.reflect.KClass
 

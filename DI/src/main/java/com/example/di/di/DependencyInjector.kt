@@ -1,8 +1,7 @@
-package woowacourse.shopping.di
+package com.example.di.di
 
-import android.util.Log
-import woowacourse.shopping.annotation.Inject
-import woowacourse.shopping.annotation.Qualifier
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -24,11 +23,9 @@ import kotlin.reflect.jvm.javaField
  */
 class DependencyInjector(private val appContainer: AppContainer) {
     fun <T : Any> inject(kClass: KClass<T>): T {
-        Log.d("DependencyInjector", "inject: 진입")
         val constructor: KFunction<T> =
             kClass.primaryConstructor ?: throw IllegalArgumentException("주생성자가 없습니다.")
         val arguments = mutableMapOf<KParameter, Any?>()
-        Log.d("DependencyInjector", "inject: $constructor, $arguments")
 
         // 생성자 주입
         constructor.parameters.forEach { param: KParameter ->
@@ -55,20 +52,16 @@ class DependencyInjector(private val appContainer: AppContainer) {
             if (field != null && injectAnnotation != null) {
                 // Qualifier가 있으면 해당 타입으로, 아니면 파라미터 타입으로
                 val qualifier = prop.findAnnotation<Qualifier>()
-                Log.d("DependencyInjector", "inject: $qualifier")
                 val dependencyClass: KClass<out Any> =
                     qualifier?.value ?: prop.returnType.classifier as? KClass<out Any>
                     ?: throw IllegalStateException("의존성 타입을 확인할 수 없습니다: ${prop.name}")
 
-                Log.d("DependencyInjector", "$dependencyClass 확인")
                 val dependencyInstance = appContainer.getInstance(dependencyClass)
-                Log.d("DependencyInjector", "$dependencyClass, $dependencyInstance, $prop")
                 // 필드 주입
                 field.isAccessible = true
                 field.set(instance, dependencyInstance)
             }
         }
-        Log.d("DependencyInjector", "$instance 인스턴스 반환")
         return instance
     }
 }

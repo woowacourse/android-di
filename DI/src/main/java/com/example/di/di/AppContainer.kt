@@ -1,6 +1,5 @@
-package woowacourse.shopping.di
+package com.example.di.di
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
@@ -26,7 +25,6 @@ class AppContainer {
                     ?: throw IllegalStateException("유효하지 않은 반환 타입입니다.")
                 val daoInstance: Any? = daoFunction.call(singleton)
                 if (daoInstance != null) {
-                    Log.d("AppContainer", "${daoInstance::class}에 $daoInstance 캐싱")
                     instances[returnType] = daoInstance
                 }
             }
@@ -35,7 +33,6 @@ class AppContainer {
     fun <T : Any> getInstance(clazz: KClass<T>): T {
         // 이미 있는 인스턴스면 반환
         instances[clazz]?.let {
-            Log.d("AppContainer", "캐싱 반환 $it")
             return it as T
         }
 
@@ -47,7 +44,6 @@ class AppContainer {
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
-        Log.d("createInstance", "$clazz")
         val constructor: KFunction<T> =
             clazz.primaryConstructor ?: throw IllegalStateException("주생성자를 찾을 수 없습니다.")
         val args: List<Any> = constructor.parameters.map { param ->

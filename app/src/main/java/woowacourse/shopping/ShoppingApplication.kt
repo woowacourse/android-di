@@ -2,10 +2,10 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import com.example.di.di.AppContainer
+import com.example.di.di.DependencyInjector
+import com.example.di.di.InjectorViewModelFactory
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.DependencyInjector
-import woowacourse.shopping.di.InjectorViewModelFactory
 
 class ShoppingApplication : Application() {
     private val shoppingDatabase: ShoppingDatabase by lazy {
