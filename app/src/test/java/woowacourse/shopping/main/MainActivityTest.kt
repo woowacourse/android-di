@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.peto.di.ViewModelFactoryInjector
+import woowacourse.shopping.App
 import woowacourse.shopping.ui.main.MainActivity
 import woowacourse.shopping.ui.main.vm.MainViewModel
 

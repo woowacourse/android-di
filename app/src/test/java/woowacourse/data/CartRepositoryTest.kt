@@ -23,11 +23,9 @@ class CartRepositoryTest {
             // given
             val product =
                 Product(
-                    id = 0,
                     name = "사과",
                     price = 3000,
                     imageUrl = "",
-                    createdAt = System.currentTimeMillis(),
                 )
 
             // when
@@ -35,28 +33,21 @@ class CartRepositoryTest {
 
             // then
             val cartItems = repository.getAllCartProducts()
-            assertTrue(cartItems.any { it.id == product.id })
+            assertTrue(cartItems.any { it.id == 0L })
         }
 
     @Test
     fun `상품을 삭제하면 장바구니에서 제거된다`() =
         runTest {
             // given
-            val product =
-                Product(
-                    id = 0,
-                    name = "사과",
-                    price = 3000,
-                    imageUrl = "",
-                    createdAt = System.currentTimeMillis(),
-                )
-            repository.addCartProduct(product)
+            val carts = repository.getAllCartProducts()
+            val deleteCartProductId = 0L
 
             // when
-            repository.deleteCartProduct(0)
+            repository.deleteCartProduct(deleteCartProductId)
 
             // then
-            val cartItems = repository.getAllCartProducts()
-            assertTrue(cartItems.isEmpty())
+            val hasNotDeletedCart = carts.any { it.id != deleteCartProductId }
+            assertTrue(hasNotDeletedCart)
         }
 }

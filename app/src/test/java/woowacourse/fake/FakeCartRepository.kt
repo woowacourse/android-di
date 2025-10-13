@@ -4,6 +4,7 @@ import woowacourse.shopping.data.db.CartProductDao
 import woowacourse.shopping.data.db.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 
 class FakeCartRepository(
@@ -13,7 +14,7 @@ class FakeCartRepository(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> = dao.getAll().map { it.toDomain() }
+    override suspend fun getAllCartProducts(): List<CartProduct> = dao.getAll().map { it.toDomain() }
 
     override suspend fun deleteCartProduct(id: Long) {
         dao.delete(id)

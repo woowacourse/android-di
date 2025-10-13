@@ -11,17 +11,17 @@ import woowacourse.shopping.data.repository.RepositoryModule
 
 class AppContainer(
     context: Context,
-) {
+) : Container {
     private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.getInstance(context)
     private val databaseModule = DatabaseModule(shoppingDatabase)
     private val repositoryModule: DependencyModule = RepositoryModule(databaseModule)
 
-    val dependencyContainer: DependencyContainer =
+    override val dependencyContainer: DependencyContainer =
         DependencyContainer(
             listOf(
                 databaseModule,
                 repositoryModule,
             ),
         )
-    val viewModelFactory: ViewModelProvider.Factory = ViewModelFactoryInjector(dependencyContainer)
+    override val viewModelFactory: ViewModelProvider.Factory = ViewModelFactoryInjector(dependencyContainer)
 }

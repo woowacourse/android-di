@@ -1,14 +1,15 @@
-package woowacourse.shopping
+package woowacourse.shopping.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import woowacourse.peto.di.ViewModelFactoryInjector
+import woowacourse.shopping.App
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 
@@ -32,6 +33,6 @@ class CartActivityTest {
         val viewModel = ViewModelProvider(activity, factory)[CartViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        Truth.assertThat(viewModel).isNotNull()
     }
 }
