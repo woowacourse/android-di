@@ -17,6 +17,7 @@ data class CartProductEntity(
 
     fun toDomain(): Product =
         Product(
+            id = id,
             name = name,
             price = price,
             imageUrl = imageUrl,
