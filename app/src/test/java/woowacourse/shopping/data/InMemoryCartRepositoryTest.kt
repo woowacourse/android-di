@@ -2,7 +2,6 @@ package woowacourse.shopping.data
 
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.fixture.ProductFixture
@@ -33,7 +32,7 @@ class InMemoryCartRepositoryTest {
             cartRepository.addCartProduct(ProductsFixture[1])
 
             // when
-            cartRepository.deleteCartProduct(0)
+            cartRepository.deleteCartProduct(1)
 
             // then
             assertThat(cartRepository.getAllCartProducts()).doesNotContain(ProductsFixture[0])
@@ -56,7 +55,7 @@ class InMemoryCartRepositoryTest {
             // when
             cartRepository.addCartProduct(ProductsFixture[0])
             cartRepository.addCartProduct(ProductsFixture[1])
-            cartRepository.deleteCartProduct(0)
+            cartRepository.deleteCartProduct(1)
             cartRepository.addCartProduct(ProductsFixture[2])
 
             // then

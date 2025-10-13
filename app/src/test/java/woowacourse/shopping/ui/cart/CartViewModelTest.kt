@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.di.AppContainer
+import com.example.di.provide
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -10,6 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.MainDispatcherRule
+import woowacourse.shopping.di.Database
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.ProductsFixture
@@ -23,12 +25,16 @@ class CartViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private lateinit var container: AppContainer
     private lateinit var viewModel: CartViewModel
 
     @Before
     fun setUp() {
-        AppContainer.provide<CartRepository>(FakeCartRepository(ProductsFixture))
-        viewModel = AppContainer.resolve()
+        container =
+            AppContainer().apply {
+                provide<CartRepository>(FakeCartRepository(ProductsFixture), Database::class)
+            }
+        viewModel = container.resolve(CartViewModel::class)
     }
 
     @Test
