@@ -11,11 +11,18 @@ class FakeAppContainer(
     productRepository: ProductRepository = FakeProductRepository(),
     cartRepository: CartRepository = FakeCartRepository(),
 ) : AppContainer {
-    private val providers: Map<KClass<*>, Any> =
-        mapOf(
+    private val providers: MutableMap<KClass<*>, Any> =
+        mutableMapOf(
             ProductRepository::class to productRepository,
             CartRepository::class to cartRepository,
         )
+
+    override fun <T : Any> register(
+        kClass: KClass<T>,
+        instance: T,
+    ) {
+        providers[kClass] = instance
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(kClass: KClass<T>): T = providers[kClass] as T

@@ -12,11 +12,19 @@ class AppContainerImpl(
     context: Context,
 ) : AppContainer {
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
-    private val providers: Map<KClass<*>, Any> =
-        mapOf(
-            ProductRepository::class to ProductRepositoryImpl(),
-            CartRepository::class to CartRepositoryImpl(database.cartProductDao()),
-        )
+    private val providers: MutableMap<KClass<*>, Any> = mutableMapOf()
+
+    init {
+        register(ProductRepository::class, ProductRepositoryImpl())
+        register(CartRepository::class, CartRepositoryImpl(database.cartProductDao()))
+    }
+
+    override fun <T : Any> register(
+        kClass: KClass<T>,
+        instance: T,
+    ) {
+        providers[kClass] = instance
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(kClass: KClass<T>): T =

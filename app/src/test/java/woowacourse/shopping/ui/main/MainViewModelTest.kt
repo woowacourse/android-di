@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.fixture.FakeAppContainer
@@ -36,7 +37,8 @@ class MainViewModelTest {
         val cartRepository = FakeCartRepository(mutableListOf())
 
         val appContainer = FakeAppContainer(productRepository, cartRepository)
-        val viewModelFactory = ViewModelFactory(appContainer)
+        val dependencyInjector = DependencyInjector(appContainer)
+        val viewModelFactory = ViewModelFactory(dependencyInjector)
         viewModel = viewModelFactory.create(MainViewModel::class.java)
     }
 
