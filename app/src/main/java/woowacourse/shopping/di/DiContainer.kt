@@ -1,7 +1,6 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.data.CartProductDao
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -22,46 +21,14 @@ object DiContainer {
             return createInstance(kClass)
         }
 
-        val implementClass: KClass<out Any> = declare(kClass) ?: kClass
-
-        instancePool[implementClass]?.let {
+        instancePool[kClass]?.let {
             return kClass.cast(it)
         }
 
-        if (kClass == CartProductDao::class) {
-            val cartProductDao = LocalStorageModule.cartProductDao
-            instancePool[kClass] = cartProductDao
-            return kClass.cast(cartProductDao)
-        }
-
         val newInstance = createInstance(kClass)
-        instancePool[implementClass] = newInstance
+        instancePool[kClass] = newInstance
 
         return kClass.cast(newInstance)
-    }
-
-    private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val implementClass: KClass<out Any> = declare(kClass) ?: kClass
-        val constructor: KFunction<Any> = implementClass.primaryConstructor
-            ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(implementClass.simpleName))
-
-        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
-            getInstance(
-                param.type.classifier as? KClass<*>
-                    ?: error(
-                        ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
-                            implementClass.simpleName,
-                            param
-                        )
-                    )
-            )
-        }
-
-        val instance = kClass.cast(constructor.callBy(arguments))
-
-        injectFieldProperties(implementClass, instance)
-
-        return instance
     }
 
     private fun <T : Any> injectFieldProperties(
@@ -81,18 +48,63 @@ object DiContainer {
             }
     }
 
-    private fun declare(targetClass: KClass<*>): KClass<out Any>? {
+    private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val module = RepositoryModule::class
 
         module.declaredMemberFunctions.forEach { function ->
-            val returnKClass = function.returnType.classifier as? KClass<*>
-            if (returnKClass != null && targetClass in returnKClass.supertypes.map { it.classifier }) {
-                return returnKClass
+            val returnTypeKClass = function.returnType.classifier as? KClass<*>
+            if (returnTypeKClass == kClass || returnTypeKClass != null && kClass in returnTypeKClass.supertypes.map { it.classifier }) {
+                return createFromModule(function, kClass)
             }
         }
-        return null
+
+        val instance = createFromConstructor(kClass)
+        injectFieldProperties(kClass, instance)
+
+        return instance
     }
 
+    private fun <T : Any> createFromModule(
+        function: KFunction<*>,
+        kClass: KClass<T>,
+    ): T {
+        val constructorArguments = function.parameters.associateWith { parameter ->
+            if (parameter.kind == KParameter.Kind.INSTANCE) {
+                RepositoryModule
+            } else {
+                val parameterClass = parameter.type.classifier as? KClass<*>
+                    ?: error("")
+                getInstance(parameterClass)
+            }
+        }
+
+        val instance = kClass.cast(function.callBy(constructorArguments))
+        injectFieldProperties(kClass, instance)
+        return instance
+    }
+
+    private fun <T : Any> createFromConstructor(kClass: KClass<T>): T {
+        val constructor: KFunction<Any> = kClass.primaryConstructor
+            ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(kClass.simpleName))
+
+        val arguments: Map<KParameter, Any> = constructor.parameters.associateWith { param ->
+            getInstance(
+                param.type.classifier as? KClass<*>
+                    ?: error(
+                        ERROR_MESSAGE_CANNOT_GET_INSTANCE.format(
+                            kClass.simpleName,
+                            param
+                        )
+                    )
+            )
+        }
+
+        val instance = kClass.cast(constructor.callBy(arguments))
+
+        injectFieldProperties(kClass, instance)
+
+        return instance
+    }
 
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
     private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."

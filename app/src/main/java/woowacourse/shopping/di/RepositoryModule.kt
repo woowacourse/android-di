@@ -10,4 +10,6 @@ object RepositoryModule {
 
     fun productRepository(): DefaultProductRepository =
         DefaultProductRepository()
+
+    fun cartProductDao(): CartProductDao = LocalStorageModule.cartProductDao
 }
