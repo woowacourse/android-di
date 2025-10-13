@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class InjectRoomCartRepository

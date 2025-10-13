@@ -2,15 +2,15 @@ package woowacourse.shopping.ui
 
 import android.app.Application
 import androidx.room.Room
+import woowacourse.shopping.AppContainer
+import woowacourse.shopping.InjectInMemoryCartRepository
+import woowacourse.shopping.InjectRoomCartRepository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.InjectInMemoryCartRepository
-import woowacourse.shopping.di.InjectRoomCartRepository
-import woowacourse.shopping.di.instance
+import woowacourse.shopping.instance
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KType
