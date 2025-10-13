@@ -1,9 +1,9 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.repository.CartDatabaseRepository
+import woowacourse.shopping.data.repository.ProductDefaultRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
@@ -15,8 +15,8 @@ class AppContainerImpl(
     private val providers: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     init {
-        register(ProductRepository::class, ProductRepositoryImpl())
-        register(CartRepository::class, CartRepositoryImpl(database.cartProductDao()))
+        register(ProductRepository::class, ProductDefaultRepository())
+        register(CartRepository::class, CartDatabaseRepository(database.cartProductDao()))
     }
 
     override fun <T : Any> register(

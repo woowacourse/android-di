@@ -4,16 +4,17 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import woowacourse.shopping.data.repository.CartDatabaseRepository
 import woowacourse.shopping.fixture.dao.FakeCartProductDao
 import woowacourse.shopping.fixture.model.PRODUCT_FIXTURE
 
-class CartRepositoryImplTest {
-    private lateinit var cartRepository: CartRepositoryImpl
+class CartDatabaseRepositoryTest {
+    private lateinit var cartRepository: CartDatabaseRepository
 
     @Before
     fun setUp() {
         val cartProductDao = FakeCartProductDao()
-        cartRepository = CartRepositoryImpl(cartProductDao)
+        cartRepository = CartDatabaseRepository(cartProductDao)
     }
 
     @Test
