@@ -1,52 +1,85 @@
 package woowacourse.shopping.di
 
+import android.content.Context
+import androidx.room.Room
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.map
 import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 
 object AppContainer {
-    private val bindings = mutableMapOf<KClass<*>, KClass<*>>()
-
+    private val providers = mutableMapOf<KClass<*>, () -> Any>()
     private val instances = ConcurrentHashMap<KClass<*>, Any>()
 
-    init {
-        register(CartRepository::class, CartRepositoryImpl::class)
-        register(ProductRepository::class, ProductRepositoryImpl::class)
+    private val implementationMap = mutableMapOf<KClass<*>, KClass<*>>()
+
+    fun init(context: Context) {
+        registerImplementation(CartRepository::class, CartRepositoryImpl::class)
+        registerImplementation(ProductRepository::class, ProductRepositoryImpl::class)
+        registerProvider(ShoppingDatabase::class) {
+            Room
+                .databaseBuilder(
+                    context.applicationContext,
+                    ShoppingDatabase::class.java,
+                    "shopping-db",
+                ).build()
+        }
+        registerProvider(CartProductDao::class) {
+            get(ShoppingDatabase::class).cartProductDao()
+        }
     }
 
-    fun register(
-        repository: KClass<*>,
-        impl: KClass<*>,
+    private fun <T : Any> registerImplementation(
+        interfaceClass: KClass<T>,
+        implementationClass: KClass<out T>,
     ) {
-        bindings[repository] = impl
+        implementationMap[interfaceClass] = implementationClass
+    }
+
+    private fun <T : Any> registerProvider(
+        type: KClass<T>,
+        provider: () -> T,
+    ) {
+        providers[type] = provider
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(serviceClass: KClass<T>): T {
-        val binding = bindings[serviceClass] ?: error("No binding for $serviceClass")
+        if (instances.containsKey(serviceClass)) {
+            return instances[serviceClass] as T
+        }
+
+        val provider = providers[serviceClass]
         val instance =
-            instances.getOrPut(binding) {
-                createInstance(binding)
+            if (provider != null) {
+                provider()
+            } else {
+                val concreteClass = implementationMap[serviceClass] ?: serviceClass
+                createInstance(concreteClass)
             }
+
+        instances[serviceClass] = instance
         return instance as T
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> createInstance(binding: KClass<T>): T {
+    fun <T : Any> createInstance(concreteClass: KClass<T>): T {
+        val constructor =
+            concreteClass.constructors.first()
         val args =
-            binding.constructors
-                .first()
-                .parameters
+            constructor.parameters
+                .filter { parameter -> parameter.hasAnnotation<Inject>() }
                 .map { parameter ->
-                    val parameterClazz = parameter.type.classifier as KClass<*>
-                    get(parameterClazz)
+                    val parameterType = parameter.type.classifier as KClass<*>
+                    get(parameterType)
                 }.toTypedArray()
 
-        val called = binding.constructors.first().call(*args)
-        return called
+        @Suppress("UNCHECKED_CAST")
+        return constructor.call(*args)
     }
 }

@@ -2,26 +2,30 @@ package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
+import kotlin.collections.toMutableList
 
 class CartProductAdapter(
-    items: List<Product>,
+    items: List<CartProduct>,
     onClickDelete: (position: Int) -> Unit,
     private val dateFormatter: DateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
-
-    private val items: MutableList<Product> = items.toMutableList()
+    private val items: MutableList<CartProduct> = items.toMutableList()
 
     private val onClickDelete = { position: Int ->
         onClickDelete(position)
         removeItem(position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
-    }
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
 
-    override fun onBindViewHolder(holder: CartProductViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: CartProductViewHolder,
+        position: Int,
+    ) {
         holder.bind(items[position])
     }
 
