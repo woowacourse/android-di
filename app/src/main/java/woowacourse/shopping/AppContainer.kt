@@ -2,12 +2,12 @@ package woowacourse.shopping
 
 import android.content.Context
 import androidx.room.Room
+import com.example.di.annotation.Database
+import com.example.di.annotation.InMemory
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.Database
-import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
 import kotlin.reflect.KClass
@@ -30,11 +30,11 @@ class AppContainer(
     init {
         providers[CartProductDao::class to null] = database.cartProductDao()
 
-        typeBindings[CartRepository::class to Database::class] = DefaultCartRepository::class
-        typeBindings[ProductRepository::class to Database::class] = DefaultProductRepository::class
+        typeBindings[CartRepository::class to com.example.di.annotation.Database::class] = DefaultCartRepository::class
+        typeBindings[ProductRepository::class to com.example.di.annotation.Database::class] = DefaultProductRepository::class
 
-        typeBindings[ProductRepository::class to InMemory::class] = DefaultProductRepository::class
-        typeBindings[CartRepository::class to InMemory::class] = DefaultCartRepository::class
+        typeBindings[ProductRepository::class to com.example.di.annotation.InMemory::class] = DefaultProductRepository::class
+        typeBindings[CartRepository::class to com.example.di.annotation.InMemory::class] = DefaultCartRepository::class
 
         typeBindings[ProductRepository::class to null] = DefaultProductRepository::class
         typeBindings[CartRepository::class to null] = DefaultCartRepository::class

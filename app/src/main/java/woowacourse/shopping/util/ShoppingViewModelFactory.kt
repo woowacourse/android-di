@@ -2,8 +2,8 @@ package woowacourse.shopping.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.di.annotation.Inject
 import woowacourse.shopping.AppContainer
-import woowacourse.shopping.di.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.hasAnnotation
@@ -57,7 +57,7 @@ class ShoppingViewModelFactory(
         // 해당 클래스에 있는 모든 프로퍼티를 가져옴
         viewModelKClass.memberProperties.forEach { property ->
             // KMutableProperty1: 프로퍼티의 값을 변경할 수 있는 프로퍼티
-            if (property is KMutableProperty1 && property.hasAnnotation<Inject>()) {
+            if (property is KMutableProperty1 && property.hasAnnotation<com.example.di.annotation.Inject>()) {
                 val dependencyClass =
                     property.returnType.classifier as? KClass<*>
                         ?: return@forEach

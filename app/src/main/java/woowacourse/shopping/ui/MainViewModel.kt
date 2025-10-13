@@ -3,8 +3,8 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.di.Database
-import woowacourse.shopping.di.Inject
+import com.example.di.annotation.Database
+import com.example.di.annotation.Inject
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 import woowacourse.shopping.model.repository.ProductRepository
