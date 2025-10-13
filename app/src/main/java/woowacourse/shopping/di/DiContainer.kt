@@ -85,13 +85,14 @@ object DiContainer {
         val module = RepositoryModule::class
 
         module.declaredMemberFunctions.forEach { function ->
-            val returnKClass = function.call(RepositoryModule) as? KClass<*>
+            val returnKClass = function.returnType.classifier as? KClass<*>
             if (returnKClass != null && targetClass in returnKClass.supertypes.map { it.classifier }) {
                 return returnKClass
             }
         }
         return null
     }
+
 
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
     private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."

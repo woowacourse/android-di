@@ -1,12 +1,13 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import kotlin.reflect.KClass
 
 object RepositoryModule {
-    fun defaultCartRepository(): KClass<DefaultCartRepository> = DefaultCartRepository::class
+    fun cartRepository(dao: CartProductDao): DefaultCartRepository =
+        DefaultCartRepository(dao)
 
-    fun defaultProductRepository(): KClass<DefaultProductRepository> =
-        DefaultProductRepository::class
+    fun productRepository(): DefaultProductRepository =
+        DefaultProductRepository()
 }
