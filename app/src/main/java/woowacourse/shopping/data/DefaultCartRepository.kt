@@ -2,6 +2,7 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class DefaultCartRepository(
@@ -11,7 +12,7 @@ class DefaultCartRepository(
         dao.insert(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<Product> {
+    override suspend fun getAllCartProducts(): List<CartProduct> {
         return dao.getAll().map { it.toDomain() }
     }
 
