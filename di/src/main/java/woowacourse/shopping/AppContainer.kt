@@ -5,11 +5,16 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 open class AppContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
+    private val instances = mutableMapOf<QualifierKey, Any>()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getInstance(clazz: KClass<T>): T {
-        instances[clazz]?.let { return it as T }
+    fun <T : Any> getInstance(
+        clazz: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        println("class: $clazz, qualifier: $qualifier")
+        val qualifierKey = QualifierKey(clazz, qualifier)
+        instances[qualifierKey]?.let { return it as T }
 
         val constructor =
             requireNotNull(clazz.primaryConstructor) {
@@ -23,7 +28,8 @@ open class AppContainer {
                         requireNotNull(param.type.classifier as KClass<*>) {
                             "지원하지 않는 타입입니다: ${param.type}"
                         }
-                    getInstance(depClass)
+                    val depQualifier = param.annotations.firstOrNull()?.annotationClass
+                    getInstance(depClass, depQualifier)
                 }.toTypedArray()
 
         return constructor.call(*args)
@@ -35,7 +41,8 @@ open class AppContainer {
             .filter { field -> field.isAnnotationPresent(Inject::class.java) }
             .forEach { field ->
                 val depClass = field.type.kotlin
-                val dependency = getInstance(depClass)
+                val depQualifier = field.annotations.firstOrNull()?.annotationClass
+                val dependency = getInstance(depClass, depQualifier)
                 field.isAccessible = true
                 field.set(instance, dependency)
             }
@@ -43,5 +50,11 @@ open class AppContainer {
     fun <T : Any> bind(
         clazz: KClass<T>,
         instance: T,
-    ) = instances.putIfAbsent(clazz, instance)
+        qualifier: KClass<out Annotation>? = null,
+    ) = instances.putIfAbsent(QualifierKey(clazz, qualifier), instance)
+
+    private data class QualifierKey(
+        val clazz: KClass<*>,
+        val qualifier: KClass<out Annotation>? = null,
+    )
 }
