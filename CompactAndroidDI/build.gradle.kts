@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -44,4 +45,21 @@ dependencies {
     testImplementation(libs.assertj.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.oungsi2000"
+                artifactId = "CompactAndroidDI"
+                version = "1.0.0"
+
+                pom {
+                    name.set("DI")
+                    description.set("simple android runtime DI framework based on Kotlin Reflection")
+                }
+            }
+        }
+    }
 }

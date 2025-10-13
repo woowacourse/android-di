@@ -6,6 +6,17 @@ plugins {
     alias(libs.plugins.android.library) apply false
 }
 
+buildscript {
+    dependencies {
+        classpath(libs.android.maven.gradle.plugin)
+    }
+}
+
 allprojects {
-    apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint
+                .get()
+                .pluginId,
+    )
 }
