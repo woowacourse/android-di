@@ -1,4 +1,4 @@
-package woowacourse.shopping.app.di // app 모듈에 있으나, di 패키지명은 유지
+package woowacourse.shopping.app.di
 
 import android.content.Context
 import woowacourse.shopping.data.CartProductDao
