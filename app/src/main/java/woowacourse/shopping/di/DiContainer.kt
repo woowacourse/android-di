@@ -77,6 +77,7 @@ object DiContainer {
         val module = modulePool.first()
 
         module.declaredMemberFunctions.forEach { function ->
+            if (!function.hasAnnotation<MyProvider>()) return@forEach
             val returnTypeKClass = function.returnType.classifier as? KClass<*>
             if (returnTypeKClass == kClass || returnTypeKClass != null && kClass in returnTypeKClass.supertypes.map { it.classifier }) {
                 return createFromModule(function, kClass, module)
