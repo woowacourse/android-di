@@ -3,8 +3,8 @@ package woowacourse.shopping.ui
 import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.instance
@@ -22,7 +22,7 @@ class ShoppingApplication :
         dependencies.getOrPut(type) {
             when (type) {
                 ProductRepository::class.createType() -> instance<DefaultProductRepository>()
-                CartRepository::class.createType() -> instance<DefaultCartRepository>()
+                CartRepository::class.createType() -> instance<RoomCartRepository>()
                 CartProductDao::class.createType() -> {
                     val database: ShoppingDatabase =
                         Room
