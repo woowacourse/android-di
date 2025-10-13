@@ -41,6 +41,7 @@ dependencies {
     // Reflection
     implementation(libs.kotlin.reflect)
     testImplementation(libs.junit)
+    testImplementation(libs.assertj.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

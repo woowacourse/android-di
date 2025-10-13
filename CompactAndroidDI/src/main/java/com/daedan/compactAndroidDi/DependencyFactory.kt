@@ -1,7 +1,5 @@
 package com.daedan.compactAndroidDi
 
-import kotlin.reflect.KClass
-
 class DependencyFactory<T : Any>(
     val qualifier: Qualifier,
     val create: () -> T,

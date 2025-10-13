@@ -21,7 +21,9 @@ class AppContainerStore {
 
     operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
 
-    fun registerFactory(vararg factories: DependencyFactory<*>) {
+    fun registerFactory(vararg modules: DependencyModule) {
+        val factories = mutableListOf<DependencyFactory<*>>()
+        modules.forEach { factories.addAll(it.factories) }
         factory.putAll(factories.associateBy { it.qualifier })
     }
 

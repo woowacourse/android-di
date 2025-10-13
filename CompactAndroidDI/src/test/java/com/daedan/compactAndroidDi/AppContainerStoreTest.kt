@@ -1,71 +1,75 @@
 package com.daedan.compactAndroidDi
 
+import com.daedan.compactAndroidDi.fixture.Child1
+import com.daedan.compactAndroidDi.fixture.Child2
+import com.daedan.compactAndroidDi.fixture.CircularDependency1
+import com.daedan.compactAndroidDi.fixture.CircularDependency2
+import com.daedan.compactAndroidDi.fixture.NestedDependency
+import com.daedan.compactAndroidDi.fixture.Parent
+import com.daedan.compactAndroidDi.fixture.TestViewModel
+import com.daedan.compactAndroidDi.fixture.UnableReflectObject
+import com.daedan.compactAndroidDi.fixture.module
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import woowacourse.fixture.Child1
-import woowacourse.fixture.Child2
-import woowacourse.fixture.CircularDependency1
-import woowacourse.fixture.NestedDependency
-import woowacourse.fixture.NoConstructorObject
-import woowacourse.fixture.Parent
-import woowacourse.fixture.UnableReflectObject
 
 class AppContainerStoreTest {
     @Test
     fun `instantiate는 등록된 팩토리를 통해 객체를 생성해야 한다`() {
         // given
-        val appContainerStore =
-            AppContainerStore(
-                listOf(
-                    DependencyFactory(Child1::class) {
-                        Child1()
-                    },
-                    DependencyFactory(Child2::class) {
-                        Child2()
-                    },
-                ),
-            )
-        // when
-        val actual = appContainerStore.instantiate(Parent::class)
-
-        assertThat(actual).isInstanceOf(Parent::class.java)
-    }
-
-    @Test
-    fun `팩토리가 없는 클래스는 리플렉션을 통해 자동 주입되어야 한다`() {
-        // given
-        val appContainerStore =
-            AppContainerStore(
-                listOf(),
-            )
+        val appContainerStore = AppContainerStore()
+        val qualifier = Qualifier(Parent::class)
+        val module =
+            module(appContainerStore) {
+                factory { Parent(Child1(), Child2()) }
+            }
+        appContainerStore.registerFactory(module)
 
         // when
-        val actual = appContainerStore.instantiate(Parent::class)
-
-        // then
+        val actual = appContainerStore.instantiate(qualifier)
         assertThat(actual).isInstanceOf(Parent::class.java)
     }
 
     @Test
     fun `중첩 의존성 체인을 성공적으로 해결하고 주입해야 한다`() {
         // given
-        val appContainerStore = AppContainerStore(listOf())
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                factory { Child1() }
+                factory { Child2() }
+                factory { Parent(child1 = get(), child2 = get()) }
+                factory { NestedDependency(get()) }
+            }
+        appContainerStore.registerFactory(module)
 
         // when
-        val actual = appContainerStore.instantiate(NestedDependency::class)
+        val actual =
+            appContainerStore.instantiate(
+                Qualifier(NestedDependency::class),
+            )
 
         // when
         assertThat(actual).isInstanceOf(NestedDependency::class.java)
     }
 
     @Test
-    fun `saveToCache=true일 때 동일 인스턴스를 반환한다`() {
+    fun `한 번 등록한 의존성은 동일 인스턴스를 반환한다`() {
         // given
-        val appContainerStore = AppContainerStore(listOf())
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                factory { Child1() }
+                factory { Child2() }
+                factory { Parent(child1 = get(), child2 = get()) }
+            }
+        appContainerStore.registerFactory(module)
 
         // when
-        val actual = appContainerStore.instantiate(Parent::class, true)
+        val actual =
+            appContainerStore.instantiate(
+                Qualifier(Parent::class),
+            )
         val expected = appContainerStore[Parent::class]
 
         // then
@@ -73,13 +77,16 @@ class AppContainerStoreTest {
     }
 
     @Test
-    fun `saveToCache=false일 때 매번 새로운 인스턴스를 반환한다`() {
+    fun `AutoViewModel 어노테이션이 붙은 객체는 매번 새로운 인스턴스를 반환한다`() {
         // given
-        val appContainerStore = AppContainerStore(listOf())
+        val appContainerStore = AppContainerStore()
 
         // when
-        val actual = appContainerStore.instantiate(Parent::class, false)
-        val expected = appContainerStore[Parent::class]
+        val actual =
+            appContainerStore.instantiate(
+                Qualifier(TestViewModel::class),
+            )
+        val expected = appContainerStore[TestViewModel::class]
 
         // then
         assertThat(actual).isNotSameAs(expected)
@@ -88,33 +95,60 @@ class AppContainerStoreTest {
     @Test
     fun `순환 참조가 발생하면 예외를 던진다`() {
         // given
-        val appContainerStore = AppContainerStore(listOf())
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                factory { CircularDependency1(get()) }
+                factory { CircularDependency2(get()) }
+                factory { Parent(get(), get()) }
+            }
+        appContainerStore.registerFactory(module)
 
         // when - then
         assertThatThrownBy {
-            appContainerStore.instantiate(CircularDependency1::class)
+            appContainerStore.instantiate(
+                Qualifier(CircularDependency1::class),
+            )
         }.message().contains("순환 참조가 발견되었습니다")
-    }
-
-    @Test
-    fun `주 생성자가 없거나 등록되지 않은 인터페이스 요청 시 예외를 던진다`() {
-        // given
-        val appContainerStore = AppContainerStore(listOf())
-
-        // when - then
-        assertThatThrownBy {
-            appContainerStore.instantiate(NoConstructorObject::class)
-        }.message().contains("주 생성자를 찾을 수 없습니다")
     }
 
     @Test
     fun `필수 의존성을 해결할 수 없으면 예외를 던진다`() {
         // given
-        val appContainerStore = AppContainerStore(listOf())
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                factory { UnableReflectObject(get()) }
+            }
+        appContainerStore.registerFactory(module)
 
         // when = then
         assertThatThrownBy {
-            appContainerStore.instantiate(UnableReflectObject::class)
+            appContainerStore.instantiate(
+                Qualifier(UnableReflectObject::class),
+            )
         }.message().contains("주 생성자를 찾을 수 없습니다")
+    }
+
+    @Test
+    fun `의존성에 네이밍을 지정하면 같은 타입의 인스턴스를 여러개 등록할 수 있다`() {
+        // given
+        val appContainerStore = AppContainerStore()
+        val child1 = Child1()
+        val child2 = Child1()
+        val module =
+            module(appContainerStore) {
+                factory(name = "child1") { child1 }
+                factory(name = "child2") { child2 }
+            }
+        appContainerStore.registerFactory(module)
+
+        // when
+        val actual1 = appContainerStore.instantiate(Qualifier(Child1::class, "child1"))
+        val actual2 = appContainerStore.instantiate(Qualifier(Child1::class, "child2"))
+
+        // then
+        assertThat(actual1).isSameAs(child1)
+        assertThat(actual2).isSameAs(child2)
     }
 }

@@ -1,5 +1,7 @@
 package com.daedan.compactAndroidDi.fixture
 
+import com.daedan.compactAndroidDi.annotation.AutoViewModel
+
 class Parent(
     private val child1: Child1,
     private val child2: Child2,
@@ -26,3 +28,6 @@ interface NoConstructorObject
 class UnableReflectObject(
     private val noConstructorObject: NoConstructorObject,
 )
+
+@AutoViewModel
+class TestViewModel
