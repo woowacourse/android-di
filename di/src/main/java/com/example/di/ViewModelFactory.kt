@@ -1,4 +1,4 @@
-package com.example.di2
+package com.example.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

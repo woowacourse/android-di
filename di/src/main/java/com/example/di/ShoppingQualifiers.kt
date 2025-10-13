@@ -1,4 +1,4 @@
-package com.example.di2
+package com.example.di
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)

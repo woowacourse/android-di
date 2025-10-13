@@ -1,4 +1,4 @@
-package com.example.di2
+package com.example.di
 
 import kotlin.reflect.KClass
 

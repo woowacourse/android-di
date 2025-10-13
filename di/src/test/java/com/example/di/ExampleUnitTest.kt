@@ -1,4 +1,4 @@
-package com.example.di2
+package com.example.di
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

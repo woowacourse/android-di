@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.di2.Inject
+import com.example.di.Inject
 import woowacourse.shopping.fixture.TestAppContainer
 
 class FieldInjectViewModelFactory(
