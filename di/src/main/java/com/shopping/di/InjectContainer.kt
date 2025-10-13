@@ -59,16 +59,9 @@ object InjectContainer {
         val information: DefinitionInformation<*> =
             checkNotNull(definitions[key]) { ERROR_NOT_FOUND_KEY.format(key.kclass) }
         return when (information.kind) {
-            Kind.SINGLETON -> {
-                singletons.computeIfAbsent(key) {
-                    (information.provider as (InjectContainer) -> Provider<T>)(this).get()
-                } as T
-            }
-
-            Kind.FACTORY -> {
-                (information.provider as (InjectContainer) -> Provider<T>)(this).get()
-            }
-        }
+            Kind.SINGLETON -> singletons.computeIfAbsent(key) { information.provider(this).get() }
+            Kind.FACTORY -> information.provider(this).get()
+        } as T
     }
 
     fun hasDefinition(
