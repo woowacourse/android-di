@@ -5,5 +5,11 @@ import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.ViewModelFactory
 
 class ShoppingApplication : Application() {
-    val container = AppContainer()
+    lateinit var container: AppContainer
+        private set
+
+    override fun onCreate() {
+        super.onCreate()
+        container = AppContainer(this)
+    }
 }
