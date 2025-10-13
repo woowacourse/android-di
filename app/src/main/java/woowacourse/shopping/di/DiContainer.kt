@@ -1,53 +1,74 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.data.annotation.Qualifier
 import woowacourse.shopping.di.Injector.inject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
-    private val providers = mutableMapOf<KClass<*>, Lazy<Any>>()
-    private val bindings = mutableMapOf<KClass<*>, KClass<*>>()
+    private data class Key(val type: KClass<*>, val qualifier: KClass<out Annotation>?)
+
+    private val providers = mutableMapOf<Key, Lazy<Any>>()
+    private val bindings = mutableMapOf<Key, KClass<*>>()
 
     fun <T : Any> addProviders(
         kClazz: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
         provider: () -> T,
     ) {
-        providers[kClazz] = lazy(LazyThreadSafetyMode.SYNCHRONIZED) { provider() }
+        val key = Key(kClazz, qualifier)
+        providers[key] = lazy(LazyThreadSafetyMode.SYNCHRONIZED) { provider() }
     }
 
-    internal inline fun <reified T : Any, reified R : T> bind() {
-        bindings[T::class] = R::class
+    fun <I : Any> bind(
+        from: KClass<I>,
+        to: KClass<out I>,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        require(from != to)
+        require(from.java.isAssignableFrom(to.java))
+        bindings[Key(from, qualifier)] = to
     }
 
-    fun <T : Any> getProvider(kClazz: KClass<T>): T {
-        providers[kClazz]?.let {
+    fun <T : Any> getProvider(
+        kClazz: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val key = Key(kClazz, qualifier)
+        providers[key]?.let {
             return it.value as T
         }
 
-        val concreteClazz = bindings[kClazz] ?: kClazz
+        val concreteClazz = bindings[key] ?: kClazz
 
         if (concreteClazz.java.isInterface) {
             throw IllegalArgumentException()
         }
 
-        val lazyProvider = providers.getOrPut(concreteClazz) {
-            lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(concreteClazz) }
-        }
+        val lazyProvider =
+            providers.getOrPut(Key(concreteClazz, qualifier)) {
+                lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(concreteClazz) }
+            }
 
         if (kClazz != concreteClazz) {
-            providers[kClazz] = lazyProvider
+            providers[Key(concreteClazz, qualifier)] = lazyProvider
         }
 
         return lazyProvider.value as T
     }
 
     private fun <T : Any> createInstance(kClazz: KClass<T>): T {
-        val constructor = kClazz.primaryConstructor
-            ?: throw IllegalArgumentException()
+        val constructor =
+            kClazz.primaryConstructor
+                ?: throw IllegalArgumentException()
         val arguments =
             constructor.parameters.associateWith { parameter ->
                 val parameterClass = parameter.type.classifier as KClass<*>
-                getProvider(parameterClass)
+                val qualifier =
+                    parameter.annotations.firstOrNull { annotation ->
+                        annotation.annotationClass.annotations.any { it is Qualifier }
+                    }?.annotationClass
+                getProvider(parameterClass, qualifier)
             }
         val instance = constructor.callBy(arguments)
         inject(instance)

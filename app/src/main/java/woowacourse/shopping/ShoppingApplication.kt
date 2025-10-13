@@ -4,6 +4,9 @@ import android.app.Application
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartProductDao
+import woowacourse.shopping.data.annotation.DatabaseLogger
+import woowacourse.shopping.data.annotation.InMemoryLogger
 import woowacourse.shopping.di.DatabaseModule
 import woowacourse.shopping.di.DiContainer
 import woowacourse.shopping.domain.repository.CartRepository
@@ -17,9 +20,17 @@ class ShoppingApplication : Application() {
 
     private fun setupDI() {
         val database = DatabaseModule.database(applicationContext)
-        DiContainer.addProviders(CartProductDao::class) { DatabaseModule.cartProductDao(database) }
+        DiContainer.addProviders(
+            CartProductDao::class,
+            DatabaseLogger::class,
+        ) { DatabaseModule.cartProductDao(database) }
 
-        DiContainer.bind<ProductRepository, DefaultProductRepository>()
-        DiContainer.bind<CartRepository, DefaultCartRepository>()
+        DiContainer.addProviders(
+            CartProductDao::class,
+            InMemoryLogger::class,
+        ) { InMemoryCartProductDao() }
+
+        DiContainer.bind(ProductRepository::class, DefaultProductRepository::class)
+        DiContainer.bind(CartRepository::class, DefaultCartRepository::class)
     }
 }
