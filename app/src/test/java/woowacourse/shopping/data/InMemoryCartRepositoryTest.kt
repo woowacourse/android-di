@@ -44,8 +44,7 @@ class InMemoryCartRepositoryTest {
 
             // when
             val products = repository.getAllCartProducts()
-            val index = products.indexOf(DEFAULT_PRODUCT)
-            repository.deleteCartProduct(index)
+            repository.deleteCartProduct(1L)
 
             // then
             repository.getAllCartProducts().shouldNotContain(DEFAULT_PRODUCT)
