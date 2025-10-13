@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.annotation.MyInjector
+import woowacourse.shopping.di.annotation.MyQualifier
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
 class CartViewModel : ViewModel() {
     @MyInjector
+    @MyQualifier("default")
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =

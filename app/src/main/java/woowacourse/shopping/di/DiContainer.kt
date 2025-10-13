@@ -64,15 +64,15 @@ object DiContainer {
     ) {
         implementClass.declaredMemberProperties
             .filter { it.hasAnnotation<MyInjector>() }
-            .forEach { prop ->
-                val mutableProp: KMutableProperty1<T, Any> = prop as KMutableProperty1<T, Any>
+            .forEach { property ->
+                val mutableProp: KMutableProperty1<T, Any> = property as KMutableProperty1<T, Any>
                 mutableProp.isAccessible = true
-                val propInstance =
+                val propertyInstance =
                     getInstance(
-                        prop.returnType.classifier as? KClass<*>
+                        property.returnType.classifier as? KClass<*>
                             ?: error(""),
                     )
-                mutableProp.setter.call(instance, propInstance)
+                mutableProp.setter.call(instance, propertyInstance)
             }
     }
 
@@ -101,7 +101,8 @@ object DiContainer {
         val constructorArguments =
             function.parameters.associateWith { parameter ->
                 if (parameter.kind == KParameter.Kind.INSTANCE) {
-                    module.objectInstance ?: error("${module.simpleName}은 object가 아닙니다.")
+                    module.objectInstance
+                        ?: error(ERROR_MESSAGE_NOT_OBJECT.format(module.simpleName))
                 } else {
                     val parameterClass =
                         parameter.type.classifier as? KClass<*>
@@ -112,6 +113,7 @@ object DiContainer {
 
         val instance = kClass.cast(function.callBy(constructorArguments))
         injectFieldProperties(kClass, instance)
+
         return instance
     }
 
@@ -140,6 +142,7 @@ object DiContainer {
         return instance
     }
 
+    private const val ERROR_MESSAGE_NOT_OBJECT = "%s은 object가 아닙니다."
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
     private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."
 }
