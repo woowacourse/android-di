@@ -31,6 +31,7 @@ class CartViewModel : ViewModel() {
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
+            getAllCartProducts()
             _onCartProductDeleted.value = true
         }
     }

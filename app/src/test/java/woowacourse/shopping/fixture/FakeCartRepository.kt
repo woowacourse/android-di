@@ -1,5 +1,7 @@
 package woowacourse.shopping.fixture
 
+import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.data.mapper.toPresentation
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.ui.model.CartUiModel
@@ -13,7 +15,7 @@ class FakeCartRepository : CartRepository {
     }
 
     override suspend fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+        cartProducts.add(product.toEntity().toPresentation())
     }
 
     override suspend fun getAllCartProducts(): List<CartUiModel> = cartProducts.toList()
