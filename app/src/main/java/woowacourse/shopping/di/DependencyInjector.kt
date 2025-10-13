@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -14,28 +15,14 @@ import kotlin.reflect.jvm.isAccessible
 class DependencyInjector(
     private val appContainer: AppContainer,
 ) {
-    /**
-     * 클래스의 인스턴스를 생성하고 의존성 주입
-     *
-     * @param kClass 생성할 클래스
-     * @return 의존성이 주입된 인스턴스
-     */
+    // 클래스의 인스턴스를 생성하고 의존성 주입
     fun <T : Any> create(kClass: KClass<T>): T {
         val instance = createInstance(kClass)
         injectFields(instance, kClass)
         return instance
     }
 
-    /**
-     * 생성자 주입으로 인스턴스 생성
-     *
-     * 우선순위:
-     * 1. 모든 파라미터를 주입 가능한 생성자 사용
-     * 2. 파라미터 없는 기본 생성자 사용
-     *
-     * @param kClass 생성할 클래스
-     * @return 생성된 인스턴스
-     */
+    // 생성자 주입으로 인스턴스 생성
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val constructor: KFunction<T>? = findInjectableConstructor(kClass)
         return if (constructor != null) {
@@ -43,7 +30,8 @@ class DependencyInjector(
                 constructor.parameters
                     .map { param: KParameter ->
                         val paramClass: KClass<*> = param.type.classifier as KClass<*>
-                        appContainer.get(paramClass)
+                        val qualifier: String? = param.findAnnotation<Qualifier>()?.value
+                        appContainer.get(paramClass, qualifier)
                     }.toTypedArray()
             constructor.call(*args)
         } else {
@@ -51,26 +39,17 @@ class DependencyInjector(
         }
     }
 
-    /**
-     * 모든 파라미터를 주입 가능한 생성자를 찾음
-     *
-     * @param kClass 검색할 클래스
-     * @return 주입 가능한 생성자, 없으면 null
-     */
+    // 모든 파라미터를 주입 가능한 생성자를 찾음
     private fun <T : Any> findInjectableConstructor(kClass: KClass<T>): KFunction<T>? =
         kClass.constructors.firstOrNull { constructor: KFunction<T> ->
             constructor.parameters.all { param: KParameter ->
                 val paramClass: KClass<*>? = param.type.classifier as? KClass<*>
-                paramClass != null && appContainer.canResolve(paramClass)
+                val qualifier: String? = param.findAnnotation<Qualifier>()?.value
+                paramClass != null && appContainer.canResolve(paramClass, qualifier)
             }
         }
 
-    /**
-     * Inject 어노테이션이 붙은 필드에 의존성 주입
-     *
-     * @param instance 주입할 대상 인스턴스
-     * @param kClass 대상 클래스
-     */
+    // @Inject 어노테이션이 붙은 필드에 의존성 주입
     private fun <T : Any> injectFields(
         instance: T,
         kClass: KClass<T>,
@@ -80,8 +59,9 @@ class DependencyInjector(
             if (property !is KMutableProperty<*>) return@forEach
 
             val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
-            if (appContainer.canResolve(propertyType)) {
-                val dependency = appContainer.get(propertyType)
+            val qualifier: String? = property.findAnnotation<Qualifier>()?.value
+            if (appContainer.canResolve(propertyType, qualifier)) {
+                val dependency = appContainer.get(propertyType, qualifier)
                 property.isAccessible = true
                 property.setter.call(instance, dependency)
             }

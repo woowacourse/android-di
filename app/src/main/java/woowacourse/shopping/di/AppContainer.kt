@@ -6,9 +6,16 @@ interface AppContainer {
     fun <T : Any> register(
         kClass: KClass<T>,
         instance: T,
+        qualifier: String? = null,
     )
 
-    fun <T : Any> get(kClass: KClass<T>): T
+    fun <T : Any> get(
+        kClass: KClass<T>,
+        qualifier: String? = null,
+    ): T
 
-    fun <T : Any> canResolve(clazz: KClass<T>): Boolean
+    fun <T : Any> canResolve(
+        klass: KClass<T>,
+        qualifier: String? = null,
+    ): Boolean
 }
