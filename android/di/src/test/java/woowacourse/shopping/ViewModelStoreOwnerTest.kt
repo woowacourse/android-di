@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping
 
 import android.app.Application
 import androidx.activity.ComponentActivity
@@ -10,8 +10,6 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.InjectedProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 

@@ -50,6 +50,7 @@ android {
 
 dependencies {
     implementation(project(":core:di"))
+    implementation(project(":android:di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
