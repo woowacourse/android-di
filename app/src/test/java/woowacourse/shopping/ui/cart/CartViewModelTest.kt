@@ -15,6 +15,7 @@ import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.domain.model.CartProduct
+import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fixture.FakeAppContainer
 import woowacourse.shopping.fixture.model.CART_PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
@@ -33,7 +34,10 @@ class CartViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         val cartRepository = FakeCartRepository(CART_PRODUCTS_FIXTURE.toMutableList())
-        val appContainer: AppContainer = FakeAppContainer(cartRepository = cartRepository)
+        val appContainer: AppContainer =
+            FakeAppContainer().apply {
+                register(CartRepository::class, cartRepository)
+            }
         val dependencyInjector = DependencyInjector(appContainer)
         val viewModelFactory = ViewModelFactory(dependencyInjector)
         viewModel = viewModelFactory.create(CartViewModel::class.java)

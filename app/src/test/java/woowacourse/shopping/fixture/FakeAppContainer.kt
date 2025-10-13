@@ -1,21 +1,10 @@
 package woowacourse.shopping.fixture
 
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.fixture.repository.FakeCartRepository
-import woowacourse.shopping.fixture.repository.FakeProductRepository
 import kotlin.reflect.KClass
 
-class FakeAppContainer(
-    productRepository: ProductRepository = FakeProductRepository(),
-    cartRepository: CartRepository = FakeCartRepository(),
-) : AppContainer {
-    private val providers: MutableMap<KClass<*>, Any> =
-        mutableMapOf(
-            ProductRepository::class to productRepository,
-            CartRepository::class to cartRepository,
-        )
+class FakeAppContainer : AppContainer {
+    private val providers: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     override fun <T : Any> register(
         kClass: KClass<T>,
