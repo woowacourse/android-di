@@ -6,9 +6,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.bibi.di.androidx.injectedViewModel
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.injectedViewModel
 import kotlin.getValue
 
 class CartActivity :
@@ -16,7 +17,9 @@ class CartActivity :
     CartProductClickListener {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy { injectedViewModel(CartViewModel::class) }
+    private val viewModel by lazy {
+        injectedViewModel<CartViewModel> { (application as ShoppingApplication).container }
+    }
 
     private lateinit var dateFormatter: DateFormatter
 

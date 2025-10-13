@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import woowacourse.bibi_di.Inject
-import woowacourse.bibi_di.Remote
+import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product

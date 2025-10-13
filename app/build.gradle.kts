@@ -49,7 +49,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":bibi-di"))
+    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

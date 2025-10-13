@@ -6,11 +6,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.bibi_di.ContainerBuilder
-import woowacourse.bibi_di.Remote
+import woowacourse.bibi.di.androidx.InjectingViewModelFactory
+import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.common.MainDispatcherRule
 import woowacourse.shopping.common.getOrAwaitValue
-import woowacourse.shopping.di.InjectingViewModelFactory
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.ui.cart.CartViewModel

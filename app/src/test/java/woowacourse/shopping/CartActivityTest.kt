@@ -15,8 +15,8 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
 import org.robolectric.shadows.ShadowToast
-import woowacourse.bibi_di.ContainerBuilder
-import woowacourse.bibi_di.Remote
+import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.common.withOverriddenContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository

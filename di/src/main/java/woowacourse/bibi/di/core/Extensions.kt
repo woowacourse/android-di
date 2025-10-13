@@ -1,4 +1,4 @@
-package woowacourse.bibi_di
+package woowacourse.bibi.di.core
 
 fun <T, R> MutableSet<T>.withElement(
     element: T,

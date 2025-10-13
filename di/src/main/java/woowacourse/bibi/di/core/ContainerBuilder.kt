@@ -1,4 +1,4 @@
-package woowacourse.bibi_di
+package woowacourse.bibi.di.core
 
 import kotlin.concurrent.getOrSet
 import kotlin.reflect.KClass

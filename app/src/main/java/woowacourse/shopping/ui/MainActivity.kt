@@ -8,16 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.bibi.di.androidx.injectedViewModel
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.injectedViewModel
 import woowacourse.shopping.ui.cart.CartActivity
-import kotlin.math.PI
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by lazy { injectedViewModel(MainViewModel::class) }
+    private val viewModel by lazy {
+        injectedViewModel<MainViewModel> { (application as ShoppingApplication).container }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,10 +1,10 @@
-package woowacourse.shopping.di
+package woowacourse.bibi.di.androidx
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.bibi_di.AppContainer
-import woowacourse.bibi_di.Inject
-import woowacourse.bibi_di.Qualifier
+import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.Qualifier
 import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createType

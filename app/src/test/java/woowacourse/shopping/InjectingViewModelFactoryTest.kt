@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import woowacourse.bibi_di.AppContainer
-import woowacourse.shopping.di.InjectingViewModelFactory
+import woowacourse.bibi.di.androidx.InjectingViewModelFactory
+import woowacourse.bibi.di.core.AppContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository

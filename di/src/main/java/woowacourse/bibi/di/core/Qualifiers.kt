@@ -1,4 +1,4 @@
-package woowacourse.bibi_di
+package woowacourse.bibi.di.core
 
 @Qualifier
 @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)

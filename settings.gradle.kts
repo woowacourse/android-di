@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "android-di"
 include(":app")
-include(":bibi-di")
+include(":di")

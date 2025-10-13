@@ -1,6 +1,6 @@
 package woowacourse.shopping.common
 
-import woowacourse.bibi_di.AppContainer
+import woowacourse.bibi.di.core.AppContainer
 import woowacourse.shopping.ShoppingApplication
 
 inline fun <R> withOverriddenContainer(

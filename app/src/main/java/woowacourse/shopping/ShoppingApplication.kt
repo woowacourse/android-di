@@ -2,8 +2,8 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
-import woowacourse.bibi_di.AppContainer
-import woowacourse.bibi_di.ContainerBuilder
+import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.shopping.di.installAllBindings
 
 class ShoppingApplication : Application() {
