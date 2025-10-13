@@ -1,9 +1,9 @@
 package woowacourse.shopping.di
 
+import com.on.di_library.di.annotation.MyModule
+import com.on.di_library.di.annotation.MyProvider
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.annotation.MyModule
-import woowacourse.shopping.di.annotation.MyProvider
 
 @MyModule
 object LocalStorageModule {

@@ -1,8 +1,8 @@
 package woowacourse.shopping
 
 import android.app.Application
+import com.on.di_library.di.DiContainer.getAnnotatedModules
 import woowacourse.shopping.di.ApplicationContextProvider
-import woowacourse.shopping.di.DiContainer.getAnnotatedModules
 
 class MyApplication : Application() {
     override fun onCreate() {
