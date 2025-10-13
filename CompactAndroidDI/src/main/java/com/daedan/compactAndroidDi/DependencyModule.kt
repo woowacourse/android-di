@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.daedan.compactAndroidDi
 
 data class DependencyModule(
     val factories: List<DependencyFactory<*>>,

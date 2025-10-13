@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daedan.compactAndroidDi.annotation.AutoViewModel
+import com.daedan.compactAndroidDi.annotation.Inject
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.annotation.AutoViewModel
-import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.daedan.compactAndroidDi
 
 import kotlin.reflect.KClass
 

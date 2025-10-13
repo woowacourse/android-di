@@ -1,11 +1,11 @@
 package woowacourse.shopping
 
 import androidx.room.Room
+import com.daedan.compactAndroidDi.DiApplication
+import com.daedan.compactAndroidDi.module
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.DiApplication
-import woowacourse.shopping.di.module
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 

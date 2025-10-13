@@ -1,7 +1,7 @@
-package woowacourse.shopping.di
+package com.daedan.compactAndroidDi
 
-import woowacourse.shopping.di.annotation.AutoViewModel
-import woowacourse.shopping.di.annotation.Inject
+import com.daedan.compactAndroidDi.annotation.AutoViewModel
+import com.daedan.compactAndroidDi.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation

@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package com.daedan.compactAndroidDi.annotation
 
 @Target(AnnotationTarget.CLASS)
 annotation class AutoViewModel

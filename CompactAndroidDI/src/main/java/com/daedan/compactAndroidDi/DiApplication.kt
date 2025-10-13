@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.daedan.compactAndroidDi
 
 import android.app.Application
 
