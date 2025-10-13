@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import dalvik.system.DexFile
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -15,6 +17,28 @@ import kotlin.reflect.jvm.isAccessible
 
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
+    private lateinit var modulePool: List<KClass<*>>
+
+    fun getAnnotatedModules(context: Context) {
+        val result = mutableListOf<KClass<*>>()
+
+        val dexFile = DexFile(context.packageCodePath)
+        val entries = dexFile.entries()
+
+        while (entries.hasMoreElements()) {
+            val className = entries.nextElement()
+
+            runCatching {
+                val clazz = Class.forName(className).kotlin
+
+                if (clazz.hasAnnotation<MyModule>()) {
+                    result.add(clazz)
+                }
+            }
+        }
+
+        modulePool = result
+    }
 
     fun <T : Any> getInstance(kClass: KClass<T>): T {
         if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
@@ -50,12 +74,12 @@ object DiContainer {
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        val module = RepositoryModule::class
+        val module = modulePool.first()
 
         module.declaredMemberFunctions.forEach { function ->
             val returnTypeKClass = function.returnType.classifier as? KClass<*>
             if (returnTypeKClass == kClass || returnTypeKClass != null && kClass in returnTypeKClass.supertypes.map { it.classifier }) {
-                return createFromModule(function, kClass)
+                return createFromModule(function, kClass, module)
             }
         }
 
@@ -68,11 +92,12 @@ object DiContainer {
     private fun <T : Any> createFromModule(
         function: KFunction<*>,
         kClass: KClass<T>,
+        module: KClass<*>,
     ): T {
         val constructorArguments =
             function.parameters.associateWith { parameter ->
                 if (parameter.kind == KParameter.Kind.INSTANCE) {
-                    RepositoryModule
+                    module.objectInstance ?: error("${module.simpleName}은 object가 아닙니다.")
                 } else {
                     val parameterClass =
                         parameter.type.classifier as? KClass<*>
