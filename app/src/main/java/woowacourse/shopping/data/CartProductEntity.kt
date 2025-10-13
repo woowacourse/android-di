@@ -21,5 +21,6 @@ data class CartProductEntity(
             price = price,
             imageUrl = imageUrl,
             id = id,
+            createdAt = createdAt,
         )
 }
