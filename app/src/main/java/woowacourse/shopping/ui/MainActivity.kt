@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.MeepleApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -17,14 +17,11 @@ import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private lateinit var viewModel: MainViewModel
+    private val appContainer by lazy { (application as MeepleApplication).appContainer }
+    private val viewModel: MainViewModel by viewModels { ViewModelFactory(appContainer) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val appContainer = (application as MeepleApplication).appContainer
-        val factory = ViewModelFactory(appContainer)
-        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
         setupContentView()
         setupBinding()

@@ -1,5 +1,6 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.repository
 
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.data.mapper.toPresentation
 import woowacourse.shopping.domain.CartRepository

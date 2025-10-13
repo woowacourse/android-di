@@ -3,7 +3,7 @@ package woowacourse.shopping.repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.domain.Product
 
 class ProductRepositoryTest {

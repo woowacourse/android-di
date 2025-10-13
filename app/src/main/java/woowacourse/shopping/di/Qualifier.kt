@@ -1,7 +1,5 @@
 package woowacourse.shopping.di
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier(
-    val name: String,
-)
+annotation class Qualifier

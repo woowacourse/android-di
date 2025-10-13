@@ -3,7 +3,7 @@ package woowacourse.shopping.repository
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.domain.Product
 
 class CartRepositoryTest {
