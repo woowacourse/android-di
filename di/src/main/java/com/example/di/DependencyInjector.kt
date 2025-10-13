@@ -15,7 +15,7 @@ object DependencyInjector {
         module.forEach(::initialize)
     }
 
-    fun <T : Any> create(targetClass: KClass<T>): T {
+    fun <T : Any> instance(targetClass: KClass<T>): T {
         val instance: T = injectParameters(targetClass)
         injectFields(instance)
         return instance
