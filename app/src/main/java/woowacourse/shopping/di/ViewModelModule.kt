@@ -9,8 +9,8 @@ import woowacourse.shopping.ui.cart.CartViewModel
 class ViewModelModule : InjectionModule {
     override fun provideDefinitions(container: InjectContainer) {
         container.apply {
-            registerFactory<MainViewModel> { Provider { MainViewModel(get(), get()) } }
-            registerFactory<CartViewModel> { Provider { CartViewModel(get()) } }
+            registerFactory<MainViewModel> { Provider { MainViewModel() } }
+            registerFactory<CartViewModel> { Provider { CartViewModel() } }
         }
     }
 }

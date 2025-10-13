@@ -20,7 +20,7 @@ class DatabaseModule(
             registerSingleton<ShoppingDatabase>(Qualifier.Named("memory")) {
                 Provider { provideInMemoryDatabase() }
             }
-            registerSingleton<CartProductDao> { container ->
+            registerSingleton<CartProductDao>(Qualifier.Named("memory")) { container ->
                 Provider {
                     val db = container.get<ShoppingDatabase>(Qualifier.Named("memory"))
                     db.cartProductDao()
