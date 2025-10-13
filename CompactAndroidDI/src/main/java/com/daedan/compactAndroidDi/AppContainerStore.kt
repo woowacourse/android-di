@@ -2,6 +2,7 @@ package com.daedan.compactAndroidDi
 
 import com.daedan.compactAndroidDi.annotation.AutoViewModel
 import com.daedan.compactAndroidDi.annotation.Inject
+import java.util.Collections
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -13,21 +14,18 @@ class AppContainerStore {
     private val cache: MutableMap<Qualifier, Any> = mutableMapOf()
     private val factory = mutableMapOf<Qualifier, DependencyFactory<*>>()
 
-    operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
+    private val inProgress =
+        Collections.synchronizedSet<Qualifier>(
+            mutableSetOf(),
+        )
 
-    fun instantiate(qualifier: Qualifier): Any {
-        val inProgress = mutableSetOf<Qualifier>()
-        return instantiate(qualifier, inProgress)
-    }
+    operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
 
     fun registerFactory(vararg factories: DependencyFactory<*>) {
         factory.putAll(factories.associateBy { it.qualifier })
     }
 
-    private fun instantiate(
-        qualifier: Qualifier,
-        inProgress: MutableSet<Qualifier>,
-    ): Any {
+    fun instantiate(qualifier: Qualifier): Any {
         if (cache.containsKey(qualifier)) {
             return cache[qualifier] ?: throw IllegalArgumentException(
                 "$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}",
@@ -43,19 +41,16 @@ class AppContainerStore {
         inProgress.add(qualifier)
         val instance =
             factory[qualifier]?.invoke()
-                ?: reflect(qualifier.type, inProgress)
+                ?: reflect(qualifier.type)
                 ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}")
 
-        injectField(instance, inProgress)
+        injectField(instance)
         save(qualifier, instance)
         inProgress.remove(qualifier)
         return instance
     }
 
-    private fun reflect(
-        type: KClass<*>,
-        inProgress: MutableSet<Qualifier>,
-    ): Any? {
+    private fun reflect(type: KClass<*>): Any? {
         if (type.findAnnotation<AutoViewModel>() == null) return null
         val constructor = type.primaryConstructor ?: return null
         val arguments =
@@ -70,16 +65,12 @@ class AppContainerStore {
 
                     instantiate(
                         childQualifier,
-                        inProgress,
                     )
                 }
         return constructor.callBy(arguments)
     }
 
-    private fun injectField(
-        instance: Any,
-        inProgress: MutableSet<Qualifier>,
-    ) {
+    private fun injectField(instance: Any) {
         try {
             instance::class.memberProperties
         } catch (e: Error) {
@@ -100,7 +91,6 @@ class AppContainerStore {
                     instance,
                     instantiate(
                         childQualifier,
-                        inProgress,
                     ),
                 )
             }
