@@ -2,7 +2,9 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
@@ -20,8 +22,15 @@ class AppContainer(
             ).build()
     }
 
+    private val instnaces = mutableMapOf<String, Any>()
+
     private val cartProductDao by lazy { database.cartProductDao() }
 
     val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
+
+    @Qualifier("database")
     val cartRepository: CartRepository by lazy { CartRepositoryImpl(cartProductDao) }
+
+    @Qualifier("inMemory")
+    val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
 }
