@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import com.m6z1.moongdi.AutoDIViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -14,7 +15,6 @@ import org.assertj.core.api.SoftAssertions.assertSoftly
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.di.AutoDIViewModelFactory
 import woowacourse.shopping.fake.CART_PRODUCTS
 import woowacourse.shopping.fake.FakeApplication
 import woowacourse.shopping.getOrAwaitValue
@@ -32,7 +32,7 @@ class CartViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
 
-        val factory = AutoDIViewModelFactory()
+        val factory = AutoDIViewModelFactory<FakeApplication>()
         val extras =
             MutableCreationExtras().apply {
                 this[APPLICATION_KEY] = FakeApplication()

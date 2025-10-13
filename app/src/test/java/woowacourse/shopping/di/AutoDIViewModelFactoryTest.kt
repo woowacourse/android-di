@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import com.m6z1.moongdi.AutoDIViewModelFactory
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertSame
 import org.junit.Assert.assertTrue
@@ -18,7 +19,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
 class AutoDIViewModelFactoryTest {
-    private lateinit var autoDIViewModelFactory: AutoDIViewModelFactory
+    private lateinit var autoDIViewModelFactory: AutoDIViewModelFactory<FakeApplication>
 
     @Before
     fun setUp() {
@@ -34,8 +35,7 @@ class AutoDIViewModelFactoryTest {
             }
 
         // when:
-        val viewModel =
-            autoDIViewModelFactory.create(MainViewModel::class.java, extras = extras)
+        val viewModel = autoDIViewModelFactory.create(MainViewModel::class.java, extras = extras)
 
         // then:
         assertNotNull(viewModel)
@@ -48,9 +48,9 @@ class AutoDIViewModelFactoryTest {
             MutableCreationExtras().apply {
                 this[APPLICATION_KEY] = FakeApplication()
             }
+
         // when:
-        val viewModel =
-            autoDIViewModelFactory.create(CartViewModel::class.java, extras)
+        val viewModel = autoDIViewModelFactory.create(CartViewModel::class.java, extras)
 
         // then:
         assertNotNull(viewModel)
@@ -69,6 +69,7 @@ class AutoDIViewModelFactoryTest {
                 ProductRepository::class to fakeApp.productRepository,
                 CartRepository::class to fakeApp.roomCartRepository,
             )
+
         // when:
         val viewModel = autoDIViewModelFactory.create(MainViewModel::class.java, extras)
 
