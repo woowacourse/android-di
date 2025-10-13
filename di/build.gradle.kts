@@ -15,4 +15,3 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.reflect)
 }
-

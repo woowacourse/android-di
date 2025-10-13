@@ -1,7 +1,6 @@
 package woowacourse.shopping
 
 import android.app.Application
-import android.util.Log
 import com.example.di.DiContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
