@@ -6,15 +6,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.di.InjectableViewModel
+import com.example.di.injectableViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    @InjectableViewModel
-    lateinit var viewModel: CartViewModel
+    private val viewModel: CartViewModel by injectableViewModel()
 
     private lateinit var dateFormatter: DateFormatter
 

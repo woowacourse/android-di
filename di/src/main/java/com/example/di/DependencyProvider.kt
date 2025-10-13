@@ -11,12 +11,10 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.typeOf
 
-class DependencyProvider(
-    vararg module: Module,
-) {
+object DependencyProvider {
     private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
 
-    init {
+    fun initialize(vararg module: Module) {
         module.forEach(::initialize)
     }
 
@@ -31,6 +29,8 @@ class DependencyProvider(
         }
     }
 
+    fun dependency(identifier: Identifier): Any = dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
+
     fun injectViewModels(activity: Activity) {
         activity::class.memberProperties.forEach { property: KProperty1<out Activity, *> ->
             if (property.findAnnotation<InjectableViewModel>() == null) return@forEach
@@ -38,14 +38,14 @@ class DependencyProvider(
 
             val kClass: KClass<*> = property.returnType.classifier as KClass<*>
             val viewModel: Any = kClass.createInstance()
-            inject(viewModel)
+            injectFields(viewModel)
 
             val mutableProperty = property.toMutableProperty()
             mutableProperty.setter.call(activity, viewModel)
         }
     }
 
-    private fun inject(target: Any) {
+    fun injectFields(target: Any) {
         target::class.memberProperties.forEach { property: KProperty1<out Any, *> ->
             if (property.findAnnotation<Inject>() == null) return@forEach
 
@@ -55,11 +55,6 @@ class DependencyProvider(
         }
     }
 
-    private fun dependency(identifier: Identifier): Any =
-        dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
-
-    companion object {
-        private fun <T, V> KProperty1<T, V>.toMutableProperty(): KMutableProperty1<T, V> =
-            this as? KMutableProperty1<T, V> ?: error("${this}은(는) 가변 프로퍼티가 아닙니다.")
-    }
+    private fun <T, V> KProperty1<T, V>.toMutableProperty(): KMutableProperty1<T, V> =
+        this as? KMutableProperty1<T, V> ?: error("${this}은(는) 가변 프로퍼티가 아닙니다.")
 }
