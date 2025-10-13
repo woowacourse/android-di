@@ -17,7 +17,7 @@ class MainViewModel : ViewModel() {
     private lateinit var productRepository: ProductRepository
 
     @Inject
-    @Qualifier(RepositoryType.DATABASE)
+    @Qualifier(RepositoryType.ROOM_DB)
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

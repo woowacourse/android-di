@@ -11,7 +11,7 @@ import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.repository.CartRepository
 
 class CartViewModel(
-    @Qualifier(RepositoryType.DATABASE)
+    @Qualifier(RepositoryType.ROOM_DB)
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

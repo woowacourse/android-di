@@ -4,17 +4,24 @@ import woowacourse.shopping.di.AppContainer
 import kotlin.reflect.KClass
 
 class FakeAppContainer : AppContainer {
-    private val providers: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     override fun <T : Any> register(
         kClass: KClass<T>,
         instance: T,
+        qualifier: String?,
     ) {
-        providers[kClass] = instance
+        dependencies[kClass] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(kClass: KClass<T>): T = providers[kClass] as T
+    override fun <T : Any> get(
+        kClass: KClass<T>,
+        qualifier: String?,
+    ): T = dependencies[kClass] as T
 
-    override fun <T : Any> canResolve(clazz: KClass<T>): Boolean = providers.containsKey(clazz)
+    override fun <T : Any> canResolve(
+        klass: KClass<T>,
+        qualifier: String?,
+    ): Boolean = dependencies.containsKey(klass)
 }

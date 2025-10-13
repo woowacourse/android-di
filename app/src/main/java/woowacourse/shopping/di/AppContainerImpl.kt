@@ -13,16 +13,15 @@ import kotlin.reflect.KClass
 class AppContainerImpl(
     context: Context,
 ) : AppContainer {
+    private val dependencies = mutableMapOf<DependencyKey, Any>()
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
-
-    private val providers = mutableMapOf<Pair<KClass<*>, String?>, Any>()
 
     init {
         register(ProductRepository::class, ProductDefaultRepository())
         register(
             CartRepository::class,
             CartDatabaseRepository(database.cartProductDao()),
-            RepositoryType.DATABASE,
+            RepositoryType.ROOM_DB,
         )
         register(
             CartRepository::class,
@@ -36,19 +35,25 @@ class AppContainerImpl(
         instance: T,
         qualifier: String?,
     ) {
-        providers[kClass to qualifier] = instance
+        val key = DependencyKey(kClass, qualifier)
+        dependencies[key] = instance
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(
         kClass: KClass<T>,
         qualifier: String?,
-    ): T =
-        providers[kClass to qualifier] as? T
+    ): T {
+        val key = DependencyKey(kClass, qualifier)
+        return dependencies[key] as? T
             ?: throw IllegalArgumentException("${kClass.simpleName} 타입의 인스턴스가 등록되어 있지 않습니다.")
+    }
 
     override fun <T : Any> canResolve(
         klass: KClass<T>,
         qualifier: String?,
-    ): Boolean = providers.containsKey(klass to qualifier)
+    ): Boolean {
+        val key = DependencyKey(klass, qualifier)
+        return dependencies.containsKey(key)
+    }
 }
