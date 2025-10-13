@@ -1,9 +1,6 @@
 package com.example.di.model
 
-import kotlin.reflect.KClass
-
 internal class FactoryProvider<T : Any>(
-    private val type: KClass<T>,
     private val factory: (Map<BindingKey, Any>) -> T,
     private val isSingleton: Boolean,
 ) : Provider<T> {
