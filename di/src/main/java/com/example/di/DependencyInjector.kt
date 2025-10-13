@@ -8,7 +8,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object DependencyProvider {
+object DependencyInjector {
     private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
 
     fun initialize(vararg module: Module) {
