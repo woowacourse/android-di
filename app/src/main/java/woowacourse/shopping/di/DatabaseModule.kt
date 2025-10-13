@@ -17,7 +17,7 @@ class DatabaseModule(
             registerSingleton<ShoppingDatabase>(Qualifier.Named("room")) {
                 Provider { provideRoomDatabase() }
             }
-            registerFactory<ShoppingDatabase>(Qualifier.Named("memory")) {
+            registerSingleton<ShoppingDatabase>(Qualifier.Named("memory")) {
                 Provider { provideInMemoryDatabase() }
             }
             registerSingleton<CartProductDao> { container ->
