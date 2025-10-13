@@ -2,6 +2,7 @@ package com.shopping.study
 
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
+import org.junit.Test
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.declaredMemberExtensionFunctions
@@ -11,7 +12,6 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberExtensionFunctions
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.staticFunctions
-import org.junit.Test
 
 class Person(
     var firstName: String,
