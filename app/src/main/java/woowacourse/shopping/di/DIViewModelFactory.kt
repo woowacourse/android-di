@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import woowacourse.shopping.AppContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
