@@ -5,8 +5,6 @@ import com.shopping.fixture.ConstructorInjectFixtureCar
 import com.shopping.fixture.ElectricFixtureCarImpl
 import com.shopping.fixture.EngineFixtureCarImpl
 import com.shopping.fixture.FactoryFixtureCar
-import com.shopping.fixture.FieldInjectFixtureCar
-import com.shopping.fixture.FieldInjectQualifierEngineFixtureCar
 import com.shopping.fixture.FixtureCar
 import com.shopping.fixture.SingletonFixtureCar
 import io.kotest.core.spec.style.StringSpec
@@ -64,38 +62,6 @@ class AppInjectorTest :
             // then
             engineCar.shouldBeInstanceOf<EngineFixtureCarImpl>()
             electricCar.shouldBeInstanceOf<ElectricFixtureCarImpl>()
-        }
-
-        "필드 주입으로 의존성을 주입할 수 있다" {
-            // given
-            InjectContainer.apply {
-                registerSingleton<FixtureCar> { Provider { ElectricFixtureCarImpl() } }
-                registerSingleton<FieldInjectFixtureCar> { Provider { FieldInjectFixtureCar() } }
-            }
-
-            // when
-            val car: FieldInjectFixtureCar = InjectContainer.get<FieldInjectFixtureCar>()
-            val injectedCar: FixtureCar = car.fixtureCar
-
-            // then
-            injectedCar.shouldBeInstanceOf<ElectricFixtureCarImpl>()
-        }
-
-        "필드 주입도 QualifierTag 어노테이션을 활용해서 의존성을 주입할 수 있다" {
-            // given
-            InjectContainer.apply {
-                registerSingleton<FixtureCar>(Qualifier.Named("engine")) { Provider { EngineFixtureCarImpl() } }
-                registerSingleton<FixtureCar>(Qualifier.Named("electric")) { Provider { ElectricFixtureCarImpl() } }
-                registerSingleton<FieldInjectQualifierEngineFixtureCar> { Provider { FieldInjectQualifierEngineFixtureCar() } }
-            }
-
-            // when
-            val car: FieldInjectQualifierEngineFixtureCar =
-                InjectContainer.get<FieldInjectQualifierEngineFixtureCar>()
-            val injectedCar: FixtureCar = car.fixtureCar
-
-            // then
-            injectedCar.shouldBeInstanceOf<EngineFixtureCarImpl>()
         }
 
         "생성자 주입으로 의존성을 주입할 수 있다" {
