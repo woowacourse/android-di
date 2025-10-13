@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.daedan.compactAndroidDi
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
