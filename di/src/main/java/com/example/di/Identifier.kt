@@ -11,15 +11,6 @@ data class Identifier(
     val qualifier: Annotation?,
 ) {
     companion object {
-        private fun qualifier(element: KAnnotatedElement): Annotation? {
-            val qualifiers: List<Annotation> =
-                element.annotations.filter { annotation: Annotation ->
-                    annotation.annotationClass.hasAnnotation<Qualifier>()
-                }
-            if (qualifiers.size > 1) error("$element has more than one qualifier: $qualifiers")
-            return qualifiers.firstOrNull()
-        }
-
         fun of(property: KProperty1<*, *>): Identifier =
             Identifier(
                 property.returnType,
@@ -31,5 +22,14 @@ data class Identifier(
                 parameter.type,
                 qualifier(parameter),
             )
+
+        private fun qualifier(element: KAnnotatedElement): Annotation? {
+            val qualifiers: List<Annotation> =
+                element.annotations.filter { annotation: Annotation ->
+                    annotation.annotationClass.hasAnnotation<Qualifier>()
+                }
+            if (qualifiers.size > 1) error("$element has more than one qualifier: $qualifiers")
+            return qualifiers.firstOrNull()
+        }
     }
 }
