@@ -1,5 +1,12 @@
 package woowacourse.shopping.di
 
+import android.content.Context
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -28,7 +35,14 @@ object DefaultAppContainer : AppContainer {
         return constructor.call(*args)
     }
 
-    fun <T : Any> bind(
+    fun init(context: Context) {
+        bind(ShoppingDatabase::class, ShoppingDatabase.getInstance(context))
+        bind(CartProductDao::class, getInstance(ShoppingDatabase::class).cartProductDao())
+        bind(ProductRepository::class, getInstance(ProductRepositoryImpl::class))
+        bind(CartRepository::class, getInstance(DefaultCartRepository::class))
+    }
+
+    private fun <T : Any> bind(
         clazz: KClass<T>,
         instance: T,
     ) = instances.putIfAbsent(clazz, instance)
