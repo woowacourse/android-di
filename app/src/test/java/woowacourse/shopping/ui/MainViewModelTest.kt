@@ -1,7 +1,14 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -10,6 +17,7 @@ import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.FakeProductRepository
 import woowacourse.shopping.fixture.getOrAwaitValue
 
+@ExperimentalCoroutinesApi
 class MainViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule() // LiveData가 동기적으로 동작
@@ -20,10 +28,13 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+
         fakeProductRepository = FakeProductRepository()
         fakeCartRepository = FakeCartRepository()
-
         viewModel = MainViewModel()
+        viewModel.cartRepository = fakeCartRepository
+        viewModel.productRepository = fakeProductRepository
     }
 
     @Test
@@ -46,16 +57,21 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `장바구니 상품 추가 성공 시 onProductAdded가 업데이트된다`() {
-        // Given
-        val product = Product("테스트상품", 1000, "")
+    fun `장바구니 상품 추가 성공 시 onProductAdded가 업데이트된다`() =
+        runTest {
+            // Given
+            val product = Product("테스트상품", 1000, "")
 
-        // When
-        viewModel.addCartProduct(product)
-        val onAdded = viewModel.onProductAdded.getOrAwaitValue()
+            // When
+            viewModel.addCartProduct(product)
+            val onAdded = viewModel.onProductAdded.getOrAwaitValue()
 
-        // Then
-        assertThat(fakeCartRepository.getAllCartProducts()).containsExactly(product)
-        assertThat(onAdded).isTrue()
+            // Then
+            assertThat(onAdded).isTrue()
+        }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 }

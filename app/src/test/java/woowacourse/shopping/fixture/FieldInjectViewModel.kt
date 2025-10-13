@@ -1,7 +1,7 @@
 package woowacourse.shopping.fixture
 
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.di.Inject
+import com.example.di2.Inject
 
 class FieldInjectViewModel : ViewModel() {
     @Inject
