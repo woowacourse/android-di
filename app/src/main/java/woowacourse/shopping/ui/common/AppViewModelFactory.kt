@@ -5,7 +5,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.di.DependencyInjector
+import com.shopping.di.DependencyInjector
 
 class AppViewModelFactory(
     owner: SavedStateRegistryOwner,
