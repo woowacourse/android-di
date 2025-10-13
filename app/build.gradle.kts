@@ -64,8 +64,7 @@ dependencies {
     androidTestImplementation(libs.assertj.core)
     androidTestImplementation(libs.truth)
 
-    // Reflection
-    implementation(libs.kotlin.reflect)
+    implementation(project(":di"))
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

@@ -1,14 +1,6 @@
 package woowacourse.shopping.di
 
-import android.content.Context
-import androidx.room.Room
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
-import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.annotation.Inject
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
@@ -19,30 +11,14 @@ object AppContainer {
 
     private val implementationMap = mutableMapOf<KClass<*>, KClass<*>>()
 
-    fun init(context: Context) {
-        registerImplementation(CartRepository::class, CartRepositoryImpl::class)
-        registerImplementation(ProductRepository::class, ProductRepositoryImpl::class)
-        registerProvider(ShoppingDatabase::class) {
-            Room
-                .databaseBuilder(
-                    context.applicationContext,
-                    ShoppingDatabase::class.java,
-                    "shopping-db",
-                ).build()
-        }
-        registerProvider(CartProductDao::class) {
-            get(ShoppingDatabase::class).cartProductDao()
-        }
-    }
-
-    private fun <T : Any> registerImplementation(
+    fun <T : Any> registerImplementation(
         interfaceClass: KClass<T>,
         implementationClass: KClass<out T>,
     ) {
         implementationMap[interfaceClass] = implementationClass
     }
 
-    private fun <T : Any> registerProvider(
+    fun <T : Any> registerProvider(
         type: KClass<T>,
         provider: () -> T,
     ) {
