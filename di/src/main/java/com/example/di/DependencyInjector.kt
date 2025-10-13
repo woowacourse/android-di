@@ -27,17 +27,18 @@ object DependencyInjector {
 
             val identifier = Identifier.of(property)
             dependencyGetters[identifier] = {
-                property.getter.call(module) ?: error("${property}의 getter가 null을 반환했습니다.")
+                property.getter.call(module) ?: error("$property's getter returned null.")
             }
         }
     }
 
     private fun dependency(identifier: Identifier): Any =
-        dependencyGetters[identifier]?.invoke() ?: error("${identifier}에 대한 의존성이 정의되지 않았습니다.")
+        dependencyGetters[identifier]?.invoke() ?: error("No dependency defined for $identifier.")
 
     private fun <T : Any> injectParameters(targetClass: KClass<T>): T {
         val constructor: KFunction<T> =
-            targetClass.primaryConstructor ?: error("${targetClass}의 주 생성자를 찾을 수 없습니다.")
+            targetClass.primaryConstructor
+                ?: error("Unable to find the primary constructor of $targetClass.")
         val parameters: Array<Any> = constructor.parameters.map(Identifier::of).toTypedArray()
         return constructor.call(*parameters)
     }
@@ -49,7 +50,7 @@ object DependencyInjector {
             val identifier = Identifier.of(property)
             val mutableProperty =
                 property as? KMutableProperty1
-                    ?: error("${property}은(는) var이 아니기 때문에 의존성을 주입할 수 없습니다.")
+                    ?: error("Cannot inject dependency to $property because it is an immutable property.")
             mutableProperty.setter.call(target, dependency(identifier))
         }
     }
