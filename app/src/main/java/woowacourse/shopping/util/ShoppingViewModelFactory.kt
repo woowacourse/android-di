@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.di.AppContainer
 import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.hasAnnotation
@@ -31,15 +32,13 @@ class ShoppingViewModelFactory(
             primaryConstructor.parameters.associateWith { param ->
                 val paramType = param.type.classifier as KClass<*>
 
-                val qualifierAnnotation =
-                    param.annotations.firstOrNull { ann ->
-                        ann.annotationClass.annotations.any { meta ->
-                            meta.annotationClass.simpleName == "Qualifier"
-                        }
-                    }
+                val qualifierKClass =
+                    param.annotations
+                        .map { it.annotationClass }
+                        .firstOrNull { it.hasAnnotation<Qualifier>() }
 
-                if (qualifierAnnotation != null) {
-                    appContainer.get(paramType, qualifierAnnotation.annotationClass)
+                if (qualifierKClass != null) {
+                    appContainer.get(paramType, qualifierKClass)
                 } else {
                     appContainer.get(paramType)
                 }
