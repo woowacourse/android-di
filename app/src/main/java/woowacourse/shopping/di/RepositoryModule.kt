@@ -1,7 +1,9 @@
 package woowacourse.shopping.di
 
-import com.example.di.MyInjector
-import com.example.di.Qualifier
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Provides
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Singleton
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.InMemoryProductRepository
@@ -9,23 +11,29 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
 @Qualifier
-annotation class Test
+annotation class InMemory
 
 @Qualifier
-annotation class Production
+annotation class Database
 
 object RepositoryModule {
-    @Production
+    @Provides
+    @Singleton
+    @Database
     fun provideCartRepository(
-        @MyInjector impl: DatabaseCartRepository,
+        @Inject impl: DatabaseCartRepository,
     ): CartRepository = impl
 
-    @Test
+    @Provides
+    @Singleton
+    @InMemory
     fun provideCartRepository(
-        @MyInjector impl: InMemoryCartRepository,
+        @Inject impl: InMemoryCartRepository,
     ): CartRepository = impl
 
+    @Provides
+    @Singleton
     fun provideProductRepository(
-        @MyInjector impl: InMemoryProductRepository,
+        @Inject impl: InMemoryProductRepository,
     ): ProductRepository = impl
 }
