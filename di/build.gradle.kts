@@ -28,4 +28,9 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.assertj.core)
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
