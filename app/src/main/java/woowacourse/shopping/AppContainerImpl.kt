@@ -52,10 +52,10 @@ class AppContainerImpl(
     }
 
     override fun <T : Any> canResolve(
-        klass: KClass<T>,
+        kClass: KClass<T>,
         qualifier: String?,
     ): Boolean {
-        val key = DependencyKey(klass, qualifier)
+        val key = DependencyKey(kClass, qualifier)
         return dependencies.containsKey(key)
     }
 }

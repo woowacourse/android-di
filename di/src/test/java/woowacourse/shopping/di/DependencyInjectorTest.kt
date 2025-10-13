@@ -5,15 +5,15 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import woowacourse.shopping.fixture.FakeAppContainer
+import woowacourse.shopping.fixture.FakeRepository
+import woowacourse.shopping.fixture.FakeRepository1
+import woowacourse.shopping.fixture.FakeRepository2
 
 class DependencyInjectorTest {
     private lateinit var appContainer: AppContainer
     private lateinit var injector: DependencyInjector
-
-    class FakeRepository1
-
-    class FakeRepository2
 
     private val fakeRepository1 = FakeRepository1()
     private val fakeRepository2 = FakeRepository2()
@@ -33,6 +33,35 @@ class DependencyInjectorTest {
         )
         appContainer.register(FakeRepository1::class, fakeRepository1)
         appContainer.register(FakeRepository2::class, fakeRepository2)
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.repo1).isEqualTo(fakeRepository1)
+        assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+
+    @Test
+    fun `생성자 주입 - Qualifier로 올바른 구현체가 주입된다`() {
+        // given
+        class TestClass(
+            @Qualifier("repo1")
+            val repo1: FakeRepository,
+            @Qualifier("repo2")
+            val repo2: FakeRepository,
+        )
+
+        appContainer.register(
+            FakeRepository::class,
+            instance = fakeRepository1,
+            qualifier = "repo1",
+        )
+        appContainer.register(
+            FakeRepository::class,
+            instance = fakeRepository2,
+            qualifier = "repo2",
+        )
 
         // when
         val instance = injector.create(TestClass::class)
@@ -78,6 +107,44 @@ class DependencyInjectorTest {
         // then
         assertThat(instance.isRepo1Initialized()).isTrue
         assertThat(instance.isRepo2Initialized()).isTrue
+        assertThat(instance.repo1).isEqualTo(fakeRepository1)
+        assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+
+    @Test
+    fun `필드 주입 - Qualifier로 올바른 구현체가 주입된다`() {
+        // given
+        class TestClass {
+            @Inject
+            @Qualifier("repo1")
+            lateinit var repo1: FakeRepository
+
+            @Inject
+            @Qualifier("repo2")
+            lateinit var repo2: FakeRepository
+
+            fun isInMemoryInitialized(): Boolean = ::repo1.isInitialized
+
+            fun isDatabaseInitialized(): Boolean = ::repo2.isInitialized
+        }
+
+        appContainer.register(
+            FakeRepository::class,
+            instance = fakeRepository1,
+            qualifier = "repo1",
+        )
+        appContainer.register(
+            FakeRepository::class,
+            instance = fakeRepository2,
+            qualifier = "repo2",
+        )
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.isInMemoryInitialized()).isTrue
+        assertThat(instance.isDatabaseInitialized()).isTrue
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
         assertThat(instance.repo2).isEqualTo(fakeRepository2)
     }

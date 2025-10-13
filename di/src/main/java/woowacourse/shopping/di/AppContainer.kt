@@ -15,7 +15,7 @@ interface AppContainer {
     ): T
 
     fun <T : Any> canResolve(
-        klass: KClass<T>,
+        kClass: KClass<T>,
         qualifier: String? = null,
     ): Boolean
 }
