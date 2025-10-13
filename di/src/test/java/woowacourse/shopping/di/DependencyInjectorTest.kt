@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertThrows
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
@@ -50,7 +50,7 @@ class DependencyInjectorTest {
         )
 
         // when & then
-        assertThrows(IllegalArgumentException::class.java) {
+        Assert.assertThrows(IllegalArgumentException::class.java) {
             injector.create(TestClass::class)
         }
     }

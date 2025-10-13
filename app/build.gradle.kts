@@ -78,4 +78,7 @@ dependencies {
     implementation(libs.glide)
     // Robolectric
     testImplementation(libs.robolectric)
+
+    // Module
+    implementation(project(":di"))
 }

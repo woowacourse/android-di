@@ -1,10 +1,12 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
 import android.content.Context
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartDatabaseRepository
 import woowacourse.shopping.data.repository.CartInMemoryRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
+import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.DependencyKey
 import woowacourse.shopping.di.annotation.RepositoryType
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
@@ -14,7 +16,7 @@ class AppContainerImpl(
     context: Context,
 ) : AppContainer {
     private val dependencies = mutableMapOf<DependencyKey, Any>()
-    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
+    private val database: ShoppingDatabase by lazy { ShoppingDatabase.Companion.getDatabase(context) }
 
     init {
         register(ProductRepository::class, ProductDefaultRepository())
