@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
+import woowacourse.shopping.di.annotation.AutoViewModel
 import woowacourse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
@@ -15,12 +15,9 @@ class AppContainerStore {
 
     operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
 
-    fun instantiate(
-        qualifier: Qualifier,
-        saveToCache: Boolean = true,
-    ): Any {
+    fun instantiate(qualifier: Qualifier): Any {
         val inProgress = mutableSetOf<Qualifier>()
-        return instantiate(qualifier, inProgress, saveToCache)
+        return instantiate(qualifier, inProgress)
     }
 
     fun registerFactory(vararg factories: DependencyFactory<*>) {
@@ -30,7 +27,6 @@ class AppContainerStore {
     private fun instantiate(
         qualifier: Qualifier,
         inProgress: MutableSet<Qualifier>,
-        saveToCache: Boolean = true,
     ): Any {
         if (cache.containsKey(qualifier)) {
             return cache[qualifier] ?: throw IllegalArgumentException(
@@ -46,21 +42,22 @@ class AppContainerStore {
 
         inProgress.add(qualifier)
         val instance =
-            factory[qualifier]?.invoke() ?: qualifier.type.primaryConstructor?.let {
-                reflect(it, inProgress)
-            }
+            factory[qualifier]?.invoke()
+                ?: reflect(qualifier.type, inProgress)
                 ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}")
 
         injectField(instance, inProgress)
-        if (saveToCache) cache[qualifier] = instance
+        save(qualifier, instance)
         inProgress.remove(qualifier)
         return instance
     }
 
     private fun reflect(
-        constructor: KFunction<Any>,
+        type: KClass<*>,
         inProgress: MutableSet<Qualifier>,
-    ): Any {
+    ): Any? {
+        if (type.findAnnotation<AutoViewModel>() == null) return null
+        val constructor = type.primaryConstructor ?: return null
         val arguments =
             constructor.parameters
                 .filter { !it.isOptional }
@@ -109,8 +106,15 @@ class AppContainerStore {
             }
     }
 
+    private fun save(
+        qualifier: Qualifier,
+        instance: Any,
+    ) {
+        if (qualifier.type.findAnnotation<AutoViewModel>() != null) return
+        cache[qualifier] = instance
+    }
+
     companion object {
-        private const val ERR_FAILED_FIELD_INJECTION = "필드 주입에 실패했습니다"
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
             "등록된 팩토리, 또는 주 생성자를 찾을 수 없습니다"

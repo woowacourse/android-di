@@ -17,7 +17,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline ex
         viewModelFactory {
             initializer {
                 val store = (this[APPLICATION_KEY] as DiApplication).appContainerStore
-                store.instantiate(Qualifier(VM::class), saveToCache = false) as VM
+                store.instantiate(Qualifier(VM::class)) as VM
             }
         }
 
