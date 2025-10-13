@@ -21,8 +21,13 @@ class DependencyModuleBuilder(
     fun build(): DependencyModule = DependencyModule(factories)
 }
 
-fun DiApplication.module(block: DependencyModuleBuilder.() -> Unit): DependencyModule {
-    val builder = DependencyModuleBuilder(appContainerStore)
+fun DiApplication.module(block: DependencyModuleBuilder.() -> Unit): DependencyModule = module(appContainerStore, block)
+
+fun module(
+    container: AppContainerStore,
+    block: DependencyModuleBuilder.() -> Unit,
+): DependencyModule {
+    val builder = DependencyModuleBuilder(container)
     block(builder)
     return builder.build()
 }

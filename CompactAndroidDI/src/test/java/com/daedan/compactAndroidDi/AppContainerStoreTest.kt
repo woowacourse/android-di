@@ -8,7 +8,6 @@ import com.daedan.compactAndroidDi.fixture.NestedDependency
 import com.daedan.compactAndroidDi.fixture.Parent
 import com.daedan.compactAndroidDi.fixture.TestViewModel
 import com.daedan.compactAndroidDi.fixture.UnableReflectObject
-import com.daedan.compactAndroidDi.fixture.module
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
