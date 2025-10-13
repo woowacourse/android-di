@@ -5,15 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemCartProductBinding
 import woowacourse.shopping.model.CartProduct
-import java.sql.Timestamp
-import java.time.ZoneId
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
     private val dateFormatter: DateFormatter,
     private val onClickDelete: (cartProductId: Long) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-
     fun bind(cartProduct: CartProduct) {
         binding.item = cartProduct
         val dateTime = dateFormatter.formatDate(cartProduct.createdAt)

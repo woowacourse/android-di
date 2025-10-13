@@ -4,13 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
-import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 
 class CartViewModel(
     private val cartRepository: CartRepository,

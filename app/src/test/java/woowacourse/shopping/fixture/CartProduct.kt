@@ -1,7 +1,6 @@
 package woowacourse.shopping.fixture
 
 import woowacourse.shopping.model.CartProduct
-import java.time.LocalDateTime
 
 val POTATO_CART_PRODUCT = CartProduct(0, "감자", 1000, "", 0)
 val CHICKEN_BREAST_CART_PRODUCT =

@@ -9,7 +9,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context.applicationContext,
             ShoppingDatabase::class.java,
-            "shopping_database"
+            "shopping_database",
         ).build()
     }
 

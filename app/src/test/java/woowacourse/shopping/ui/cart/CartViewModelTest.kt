@@ -11,7 +11,6 @@ import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fake.FakeCartRepository
 import woowacourse.shopping.fixture.POTATO_CART_PRODUCT
-import woowacourse.shopping.fixture.POTATO_PRODUCT
 import woowacourse.shopping.ui.utils.getOrAwaitValue
 
 @RunWith(RobolectricTestRunner::class)

@@ -11,18 +11,23 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelDIFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         val kClass = modelClass.kotlin
-        val constructor = kClass.primaryConstructor
-            ?: throw IllegalArgumentException()
+        val constructor =
+            kClass.primaryConstructor
+                ?: throw IllegalArgumentException()
 
-        val arguments = constructor.parameters.associateWith { parameter ->
-            val clazz = parameter.type.classifier as KClass<*>
-            when (clazz) {
-                SavedStateHandle::class -> extras.createSavedStateHandle()
-                else -> DiContainer.getProvider(clazz)
+        val arguments =
+            constructor.parameters.associateWith { parameter ->
+                val clazz = parameter.type.classifier as KClass<*>
+                when (clazz) {
+                    SavedStateHandle::class -> extras.createSavedStateHandle()
+                    else -> DiContainer.getProvider(clazz)
+                }
             }
-        }
 
         val vm = constructor.callBy(arguments)
         Injector.inject(vm)

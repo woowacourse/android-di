@@ -1,23 +1,14 @@
 package woowacourse.shopping.ui
 
-import android.util.Log
-import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.shadows.ShadowLooper
-import org.robolectric.shadows.ShadowToast
-import woowacourse.shopping.R
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
