@@ -61,12 +61,16 @@ object InjectContainer {
         return when (information.kind) {
             Kind.SINGLETON -> {
                 singletons.computeIfAbsent(key) {
-                    (information.provider as (InjectContainer) -> Provider<T>)(this).get()
+                    val instance =
+                        (information.provider as (InjectContainer) -> Provider<T>)(this).get()
+                    DependencyInjector.injectFields(instance)
                 } as T
             }
 
             Kind.FACTORY -> {
-                (information.provider as (InjectContainer) -> Provider<T>)(this).get()
+                val instance =
+                    (information.provider as (InjectContainer) -> Provider<T>)(this).get()
+                DependencyInjector.injectFields(instance)
             }
         }
     }
