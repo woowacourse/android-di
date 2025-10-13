@@ -12,13 +12,6 @@ class AppContainer(
 ) {
     private val instances = mutableMapOf<DIKey, Any>()
 
-//    init {
-//        providers[DIKey(CartRepository::class, RoomDatabase::class)] =
-//            { DefaultCartRepository(shoppingDatabase.cartProductDao()) }
-//
-//        providers[DIKey(ProductRepository::class, InMemory::class)] = { DefaultProductRepository() }
-//    }
-
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> resolve(
         clazz: KClass<T>,
