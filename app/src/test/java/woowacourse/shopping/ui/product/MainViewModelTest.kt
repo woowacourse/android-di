@@ -2,6 +2,14 @@ package woowacourse.shopping.ui.product
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.fixture.FakeCartRepository
@@ -12,15 +20,28 @@ import woowacourse.shopping.fixture.PRODUCT_3
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.getOrAwaitValue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+    private val testDispatcher = StandardTestDispatcher()
+    lateinit var viewModel: MainViewModel
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        viewModel = MainViewModel()
+        viewModel.productRepository = FakeProductRepository()
+        viewModel.cartRepository = FakeCartRepository()
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun `상품 데이터를 불러올 수 있다`() {
-        // given
-        val viewModel = MainViewModel(FakeProductRepository(), FakeCartRepository())
-
         // when
         viewModel.getAllProducts()
 
@@ -31,26 +52,19 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `장바구니에 상품을 추가할 수 있다`() {
-        // given
-        val productRepository = FakeProductRepository()
-        val cartRepository = FakeCartRepository()
-        val viewModel = MainViewModel(productRepository, cartRepository)
+    fun `장바구니에 상품을 추가할 수 있다`() =
+        runTest {
+            // when
+            viewModel.addCartProduct(PRODUCT_1)
 
-        // when
-        viewModel.addCartProduct(PRODUCT_1)
-
-        // then
-        val actual: List<Product> = cartRepository.getAllCartProducts()
-        val expected: List<Product> = listOf(PRODUCT_1)
-        assertThat(actual).isEqualTo(expected)
-    }
+            // then
+            val actual: List<Product> = viewModel.cartRepository.getAllCartProducts()
+            val expected: List<Product> = listOf(PRODUCT_1)
+            assertThat(actual).isEqualTo(expected)
+        }
 
     @Test
     fun `장바구니에 상품을 추가하면 상품 추가 이벤트가 발생한다`() {
-        // given
-        val viewModel = MainViewModel(FakeProductRepository(), FakeCartRepository())
-
         // when
         viewModel.addCartProduct(PRODUCT_1)
 
