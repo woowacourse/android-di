@@ -11,12 +11,9 @@ import woowacourse.di.DIViewModelFactory
 import woowacourse.di.annotation.RoomDB
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fake.FakeCartRepository
-import woowacourse.shopping.fixture.GOBCHANG
 import woowacourse.shopping.fixture.GOBCHANG_CART
-import woowacourse.shopping.fixture.MALATANG
 import woowacourse.shopping.fixture.MALATANG_CART
 import woowacourse.shopping.fixture.MainDispatcherRule
-import woowacourse.shopping.fixture.TONKATSU
 import woowacourse.shopping.fixture.TONKATSU_CART
 import woowacourse.shopping.getOrAwaitValue
 
@@ -34,12 +31,7 @@ class CartViewModelTest {
     fun setUp() {
         runTest {
             val factory = DIViewModelFactory()
-            cartRepository =
-                FakeCartRepository().apply {
-                    addCartProduct(TONKATSU)
-                    addCartProduct(MALATANG)
-                    addCartProduct(GOBCHANG)
-                }
+            cartRepository = FakeCartRepository()
             DIContainer.register(CartRepository::class, RoomDB::class) { cartRepository }
             viewModel = factory.create(CartViewModel::class.java)
         }
