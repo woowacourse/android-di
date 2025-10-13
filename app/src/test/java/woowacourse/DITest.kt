@@ -15,14 +15,20 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.jvm.java
 
 class FakeCartProductDao : CartProductDao {
     private val items = mutableListOf<CartProductEntity>()
-    override suspend fun insert(entity: CartProductEntity) { items += entity }
+
+    override suspend fun insert(entity: CartProductEntity) {
+        items += entity
+    }
+
     override suspend fun getAll(): List<CartProductEntity> = items.toList()
-    override suspend fun delete(id: Long) { items.removeIf { it.id == id } }
+
+    override suspend fun delete(id: Long) {
+        items.removeIf { it.id == id }
+    }
 }
 
 private class TestMainVm : ViewModel() {
@@ -31,10 +37,10 @@ private class TestMainVm : ViewModel() {
     var title: String = "Main"
 }
 
-
 private class TestBothVm : ViewModel() {
     @field:Inject
     lateinit var productRepository: ProductRepository
+
     @field:Inject
     lateinit var cartRepository: CartRepository
 }
@@ -45,7 +51,6 @@ private class FactoryTargetVm : ViewModel() {
 }
 
 class DiBasicsTests {
-
     private fun container(): ShoppingContainer =
         ShoppingContainer().apply {
             register(CartProductDao::class) { FakeCartProductDao() }
@@ -75,9 +80,10 @@ class DiBasicsTests {
         val empty = ShoppingContainer()
         val vm = TestMainVm()
 
-        val ex = assertThrows(IllegalStateException::class.java) {
-            FieldInjector.inject(vm, empty)
-        }
+        val ex =
+            assertThrows(IllegalStateException::class.java) {
+                FieldInjector.inject(vm, empty)
+            }
 
         assertTrue(ex.message!!.contains("ProductRepository"))
     }

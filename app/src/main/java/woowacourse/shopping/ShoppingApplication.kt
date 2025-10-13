@@ -9,7 +9,6 @@ import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.jvm.java
-import kotlin.reflect.KClass
 
 class ShoppingApplication : Application() {
     val container: ShoppingContainer by lazy {
@@ -19,7 +18,7 @@ class ShoppingApplication : Application() {
             Room.databaseBuilder(
                 applicationContext,
                 ShoppingDatabase::class.java,
-                "shopping.db"
+                "shopping.db",
             ).build()
         }
 
@@ -31,8 +30,8 @@ class ShoppingApplication : Application() {
         container.register(CartRepository::class) {
             DefaultCartRepository(
                 container.get(
-                    CartProductDao::class
-                )
+                    CartProductDao::class,
+                ),
             )
         }
 

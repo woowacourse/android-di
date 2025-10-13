@@ -7,7 +7,10 @@ import kotlin.jvm.java
 annotation class Inject
 
 object FieldInjector {
-    fun inject(target: Any, container: ShoppingContainer) {
+    fun inject(
+        target: Any,
+        container: ShoppingContainer,
+    ) {
         val clazz = target.javaClass
         for (field in clazz.declaredFields) {
             if (field.isAnnotationPresent(Inject::class.java)) {
