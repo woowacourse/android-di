@@ -10,21 +10,12 @@ data class Identifier(
     val qualifier: Annotation?,
 ) {
     companion object {
-        private fun qualifier(property: KProperty1<*, *>): Annotation? {
+        private fun qualifier(element: KAnnotatedElement): Annotation? {
             val qualifiers: List<Annotation> =
-                property.annotations.filter { annotation: Annotation ->
+                element.annotations.filter { annotation: Annotation ->
                     annotation.annotationClass.hasAnnotation<Qualifier>()
                 }
-            if (qualifiers.size > 1) error("${property}이(가) 두 개 이상의 Qualifier를 사용하고 있습니다. ($qualifiers)")
-            return qualifiers.firstOrNull()
-        }
-
-        private fun qualifier(parameter: KParameter): Annotation? {
-            val qualifiers: List<Annotation> =
-                parameter.annotations.filter { annotation: Annotation ->
-                    annotation.annotationClass.hasAnnotation<Qualifier>()
-                }
-            if (qualifiers.size > 1) error("${parameter}이(가) 두 개 이상의 Qualifier를 사용하고 있습니다. ($qualifiers)")
+            if (qualifiers.size > 1) error("${element}이(가) 두 개 이상의 Qualifier를 사용하고 있습니다. ($qualifiers)")
             return qualifiers.firstOrNull()
         }
 
