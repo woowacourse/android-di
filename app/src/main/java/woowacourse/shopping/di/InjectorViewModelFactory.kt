@@ -3,11 +3,12 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.annotation.Inject
-import java.lang.reflect.Field
+import woowacourse.shopping.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.javaField
 
 class InjectorViewModelFactory(
@@ -20,14 +21,15 @@ class InjectorViewModelFactory(
 
         // @Inject 어노테이션이 붙은 fields 탐색
         viewModelKClass.declaredMemberProperties.forEach { prop: KProperty1<T, *> ->
-            val field: Field? = prop.javaField
-            if (field?.isAnnotationPresent(Inject::class.java) == true) {
-                // appContainer에서 실제 프로퍼티 인스턴스를 찾아 주입
-                val dependencyInstance: Any? = appContainer.getInstance(field.type.kotlin)
-                dependencyInstance?.let {
-                    field.isAccessible = true
-                    field.set(viewModelInstance, dependencyInstance)
-                }
+            val field = prop.javaField ?: return@forEach
+            val qualifier: Qualifier? = prop.findAnnotation<Qualifier>()
+            if (field.isAnnotationPresent(Inject::class.java)) {
+                val dependencyClass: KClass<out Any> = qualifier?.value // @Qualifier에 지정된 구현체 클래스
+                    ?: field.type.kotlin // 기본적으로 인터페이스 타입 사용
+
+                val dependencyInstance = appContainer.getInstance(dependencyClass)
+                field.isAccessible = true
+                field.set(viewModelInstance, dependencyInstance)
             }
         }
         return viewModelInstance

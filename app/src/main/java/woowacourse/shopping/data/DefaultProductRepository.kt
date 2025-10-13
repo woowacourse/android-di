@@ -6,7 +6,7 @@ interface ProductRepository {
     fun getAllProducts(): List<Product>
 }
 
-class DefaultProductRepository : ProductRepository {
+class DefaultProductRepository() : ProductRepository {
     private val products: List<Product> =
         listOf(
             Product(
