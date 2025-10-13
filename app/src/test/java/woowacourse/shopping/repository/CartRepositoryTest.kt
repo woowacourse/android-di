@@ -5,13 +5,14 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.repository.DefaultCartRepository
 import woowacourse.shopping.domain.Product
+import woowacourse.shopping.fixture.FakeCartRepository
 
 class CartRepositoryTest {
     private lateinit var cartRepository: DefaultCartRepository
 
     @Before
     fun setUp() {
-        cartRepository = DefaultCartRepository()
+        cartRepository = FakeCartRepository()
     }
 
     @Test

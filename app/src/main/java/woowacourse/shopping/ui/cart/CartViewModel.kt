@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.di2.Inject
+import com.example.di2.RoomDatabase
 import kotlinx.coroutines.launch
-import woowacourse.shopping.di.Inject
-import woowacourse.shopping.di.RoomDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.ui.model.CartUiModel
 

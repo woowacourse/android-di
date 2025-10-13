@@ -10,13 +10,12 @@ import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.MeepleApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.di.ViewModelFactory
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
-    private val appContainer by lazy { (application as MeepleApplication).appContainer }
-    private val viewModel: CartViewModel by viewModels { ViewModelFactory(appContainer) }
-
+    private val viewModel: CartViewModel by viewModels {
+        (application as MeepleApplication).viewModelFactory
+    }
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,11 +1,11 @@
-package woowacourse.shopping.di
+package com.example.di2
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FIELD)
 annotation class RoomDatabase
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FIELD)
 annotation class InMemory

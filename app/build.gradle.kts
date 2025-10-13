@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "woowacourse.shopping"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -49,6 +49,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":di2"))
+
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

@@ -1,6 +1,5 @@
-package woowacourse.shopping.di
+package com.example.di2
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +27,6 @@ class ViewModelFactory(
 
                 if (!javaField.isAnnotationPresent(Inject::class.java)) return@forEach
 
-                // ✅ Qualifier 확인
                 val qualifier =
                     when {
                         javaField.isAnnotationPresent(RoomDatabase::class.java) -> RoomDatabase::class
@@ -46,12 +44,6 @@ class ViewModelFactory(
 
                 if (dependency != null) {
                     prop.setter.call(vm, dependency)
-
-                    Log.d(
-                        "AppContainer",
-                        "✅ ${kClass.simpleName}.${prop.name} <- ${dependency::class.simpleName}" +
-                            (qualifier?.let { " (${it.simpleName})" } ?: ""),
-                    )
                 }
             }
 
