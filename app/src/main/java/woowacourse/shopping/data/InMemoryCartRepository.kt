@@ -12,7 +12,7 @@ class InMemoryCartRepository : CartRepository {
 
     override suspend fun getAllCartProducts(): List<Product> = cartProducts.toList()
 
-    override suspend fun deleteCartProduct(id: Int) {
+    override suspend fun deleteCartProduct(id: Long) {
         cartProducts.removeAt(id)
     }
 }
