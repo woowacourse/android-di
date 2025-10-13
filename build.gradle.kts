@@ -7,5 +7,10 @@ plugins {
 }
 
 allprojects {
-    apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint
+                .get()
+                .pluginId,
+    )
 }
