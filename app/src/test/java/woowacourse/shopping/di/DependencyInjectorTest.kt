@@ -1,0 +1,128 @@
+package woowacourse.shopping.di
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertThrows
+import org.junit.Before
+import org.junit.Test
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.fixture.FakeAppContainer
+
+class DependencyInjectorTest {
+    private lateinit var appContainer: AppContainer
+    private lateinit var injector: DependencyInjector
+
+    class FakeRepository1
+
+    class FakeRepository2
+
+    private val fakeRepository1 = FakeRepository1()
+    private val fakeRepository2 = FakeRepository2()
+
+    @Before
+    fun setup() {
+        appContainer = FakeAppContainer()
+        injector = DependencyInjector(appContainer)
+    }
+
+    @Test
+    fun `생성자 주입 - 의존성이 모두 등록되어 있으면 의존성 주입이 성공한다`() {
+        // given
+        class TestClass(
+            val repo1: FakeRepository1,
+            val repo2: FakeRepository2,
+        )
+        appContainer.register(FakeRepository1::class, fakeRepository1)
+        appContainer.register(FakeRepository2::class, fakeRepository2)
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.repo1).isEqualTo(fakeRepository1)
+        assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+
+    @Test
+    fun `생성자 주입 - 의존성이 등록되어 있지 않으면 의존성 주입이 실패한다`() {
+        // given
+        class TestClass(
+            val repo1: FakeRepository1,
+        )
+
+        // when & then
+        assertThrows(IllegalArgumentException::class.java) {
+            injector.create(TestClass::class)
+        }
+    }
+
+    @Test
+    fun `필드 주입 - 의존성이 모두 등록되어 있으면 의존성 주입이 성공한다`() {
+        // given
+        class TestClass {
+            @Inject
+            lateinit var repo1: FakeRepository1
+
+            @Inject
+            lateinit var repo2: FakeRepository2
+
+            fun isRepo1Initialized(): Boolean = ::repo1.isInitialized
+
+            fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
+        }
+        appContainer.register(FakeRepository1::class, fakeRepository1)
+        appContainer.register(FakeRepository2::class, fakeRepository2)
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.isRepo1Initialized()).isTrue
+        assertThat(instance.isRepo2Initialized()).isTrue
+        assertThat(instance.repo1).isEqualTo(fakeRepository1)
+        assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+
+    @Test
+    fun `필드 주입 - 의존성이 등록되어 있지 않으면 의존성 주입이 실패한다`() {
+        // given
+        class TestClass {
+            @Inject
+            lateinit var repo1: FakeRepository1
+
+            @Inject
+            lateinit var repo2: FakeRepository2
+
+            fun isRepo1Initialized(): Boolean = ::repo1.isInitialized
+
+            fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
+        }
+        appContainer.register(FakeRepository1::class, fakeRepository1)
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.isRepo1Initialized()).isTrue
+        assertThat(instance.isRepo2Initialized()).isFalse
+    }
+
+    @Test
+    fun `혼합 주입 - 생성자와 필드 주입을 동시에 사용해도 의존성 주입이 성공한다`() {
+        // given
+        class TestClass(
+            val repo1: FakeRepository1,
+        ) {
+            @Inject
+            lateinit var repo2: FakeRepository2
+        }
+        appContainer.register(FakeRepository1::class, fakeRepository1)
+        appContainer.register(FakeRepository2::class, fakeRepository2)
+
+        // when
+        val instance = injector.create(TestClass::class)
+
+        // then
+        assertThat(instance.repo1).isEqualTo(fakeRepository1)
+        assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+}
