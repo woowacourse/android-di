@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 private val defaultProductRepository by lazy { DefaultProductRepository() }
 private val defaultCartRepository by lazy { DefaultCartRepository() }
 
-object Dependency {
+object DIContainer {
     private val dependencies by lazy {
         mapOf<KClass<*>, Any>(
             ProductRepository::class to defaultProductRepository,
