@@ -1,7 +1,7 @@
 package woowacourse.shopping.core.di
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class InjectRoomCartRepository
+annotation class InjectPersistentCartRepository
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class InjectInMemoryCartRepository
