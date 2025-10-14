@@ -9,7 +9,7 @@ import woowacourse.shopping.core.di.createInstance
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.RoomCartRepository
+import woowacourse.shopping.data.PersistentCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
@@ -31,7 +31,7 @@ class ShoppingApplication :
                 CartRepository::class.createType() -> {
                     when {
                         annotations.contains(InjectPersistentCartRepository()) -> {
-                            createInstance<RoomCartRepository>()
+                            createInstance<PersistentCartRepository>()
                         }
 
                         annotations.contains(InjectInMemoryCartRepository()) -> {
