@@ -16,7 +16,7 @@ class AppContainer(
     context: Context,
 ) : Container {
     private val dependencies = mutableMapOf<DependencyKey, Any>()
-    private val database: ShoppingDatabase by lazy { ShoppingDatabase.Companion.getDatabase(context) }
+    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
 
     init {
         register(ProductRepository::class, ProductDefaultRepository())
