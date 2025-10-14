@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "woowacourse.shopping"
+    namespace = "woowacourse.shopping.android.di"
     compileSdk = 36
 
     defaultConfig {
