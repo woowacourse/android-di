@@ -31,7 +31,11 @@ class CartProductAdapter(
     override fun getItemCount(): Int = items.size
 
     private fun removeItem(id: Long) {
-        val position: Int = items.indexOfFirst { cartProduct: CartProduct -> cartProduct.id == id }
+        val position: Int =
+            items
+                .indexOfFirst { cartProduct: CartProduct -> cartProduct.id == id }
+                .takeUnless { it == -1 } ?: return
+
         items.removeAt(position)
         notifyItemRemoved(position)
     }
