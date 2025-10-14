@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.daedan.compactAndroidDi.util.getQualifier
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline extrasProducer: (() -> CreationExtras)? = null): Lazy<VM> {
@@ -15,7 +16,7 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline ex
         viewModelFactory {
             initializer {
                 val store = (this[APPLICATION_KEY] as DiApplication).appContainerStore
-                store.instantiate(Qualifier(VM::class)) as VM
+                store.instantiate(VM::class.getQualifier()) as VM
             }
         }
 

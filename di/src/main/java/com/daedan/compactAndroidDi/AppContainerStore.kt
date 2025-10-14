@@ -1,14 +1,13 @@
 package com.daedan.compactAndroidDi
 
-import com.daedan.compactAndroidDi.annotation.AutoViewModel
+import com.daedan.compactAndroidDi.annotation.Component
 import com.daedan.compactAndroidDi.annotation.Inject
+import com.daedan.compactAndroidDi.qualifier.Qualifier
+import com.daedan.compactAndroidDi.util.getQualifier
 import java.util.Collections
-import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.jvmErasure
 
 class AppContainerStore {
     private val cache: MutableMap<Qualifier, Any> = mutableMapOf()
@@ -19,7 +18,7 @@ class AppContainerStore {
             mutableSetOf(),
         )
 
-    operator fun get(clazz: KClass<*>): Any? = cache[Qualifier(clazz)]
+    operator fun get(qualifier: Qualifier): Any? = cache[qualifier]
 
     fun registerFactory(vararg modules: DependencyModule) {
         val factories = mutableListOf<DependencyFactory<*>>()
@@ -29,47 +28,22 @@ class AppContainerStore {
 
     fun instantiate(qualifier: Qualifier): Any {
         if (cache.containsKey(qualifier)) {
-            return cache[qualifier] ?: throw IllegalArgumentException(
-                "$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}",
-            )
+            return cache[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
         }
 
         if (inProgress.contains(qualifier)) {
-            throw IllegalArgumentException(
-                "$ERR_CIRCULAR_DEPENDENCY_DETECTED : ${qualifier.type.simpleName}",
-            )
+            error("$ERR_CIRCULAR_DEPENDENCY_DETECTED : $qualifier")
         }
 
         inProgress.add(qualifier)
         val instance =
             factory[qualifier]?.invoke()
-                ?: reflect(qualifier.type)
-                ?: throw IllegalArgumentException("$ERR_CONSTRUCTOR_NOT_FOUND : ${qualifier.type.simpleName}")
+                ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
 
         injectField(instance)
-        save(qualifier, instance)
+        cache[qualifier] = instance
         inProgress.remove(qualifier)
         return instance
-    }
-
-    private fun reflect(type: KClass<*>): Any? {
-        if (type.findAnnotation<AutoViewModel>() == null) return null
-        val constructor = type.primaryConstructor ?: return null
-        val arguments =
-            constructor.parameters
-                .filter { !it.isOptional }
-                .associateWith { parameter ->
-                    val childQualifier =
-                        Qualifier(
-                            parameter.type.jvmErasure,
-                            parameter.findAnnotation<Inject>()?.name,
-                        )
-
-                    instantiate(
-                        childQualifier,
-                    )
-                }
-        return constructor.callBy(arguments)
     }
 
     private fun injectField(instance: Any) {
@@ -82,13 +56,9 @@ class AppContainerStore {
         instance::class
             .memberProperties
             .filterIsInstance<KMutableProperty1<Any, Any>>()
-            .filter { it.findAnnotation<Inject>() != null }
+            .filter { it.findAnnotation<Inject>() != null || it.annotations.any { it.annotationClass.findAnnotation<Component>() != null } }
             .forEach { property ->
-                val childQualifier =
-                    Qualifier(
-                        property.returnType.jvmErasure,
-                        property.findAnnotation<Inject>()?.name,
-                    )
+                val childQualifier = property.getQualifier()
                 property.set(
                     instance,
                     instantiate(
@@ -98,15 +68,8 @@ class AppContainerStore {
             }
     }
 
-    private fun save(
-        qualifier: Qualifier,
-        instance: Any,
-    ) {
-        if (qualifier.type.findAnnotation<AutoViewModel>() != null) return
-        cache[qualifier] = instance
-    }
-
     companion object {
+        private const val ERR_CANNOT_FIND_INSTANCE = "컨테이너에서 인스턴스를 찾을 수 없습니다"
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
             "등록된 팩토리, 또는 주 생성자를 찾을 수 없습니다"

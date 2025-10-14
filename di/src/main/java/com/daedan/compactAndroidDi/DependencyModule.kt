@@ -1,5 +1,10 @@
 package com.daedan.compactAndroidDi
 
+import com.daedan.compactAndroidDi.qualifier.AnnotationQualifier
+import com.daedan.compactAndroidDi.qualifier.NamedQualifier
+import com.daedan.compactAndroidDi.qualifier.Qualifier
+import com.daedan.compactAndroidDi.qualifier.TypeQualifier
+
 data class DependencyModule(
     val factories: List<DependencyFactory<*>>,
 )
@@ -9,14 +14,18 @@ class DependencyModuleBuilder(
 ) {
     val factories = mutableListOf<DependencyFactory<*>>()
 
+    inline fun <reified T : Annotation> annotated(): AnnotationQualifier = AnnotationQualifier(T::class)
+
+    fun named(name: String): NamedQualifier = NamedQualifier(name)
+
     inline fun <reified T : Any> factory(
-        name: String? = null,
+        qualifier: Qualifier = TypeQualifier(T::class),
         noinline create: () -> T,
     ) {
-        factories.add(DependencyFactory(Qualifier(T::class, name), create))
+        factories.add(DependencyFactory(qualifier, create))
     }
 
-    inline fun <reified T : Any> get(name: String? = null): T = appContainerStore.instantiate(Qualifier(T::class, name)) as T
+    inline fun <reified T : Any> get(qualifier: Qualifier = TypeQualifier(T::class)): T = appContainerStore.instantiate(qualifier) as T
 
     fun build(): DependencyModule = DependencyModule(factories)
 }
