@@ -162,7 +162,7 @@ class FakeApplication :
     ): Any =
         when (type) {
             DeclaredDependency::class.createType() -> DefaultDeclaredDependency()
-            else -> error("")
+            else -> error("Don't know how to inject $type")
         }
 }
 
