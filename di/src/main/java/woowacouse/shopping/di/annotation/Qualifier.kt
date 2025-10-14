@@ -1,4 +1,4 @@
-package woowacourse.shopping.annotation
+package woowacouse.shopping.di.annotation
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

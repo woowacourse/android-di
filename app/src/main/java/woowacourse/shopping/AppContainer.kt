@@ -1,18 +1,19 @@
-package woowacourse.shopping.di
+package woowacourse.shopping
 
 import android.content.Context
 import androidx.room.Room
-import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
+import woowacouse.shopping.di.Container
+import woowacouse.shopping.di.annotation.Qualifier
 
 class AppContainer(
     context: Context,
-) {
+) : Container {
     private val database: ShoppingDatabase by lazy {
         Room
             .databaseBuilder(

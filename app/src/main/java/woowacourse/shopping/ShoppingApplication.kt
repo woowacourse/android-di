@@ -1,8 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.AppContainer
 
 class ShoppingApplication : Application() {
     lateinit var container: AppContainer

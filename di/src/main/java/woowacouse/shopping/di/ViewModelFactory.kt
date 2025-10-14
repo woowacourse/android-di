@@ -1,11 +1,11 @@
-package woowacourse.shopping.di
+package woowacouse.shopping.di
 
 import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.annotation.Inject
+import woowacouse.shopping.di.annotation.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -14,7 +14,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class ViewModelFactory(
-    private val container: AppContainer,
+    private val container: Container,
     private val owner: SavedStateRegistryOwner,
     private val defaultArgs: Bundle? = null,
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {

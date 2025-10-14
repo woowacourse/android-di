@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
-import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.domain.ProductRepository
+import woowacouse.shopping.di.annotation.Inject
 
 class InjectViewModel : ViewModel() {
     @Inject
