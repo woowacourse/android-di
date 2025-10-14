@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
-interface AppContainer {
+interface Container {
     fun <T : Any> register(
         kClass: KClass<T>,
         instance: T,

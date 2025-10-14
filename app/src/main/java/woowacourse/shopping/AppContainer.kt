@@ -5,16 +5,16 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartDatabaseRepository
 import woowacourse.shopping.data.repository.CartInMemoryRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
-import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.DependencyKey
 import woowacourse.shopping.di.annotation.RepositoryType
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 
-class AppContainerImpl(
+class AppContainer(
     context: Context,
-) : AppContainer {
+) : Container {
     private val dependencies = mutableMapOf<DependencyKey, Any>()
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.Companion.getDatabase(context) }
 

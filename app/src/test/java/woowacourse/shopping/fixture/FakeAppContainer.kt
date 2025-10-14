@@ -1,9 +1,9 @@
 package woowacourse.shopping.fixture
 
-import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.Container
 import kotlin.reflect.KClass
 
-class FakeAppContainer : AppContainer {
+class FakeAppContainer : Container {
     private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     override fun <T : Any> register(
@@ -21,7 +21,7 @@ class FakeAppContainer : AppContainer {
     ): T = dependencies[kClass] as T
 
     override fun <T : Any> canResolve(
-        klass: KClass<T>,
+        kClass: KClass<T>,
         qualifier: String?,
-    ): Boolean = dependencies.containsKey(klass)
+    ): Boolean = dependencies.containsKey(kClass)
 }

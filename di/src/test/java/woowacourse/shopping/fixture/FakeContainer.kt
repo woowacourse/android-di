@@ -1,9 +1,9 @@
 package woowacourse.shopping.fixture
 
-import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.Container
 import kotlin.reflect.KClass
 
-class FakeAppContainer : AppContainer {
+class FakeContainer : Container {
     private val dependencies: MutableMap<Pair<KClass<*>, String?>, Any> = mutableMapOf()
 
     override fun <T : Any> register(

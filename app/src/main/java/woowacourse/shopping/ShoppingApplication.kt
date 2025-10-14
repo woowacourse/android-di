@@ -6,7 +6,7 @@ import woowacourse.shopping.di.ViewModelFactory
 
 class ShoppingApplication : Application() {
     private val dependencyInjector: DependencyInjector by lazy {
-        DependencyInjector(AppContainerImpl(this))
+        DependencyInjector(AppContainer(this))
     }
 
     val viewModelFactory: ViewModelFactory by lazy {

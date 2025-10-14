@@ -6,13 +6,13 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
-import woowacourse.shopping.fixture.FakeAppContainer
+import woowacourse.shopping.fixture.FakeContainer
 import woowacourse.shopping.fixture.FakeRepository
 import woowacourse.shopping.fixture.FakeRepository1
 import woowacourse.shopping.fixture.FakeRepository2
 
 class DependencyInjectorTest {
-    private lateinit var appContainer: AppContainer
+    private lateinit var container: Container
     private lateinit var injector: DependencyInjector
 
     private val fakeRepository1 = FakeRepository1()
@@ -20,8 +20,8 @@ class DependencyInjectorTest {
 
     @Before
     fun setup() {
-        appContainer = FakeAppContainer()
-        injector = DependencyInjector(appContainer)
+        container = FakeContainer()
+        injector = DependencyInjector(container)
     }
 
     @Test
@@ -31,8 +31,8 @@ class DependencyInjectorTest {
             val repo1: FakeRepository1,
             val repo2: FakeRepository2,
         )
-        appContainer.register(FakeRepository1::class, fakeRepository1)
-        appContainer.register(FakeRepository2::class, fakeRepository2)
+        container.register(FakeRepository1::class, fakeRepository1)
+        container.register(FakeRepository2::class, fakeRepository2)
 
         // when
         val instance = injector.create(TestClass::class)
@@ -52,12 +52,12 @@ class DependencyInjectorTest {
             val repo2: FakeRepository,
         )
 
-        appContainer.register(
+        container.register(
             FakeRepository::class,
             instance = fakeRepository1,
             qualifier = "repo1",
         )
-        appContainer.register(
+        container.register(
             FakeRepository::class,
             instance = fakeRepository2,
             qualifier = "repo2",
@@ -98,8 +98,8 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        appContainer.register(FakeRepository1::class, fakeRepository1)
-        appContainer.register(FakeRepository2::class, fakeRepository2)
+        container.register(FakeRepository1::class, fakeRepository1)
+        container.register(FakeRepository2::class, fakeRepository2)
 
         // when
         val instance = injector.create(TestClass::class)
@@ -128,12 +128,12 @@ class DependencyInjectorTest {
             fun isDatabaseInitialized(): Boolean = ::repo2.isInitialized
         }
 
-        appContainer.register(
+        container.register(
             FakeRepository::class,
             instance = fakeRepository1,
             qualifier = "repo1",
         )
-        appContainer.register(
+        container.register(
             FakeRepository::class,
             instance = fakeRepository2,
             qualifier = "repo2",
@@ -163,7 +163,7 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        appContainer.register(FakeRepository1::class, fakeRepository1)
+        container.register(FakeRepository1::class, fakeRepository1)
 
         // when
         val instance = injector.create(TestClass::class)
@@ -182,8 +182,8 @@ class DependencyInjectorTest {
             @Inject
             lateinit var repo2: FakeRepository2
         }
-        appContainer.register(FakeRepository1::class, fakeRepository1)
-        appContainer.register(FakeRepository2::class, fakeRepository2)
+        container.register(FakeRepository1::class, fakeRepository1)
+        container.register(FakeRepository2::class, fakeRepository2)
 
         // when
         val instance = injector.create(TestClass::class)

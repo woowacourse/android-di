@@ -13,7 +13,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 class DependencyInjector(
-    private val appContainer: AppContainer,
+    private val container: Container,
 ) {
     // 클래스의 인스턴스를 생성하고 의존성 주입
     fun <T : Any> create(kClass: KClass<T>): T {
@@ -31,7 +31,7 @@ class DependencyInjector(
                     .map { param: KParameter ->
                         val paramClass: KClass<*> = param.type.classifier as KClass<*>
                         val qualifier: String? = param.findAnnotation<Qualifier>()?.value
-                        appContainer.get(paramClass, qualifier)
+                        container.get(paramClass, qualifier)
                     }.toTypedArray()
             constructor.call(*args)
         } else {
@@ -45,7 +45,7 @@ class DependencyInjector(
             constructor.parameters.all { param: KParameter ->
                 val paramClass: KClass<*>? = param.type.classifier as? KClass<*>
                 val qualifier: String? = param.findAnnotation<Qualifier>()?.value
-                paramClass != null && appContainer.canResolve(paramClass, qualifier)
+                paramClass != null && container.canResolve(paramClass, qualifier)
             }
         }
 
@@ -60,8 +60,8 @@ class DependencyInjector(
 
             val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
             val qualifier: String? = property.findAnnotation<Qualifier>()?.value
-            if (appContainer.canResolve(propertyType, qualifier)) {
-                val dependency = appContainer.get(propertyType, qualifier)
+            if (container.canResolve(propertyType, qualifier)) {
+                val dependency = container.get(propertyType, qualifier)
                 property.isAccessible = true
                 property.setter.call(instance, dependency)
             }

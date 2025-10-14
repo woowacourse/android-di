@@ -38,12 +38,12 @@ class MainViewModelTest {
         val productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
         val cartRepository = FakeCartRepository(mutableListOf())
 
-        val appContainer =
+        val container =
             FakeAppContainer().apply {
                 register(ProductRepository::class, productRepository)
                 register(CartRepository::class, cartRepository)
             }
-        val dependencyInjector = DependencyInjector(appContainer)
+        val dependencyInjector = DependencyInjector(container)
         val viewModelFactory = ViewModelFactory(dependencyInjector)
         viewModel = viewModelFactory.create(MainViewModel::class.java)
     }
