@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import woowacourse.shopping.InjectRoomCartRepository
-import woowacourse.shopping.InjectedProperty
+import woowacourse.shopping.core.di.InjectRoomCartRepository
+import woowacourse.shopping.core.di.InjectedProperty
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository

@@ -2,10 +2,10 @@ package woowacourse.shopping.ui
 
 import android.app.Application
 import androidx.room.Room
-import woowacourse.shopping.DependencyContainer
-import woowacourse.shopping.InjectInMemoryCartRepository
-import woowacourse.shopping.InjectRoomCartRepository
-import woowacourse.shopping.createInstance
+import woowacourse.shopping.core.di.DependencyContainer
+import woowacourse.shopping.core.di.InjectInMemoryCartRepository
+import woowacourse.shopping.core.di.InjectRoomCartRepository
+import woowacourse.shopping.core.di.createInstance
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository

@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.core.di
 
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter

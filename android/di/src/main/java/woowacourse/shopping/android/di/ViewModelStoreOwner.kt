@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.android.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
+import woowacourse.shopping.core.di.DependencyContainer
+import woowacourse.shopping.core.di.InjectedProperty
+import woowacourse.shopping.core.di.createInstance
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
