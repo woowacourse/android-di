@@ -8,15 +8,17 @@ androidx-espresso-core = "3.6.1"
 androidx-test-ext-junit = "1.2.1"
 androidx-test-runner = "1.6.2"
 assertj-core = "3.27.3"
+assertj-core-version = "3.27.6"
 core-testing = "2.2.0"
 glide = "4.15.1"
 google-material = "1.12.0"
-kotlin = "1.9.25"
+kotlin = "2.2.20"
 kotlin-reflect = "2.2.0"
 kotlinx-coroutines-core = "1.8.1"
 kotlinx-coroutines-test = "1.8.0"
 ktlint = "12.1.0"
 lifecycle-runtime-ktx = "2.9.4"
+mockk = "1.14.6"
 robolectric = "4.16"
 room-runtime = "2.6.1"
 truth = "1.4.5"
@@ -38,6 +40,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test-runner" }
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj-core" }
+assertj-core-v3276 = { module = "org.assertj:assertj-core", version.ref = "assertj-core-version" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "google-material" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -45,6 +48,7 @@ kotlin-reflect-v220 = { module = "org.jetbrains.kotlin:kotlin-reflect", version.
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
