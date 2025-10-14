@@ -25,7 +25,7 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                     ): T {
                         val application: Application = checkNotNull(extras[APPLICATION_KEY])
                         val container: DependencyContainer = application as DependencyContainer
-                        val viewModel = container.instance<VM>() as T
+                        val viewModel = container.createInstance<VM>() as T
                         val fieldsToBeInjected: List<KProperty1<out T, *>> =
                             viewModel::class.memberProperties.filter { it.hasAnnotation<InjectedProperty>() }
 

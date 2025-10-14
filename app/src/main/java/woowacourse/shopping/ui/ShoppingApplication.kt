@@ -5,12 +5,12 @@ import androidx.room.Room
 import woowacourse.shopping.DependencyContainer
 import woowacourse.shopping.InjectInMemoryCartRepository
 import woowacourse.shopping.InjectRoomCartRepository
+import woowacourse.shopping.createInstance
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.instance
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 import kotlin.reflect.KType
@@ -27,15 +27,15 @@ class ShoppingApplication :
     ): Any =
         dependencies.getOrPut(type) {
             when (type) {
-                ProductRepository::class.createType() -> instance<DefaultProductRepository>()
+                ProductRepository::class.createType() -> createInstance<DefaultProductRepository>()
                 CartRepository::class.createType() -> {
                     when {
                         annotations.contains(InjectRoomCartRepository()) -> {
-                            instance<RoomCartRepository>()
+                            createInstance<RoomCartRepository>()
                         }
 
                         annotations.contains(InjectInMemoryCartRepository()) -> {
-                            instance<InMemoryCartRepository>()
+                            createInstance<InMemoryCartRepository>()
                         }
 
                         else -> error("Don't know how to inject $type")

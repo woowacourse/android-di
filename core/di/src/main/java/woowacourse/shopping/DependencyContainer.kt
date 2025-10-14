@@ -12,7 +12,7 @@ interface DependencyContainer {
     ): Any
 }
 
-inline fun <reified T : Any> DependencyContainer.instance(): T {
+inline fun <reified T : Any> DependencyContainer.createInstance(): T {
     val primaryConstructor: KFunction<T> =
         T::class.primaryConstructor
             ?: error("${T::class.qualifiedName} doesn't have primary constructor")
