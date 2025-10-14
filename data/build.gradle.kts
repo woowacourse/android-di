@@ -44,6 +44,5 @@ dependencies {
     implementation(project(":di"))
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-
     kapt(libs.androidx.room.compiler)
 }
