@@ -72,9 +72,7 @@ class MainActivity : AppCompatActivity() {
             val adapter =
                 ProductAdapter(
                     items = it,
-                    onClickProduct = { product ->
-                        viewModel.addCartProduct(product)
-                    },
+                    onClickProduct = viewModel::addCartProduct,
                 )
             binding.rvProducts.adapter = adapter
         }
