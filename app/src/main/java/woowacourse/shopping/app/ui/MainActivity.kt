@@ -10,16 +10,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
-import woowacourse.shopping.app.di.DIViewModelFactory
-import woowacourse.shopping.app.di.appContainer
+import woowacourse.shopping.app.ShoppingApplication
 import woowacourse.shopping.app.ui.cart.CartActivity
 import woowacourse.shopping.databinding.ActivityMainBinding
+import woowacourse.shopping.di.DIViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel by viewModels<MainViewModel> {
-        DIViewModelFactory(this.appContainer)
+        DIViewModelFactory(ShoppingApplication.getContainer(this))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

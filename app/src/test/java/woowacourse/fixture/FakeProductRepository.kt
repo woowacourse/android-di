@@ -1,6 +1,6 @@
 package woowacourse.fixture
 
-import woowacourse.shopping.di.InMemory
+import woowacourse.shopping.app.di.InMemory
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
