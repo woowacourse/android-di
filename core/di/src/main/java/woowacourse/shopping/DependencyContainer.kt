@@ -5,14 +5,14 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 
-interface AppContainer {
+interface DependencyContainer {
     fun dependency(
         type: KType,
         annotations: List<Annotation> = emptyList(),
     ): Any
 }
 
-inline fun <reified T : Any> AppContainer.instance(): T {
+inline fun <reified T : Any> DependencyContainer.instance(): T {
     val primaryConstructor: KFunction<T> =
         T::class.primaryConstructor
             ?: error("${T::class.qualifiedName} doesn't have primary constructor")

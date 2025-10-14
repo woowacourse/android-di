@@ -155,7 +155,7 @@ class ViewModelStoreOwnerTest {
 
 class FakeApplication :
     Application(),
-    AppContainer {
+    DependencyContainer {
     override fun dependency(
         type: KType,
         annotations: List<Annotation>,

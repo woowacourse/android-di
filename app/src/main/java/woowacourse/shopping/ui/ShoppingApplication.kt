@@ -2,7 +2,7 @@ package woowacourse.shopping.ui
 
 import android.app.Application
 import androidx.room.Room
-import woowacourse.shopping.AppContainer
+import woowacourse.shopping.DependencyContainer
 import woowacourse.shopping.InjectInMemoryCartRepository
 import woowacourse.shopping.InjectRoomCartRepository
 import woowacourse.shopping.data.CartProductDao
@@ -18,7 +18,7 @@ import kotlin.reflect.full.createType
 
 class ShoppingApplication :
     Application(),
-    AppContainer {
+    DependencyContainer {
     private val dependencies: MutableMap<KType, Any> = mutableMapOf()
 
     override fun dependency(

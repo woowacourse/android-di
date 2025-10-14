@@ -6,9 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.AppContainer
-import woowacourse.shopping.InjectedProperty
-import woowacourse.shopping.instance
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -27,8 +24,8 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                         extras: CreationExtras,
                     ): T {
                         val application: Application = checkNotNull(extras[APPLICATION_KEY])
-                        val appContainer: AppContainer = application as AppContainer
-                        val viewModel = appContainer.instance<VM>() as T
+                        val container: DependencyContainer = application as DependencyContainer
+                        val viewModel = container.instance<VM>() as T
                         val fieldsToBeInjected: List<KProperty1<out T, *>> =
                             viewModel::class.memberProperties.filter { it.hasAnnotation<InjectedProperty>() }
 
@@ -37,7 +34,7 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                                 isAccessible = true
                                 javaField?.set(
                                     viewModel,
-                                    appContainer.dependency(returnType, property.annotations),
+                                    container.dependency(returnType, property.annotations),
                                 )
                             }
                         }
