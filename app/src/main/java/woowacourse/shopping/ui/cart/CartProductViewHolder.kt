@@ -18,13 +18,11 @@ class CartProductViewHolder(
                     onClickDelete(id)
                 }
             }
+        binding.dateFormatter = dateFormatter
     }
 
     fun bind(product: Product) {
         binding.item = product
-        product.createdAt?.let { createdAt: Long ->
-            binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(createdAt)
-        }
     }
 
     companion object {
