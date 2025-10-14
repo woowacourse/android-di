@@ -12,7 +12,12 @@ class CartProductViewHolder(
     private val onClickDelete: (id: Long) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
-        binding.onClickDelete = onClickDelete
+        binding.itemListener =
+            object : CartProductItemListener {
+                override fun delete(id: Long) {
+                    onClickDelete(id)
+                }
+            }
     }
 
     fun bind(product: Product) {
