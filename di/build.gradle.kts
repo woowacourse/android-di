@@ -52,7 +52,7 @@ afterEvaluate {
             register<MavenPublication>("release") {
                 from(components["release"])
                 groupId = "com.github.oungsi2000"
-                artifactId = "compact-android-di"
+                artifactId = "android-di"
                 version = "beta-1.0.0"
 
                 pom {
