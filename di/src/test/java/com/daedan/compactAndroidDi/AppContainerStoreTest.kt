@@ -8,6 +8,7 @@ import com.daedan.compactAndroidDi.fixture.NestedDependency
 import com.daedan.compactAndroidDi.fixture.Parent
 import com.daedan.compactAndroidDi.fixture.TestViewModel
 import com.daedan.compactAndroidDi.fixture.UnableReflectObject
+import com.daedan.compactAndroidDi.qualifier.NamedQualifier
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -17,7 +18,7 @@ class AppContainerStoreTest {
     fun `instantiate는 등록된 팩토리를 통해 객체를 생성해야 한다`() {
         // given
         val appContainerStore = AppContainerStore()
-        val qualifier = Qualifier(Parent::class)
+        val namedQualifier = NamedQualifier(Parent::class)
         val module =
             module(appContainerStore) {
                 factory { Parent(Child1(), Child2()) }
@@ -25,7 +26,7 @@ class AppContainerStoreTest {
         appContainerStore.registerFactory(module)
 
         // when
-        val actual = appContainerStore.instantiate(qualifier)
+        val actual = appContainerStore.instantiate(namedQualifier)
         assertThat(actual).isInstanceOf(Parent::class.java)
     }
 
@@ -45,7 +46,7 @@ class AppContainerStoreTest {
         // when
         val actual =
             appContainerStore.instantiate(
-                Qualifier(NestedDependency::class),
+                NamedQualifier(NestedDependency::class),
             )
 
         // when
@@ -67,7 +68,7 @@ class AppContainerStoreTest {
         // when
         val actual =
             appContainerStore.instantiate(
-                Qualifier(Parent::class),
+                NamedQualifier(Parent::class),
             )
         val expected = appContainerStore[Parent::class]
 
@@ -83,7 +84,7 @@ class AppContainerStoreTest {
         // when
         val actual =
             appContainerStore.instantiate(
-                Qualifier(TestViewModel::class),
+                NamedQualifier(TestViewModel::class),
             )
         val expected = appContainerStore[TestViewModel::class]
 
@@ -106,7 +107,7 @@ class AppContainerStoreTest {
         // when - then
         assertThatThrownBy {
             appContainerStore.instantiate(
-                Qualifier(CircularDependency1::class),
+                NamedQualifier(CircularDependency1::class),
             )
         }.message().contains("순환 참조가 발견되었습니다")
     }
@@ -124,7 +125,7 @@ class AppContainerStoreTest {
         // when = then
         assertThatThrownBy {
             appContainerStore.instantiate(
-                Qualifier(UnableReflectObject::class),
+                NamedQualifier(UnableReflectObject::class),
             )
         }.message().contains("주 생성자를 찾을 수 없습니다")
     }
@@ -143,8 +144,8 @@ class AppContainerStoreTest {
         appContainerStore.registerFactory(module)
 
         // when
-        val actual1 = appContainerStore.instantiate(Qualifier(Child1::class, "child1"))
-        val actual2 = appContainerStore.instantiate(Qualifier(Child1::class, "child2"))
+        val actual1 = appContainerStore.instantiate(NamedQualifier(Child1::class, "child1"))
+        val actual2 = appContainerStore.instantiate(NamedQualifier(Child1::class, "child2"))
 
         // then
         assertThat(actual1).isSameAs(child1)

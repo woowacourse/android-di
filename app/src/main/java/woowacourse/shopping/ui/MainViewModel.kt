@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daedan.compactAndroidDi.annotation.AutoViewModel
 import com.daedan.compactAndroidDi.annotation.Inject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.RoomDBCartRepository
@@ -12,7 +11,6 @@ import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
-@AutoViewModel
 class MainViewModel : ViewModel() {
     @Inject("productRepository")
     lateinit var productRepository: ProductRepository
