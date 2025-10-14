@@ -8,15 +8,15 @@ import com.shopping.di.annotation.Inject
 import com.shopping.di.annotation.QualifierTag
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
 class CartViewModel : ViewModel() {
     @Inject
     @QualifierTag("memory")
     private lateinit var cartRepository: CartRepository
 
-    private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+    private val _cartProducts: MutableLiveData<List<CartProduct>> = MutableLiveData(emptyList())
+    val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
 
     private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
     val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
