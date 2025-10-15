@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.data.annotation.InMemoryLogger
+import woowacourse.shopping.data.annotation.InMemoryCartProductDao
 import woowacourse.shopping.data.mapper.toCartEntity
 import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.domain.repository.CartRepository
@@ -8,7 +8,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class DefaultCartRepository(
-    @InMemoryLogger private val cartProductDao: CartProductDao,
+    @InMemoryCartProductDao private val cartProductDao: CartProductDao,
 ) :
     CartRepository {
     override suspend fun addCartProduct(product: Product) {
