@@ -1,21 +1,19 @@
 package com.example.di
 
-import com.example.di.annotation.Inject
-import com.example.di.annotation.Provides
-import com.example.di.annotation.Singleton
 import com.example.di.model.BindingKey
 import com.example.di.model.FactoryProvider
-import com.example.di.model.InstanceProvider
 import com.example.di.model.Provider
+import com.example.di.model.SingletonProvider
 import com.example.di.util.findSingleQualifierOrNull
-import com.example.di.util.toBindingKey
+import com.example.di.util.isProvidesFunction
+import com.example.di.util.isSingletonFunction
+import com.example.di.util.requireInject
+import com.example.di.util.requireModuleObject
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -32,14 +30,19 @@ class AppContainer {
         qualifier: KClass<out Annotation>? = null,
     ) {
         val key = BindingKey(type, qualifier)
-        bindings[key] = InstanceProvider(instance)
+        bindings[key] = SingletonProvider { instance }
     }
 
-    /** object 모듈을 스캔하여 @Provides 함수/프로퍼티 등록 */
+    /** object 모듈을 스캔하여 @Provides 함수들을 FactoryProvider로 등록 */
     fun <T : Any> provideModule(module: KClass<T>) {
-        val instance = requireModuleObject(module)
-        registerProvideFunctions(module, instance)
-        registerPublicProperties(module, instance)
+        module
+            .declaredMemberFunctions
+            .filter { fn -> fn.isProvidesFunction() }
+            .forEach { fn ->
+                val key = BindingKey.from(fn)
+                val provider = buildProvider(fn as KFunction<Any>, requireModuleObject(module))
+                bindings[key] = provider
+            }
     }
 
     /** 타입(+선택: Qualifier)으로 인스턴스 획득 */
@@ -51,89 +54,21 @@ class AppContainer {
         findOverride(overrides, type, qualifier)?.let { return it }
         findBoundProvider(type, qualifier)?.let { return it.get(overrides) as T }
 
-        val created = createByConstructor(type, overrides)
-        cacheIfSingleton(type, qualifier, created)
-        return created
+        return createByConstructor(type, overrides)
     }
 
-    /* ============================
-     * Module registration
-     * ============================ */
-
-    private fun <T : Any> requireModuleObject(module: KClass<T>): T {
-        val instance = module.objectInstance
-        requireNotNull(instance) { ERROR_MODULE_MUST_BE_OBJECT.format(module.qualifiedName) }
-        return instance
-    }
-
-    /** @Provides 함수들을 FactoryProvider로 등록 */
-    private fun <T : Any> registerProvideFunctions(
-        module: KClass<T>,
-        instance: T,
-    ) {
-        module
-            .declaredMemberFunctions
-            .filter(::isProvidesFunction)
-            .forEach { fn ->
-                val key = buildProvidesKey(fn)
-                val provider = buildFactoryProvider(fn as KFunction<Any>, instance)
-                bindings[key] = provider
-            }
-    }
-
-    /** 모듈의 public val/var 아닌 프로퍼티(= 읽기 전용 프로퍼티) 즉시 등록 */
-    private fun <T : Any> registerPublicProperties(
-        module: KClass<T>,
-        instance: T,
-    ) {
-        module.memberProperties.forEach { prop ->
-            // var 제외(설정가능 프로퍼티는 외부 주입 대상이 될 수 있으므로 자동 등록 지양)
-            if (prop is KMutableProperty1<*, *>) return@forEach
-
-            prop.isAccessible = true
-            val value = prop.get(instance) ?: return@forEach
-
-            val returnType = prop.returnType.jvmErasure as KClass<Any>
-            val qualifier = findSingleQualifierOrNull(prop.annotations)
-            val key = BindingKey(returnType, qualifier)
-
-            if (bindings[key] != null) return@forEach
-            bindings[key] = InstanceProvider(value)
-        }
-    }
-
-    /* ============================
-     * Resolve helpers
-     * ============================ */
-
+    /** overrides에서 타입(+선택: Qualifier)으로 인스턴스 찾기 */
     private fun <T : Any> findOverride(
         overrides: Map<BindingKey, Any>,
         type: KClass<T>,
         qualifier: KClass<out Annotation>?,
-    ): T? {
-        val o = overrides[BindingKey(type, qualifier)] ?: return null
-        @Suppress("UNCHECKED_CAST")
-        return o as T
-    }
+    ): T? = overrides[BindingKey(type, qualifier)] as? T
 
+    /** bindings에서 타입(+선택: Qualifier)으로 Provider 찾기 */
     private fun <T : Any> findBoundProvider(
         type: KClass<T>,
         qualifier: KClass<out Annotation>?,
     ): Provider<out Any>? = bindings[BindingKey(type, qualifier)]
-
-    private fun <T : Any> cacheIfSingleton(
-        type: KClass<T>,
-        qualifier: KClass<out Annotation>?,
-        instance: T,
-    ) {
-        val isSingleton = type.findAnnotation<Singleton>() != null
-        if (!isSingleton) return
-        bindings[BindingKey(type, qualifier)] = InstanceProvider(instance)
-    }
-
-    /* ============================
-     * Construction & Injection
-     * ============================ */
 
     /** 생성자 생성 + @Inject 프로퍼티 주입 */
     private fun <T : Any> createByConstructor(
@@ -144,8 +79,7 @@ class AppContainer {
             requireNotNull(type.primaryConstructor) {
                 ERROR_NO_PUBLIC_CTOR.format(type.simpleName ?: "Anonymous")
             }
-        val args = buildConstructorArgs(constructor, overrides)
-        val instance = constructor.callBy(args)
+        val instance = buildConstructorArgs(constructor, overrides).let(constructor::callBy)
         injectProperties(instance, overrides)
         return instance
     }
@@ -154,34 +88,34 @@ class AppContainer {
     private fun buildConstructorArgs(
         constructor: KFunction<*>,
         overrides: Map<BindingKey, Any>,
-    ): Map<KParameter, Any?> =
+    ): Map<KParameter, Any> =
         constructor.parameters
             .mapNotNull { param ->
-                val instance =
-                    resolveConstructorParameter(param, overrides) ?: return@mapNotNull null
-                param to instance
+                resolveConstructorParameter(param, overrides)?.let { instance ->
+                    param to instance
+                } ?: return@mapNotNull null
             }.toMap()
 
-    /** 단일 생성자 파라미터 해석 */
+    /**
+     * 단일 생성자 파라미터 해석 규칙
+     * - @Inject 없음 + optional: 생략(null) → callBy에서 기본값 사용
+     * - @Inject 없음 + optional 아님: 오류
+     * - overrides에 존재: 최우선 반환
+     * - 그 외: 컨테이너에서 (타입, 한정자)로 resolve
+     */
     private fun resolveConstructorParameter(
         param: KParameter,
         overrides: Map<BindingKey, Any>,
     ): Any? {
-        val hasInject = param.findAnnotation<Inject>() != null
-        if (!hasInject) {
-            // @Inject 아님 → 기본값 있으면 생략(맵에 넣지 않음)
-            if (param.isOptional) return null
-            // 기본값도 없으면 오류
-            throw IllegalArgumentException(ERROR_PARAM_NOT_AUTOWIRE.format(param))
+        if (param.requireInject().not()) {
+            require(param.isOptional) { ERROR_PARAM_NOT_AUTOWIRE.format(param) }
+            return null
         }
 
-        val key = param.toBindingKey()
+        val key = BindingKey.from(param)
         overrides[key]?.let { return it }
 
-        val kClass =
-            requireNotNull(param.type.classifier as? KClass<out Any>) {
-                ERROR_UNKNOWN_TYPE.format(param)
-            }
+        val kClass = param.type.classifier as KClass<out Any>
         return resolve(kClass, key.qualifier, overrides)
     }
 
@@ -193,13 +127,12 @@ class AppContainer {
         target::class
             .memberProperties
             .filterIsInstance<KMutableProperty1<Any, Any?>>()
-            .filter { prop -> prop.hasAnnotation<Inject>() }
+            .filter { prop -> prop.requireInject() }
             .forEach { prop ->
+                prop.isAccessible = true
                 val qualifier = findSingleQualifierOrNull(prop.annotations)
                 val kClass = prop.returnType.jvmErasure as KClass<Any>
 
-                // 이미 값이 있으면 스킵
-                prop.isAccessible = true
                 val current = runCatching { prop.get(target) }.getOrNull()
                 if (current != null) return@forEach
 
@@ -208,34 +141,19 @@ class AppContainer {
             }
     }
 
-    /* ============================
-     * @Provides helpers
-     * ============================ */
-
-    private fun isProvidesFunction(fn: KFunction<*>): Boolean = fn.findAnnotation<Provides>() != null
-
-    private fun buildProvidesKey(fn: KFunction<*>): BindingKey {
-        val returnType = fn.returnType.jvmErasure
-        val qualifier = findSingleQualifierOrNull(fn.annotations)
-        return BindingKey(returnType, qualifier)
-    }
-
-    private fun <T : Any> buildFactoryProvider(
+    /** @Provides Annotation이 붙은 함수로부터 Provider를 생성한다. */
+    private fun <T : Any> buildProvider(
         fn: KFunction<T>,
         moduleInstance: Any,
-    ): FactoryProvider<Any> {
+    ): Provider<Any> {
         fn.isAccessible = true
-
-        val isSingleton = fn.findAnnotation<Singleton>() != null
-
         val factory: (Map<BindingKey, Any>) -> Any = { overrides ->
             val args = buildProvidesArgs(fn, moduleInstance, overrides)
             fn.callBy(args)
         }
-        return FactoryProvider(
-            factory = factory,
-            isSingleton = isSingleton,
-        )
+
+        if (fn.isSingletonFunction()) return SingletonProvider(factory)
+        return FactoryProvider(factory)
     }
 
     /** @Provides 함수 인자 맵 생성(모듈 인스턴스 + 값 파라미터) */
@@ -243,38 +161,32 @@ class AppContainer {
         fn: KFunction<*>,
         moduleInstance: Any,
         overrides: Map<BindingKey, Any>,
-    ): Map<KParameter, Any?> =
-        fn.parameters.associateWith { param ->
-            if (param.kind == KParameter.Kind.INSTANCE) return@associateWith moduleInstance
-            resolveProvidesParameter(param, overrides)
-        }
+    ): Map<KParameter, Any> =
+        fn.parameters
+            .mapNotNull { param ->
+                if (param.kind == KParameter.Kind.INSTANCE) return@mapNotNull param to moduleInstance
+                val resolved = resolveProvidesParameter(param, overrides) ?: return@mapNotNull null
+                param to resolved
+            }.toMap()
 
     /** 단일 @Provides 파라미터 해석 */
     private fun resolveProvidesParameter(
         param: KParameter,
         overrides: Map<BindingKey, Any>,
-    ): Any {
-        // @Provides 파라미터도 @Inject로 자동 주입 대상을 명시적으로 제한
-        require(param.findAnnotation<Inject>() != null) {
-            ERROR_PARAM_NOT_AUTOWIRE.format(param)
-        }
+    ): Any? {
+        if (param.requireInject().not()) return null
 
-        val key = param.toBindingKey()
+        val key = BindingKey.from(param)
         overrides[key]?.let { return it }
 
-        val kClass =
-            requireNotNull(param.type.classifier as? KClass<out Any>) {
-                ERROR_UNKNOWN_TYPE.format(param)
-            }
+        val kClass = param.type.classifier as KClass<out Any>
         return resolve(kClass, key.qualifier, overrides)
     }
 
     companion object {
-        const val ERROR_MODULE_MUST_BE_OBJECT = "모듈은 object여야 합니다: %s"
-        const val ERROR_NO_PUBLIC_CTOR = "%s에 public 생성자가 없습니다."
-        const val ERROR_PARAM_NOT_AUTOWIRE =
+        private const val ERROR_NO_PUBLIC_CTOR = "%s에 public 생성자가 없습니다."
+        private const val ERROR_PARAM_NOT_AUTOWIRE =
             "자동 주입 대상이 아닌 파라미터입니다. @Inject를 붙이거나 모듈 @Provides를 사용하세요: %s"
-        const val ERROR_UNKNOWN_TYPE = "타입 정보를 알 수 없습니다: %s"
     }
 }
 
