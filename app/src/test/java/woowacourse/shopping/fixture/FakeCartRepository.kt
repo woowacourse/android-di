@@ -1,6 +1,7 @@
 package woowacourse.shopping.fixture
 
 import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class FakeCartRepository : CartRepository {
@@ -10,7 +11,7 @@ class FakeCartRepository : CartRepository {
         products.add(product)
     }
 
-    override suspend fun getAllCartProducts(): List<Product> = products.toList()
+    override suspend fun getAllCartProducts(): List<CartProduct> = products.toList()
 
     override suspend fun deleteCartProduct(id: Long) {
         products.removeAt(id.toInt())
