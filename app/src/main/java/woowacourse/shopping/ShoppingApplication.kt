@@ -9,7 +9,6 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacouse.shopping.di.Container
-import woowacouse.shopping.di.annotation.Qualifier
 
 class ShoppingApplication : Application() {
     private val database: ShoppingDatabase by lazy {
