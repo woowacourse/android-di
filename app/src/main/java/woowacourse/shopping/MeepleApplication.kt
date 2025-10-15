@@ -14,11 +14,9 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
 class MeepleApplication : Application() {
-    lateinit var appContainer: AppContainer
-        private set
+    private lateinit var appContainer: AppContainer
 
-    lateinit var shoppingDatabase: ShoppingDatabase
-        private set
+    private lateinit var shoppingDatabase: ShoppingDatabase
 
     lateinit var viewModelFactory: ViewModelFactory
         private set
