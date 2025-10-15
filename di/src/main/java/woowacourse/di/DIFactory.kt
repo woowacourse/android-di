@@ -1,8 +1,7 @@
 package woowacourse.di
 
-import woowacourse.di.annotation.InMemory
 import woowacourse.di.annotation.Inject
-import woowacourse.di.annotation.RoomDB
+import woowacourse.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
@@ -29,7 +28,9 @@ object DIFactory {
             primaryConstructor.parameters.associateWith { param ->
                 val isAnnotated = param.hasAnnotation<Inject>()
                 val qualifierAnnotation =
-                    param.annotations.firstOrNull { it is RoomDB || it is InMemory }?.annotationClass
+                    param.annotations
+                        .firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+                        ?.annotationClass
 
                 if (isAnnotated) {
                     val typeKClass =
@@ -61,7 +62,8 @@ object DIFactory {
                 val dependency =
                     DIContainer.get(
                         dependencyClass,
-                        property.annotations.firstOrNull { it is RoomDB || it is InMemory }?.annotationClass,
+                        property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
+                            ?.annotationClass,
                     )
                 property.set(instance, dependency)
             }
