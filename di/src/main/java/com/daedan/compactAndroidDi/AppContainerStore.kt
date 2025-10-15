@@ -22,9 +22,16 @@ class AppContainerStore {
     operator fun get(qualifier: Qualifier): Any? = cache[qualifier]
 
     fun registerFactory(vararg modules: DependencyModule) {
-        val factories = mutableListOf<DependencyFactory<*>>()
-        modules.forEach { factories.addAll(it.factories) }
-        factory.putAll(factories.associateBy { it.qualifier })
+        val newFactories = modules.flatMap { it.factories }
+        val newFactoryMap = newFactories.associateBy { it.qualifier }
+        require(newFactoryMap.size == newFactories.size) { ERR_CONFLICT_KEY }
+
+        val conflictingKeys = newFactoryMap.keys.filter { factory.containsKey(it) }
+        require(conflictingKeys.isEmpty()) {
+            "$ERR_CONFLICT_KEY ${conflictingKeys.joinToString()}"
+        }
+
+        factory.putAll(newFactoryMap)
     }
 
     fun instantiate(qualifier: Qualifier): Any {
@@ -83,6 +90,7 @@ class AppContainerStore {
     }
 
     companion object {
+        private const val ERR_CONFLICT_KEY = "이미 동일한 Qualifier가 존재합니다"
         private const val ERR_CANNOT_FIND_INSTANCE = "컨테이너에서 인스턴스를 찾을 수 없습니다"
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
         private const val ERR_CONSTRUCTOR_NOT_FOUND =
