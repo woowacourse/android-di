@@ -23,10 +23,12 @@ object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
     private lateinit var modulePool: List<KClass<*>>
 
+    /** DiContainer에서 Context를 사용할 수 있도록 설정 **/
     fun setContext(context: Context) {
         instancePool[Context::class] = context
     }
 
+    /** 현재 패키지에 있는 클래스들 중 MyModule의 어노테이션이 붙어있는 모듈 찾기**/
     fun getAnnotatedModules() {
         val result = mutableListOf<KClass<*>>()
         val context = instancePool[Context::class] as Application
@@ -49,6 +51,7 @@ object DiContainer {
         modulePool = result
     }
 
+    /** 외부에 인스턴스를 주입해주는 주는 메서드**/
     fun <T : Any> getInstance(kClass: KClass<T>): T {
         if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
             return createInstance(kClass)
@@ -64,21 +67,22 @@ object DiContainer {
         return kClass.cast(newInstance)
     }
 
+    /** MyInjector어노테이션이 붙어 있는 프로퍼티를 찾아 인스턴스 주입 **/
     private fun <T : Any> injectFieldProperties(
         implementClass: KClass<out Any>,
         instance: T,
     ) {
         implementClass.declaredMemberProperties
             .filter { it.hasAnnotation<MyInjector>() }
+            .filterIsInstance<KMutableProperty1<Any, Any?>>()
             .forEach { property ->
-                val mutableProp: KMutableProperty1<T, Any> = property as KMutableProperty1<T, Any>
-                mutableProp.isAccessible = true
+                property.isAccessible = true
                 val propertyInstance =
                     getInstance(
                         property.returnType.classifier as? KClass<*>
                             ?: error(""),
                     )
-                mutableProp.setter.call(instance, propertyInstance)
+                property.setter.call(instance, propertyInstance)
             }
     }
 
@@ -98,6 +102,7 @@ object DiContainer {
 
         return instance
     }
+
 
     private fun <T : Any> createFromModule(
         function: KFunction<*>,
