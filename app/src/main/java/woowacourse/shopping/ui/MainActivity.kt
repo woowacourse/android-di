@@ -8,15 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import woowacourse.bibi.di.androidx.injectedViewModel
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.injectedViewModel
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by lazy { injectedViewModel(MainViewModel::class) }
+    private val viewModel by lazy {
+        injectedViewModel<MainViewModel> { (application as ShoppingApplication).container }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +75,17 @@ class MainActivity : AppCompatActivity() {
                 )
             binding.rvProducts.adapter = adapter
         }
+
         viewModel.onProductAdded.observe(this) {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_added), Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.errorMessage.observe(this) { message ->
+            if (!message.isNullOrBlank()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                viewModel.consumeError()
+            }
         }
     }
 

@@ -1,8 +1,10 @@
 package woowacourse.shopping
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -10,6 +12,14 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowToast
+import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Local
+import woowacourse.bibi.di.core.Remote
+import woowacourse.shopping.common.withOverriddenContainer
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.fake.FakeCartRepository
+import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.ui.MainActivity
 import woowacourse.shopping.ui.MainViewModel
 
@@ -48,11 +58,7 @@ class MainActivityTest {
     @Test
     fun `상품을 클릭하면 토스트 메세지가 출력된다`() {
         // given
-        val activity =
-            Robolectric
-                .buildActivity(MainActivity::class.java)
-                .setup()
-                .get()
+        val activity = launchMainWithFakes()
         val recyclerView = activity.findViewById<RecyclerView>(R.id.rv_products)
         val firstProduct =
             recyclerView.layoutManager
@@ -65,5 +71,23 @@ class MainActivityTest {
         // then
         val toastMessage = ShadowToast.getTextOfLatestToast()
         assertThat(toastMessage).isEqualTo("장바구니에 추가되었습니다.")
+    }
+
+    private fun launchMainWithFakes(): MainActivity {
+        val app = ApplicationProvider.getApplicationContext<Context>() as ShoppingApplication
+
+        val testContainer =
+            ContainerBuilder()
+                .apply {
+                    register(CartRepository::class, Local::class) { FakeCartRepository() }
+                    register(ProductRepository::class, Local::class) { FakeProductRepository(ProductFixture.AllProducts) }
+                }.build()
+
+        return withOverriddenContainer(app, testContainer) {
+            Robolectric
+                .buildActivity(MainActivity::class.java)
+                .setup()
+                .get()
+        }
     }
 }

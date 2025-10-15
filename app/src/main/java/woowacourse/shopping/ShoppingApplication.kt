@@ -1,8 +1,9 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.di.ContainerBuilder
+import androidx.annotation.VisibleForTesting
+import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.shopping.di.installAllBindings
 
 class ShoppingApplication : Application() {
@@ -12,7 +13,12 @@ class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         val builder = ContainerBuilder()
-        installAllBindings(builder)
+        installAllBindings(builder, this)
         container = builder.build()
+    }
+
+    @VisibleForTesting
+    fun overrideContainerForTest(testContainer: AppContainer) {
+        container = testContainer
     }
 }

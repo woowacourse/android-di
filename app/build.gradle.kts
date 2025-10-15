@@ -49,11 +49,13 @@ android {
 }
 
 dependencies {
+    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.material)
+    implementation(libs.core.ktx)
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.androidx.core.testing)
