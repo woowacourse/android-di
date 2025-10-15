@@ -50,22 +50,17 @@ class DIContainer(
             }
     }
 
-    private fun getInstance(
-        kClass: KClass<*>,
-        qualifier: String? = null,
-    ): Any {
-        val dependencyKey = DependencyKey(kClass, qualifier)
-
+    private fun getInstance(dependencyKey: DependencyKey): Any {
         // ViewModel은 매번 새로 생성
-        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
-            return createNewInstance(kClass)
+        if (ViewModel::class.java.isAssignableFrom(dependencyKey.type.java)) {
+            return createNewInstance(dependencyKey.type)
         }
 
         // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
         instances[dependencyKey]?.let { return it }
 
         // Room의 Dao 요쳥일 경우 externalSingletons의 Room 인스턴스 에서 Dao 인스턴스 반환
-        resolveDaoFromRoomDB(kClass)?.let { dao ->
+        resolveDaoFromRoomDB(dependencyKey.type)?.let { dao ->
             instances[dependencyKey] = dao
             return dao
         }
@@ -78,7 +73,7 @@ class DIContainer(
         }
 
         // 인스턴스가 존재하지 않을 경우 생성
-        val createdInstance = createNewInstance(kClass)
+        val createdInstance = createNewInstance(dependencyKey.type)
         instances[dependencyKey] = createdInstance
         return createdInstance
     }
@@ -105,7 +100,7 @@ class DIContainer(
         try {
             val fieldType = property.returnType.classifier as KClass<*>
             val qualifier = getFieldQualifier(property)
-            val dependency = getInstance(fieldType, qualifier)
+            val dependency = getInstance(DependencyKey(fieldType, qualifier))
 
             property.isAccessible = true
             property.set(target, dependency)
@@ -144,7 +139,7 @@ class DIContainer(
                 .filterNot { it.isOptional }
                 .associateWith { param ->
                     val paramType = param.type.classifier as KClass<*>
-                    getInstance(paramType)
+                    getInstance(DependencyKey(paramType))
                 }
         return constructor.callBy(parameterMap)
     }
