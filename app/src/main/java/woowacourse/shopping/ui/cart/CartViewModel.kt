@@ -9,6 +9,7 @@ import com.example.di.RoomDatabase
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.ui.model.CartUiModel
+import woowacourse.shopping.ui.model.toPresentation
 
 class CartViewModel : ViewModel() {
     @Inject
@@ -24,7 +25,7 @@ class CartViewModel : ViewModel() {
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            _cartProducts.value = cartRepository.getAllCartProducts()
+            _cartProducts.value = cartRepository.getAllCartProducts().map { it.toPresentation() }
         }
     }
 

@@ -13,11 +13,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.shopping.data.mapper.toData
-import woowacourse.shopping.data.mapper.toPresentation
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.fixture.getOrAwaitValue
 import woowacourse.shopping.ui.model.CartUiModel
+import woowacourse.shopping.ui.model.toPresentation
 
 @ExperimentalCoroutinesApi
 class CartViewModelTest {

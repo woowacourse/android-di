@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.domain.ProductRepository
+import woowacourse.shopping.domain.toData
 
 class MainViewModel : ViewModel() {
     @Inject
@@ -29,7 +30,7 @@ class MainViewModel : ViewModel() {
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
-            cartRepository.addCartProduct(product)
+            cartRepository.addCartProduct(product.toData())
             _onProductAdded.value = true
         }
     }
