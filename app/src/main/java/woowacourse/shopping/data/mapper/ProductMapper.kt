@@ -4,7 +4,7 @@ import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.ui.model.CartUiModel
 
-fun Product.toEntity(): CartProductEntity =
+fun Product.toData(): CartProductEntity =
     CartProductEntity(
         name = name,
         price = price,

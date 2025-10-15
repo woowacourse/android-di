@@ -12,7 +12,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.data.mapper.toData
 import woowacourse.shopping.data.mapper.toPresentation
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.fixture.FakeCartRepository
@@ -63,8 +63,8 @@ class CartViewModelTest {
             val product2 = Product("상품2", 2000, "")
             fakeCartRepository.setCartProducts(
                 listOf(
-                    product1.toEntity().toPresentation(),
-                    product2.toEntity().toPresentation(),
+                    product1.toData().toPresentation(),
+                    product2.toData().toPresentation(),
                 ),
             )
 
