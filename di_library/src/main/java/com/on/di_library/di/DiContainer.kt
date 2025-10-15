@@ -68,7 +68,11 @@ object DiContainer {
                 val qualifier = function.findAnnotation<MyQualifier>()?.type
 
                 if (dependencyProviders.containsKey(returnTypeKClass) && qualifier == null) {
-                    throw IllegalArgumentException(ERROR_MESSAGE.format(returnTypeKClass.simpleName))
+                    throw IllegalArgumentException(
+                        ERROR_MESSAGE_DUPLICATED_PROVIDER_ERROR.format(
+                            returnTypeKClass.simpleName
+                        )
+                    )
                 } else if (!dependencyProviders.containsKey(returnTypeKClass)) {
                     dependencyProviders[returnTypeKClass] = mutableListOf()
                 }
@@ -155,7 +159,12 @@ object DiContainer {
                 } else {
                     val parameterClass: KClass<*> =
                         parameter.type.classifier as? KClass<*>
-                            ?: error("")
+                            ?: error(
+                                ERROR_MESSAGE_INVALID_PARAMETER_TYPE.format(
+                                    module,
+                                    function.name
+                                )
+                            )
                     getInstance(parameterClass)
                 }
             }
@@ -198,5 +207,7 @@ object DiContainer {
     private const val ERROR_MESSAGE_NOT_OBJECT = "%s은 object가 아닙니다."
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
     private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."
-    private const val ERROR_MESSAGE = "중복된 Provider 감지: %s 타입의 기본 Provider가 여러 개 존재합니다."
+    private const val ERROR_MESSAGE_DUPLICATED_PROVIDER_ERROR =
+        "중복된 Provider 감지: %s 타입의 기본 Provider가 여러 개 존재합니다."
+    private const val ERROR_MESSAGE_INVALID_PARAMETER_TYPE = "모듈 %s의 함수 %s에서 파라미터 타입을 확인할 수 없습니다."
 }
