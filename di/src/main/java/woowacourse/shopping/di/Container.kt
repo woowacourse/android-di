@@ -5,8 +5,8 @@ import kotlin.reflect.KClass
 interface Container {
     fun <T : Any> register(
         kClass: KClass<T>,
-        instance: T,
         qualifier: String? = null,
+        provider: () -> T,
     )
 
     fun <T : Any> get(

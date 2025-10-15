@@ -1,44 +1,20 @@
 package woowacourse.shopping
 
-import android.content.Context
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.data.repository.CartDatabaseRepository
-import woowacourse.shopping.data.repository.CartInMemoryRepository
-import woowacourse.shopping.data.repository.ProductDefaultRepository
-import woowacourse.shopping.data.repository.RepositoryType
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.DependencyKey
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass
 
-class AppContainer(
-    context: Context,
-) : Container {
+class AppContainer : Container {
+    private val providers = mutableMapOf<DependencyKey, () -> Any>()
     private val dependencies = mutableMapOf<DependencyKey, Any>()
-    private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(context) }
-
-    init {
-        register(ProductRepository::class, ProductDefaultRepository())
-        register(
-            CartRepository::class,
-            CartDatabaseRepository(database.cartProductDao()),
-            RepositoryType.ROOM_DB,
-        )
-        register(
-            CartRepository::class,
-            CartInMemoryRepository(),
-            RepositoryType.IN_MEMORY,
-        )
-    }
 
     override fun <T : Any> register(
         kClass: KClass<T>,
-        instance: T,
         qualifier: String?,
+        provider: () -> T,
     ) {
         val key = DependencyKey(kClass, qualifier)
-        dependencies[key] = instance
+        providers[key] = provider
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -47,8 +23,12 @@ class AppContainer(
         qualifier: String?,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        return dependencies[key] as? T
-            ?: throw IllegalArgumentException("${kClass.simpleName} 타입의 인스턴스가 등록되어 있지 않습니다.")
+        val provider =
+            providers[key]
+                ?: throw IllegalArgumentException("${kClass.simpleName} 의존성이 등록되어 있지 않습니다.")
+        val instance = provider()
+        dependencies[key] = instance
+        return instance as T
     }
 
     override fun <T : Any> canResolve(
@@ -56,6 +36,6 @@ class AppContainer(
         qualifier: String?,
     ): Boolean {
         val key = DependencyKey(kClass, qualifier)
-        return dependencies.containsKey(key)
+        return dependencies.containsKey(key) || providers.containsKey(key)
     }
 }
