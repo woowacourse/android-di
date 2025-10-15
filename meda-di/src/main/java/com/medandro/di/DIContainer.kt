@@ -107,7 +107,10 @@ class DIContainer(
     private fun createNewInstance(kClass: KClass<*>): Any {
         val constructor =
             kClass.primaryConstructor
-                ?: throw IllegalStateException("주 생성자가 존재하지 않아 객체를 생성할 수 없습니다")
+                ?: throw IllegalStateException(
+                    "${kClass.simpleName} 는 주 생성자가 없어 자동으로 인스턴스를 생성할 수 없습니다." +
+                        "DIContainer가 지원하는 타입: 주 생성자가 명시되어 있거나 생략된 클래스",
+                )
 
         val parameterMap =
             constructor.parameters
