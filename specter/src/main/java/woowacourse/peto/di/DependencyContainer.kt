@@ -18,7 +18,6 @@ class DependencyContainer(
     modules: List<DependencyModule>,
 ) {
     private val providers = ConcurrentHashMap<DependencyKey, LazyProvider>()
-    private val instances = ConcurrentHashMap<DependencyKey, Instance>()
 
     init {
         modules.forEach(::registerModule)
@@ -41,14 +40,12 @@ class DependencyContainer(
     ): Instance = get(DependencyKey(type, qualifier))
 
     private fun get(key: DependencyKey): Instance {
-        return instances.computeIfAbsent(key) {
-            val provider = providers[key]
-            requireNotNull(provider?.invoke()) {
-                val className = (key.type.classifier as? KClass<*>)?.simpleName ?: key.type
-                val dependencyName =
-                    key.qualifier?.let { "$className('$it')" } ?: className.toString()
-                DEPENDENCY_NOT_FOUND.format(dependencyName)
-            }
+        val provider = providers[key]
+        return requireNotNull(provider?.invoke()) {
+            val className = (key.type.classifier as? KClass<*>)?.simpleName ?: key.type
+            val dependencyName =
+                key.qualifier?.let { "$className('$it')" } ?: className.toString()
+            DEPENDENCY_NOT_FOUND.format(dependencyName)
         }
     }
 
