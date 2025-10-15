@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -24,7 +24,7 @@ object DependencyInjector {
 
     private fun initialize(module: Module) {
         module::class.memberProperties.forEach { property: KProperty1<out Module, *> ->
-            if (property.findAnnotation<Dependency>() == null) return@forEach
+            if (!property.hasAnnotation<Dependency>()) return@forEach
 
             val identifier = Identifier.from(property)
             dependencyGetters[identifier] = {
@@ -47,7 +47,7 @@ object DependencyInjector {
     private fun injectFields(target: Any) {
         target::class.memberProperties.forEach { property: KProperty1<out Any, *> ->
             property.isAccessible = true
-            if (property.findAnnotation<Inject>() == null) return@forEach
+            if (!property.hasAnnotation<Inject>()) return@forEach
 
             val identifier = Identifier.from(property)
             val mutableProperty =
