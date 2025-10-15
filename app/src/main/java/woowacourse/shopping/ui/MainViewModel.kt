@@ -15,11 +15,11 @@ import woowacourse.shopping.domain.toData
 
 class MainViewModel : ViewModel() {
     @Inject
-    @RoomDatabase
+    @field:RoomDatabase
     private lateinit var cartRepository: CartRepository
 
     @Inject
-    @InMemory
+    @field:InMemory
     private lateinit var productRepository: ProductRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
