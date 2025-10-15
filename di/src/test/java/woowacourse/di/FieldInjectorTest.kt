@@ -1,6 +1,7 @@
 package woowacourse.di
 
 import com.google.common.truth.Truth.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -50,6 +51,8 @@ class FieldInjectorTest {
         FieldInjector.inject(target, container)
 
         // then (예외 발생)
-        Unit
+        assertThatThrownBy { FieldInjector.inject(target, container) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("provider")
     }
 }
