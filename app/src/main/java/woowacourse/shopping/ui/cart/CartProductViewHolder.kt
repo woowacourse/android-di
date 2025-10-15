@@ -23,7 +23,7 @@ class CartProductViewHolder(
 
     fun bind(cartItem: CartUiModel) {
         cartItemId = cartItem.id
-        binding.item = cartItem.product
+        binding.item = cartItem
         binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartItem.createdAt)
     }
 
