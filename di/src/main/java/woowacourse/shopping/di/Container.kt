@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
-object Container {
+class Container {
     private val providers = mutableMapOf<DependencyKey, () -> Any>()
     private val dependencies = mutableMapOf<DependencyKey, Any>()
 
@@ -13,6 +13,15 @@ object Container {
     ) {
         val key = DependencyKey(kClass, qualifier)
         providers[key] = provider
+    }
+
+    fun <T : Any> registerInstance(
+        kClass: KClass<T>,
+        instance: T,
+        qualifier: String? = null,
+    ) {
+        val key = DependencyKey(kClass, qualifier)
+        dependencies[key] = instance
     }
 
     @Suppress("UNCHECKED_CAST")

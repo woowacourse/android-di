@@ -11,11 +11,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import woowacourse.shopping.data.repository.RepositoryType
+import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.fixture.FakeAppContainer
 import woowacourse.shopping.fixture.model.CART_PRODUCTS_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.getOrAwaitValue
@@ -34,8 +35,8 @@ class CartViewModelTest {
 
         val cartRepository = FakeCartRepository(CART_PRODUCTS_FIXTURE.toMutableList())
         val container =
-            FakeAppContainer().apply {
-                register(CartRepository::class, cartRepository)
+            Container().apply {
+                registerInstance(CartRepository::class, cartRepository, RepositoryType.ROOM_DB)
             }
         val dependencyInjector = DependencyInjector(container)
         val viewModelFactory = ViewModelFactory(dependencyInjector)
