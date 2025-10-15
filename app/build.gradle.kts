@@ -62,9 +62,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.assertj.core)
     androidTestImplementation(libs.truth)
-
-    // Reflection
-    implementation(libs.kotlin.reflect)
+    
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
