@@ -5,9 +5,9 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository.CartDatabaseRepository
 import woowacourse.shopping.data.repository.CartInMemoryRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
+import woowacourse.shopping.data.repository.RepositoryType
 import woowacourse.shopping.di.Container
 import woowacourse.shopping.di.DependencyKey
-import woowacourse.shopping.di.annotation.RepositoryType
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.reflect.KClass

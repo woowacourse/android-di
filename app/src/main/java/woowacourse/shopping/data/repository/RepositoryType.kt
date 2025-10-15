@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.annotation
+package woowacourse.shopping.data.repository
 
 object RepositoryType {
     const val IN_MEMORY = "in_memory"
