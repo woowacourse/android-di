@@ -11,9 +11,8 @@ data class CartProductEntity(
     val name: String,
     val price: Int,
     val imageUrl: String,
-) {
-    var createdAt: Long = System.currentTimeMillis()
-}
+    val createdAt: Long = System.currentTimeMillis()
+)
 
 fun CartProductEntity.toDomain(): CartProduct =
     CartProduct(
