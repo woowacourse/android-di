@@ -21,12 +21,16 @@ object Container {
         qualifier: String?,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        val provider =
-            providers[key]
-                ?: throw IllegalArgumentException("${kClass.simpleName} 의존성이 등록되어 있지 않습니다.")
-        val instance = provider()
-        dependencies[key] = instance
-        return instance as T
+        return if (dependencies.containsKey(key)) {
+            dependencies[key] as T
+        } else {
+            val provider =
+                providers[key]
+                    ?: throw IllegalArgumentException("${kClass.simpleName} 의존성이 등록되어 있지 않습니다.")
+            val instance = provider()
+            dependencies[key] = instance
+            instance as T
+        }
     }
 
     fun <T : Any> canResolve(
