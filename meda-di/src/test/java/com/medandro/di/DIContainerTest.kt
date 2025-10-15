@@ -189,4 +189,26 @@ class DIContainerTest {
         // then
         assertThat(car.wheels.count).isEqualTo(10)
     }
+
+    @Test(
+        // then
+        expected = IllegalStateException::class,
+    )
+    fun `부 생성자만 존재하는 인스턴스는 자동으로 생성할 수 없다`() {
+        // given
+        class Train {
+            constructor(name: String) { }
+        }
+
+        class Vehicle {
+            @InjectField
+            lateinit var train: Train
+        }
+
+        val diContainer = DIContainer()
+        val vehicle = Vehicle()
+
+        // when
+        diContainer.injectFields(vehicle)
+    }
 }
