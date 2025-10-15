@@ -23,6 +23,6 @@ class ShoppingApplication : Application() {
             ProductDefaultRepository::class,
             CartRoomRepository::class,
             CartInMemoryRepository::class,
-        ).registerSingleton(database)
+        ).registerSingleton(database).registerSingleton(database.cartProductDao())
     }
 }
