@@ -1,28 +1,21 @@
 package woowacourse.shopping.fixture
 
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.Product
-import woowacourse.shopping.ui.model.CartUiModel
 
 class FakeCartRepository : CartRepository {
-    private val cartProducts: MutableList<CartUiModel> = mutableListOf()
+    private val cartProducts: MutableList<CartProductEntity> = mutableListOf()
 
-    fun setCartProducts(products: List<CartUiModel>) {
+    fun setCartProducts(products: List<CartProductEntity>) {
         cartProducts.clear()
         cartProducts.addAll(products)
     }
 
-    override suspend fun addCartProduct(product: Product) {
-        val newCartItem =
-            CartUiModel(
-                id = 0L,
-                product = product,
-                createdAt = 0L,
-            )
-        cartProducts.add(newCartItem)
+    override suspend fun addCartProduct(product: CartProductEntity) {
+        cartProducts.add(product)
     }
 
-    override suspend fun getAllCartProducts(): List<CartUiModel> = cartProducts.toList()
+    override suspend fun getAllCartProducts(): List<CartProductEntity> = cartProducts.toList()
 
     override suspend fun deleteCartProduct(id: Long) {
         if (id in cartProducts.indices) {

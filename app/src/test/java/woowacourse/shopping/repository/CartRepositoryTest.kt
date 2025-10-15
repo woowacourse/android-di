@@ -7,8 +7,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertAll
 import woowacourse.shopping.domain.Product
+import woowacourse.shopping.domain.toData
 import woowacourse.shopping.fixture.FakeCartRepository
-import woowacourse.shopping.ui.model.CartUiModel
 
 class CartRepositoryTest {
     private lateinit var cartRepository: FakeCartRepository
@@ -23,10 +23,10 @@ class CartRepositoryTest {
         runTest {
             // Given
             val product = Product("상품1", 1000, "")
-            val cartItem = CartUiModel(id = 0L, product = product, createdAt = 0L)
+            val cartItem = product.toData()
 
             // When
-            cartRepository.addCartProduct(product)
+            cartRepository.addCartProduct(cartItem)
 
             // Then
             val cartProducts = cartRepository.getAllCartProducts()
@@ -44,8 +44,8 @@ class CartRepositoryTest {
             val product2 = Product("상품2", 2000, "")
 
             // When
-            cartRepository.addCartProduct(product1)
-            cartRepository.addCartProduct(product2)
+            cartRepository.addCartProduct(product1.toData())
+            cartRepository.addCartProduct(product2.toData())
 
             // Then
             val cartProducts = cartRepository.getAllCartProducts()
@@ -58,17 +58,18 @@ class CartRepositoryTest {
             // Given
             val product1 = Product("상품1", 1000, "")
             val product2 = Product("상품2", 2000, "")
-            val cartItem = CartUiModel(id = 0L, product = product2, createdAt = 0L)
-            cartRepository.addCartProduct(product1)
-            cartRepository.addCartProduct(product2)
+            val cartItem1 = product1.toData()
+            val cartItem2 = product2.toData()
+            cartRepository.addCartProduct(cartItem1)
+            cartRepository.addCartProduct(cartItem2)
 
             // When
-            cartRepository.deleteCartProduct(0)
+            cartRepository.deleteCartProduct(1L)
 
             // Then
             val cartProducts = cartRepository.getAllCartProducts()
             assertAll(
-                { assertThat(cartProducts).containsExactly(cartItem) },
+                { assertThat(cartProducts).containsExactly(cartItem1) },
                 { assertThat(cartProducts).hasSize(1) },
             )
         }
