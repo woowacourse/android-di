@@ -29,6 +29,11 @@ class AutoInjectingViewModelFactoryTest {
         lateinit var anotherRepository: AnotherRepository
     }
 
+    class ConstructorInjectedViewModel(
+        val repository: TestRepository,
+        val anotherRepository: AnotherRepository,
+    ) : ViewModel()
+
     @Test
     fun `ViewModel이_정상적으로_주입된다`() {
         // given
@@ -66,6 +71,27 @@ class AutoInjectingViewModelFactoryTest {
         val mainRepository = extractPrivateField(mainViewModel, "repository")
         val cartRepository = extractPrivateField(cartViewModel, "repository")
         assertThat(mainRepository === cartRepository).isTrue()
+    }
+
+    @Test
+    fun `생성자로_의존성이_주입된다`() {
+        // given
+        val container =
+            Container().apply {
+                bindSingleton(TestRepository::class) { TestRepository() }
+                bindSingleton(AnotherRepository::class) { AnotherRepository() }
+            }
+        val factory = AutoInjectingViewModelFactory(container)
+
+        // when
+        val viewModel = factory.create(ConstructorInjectedViewModel::class.java)
+
+        // then
+        val repoFromContainer = container.get(TestRepository::class)
+        val anotherFromContainer = container.get(AnotherRepository::class)
+
+        assertThat(viewModel.repository === repoFromContainer).isTrue()
+        assertThat(viewModel.anotherRepository === anotherFromContainer).isTrue()
     }
 
     private fun extractPrivateField(
