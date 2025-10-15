@@ -36,14 +36,16 @@ class AppContainerStore {
         }
 
         inProgress.add(qualifier)
-        val instance =
-            factory[qualifier]?.invoke()
-                ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
-
-        injectField(instance)
-        cache[qualifier] = instance
-        inProgress.remove(qualifier)
-        return instance
+        try {
+            val instance =
+                factory[qualifier]?.invoke()
+                    ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
+            injectField(instance)
+            cache[qualifier] = instance
+            return instance
+        } finally {
+            inProgress.remove(qualifier)
+        }
     }
 
     private fun injectField(instance: Any) {
