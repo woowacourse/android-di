@@ -20,14 +20,14 @@ object RepositoryModule {
     @Provides
     @Singleton
     @Database
-    fun provideCartRepository(
+    fun provideDatabaseCartRepository(
         @Inject impl: DatabaseCartRepository,
     ): CartRepository = impl
 
     @Provides
     @Singleton
     @InMemory
-    fun provideCartRepository(
+    fun provideInMemoryCartRepository(
         @Inject impl: InMemoryCartRepository,
     ): CartRepository = impl
 
