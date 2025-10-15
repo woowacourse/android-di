@@ -16,7 +16,6 @@ class CartInMemoryRepository : CartRepository {
         val cartEntity =
             product.toEntity().apply {
                 id = currentId++
-                createdAt = System.currentTimeMillis()
             }
 
         cartItems.add(cartEntity)
