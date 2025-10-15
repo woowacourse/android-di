@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.daedan.di.AppContainerStore
@@ -12,8 +12,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import net.bytebuddy.matcher.ElementMatchers.named
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -25,7 +24,6 @@ import woowacourse.fixture.getOrAwaitValue
 import woowacourse.shopping.di.RoomDBCartRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.ui.MainViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
@@ -85,7 +83,7 @@ class MainViewModelTest {
 
             // then
             val productAdded = viewModel.onProductAdded.getOrAwaitValue()
-            assertThat(productAdded).isTrue()
+            Assertions.assertThat(productAdded).isTrue()
         }
 
     @Test
@@ -98,6 +96,6 @@ class MainViewModelTest {
 
         // then
         val actual = viewModel.products.getOrAwaitValue()
-        assertThat(actual).isEqualTo(expected)
+        Assertions.assertThat(actual).isEqualTo(expected)
     }
 }

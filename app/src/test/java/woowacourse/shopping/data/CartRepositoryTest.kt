@@ -1,7 +1,7 @@
-package woowacourse.shopping
+package woowacourse.shopping.data
 
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
 import woowacourse.fixture.FakeCartProductDao
@@ -32,7 +32,7 @@ class CartRepositoryTest {
 
             // then
             val actual = cartRepository.getAllCartProducts()
-            assertThat(actual).doesNotContain(target)
+            Assertions.assertThat(actual).doesNotContain(target)
         }
 
     @Test
@@ -46,7 +46,7 @@ class CartRepositoryTest {
 
             // then
             val actual = cartRepository.getAllCartProducts()
-            assertThat(actual).anyMatch { it.id == product.id }
+            Assertions.assertThat(actual).anyMatch { it.id == product.id }
         }
 
     @Test
@@ -62,6 +62,6 @@ class CartRepositoryTest {
 
             // then
             val actual = cartRepository.getAllCartProducts().map { it.name }
-            assertThat(actual).isEqualTo(expected)
+            Assertions.assertThat(actual).isEqualTo(expected)
         }
 }

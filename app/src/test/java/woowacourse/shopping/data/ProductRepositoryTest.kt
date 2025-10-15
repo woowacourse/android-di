@@ -1,6 +1,6 @@
-package woowacourse.shopping
+package woowacourse.shopping.data
 
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.repository.DefaultProductRepository
@@ -30,6 +30,6 @@ class ProductRepositoryTest {
             }
 
         // then
-        assertThat(actual).isEqualTo(expected)
+        Assertions.assertThat(actual).isEqualTo(expected)
     }
 }
