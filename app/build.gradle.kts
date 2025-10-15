@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -58,6 +59,7 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.assertj.core)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
@@ -79,4 +81,5 @@ dependencies {
     implementation(libs.glide)
     // Robolectric
     testImplementation(libs.robolectric)
+    testImplementation(kotlin("test"))
 }

@@ -1,5 +1,7 @@
 package woowacourse.shopping
 
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.module.DatabaseModule
 import woowacourse.shopping.di.module.RepositoryModule
 
 class ShoppingApplication : BaseApplication() {
@@ -9,7 +11,9 @@ class ShoppingApplication : BaseApplication() {
     }
 
     override fun setupModules() {
-        val modules = listOf(RepositoryModule())
+        val shoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
+        val inMemoryDatabase = ShoppingDatabase.getInMemoryInstance(applicationContext)
+        val modules = listOf(RepositoryModule(), DatabaseModule(shoppingDatabase, inMemoryDatabase))
         installModules(modules)
     }
 }
