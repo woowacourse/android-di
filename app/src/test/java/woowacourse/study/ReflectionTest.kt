@@ -2,9 +2,6 @@ package woowacourse.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.di.LocalStorageModule
-import woowacourse.shopping.model.CartRepository
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredFunctions
@@ -137,37 +134,5 @@ class ReflectionTest {
     @Test
     fun `클래스 내에서 선언된 정적 함수`() {
         assertThat(Person::class.staticFunctions.size).isEqualTo(0)
-    }
-
-    @Test
-    fun `클래스 내에서 선언된 함수 리턴값 추적`() {
-        class TestingClass() {
-            fun intReturn(): Int = 3
-
-            fun classReturn(): CartRepository =
-                DefaultCartRepository(LocalStorageModule.cartProductDao)
-        }
-
-        val module = TestingClass::class
-
-        module.declaredFunctions.forEach { function ->
-            println("testingClass의 리턴값 : ${function.returnType}")
-        }
-    }
-
-    @Test
-    fun `클래스를 추적해서 module 추적`() {
-        class TestingClass() {
-            fun intReturn(): Int = 3
-
-            fun classReturn(): CartRepository =
-                DefaultCartRepository(LocalStorageModule.cartProductDao)
-        }
-
-        val module = TestingClass::class
-
-        module.declaredFunctions.forEach { function ->
-            println("testingClass의 리턴값 : ${function.returnType}")
-        }
     }
 }
