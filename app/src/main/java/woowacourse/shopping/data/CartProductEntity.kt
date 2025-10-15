@@ -13,6 +13,4 @@ data class CartProductEntity(
     var id: Long = 0
 
     var createdAt: Long = System.currentTimeMillis()
-
-    companion object
 }
