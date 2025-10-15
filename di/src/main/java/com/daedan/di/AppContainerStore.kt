@@ -24,6 +24,8 @@ class AppContainerStore {
 
     fun registerFactory(vararg modules: DependencyModule) {
         val newFactories = modules.flatMap { it.factories }
+
+        // Map으로 변환
         val newFactoryMap = newFactories.associateBy { it.qualifier }
         require(newFactoryMap.size == newFactories.size) { ERR_CONFLICT_KEY }
 
