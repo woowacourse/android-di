@@ -1,18 +1,37 @@
 package woowacourse.shopping.fixture
 
+import woowacourse.shopping.domain.CartRepository
+import woowacourse.shopping.domain.ProductRepository
 import kotlin.reflect.KClass
 
 class TestAppContainer {
     val fakeProductRepository = FakeProductRepository()
+    val fakeCartRepository = FakeCartRepository()
 
-    private val providers = mutableMapOf<KClass<*>, Any>()
+    private val dependencies = mutableMapOf<Pair<KClass<*>, KClass<out Annotation>?>, Any>()
 
     init {
-        providers[FakeProductRepository::class] = fakeProductRepository
+        addDependency(ProductRepository::class, fakeProductRepository)
+        addDependency(CartRepository::class, fakeCartRepository)
+        addDependency(FakeProductRepository::class, fakeProductRepository)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> resolve(clazz: KClass<T>): T =
-        providers[clazz] as? T
-            ?: throw IllegalArgumentException("${clazz.simpleName} provider 없음")
+    fun <T : Any> addDependency(
+        type: KClass<T>,
+        instance: T,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        dependencies[type to qualifier] = instance
+    }
+
+    fun resolve(type: KClass<*>): Any? {
+        val candidates = dependencies.filterKeys { it.first == type }
+        return when {
+            candidates.size == 1 -> candidates.values.first()
+            candidates.isEmpty() -> null
+            else -> throw IllegalArgumentException("여러 구현체가 존재하지만 Qualifier가 없습니다: ${type.simpleName}")
+        }
+    }
+
+    fun clear() = dependencies.clear()
 }
