@@ -8,5 +8,5 @@ fun findQualifier(property: KProperty1<*, *>): KClass<out Annotation>? = findQua
 
 private fun findQualifier(annotations: List<Annotation>): KClass<out Annotation>? =
     annotations
-        .firstOrNull { it.annotationClass.findAnnotation<Qualifier>() != null }
-        ?.annotationClass
+        .map { it.annotationClass }
+        .firstOrNull { it.findAnnotation<Qualifier>() != null }
