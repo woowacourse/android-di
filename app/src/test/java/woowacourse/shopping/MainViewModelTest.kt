@@ -8,6 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import woowacourse.bibi.di.androidx.InjectingViewModelFactory
 import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.common.MainDispatcherRule
 import woowacourse.shopping.common.getOrAwaitValue
@@ -63,8 +64,8 @@ class MainViewModelTest {
         val container =
             ContainerBuilder()
                 .apply {
-                    register(ProductRepository::class, Remote::class) { fakeProductRepo }
-                    register(CartRepository::class, Remote::class) { fakeCartRepo }
+                    register(ProductRepository::class, Local::class) { fakeProductRepo }
+                    register(CartRepository::class, Local::class) { fakeCartRepo }
                 }.build()
         val factory = InjectingViewModelFactory(container)
 

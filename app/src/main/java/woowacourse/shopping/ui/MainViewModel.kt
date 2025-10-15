@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
@@ -14,11 +15,11 @@ import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {
     @Inject
-    @Remote
+    @Local
     private lateinit var productRepository: ProductRepository
 
     @Inject
-    @Remote
+    @Local
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

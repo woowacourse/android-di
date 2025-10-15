@@ -16,6 +16,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
 import org.robolectric.shadows.ShadowToast
 import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.common.withOverriddenContainer
 import woowacourse.shopping.domain.CartRepository
@@ -95,12 +96,12 @@ class CartActivityTest {
         val testContainer =
             ContainerBuilder()
                 .apply {
-                    register(ProductRepository::class, Remote::class) {
+                    register(ProductRepository::class, Local::class) {
                         FakeProductRepository(
                             ProductFixture.AllProducts,
                         )
                     }
-                    register(CartRepository::class, Remote::class) { fakeCartRepo }
+                    register(CartRepository::class, Local::class) { fakeCartRepo }
                 }.build()
 
         return withOverriddenContainer(app, testContainer) {

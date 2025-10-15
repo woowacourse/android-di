@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import woowacourse.bibi.di.core.ContainerBuilder
+import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
@@ -16,6 +17,6 @@ fun installAllBindings(
     val db = ShoppingDatabase.getInstance(appContext)
     val cartDao = db.cartProductDao()
 
-    builder.register(ProductRepository::class, Remote::class) { ProductRepositoryImpl() }
-    builder.register(CartRepository::class, Remote::class) { CartRepositoryImpl(cartDao) }
+    builder.register(ProductRepository::class, Local::class) { ProductRepositoryImpl() }
+    builder.register(CartRepository::class, Local::class) { CartRepositoryImpl(cartDao) }
 }
