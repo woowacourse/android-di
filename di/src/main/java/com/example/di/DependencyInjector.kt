@@ -7,6 +7,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
     private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
@@ -45,6 +46,7 @@ object DependencyInjector {
 
     private fun injectFields(target: Any) {
         target::class.memberProperties.forEach { property: KProperty1<out Any, *> ->
+            property.isAccessible = true
             if (property.findAnnotation<Inject>() == null) return@forEach
 
             val identifier = Identifier.of(property)
