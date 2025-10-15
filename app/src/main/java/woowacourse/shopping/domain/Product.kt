@@ -14,10 +14,3 @@ fun Product.toData(): CartProductEntity =
         price = price,
         imageUrl = imageUrl,
     )
-
-fun CartProductEntity.toDomain(): Product =
-    Product(
-        name = this.name,
-        price = this.price,
-        imageUrl = this.imageUrl,
-    )
