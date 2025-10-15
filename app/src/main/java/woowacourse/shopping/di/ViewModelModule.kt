@@ -1,8 +1,8 @@
 package woowacourse.shopping.di
 
-import com.daedan.compactAndroidDi.DependencyModule
-import com.daedan.compactAndroidDi.DiApplication
-import com.daedan.compactAndroidDi.module
+import com.daedan.di.DependencyModule
+import com.daedan.di.DiApplication
+import com.daedan.di.module
 import woowacourse.shopping.ui.MainViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
 

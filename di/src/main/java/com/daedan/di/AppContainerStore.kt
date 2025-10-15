@@ -1,10 +1,10 @@
-package com.daedan.compactAndroidDi
+package com.daedan.di
 
-import com.daedan.compactAndroidDi.annotation.Component
-import com.daedan.compactAndroidDi.annotation.Inject
-import com.daedan.compactAndroidDi.qualifier.Qualifier
-import com.daedan.compactAndroidDi.scope.CreateRule
-import com.daedan.compactAndroidDi.util.getQualifier
+import com.daedan.di.annotation.Component
+import com.daedan.di.annotation.Inject
+import com.daedan.di.qualifier.Qualifier
+import com.daedan.di.scope.CreateRule
+import com.daedan.di.util.getQualifier
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation

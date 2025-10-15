@@ -1,4 +1,4 @@
-package com.daedan.compactAndroidDi.util
+package com.daedan.di.util
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.daedan.compactAndroidDi.DiApplication
+import com.daedan.di.DiApplication
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(noinline extrasProducer: (() -> CreationExtras)? = null): Lazy<VM> {

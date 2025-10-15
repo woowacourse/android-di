@@ -1,4 +1,4 @@
-package com.daedan.compactAndroidDi
+package com.daedan.di
 
 import android.app.Application
 

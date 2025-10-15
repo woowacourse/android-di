@@ -1,7 +1,7 @@
-package com.daedan.compactAndroidDi
+package com.daedan.di
 
-import com.daedan.compactAndroidDi.qualifier.Qualifier
-import com.daedan.compactAndroidDi.scope.CreateRule
+import com.daedan.di.qualifier.Qualifier
+import com.daedan.di.scope.CreateRule
 
 class DependencyFactory<T : Any>(
     val qualifier: Qualifier,

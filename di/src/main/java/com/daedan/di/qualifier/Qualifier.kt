@@ -1,4 +1,4 @@
-package com.daedan.compactAndroidDi.qualifier
+package com.daedan.di.qualifier
 
 interface Qualifier {
     override fun toString(): String

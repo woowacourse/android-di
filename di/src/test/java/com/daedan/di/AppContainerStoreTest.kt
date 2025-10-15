@@ -1,14 +1,14 @@
-package com.daedan.compactAndroidDi
+package com.daedan.di
 
-import com.daedan.compactAndroidDi.fixture.Child1
-import com.daedan.compactAndroidDi.fixture.Child2
-import com.daedan.compactAndroidDi.fixture.CircularDependency1
-import com.daedan.compactAndroidDi.fixture.CircularDependency2
-import com.daedan.compactAndroidDi.fixture.NestedDependency
-import com.daedan.compactAndroidDi.fixture.Parent
-import com.daedan.compactAndroidDi.fixture.TestViewModel
-import com.daedan.compactAndroidDi.fixture.UnableReflectObject
-import com.daedan.compactAndroidDi.qualifier.NamedQualifier
+import com.daedan.di.fixture.Child1
+import com.daedan.di.fixture.Child2
+import com.daedan.di.fixture.CircularDependency1
+import com.daedan.di.fixture.CircularDependency2
+import com.daedan.di.fixture.NestedDependency
+import com.daedan.di.fixture.Parent
+import com.daedan.di.fixture.TestViewModel
+import com.daedan.di.fixture.UnableReflectObject
+import com.daedan.di.qualifier.NamedQualifier
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test

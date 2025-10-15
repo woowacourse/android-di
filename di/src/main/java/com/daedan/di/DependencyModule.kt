@@ -1,10 +1,10 @@
-package com.daedan.compactAndroidDi
+package com.daedan.di
 
-import com.daedan.compactAndroidDi.qualifier.AnnotationQualifier
-import com.daedan.compactAndroidDi.qualifier.NamedQualifier
-import com.daedan.compactAndroidDi.qualifier.Qualifier
-import com.daedan.compactAndroidDi.qualifier.TypeQualifier
-import com.daedan.compactAndroidDi.scope.CreateRule
+import com.daedan.di.qualifier.AnnotationQualifier
+import com.daedan.di.qualifier.NamedQualifier
+import com.daedan.di.qualifier.Qualifier
+import com.daedan.di.qualifier.TypeQualifier
+import com.daedan.di.scope.CreateRule
 
 data class DependencyModule(
     val factories: List<DependencyFactory<*>>,

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.daedan.compactAndroidDi"
+    namespace = "com.daedan.di"
     compileSdk = 36
 
     defaultConfig {

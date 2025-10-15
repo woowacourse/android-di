@@ -1,4 +1,4 @@
-package com.daedan.compactAndroidDi.scope
+package com.daedan.di.scope
 
 enum class CreateRule {
     SINGLETON,

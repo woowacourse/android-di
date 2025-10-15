@@ -1,4 +1,4 @@
-package com.daedan.compactAndroidDi.fixture
+package com.daedan.di.fixture
 
 class Parent(
     private val child1: Child1,

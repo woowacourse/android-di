@@ -1,11 +1,11 @@
-package com.daedan.compactAndroidDi.util
+package com.daedan.di.util
 
-import com.daedan.compactAndroidDi.annotation.Component
-import com.daedan.compactAndroidDi.annotation.Inject
-import com.daedan.compactAndroidDi.qualifier.AnnotationQualifier
-import com.daedan.compactAndroidDi.qualifier.NamedQualifier
-import com.daedan.compactAndroidDi.qualifier.Qualifier
-import com.daedan.compactAndroidDi.qualifier.TypeQualifier
+import com.daedan.di.annotation.Component
+import com.daedan.di.annotation.Inject
+import com.daedan.di.qualifier.AnnotationQualifier
+import com.daedan.di.qualifier.NamedQualifier
+import com.daedan.di.qualifier.Qualifier
+import com.daedan.di.qualifier.TypeQualifier
 import kotlin.reflect.KAnnotatedElement // 💡 KClass와 KProperty 모두 상속
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
