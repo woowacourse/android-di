@@ -38,8 +38,12 @@ class ConstructorDIInjectionTest {
         assertThat(vm.repository).isEqualTo(container.fakeProductRepository)
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    fun `AppContainer에_없는_의존성은_생성_실패`() {
-        factory.create(ViewModelWithUnregisteredDependency::class.java)
+    @Test
+    fun `AppContainer에_없는_의존성은_생성_실패하고_에러_메세지가_표시된다`() {
+        try {
+            factory.create(ViewModelWithUnregisteredDependency::class.java)
+        } catch (e: IllegalArgumentException) {
+            assertThat(e.message).isEqualTo("AppContainer에 repository(woowacourse.shopping.fixture.UnregisteredRepository) 타입의 의존성이 없습니다.")
+        }
     }
 }
