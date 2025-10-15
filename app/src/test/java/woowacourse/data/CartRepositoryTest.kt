@@ -1,6 +1,7 @@
 package woowacourse.data
 
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -21,6 +22,9 @@ class CartRepositoryTest {
     fun `상품을 장바구니에 추가하면 목록에 추가되고 장바구니 상품을 가져온다`() =
         runTest {
             // given
+            val initialCartProducts = repository.getAllCartProducts()
+            val initialSize = initialCartProducts.size
+
             val product =
                 Product(
                     name = "사과",
@@ -30,10 +34,12 @@ class CartRepositoryTest {
 
             // when
             repository.addCartProduct(product)
+            val updatedCartProducts = repository.getAllCartProducts()
+            val updatedSize = updatedCartProducts.size
 
             // then
-            val cartItems = repository.getAllCartProducts()
-            assertTrue(cartItems.any { it.id == 0L })
+            assertEquals(initialSize + 1, updatedSize)
+            assertEquals(product.name, updatedCartProducts.last().name)
         }
 
     @Test
