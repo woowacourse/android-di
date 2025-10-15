@@ -15,6 +15,7 @@ data class CartProductEntity(val name: String, val price: Int, val imageUrl: Str
 
 fun CartProductEntity.toDomain(): CartProduct =
     CartProduct(
+        id = id,
         product = Product(name = name, price = price, imageUrl = imageUrl),
         createdAt = createdAt,
     )
