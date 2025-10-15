@@ -1,6 +1,6 @@
 package com.example.di
 
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 annotation class Inject
 
 @Target(AnnotationTarget.PROPERTY)

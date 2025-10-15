@@ -40,7 +40,11 @@ object DependencyInjector {
         val constructor: KFunction<T> =
             targetClass.primaryConstructor
                 ?: error("Unable to find the primary constructor of $targetClass.")
-        val parameters: Array<Any> = constructor.parameters.map(Identifier::from).toTypedArray()
+        val parameters: Array<Any> =
+            constructor.parameters
+                .map(Identifier::from)
+                .map(::dependency)
+                .toTypedArray()
         return constructor.call(*parameters)
     }
 
