@@ -23,14 +23,7 @@ import kotlin.reflect.jvm.isAccessible
 
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
-
-    private val functionWithQualifier = mutableMapOf<KClass<*>, MutableList<DependencyKey>>()
-
-    data class DependencyKey(
-        val module: KClass<*>,
-        val function: KFunction<*>,
-        val qualifier: String?,
-    )
+    private val dependencyProviders = mutableMapOf<KClass<*>, MutableList<DependencyIdentifier>>()
 
     /** DiContainer에서 Context를 사용할 수 있도록 설정 **/
     fun setContext(context: Context) {
@@ -63,6 +56,7 @@ object DiContainer {
      * MyModule 어노테이션이 붙어있는 모듈들 중 MyProvider가 붙어있는 함수를 불러옴
      * 하나의 인터페이스의 여러 구현체가 있는 경우 MyQualifier를 통해 list로 해당 함수를 저장
      * 함수를 실행하는 것이 아닌 KFunction을 저장하는 것
+     * Qualifier가 없는데 중복 주입 시 에러 발생
      * **/
     private fun createModuleFunction(modulePool: List<KClass<*>>) {
         modulePool.forEach { module ->
@@ -73,11 +67,14 @@ object DiContainer {
                     function.returnType.classifier as? KClass<*> ?: return@forEach
                 val qualifier = function.findAnnotation<MyQualifier>()?.type
 
-                if (!functionWithQualifier.containsKey(returnTypeKClass))
-                    functionWithQualifier[returnTypeKClass] = mutableListOf()
+                if (dependencyProviders.containsKey(returnTypeKClass) && qualifier == null) {
+                    throw IllegalArgumentException(ERROR_MESSAGE.format(returnTypeKClass.simpleName))
+                } else if (!dependencyProviders.containsKey(returnTypeKClass)) {
+                    dependencyProviders[returnTypeKClass] = mutableListOf()
+                }
 
-                functionWithQualifier[returnTypeKClass]?.add(
-                    DependencyKey(module, function, qualifier)
+                dependencyProviders[returnTypeKClass]?.add(
+                    DependencyIdentifier(module, function, qualifier)
                 )
             }
         }
@@ -125,9 +122,11 @@ object DiContainer {
      *  없을 경우 기본 생성자를 통해 직접 인스턴스를 생성
      **/
     private fun <T : Any> createInstance(kClass: KClass<T>, qualifier: String? = null): T {
-        val possibleProviders: List<DependencyKey> = functionWithQualifier[kClass] ?: emptyList()
+        val possibleProviders: List<DependencyIdentifier> =
+            dependencyProviders[kClass] ?: emptyList()
 
-        val matchedProvider: DependencyKey? = possibleProviders.find { it.qualifier == qualifier }
+        val matchedProvider: DependencyIdentifier? =
+            possibleProviders.find { it.qualifier == qualifier }
 
         matchedProvider?.let { key ->
             return createFromModule(key.function, kClass, key.module)
@@ -199,4 +198,5 @@ object DiContainer {
     private const val ERROR_MESSAGE_NOT_OBJECT = "%s은 object가 아닙니다."
     private const val ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR = "%s 클래스에 기본 생성자가 없습니다."
     private const val ERROR_MESSAGE_CANNOT_GET_INSTANCE = "생성자 %s의 파라미터 %s 타입을 가져올 수 없습니다."
+    private const val ERROR_MESSAGE = "중복된 Provider 감지: %s 타입의 기본 Provider가 여러 개 존재합니다."
 }
