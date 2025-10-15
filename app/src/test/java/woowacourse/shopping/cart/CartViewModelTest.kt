@@ -15,9 +15,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.CoroutinesTestExtension
 import woowacourse.extensions.getOrAwaitValue
-import woowacourse.fake.FakeContainer
+import woowacourse.fake.FakeCartProductDao
+import woowacourse.fake.FakeDatabaseModule
+import woowacourse.fake.FakeRepositoryModule
 import woowacourse.fixture.CART_PRODUCTS_ENTITIES_FIXTURE
-import woowacourse.shopping.Container
+import woowacourse.peto.di.DependencyContainer
+import woowacourse.peto.di.ViewModelFactoryInjector
 import woowacourse.shopping.data.db.toDomain
 import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.ui.cart.vm.CartViewModel
@@ -29,13 +32,21 @@ class CartViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var appContainer: Container
+    private lateinit var dependencyContainer: DependencyContainer
     private lateinit var viewModel: CartViewModel
 
     @Before
     fun setup() {
-        appContainer = FakeContainer()
-        viewModel = appContainer.viewModelFactory.create(CartViewModel::class.java)
+        dependencyContainer =
+            DependencyContainer(
+                listOf(
+                    FakeDatabaseModule(),
+                    FakeRepositoryModule(FakeCartProductDao()),
+                ),
+            )
+        viewModel =
+            ViewModelFactoryInjector(dependencyContainer)
+                .create(CartViewModel::class.java)
     }
 
     @Test

@@ -1,5 +1,6 @@
 package woowacourse.shopping.data.repository
 
+import woowacourse.peto.di.annotation.Inject
 import woowacourse.shopping.data.db.CartProductDao
 import woowacourse.shopping.data.db.toDomain
 import woowacourse.shopping.data.mapper.toEntity
@@ -8,7 +9,7 @@ import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 
 class DefaultCartRepository(
-    private val dao: CartProductDao,
+    @Inject private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
         dao.insert(product.toEntity())
