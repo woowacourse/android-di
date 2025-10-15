@@ -21,7 +21,9 @@ class AppContainer(
         instances[key]?.let { return it as T }
 
         val provider =
-            bindings[key]
+            bindings[key] ?: bindings.entries
+                .firstOrNull { it.key.kClass == clazz && it.key.qualifierClass == null }
+                ?.value
                 ?: throw IllegalArgumentException("No binding for $clazz with qualifier ${qualifier?.simpleName}")
         val instance = provider() as T
         instances[key] = instance

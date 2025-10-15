@@ -14,12 +14,13 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
 class MeepleApplication : Application() {
-    private lateinit var appContainer: AppContainer
-
-    private lateinit var shoppingDatabase: ShoppingDatabase
+    lateinit var appContainer: AppContainer
+        private set
 
     lateinit var viewModelFactory: ViewModelFactory
         private set
+
+    private lateinit var shoppingDatabase: ShoppingDatabase
 
     override fun onCreate() {
         super.onCreate()
