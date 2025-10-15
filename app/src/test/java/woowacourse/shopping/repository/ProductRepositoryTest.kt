@@ -3,6 +3,7 @@ package woowacourse.shopping.repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertAll
 import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.domain.Product
 
@@ -40,7 +41,9 @@ class ProductRepositoryTest {
         val products = productRepository.getAllProducts()
 
         // Then
-        assertThat(products).isEqualTo(expectedProducts)
-        assertThat(products.size).isEqualTo(3)
+        assertAll(
+            { assertThat(products).isEqualTo(expectedProducts) },
+            { assertThat(products.size).isEqualTo(3) },
+        )
     }
 }

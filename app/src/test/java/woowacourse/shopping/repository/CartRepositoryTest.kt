@@ -2,8 +2,10 @@ package woowacourse.shopping.repository
 
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertAll
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.fixture.FakeCartRepository
 import woowacourse.shopping.ui.model.CartUiModel
@@ -28,8 +30,10 @@ class CartRepositoryTest {
 
             // Then
             val cartProducts = cartRepository.getAllCartProducts()
-            Assertions.assertThat(cartProducts).containsExactly(cartItem)
-            Assertions.assertThat(cartProducts.size).isEqualTo(1)
+            assertAll(
+                { assertThat(cartProducts).containsExactly(cartItem) },
+                { assertThat(cartProducts).hasSize(1) },
+            )
         }
 
     @Test
@@ -63,7 +67,9 @@ class CartRepositoryTest {
 
             // Then
             val cartProducts = cartRepository.getAllCartProducts()
-            Assertions.assertThat(cartProducts).containsExactly(cartItem)
-            Assertions.assertThat(cartProducts.size).isEqualTo(1)
+            assertAll(
+                { assertThat(cartProducts).containsExactly(cartItem) },
+                { assertThat(cartProducts).hasSize(1) },
+            )
         }
 }

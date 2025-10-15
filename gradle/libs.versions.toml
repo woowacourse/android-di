@@ -11,6 +11,7 @@ assertj-core = "3.27.3"
 core-testing = "2.2.0"
 glide = "4.15.1"
 google-material = "1.12.0"
+junit-jupiter-api = "5.10.0"
 kotlin = "1.9.25"
 kotlinx-coroutines-core = "1.8.1"
 kotlinx-coroutines-test = "1.8.0"
@@ -35,6 +36,7 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version.ref =
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj-core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "google-material" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-api" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
