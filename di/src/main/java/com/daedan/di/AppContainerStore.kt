@@ -20,8 +20,6 @@ class AppContainerStore {
             mutableSetOf(),
         )
 
-    operator fun get(qualifier: Qualifier): Any? = cache[qualifier]
-
     fun registerFactory(vararg modules: DependencyModule) {
         val newFactories = modules.flatMap { it.factories }
 
