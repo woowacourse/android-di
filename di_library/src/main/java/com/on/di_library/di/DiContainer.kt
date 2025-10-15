@@ -36,19 +36,20 @@ object DiContainer {
         val dexFile = DexFile(context.packageCodePath)
         val entries = dexFile.entries()
 
-        val annotatedClass = buildList {
-            while (entries.hasMoreElements()) {
-                val className = entries.nextElement()
+        val annotatedClass =
+            buildList {
+                while (entries.hasMoreElements()) {
+                    val className = entries.nextElement()
 
-                runCatching {
-                    val clazz = Class.forName(className).kotlin
+                    runCatching {
+                        val clazz = Class.forName(className).kotlin
 
-                    if (clazz.hasAnnotation<MyModule>()) {
-                        add(clazz)
+                        if (clazz.hasAnnotation<MyModule>()) {
+                            add(clazz)
+                        }
                     }
                 }
             }
-        }
         createModuleFunction(annotatedClass)
     }
 
@@ -70,22 +71,25 @@ object DiContainer {
                 if (dependencyProviders.containsKey(returnTypeKClass) && qualifier == null) {
                     throw IllegalArgumentException(
                         ERROR_MESSAGE_DUPLICATED_PROVIDER_ERROR.format(
-                            returnTypeKClass.simpleName
-                        )
+                            returnTypeKClass.simpleName,
+                        ),
                     )
                 } else if (!dependencyProviders.containsKey(returnTypeKClass)) {
                     dependencyProviders[returnTypeKClass] = mutableListOf()
                 }
 
                 dependencyProviders[returnTypeKClass]?.add(
-                    DependencyIdentifier(module, function, qualifier)
+                    DependencyIdentifier(module, function, qualifier),
                 )
             }
         }
     }
 
     /** 외부에 인스턴스를 주입해주는 주는 메서드**/
-    fun <T : Any> getInstance(kClass: KClass<T>, qualifier: String? = null): T {
+    fun <T : Any> getInstance(
+        kClass: KClass<T>,
+        qualifier: String? = null,
+    ): T {
         if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
             return createInstance(kClass)
         }
@@ -114,7 +118,7 @@ object DiContainer {
                     getInstance(
                         property.returnType.classifier as? KClass<*>
                             ?: error(""),
-                        property.findAnnotation<MyQualifier>()?.type
+                        property.findAnnotation<MyQualifier>()?.type,
                     )
                 property.setter.call(instance, propertyInstance)
             }
@@ -125,7 +129,10 @@ object DiContainer {
      *  먼저 MyProvider가 있는 모듈 함수를 통해 생성 가능한지 확인
      *  없을 경우 기본 생성자를 통해 직접 인스턴스를 생성
      **/
-    private fun <T : Any> createInstance(kClass: KClass<T>, qualifier: String? = null): T {
+    private fun <T : Any> createInstance(
+        kClass: KClass<T>,
+        qualifier: String? = null,
+    ): T {
         val possibleProviders: List<DependencyIdentifier> =
             dependencyProviders[kClass] ?: emptyList()
 
@@ -162,8 +169,8 @@ object DiContainer {
                             ?: error(
                                 ERROR_MESSAGE_INVALID_PARAMETER_TYPE.format(
                                     module,
-                                    function.name
-                                )
+                                    function.name,
+                                ),
                             )
                     getInstance(parameterClass)
                 }
