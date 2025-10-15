@@ -56,10 +56,14 @@ object DiContainer {
                 }
             }
         }
-
         createModuleFunction(annotatedClass)
     }
 
+    /**
+     * MyModule 어노테이션이 붙어있는 모듈들 중 MyProvider가 붙어있는 함수를 불러옴
+     * 하나의 인터페이스의 여러 구현체가 있는 경우 MyQualifier를 통해 list로 해당 함수를 저장
+     * 함수를 실행하는 것이 아닌 KFunction을 저장하는 것
+     * **/
     private fun createModuleFunction(modulePool: List<KClass<*>>) {
         modulePool.forEach { module ->
             module.declaredMemberFunctions.forEach { function ->
@@ -115,6 +119,11 @@ object DiContainer {
             }
     }
 
+    /**
+     * 요청된 타입에 맞는 인스턴스를 생성하는 메서드
+     *  먼저 MyProvider가 있는 모듈 함수를 통해 생성 가능한지 확인
+     *  없을 경우 기본 생성자를 통해 직접 인스턴스를 생성
+     **/
     private fun <T : Any> createInstance(kClass: KClass<T>, qualifier: String? = null): T {
         val possibleProviders: List<DependencyKey> = functionWithQualifier[kClass] ?: emptyList()
 
@@ -129,6 +138,11 @@ object DiContainer {
         return instance
     }
 
+    /**
+     * MyModule 내의 MyProvider 함수로부터 인스턴스를 생성하는 메서드
+     * 함수의 파라미터를 재귀를 통해 주입받고
+     * 모듈 함수 호출을 통해 객체를 반환
+     **/
     private fun <T : Any> createFromModule(
         function: KFunction<*>,
         kClass: KClass<T>,
@@ -153,6 +167,10 @@ object DiContainer {
         return instance
     }
 
+    /**
+     * 클래스의 기본 생성자를 이용해 인스턴스를 생성하는 메서드
+     * 생성자 파라미터에 필요한 의존성을 재귀로 주입
+     **/
     private fun <T : Any> createFromConstructor(kClass: KClass<T>): T {
         val constructor: KFunction<Any> =
             kClass.primaryConstructor
