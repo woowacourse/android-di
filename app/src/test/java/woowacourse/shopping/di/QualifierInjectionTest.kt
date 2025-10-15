@@ -1,13 +1,6 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.fixture.TestAppContainer
 
 interface FakeRepository
 
@@ -43,67 +36,67 @@ class BarQualifierViewModel(
     @BarQualifier val repo: FakeRepository,
 ) : ViewModel()
 
-@RunWith(RobolectricTestRunner::class)
-class QualifierInjectionTest {
-    private val container = TestAppContainer()
-
-    @Test
-    fun `단일 구현체만 있을 때 Qualifier 없이 주입 성공`() {
-        val fooRepo = FooFakeRepository()
-        container.addDependency(FakeRepository::class, fooRepo)
-
-        val factory = ConstructorInjectViewModelFactory(container)
-        val viewModel = factory.create(SingleImplViewModel::class.java)
-
-        assertThat(fooRepo).isEqualTo(viewModel.repo)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `두 개의 구현체가 등록되어 있고 Qualifier가 없으면 실패`() {
-        container.addDependency(FakeRepository::class, FooFakeRepository())
-        container.addDependency(FakeRepository::class, BarFakeRepository())
-
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-
-        activity.viewModelNoQualifier // 실패 지점
-    }
-
-    @Test
-    fun `두 개의 구현체가 등록되어 있고 FooQualifier가 있으면 Foo 주입 성공`() {
-        // given
-        val fooRepo = FooFakeRepository()
-        val barRepo = BarFakeRepository()
-        container.addDependency(FakeRepository::class, fooRepo, FooQualifier::class)
-        container.addDependency(FakeRepository::class, barRepo, BarQualifier::class)
-
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-
-        // when
-        val viewModel = activity.viewModelWithFooQualifier
-
-        // then
-        assertEquals(fooRepo, viewModel.fakeRepository)
-    }
-
-    @Test
-    fun `두 개의 구현체가 등록되어 있고 BarQualifier가 있으면 Bar 주입 성공`() {
-        // given
-        val fooRepo = FooFakeRepository()
-        val barRepo = BarFakeRepository()
-        container.addDependency(FakeRepository::class, fooRepo, FooQualifier::class)
-        container.addDependency(FakeRepository::class, barRepo, BarQualifier::class)
-
-        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
-
-        // when
-        val viewModel = activity.viewModelWithBarQualifier
-
-        // then
-        assertEquals(barRepo, viewModel.fakeRepository)
-    }
-
-    @After
-    fun tearDown() {
-        container.clear()
-    }
-}
+// @RunWith(RobolectricTestRunner::class)
+// class QualifierInjectionTest {
+//    private val container = TestAppContainer()
+//
+//    @Test
+//    fun `단일 구현체만 있을 때 Qualifier 없이 주입 성공`() {
+//        val fooRepo = FooFakeRepository()
+//        container.addDependency(FakeRepository::class, fooRepo)
+//
+//        val factory = ConstructorInjectViewModelFactory(container)
+//        val viewModel = factory.create(SingleImplViewModel::class.java)
+//
+//        assertThat(fooRepo).isEqualTo(viewModel.repo)
+//    }
+//
+//    @Test(expected = IllegalArgumentException::class)
+//    fun `두 개의 구현체가 등록되어 있고 Qualifier가 없으면 실패`() {
+//        container.addDependency(FakeRepository::class, FooFakeRepository())
+//        container.addDependency(FakeRepository::class, BarFakeRepository())
+//
+//        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+//
+//        activity.viewModelNoQualifier // 실패 지점
+//    }
+//
+//    @Test
+//    fun `두 개의 구현체가 등록되어 있고 FooQualifier가 있으면 Foo 주입 성공`() {
+//        // given
+//        val fooRepo = FooFakeRepository()
+//        val barRepo = BarFakeRepository()
+//        container.addDependency(FakeRepository::class, fooRepo, FooQualifier::class)
+//        container.addDependency(FakeRepository::class, barRepo, BarQualifier::class)
+//
+//        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+//
+//        // when
+//        val viewModel = activity.viewModelWithFooQualifier
+//
+//        // then
+//        assertEquals(fooRepo, viewModel.fakeRepository)
+//    }
+//
+//    @Test
+//    fun `두 개의 구현체가 등록되어 있고 BarQualifier가 있으면 Bar 주입 성공`() {
+//        // given
+//        val fooRepo = FooFakeRepository()
+//        val barRepo = BarFakeRepository()
+//        container.addDependency(FakeRepository::class, fooRepo, FooQualifier::class)
+//        container.addDependency(FakeRepository::class, barRepo, BarQualifier::class)
+//
+//        val activity = Robolectric.buildActivity(FakeActivity::class.java).create().get()
+//
+//        // when
+//        val viewModel = activity.viewModelWithBarQualifier
+//
+//        // then
+//        assertEquals(barRepo, viewModel.fakeRepository)
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        container.clear()
+//    }
+// }

@@ -33,8 +33,14 @@ class MainViewModelTest {
         fakeProductRepository = FakeProductRepository()
         fakeCartRepository = FakeCartRepository()
         viewModel = MainViewModel()
-        viewModel.cartRepository = fakeCartRepository
-        viewModel.productRepository = fakeProductRepository
+
+        val productRepoField = viewModel.javaClass.getDeclaredField("productRepository")
+        productRepoField.isAccessible = true
+        productRepoField.set(viewModel, fakeProductRepository)
+
+        val cartRepoField = viewModel.javaClass.getDeclaredField("cartRepository")
+        cartRepoField.isAccessible = true
+        cartRepoField.set(viewModel, fakeCartRepository)
     }
 
     @Test
