@@ -87,10 +87,10 @@ class AutoInjectingViewModelFactoryTest {
         val viewModel = factory.create(ConstructorInjectedViewModel::class.java)
 
         // then
-        val repoFromContainer = container.get(TestRepository::class)
+        val repositoryFromContainer = container.get(TestRepository::class)
         val anotherFromContainer = container.get(AnotherRepository::class)
 
-        assertThat(viewModel.repository === repoFromContainer).isTrue()
+        assertThat(viewModel.repository === repositoryFromContainer).isTrue()
         assertThat(viewModel.anotherRepository === anotherFromContainer).isTrue()
     }
 
