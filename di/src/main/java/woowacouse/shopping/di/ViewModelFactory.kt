@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import woowacouse.shopping.di.annotation.Inject
+import woowacouse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -31,14 +32,17 @@ class ViewModelFactory(
         val parameters =
             constructor.parameters
                 .map { parameter ->
-                    when (parameter.type.classifier) {
+                    val kParameter =
+                        parameter.type.classifier as? KClass<*>
+                            ?: throw IllegalArgumentException("No matching dependency for ${parameter.name}")
+
+                    when (kParameter) {
                         SavedStateHandle::class -> handle
                         else ->
-                            container::class
-                                .members
-                                .firstOrNull { it.name == parameter.name }
-                                ?.call(container)
-                                ?: throw IllegalArgumentException("No matching dependency for ${parameter.name}")
+                            container.get(
+                                kParameter,
+                                parameter.findAnnotation<Qualifier>()?.value,
+                            )
                     }
                 }.toTypedArray()
 
@@ -56,15 +60,12 @@ class ViewModelFactory(
                     property.returnType.classifier as? KClass<*>
                         ?: error("@Inject target must be a 'var' mutable property: ${property.name} in $modelClass")
 
+                val qualifier = property.findAnnotation<Qualifier>()?.value
                 val dependency =
                     when (targetType) {
                         SavedStateHandle::class -> handle
                         else -> {
-                            container::class
-                                .memberProperties
-                                .firstOrNull { it.name == targetType.simpleName }
-                                ?.getter
-                                ?.call(container)
+                            container.get(targetType, qualifier)
                                 ?: throw IllegalArgumentException("No matching dependency for ${targetType.simpleName} in $modelClass")
                         }
                     }
