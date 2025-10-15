@@ -15,7 +15,6 @@ class FakeApplication :
 
     @InMemory
     override val productRepository: ProductRepository = FakeProductRepository()
-    override val cartDao = FakeCartProductDao()
 
     @InMemory
     override val inMemoryCartRepository: CartRepository = FakeInMemoryCartRepository()
