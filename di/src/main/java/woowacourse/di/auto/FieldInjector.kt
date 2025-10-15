@@ -2,7 +2,7 @@ package woowacourse.di.auto
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -15,7 +15,7 @@ object FieldInjector {
         target::class
             .memberProperties
             .filterIsInstance<KMutableProperty1<Any, Any?>>()
-            .filter { it.findAnnotation<InjectField>() != null }
+            .filter { it.hasAnnotation<InjectField>() }
             .forEach { property ->
                 val type =
                     (property.returnType.classifier as? KClass<*>)
