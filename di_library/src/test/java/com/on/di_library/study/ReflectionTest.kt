@@ -1,6 +1,6 @@
-package woowacourse.study
+package com.on.di_library.study
 
-import org.assertj.core.api.Assertions.assertThat
+import io.kotest.matchers.shouldBe
 import org.junit.Test
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty1
@@ -48,7 +48,7 @@ class ReflectionTest {
     fun `변경 가능한 공개 프로퍼티 값 변경`() {
         val person = Person("Jason", "Park", 20)
         Person::firstName.set(person, "Jaesung")
-        assertThat(person.firstName).isEqualTo("Jaesung")
+        (person.firstName) shouldBe ("Jaesung")
     }
 
     @Test
@@ -59,7 +59,7 @@ class ReflectionTest {
             isAccessible = true
             set(person, "Mraz")
         }
-        assertThat(person.lastName).isEqualTo("Mraz")
+        (person.lastName) shouldBe ("Mraz")
     }
 
     @Test
@@ -74,20 +74,20 @@ class ReflectionTest {
             println("returnType: ${properties.returnType}")
             println("-------------------")
         }
-        assertThat(declaredMemberProperties.size).isEqualTo(6)
+        (declaredMemberProperties.size) shouldBe (6)
     }
 
     @Test
     fun `클래스 내에서 선언된 프로퍼티(상속된 거 포함)`() {
         val declaredMemberProperties = Person::class.memberProperties
-        assertThat(declaredMemberProperties.size).isEqualTo(7)
+        (declaredMemberProperties.size) shouldBe (7)
     }
 
     @Test
     fun `클래스 내에서 선언된 변경 가능한 프로퍼티`() {
         val mutableProperties =
             Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
-        assertThat(mutableProperties.size).isEqualTo(3)
+        (mutableProperties.size) shouldBe (3)
     }
 
     @Test
@@ -97,42 +97,42 @@ class ReflectionTest {
             Person::class.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
                 .first { it.name == "firstName" }
         firstNameProperty.setter.call(person, "Jaesung")
-        assertThat(person.firstName).isEqualTo("Jaesung")
+        (person.firstName) shouldBe ("Jaesung")
     }
 
     @Test
     fun `클래스 및 부모 클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
         // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
+        (personReflection.functions.size) shouldBe (6)
         // fullName, greeting, equals, hashCode, toString
-        assertThat(personReflection.memberFunctions.size).isEqualTo(5)
+        (personReflection.memberFunctions.size) shouldBe (5)
         // isAdult
-        assertThat(personReflection.memberExtensionFunctions.size).isEqualTo(1)
+        (personReflection.memberExtensionFunctions.size) shouldBe (1)
     }
 
     @Test
     fun `클래스 내에서 선언된 함수`() {
         val personReflection = Person::class
         // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+        (personReflection.declaredFunctions.size) shouldBe (3)
         // greeting, isAdult
-        assertThat(personReflection.declaredMemberFunctions.size).isEqualTo(2)
+        (personReflection.declaredMemberFunctions.size) shouldBe (2)
         // isAdult
-        assertThat(personReflection.declaredMemberExtensionFunctions.size).isEqualTo(1)
+        (personReflection.declaredMemberExtensionFunctions.size) shouldBe (1)
     }
 
     @Test
     fun `멤버 함수 확장 함수 클래스 내에서 선언된 정적 함수`() {
         val personReflection = Person::class
         // fullName, greeting, isAdult, equals, hashCode, toString
-        assertThat(personReflection.functions.size).isEqualTo(6)
+        (personReflection.functions.size) shouldBe (6)
         // fullName, greeting, isAdult
-        assertThat(personReflection.declaredFunctions.size).isEqualTo(3)
+        (personReflection.declaredFunctions.size) shouldBe (3)
     }
 
     @Test
     fun `클래스 내에서 선언된 정적 함수`() {
-        assertThat(Person::class.staticFunctions.size).isEqualTo(0)
+        (Person::class.staticFunctions.size) shouldBe (0)
     }
 }

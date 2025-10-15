@@ -1,4 +1,4 @@
-package woowacourse.study
+package com.on.di_library.study
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
