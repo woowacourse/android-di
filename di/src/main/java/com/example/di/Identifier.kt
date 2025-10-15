@@ -11,13 +11,13 @@ data class Identifier(
     val qualifier: Annotation?,
 ) {
     companion object {
-        fun of(property: KProperty1<*, *>): Identifier =
+        fun from(property: KProperty1<*, *>): Identifier =
             Identifier(
                 property.returnType,
                 qualifier(property),
             )
 
-        fun of(parameter: KParameter): Identifier =
+        fun from(parameter: KParameter): Identifier =
             Identifier(
                 parameter.type,
                 qualifier(parameter),
