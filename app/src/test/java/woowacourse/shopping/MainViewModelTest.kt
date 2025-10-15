@@ -1,6 +1,10 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.daedan.di.AppContainerStore
+import com.daedan.di.module
+import com.daedan.di.qualifier.NamedQualifier
+import com.daedan.di.util.getQualifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -8,6 +12,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import net.bytebuddy.matcher.ElementMatchers.named
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -17,6 +22,7 @@ import woowacourse.fixture.FakeCartRepository
 import woowacourse.fixture.FakeProductRepository
 import woowacourse.fixture.PRODUCT1
 import woowacourse.fixture.getOrAwaitValue
+import woowacourse.shopping.di.RoomDBCartRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.ui.MainViewModel
@@ -27,27 +33,38 @@ class MainViewModelTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
     private lateinit var viewModel: MainViewModel
     private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setup() {
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                single<ProductRepository>(named("productRepository")) {
+                    FakeProductRepository(
+                        fakeAllProducts =
+                            listOf(
+                                PRODUCT1,
+                            ),
+                    )
+                }
+
+                single<CartRepository>(annotated<RoomDBCartRepository>()) {
+                    FakeCartRepository(
+                        fakeAllCartProducts =
+                            listOf(
+                                PRODUCT1,
+                            ),
+                    )
+                }
+
+                viewModel { MainViewModel() }
+            }
+        appContainerStore.registerFactory(module)
+
         productRepository =
-            FakeProductRepository(
-                fakeAllProducts =
-                    listOf(
-                        PRODUCT1,
-                    ),
-            )
-        cartRepository =
-            FakeCartRepository(
-                fakeAllCartProducts =
-                    listOf(
-                        PRODUCT1,
-                    ),
-            )
-        viewModel = MainViewModel()
-        viewModel.productRepository = productRepository
-        viewModel.cartRepository = cartRepository
+            appContainerStore.instantiate(NamedQualifier("productRepository")) as ProductRepository
+        viewModel =
+            appContainerStore.instantiate(MainViewModel::class.getQualifier()) as MainViewModel
         Dispatchers.setMain(StandardTestDispatcher())
     }
 
