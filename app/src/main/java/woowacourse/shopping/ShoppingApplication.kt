@@ -13,8 +13,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class ShoppingApplication : Application() {
-    private val container: Container by lazy { AppContainer() }
-
+    private val container: Container = Container
     private val dependencyInjector: DependencyInjector by lazy {
         DependencyInjector(container)
     }
