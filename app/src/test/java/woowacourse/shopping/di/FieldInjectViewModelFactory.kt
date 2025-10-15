@@ -15,9 +15,14 @@ class FieldInjectViewModelFactory(
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
 
+                // 바인딩 없으면 예외
                 val dependency = appContainer.resolve(field.type.kotlin)
                 if (dependency != null) {
                     field.set(vm, dependency)
+                } else {
+                    throw IllegalArgumentException(
+                        "No binding found for type ${field.type.kotlin.simpleName}",
+                    )
                 }
             }
         }

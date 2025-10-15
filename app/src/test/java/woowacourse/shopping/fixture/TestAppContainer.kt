@@ -28,7 +28,7 @@ class TestAppContainer {
         val candidates = dependencies.filterKeys { it.first == type }
         return when {
             candidates.size == 1 -> candidates.values.first()
-            candidates.isEmpty() -> null
+            candidates.isEmpty() -> throw IllegalArgumentException("등록되지 않은 의존성: ${type.simpleName}")
             else -> throw IllegalArgumentException("여러 구현체가 존재하지만 Qualifier가 없습니다: ${type.simpleName}")
         }
     }
