@@ -1,5 +1,6 @@
 package com.on.di_library.di
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.on.di_library.di.annotation.MyInjector
@@ -22,8 +23,13 @@ object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
     private lateinit var modulePool: List<KClass<*>>
 
-    fun getAnnotatedModules(context: Context) {
+    fun setContext(context: Context) {
+        instancePool[Context::class] = context
+    }
+
+    fun getAnnotatedModules() {
         val result = mutableListOf<KClass<*>>()
+        val context = instancePool[Context::class] as Application
 
         val dexFile = DexFile(context.packageCodePath)
         val entries = dexFile.entries()
