@@ -1,5 +1,7 @@
 package com.daedan.di.fixture
 
+import com.daedan.di.annotation.Component
+
 class Parent(
     private val child1: Child1,
     private val child2: Child2,
@@ -27,5 +29,18 @@ class UnableReflectObject(
     private val noConstructorObject: NoConstructorObject,
 )
 
-@AutoViewModel
-class TestViewModel
+@Component
+annotation class TestComponent1
+
+@Component
+annotation class TestComponent2
+
+interface ComponentObject
+
+@TestComponent1
+class ComponentObject1 : ComponentObject
+
+@TestComponent2
+class ComponentObject2 : ComponentObject
+
+annotation class GeneralAnnotation
