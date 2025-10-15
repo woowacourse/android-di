@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.jvm.isAccessible
 
 class ViewModelFactory(
     private val appContainer: AppContainer,
@@ -24,8 +25,9 @@ class ViewModelFactory(
             .filterIsInstance<KMutableProperty1<T, Any?>>()
             .forEach { prop ->
                 val javaField = kClass.java.getDeclaredField(prop.name)
-
                 if (!javaField.isAnnotationPresent(Inject::class.java)) return@forEach
+
+                prop.isAccessible = true
 
                 val qualifier =
                     when {
