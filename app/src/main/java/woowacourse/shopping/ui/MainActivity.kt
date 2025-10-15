@@ -9,8 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -73,9 +71,7 @@ class MainActivity : AppCompatActivity() {
                 ProductAdapter(
                     items = it,
                     onClickProduct = { product ->
-                        lifecycleScope.launch {
-                            viewModel.addCartProduct(product)
-                        }
+                        viewModel.addCartProduct(product)
                     },
                 )
             binding.rvProducts.adapter = adapter

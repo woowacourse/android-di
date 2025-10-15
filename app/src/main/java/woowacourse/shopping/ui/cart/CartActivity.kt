@@ -80,9 +80,7 @@ class CartActivity : AppCompatActivity() {
                     items = it,
                     dateFormatter = dateFormatter,
                     onClickDelete = { id ->
-                        lifecycleScope.launch {
-                            viewModel.deleteCartProduct(id.toLong())
-                        }
+                        viewModel.deleteCartProduct(id.toLong())
                     },
                 )
             binding.rvCartProducts.adapter = adapter

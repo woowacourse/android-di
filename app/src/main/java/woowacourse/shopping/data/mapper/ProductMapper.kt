@@ -10,7 +10,7 @@ fun Product.toEntity(): CartProductEntity =
         imageUrl = imageUrl,
     )
 
-fun CartProductEntity.toProduct(): Product =
+fun CartProductEntity.toDomain(): Product =
     Product(
         id = id,
         name = name,
