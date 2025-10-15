@@ -7,7 +7,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 
 fun DiApplication.dataModule() =
     module {
-        factory {
+        single {
             Room
                 .databaseBuilder(
                     applicationContext,
@@ -15,5 +15,5 @@ fun DiApplication.dataModule() =
                     "shopping_db",
                 ).build()
         }
-        factory { get<ShoppingDatabase>().cartProductDao() }
+        single { get<ShoppingDatabase>().cartProductDao() }
     }

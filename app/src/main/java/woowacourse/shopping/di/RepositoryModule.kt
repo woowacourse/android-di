@@ -9,12 +9,12 @@ import woowacourse.shopping.domain.repository.ProductRepository
 
 fun DiApplication.repositoryModule() =
     module {
-        factory<CartRepository>(annotated<RoomDBCartRepository>()) {
+        single<CartRepository>(annotated<RoomDBCartRepository>()) {
             DefaultCartRepository(
                 get(),
             )
         }
-        factory<ProductRepository>(named("productRepository")) {
+        single<ProductRepository>(named("productRepository")) {
             DefaultProductRepository()
         }
     }

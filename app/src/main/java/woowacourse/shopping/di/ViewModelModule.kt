@@ -8,6 +8,6 @@ import woowacourse.shopping.ui.cart.CartViewModel
 
 fun DiApplication.viewModelModule(): DependencyModule =
     module {
-        factory { CartViewModel(get(annotated<RoomDBCartRepository>())) }
-        factory { MainViewModel() }
+        viewModel { CartViewModel(get(annotated<RoomDBCartRepository>())) }
+        viewModel { MainViewModel() }
     }

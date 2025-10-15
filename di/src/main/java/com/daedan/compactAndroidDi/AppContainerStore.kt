@@ -3,6 +3,7 @@ package com.daedan.compactAndroidDi
 import com.daedan.compactAndroidDi.annotation.Component
 import com.daedan.compactAndroidDi.annotation.Inject
 import com.daedan.compactAndroidDi.qualifier.Qualifier
+import com.daedan.compactAndroidDi.scope.CreateRule
 import com.daedan.compactAndroidDi.util.getQualifier
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -41,7 +42,7 @@ class AppContainerStore {
                 factory[qualifier]?.invoke()
                     ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
             injectField(instance)
-            cache[qualifier] = instance
+            save(qualifier, instance)
             return instance
         } finally {
             inProgress.remove(qualifier)
@@ -68,6 +69,17 @@ class AppContainerStore {
                     ),
                 )
             }
+    }
+
+    private fun save(
+        qualifier: Qualifier,
+        instance: Any,
+    ) {
+        val createRule = factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
+        when (createRule) {
+            CreateRule.SINGLETON -> cache[qualifier] = instance
+            CreateRule.VIEWMODEL -> Unit
+        }
     }
 
     companion object {
