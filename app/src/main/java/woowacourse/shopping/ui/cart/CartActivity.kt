@@ -10,7 +10,6 @@ import woowacourse.bibi.di.androidx.injectedViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import kotlin.getValue
 
 class CartActivity :
     AppCompatActivity(),
