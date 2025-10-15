@@ -3,6 +3,7 @@ package woowacourse.shopping.data.repository
 import com.medandro.di.annotation.Qualifier
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.mapper.toDomain
+import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.Product
 
@@ -13,11 +14,7 @@ class CartInMemoryRepository : CartRepository {
 
     override suspend fun addCartProduct(product: Product) {
         val cartEntity =
-            CartProductEntity(
-                name = product.name,
-                price = product.price,
-                imageUrl = product.imageUrl,
-            ).apply {
+            product.toEntity().apply {
                 id = currentId++
                 createdAt = System.currentTimeMillis()
             }
