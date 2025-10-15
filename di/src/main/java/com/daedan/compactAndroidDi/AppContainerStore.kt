@@ -9,6 +9,7 @@ import java.util.Collections
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 class AppContainerStore {
     private val cache: MutableMap<Qualifier, Any> = mutableMapOf()
@@ -66,9 +67,10 @@ class AppContainerStore {
         instance::class
             .memberProperties
             .filterIsInstance<KMutableProperty1<Any, Any>>()
-            .filter { it.findAnnotation<Inject>() != null || it.annotations.any { it.annotationClass.findAnnotation<Component>() != null } }
+            .filter { it.isTargetField() }
             .forEach { property ->
                 val childQualifier = property.getQualifier()
+                property.isAccessible = true
                 property.set(
                     instance,
                     instantiate(
@@ -77,6 +79,12 @@ class AppContainerStore {
                 )
             }
     }
+
+    private fun KMutableProperty1<*, *>.isTargetField(): Boolean =
+        findAnnotation<Inject>() != null ||
+            annotations.any {
+                it.annotationClass.findAnnotation<Component>() != null
+            }
 
     private fun save(
         qualifier: Qualifier,
