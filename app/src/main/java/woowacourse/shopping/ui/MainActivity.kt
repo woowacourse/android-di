@@ -13,14 +13,18 @@ import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacouse.shopping.di.Container
 import woowacouse.shopping.di.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val container by lazy {
+        (application as ShoppingApplication).container
+    }
 
     private val viewModel: MainViewModel by viewModels {
         ViewModelFactory(
-            (application as ShoppingApplication).container,
+            container = container,
             owner = this,
             defaultArgs = intent.extras,
         )
