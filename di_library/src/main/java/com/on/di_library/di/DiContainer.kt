@@ -23,7 +23,6 @@ import kotlin.reflect.jvm.isAccessible
 
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
-    private lateinit var modulePool: List<KClass<*>>
 
     private val functionWithQualifier = mutableMapOf<KClass<*>, MutableList<DependencyKey>>()
 
@@ -40,28 +39,28 @@ object DiContainer {
 
     /** 현재 패키지에 있는 클래스들 중 MyModule의 어노테이션이 붙어있는 모듈 찾기**/
     fun getAnnotatedModules() {
-        val result = mutableListOf<KClass<*>>()
         val context = instancePool[Context::class] as Application
-
         val dexFile = DexFile(context.packageCodePath)
         val entries = dexFile.entries()
 
-        while (entries.hasMoreElements()) {
-            val className = entries.nextElement()
+        val annotatedClass = buildList {
+            while (entries.hasMoreElements()) {
+                val className = entries.nextElement()
 
-            runCatching {
-                val clazz = Class.forName(className).kotlin
+                runCatching {
+                    val clazz = Class.forName(className).kotlin
 
-                if (clazz.hasAnnotation<MyModule>()) {
-                    result.add(clazz)
+                    if (clazz.hasAnnotation<MyModule>()) {
+                        add(clazz)
+                    }
                 }
             }
         }
-        modulePool = result
-        createModuleFunction()
+
+        createModuleFunction(annotatedClass)
     }
 
-    private fun createModuleFunction() {
+    private fun createModuleFunction(modulePool: List<KClass<*>>) {
         modulePool.forEach { module ->
             module.declaredMemberFunctions.forEach { function ->
                 if (!function.hasAnnotation<MyProvider>()) return@forEach
@@ -79,7 +78,6 @@ object DiContainer {
             }
         }
     }
-
 
     /** 외부에 인스턴스를 주입해주는 주는 메서드**/
     fun <T : Any> getInstance(kClass: KClass<T>, qualifier: String? = null): T {
@@ -118,15 +116,15 @@ object DiContainer {
     }
 
     private fun <T : Any> createInstance(kClass: KClass<T>, qualifier: String? = null): T {
-        val possibleProviders = functionWithQualifier[kClass] ?: emptyList()
+        val possibleProviders: List<DependencyKey> = functionWithQualifier[kClass] ?: emptyList()
 
-        val matchedProvider = possibleProviders.find { it.qualifier == qualifier }
+        val matchedProvider: DependencyKey? = possibleProviders.find { it.qualifier == qualifier }
 
         matchedProvider?.let { key ->
             return createFromModule(key.function, kClass, key.module)
         }
 
-        val instance = createFromConstructor(kClass)
+        val instance: T = createFromConstructor(kClass)
         injectFieldProperties(kClass, instance)
         return instance
     }
@@ -136,13 +134,13 @@ object DiContainer {
         kClass: KClass<T>,
         module: KClass<*>,
     ): T {
-        val constructorArguments =
+        val constructorArguments: Map<KParameter, Any> =
             function.parameters.associateWith { parameter ->
                 if (parameter.kind == KParameter.Kind.INSTANCE) {
                     module.objectInstance
                         ?: error(ERROR_MESSAGE_NOT_OBJECT.format(module.simpleName))
                 } else {
-                    val parameterClass =
+                    val parameterClass: KClass<*> =
                         parameter.type.classifier as? KClass<*>
                             ?: error("")
                     getInstance(parameterClass)
@@ -173,7 +171,7 @@ object DiContainer {
                 )
             }
 
-        val instance = kClass.cast(constructor.callBy(arguments))
+        val instance: T = kClass.cast(constructor.callBy(arguments))
 
         injectFieldProperties(kClass, instance)
 
