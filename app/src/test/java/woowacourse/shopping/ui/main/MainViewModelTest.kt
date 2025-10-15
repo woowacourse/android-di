@@ -1,32 +1,57 @@
 package woowacourse.shopping.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.domain.CartRepository
-import woowacourse.shopping.domain.ProductRepository
-import woowacourse.shopping.fixture.PRODUCTS_FIXTURE
-import woowacourse.shopping.fixture.PRODUCT_FIXTURE
+import woowacourse.shopping.data.repository.RepositoryType
+import woowacourse.shopping.di.Container
+import woowacourse.shopping.di.DependencyInjector
+import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.fixture.model.PRODUCTS_FIXTURE
+import woowacourse.shopping.fixture.model.PRODUCT_FIXTURE
 import woowacourse.shopping.fixture.repository.FakeCartRepository
 import woowacourse.shopping.fixture.repository.FakeProductRepository
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.model.Product
 
+@ExperimentalCoroutinesApi
 class MainViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: MainViewModel
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setup() {
-        productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
-        cartRepository = FakeCartRepository(mutableListOf())
-        viewModel = MainViewModel(productRepository, cartRepository)
+        Dispatchers.setMain(testDispatcher)
+
+        val productRepository = FakeProductRepository(PRODUCTS_FIXTURE)
+        val cartRepository = FakeCartRepository(mutableListOf())
+        val container =
+            Container().apply {
+                registerInstance(ProductRepository::class, productRepository)
+                registerInstance(CartRepository::class, cartRepository, RepositoryType.ROOM_DB)
+            }
+
+        val dependencyInjector = DependencyInjector(container)
+        val viewModelFactory = ViewModelFactory(dependencyInjector)
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
