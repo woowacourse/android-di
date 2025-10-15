@@ -7,10 +7,12 @@ import woowacourse.shopping.domain.repository.CartRepository
 class FakeCartRepository(
     private val cartProducts: MutableList<CartProduct> = mutableListOf(),
 ) : CartRepository {
+    private var nextId: Long = 0L
+
     override suspend fun addCartProduct(product: Product) {
         val cartProduct =
             CartProduct(
-                id = cartProducts.size.toLong(),
+                id = nextId++,
                 name = product.name,
                 price = product.price,
                 imageUrl = product.imageUrl,
