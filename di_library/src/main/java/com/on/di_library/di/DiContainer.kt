@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.on.di_library.di.annotation.MyInjector
 import com.on.di_library.di.annotation.MyModule
 import com.on.di_library.di.annotation.MyProvider
+import com.on.di_library.di.annotation.MyQualifier
 import dalvik.system.DexFile
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -15,6 +16,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.cast
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -22,6 +24,14 @@ import kotlin.reflect.jvm.isAccessible
 object DiContainer {
     private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
     private lateinit var modulePool: List<KClass<*>>
+
+    private val functionWithQualifier = mutableMapOf<KClass<*>, MutableList<DependencyKey>>()
+
+    data class DependencyKey(
+        val module: KClass<*>,
+        val function: KFunction<*>,
+        val qualifier: String?,
+    )
 
     /** DiContainer에서 Context를 사용할 수 있도록 설정 **/
     fun setContext(context: Context) {
@@ -47,12 +57,32 @@ object DiContainer {
                 }
             }
         }
-
         modulePool = result
+        createModuleFunction()
     }
 
+    private fun createModuleFunction() {
+        modulePool.forEach { module ->
+            module.declaredMemberFunctions.forEach { function ->
+                if (!function.hasAnnotation<MyProvider>()) return@forEach
+
+                val returnTypeKClass =
+                    function.returnType.classifier as? KClass<*> ?: return@forEach
+                val qualifier = function.findAnnotation<MyQualifier>()?.type
+
+                if (!functionWithQualifier.containsKey(returnTypeKClass))
+                    functionWithQualifier[returnTypeKClass] = mutableListOf()
+
+                functionWithQualifier[returnTypeKClass]?.add(
+                    DependencyKey(module, function, qualifier)
+                )
+            }
+        }
+    }
+
+
     /** 외부에 인스턴스를 주입해주는 주는 메서드**/
-    fun <T : Any> getInstance(kClass: KClass<T>): T {
+    fun <T : Any> getInstance(kClass: KClass<T>, qualifier: String? = null): T {
         if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
             return createInstance(kClass)
         }
@@ -61,7 +91,7 @@ object DiContainer {
             return kClass.cast(it)
         }
 
-        val newInstance = createInstance(kClass)
+        val newInstance = createInstance(kClass, qualifier)
         instancePool[kClass] = newInstance
 
         return kClass.cast(newInstance)
@@ -81,28 +111,25 @@ object DiContainer {
                     getInstance(
                         property.returnType.classifier as? KClass<*>
                             ?: error(""),
+                        property.findAnnotation<MyQualifier>()?.type
                     )
                 property.setter.call(instance, propertyInstance)
             }
     }
 
-    private fun <T : Any> createInstance(kClass: KClass<T>): T {
-        modulePool.forEach { module ->
-            module.declaredMemberFunctions.forEach { function ->
-                if (!function.hasAnnotation<MyProvider>()) return@forEach
-                val returnTypeKClass = function.returnType.classifier as? KClass<*>
-                if (returnTypeKClass == kClass || returnTypeKClass != null && kClass in returnTypeKClass.supertypes.map { it.classifier }) {
-                    return createFromModule(function, kClass, module)
-                }
-            }
+    private fun <T : Any> createInstance(kClass: KClass<T>, qualifier: String? = null): T {
+        val possibleProviders = functionWithQualifier[kClass] ?: emptyList()
+
+        val matchedProvider = possibleProviders.find { it.qualifier == qualifier }
+
+        matchedProvider?.let { key ->
+            return createFromModule(key.function, kClass, key.module)
         }
 
         val instance = createFromConstructor(kClass)
         injectFieldProperties(kClass, instance)
-
         return instance
     }
-
 
     private fun <T : Any> createFromModule(
         function: KFunction<*>,
