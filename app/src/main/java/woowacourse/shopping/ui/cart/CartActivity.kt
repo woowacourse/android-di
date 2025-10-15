@@ -7,8 +7,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -68,9 +66,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupCartProductData() {
-        lifecycleScope.launch {
-            viewModel.getAllCartProducts()
-        }
+        viewModel.getAllCartProducts()
     }
 
     private fun setupCartProductList() {
