@@ -6,7 +6,7 @@ class Container {
     private val providers = mutableMapOf<DependencyKey, () -> Any>()
     private val dependencies = mutableMapOf<DependencyKey, Any>()
 
-    fun <T : Any> register(
+    fun <T : Any> registerProvider(
         kClass: KClass<T>,
         qualifier: String? = null,
         provider: () -> T,

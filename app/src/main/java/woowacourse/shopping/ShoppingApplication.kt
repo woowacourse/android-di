@@ -20,13 +20,13 @@ class ShoppingApplication : Application() {
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(this) }
 
     init {
-        appContainer.register(ProductRepository::class) {
+        appContainer.registerProvider(ProductRepository::class) {
             ProductDefaultRepository()
         }
-        appContainer.register(CartRepository::class, RepositoryType.ROOM_DB) {
+        appContainer.registerProvider(CartRepository::class, RepositoryType.ROOM_DB) {
             CartDatabaseRepository(database.cartProductDao())
         }
-        appContainer.register(CartRepository::class, RepositoryType.IN_MEMORY) {
+        appContainer.registerProvider(CartRepository::class, RepositoryType.IN_MEMORY) {
             CartInMemoryRepository()
         }
     }
