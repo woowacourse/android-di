@@ -16,7 +16,7 @@ class DIContainerTest {
     }
 
     @Test
-    fun `register와 get이 올바르게 동작한다`() {
+    fun `register한 의존성을 get하면 같은 객체가 반환된다`() {
         val repo1 = DIContainer.get(ProductRepository::class)
         val repo2 = DIContainer.get(ProductRepository::class)
 
