@@ -3,9 +3,6 @@ package woowacourse.di
 import androidx.lifecycle.ViewModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import woowacourse.di.auto.AutoInjectingViewModelFactory
-import woowacourse.di.auto.Container
-import woowacourse.di.auto.InjectField
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 

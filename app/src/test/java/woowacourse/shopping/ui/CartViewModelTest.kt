@@ -8,9 +8,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.di.auto.Container
-import woowacourse.di.auto.Database
-import woowacourse.di.auto.FieldInjector
+import woowacourse.di.Container
+import woowacourse.di.Database
+import woowacourse.di.FieldInjector
 import woowacourse.shopping.MainDispatcherRule
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.getOrAwaitValue

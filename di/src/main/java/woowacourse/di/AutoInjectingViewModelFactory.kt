@@ -1,4 +1,4 @@
-package woowacourse.di.auto
+package woowacourse.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

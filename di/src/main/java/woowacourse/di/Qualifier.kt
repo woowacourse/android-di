@@ -1,4 +1,4 @@
-package woowacourse.di.auto
+package woowacourse.di
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.RUNTIME)

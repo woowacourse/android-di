@@ -2,9 +2,9 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
-import woowacourse.di.auto.Container
-import woowacourse.di.auto.Database
-import woowacourse.di.auto.InMemory
+import woowacourse.di.Container
+import woowacourse.di.Database
+import woowacourse.di.InMemory
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultProductRepository

@@ -1,4 +1,4 @@
-package woowacourse.di.auto
+package woowacourse.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
