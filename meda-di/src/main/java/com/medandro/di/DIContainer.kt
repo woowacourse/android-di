@@ -40,7 +40,17 @@ class DIContainer(
         return this
     }
 
-    fun getInstance(
+    fun injectFields(target: Any) {
+        target::class
+            .memberProperties
+            .filterIsInstance<KMutableProperty1<Any, Any?>>()
+            .filter { it.hasAnnotation<InjectField>() }
+            .forEach { property ->
+                injectSingleField(target, property)
+            }
+    }
+
+    private fun getInstance(
         kClass: KClass<*>,
         qualifier: String? = null,
     ): Any {
@@ -71,16 +81,6 @@ class DIContainer(
         val createdInstance = createNewInstance(kClass)
         instances[dependencyKey] = createdInstance
         return createdInstance
-    }
-
-    fun injectFields(target: Any) {
-        target::class
-            .memberProperties
-            .filterIsInstance<KMutableProperty1<Any, Any?>>()
-            .filter { it.hasAnnotation<InjectField>() }
-            .forEach { property ->
-                injectSingleField(target, property)
-            }
     }
 
     private fun generateInterfaceMapping(registerClasses: Array<out KClass<*>>) {
