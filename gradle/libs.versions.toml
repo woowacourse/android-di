@@ -23,6 +23,7 @@ truth = "1.4.5"
 junit = "4.13.2"
 
 [libraries]
+android-di = { module = "com.github.oungsi2000:android-di", version.ref = "compactandroiddi" }
 android-maven-gradle-plugin = { module = "com.github.dcendents:android-maven-gradle-plugin", version.ref = "android-maven-gradle-plugin" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity-ktx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
