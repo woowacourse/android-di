@@ -80,5 +80,6 @@ dependencies {
     testImplementation(libs.robolectric)
 
     // Module
+    implementation(project(":domain"))
     implementation(project(":di"))
 }
