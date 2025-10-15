@@ -12,7 +12,8 @@ class ShoppingApplication : BaseApplication() {
 
     override fun setupModules() {
         val shoppingDatabase = ShoppingDatabase.getInstance(applicationContext)
-        val modules = listOf(RepositoryModule(), DatabaseModule(shoppingDatabase))
+        val inMemoryDatabase = ShoppingDatabase.getInMemoryInstance(applicationContext)
+        val modules = listOf(RepositoryModule(), DatabaseModule(shoppingDatabase, inMemoryDatabase))
         installModules(modules)
     }
 }

@@ -28,5 +28,15 @@ abstract class ShoppingDatabase : RoomDatabase() {
                 instance
             }
         }
+
+        @Synchronized
+        fun getInMemoryInstance(context: Context): ShoppingDatabase {
+            return Room.inMemoryDatabaseBuilder(
+                context.applicationContext,
+                ShoppingDatabase::class.java,
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+        }
     }
 }
