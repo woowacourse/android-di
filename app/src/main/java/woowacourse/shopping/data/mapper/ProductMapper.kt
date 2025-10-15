@@ -9,7 +9,6 @@ fun Product.toEntity(): CartProductEntity =
         name = name,
         price = price,
         imageUrl = imageUrl,
-        createdAt = System.currentTimeMillis(),
     )
 
 fun CartProductEntity.toDomain(): Product =
