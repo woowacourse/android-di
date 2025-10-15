@@ -8,8 +8,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.fake.FakeCartProductDao
+import woowacourse.fake.FakeDatabaseModule
+import woowacourse.fake.FakeRepositoryModule
+import woowacourse.peto.di.DependencyContainer
 import woowacourse.peto.di.ViewModelFactoryInjector
-import woowacourse.shopping.App
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 
@@ -26,8 +29,14 @@ class CartActivityTest {
                 .create()
                 .get()
 
-        val appContainer = (activity.application as App).container
-        val factory = ViewModelFactoryInjector(appContainer.dependencyContainer)
+        val dependencyContainer =
+            DependencyContainer(
+                listOf(
+                    FakeDatabaseModule(),
+                    FakeRepositoryModule(FakeCartProductDao()),
+                ),
+            )
+        val factory = ViewModelFactoryInjector(dependencyContainer)
 
         // when
         val viewModel = ViewModelProvider(activity, factory)[CartViewModel::class.java]
