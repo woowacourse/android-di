@@ -3,6 +3,7 @@ package woowacourse.shopping.ui.cart
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.domain.model.CartProduct
+import woowacourse.shopping.ui.cart.vm.CartProductViewHolder
 import kotlin.collections.toMutableList
 
 class CartProductAdapter(

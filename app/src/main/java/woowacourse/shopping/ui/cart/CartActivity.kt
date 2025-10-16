@@ -10,7 +10,8 @@ import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.ui.vmfactory.AutoViewModelFactory
+import woowacourse.shopping.AutoViewModelFactory
+import woowacourse.shopping.ui.cart.vm.CartViewModel
 import kotlin.getValue
 
 class CartActivity : AppCompatActivity() {

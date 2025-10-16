@@ -1,10 +1,11 @@
-package woowacourse.shopping.ui.cart
+package woowacourse.shopping.ui.cart.vm
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemCartProductBinding
 import woowacourse.shopping.domain.model.CartProduct
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,

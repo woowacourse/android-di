@@ -1,9 +1,7 @@
-package woowacourse.shopping.ui.vmfactory
+package woowacourse.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.FieldInjector
-import woowacourse.shopping.ShoppingContainer
 
 class AutoViewModelFactory(
     private val container: ShoppingContainer,
