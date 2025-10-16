@@ -8,6 +8,8 @@ enum class ScopeType {
     NONE,
     APPLICATION,
     ACTIVITY,
+    FRAGMENT,
+    SERVICE,
     VIEW_MODEL,
 }
 
@@ -29,6 +31,15 @@ class ScopeContext private constructor(
         fun application(): ScopeContext = ScopeContext(mapOf(ScopeType.APPLICATION to APPLICATION_IDENTIFIER))
 
         fun activity(activity: Any): ScopeContext = application().plus(ScopeType.ACTIVITY, activity)
+
+        fun fragment(fragment: Any): ScopeContext = application().plus(ScopeType.FRAGMENT, fragment)
+
+        fun fragment(
+            activity: Any,
+            fragment: Any,
+        ): ScopeContext = activity(activity).plus(ScopeType.FRAGMENT, fragment)
+
+        fun service(service: Any): ScopeContext = application().plus(ScopeType.SERVICE, service)
 
         fun viewModel(identifier: Any): ScopeContext = application().plus(ScopeType.VIEW_MODEL, identifier)
     }
@@ -115,6 +126,8 @@ open class Container {
         qualifier: KClass<out Annotation>? = null,
         scopeContext: ScopeContext? = null,
     ): T = get(T::class, qualifier, scopeContext)
+
+    protected fun requireScopeContext(): ScopeContext = currentScopeContext.get() ?: error("No scope context is currently active")
 
     private fun <T> invokeWithScopeContext(
         scopeContext: ScopeContext,

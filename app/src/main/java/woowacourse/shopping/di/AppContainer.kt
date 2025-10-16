@@ -2,6 +2,8 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
+import woowacourse.di.ActivityContext
+import woowacourse.di.ApplicationContext
 import woowacourse.di.Container
 import woowacourse.di.Database
 import woowacourse.di.InMemory
@@ -17,12 +19,26 @@ import woowacourse.shopping.ui.cart.DateFormatter
 
 object AppContainer : Container() {
     fun init(context: Context) {
-        bindSingleton(Context::class) { context.applicationContext }
+        bindSingleton(
+            type = Context::class,
+            qualifier = ApplicationContext::class,
+        ) { context.applicationContext }
+
+        bindScoped(
+            type = Context::class,
+            qualifier = ActivityContext::class,
+            scopeType = ScopeType.ACTIVITY,
+        ) {
+            val scopeContext = requireScopeContext()
+            val identifier = scopeContext.identifierOf(ScopeType.ACTIVITY)
+            require(identifier is Context) { "Activity scope identifier must be an Android Context" }
+            identifier
+        }
 
         bindSingleton(ShoppingDatabase::class) {
             Room
                 .databaseBuilder(
-                    get(Context::class),
+                    get(Context::class, ApplicationContext::class),
                     ShoppingDatabase::class.java,
                     "shopping.db",
                 ).build()
@@ -59,7 +75,7 @@ object AppContainer : Container() {
             type = DateFormatter::class,
             scopeType = ScopeType.ACTIVITY,
         ) {
-            DateFormatter(get(Context::class))
+            DateFormatter(get(Context::class, ActivityContext::class))
         }
     }
 }

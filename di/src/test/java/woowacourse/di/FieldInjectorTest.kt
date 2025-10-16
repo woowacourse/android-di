@@ -50,7 +50,7 @@ class FieldInjectorTest {
         // when
         FieldInjector.inject(target, container)
 
-        // then (예외 발생)
+        // then
         assertThatThrownBy { FieldInjector.inject(target, container) }
             .isInstanceOf(IllegalStateException::class.java)
             .hasMessageContaining("provider")
