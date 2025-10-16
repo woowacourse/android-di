@@ -52,7 +52,6 @@ object AppContainer {
             concreteClass.constructors.first()
         val args =
             constructor.parameters
-                .filter { parameter -> parameter.hasAnnotation<Inject>() }
                 .map { parameter ->
                     val parameterType = parameter.type.classifier as KClass<*>
                     get(parameterType)
