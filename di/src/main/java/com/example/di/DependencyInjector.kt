@@ -1,6 +1,7 @@
 package com.example.di
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -33,9 +34,17 @@ object DependencyInjector {
         qualifier: KClass<out Annotation>? = null,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        return instances[key] as? T ?: run {
-            instances[key] = createInstance(kClass, savedStateHandle, key)
-            return (instances[key] as T).also { instances.remove(key) }
+        val isViewModel = kClass.findAnnotation<ViewModelScope>() != null
+        if (isViewModel && !ViewModel::class.java.isAssignableFrom(kClass.java)) error("viewModel만 사용 가능한 어노테이션")
+        if (ViewModel::class.java.isAssignableFrom(kClass.java) && !isViewModel) error("${kClass.java.simpleName}:@ViewModelScope 필요")
+
+        return if (isViewModel) {
+            createInstance(kClass, savedStateHandle, key) as T
+        } else {
+            instances[key] as? T ?: run {
+                instances[key] = createInstance(kClass, savedStateHandle, key)
+                return (instances[key] as T)
+            }
         }
     }
 
@@ -85,7 +94,6 @@ object DependencyInjector {
             return kClass.java.getDeclaredConstructor().newInstance()
         } finally {
             creating.remove(kClass)
-            instances.remove(key)
         }
     }
 

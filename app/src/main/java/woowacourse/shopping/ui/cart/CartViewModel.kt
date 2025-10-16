@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.DatabaseLogger
 import com.example.di.RequireInjection
+import com.example.di.ViewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
+@ViewModelScope
 class CartViewModel : ViewModel() {
     @RequireInjection
     @DatabaseLogger
