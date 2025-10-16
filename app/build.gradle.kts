@@ -53,7 +53,6 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(project(":di"))
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)

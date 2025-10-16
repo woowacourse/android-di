@@ -19,4 +19,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "android-di"
-include(":app", ":di")
+include(":app")
