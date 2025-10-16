@@ -11,8 +11,6 @@ import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import woowacourse.shopping.annotation.InMemory
-import woowacourse.shopping.annotation.Room
 
 class ContainerTest {
     private lateinit var container: Container
@@ -45,12 +43,12 @@ class ContainerTest {
     @Test
     fun getInstanceWithQualifier() {
         // given
-        container.bind(TestRepository::class, ::InMemoryTestRepository, InMemory::class)
-        container.bind(TestRepository::class, ::RoomTestRepository, Room::class)
+        container.bind(TestRepository::class, ::InMemoryTestRepository, QualifierA::class)
+        container.bind(TestRepository::class, ::RoomTestRepository, QualifierB::class)
 
         // when
-        val inMemoryInstance = container.get(TestRepository::class, InMemory::class)
-        val roomInstance = container.get(TestRepository::class, Room::class)
+        val inMemoryInstance = container.get(TestRepository::class, QualifierA::class)
+        val roomInstance = container.get(TestRepository::class, QualifierB::class)
 
         assertSoftly {
             inMemoryInstance.shouldBeTypeOf<InMemoryTestRepository>()
@@ -126,7 +124,7 @@ class ContainerTest {
         container.installModule(TestModule)
 
         // when
-        val roomInstance = container.get(TestRepository::class, Room::class)
+        val roomInstance = container.get(TestRepository::class, QualifierA::class)
 
         // then
         roomInstance.shouldBeTypeOf<RoomTestRepository>()

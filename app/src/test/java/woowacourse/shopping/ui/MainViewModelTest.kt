@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import woowacourse.shopping.Container
 import woowacourse.shopping.DEFAULT_PRODUCT
-import woowacourse.shopping.annotation.Room
+import woowacourse.shopping.di.annotation.RoomDB
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
@@ -37,7 +37,7 @@ class MainViewModelTest {
                 bind(
                     type = CartRepository::class,
                     provider = { FakeCartRepository() },
-                    qualifier = Room::class,
+                    qualifier = RoomDB::class,
                 )
             }
         viewModel = container.get()
