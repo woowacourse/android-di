@@ -1,14 +1,12 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.annotation.InMemory
 import woowacourse.shopping.annotation.Inject
-import woowacourse.shopping.annotation.Room
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.Singleton
 import woowacourse.shopping.model.Key
-import kotlin.reflect.KCallable
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -144,19 +142,10 @@ class Container {
             function.call(module, *args)
         }
 
-    private fun findQualifierAnnotation(callable: KCallable<*>): KClass<out Annotation>? =
-        when {
-            callable.hasAnnotation<InMemory>() -> InMemory::class
-            callable.hasAnnotation<Room>() -> Room::class
-            else -> null
-        }
-
-    private fun findQualifierAnnotation(param: KParameter): KClass<out Annotation>? =
-        when {
-            param.hasAnnotation<InMemory>() -> InMemory::class
-            param.hasAnnotation<Room>() -> Room::class
-            else -> null
-        }
+    private fun findQualifierAnnotation(element: KAnnotatedElement): KClass<out Annotation>? =
+        element.annotations
+            .map { annotation -> annotation.annotationClass }
+            .find { annotationClass -> annotationClass.hasAnnotation<Qualifier>() }
 
     private fun <T : Any> findInjectableConstructor(type: KClass<T>): KFunction<T>? =
         type.constructors.firstOrNull { it.hasAnnotation<Inject>() } ?: type.primaryConstructor
