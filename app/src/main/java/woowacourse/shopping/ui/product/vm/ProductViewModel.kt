@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProductViewModel : ViewModel() {
     @field:Inject
-    lateinit var productRepository: ProductRepository
+    private lateinit var productRepository: ProductRepository
 
     @field:Inject
     lateinit var cartRepository: CartRepository

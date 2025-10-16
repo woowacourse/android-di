@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class CartViewModel : ViewModel() {
     @field:Inject
     @Qualifier("room")
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
     val cartProducts: LiveData<List<CartProduct>> get() = _cartProducts
