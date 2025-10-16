@@ -6,7 +6,8 @@ import com.example.di.ShoppingContainer
 import com.example.domain.repository.CartRepository
 import com.example.domain.repository.ProductRepository
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultInMemoryCartRepository
+import woowacourse.shopping.data.DefaultRoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
@@ -27,13 +28,16 @@ class ShoppingApplication : Application() {
         }
 
         container.register(ProductRepository::class) { DefaultProductRepository() }
+
         container.register(CartRepository::class) {
-            DefaultCartRepository(
+            DefaultRoomCartRepository(
                 container.get(
                     CartProductDao::class,
                 ),
             )
         }
+
+        container.register(CartRepository::class) { DefaultInMemoryCartRepository() }
 
         container
     }
