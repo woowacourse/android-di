@@ -2,9 +2,11 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.di.RoomDB
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
+@RoomDB
 class DefaultCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {

@@ -2,9 +2,11 @@ package woowacourse.shopping.data
 
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
+import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
+@InMemory
 class InMemoryCartRepository : CartRepository {
     private val carts: MutableList<CartProductEntity> = mutableListOf()
 
