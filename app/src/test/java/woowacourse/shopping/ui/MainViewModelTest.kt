@@ -1,6 +1,8 @@
 package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.di.DiContainer
+import com.example.di.Injector
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -8,6 +10,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.fake.FakeCartRepository
@@ -22,14 +26,13 @@ class MainViewModelTest {
     @get:Rule
     val instant = InstantTaskExecutorRule()
     private lateinit var viewModel: MainViewModel
-    private lateinit var productRepository: ProductRepository
-    private lateinit var cartRepository: CartRepository
 
     @Before
     fun setup() {
-        productRepository = FakeProductRepository()
-        cartRepository = FakeCartRepository()
-        viewModel = MainViewModel(productRepository, cartRepository)
+        DiContainer.bind(ProductRepository::class, FakeProductRepository::class)
+        DiContainer.bind(CartRepository::class, FakeCartRepository::class)
+        viewModel = MainViewModel()
+        Injector.inject(viewModel)
     }
 
     @Test
