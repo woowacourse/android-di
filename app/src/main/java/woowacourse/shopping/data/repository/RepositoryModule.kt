@@ -1,9 +1,19 @@
 package woowacourse.shopping.data.repository
 
+import woowacourse.peto.di.DependencyModule
+import woowacourse.peto.di.annotation.Qualifier
+import woowacourse.shopping.data.db.DatabaseModule
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
-object RepositoryModule {
-    val productRepository: ProductRepository = DefaultProductRepository()
-    val cartRepository: CartRepository = DefaultCartRepository()
+class RepositoryModule(
+    private val databaseModule: DatabaseModule,
+) : DependencyModule {
+    val productRepository: ProductRepository by lazy { DefaultProductRepository() }
+
+    @Qualifier("default")
+    val defaultCartRepository: CartRepository by lazy { DefaultCartRepository(databaseModule.cartDao) }
+
+    @Qualifier("inMemory")
+    val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
 }

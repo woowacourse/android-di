@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package woowacourse.shopping.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
@@ -8,7 +8,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.di.ViewModelFactoryInjector
+import woowacourse.fake.FakeCartProductDao
+import woowacourse.fake.FakeDatabaseModule
+import woowacourse.fake.FakeRepositoryModule
+import woowacourse.peto.di.DependencyContainer
+import woowacourse.peto.di.ViewModelFactoryInjector
 import woowacourse.shopping.ui.main.MainActivity
 import woowacourse.shopping.ui.main.vm.MainViewModel
 
@@ -38,7 +42,14 @@ class MainActivityTest {
                 .create()
                 .get()
 
-        val factory = ViewModelFactoryInjector.create(MainViewModel::class)
+        val dependencyContainer =
+            DependencyContainer(
+                listOf(
+                    FakeDatabaseModule(),
+                    FakeRepositoryModule(FakeCartProductDao()),
+                ),
+            )
+        val factory = ViewModelFactoryInjector(dependencyContainer)
 
         // when
         val viewModel = ViewModelProvider(activity, factory)[MainViewModel::class.java]
