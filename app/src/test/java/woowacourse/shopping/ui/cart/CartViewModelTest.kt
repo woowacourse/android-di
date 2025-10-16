@@ -1,7 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.di.DependencyInjector
+import com.example.di.DependencyContainer
 import com.example.di.ViewModelFactory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        DependencyInjector.initialize(FakeRepositoryModule())
+        DependencyContainer.initialize(FakeRepositoryModule())
         viewModel = ViewModelFactory.create(CartViewModel::class.java)
         viewModel.getAllCartProducts()
     }
