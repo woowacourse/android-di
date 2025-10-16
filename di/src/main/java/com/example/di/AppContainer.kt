@@ -1,10 +1,13 @@
 package com.example.di
 
+import android.content.Context
 import com.example.di.model.BindingKey
 import com.example.di.model.FactoryProvider
 import com.example.di.model.Provider
 import com.example.di.model.SingletonProvider
+import com.example.di.util.extractDexFiles
 import com.example.di.util.findSingleQualifierOrNull
+import com.example.di.util.isModuleObject
 import com.example.di.util.isProvidesFunction
 import com.example.di.util.isSingletonFunction
 import com.example.di.util.requireInject
@@ -22,6 +25,32 @@ import kotlin.reflect.jvm.jvmErasure
 @Suppress("UNCHECKED_CAST")
 class AppContainer {
     private val bindings = mutableMapOf<BindingKey, Provider<out Any>>()
+
+    /**
+     * 전체 DEX를 순회하여 @Module 이 붙은 Kotlin object 를 찾아 일괄 등록한다.
+     *
+     * 성능을 위해 앱 시작 시 1회 호출을 권장하며,
+     * 필요하면 발견된 FQCN 목록을 캐시하여 다음 실행에서 재사용하도록 해라.
+     */
+    fun init(context: Context) {
+        provide<Context>(context.applicationContext)
+
+        val dexFiles = context.classLoader.extractDexFiles()
+        dexFiles.forEach { dex ->
+            val entries = runCatching { dex.entries() }.getOrNull() ?: return@forEach
+            while (entries.hasMoreElements()) {
+                val className = entries.nextElement()
+                val javaClass =
+                    runCatching { Class.forName(className, false, context.classLoader) }.getOrNull()
+                val kClass = javaClass?.kotlin ?: continue
+
+                val isModuleObject = runCatching { kClass.isModuleObject() }.getOrDefault(false)
+                if (isModuleObject.not()) continue
+
+                provideModule(kClass as KClass<Any>)
+            }
+        }
+    }
 
     /** 인스턴스를 직접 바인딩 */
     fun <T : Any> provide(
