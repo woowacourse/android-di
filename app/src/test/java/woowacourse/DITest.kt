@@ -1,20 +1,20 @@
 package woowacourse
 
 import androidx.lifecycle.ViewModel
+import com.example.di.FieldInjector
+import com.example.di.Inject
+import com.example.di.ShoppingContainer
+import com.example.domain.repository.CartRepository
+import com.example.domain.repository.ProductRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import woowacourse.shopping.FieldInjector
-import woowacourse.shopping.Inject
-import woowacourse.shopping.ShoppingContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.DefaultRoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.jvm.java
 
 class FakeCartProductDao : CartProductDao {
@@ -55,7 +55,7 @@ class DiBasicsTests {
         ShoppingContainer().apply {
             register(CartProductDao::class) { FakeCartProductDao() }
             register(ProductRepository::class) { DefaultProductRepository() }
-            register(CartRepository::class) { DefaultCartRepository(get(CartProductDao::class)) }
+            register(CartRepository::class) { DefaultRoomCartRepository(get(CartProductDao::class)) }
         }
 
     @Test
@@ -96,6 +96,6 @@ class DiBasicsTests {
         assertNotNull(vm.productRepository)
         assertNotNull(vm.cartRepository)
         assertTrue(vm.productRepository is DefaultProductRepository)
-        assertTrue(vm.cartRepository is DefaultCartRepository)
+        assertTrue(vm.cartRepository is DefaultRoomCartRepository)
     }
 }
