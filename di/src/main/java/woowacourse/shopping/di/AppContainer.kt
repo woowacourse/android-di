@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.di.annotation.Inject
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -13,6 +14,10 @@ object AppContainer {
     private val instances = ConcurrentHashMap<KClass<*>, Any>()
 
     private val implementationMap = mutableMapOf<KClass<*>, KClass<*>>()
+
+    val viewModelFactory: ViewModelProvider.Factory by lazy {
+        DIViewModelFactory(this)
+    }
 
     fun <T : Any> registerImplementation(
         interfaceClass: KClass<T>,
