@@ -2,26 +2,24 @@ package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    items: List<CartProduct>,
+    onClickDelete: (id: Long) -> Unit,
     private val dateFormatter: DateFormatter,
 ) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
+    private val items: MutableList<CartProduct> = items.toMutableList()
 
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
+    private val onClickDelete = { id: Long ->
+        onClickDelete(id)
+        removeItem(id)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
-    }
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,
@@ -32,7 +30,12 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    private fun removeItem(position: Int) {
+    private fun removeItem(id: Long) {
+        val position: Int =
+            items
+                .indexOfFirst { cartProduct: CartProduct -> cartProduct.id == id }
+                .takeUnless { it == -1 } ?: return
+
         items.removeAt(position)
         notifyItemRemoved(position)
     }
