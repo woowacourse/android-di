@@ -2,6 +2,7 @@ package woowacourse.shopping.data
 
 import com.example.di.Dependency
 import com.example.di.Module
+import woowacourse.shopping.di.DatabaseRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.fixture.FakeProductRepository

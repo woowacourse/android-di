@@ -1,24 +1,19 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.di
 
 import android.content.Context
 import com.example.di.Dependency
 import com.example.di.Module
-import com.example.di.Qualifier
+import woowacourse.shopping.data.DatabaseCartRepository
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-@Qualifier
-annotation class DatabaseRepository
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
-@Qualifier
-annotation class InMemoryRepository
 
 class RepositoryModule(
     context: Context,
 ) : Module {
-    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
+    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.Companion.instance(context)
 
     @Dependency
     val productRepository: ProductRepository by lazy { DefaultProductRepository() }
