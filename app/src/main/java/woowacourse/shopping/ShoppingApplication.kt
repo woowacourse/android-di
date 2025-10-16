@@ -19,11 +19,10 @@ class ShoppingApplication : Application() {
     }
 
     private fun setupDI() {
-        val database = DatabaseModule.database(applicationContext)
         DiContainer.addProviders(
             CartProductDao::class,
             LocalDatabaseCartProductDao::class,
-        ) { DatabaseModule.cartProductDao(database) }
+        ) { DatabaseModule.cartProductDao(context = applicationContext) }
 
         DiContainer.addProviders(
             CartProductDao::class,
