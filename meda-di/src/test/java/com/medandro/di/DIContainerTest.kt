@@ -167,4 +167,48 @@ class DIContainerTest {
         assertThat(car.driver.person.name).isEqualTo("민택")
         assertThat(car.brand.name).isEqualTo("카카오")
     }
+
+    @Test
+    fun `외부에서 생성한 인스턴스를 직접 등록 가능하다`() {
+        // given
+        class TestCar {
+            @InjectField
+            lateinit var wheels: Wheels
+        }
+
+        val tenWheels: Wheels =
+            object : Wheels {
+                override val count = 10
+            }
+
+        // when
+        val diContainer = DIContainer().registerSingleton(tenWheels)
+        val car = TestCar()
+        diContainer.injectFields(car)
+
+        // then
+        assertThat(car.wheels.count).isEqualTo(10)
+    }
+
+    @Test(
+        // then
+        expected = IllegalStateException::class,
+    )
+    fun `부 생성자만 존재하는 인스턴스는 자동으로 생성할 수 없다`() {
+        // given
+        class Train {
+            constructor(name: String) { }
+        }
+
+        class Vehicle {
+            @InjectField
+            lateinit var train: Train
+        }
+
+        val diContainer = DIContainer()
+        val vehicle = Vehicle()
+
+        // when
+        diContainer.injectFields(vehicle)
+    }
 }

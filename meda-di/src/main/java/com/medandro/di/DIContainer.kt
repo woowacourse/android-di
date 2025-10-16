@@ -1,10 +1,8 @@
 package com.medandro.di
 
 import androidx.lifecycle.ViewModel
-import androidx.room.RoomDatabase
 import com.medandro.di.annotation.InjectField
 import com.medandro.di.annotation.Qualifier
-import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -59,12 +57,6 @@ class DIContainer(
         // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
         instances[dependencyKey]?.let { return it }
 
-        // Room의 Dao 요쳥일 경우 externalSingletons의 Room 인스턴스 에서 Dao 인스턴스 반환
-        resolveDaoFromRoomDB(dependencyKey.type)?.let { dao ->
-            instances[dependencyKey] = dao
-            return dao
-        }
-
         // 인터페이스일 경우 매핑된 클래스로 반환
         interfaceMapping[dependencyKey]?.let { implClass ->
             val instance = createNewInstance(implClass)
@@ -112,27 +104,13 @@ class DIContainer(
         }
     }
 
-    private fun resolveDaoFromRoomDB(kClass: KClass<*>): Any? {
-        if (!kClass.java.isInterface || kClass.simpleName?.endsWith("Dao") != true) {
-            return null
-        }
-
-        val database =
-            instances.values.find { it is RoomDatabase } as? RoomDatabase
-                ?: return null
-
-        val dbClass: Class<RoomDatabase> = database.javaClass
-        val method: Method =
-            dbClass.methods.firstOrNull { m: Method ->
-                m.parameterCount == 0 && kClass.java.isAssignableFrom(m.returnType)
-            } ?: return null
-        return method.invoke(database)
-    }
-
     private fun createNewInstance(kClass: KClass<*>): Any {
         val constructor =
             kClass.primaryConstructor
-                ?: throw IllegalStateException("주 생성자가 존재하지 않아 객체를 생성할 수 없습니다")
+                ?: throw IllegalStateException(
+                    "${kClass.simpleName} 는 주 생성자가 없어 자동으로 인스턴스를 생성할 수 없습니다." +
+                        "DIContainer가 지원하는 타입: 주 생성자가 명시되어 있거나 생략된 클래스",
+                )
 
         val parameterMap =
             constructor.parameters
