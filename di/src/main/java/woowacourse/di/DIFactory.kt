@@ -1,7 +1,11 @@
 package woowacourse.di
 
+import woowacourse.di.annotation.ActivityScope
 import woowacourse.di.annotation.Inject
 import woowacourse.di.annotation.Qualifier
+import woowacourse.di.annotation.Scope
+import woowacourse.di.annotation.SingletonScope
+import woowacourse.di.annotation.ViewModelScope
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.createInstance
@@ -18,35 +22,31 @@ object DIFactory {
     }
 
     private fun <T : Any> createWithConstructor(kClass: KClass<T>): T {
-        val primaryConstructor =
-            kClass.primaryConstructor
-                ?: return kClass.createInstance()
-
-        primaryConstructor.isAccessible = true
+        val constructor = kClass.primaryConstructor ?: return kClass.createInstance()
+        constructor.isAccessible = true
 
         val args =
-            primaryConstructor.parameters.associateWith { param ->
-                val isAnnotated = param.hasAnnotation<Inject>()
-                val qualifierAnnotation =
-                    param.annotations
-                        .firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-                        ?.annotationClass
-
-                if (isAnnotated) {
+            constructor.parameters.associateWith { param ->
+                if (param.hasAnnotation<Inject>()) {
+                    val qualifier =
+                        param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
+                    val scopeAnnotation =
+                        param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Scope>() }?.annotationClass
+                    val scope = extractScopeFromAnnotations(scopeAnnotation)
                     val typeKClass =
                         param.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("Unsupported parameter type: ${param.type}")
-                    DIContainer.get(typeKClass, qualifierAnnotation)
+                    DIContainer.get(typeKClass, qualifier, scope)
                 } else {
                     null
                 }
             }
-        return primaryConstructor.callBy(args.filterValues { it != null })
+
+        return constructor.callBy(args.filterValues { it != null })
     }
 
     private fun <T : Any> injectFields(instance: T) {
         val kClass = instance::class
-
         kClass.memberProperties
             .filterIsInstance<KMutableProperty1<T, Any?>>()
             .filter { it.hasAnnotation<Inject>() }
@@ -55,17 +55,25 @@ object DIFactory {
 
                 val dependencyClass =
                     property.returnType.classifier as? KClass<*>
-                        ?: throw IllegalArgumentException(
-                            "Unsupported field type for injection: ${property.returnType}",
-                        )
+                        ?: throw IllegalArgumentException("Unsupported field type: ${property.returnType}")
 
-                val dependency =
-                    DIContainer.get(
-                        dependencyClass,
-                        property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }
-                            ?.annotationClass,
-                    )
+                val qualifier =
+                    property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
+                val scopeAnnotation =
+                    property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Scope>() }?.annotationClass
+                val scope = extractScopeFromAnnotations(scopeAnnotation)
+
+                val dependency = DIContainer.get(dependencyClass, qualifier, scope)
                 property.set(instance, dependency)
             }
+    }
+
+    private fun extractScopeFromAnnotations(scopeAnnotation: KClass<out Annotation>?): ScopeType {
+        return when (scopeAnnotation) {
+            SingletonScope::class -> ScopeType.Singleton
+            ActivityScope::class -> ScopeType.Activity
+            ViewModelScope::class -> ScopeType.ViewModel
+            else -> ScopeType.Singleton
+        }
     }
 }
