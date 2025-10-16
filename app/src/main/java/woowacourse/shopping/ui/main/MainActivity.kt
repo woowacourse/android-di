@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setupContentView()
         setupBinding()
         setupToolbar()
-        setupViewData()
+        setupProductList()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -54,16 +54,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
     }
 
-    private fun setupViewData() {
-        setupProductData()
-        setupProductList()
-    }
-
-    private fun setupProductData() {
-        viewModel.getAllProducts()
-    }
-
     private fun setupProductList() {
+        viewModel.getAllProducts()
         viewModel.products.observe(this) {
             val adapter =
                 ProductAdapter(

@@ -9,9 +9,7 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
-import woowacourse.shopping.di.DiContainer
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import com.example.di.DependencyInjector
 
 class AutoViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -22,22 +20,22 @@ class AutoViewModelFactory(
         handle: SavedStateHandle,
     ): T {
         val kClass = modelClass.kotlin
-        val constructor = requireNotNull(kClass.primaryConstructor) { kClass.java.simpleName }
-        val params =
-            constructor.parameters.associateWith { param ->
-                when (param.type.classifier) {
-                    SavedStateHandle::class -> handle
-                    else -> DiContainer.getInstance(param.type.classifier as KClass<*>)
-                }
-            }
-        return constructor.callBy(params)
+        val instance =
+            DependencyInjector
+                .getInstance(kClass, handle)
+
+        DependencyInjector
+            .injectAnnotatedProperties(kClass, instance)
+        return instance
     }
 }
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
-    noinline factoryProducer: (() -> Factory)? = { AutoViewModelFactory(this) },
+    noinline factoryProducer: (() -> Factory)? = {
+        AutoViewModelFactory(this)
+    },
 ): Lazy<VM> =
     ViewModelLazy(
         VM::class,

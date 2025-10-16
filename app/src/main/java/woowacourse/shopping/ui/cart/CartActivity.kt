@@ -8,23 +8,29 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.ui.ProductClickListener
 import woowacourse.shopping.ui.autoViewModel
 
-class CartActivity : AppCompatActivity() {
+class CartActivity :
+    AppCompatActivity(),
+    ProductClickListener {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by autoViewModel()
 
-    private lateinit var dateFormatter: DateFormatter
+    private val dateFormatter by lazy { DateFormatter(this) }
+
+    private val cartProductAdapter by lazy {
+        CartProductAdapter(this, dateFormatter)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
-        setupViewData()
+        setupCartProductList()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -42,10 +48,6 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
-    }
-
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -56,28 +58,19 @@ class CartActivity : AppCompatActivity() {
         binding.vm = viewModel
     }
 
-    private fun setupViewData() {
-        setupCartProductData()
-        setupCartProductList()
-    }
-
-    private fun setupCartProductData() {
-        viewModel.getAllCartProducts()
-    }
-
     private fun setupCartProductList() {
+        binding.rvCartProducts.adapter = cartProductAdapter
+        viewModel.getAllCartProducts()
         viewModel.cartProducts.observe(this) {
-            val adapter =
-                CartProductAdapter(
-                    items = it,
-                    dateFormatter = dateFormatter,
-                    onClickDelete = viewModel::deleteCartProduct,
-                )
-            binding.rvCartProducts.adapter = adapter
+            cartProductAdapter.submitList(it)
         }
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onProductDeleteClicked(id: Long) {
+        viewModel.deleteCartProduct(id)
     }
 }

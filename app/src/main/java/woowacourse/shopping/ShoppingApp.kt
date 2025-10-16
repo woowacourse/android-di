@@ -1,14 +1,13 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.DiContainer
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
+import com.example.di.DependencyInjector
 
 class ShoppingApp : Application() {
+    private val appContainer by lazy { AppContainer(this) }
+
     override fun onCreate() {
         super.onCreate()
-        DiContainer.setInstance(CartRepository::class, AppContainer.cartRepository)
-        DiContainer.setInstance(ProductRepository::class, AppContainer.productRepository)
+        DependencyInjector.setInstance(appContainer)
     }
 }
