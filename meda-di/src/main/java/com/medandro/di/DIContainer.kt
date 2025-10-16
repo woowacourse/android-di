@@ -50,7 +50,7 @@ class DIContainer(
             }
     }
 
-    private fun getInstance(dependencyKey: DependencyKey): Any {
+    fun getInstance(dependencyKey: DependencyKey): Any {
         // ViewModel은 매번 새로 생성
         if (ViewModel::class.java.isAssignableFrom(dependencyKey.type.java)) {
             return createNewInstance(dependencyKey.type)
