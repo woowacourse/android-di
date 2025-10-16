@@ -7,7 +7,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
+import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AppContainer
+import woowacourse.shopping.di.AppContainer.get
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
@@ -18,7 +23,15 @@ class AppContainerTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-        AppContainer.init(context)
+        val appContainer = AppContainer
+        appContainer.registerImplementation(CartRepository::class, CartRepositoryImpl::class)
+        appContainer.registerImplementation(ProductRepository::class, ProductRepositoryImpl::class)
+        appContainer.registerProvider(ShoppingDatabase::class) {
+            ShoppingDatabase.getDatabase(context = context)
+        }
+        appContainer.registerProvider(CartProductDao::class) {
+            get(ShoppingDatabase::class).cartProductDao()
+        }
     }
 
     @Test
