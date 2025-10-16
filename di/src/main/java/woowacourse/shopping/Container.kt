@@ -38,31 +38,6 @@ class Container {
         providers[key] = provider
     }
 
-    fun <T : Any> bindSingleton(
-        type: KClass<T>,
-        provider: Provider<T>,
-    ) {
-        val key = Key.from(type)
-        providers[key] = {
-            synchronized(singletons) {
-                singletons.getOrPut(key) { provider() }
-            }
-        }
-    }
-
-    fun <T : Any> bindSingleton(
-        type: KClass<T>,
-        provider: Provider<T>,
-        qualifier: KClass<out Annotation>,
-    ) {
-        val key = Key.of(type, qualifier)
-        providers[key] = {
-            synchronized(singletons) {
-                singletons.getOrPut(key) { provider() }
-            }
-        }
-    }
-
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(
         type: KClass<T>,
@@ -84,19 +59,17 @@ class Container {
             val qualifier = findQualifierAnnotation(function)
             val key = Key.of(returnType, qualifier)
 
-            providers[key] = {
-                val args =
-                    function.parameters
-                        .drop(1)
-                        .map { param ->
-                            val paramClass =
-                                param.type.classifier as? KClass<*>
-                                    ?: throw NoProviderException("지원하지 않는 타입입니다: ${param.type}")
-                            val paramQualifier = findQualifierAnnotation(param)
-                            get(paramClass, paramQualifier)
-                        }.toTypedArray()
-                function.isAccessible = true
-                function.call(module, *args)
+            val provider = createProvider(module, function)
+            if (function.hasAnnotation<Singleton>()) {
+                providers[key] = {
+                    singletons[key] ?: synchronized(this) {
+                        singletons[key] ?: (provider.invoke() as Any).also { instance ->
+                            singletons[key] = instance
+                        }
+                    }
+                }
+            } else {
+                providers[key] = provider
             }
         }
     }
@@ -151,6 +124,25 @@ class Container {
                 field.set(instance, get(type, qualifier))
             }
     }
+
+    private fun <T> createProvider(
+        module: Any,
+        function: KFunction<T>,
+    ): Provider<T> =
+        {
+            val args =
+                function.parameters
+                    .drop(1)
+                    .map { param ->
+                        val paramClass =
+                            param.type.classifier as? KClass<*>
+                                ?: throw NoProviderException("지원하지 않는 타입입니다: ${param.type}")
+                        val paramQualifier = findQualifierAnnotation(param)
+                        get(paramClass, paramQualifier)
+                    }.toTypedArray()
+            function.isAccessible = true
+            function.call(module, *args)
+        }
 
     private fun findQualifierAnnotation(callable: KCallable<*>): KClass<out Annotation>? =
         when {

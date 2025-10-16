@@ -41,24 +41,6 @@ class ContainerTest {
         }
     }
 
-    @DisplayName("컨테이너에 존재하는 싱글톤 인스턴스를 반환한다")
-    @Test
-    fun getSingletonTest() {
-        // given
-        container.bindSingleton(TestRepository::class, ::InMemoryTestRepository)
-
-        // when
-        val instance1 = container.get<TestRepository>()
-        val instance2 = container.get<TestRepository>()
-
-        // then
-        assertSoftly {
-            instance1.shouldNotBeNull()
-            instance2.shouldNotBeNull()
-            instance1 shouldBeSameInstanceAs instance2
-        }
-    }
-
     @DisplayName("Qualifier가 일치하는 인스턴스를 반환한다")
     @Test
     fun getInstanceWithQualifier() {
@@ -148,5 +130,19 @@ class ContainerTest {
 
         // then
         roomInstance.shouldBeTypeOf<RoomTestRepository>()
+    }
+
+    @DisplayName("@Singleton이 붙은 메소드는 생성된 인스턴스가 싱글톤으로 관리된다")
+    @Test
+    fun installModuleSingletonTest() {
+        // given
+        container.installModule(TestModule)
+
+        // when
+        val instance1 = container.get(TestRepository::class)
+        val instance2 = container.get(TestRepository::class)
+
+        // then
+        instance1 shouldBeSameInstanceAs instance2
     }
 }
