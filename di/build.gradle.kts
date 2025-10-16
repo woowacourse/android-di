@@ -11,8 +11,13 @@ kotlin {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation(libs.kotlin.reflect)
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
