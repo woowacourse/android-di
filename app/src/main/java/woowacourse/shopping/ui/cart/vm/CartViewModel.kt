@@ -26,8 +26,9 @@ class CartViewModel : ViewModel() {
     }
 
     fun deleteCartProduct(id: Int) {
+        val cartProduct = _cartProducts.value?.get(id) ?: return
         viewModelScope.launch {
-            cartRepository.deleteCartProduct(id)
+            cartRepository.deleteCartProduct(cartProduct.id)
         }
         _onCartProductDeleted.value = true
     }

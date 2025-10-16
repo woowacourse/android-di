@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import android.util.Log
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.model.CartProduct
@@ -17,7 +18,7 @@ class DefaultCartRepository(
         return dao.getAll().map { it.toDomain() }
     }
 
-    override suspend fun deleteCartProduct(id: Int) {
-        dao.delete(id.toLong())
+    override suspend fun deleteCartProduct(id: Long) {
+        dao.delete(id)
     }
 }
