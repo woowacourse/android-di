@@ -1,6 +1,5 @@
 package com.yrsel.di
 
-import android.util.Log
 import com.yrsel.di.annotation.Inject
 import com.yrsel.di.annotation.Qualifier
 import kotlin.reflect.KClass
@@ -38,12 +37,10 @@ object DependencyInjector {
 
     fun <T : Any> injectFields(instance: T): T {
         val instanceClass: KClass<out T> = instance::class
-        Log.d("CN", "instance = ${instanceClass.simpleName}")
         instanceClass.declaredMemberProperties
             .filterIsInstance<KMutableProperty1<T, Any?>>()
             .filter { it.isInjectableProperty() }
             .forEach { field ->
-                Log.d("CN", "field = ${field.name}")
                 val fieldClass: KClass<*> =
                     field.returnType.classifier as? KClass<*> ?: return@forEach
 
