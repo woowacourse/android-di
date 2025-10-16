@@ -1,5 +1,6 @@
 package com.daedan.di
 
+import androidx.lifecycle.ViewModel
 import com.daedan.di.qualifier.AnnotationQualifier
 import com.daedan.di.qualifier.NamedQualifier
 import com.daedan.di.qualifier.Qualifier
@@ -19,11 +20,19 @@ class DependencyModuleBuilder(
 
     fun named(name: String): NamedQualifier = NamedQualifier(name)
 
-    inline fun <reified T : Any> viewModel(
+    inline fun <reified T : ViewModel> viewModel(
         qualifier: Qualifier = TypeQualifier(T::class),
         noinline create: () -> T,
     ) {
-        val createRule = CreateRule.VIEWMODEL
+        val createRule = CreateRule.FACTORY
+        factories.add(DependencyFactory(qualifier, createRule, create))
+    }
+
+    inline fun <reified T : Any> factory(
+        qualifier: Qualifier = TypeQualifier(T::class),
+        noinline create: () -> T,
+    ) {
+        val createRule = CreateRule.FACTORY
         factories.add(DependencyFactory(qualifier, createRule, create))
     }
 

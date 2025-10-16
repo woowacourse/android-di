@@ -93,7 +93,7 @@ class AppContainerStore {
         val createRule = factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
         when (createRule) {
             CreateRule.SINGLETON -> cache[qualifier] = instance
-            CreateRule.VIEWMODEL -> Unit
+            CreateRule.FACTORY -> Unit
         }
     }
 
@@ -105,3 +105,19 @@ class AppContainerStore {
             "등록된 팩토리, 또는 주 생성자를 찾을 수 없습니다"
     }
 }
+
+/*
+일단 처음에는 ViewModel Factory를 저장하려고 헀지만, 동적 타입이라서 실패했나?
+팩토리 기반으로 한다면 ViewModel이 TypeQualifier로만 지정을 해야 할 듯 하다..!
+
+그렇다면 이것을 Scope와 통합시킬 수 있을까?
+Configuration Changes에도 살아남아야 하는 객체가 있다
+-> DateFormatter는 activityContext, androidContext 함수로 하면 될 듯
+-> 문제는 ProductRepository가 뷰모델 생명주기에서만 살아남아야 하는데..
+-> 근데 '특정 뷰모델의' 생명주기에만 살아남으면 되지 않을까?
+
+viewModel {} 의 스코프는 특별하게 관리..?
+-> by autoViewModel에서 팩토리 생성,
+scope(ViewModel)
+
+ */
