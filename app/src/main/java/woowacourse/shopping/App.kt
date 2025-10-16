@@ -1,14 +1,5 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.example.di.AppContainer
+import com.example.di.wrapper.DIApplication
 
-class App : Application() {
-    val container: AppContainer = AppContainer()
-
-    override fun onCreate() {
-        super.onCreate()
-
-        container.init(this)
-    }
-}
+class App : DIApplication()
