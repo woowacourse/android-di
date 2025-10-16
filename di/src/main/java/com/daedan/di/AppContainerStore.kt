@@ -4,6 +4,8 @@ import com.daedan.di.annotation.Component
 import com.daedan.di.annotation.Inject
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.scope.CreateRule
+import com.daedan.di.scope.Scope
+import com.daedan.di.scope.SingleTonScope
 import com.daedan.di.util.getQualifier
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -35,7 +37,10 @@ class AppContainerStore {
         factory.putAll(newFactoryMap)
     }
 
-    fun instantiate(qualifier: Qualifier): Any {
+    fun instantiate(
+        qualifier: Qualifier,
+        scope: Scope = SingleTonScope,
+    ): Any {
         if (cache.containsKey(qualifier)) {
             return cache[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
         }
@@ -92,7 +97,7 @@ class AppContainerStore {
     ) {
         val createRule = factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
         when (createRule) {
-            CreateRule.SINGLETON -> cache[qualifier] = instance
+            CreateRule.SINGLE -> cache[qualifier] = instance
             CreateRule.FACTORY -> Unit
         }
     }
