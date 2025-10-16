@@ -2,10 +2,10 @@ package woowacourse.shopping
 
 import android.content.Context
 import androidx.room.Room
-import com.example.di.AppContainer
-import com.example.di.DIModule
-import com.example.di.annotation.Database
-import com.example.di.annotation.InMemory
+import com.example.di_v2.DIContainer
+import com.example.di_v2.DIModule
+import com.example.di_v2.annotation.Database
+import com.example.di_v2.annotation.InMemory
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -16,7 +16,7 @@ import woowacourse.shopping.model.repository.ProductRepository
 class ShoppingDIModule(
     private val context: Context,
 ) : DIModule {
-    override fun register(container: AppContainer) {
+    override fun register(container: DIContainer) {
         val database =
             Room
                 .databaseBuilder(
@@ -25,16 +25,18 @@ class ShoppingDIModule(
                     "shopping-database",
                 ).build()
 
-        container.register(CartProductDao::class, database.cartProductDao())
+        container.register(CartProductDao::class) { database.cartProductDao() }
 
-        container.bind(CartRepository::class, DefaultCartRepository::class, null)
-        container.bind(ProductRepository::class, DefaultProductRepository::class, null)
+        // 기본 (Qualifier 없음 = null) 바인딩
+        container.register(CartRepository::class, null) { container.resolve(DefaultCartRepository::class) }
+        container.register(ProductRepository::class, null) { container.resolve(DefaultProductRepository::class) }
 
-        container.bind(CartRepository::class, DefaultCartRepository::class, Database::class)
-        container.bind(ProductRepository::class, DefaultProductRepository::class, Database::class)
+        // @Database Qualifier 바인딩
+        container.register(CartRepository::class, Database::class) { container.resolve(DefaultCartRepository::class) }
+        container.register(ProductRepository::class, Database::class) { container.resolve(DefaultProductRepository::class) }
 
-        // InMemory 버전 작성 (임시)
-        container.bind(CartRepository::class, DefaultCartRepository::class, InMemory::class)
-        container.bind(ProductRepository::class, DefaultProductRepository::class, InMemory::class)
+        // @InMemory Qualifier 바인딩
+        container.register(CartRepository::class, InMemory::class) { container.resolve(DefaultCartRepository::class) }
+        container.register(ProductRepository::class, InMemory::class) { container.resolve(DefaultProductRepository::class) }
     }
 }

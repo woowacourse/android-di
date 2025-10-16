@@ -1,18 +1,19 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.di.AppContainer
+import com.example.di_v2.DIContainer
 
 class ShoppingApplication : Application() {
-    lateinit var appContainer: AppContainer
+    lateinit var appContainer: DIContainer
         private set
 
     override fun onCreate() {
         super.onCreate()
 
-        appContainer =
-            AppContainer().apply {
-                ShoppingDIModule(this@ShoppingApplication).register(this)
-            }
+        appContainer = DIContainer()
+        val module = ShoppingDIModule(applicationContext)
+        module.register(appContainer)
+
+        appContainer.printBindings()
     }
 }

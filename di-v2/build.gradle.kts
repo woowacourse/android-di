@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.di"
+    namespace = "com.example.di_v2"
     compileSdk = 36
 
     defaultConfig {
@@ -37,9 +37,12 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
-    testImplementation(libs.junit)
+    implementation(libs.kotlin.reflect)
+
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    // Reflection
-    implementation(libs.kotlin.reflect)
+
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
 }

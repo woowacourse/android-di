@@ -79,5 +79,5 @@ dependencies {
     // Robolectric
     testImplementation(libs.robolectric)
 
-    implementation(project(":di"))
+    implementation(project(":di-v2"))
 }
