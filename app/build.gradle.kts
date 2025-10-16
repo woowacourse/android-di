@@ -54,6 +54,7 @@ tasks.withType<Test> {
 
 dependencies {
 
+    implementation(project(":inject"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
