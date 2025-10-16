@@ -37,7 +37,7 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
                                 isAccessible = true
                                 javaField?.set(
                                     viewModel,
-                                    container.dependency(returnType, property.annotations),
+                                    container.dependency(returnType, annotations),
                                 )
                             }
                         }
