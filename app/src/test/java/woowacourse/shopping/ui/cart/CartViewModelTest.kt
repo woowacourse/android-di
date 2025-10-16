@@ -26,9 +26,8 @@ import woowacourse.shopping.ui.getOrAwaitValue
 class CartViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
-
     private val testDispatcher = StandardTestDispatcher()
-    lateinit var viewModel: CartViewModel
+    private lateinit var viewModel: CartViewModel
 
     @Before
     fun setUp() {
