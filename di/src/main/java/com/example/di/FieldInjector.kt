@@ -6,6 +6,9 @@ import kotlin.jvm.java
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject
 
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Qualifier(val name: String)
+
 object FieldInjector {
     fun inject(
         target: Any,

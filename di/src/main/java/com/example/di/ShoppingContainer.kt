@@ -1,25 +1,36 @@
 package com.example.di
 
 import kotlin.reflect.KClass
-
+private data class Key(
+    val type: KClass<*>,
+    val qualifier: String?,
+)
 class ShoppingContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
-    private val makers = mutableMapOf<KClass<*>, () -> Any>()
+    private val instances = mutableMapOf<Key, Any>()
+    private val makers = mutableMapOf<Key, () -> Any>()
 
     fun <T : Any> register(
         type: KClass<T>,
+        qualifier: String? = null,
         creator: () -> T,
     ) {
-        makers[type] = creator
+        val key = Key(
+            type = type,
+            qualifier = qualifier)
+        makers[key] = creator
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(type: KClass<T>): T {
-        instances[type]?.let { return it as T }
+    fun <T : Any> get(
+        type: KClass<T>,
+        qualifier: String? = null,
+    ): T {
+        val key = Key(type, qualifier)
+        instances[key]?.let { return it as T }
 
-        val maker: () -> Any = makers[type] ?: error("${type.simpleName} 만드는 방법이 없습니다.")
+        val maker: () -> Any = makers[key] ?: error("${type.simpleName} 만드는 방법이 없습니다.")
         val newInstance: Any = maker()
-        instances[type] = newInstance
+        instances[key] = newInstance
         return newInstance as T
     }
 }
