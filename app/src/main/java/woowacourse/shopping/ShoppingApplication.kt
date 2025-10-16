@@ -2,13 +2,13 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import com.example.di.ShoppingContainer
+import com.example.domain.repository.CartRepository
+import com.example.domain.repository.ProductRepository
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import kotlin.jvm.java
 
 class ShoppingApplication : Application() {
     val container: ShoppingContainer by lazy {

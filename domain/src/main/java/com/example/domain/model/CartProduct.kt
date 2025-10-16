@@ -1,4 +1,4 @@
-package woowacourse.shopping.domain.model
+package com.example.domain.model
 
 class CartProduct(
     val id: Long,

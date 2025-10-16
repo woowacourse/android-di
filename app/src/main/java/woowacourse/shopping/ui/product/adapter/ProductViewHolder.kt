@@ -3,8 +3,8 @@ package woowacourse.shopping.ui.product.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.domain.model.Product
 import woowacourse.shopping.databinding.ItemProductBinding
-import woowacourse.shopping.domain.model.Product
 
 class ProductViewHolder(
     private val binding: ItemProductBinding,

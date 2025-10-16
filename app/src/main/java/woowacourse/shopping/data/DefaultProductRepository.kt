@@ -1,7 +1,7 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.domain.model.Product
-import woowacourse.shopping.domain.repository.ProductRepository
+import com.example.domain.model.Product
+import com.example.domain.repository.ProductRepository
 
 class DefaultProductRepository : ProductRepository {
     private val products: List<Product> =
