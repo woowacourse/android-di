@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package woowacourse.shopping.ui.product
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,11 +14,13 @@ import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.AutoViewModelFactory
+import woowacourse.shopping.ui.product.adapter.ProductAdapter
+import woowacourse.shopping.ui.product.vm.ProductViewModel
 
-class MainActivity : AppCompatActivity() {
+class ProductActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels {
+    private val viewModel: ProductViewModel by viewModels {
         AutoViewModelFactory(
             (application as ShoppingApplication).container,
         )

@@ -1,9 +1,9 @@
-package woowacourse.shopping.ui.cart
+package woowacourse.shopping.ui.cart.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.domain.model.CartProduct
-import woowacourse.shopping.ui.cart.vm.CartProductViewHolder
+import woowacourse.shopping.ui.cart.DateFormatter
 import kotlin.collections.toMutableList
 
 class CartProductAdapter(
