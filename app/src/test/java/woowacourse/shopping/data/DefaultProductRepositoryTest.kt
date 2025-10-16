@@ -5,12 +5,12 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.model.Product
 
-class ProductRepositoryImplTest {
-    private lateinit var repository: ProductRepositoryImpl
+class DefaultProductRepositoryTest {
+    private lateinit var repository: DefaultProductRepository
 
     @Before
     fun setup() {
-        repository = ProductRepositoryImpl()
+        repository = DefaultProductRepository()
     }
 
     @Test

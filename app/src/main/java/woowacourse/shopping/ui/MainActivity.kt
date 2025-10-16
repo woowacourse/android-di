@@ -9,16 +9,24 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import com.example.di_v2.DIContainer
+import com.example.di_v2.ViewModelInjectionFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.util.ShoppingViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private val viewModel: MainViewModel by viewModels { ShoppingViewModelFactory((application as ShoppingApplication).appContainer) }
+    private val diContainer: DIContainer
+        get() = (application as ShoppingApplication).appContainer
+    private val viewModelFactory: ViewModelProvider.Factory by lazy {
+        ViewModelInjectionFactory(diContainer)
+    }
+
+    private val viewModel: MainViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +78,9 @@ class MainActivity : AppCompatActivity() {
             val adapter =
                 ProductAdapter(
                     items = it,
-                    onClickProduct = viewModel::addCartProduct,
+                    onClickProduct = { product ->
+                        viewModel.addCartProduct(product)
+                    },
                 )
             binding.rvProducts.adapter = adapter
         }
