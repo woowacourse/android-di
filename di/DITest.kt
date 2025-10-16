@@ -31,25 +31,6 @@ class FakeCartProductDao : CartProductDao {
     }
 }
 
-private class TestMainVm : ViewModel() {
-    @field:Inject
-    lateinit var productRepository: ProductRepository
-    var title: String = "Main"
-}
-
-private class TestBothVm : ViewModel() {
-    @field:Inject
-    lateinit var productRepository: ProductRepository
-
-    @field:Inject
-    lateinit var cartRepository: CartRepository
-}
-
-private class FactoryTargetVm : ViewModel() {
-    @field:Inject
-    lateinit var productRepository: ProductRepository
-}
-
 class DiBasicsTests {
     private fun container(): ShoppingContainer =
         ShoppingContainer().apply {
