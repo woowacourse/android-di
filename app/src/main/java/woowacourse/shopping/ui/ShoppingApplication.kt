@@ -19,22 +19,22 @@ import kotlin.reflect.full.createType
 class ShoppingApplication :
     Application(),
     DependencyContainer {
-    private val dependencies: MutableMap<KType, Any> = mutableMapOf()
+    private val dependencies: MutableMap<Pair<KType, List<Annotation>>, Any> = mutableMapOf()
 
     override fun dependency(
         type: KType,
-        annotations: List<Annotation>,
+        qualifiers: List<Annotation>,
     ): Any =
-        dependencies.getOrPut(type) {
+        dependencies.getOrPut(type to qualifiers) {
             when (type) {
                 ProductRepository::class.createType() -> createInstance<DefaultProductRepository>()
                 CartRepository::class.createType() -> {
                     when {
-                        annotations.contains(InjectPersistentCartRepository()) -> {
+                        qualifiers.any { it.annotationClass == InjectPersistentCartRepository::class } -> {
                             createInstance<PersistentCartRepository>()
                         }
 
-                        annotations.contains(InjectInMemoryCartRepository()) -> {
+                        qualifiers.any { it.annotationClass == InjectInMemoryCartRepository::class } -> {
                             createInstance<InMemoryCartRepository>()
                         }
 

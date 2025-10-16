@@ -160,7 +160,7 @@ class FakeApplication :
     DependencyContainer {
     override fun dependency(
         type: KType,
-        annotations: List<Annotation>,
+        qualifiers: List<Annotation>,
     ): Any =
         when (type) {
             DeclaredDependency::class.createType() -> DefaultDeclaredDependency()

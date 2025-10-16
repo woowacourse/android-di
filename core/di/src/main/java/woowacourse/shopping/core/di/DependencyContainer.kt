@@ -8,7 +8,7 @@ import kotlin.reflect.full.primaryConstructor
 interface DependencyContainer {
     fun dependency(
         type: KType,
-        annotations: List<Annotation> = emptyList(),
+        qualifiers: List<Annotation> = emptyList(),
     ): Any
 }
 
