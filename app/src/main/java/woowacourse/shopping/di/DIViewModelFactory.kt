@@ -1,46 +1,27 @@
 package woowacourse.shopping.di
 
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import woowacourse.shopping.App
+import woowacourse.shopping.Container
 
 class DIViewModelFactory(
-    private val container: AppContainer,
+    private val container: Container,
 ) : ViewModelProvider.Factory {
     override fun <VM : ViewModel> create(
         modelClass: Class<VM>,
         extras: CreationExtras,
-    ): VM {
-        val kClass = modelClass.kotlin
-        val constructor =
-            requireNotNull(kClass.primaryConstructor) {
-                "${kClass.qualifiedName} 클래스에 생성자가 존재하지 않습니다."
-            }
-
-        val args =
-            constructor.parameters
-                .map { param ->
-                    when (param.type.classifier) {
-                        SavedStateHandle::class -> extras.createSavedStateHandle()
-                        else -> container.getInstance(param.type.classifier as KClass<*>)
-                    }
-                }.toTypedArray()
-
-        return constructor.call(*args)
-    }
+    ): VM = container.get(modelClass.kotlin)
 }
 
 inline fun <reified VM : ViewModel> ComponentActivity.injectViewModel(
     noinline extrasProducer: (() -> CreationExtras)? = null,
     noinline factoryProducer: (() -> ViewModelProvider.Factory)? = null,
 ): Lazy<VM> {
-    val factoryPromise = factoryProducer ?: { DIViewModelFactory(DefaultAppContainer) }
+    val factoryPromise = factoryProducer ?: { DIViewModelFactory((application as App).container) }
 
     return ViewModelLazy(
         viewModelClass = VM::class,

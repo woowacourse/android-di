@@ -3,14 +3,23 @@ package woowacourse.shopping.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import woowacourse.shopping.annotation.Inject
+import woowacourse.shopping.annotation.Room
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
-class MainViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
+    @Inject
+    private lateinit var productRepository: ProductRepository
+
+    @Inject
+    @Room
+    private lateinit var cartRepository: CartRepository
+
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
@@ -18,11 +27,20 @@ class MainViewModel(
     val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        _onProductAdded.value = true
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product.toCartProduct())
+            _onProductAdded.value = true
+        }
     }
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
     }
+
+    private fun Product.toCartProduct(): CartProduct =
+        CartProduct(
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+        )
 }

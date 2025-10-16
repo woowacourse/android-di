@@ -4,35 +4,41 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemCartProductBinding
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
     private val dateFormatter: DateFormatter,
-    onClickDelete: (position: Int) -> Unit,
+    onClickDelete: OnClickDelete,
 ) : RecyclerView.ViewHolder(binding.root) {
+    private var id: Long? = null
+
     init {
         binding.ivCartProductDelete.setOnClickListener {
-            val position = adapterPosition
-            onClickDelete(position)
+            id?.let(onClickDelete::onClick)
         }
     }
 
-    fun bind(product: Product) {
-        binding.item = product
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+    fun bind(cartProduct: CartProduct) {
+        id = cartProduct.id
+        binding.item = cartProduct
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.createdAt)
     }
 
     companion object {
         fun from(
             parent: ViewGroup,
             dateFormatter: DateFormatter,
-            onClickDelete: (position: Int) -> Unit,
+            onClickDelete: OnClickDelete,
         ): CartProductViewHolder {
             val binding =
                 ItemCartProductBinding
                     .inflate(LayoutInflater.from(parent.context), parent, false)
             return CartProductViewHolder(binding, dateFormatter, onClickDelete)
         }
+    }
+
+    fun interface OnClickDelete {
+        fun onClick(id: Long)
     }
 }

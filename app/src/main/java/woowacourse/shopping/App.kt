@@ -1,20 +1,17 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.DefaultAppContainer
-import woowacourse.shopping.di.RepositoryModule.cartRepository
-import woowacourse.shopping.di.RepositoryModule.productRepository
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
+import android.content.Context
+import woowacourse.shopping.di.DatabaseModule
+import woowacourse.shopping.di.RepositoryModule
 
 class App : Application() {
+    val container: Container by lazy { Container() }
+
     override fun onCreate() {
         super.onCreate()
-        bind()
-    }
-
-    private fun bind() {
-        DefaultAppContainer.bind(ProductRepository::class, productRepository)
-        DefaultAppContainer.bind(CartRepository::class, cartRepository)
+        container.bind(Context::class) { this }
+        container.installModule(DatabaseModule)
+        container.installModule(RepositoryModule)
     }
 }

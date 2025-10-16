@@ -1,39 +1,36 @@
 package woowacourse.shopping.ui.cart
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import woowacourse.shopping.domain.model.Product
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductAdapter(
-    items: List<Product>,
-    onClickDelete: (position: Int) -> Unit,
+    private val onClickDelete: CartProductViewHolder.OnClickDelete,
     private val dateFormatter: DateFormatter,
-) : RecyclerView.Adapter<CartProductViewHolder>() {
-    private val items: MutableList<Product> = items.toMutableList()
-
-    private val onClickDelete = { position: Int ->
-        onClickDelete(position)
-        removeItem(position)
-    }
-
+) : ListAdapter<CartProduct, CartProductViewHolder>(DiffUtil) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): CartProductViewHolder {
-        return CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
-    }
+    ): CartProductViewHolder = CartProductViewHolder.from(parent, dateFormatter, onClickDelete)
 
     override fun onBindViewHolder(
         holder: CartProductViewHolder,
         position: Int,
-    ) {
-        holder.bind(items[position])
-    }
+    ) = holder.bind(getItem(position))
 
-    override fun getItemCount(): Int = items.size
+    companion object {
+        private val DiffUtil =
+            object : DiffUtil.ItemCallback<CartProduct>() {
+                override fun areContentsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean = oldItem == newItem
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+                override fun areItemsTheSame(
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
+                ): Boolean = oldItem.id == newItem.id
+            }
     }
 }
