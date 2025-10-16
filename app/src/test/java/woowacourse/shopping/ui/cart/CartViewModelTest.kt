@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import woowacourse.shopping.Container
-import woowacourse.shopping.DEFAULT_PRODUCT
+import woowacourse.shopping.DEFAULT_CART_PRODUCT
 import woowacourse.shopping.annotation.Room
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.ui.FakeCartRepository
@@ -53,16 +53,13 @@ class CartViewModelTest {
     @Test
     fun getAllCartProductsTest() =
         runTest(testDispatcher) {
-            // given
-            viewModel
-
             // when
             viewModel.getAllCartProducts()
             advanceUntilIdle()
             val products = viewModel.cartProducts.getOrAwaitValue()
 
             // then
-            products shouldContain DEFAULT_PRODUCT
+            products shouldContain DEFAULT_CART_PRODUCT
         }
 
     @DisplayName("장바구니에 담긴 물건을 삭제하면 상태가 변경된다")

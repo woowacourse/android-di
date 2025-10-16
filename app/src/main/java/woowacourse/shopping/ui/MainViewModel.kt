@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.annotation.Room
+import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
@@ -27,7 +28,7 @@ class MainViewModel : ViewModel() {
 
     fun addCartProduct(product: Product) {
         viewModelScope.launch {
-            cartRepository.addCartProduct(product)
+            cartRepository.addCartProduct(product.toCartProduct())
             _onProductAdded.value = true
         }
     }
@@ -35,4 +36,11 @@ class MainViewModel : ViewModel() {
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
     }
+
+    private fun Product.toCartProduct(): CartProduct =
+        CartProduct(
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+        )
 }

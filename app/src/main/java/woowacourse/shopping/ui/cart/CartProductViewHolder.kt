@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import woowacourse.shopping.databinding.ItemCartProductBinding
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
@@ -19,10 +19,10 @@ class CartProductViewHolder(
         }
     }
 
-    fun bind(product: Product) {
-        id = product.id
-        binding.item = product
-        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt)
+    fun bind(cartProduct: CartProduct) {
+        id = cartProduct.id
+        binding.item = cartProduct
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(cartProduct.createdAt)
     }
 
     companion object {

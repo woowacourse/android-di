@@ -3,12 +3,12 @@ package woowacourse.shopping.ui.cart
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import woowacourse.shopping.domain.model.Product
+import woowacourse.shopping.domain.model.CartProduct
 
 class CartProductAdapter(
     private val onClickDelete: CartProductViewHolder.OnClickDelete,
     private val dateFormatter: DateFormatter,
-) : ListAdapter<Product, CartProductViewHolder>(DiffUtil) {
+) : ListAdapter<CartProduct, CartProductViewHolder>(DiffUtil) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -21,15 +21,15 @@ class CartProductAdapter(
 
     companion object {
         private val DiffUtil =
-            object : DiffUtil.ItemCallback<Product>() {
+            object : DiffUtil.ItemCallback<CartProduct>() {
                 override fun areContentsTheSame(
-                    oldItem: Product,
-                    newItem: Product,
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
                 ): Boolean = oldItem == newItem
 
                 override fun areItemsTheSame(
-                    oldItem: Product,
-                    newItem: Product,
+                    oldItem: CartProduct,
+                    newItem: CartProduct,
                 ): Boolean = oldItem.id == newItem.id
             }
     }
