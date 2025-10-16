@@ -11,7 +11,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
-    private val instances = mutableMapOf<DependencyKey<*>, Any>()
+    private val instances = mutableMapOf<DependencyKey<*>, () -> Any>()
     private val creating = mutableSetOf<KClass<*>>()
 
     fun setInstance(container: Any) {
@@ -24,7 +24,7 @@ object DependencyInjector {
                 val kClass = property.returnType.classifier as KClass<*>
                 val qualifier = findAnnotation(property)
                 val key = DependencyKey(kClass, qualifier)
-                instances[key] = instance
+                instances[key] = { property.get(container)!! }
             }
     }
 
@@ -35,16 +35,24 @@ object DependencyInjector {
     ): T {
         val key = DependencyKey(kClass, qualifier)
         val isViewModel = kClass.findAnnotation<ViewModelScope>() != null
-        if (isViewModel && !ViewModel::class.java.isAssignableFrom(kClass.java)) error("viewModel만 사용 가능한 어노테이션")
+        if (isViewModel && !ViewModel::class.java.isAssignableFrom(kClass.java)) error("${kClass.java.simpleName}:viewModel만 사용 가능한 어노테이션")
         if (ViewModel::class.java.isAssignableFrom(kClass.java) && !isViewModel) error("${kClass.java.simpleName}:@ViewModelScope 필요")
 
         return if (isViewModel) {
             createInstance(kClass, savedStateHandle, key) as T
         } else {
-            instances[key] as? T ?: run {
-                instances[key] = createInstance(kClass, savedStateHandle, key)
-                return (instances[key] as T)
-            }
+            val factory =
+                instances[key] ?: run {
+                    val newFactory = { createInstance(kClass, savedStateHandle, key) }
+                    instances[key] = newFactory
+                    newFactory
+                }
+
+            val instance = factory.invoke() as T
+
+            instances[key] = { instance }
+
+            return instance
         }
     }
 
