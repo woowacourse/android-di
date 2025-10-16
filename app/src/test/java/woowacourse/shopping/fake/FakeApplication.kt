@@ -1,16 +1,15 @@
 package woowacourse.shopping.fake
 
 import android.app.Application
-import com.m6z1.moongdi.annotation.InMemory
-import com.m6z1.moongdi.annotation.RoomDb
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.AppDependencies
+import woowacourse.shopping.di.InMemory
+import woowacourse.shopping.di.RoomDB
 
 class FakeApplication :
     Application(),
     AppDependencies {
-    @RoomDb
+    @RoomDB
     override val roomCartRepository: CartRepository = FakeRoomCartRepository()
 
     @InMemory

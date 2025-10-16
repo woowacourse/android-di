@@ -6,15 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m6z1.moongdi.annotation.InjectClass
 import com.m6z1.moongdi.annotation.InjectField
-import com.m6z1.moongdi.annotation.RoomDb
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.di.RoomDB
 import woowacourse.shopping.model.CartProduct
 
 @InjectClass
 class CartViewModel : ViewModel() {
     @InjectField
-    @RoomDb
+    @RoomDB
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
