@@ -9,7 +9,7 @@ class DependencyFactory<T : Any>(
     val qualifier: Qualifier,
     val createRule: CreateRule,
     val create: () -> T,
-    val scopeQualifier: Scope = SingleTonScope,
+    val scope: Scope = SingleTonScope,
 ) {
     operator fun invoke(): T = create.invoke()
 }

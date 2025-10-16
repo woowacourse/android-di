@@ -49,3 +49,7 @@ fun KMutableProperty1<*, *>.getQualifier(): Qualifier {
     val defaultType = returnType.jvmErasure
     return resolveQualifier(defaultType)
 }
+
+inline fun <reified T : Annotation> annotated(): AnnotationQualifier = AnnotationQualifier(T::class)
+
+fun named(name: String): NamedQualifier = NamedQualifier(name)

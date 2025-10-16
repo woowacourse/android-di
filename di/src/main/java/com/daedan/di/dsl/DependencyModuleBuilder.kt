@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.daedan.di.AppContainerStore
 import com.daedan.di.DependencyFactory
 import com.daedan.di.DependencyModule
-import com.daedan.di.qualifier.AnnotationQualifier
-import com.daedan.di.qualifier.NamedQualifier
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
 import com.daedan.di.scope.CreateRule
@@ -17,10 +15,6 @@ class DependencyModuleBuilder(
     val appContainerStore: AppContainerStore,
 ) {
     val factories = mutableListOf<DependencyFactory<*>>()
-
-    inline fun <reified T : Annotation> annotated(): AnnotationQualifier = AnnotationQualifier(T::class)
-
-    fun named(name: String): NamedQualifier = NamedQualifier(name)
 
     inline fun <reified T : ViewModel> viewModel(
         qualifier: Qualifier = TypeQualifier(T::class),

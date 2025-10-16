@@ -14,7 +14,11 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 class AppContainerStore {
-    private val cache: MutableMap<Qualifier, Any> = mutableMapOf()
+    private val cache =
+        Collections.synchronizedMap<Scope, DependencyContainer>(
+            mutableMapOf(),
+        )
+
     private val factory = mutableMapOf<Qualifier, DependencyFactory<*>>()
 
     private val inProgress =
@@ -41,8 +45,16 @@ class AppContainerStore {
         qualifier: Qualifier,
         scope: Scope = SingleTonScope,
     ): Any {
-        if (cache.containsKey(qualifier)) {
-            return cache[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
+        val scopedContainer = cache.getOrPut(scope) { DependencyContainer() }
+
+        if (scopedContainer.containsKey(qualifier)) {
+            return scopedContainer[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
+        }
+
+        val creator = factory[qualifier] ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
+
+        if (creator.scope != scope && creator.scope != SingleTonScope) {
+            error("$ERR_ILLEGAL_SCPE_REQUESTED : $qualifier")
         }
 
         if (inProgress.contains(qualifier)) {
@@ -51,11 +63,9 @@ class AppContainerStore {
 
         inProgress.add(qualifier)
         try {
-            val instance =
-                factory[qualifier]?.invoke()
-                    ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
+            val instance = creator.invoke()
             injectField(instance)
-            save(qualifier, instance)
+            creator.scope.save(qualifier, instance)
             return instance
         } finally {
             inProgress.remove(qualifier)
@@ -91,18 +101,22 @@ class AppContainerStore {
                 it.annotationClass.findAnnotation<Component>() != null
             }
 
-    private fun save(
+    private fun Scope.save(
         qualifier: Qualifier,
         instance: Any,
     ) {
         val createRule = factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
         when (createRule) {
-            CreateRule.SINGLE -> cache[qualifier] = instance
+            CreateRule.SINGLE -> {
+                val container = cache.getOrPut(this) { DependencyContainer() }
+                container[qualifier] = instance
+            }
             CreateRule.FACTORY -> Unit
         }
     }
 
     companion object {
+        private const val ERR_ILLEGAL_SCPE_REQUESTED = "등록된 스코프와 다른 스코프에서는 객체 생성이 불가능합니다"
         private const val ERR_CONFLICT_KEY = "이미 동일한 Qualifier가 존재합니다"
         private const val ERR_CANNOT_FIND_INSTANCE = "컨테이너에서 인스턴스를 찾을 수 없습니다"
         private const val ERR_CIRCULAR_DEPENDENCY_DETECTED = "순환 참조가 발견되었습니다"
@@ -110,19 +124,3 @@ class AppContainerStore {
             "등록된 팩토리, 또는 주 생성자를 찾을 수 없습니다"
     }
 }
-
-/*
-일단 처음에는 ViewModel Factory를 저장하려고 헀지만, 동적 타입이라서 실패했나?
-팩토리 기반으로 한다면 ViewModel이 TypeQualifier로만 지정을 해야 할 듯 하다..!
-
-그렇다면 이것을 Scope와 통합시킬 수 있을까?
-Configuration Changes에도 살아남아야 하는 객체가 있다
--> DateFormatter는 activityContext, androidContext 함수로 하면 될 듯
--> 문제는 ProductRepository가 뷰모델 생명주기에서만 살아남아야 하는데..
--> 근데 '특정 뷰모델의' 생명주기에만 살아남으면 되지 않을까?
-
-viewModel {} 의 스코프는 특별하게 관리..?
--> by autoViewModel에서 팩토리 생성,
-scope(ViewModel)
-
- */
