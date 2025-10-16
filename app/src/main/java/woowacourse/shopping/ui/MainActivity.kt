@@ -8,9 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.daedan.di.util.autoViewModels
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
-import woowacourse.shopping.di.autoViewModels
 import woowacourse.shopping.ui.cart.CartActivity
 
 class MainActivity : AppCompatActivity() {

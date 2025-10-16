@@ -11,13 +11,13 @@ class FakeCartRepository(
     var isProductDeleted = false
         private set
 
-    override fun addCartProduct(product: Product) {
+    override suspend fun addCartProduct(product: Product) {
         isProductAdded = true
     }
 
-    override fun getAllCartProducts(): List<Product> = fakeAllCartProducts
+    override suspend fun getAllCartProducts(): List<Product> = fakeAllCartProducts
 
-    override fun deleteCartProduct(id: Int) {
+    override suspend fun deleteCartProduct(id: Int) {
         isProductDeleted = true
     }
 }

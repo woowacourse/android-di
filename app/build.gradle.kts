@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "woowacourse.shopping"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.android.di)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -62,9 +63,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.assertj.core)
     androidTestImplementation(libs.truth)
-
-    // Reflection
-    implementation(libs.kotlin.reflect)
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

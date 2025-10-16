@@ -1,20 +1,16 @@
-package woowacourse.shopping
+package woowacourse.shopping.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.ui.MainActivity
-import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.cart.CartActivity
-import woowacourse.shopping.ui.cart.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
-class CartActivityTest {
+class MainActivityTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -23,12 +19,12 @@ class CartActivityTest {
         // given
         val activity =
             Robolectric
-                .buildActivity(CartActivity::class.java)
+                .buildActivity(MainActivity::class.java)
                 .create()
                 .get()
 
         // then
-        assertThat(activity).isNotNull()
+        Truth.assertThat(activity).isNotNull()
     }
 
     @Test
@@ -36,12 +32,12 @@ class CartActivityTest {
         // given
         val activity =
             Robolectric
-                .buildActivity(CartActivity::class.java)
+                .buildActivity(MainActivity::class.java)
                 .create()
                 .get()
-        val viewModel = ViewModelProvider(activity)[CartViewModel::class.java]
+        val viewModel = ViewModelProvider(activity)[MainViewModel::class.java]
 
         // then
-        assertThat(viewModel).isNotNull()
+        Truth.assertThat(viewModel).isNotNull()
     }
 }

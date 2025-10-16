@@ -1,23 +1,17 @@
 package woowacourse.shopping
 
-import android.app.Application
-import woowacourse.shopping.data.repository.DefaultCartRepository
-import woowacourse.shopping.data.repository.DefaultProductRepository
-import woowacourse.shopping.di.AppContainerStore
-import woowacourse.shopping.di.DependencyFactory
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
+import com.daedan.di.DiApplication
+import woowacourse.shopping.di.dataModule
+import woowacourse.shopping.di.repositoryModule
+import woowacourse.shopping.di.viewModelModule
 
-class MainApplication : Application() {
-    val appContainerStore =
-        AppContainerStore(
-            listOf(
-                DependencyFactory(CartRepository::class) {
-                    DefaultCartRepository()
-                },
-                DependencyFactory(ProductRepository::class) {
-                    DefaultProductRepository()
-                },
-            ),
+class MainApplication : DiApplication() {
+    override fun onCreate() {
+        super.onCreate()
+        register(
+            dataModule(),
+            repositoryModule(),
+            viewModelModule(),
         )
+    }
 }

@@ -9,3 +9,12 @@ fun Product.toEntity(): CartProductEntity =
         price = price,
         imageUrl = imageUrl,
     )
+
+fun CartProductEntity.toProduct(): Product =
+    Product(
+        id = id.toInt(),
+        name = name,
+        price = price,
+        imageUrl = imageUrl,
+        createdAt = createdAt,
+    )

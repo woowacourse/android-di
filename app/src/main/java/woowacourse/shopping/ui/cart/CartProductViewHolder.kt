@@ -9,18 +9,20 @@ import woowacourse.shopping.domain.model.Product
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
     private val dateFormatter: DateFormatter,
-    onClickDelete: (position: Int) -> Unit,
+    onClickDelete: (id: Int) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
+    private lateinit var product: Product
+
     init {
         binding.ivCartProductDelete.setOnClickListener {
-            val position = adapterPosition
-            onClickDelete(position)
+            onClickDelete(product.id)
         }
     }
 
     fun bind(product: Product) {
+        this.product = product
         binding.item = product
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt) // 추가됨
     }
 
     companion object {

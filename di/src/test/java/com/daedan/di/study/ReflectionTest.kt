@@ -1,4 +1,4 @@
-package woowacourse.study
+package com.daedan.di.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
