@@ -1,9 +1,8 @@
-package woowacourse.shopping.ui.common
+package com.on.di_library.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.di.DiContainer
 
 object DiViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(

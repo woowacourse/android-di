@@ -63,8 +63,6 @@ dependencies {
     androidTestImplementation(libs.assertj.core)
     androidTestImplementation(libs.truth)
 
-    // Reflection
-    implementation(libs.kotlin.reflect)
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -78,7 +76,6 @@ dependencies {
     implementation(libs.glide)
     // Robolectric
     testImplementation(libs.robolectric)
-    // KoTest
-    testImplementation(libs.kotest.runner.junit5)
-    testImplementation(libs.kotest.assertions.core)
+    // myDI
+    implementation(project(":di_library"))
 }
