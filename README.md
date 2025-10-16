@@ -144,4 +144,3 @@
 - [ ] Fragment, Service 등 추가 컴포넌트 스코프 지원
 - [ ] Android `Context`용 Qualifier(예: `@ActivityContext`, `@ApplicationContext`) 제공
 - [ ] 스코프 바인딩 DSL 제공 (예: `bindIn(activity) { ... }`, `bindIn(viewModel) { ... }`)
-- 
