@@ -1,9 +1,9 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.domain.Product
 import woowacourse.shopping.domain.ProductRepository
 
-class ProductRepositoryImpl : ProductRepository {
+class DefaultProductRepository : ProductRepository {
     private val products: List<Product> =
         listOf(
             Product(

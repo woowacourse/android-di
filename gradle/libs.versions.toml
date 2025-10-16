@@ -11,6 +11,7 @@ assertj-core = "3.27.3"
 core-testing = "2.2.0"
 glide = "4.15.1"
 google-material = "1.12.0"
+junit-jupiter-api = "5.10.0"
 kotlin = "1.9.25"
 kotlinx-coroutines-core = "1.8.1"
 kotlinx-coroutines-test = "1.8.0"
@@ -18,6 +19,7 @@ ktlint = "12.1.0"
 robolectric = "4.16"
 room-runtime = "2.6.1"
 truth = "1.4.5"
+junit = "4.13.2"
 
 [libraries]
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity-ktx" }
@@ -34,15 +36,18 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version.ref =
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj-core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "google-material" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-api" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kotlin-kapt = { id = "kotlin-kapt" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }

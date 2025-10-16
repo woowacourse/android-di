@@ -8,9 +8,8 @@ data class CartProductEntity(
     val name: String,
     val price: Int,
     val imageUrl: String,
+    val createdAt: Long = System.currentTimeMillis(),
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-
-    var createdAt: Long = System.currentTimeMillis()
 }

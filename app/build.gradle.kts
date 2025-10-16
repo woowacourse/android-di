@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "woowacourse.shopping"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -27,19 +27,24 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     kotlinOptions {
         jvmTarget = "21"
     }
+
     dataBinding {
         enable = true
     }
+
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+
     packaging {
         resources {
             excludes += "META-INF/**"
@@ -49,6 +54,8 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -57,6 +64,7 @@ dependencies {
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
