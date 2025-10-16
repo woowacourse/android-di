@@ -19,6 +19,8 @@ import com.daedan.di.fixture.TestComponent1
 import com.daedan.di.fixture.TestComponent2
 import com.daedan.di.fixture.UnableReflectObject
 import com.daedan.di.qualifier.TypeQualifier
+import com.daedan.di.util.annotated
+import com.daedan.di.util.named
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -67,12 +69,12 @@ class AppContainerStoreTest {
     }
 
     @Test
-    fun `viewModel로 등록한 의존성은 매번 다른 인스턴스를 생성한다`() {
+    fun `factory로 등록한 의존성은 매번 다른 인스턴스를 생성한다`() {
         // given
         val appContainerStore = AppContainerStore()
         val module =
             module(appContainerStore) {
-                viewModel { Child1() }
+                factory { Child1() }
             }
         appContainerStore.registerFactory(module)
 

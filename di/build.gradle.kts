@@ -41,9 +41,10 @@ dependencies {
 
     // Reflection
     implementation(libs.kotlin.reflect)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.assertj.core)
-    androidTestImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.espresso.core)
 }
 afterEvaluate {
