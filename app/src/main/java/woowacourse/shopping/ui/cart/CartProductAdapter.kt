@@ -14,7 +14,8 @@ class CartProductAdapter(
 
     private val onClickDelete = { position: Int ->
         onClickDelete(position)
-        removeItem(position)
+        removeItem(items[position].id)
+        notifyItemRemoved(position)
     }
 
     override fun onCreateViewHolder(
@@ -31,8 +32,7 @@ class CartProductAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    private fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    private fun removeItem(id: Long) {
+        items.filter { item -> item.id != id }
     }
 }
