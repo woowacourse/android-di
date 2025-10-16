@@ -6,6 +6,8 @@ import com.daedan.di.qualifier.AnnotationQualifier
 import com.daedan.di.qualifier.NamedQualifier
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
+import com.daedan.di.scope.NamedScope
+import com.daedan.di.scope.TypeScope
 import kotlin.reflect.KAnnotatedElement // 💡 KClass와 KProperty 모두 상속
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -53,3 +55,7 @@ fun KMutableProperty1<*, *>.getQualifier(): Qualifier {
 inline fun <reified T : Annotation> annotated(): AnnotationQualifier = AnnotationQualifier(T::class)
 
 fun named(name: String): NamedQualifier = NamedQualifier(name)
+
+fun withScope(name: String): NamedScope = NamedScope(name)
+
+inline fun <reified T : Any> withScope(): TypeScope = TypeScope(T::class)

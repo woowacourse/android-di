@@ -11,17 +11,23 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.daedan.di.DiApplication
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
+import com.daedan.di.scope.Scope
+import com.daedan.di.scope.TypeScope
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
     qualifier: Qualifier = TypeQualifier(VM::class),
+    scope: Scope = TypeScope(VM::class),
     noinline extrasProducer: (() -> CreationExtras)? = null,
 ): Lazy<VM> {
     val factory =
         viewModelFactory {
             initializer {
                 val store = (this[APPLICATION_KEY] as DiApplication).appContainerStore
-                store.instantiate(qualifier) as VM
+                store.createScope(scope)
+                val viewModel = store.instantiate(qualifier, scope) as VM
+                viewModel.addCloseable { store.closeScope(scope) }
+                viewModel
             }
         }
     return ViewModelLazy(

@@ -35,6 +35,5 @@ class ScopeDependencyModuleBuilder(
         )
     }
 
-    inline fun <reified T : Any> get(qualifier: Qualifier = TypeQualifier(T::class)): T =
-        dependencyModuleBuilder.appContainerStore.instantiate(qualifier, scope) as T
+    inline fun <reified T : Any> get(qualifier: Qualifier = TypeQualifier(T::class)): T = dependencyModuleBuilder.get(qualifier, scope)
 }

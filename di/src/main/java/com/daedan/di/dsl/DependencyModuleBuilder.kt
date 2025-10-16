@@ -8,6 +8,7 @@ import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
 import com.daedan.di.scope.CreateRule
 import com.daedan.di.scope.Scope
+import com.daedan.di.scope.SingleTonScope
 import com.daedan.di.scope.TypeScope
 
 @DependencyModuleDSL
@@ -47,7 +48,10 @@ class DependencyModuleBuilder(
         block(ScopeDependencyModuleBuilder(qualifier, this))
     }
 
-    inline fun <reified T : Any> get(qualifier: Qualifier = TypeQualifier(T::class)): T = appContainerStore.instantiate(qualifier) as T
+    inline fun <reified T : Any> get(
+        qualifier: Qualifier = TypeQualifier(T::class),
+        scope: Scope = SingleTonScope,
+    ): T = appContainerStore.instantiate(qualifier, scope) as T
 
     fun build(): DependencyModule = DependencyModule(factories)
 }

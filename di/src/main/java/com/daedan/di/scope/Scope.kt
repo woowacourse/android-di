@@ -1,9 +1,5 @@
 package com.daedan.di.scope
 
-interface Scope {
-    override fun toString(): String
+import com.daedan.di.qualifier.Qualifier
 
-    override fun hashCode(): Int
-
-    override fun equals(other: Any?): Boolean
-}
+interface Scope : Qualifier

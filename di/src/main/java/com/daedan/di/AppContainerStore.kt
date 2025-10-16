@@ -16,7 +16,7 @@ import kotlin.reflect.jvm.isAccessible
 class AppContainerStore {
     private val cache =
         Collections.synchronizedMap<Scope, DependencyContainer>(
-            mutableMapOf(),
+            mutableMapOf(SingleTonScope to DependencyContainer()),
         )
 
     private val factory = mutableMapOf<Qualifier, DependencyFactory<*>>()
@@ -41,11 +41,19 @@ class AppContainerStore {
         factory.putAll(newFactoryMap)
     }
 
+    fun createScope(scope: Scope) {
+        cache[scope] = DependencyContainer()
+    }
+
+    fun closeScope(scope: Scope) {
+        cache.remove(scope)
+    }
+
     fun instantiate(
         qualifier: Qualifier,
         scope: Scope = SingleTonScope,
     ): Any {
-        val scopedContainer = cache.getOrPut(scope) { DependencyContainer() }
+        val scopedContainer = cache[scope] ?: error("$ERR_SCOPE_NOT_CREATED : $scope")
 
         if (scopedContainer.containsKey(qualifier)) {
             return scopedContainer[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
@@ -53,8 +61,9 @@ class AppContainerStore {
 
         val creator = factory[qualifier] ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
 
+        // 모듈에 등록된 스코프와 다른 스코프로 객체 생성 요청 거부
         if (creator.scope != scope && creator.scope != SingleTonScope) {
-            error("$ERR_ILLEGAL_SCPE_REQUESTED : $qualifier")
+            error("$ERR_ILLEGAL_SCPE_REQUESTED,  request $scope but actual ${creator.scope} at $qualifier")
         }
 
         if (inProgress.contains(qualifier)) {
@@ -64,7 +73,7 @@ class AppContainerStore {
         inProgress.add(qualifier)
         try {
             val instance = creator.invoke()
-            injectField(instance)
+            injectField(instance, scope)
             creator.scope.save(qualifier, instance)
             return instance
         } finally {
@@ -72,7 +81,10 @@ class AppContainerStore {
         }
     }
 
-    private fun injectField(instance: Any) {
+    private fun injectField(
+        instance: Any,
+        scope: Scope,
+    ) {
         try {
             instance::class.memberProperties
         } catch (e: Error) {
@@ -90,6 +102,7 @@ class AppContainerStore {
                     instance,
                     instantiate(
                         childQualifier,
+                        scope,
                     ),
                 )
             }
@@ -116,6 +129,7 @@ class AppContainerStore {
     }
 
     companion object {
+        private const val ERR_SCOPE_NOT_CREATED = "아직 스코프가 생성되지 않았습니다"
         private const val ERR_ILLEGAL_SCPE_REQUESTED = "등록된 스코프와 다른 스코프에서는 객체 생성이 불가능합니다"
         private const val ERR_CONFLICT_KEY = "이미 동일한 Qualifier가 존재합니다"
         private const val ERR_CANNOT_FIND_INSTANCE = "컨테이너에서 인스턴스를 찾을 수 없습니다"
