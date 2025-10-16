@@ -4,12 +4,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class ProductRepositoryImplTest {
-    private lateinit var productRepository: ProductRepositoryImpl
+class InMemoryProductRepositoryTest {
+    private lateinit var productRepository: InMemoryProductRepository
 
     @Before
     fun setUp() {
-        productRepository = ProductRepositoryImpl()
+        productRepository = InMemoryProductRepository()
     }
 
     @Test

@@ -1,11 +1,41 @@
 package woowacourse.shopping.di
 
-import woowacourse.shopping.data.CartRepositoryImpl
-import woowacourse.shopping.data.ProductRepositoryImpl
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Module
+import com.example.di.annotation.Provides
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Singleton
+import woowacourse.shopping.data.DatabaseCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.InMemoryProductRepository
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
+@Qualifier
+annotation class InMemory
+
+@Qualifier
+annotation class Database
+
+@Module
 object RepositoryModule {
-    private val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
-    private val cartRepository: CartRepository by lazy { CartRepositoryImpl() }
+    @Provides
+    @Singleton
+    @Database
+    fun provideDatabaseCartRepository(
+        @Inject impl: DatabaseCartRepository,
+    ): CartRepository = impl
+
+    @Provides
+    @Singleton
+    @InMemory
+    fun provideInMemoryCartRepository(
+        @Inject impl: InMemoryCartRepository,
+    ): CartRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(
+        @Inject impl: InMemoryProductRepository,
+    ): ProductRepository = impl
 }
