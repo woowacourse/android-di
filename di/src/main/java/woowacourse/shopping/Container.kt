@@ -69,8 +69,8 @@ class Container {
         qualifier: KClass<out Annotation>? = null,
     ): T {
         val key = Key.of(type, qualifier)
-        val provider = providers[key]
-        if (provider != null) return (provider as Provider<T>).invoke()
+        singletons[key]?.let { instance -> return instance as T }
+        providers[key]?.let { provider -> return (provider as Provider<T>).invoke() }
         return createAndReturn(type, qualifier)
     }
 
