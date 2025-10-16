@@ -106,3 +106,42 @@
 - [x] DI 라이브러리를 독립 모듈로 분리 (`core-di` 등)
 - [ ] 선택: DSL 기반 의존성 등록 문법 추가 (예: `container.bind<T> { ... }`)
 - [ ] 선택: Jitpack을 활용해 라이브러리 배포 및 적용 테스트
+
+---
+
+## 🧱 기능 요구 사항 (4단계)
+
+- **Lifecycle 기반 DI**
+  - 개발자가 매번 `DateFormatter` 인스턴스를 관리하지 않아도 된다.
+  - 모든 의존성을 싱글 오브젝트로 만들지 않는다.
+  - `CartRepository`는 **앱 전체(Application)** 생명주기 동안 유지된다.
+  - `ProductRepository`는 **ViewModel** 생명주기 동안 유지된다.
+  - `DateFormatter`는 **Activity** 생명주기 동안 유지된다.
+  - 내가 만든 DI 라이브러리가 위 스코프 규칙을 따르는지 테스트를 작성한다.
+
+## 🛠️ 구현할 기능 (4단계)
+
+- [ ] DI 컨테이너에 스코프 개념 추가 (예: `application`, `activity`, `viewModel`)
+- [ ] `CartRepository`를 Application 스코프로 바인딩
+- [ ] `ProductRepository`를 ViewModel 스코프로 바인딩
+- [ ] `DateFormatter`를 Activity 스코프로 바인딩
+- [ ] Activity에서 `DateFormatter` 필드 주입 적용 (필드/생성자 선택)
+- [ ] 필드 주입 + 스코프 동작 테스트 (DI 모듈 단위 테스트)
+- [ ] Robolectric로 Activity recreate 시나리오 테스트
+- [ ] ViewModel 소멸 시, ViewModel 스코프 해제 테스트
+
+## 🛠️ 프로그래밍 요구 사항 (4단계)
+
+- [ ] 제공된/기존 테스트와 공존하도록 테스트를 작성한다.
+- [ ] 스코프별 인스턴스 생명주기를 명확히 검증한다.
+  - Application: 프로세스 생존 동안 동일 인스턴스
+  - Activity: recreate 전후 비교(필요 시 Retained 옵션 고려)
+  - ViewModel: ViewModel 생성/소멸에 맞춰 생성/해제
+
+## 🧱 선택 요구 사항 (4단계)
+
+- [ ] `DateFormatter`를 Configuration Changes에 **살아남도록**(Activity Retained) 선택 구현
+- [ ] Fragment, Service 등 추가 컴포넌트 스코프 지원
+- [ ] Android `Context`용 Qualifier(예: `@ActivityContext`, `@ApplicationContext`) 제공
+- [ ] 스코프 바인딩 DSL 제공 (예: `bindIn(activity) { ... }`, `bindIn(viewModel) { ... }`)
+- 
