@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import com.example.di.annotation.Inject
+import com.example.di.annotation.Module
 import com.example.di.annotation.Provides
 import com.example.di.annotation.Qualifier
 import com.example.di.annotation.Singleton
@@ -16,6 +17,7 @@ annotation class InMemory
 @Qualifier
 annotation class Database
 
+@Module
 object RepositoryModule {
     @Provides
     @Singleton
