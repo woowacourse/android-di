@@ -5,8 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.di.DIScopeManager
+import woowacourse.di.ScopeType
 import woowacourse.di.annotation.Inject
 import woowacourse.di.annotation.RoomDB
+import woowacourse.di.annotation.SingletonScope
+import woowacourse.di.annotation.ViewModelScope
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
@@ -14,9 +18,12 @@ import woowacourse.shopping.model.Product
 class MainViewModel : ViewModel() {
     @Inject
     @RoomDB
+    @SingletonScope
     lateinit var cartRepository: CartRepository
 
-    @Inject lateinit var productRepository: ProductRepository
+    @Inject
+    @ViewModelScope
+    lateinit var productRepository: ProductRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
@@ -33,5 +40,10 @@ class MainViewModel : ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        DIScopeManager.clearScope(ScopeType.ViewModel)
     }
 }

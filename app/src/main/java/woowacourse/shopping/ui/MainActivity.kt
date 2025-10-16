@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.DIScopeManager
 import woowacourse.di.DIViewModelFactory
+import woowacourse.di.ScopeType
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
@@ -83,5 +85,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToCart() {
         startActivity(Intent(this, CartActivity::class.java))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DIScopeManager.clearScope(ScopeType.Activity)
     }
 }

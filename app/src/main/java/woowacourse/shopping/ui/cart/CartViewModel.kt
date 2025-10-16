@@ -5,14 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.di.DIScopeManager
+import woowacourse.di.ScopeType
 import woowacourse.di.annotation.Inject
 import woowacourse.di.annotation.RoomDB
+import woowacourse.di.annotation.SingletonScope
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 
 class CartViewModel : ViewModel() {
     @Inject
     @RoomDB
+    @SingletonScope
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
@@ -33,5 +37,10 @@ class CartViewModel : ViewModel() {
             cartRepository.deleteCartProduct(id)
             _onCartProductDeleted.value = true
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        DIScopeManager.clearScope(ScopeType.ViewModel)
     }
 }
