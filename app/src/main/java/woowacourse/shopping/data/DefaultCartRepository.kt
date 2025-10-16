@@ -1,6 +1,5 @@
 package woowacourse.shopping.data
 
-import android.util.Log
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.domain.model.CartProduct
