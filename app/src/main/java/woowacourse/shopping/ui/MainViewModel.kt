@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.shopping.Inject
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.domain.model.Product
 
 class MainViewModel : ViewModel() {
     @field:Inject

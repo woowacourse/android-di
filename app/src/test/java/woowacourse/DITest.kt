@@ -11,10 +11,10 @@ import woowacourse.shopping.Inject
 import woowacourse.shopping.ShoppingContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import kotlin.jvm.java
 
 class FakeCartProductDao : CartProductDao {

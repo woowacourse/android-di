@@ -3,10 +3,10 @@ package woowacourse.shopping
 import android.app.Application
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.jvm.java
 

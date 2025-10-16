@@ -1,7 +1,7 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.domain.repository
 
-import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.domain.model.CartProduct
+import woowacourse.shopping.domain.model.Product
 
 interface CartRepository {
     suspend fun addCartProduct(product: Product)
