@@ -8,7 +8,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class CartRepositoryImpl(
-    @param:Inject
+    @Inject
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

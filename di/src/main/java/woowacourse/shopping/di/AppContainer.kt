@@ -3,7 +3,10 @@ package woowacourse.shopping.di
 import woowacourse.shopping.di.annotation.Inject
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.isAccessible
 
 object AppContainer {
     private val providers = mutableMapOf<KClass<*>, () -> Any>()
@@ -37,7 +40,7 @@ object AppContainer {
                 provider()
             } else {
                 val concreteClass = implementationMap[serviceClass] ?: serviceClass
-                createInstance(concreteClass)
+                injectFields(createInstance(concreteClass))
             }
 
         instances[serviceClass] = instance
@@ -57,5 +60,19 @@ object AppContainer {
 
         @Suppress("UNCHECKED_CAST")
         return constructor.call(*args)
+    }
+
+    private fun <T : Any> injectFields(instance: T): T {
+        val klass = instance::class
+        klass.declaredMemberProperties.forEach { property ->
+            if (property.hasAnnotation<Inject>() && property is KMutableProperty1<*, *>) {
+                property.isAccessible = true
+                val dependencyType = property.returnType.classifier as KClass<*>
+                val dependencyInstance = get(dependencyType)
+                (property as KMutableProperty1<T, Any>).set(instance, dependencyInstance)
+            }
+        }
+        @Suppress("UNCHECKED_CAST")
+        return instance
     }
 }
