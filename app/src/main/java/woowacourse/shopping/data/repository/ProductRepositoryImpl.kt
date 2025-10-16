@@ -1,4 +1,4 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.ProductRepository
@@ -23,7 +23,5 @@ class ProductRepositoryImpl : ProductRepository {
             ),
         )
 
-    override fun getAllProducts(): List<Product> {
-        return products
-    }
+    override fun getAllProducts(): List<Product> = products
 }

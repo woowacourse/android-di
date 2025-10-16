@@ -1,4 +1,4 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.repository
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.collections.shouldContain

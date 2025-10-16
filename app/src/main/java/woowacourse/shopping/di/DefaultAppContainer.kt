@@ -5,10 +5,10 @@ import woowacourse.shopping.AppContainer
 import woowacourse.shopping.annotation.InMemory
 import woowacourse.shopping.annotation.Room
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.repository.DefaultCartRepository
+import woowacourse.shopping.data.repository.InMemoryCartRepository
+import woowacourse.shopping.data.repository.ProductRepositoryImpl
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 

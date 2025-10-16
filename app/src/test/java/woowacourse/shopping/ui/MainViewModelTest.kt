@@ -7,6 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -25,22 +26,23 @@ class MainViewModelTest {
     fun setUp() {
         productRepository = mockk<ProductRepository>(relaxed = true)
         cartRepository = mockk<CartRepository>(relaxed = true)
-        viewModel = MainViewModel(productRepository, cartRepository)
+        viewModel = MainViewModel()
     }
 
     @DisplayName("상품을 추가하면 상태가 변경된다")
     @Test
-    fun addCartProductTest() {
-        // given
-        coEvery { cartRepository.addCartProduct(DEFAULT_PRODUCT) } just Runs
+    fun addCartProductTest() =
+        runTest {
+            // given
+            coEvery { cartRepository.addCartProduct(DEFAULT_PRODUCT) } just Runs
 
-        // when
-        viewModel.addCartProduct(DEFAULT_PRODUCT)
+            // when
+            viewModel.addCartProduct(DEFAULT_PRODUCT)
 
-        // then
-        viewModel.onProductAdded.getOrAwaitValue().shouldBeTrue()
-        coVerify(exactly = 1) { cartRepository.addCartProduct(DEFAULT_PRODUCT) }
-    }
+            // then
+            viewModel.onProductAdded.getOrAwaitValue().shouldBeTrue()
+            coVerify(exactly = 1) { cartRepository.addCartProduct(DEFAULT_PRODUCT) }
+        }
 
     @DisplayName("상품 목록을 가져온다")
     @Test

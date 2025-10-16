@@ -1,4 +1,4 @@
-package woowacourse.shopping.data
+package woowacourse.shopping.data.repository
 
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.types.shouldBeTypeOf

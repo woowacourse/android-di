@@ -7,6 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -24,37 +25,39 @@ class CartViewModelTest {
     @BeforeEach
     fun setUp() {
         cartRepository = mockk<CartRepository>(relaxed = true)
-        viewModel = CartViewModel(cartRepository)
+        viewModel = CartViewModel()
     }
 
     @DisplayName("장바구니에 담긴 상품 목록을 가져온다")
     @Test
-    fun getAllCartProductsTest() {
-        // given
-        coEvery { cartRepository.getAllCartProducts() } returns listOf(DEFAULT_PRODUCT)
+    fun getAllCartProductsTest() =
+        runTest {
+            // given
+            coEvery { cartRepository.getAllCartProducts() } returns listOf(DEFAULT_PRODUCT)
 
-        // when
-        viewModel.getAllCartProducts()
-        val products = viewModel.cartProducts.getOrAwaitValue()
+            // when
+            viewModel.getAllCartProducts()
+            val products = viewModel.cartProducts.getOrAwaitValue()
 
-        // then
-        products shouldContain DEFAULT_PRODUCT
-        coVerify(exactly = 1) { cartRepository.getAllCartProducts() }
-    }
+            // then
+            products shouldContain DEFAULT_PRODUCT
+            coVerify(exactly = 1) { cartRepository.getAllCartProducts() }
+        }
 
     @DisplayName("장바구니에 담긴 물건을 삭제하면 상태가 변경된다")
     @Test
-    fun deleteCartProductTest() {
-        // given
-        val id = 1
-        coEvery { cartRepository.deleteCartProduct(id) } just Runs
+    fun deleteCartProductTest() =
+        runTest {
+            // given
+            val id = 1L
+            coEvery { cartRepository.deleteCartProduct(id) } just Runs
 
-        // when
-        viewModel.deleteCartProduct(id)
-        val deleted = viewModel.onCartProductDeleted.getOrAwaitValue()
+            // when
+            viewModel.deleteCartProduct(id)
+            val deleted = viewModel.onCartProductDeleted.getOrAwaitValue()
 
-        // then
-        deleted.shouldBeTrue()
-        coVerify(exactly = 1) { cartRepository.deleteCartProduct(id) }
-    }
+            // then
+            deleted.shouldBeTrue()
+            coVerify(exactly = 1) { cartRepository.deleteCartProduct(id) }
+        }
 }
