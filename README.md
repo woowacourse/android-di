@@ -121,19 +121,19 @@
 
 ## 🛠️ 구현할 기능 (4단계)
 
-- [ ] DI 컨테이너에 스코프 개념 추가 (예: `application`, `activity`, `viewModel`)
-- [ ] `CartRepository`를 Application 스코프로 바인딩
-- [ ] `ProductRepository`를 ViewModel 스코프로 바인딩
-- [ ] `DateFormatter`를 Activity 스코프로 바인딩
-- [ ] Activity에서 `DateFormatter` 필드 주입 적용 (필드/생성자 선택)
-- [ ] 필드 주입 + 스코프 동작 테스트 (DI 모듈 단위 테스트)
-- [ ] Robolectric로 Activity recreate 시나리오 테스트
-- [ ] ViewModel 소멸 시, ViewModel 스코프 해제 테스트
+- [x] DI 컨테이너에 스코프 개념 추가 (예: `application`, `activity`, `viewModel`)
+- [x] `CartRepository`를 Application 스코프로 바인딩
+- [x] `ProductRepository`를 ViewModel 스코프로 바인딩
+- [x] `DateFormatter`를 Activity 스코프로 바인딩
+- [x] Activity에서 `DateFormatter` 필드 주입 적용 (필드/생성자 선택)
+- [x] 필드 주입 + 스코프 동작 테스트 (DI 모듈 단위 테스트)
+- [x] Robolectric로 Activity recreate 시나리오 테스트
+- [x] ViewModel 소멸 시, ViewModel 스코프 해제 테스트
 
 ## 🛠️ 프로그래밍 요구 사항 (4단계)
 
-- [ ] 제공된/기존 테스트와 공존하도록 테스트를 작성한다.
-- [ ] 스코프별 인스턴스 생명주기를 명확히 검증한다.
+- [x] 제공된/기존 테스트와 공존하도록 테스트를 작성한다.
+- [x] 스코프별 인스턴스 생명주기를 명확히 검증한다.
   - Application: 프로세스 생존 동안 동일 인스턴스
   - Activity: recreate 전후 비교(필요 시 Retained 옵션 고려)
   - ViewModel: ViewModel 생성/소멸에 맞춰 생성/해제

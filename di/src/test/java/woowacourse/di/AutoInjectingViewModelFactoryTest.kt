@@ -1,8 +1,11 @@
 package woowacourse.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.Closeable
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -55,7 +58,7 @@ class AutoInjectingViewModelFactoryTest {
     }
 
     @Test
-    fun `두_ViewModel이_같은_의존성을_주입받는다`() {
+    fun `스코프를_지정하지_않은_경우_두_ViewModel이_같은_의존성을_주입받는다`() {
         // given
         val container =
             Container().apply {
@@ -71,6 +74,25 @@ class AutoInjectingViewModelFactoryTest {
         val mainRepository = extractPrivateField(mainViewModel, "repository")
         val cartRepository = extractPrivateField(cartViewModel, "repository")
         assertThat(mainRepository === cartRepository).isTrue()
+    }
+
+    @Test
+    fun `스코프를_지정한_경우_두_ViewModel은_ViewModel_스코프의_의존성을_공유하지_않는다`() {
+        // given
+        val container =
+            Container().apply {
+                bindScoped(TestRepository::class, scopeType = ScopeType.VIEW_MODEL) { TestRepository() }
+            }
+        val factory = AutoInjectingViewModelFactory(container)
+
+        // when
+        val mainViewModel = factory.create(MainViewModel::class.java)
+        val cartViewModel = factory.create(CartViewModel::class.java)
+
+        // then
+        val mainRepository = extractPrivateField(mainViewModel, "repository")
+        val cartRepository = extractPrivateField(cartViewModel, "repository")
+        assertThat(mainRepository === cartRepository).isFalse()
     }
 
     @Test
@@ -94,6 +116,30 @@ class AutoInjectingViewModelFactoryTest {
         assertThat(viewModel.anotherRepository === anotherFromContainer).isTrue()
     }
 
+    @Test
+    fun `ViewModel_해제시_ViewModel_스코프가_정리된다`() {
+        // given
+        val container =
+            Container().apply {
+                bindScoped(TestRepository::class, scopeType = ScopeType.VIEW_MODEL) { TestRepository() }
+            }
+        val factory = AutoInjectingViewModelFactory(container)
+        val extras =
+            MutableCreationExtras().apply {
+                set(ViewModelProvider.NewInstanceFactory.VIEW_MODEL_KEY, "scopedViewModel")
+            }
+
+        // when
+        val viewModel = factory.create(MainViewModel::class.java, extras)
+        val repositoryBeforeClear = extractPrivateField(viewModel, "repository")
+        retrieveScopeCloseable(viewModel).close()
+        val recreatedViewModel = factory.create(MainViewModel::class.java, extras)
+        val repositoryAfterClear = extractPrivateField(recreatedViewModel, "repository")
+
+        // then
+        assertThat(repositoryBeforeClear === repositoryAfterClear).isFalse()
+    }
+
     private fun extractPrivateField(
         viewModel: ViewModel,
         fieldName: String,
@@ -101,5 +147,15 @@ class AutoInjectingViewModelFactoryTest {
         val property = viewModel::class.declaredMemberProperties.first { it.name == fieldName }
         property.isAccessible = true
         return property.getter.call(viewModel)
+    }
+
+    private fun retrieveScopeCloseable(viewModel: ViewModel): Closeable {
+        val field = ViewModel::class.java.getDeclaredField("mBagOfTags")
+        field.isAccessible = true
+        val tags =
+            field.get(viewModel) as? MutableMap<*, *>
+                ?: error("ViewModel tags are not available")
+        return tags[AutoInjectingViewModelFactory.VIEW_MODEL_SCOPE_TAG] as? Closeable
+            ?: error("Scope closeable is not registered")
     }
 }

@@ -5,6 +5,7 @@ import androidx.room.Room
 import woowacourse.di.Container
 import woowacourse.di.Database
 import woowacourse.di.InMemory
+import woowacourse.di.ScopeType
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -12,6 +13,7 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 object AppContainer : Container() {
     fun init(context: Context) {
@@ -30,16 +32,34 @@ object AppContainer : Container() {
             get(ShoppingDatabase::class).cartProductDao()
         }
 
-        bindSingleton(CartRepository::class, qualifier = Database::class) {
+        bindScoped(
+            type = CartRepository::class,
+            qualifier = Database::class,
+            scopeType = ScopeType.APPLICATION,
+        ) {
             RoomCartRepository(get(CartProductDao::class))
         }
 
-        bindSingleton(CartRepository::class, qualifier = InMemory::class) {
+        bindScoped(
+            type = CartRepository::class,
+            qualifier = InMemory::class,
+            scopeType = ScopeType.APPLICATION,
+        ) {
             InMemoryCartRepository()
         }
 
-        bindSingleton(ProductRepository::class) {
+        bindScoped(
+            type = ProductRepository::class,
+            scopeType = ScopeType.VIEW_MODEL,
+        ) {
             DefaultProductRepository()
+        }
+
+        bindScoped(
+            type = DateFormatter::class,
+            scopeType = ScopeType.ACTIVITY,
+        ) {
+            DateFormatter(get(Context::class))
         }
     }
 }

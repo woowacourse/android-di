@@ -11,6 +11,7 @@ object FieldInjector {
     fun inject(
         target: Any,
         container: Container,
+        scopeContext: ScopeContext = ScopeContext.application(),
     ) {
         target::class
             .memberProperties
@@ -21,7 +22,7 @@ object FieldInjector {
                     (property.returnType.classifier as? KClass<*>)
                         ?: error("Unsupported field type: ${property.returnType}")
                 val qualifier = findQualifier(property)
-                val value = container.get(type, qualifier)
+                val value = container.get(type, qualifier, scopeContext)
                 property.isAccessible = true
                 property.set(target, value)
             }
