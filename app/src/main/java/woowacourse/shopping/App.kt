@@ -7,6 +7,7 @@ import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.AppContainer.get
+import woowacourse.shopping.di.qualifier.Qualifiers.DATABASE
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
@@ -18,11 +19,11 @@ class App : Application() {
         appContainer = AppContainer
         appContainer.registerImplementation(CartRepository::class, CartRepositoryImpl::class)
         appContainer.registerImplementation(ProductRepository::class, ProductRepositoryImpl::class)
-        appContainer.registerProvider(ShoppingDatabase::class) {
+        appContainer.registerProvider(ShoppingDatabase::class, DATABASE) {
             ShoppingDatabase.getDatabase(context = applicationContext)
         }
-        appContainer.registerProvider(CartProductDao::class) {
-            get(ShoppingDatabase::class).cartProductDao()
+        appContainer.registerProvider(CartProductDao::class, DATABASE) {
+            get(ShoppingDatabase::class, DATABASE).cartProductDao()
         }
     }
 }

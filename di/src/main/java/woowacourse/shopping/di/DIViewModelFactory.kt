@@ -7,5 +7,5 @@ class DIViewModelFactory(
     private val appContainer: AppContainer,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = appContainer.get(modelClass.kotlin)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = appContainer.get(modelClass.kotlin, null)
 }
