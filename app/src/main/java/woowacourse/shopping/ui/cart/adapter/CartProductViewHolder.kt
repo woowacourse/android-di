@@ -1,10 +1,11 @@
-package woowacourse.shopping.ui.cart
+package woowacourse.shopping.ui.cart.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.domain.model.CartProduct
 import woowacourse.shopping.databinding.ItemCartProductBinding
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class CartProductViewHolder(
     private val binding: ItemCartProductBinding,
@@ -18,9 +19,9 @@ class CartProductViewHolder(
         }
     }
 
-    fun bind(product: Product) {
+    fun bind(product: CartProduct) {
         binding.item = product
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
+        binding.tvCartProductCreatedAt.text = dateFormatter.formatDate(product.createdAt)
     }
 
     companion object {

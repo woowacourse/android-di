@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="woowacourse.shopping.model.Product" />
+            type="com.example.domain.model.Product" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
