@@ -29,7 +29,7 @@ class ShoppingApplication : Application() {
 
         container.register(ProductRepository::class) { DefaultProductRepository() }
 
-        container.register(CartRepository::class) {
+        container.register(type = CartRepository::class, qualifier = "room") {
             DefaultRoomCartRepository(
                 container.get(
                     CartProductDao::class,
@@ -37,7 +37,10 @@ class ShoppingApplication : Application() {
             )
         }
 
-        container.register(CartRepository::class) { DefaultInMemoryCartRepository() }
+        container.register(
+            type = CartRepository::class,
+            qualifier = "in_memory"
+        ) { DefaultInMemoryCartRepository() }
 
         container
     }

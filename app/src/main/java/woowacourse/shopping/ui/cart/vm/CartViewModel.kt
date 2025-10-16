@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.Inject
+import com.example.di.Qualifier
 import com.example.domain.model.CartProduct
 import com.example.domain.repository.CartRepository
 import kotlinx.coroutines.launch
 
 class CartViewModel : ViewModel() {
     @field:Inject
+    @Qualifier("room")
     lateinit var cartRepository: CartRepository
     private val _cartProducts: MutableLiveData<List<CartProduct>> =
         MutableLiveData(emptyList())
