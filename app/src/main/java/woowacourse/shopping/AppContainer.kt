@@ -3,6 +3,7 @@ package woowacourse.shopping
 import android.app.Application
 import com.example.di.DatabaseLogger
 import com.example.di.InMemoryLogger
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
@@ -19,7 +20,11 @@ class AppContainer(
 
     @DatabaseLogger
     private val cartRepository: CartRepository by lazy {
-        CartRepositoryImpl(database.cartProductDao())
+        CartRepositoryImpl(cardDao)
+    }
+
+    private val cardDao: CartProductDao by lazy {
+        database.cartProductDao()
     }
 
     private val database: ShoppingDatabase by lazy {

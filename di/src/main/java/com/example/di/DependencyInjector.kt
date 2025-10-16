@@ -20,7 +20,6 @@ object DependencyInjector {
             .filterIsInstance<KProperty1<Any, *>>()
             .forEach { property ->
                 property.isAccessible = true
-                val instance = property.get(container) ?: return@forEach
                 val kClass = property.returnType.classifier as KClass<*>
                 val qualifier = findAnnotation(property)
                 val key = DependencyKey(kClass, qualifier)

@@ -5,7 +5,12 @@ import com.example.di.InMemoryLogger
 
 class FakeAppContainer {
     @InMemoryLogger
-    val productRepository: FakeProductRepositoryImpl by lazy {
+    val productRepository: FakeProductRepository by lazy {
+        FakeProductRepositoryImpl()
+    }
+
+    @DatabaseLogger
+    val productRepository2: FakeProductRepository by lazy {
         FakeProductRepositoryImpl()
     }
 
