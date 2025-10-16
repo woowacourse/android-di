@@ -69,12 +69,20 @@ class DIContainer {
     ): T {
         // 1. qualifier 있는 경우, 등록된 바인딩 중에서 qualifier 일치하는 팩토리 사용
         val qualifierMap = bindings[type]
+
         val instanceProvider =
-            qualifierMap?.get(qualifier)
-                ?: qualifierMap?.get(null)
+            if (qualifier != null) {
+                qualifierMap?.get(qualifier)
+            } else {
+                qualifierMap?.get(null)
+            }
 
         if (instanceProvider != null) {
             return instanceProvider() as T
+        }
+
+        if (qualifier != null && qualifierMap != null) {
+            error("Qualifier ${qualifier.simpleName}에 해당하는 ${type.simpleName} 바인딩을 찾을 수 없습니다.")
         }
 
         // qualifier가 있는 경우, 그 qualifier에 해당하는 구현체를 자동 선택
