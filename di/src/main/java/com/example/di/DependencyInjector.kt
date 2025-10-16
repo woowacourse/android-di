@@ -10,31 +10,11 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
-    private val dependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
-
-    fun initialize(vararg module: Module) {
-        module.forEach(::initialize)
-    }
-
     fun <T : Any> instance(targetClass: KClass<T>): T {
         val instance: T = injectParameters(targetClass)
         injectFields(instance)
         return instance
     }
-
-    private fun initialize(module: Module) {
-        module::class.memberProperties.forEach { property: KProperty1<out Module, *> ->
-            if (!property.hasAnnotation<Dependency>()) return@forEach
-
-            val identifier = Identifier.from(property)
-            dependencyGetters[identifier] = {
-                property.getter.call(module) ?: error("$property's getter returned null.")
-            }
-        }
-    }
-
-    private fun dependency(identifier: Identifier): Any =
-        dependencyGetters[identifier]?.invoke() ?: error("No dependency defined for $identifier.")
 
     private fun <T : Any> injectParameters(targetClass: KClass<T>): T {
         val constructor: KFunction<T> =
@@ -43,7 +23,7 @@ object DependencyInjector {
         val parameters: Array<Any> =
             constructor.parameters
                 .map(Identifier::from)
-                .map(::dependency)
+                .map(DependencyContainer::dependency)
                 .toTypedArray()
         return constructor.call(*parameters)
     }
@@ -57,7 +37,7 @@ object DependencyInjector {
             val mutableProperty =
                 property as? KMutableProperty1
                     ?: error("Cannot inject dependency to $property because it is an immutable property.")
-            mutableProperty.setter.call(target, dependency(identifier))
+            mutableProperty.setter.call(target, DependencyContainer.dependency(identifier))
         }
     }
 }

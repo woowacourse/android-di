@@ -1,12 +1,12 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.di.DependencyInjector
+import com.example.di.DependencyContainer
 import woowacourse.shopping.data.RepositoryModule
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        DependencyInjector.initialize(RepositoryModule(this))
+        DependencyContainer.initialize(RepositoryModule(this))
     }
 }
