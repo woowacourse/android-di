@@ -1,21 +1,25 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.data.annotation.InMemoryCartProductDao
+import woowacourse.shopping.data.mapper.toCartEntity
+import woowacourse.shopping.data.mapper.toCartProduct
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
-class DefaultCartRepository : CartRepository {
-    private val cartProducts: MutableList<Product> = mutableListOf()
-
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+class DefaultCartRepository(
+    @InMemoryCartProductDao private val cartProductDao: CartProductDao,
+) :
+    CartRepository {
+    override suspend fun addCartProduct(product: Product) {
+        cartProductDao.insert(product.toCartEntity())
     }
 
-    override fun getAllCartProducts(): List<Product> {
-        return cartProducts.toList()
+    override suspend fun getAllCartProducts(): List<CartProduct> {
+        return cartProductDao.getAll().map { it.toCartProduct() }
     }
 
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cartProductDao.delete(id)
     }
 }

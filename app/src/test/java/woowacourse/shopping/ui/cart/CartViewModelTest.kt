@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.fake.FakeCartRepository
-import woowacourse.shopping.fixture.POTATO
+import woowacourse.shopping.fixture.POTATO_CART_PRODUCT
 import woowacourse.shopping.ui.utils.getOrAwaitValue
 
 @RunWith(RobolectricTestRunner::class)
@@ -29,7 +29,7 @@ class CartViewModelTest {
     @Test
     fun `모든 장바구니를 가져오는지 테스트`() {
         // given
-        val expected = listOf(POTATO)
+        val expected = listOf(POTATO_CART_PRODUCT)
         // when
         viewModel.getAllCartProducts()
         // then
