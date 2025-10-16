@@ -54,11 +54,12 @@ class AutoInjectingViewModelFactory(
         viewModel: ViewModel,
         viewModelKey: Any,
     ) {
-        val scopeCloseable: Closeable =
+        val scopeCloseable =
             ScopeCloseable {
                 container.clearScope(ScopeType.VIEW_MODEL, viewModelKey)
             }
-        try {
+
+        runCatching {
             when {
                 setTagIfAbsentMethod != null ->
                     setTagIfAbsentMethod.invoke(viewModel, VIEW_MODEL_SCOPE_TAG, scopeCloseable)
@@ -66,12 +67,9 @@ class AutoInjectingViewModelFactory(
                 addCloseableMethod != null ->
                     addCloseableMethod.invoke(viewModel, scopeCloseable)
 
-                else ->
-                    throw IllegalStateException(
-                        "ViewModel scope cleanup cannot be registered because no supported API is available.",
-                    )
+                else -> error("ViewModel scope cleanup cannot be registered because no supported API is available.")
             }
-        } catch (exception: ReflectiveOperationException) {
+        }.onFailure { exception ->
             throw IllegalStateException(
                 "Failed to register ViewModel scope cleanup for ${viewModel::class.qualifiedName}",
                 exception,
@@ -98,13 +96,12 @@ class AutoInjectingViewModelFactory(
             methodName: String,
             vararg parameterTypes: Class<*>,
         ): Method? =
-            try {
+            runCatching {
                 ViewModel::class.java
                     .getDeclaredMethod(methodName, *parameterTypes)
                     .apply { isAccessible = true }
-            } catch (exception: NoSuchMethodException) {
+            }.onFailure { exception ->
                 Log.e("AutoInjectingVMFactory", "Method $methodName is not found.", exception)
-                null
-            }
+            }.getOrNull()
     }
 }
