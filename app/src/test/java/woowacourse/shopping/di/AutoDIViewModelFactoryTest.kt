@@ -66,8 +66,8 @@ class AutoDIViewModelFactoryTest {
             }
         val expectedDependencies: Map<KClass<*>, Any> =
             mapOf(
-                ProductRepository::class to fakeApp.productRepository,
-                CartRepository::class to fakeApp.roomCartRepository,
+                ProductRepository::class to fakeApp.appContainer.productRepository,
+                CartRepository::class to fakeApp.appContainer.roomCartRepository,
             )
 
         // when:

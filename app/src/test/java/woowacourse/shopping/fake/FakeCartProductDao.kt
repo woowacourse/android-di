@@ -4,7 +4,19 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
 
 class FakeCartProductDao : CartProductDao {
-    private val products = mutableListOf<CartProductEntity>()
+    private val products =
+        mutableListOf(
+            CartProductEntity(
+                name = "떡뻥",
+                price = 2000,
+                imageUrl = "",
+            ),
+            CartProductEntity(
+                name = "떡뻥",
+                price = 2000,
+                imageUrl = "",
+            ),
+        )
 
     override suspend fun getAll(): List<CartProductEntity> = products.toList()
 
