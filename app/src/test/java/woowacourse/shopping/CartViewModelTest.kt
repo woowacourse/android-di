@@ -1,51 +1,79 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.fixture.FakeCartRepository
-import woowacourse.fixture.FakeProductRepository
+import woowacourse.shopping.app.ui.cart.CartViewModel
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.MainViewModel
-import woowacourse.shopping.ui.cart.CartViewModel
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val cartRepository = FakeCartRepository()
-    private val viewModel = CartViewModel(cartRepository)
+    private val testDispatcher = UnconfinedTestDispatcher()
 
-    private fun product(name: String) = Product(name, 10_000, "")
+    private lateinit var cartRepository: FakeCartRepository
+    private lateinit var viewModel: CartViewModel
 
-    @Test
-    fun `장바구니에 저장된 상품을 조회할 수 있다`() {
-        cartRepository.apply {
-            addCartProduct(product("A"))
-            addCartProduct(product("B"))
-        }
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        cartRepository = FakeCartRepository()
+        viewModel = CartViewModel()
 
-        viewModel.getAllCartProducts()
-        val expected = cartRepository.getAllCartProducts()
-        val actual = viewModel.cartProducts.value
-
-        assertThat(actual).isEqualTo(expected)
+        viewModel.cartRepository = cartRepository
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    private fun product(
+        id: Long,
+        name: String,
+    ) = Product(id, name, 10_000, "", 20011226)
+
     @Test
-    fun `장바구니에 저장된 상품을 삭제할 수 있다`() {
-        cartRepository.apply {
-            addCartProduct(product("A"))
-            addCartProduct(product("B"))
-            addCartProduct(product("C"))
+    fun `장바구니에 저장된 상품을 조회할 수 있다`() =
+        runTest(testDispatcher) {
+            cartRepository.apply {
+                addCartProduct(product(0L, "A"))
+                addCartProduct(product(1L, "B"))
+            }
+
+            viewModel.getAllCartProducts()
+
+            val expected = cartRepository.getAllCartProducts()
+            val actual = viewModel.cartProducts.getOrAwaitValue()
+            assertThat(actual).isEqualTo(expected)
         }
 
-        viewModel.deleteCartProduct(1) // B 삭제
-        viewModel.getAllCartProducts()
+    @Test
+    fun `장바구니에 저장된 상품을 삭제할 수 있다`() =
+        runTest(testDispatcher) {
+            cartRepository.apply {
+                addCartProduct(product(0L, "A"))
+                addCartProduct(product(1L, "B"))
+                addCartProduct(product(2L, "C"))
+            }
 
-        val products = viewModel.cartProducts.getOrAwaitValue()
-        assertThat(products.map { it.name }).containsExactly("A", "C")
-        assertThat(viewModel.onCartProductDeleted.value).isTrue()
-    }
+            viewModel.deleteCartProduct(1L)
+            viewModel.getAllCartProducts()
+
+            val products = viewModel.cartProducts.getOrAwaitValue()
+            assertThat(products.map { it.name }).containsExactly("A", "C")
+            assertThat(viewModel.onCartProductDeleted.getOrAwaitValue()).isTrue()
+        }
 }

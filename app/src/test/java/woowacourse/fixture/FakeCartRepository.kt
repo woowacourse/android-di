@@ -1,19 +1,20 @@
 package woowacourse.fixture
 
+import woowacourse.shopping.di.InMemory
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
+@InMemory
 class FakeCartRepository : CartRepository {
-    val cartProducts: MutableList<Product> = mutableListOf()
+    private val cart = mutableListOf<Product>()
 
-    override fun addCartProduct(product: Product) {
-        cartProducts.add(product)
+    override suspend fun getAllCartProducts(): List<Product> = cart.toList()
+
+    override suspend fun addCartProduct(product: Product) {
+        cart.add(product)
     }
 
-    override fun getAllCartProducts(): List<Product> = cartProducts.toList()
-
-    override fun deleteCartProduct(id: Int) {
-        cartProducts.removeAt(id)
+    override suspend fun deleteCartProduct(id: Long) {
+        cart.removeAll { it.id == id }
     }
 }
