@@ -1,5 +1,6 @@
 package woowacourse.di
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -102,6 +103,7 @@ class AutoInjectingViewModelFactory(
                     .getDeclaredMethod(methodName, *parameterTypes)
                     .apply { isAccessible = true }
             } catch (exception: NoSuchMethodException) {
+                Log.e("AutoInjectingVMFactory", "Method $methodName is not found.", exception)
                 null
             }
     }
