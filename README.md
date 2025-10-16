@@ -42,3 +42,13 @@ fun bind(product: ...) {
 ### 선택 요구 사항
 - [] DSL을 활용한다.
 - [] 내가 만든 DI 라이브러리를 배포하고 적용한다.
+
+## 4단계 기능 요구 사항
+- [] `CartRepository`는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+- [] `ProductRepository`는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [] `DateFormatter`는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+
+### 선택 요구 사항
+- [] `DateFormatter`가 Configuration Changes에도 살아남을 수 있도록 구현한다.
+- [] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.
