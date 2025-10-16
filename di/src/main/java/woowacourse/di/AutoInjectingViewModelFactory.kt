@@ -1,4 +1,4 @@
-package woowacourse.shopping.di.auto
+package woowacourse.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -33,7 +33,10 @@ class AutoInjectingViewModelFactory(
                     }
                 }.toTypedArray()
 
-        return constructor.call(*parameterValues)
+        val viewModel = constructor.call(*parameterValues)
+        FieldInjector.inject(viewModel, container)
+
+        return viewModel
     }
 
     @Suppress("UNCHECKED_CAST")

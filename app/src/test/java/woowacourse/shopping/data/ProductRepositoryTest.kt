@@ -7,7 +7,7 @@ class ProductRepositoryTest {
     @Test
     fun `상품_조회시_상품이_순서대로_조회된다`() {
         // given
-        val repository: ProductRepository = ProductRepositoryImpl()
+        val repository: ProductRepository = DefaultProductRepository()
 
         // when
         val products = repository.getAllProducts()
