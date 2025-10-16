@@ -86,6 +86,28 @@ class AppContainer {
         return createByConstructor(type, overrides)
     }
 
+    /** @Inject 프로퍼티 주입(이미 값이 있으면 스킵) */
+    fun injectProperties(
+        target: Any,
+        overrides: Map<BindingKey, Any> = emptyMap(),
+    ) {
+        target::class
+            .memberProperties
+            .filterIsInstance<KMutableProperty1<Any, Any?>>()
+            .filter { prop -> prop.requireInject() }
+            .forEach { prop ->
+                prop.isAccessible = true
+                val qualifier = findSingleQualifierOrNull(prop.annotations)
+                val kClass = prop.returnType.jvmErasure as KClass<Any>
+
+                val current = runCatching { prop.get(target) }.getOrNull()
+                if (current != null) return@forEach
+
+                val value = resolve(kClass, qualifier, overrides)
+                prop.set(target, value)
+            }
+    }
+
     /** overrides에서 타입(+선택: Qualifier)으로 인스턴스 찾기 */
     private fun <T : Any> findOverride(
         overrides: Map<BindingKey, Any>,
@@ -146,28 +168,6 @@ class AppContainer {
 
         val kClass = param.type.classifier as KClass<out Any>
         return resolve(kClass, key.qualifier, overrides)
-    }
-
-    /** @Inject 프로퍼티 주입(이미 값이 있으면 스킵) */
-    private fun injectProperties(
-        target: Any,
-        overrides: Map<BindingKey, Any> = emptyMap(),
-    ) {
-        target::class
-            .memberProperties
-            .filterIsInstance<KMutableProperty1<Any, Any?>>()
-            .filter { prop -> prop.requireInject() }
-            .forEach { prop ->
-                prop.isAccessible = true
-                val qualifier = findSingleQualifierOrNull(prop.annotations)
-                val kClass = prop.returnType.jvmErasure as KClass<Any>
-
-                val current = runCatching { prop.get(target) }.getOrNull()
-                if (current != null) return@forEach
-
-                val value = resolve(kClass, qualifier, overrides)
-                prop.set(target, value)
-            }
     }
 
     /** @Provides Annotation이 붙은 함수로부터 Provider를 생성한다. */
