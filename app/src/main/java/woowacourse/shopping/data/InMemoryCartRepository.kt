@@ -15,6 +15,6 @@ class InMemoryCartRepository : CartRepository {
     override suspend fun getAllCartProducts(): List<CartProduct> = carts.map(CartProductEntity::toDomain)
 
     override suspend fun deleteCartProduct(id: Long) {
-        carts.removeAt(0)
+        carts.removeAt(carts.indexOfFirst { it.id == id })
     }
 }
