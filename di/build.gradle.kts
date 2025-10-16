@@ -14,4 +14,7 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlin.reflect)
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.25")
+    testImplementation(libs.assertj.core)
 }
