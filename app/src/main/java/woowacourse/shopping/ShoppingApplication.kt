@@ -2,33 +2,17 @@ package woowacourse.shopping
 
 import android.app.Application
 import com.m6z1.moongdi.AutoDIViewModelFactory
-import com.m6z1.moongdi.annotation.InMemory
-import com.m6z1.moongdi.annotation.RoomDb
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.AppDependencies
+import woowacourse.shopping.di.AppContainer
 
-class ShoppingApplication :
-    Application(),
-    AppDependencies {
-    @InMemory
-    override val inMemoryCartRepository: CartRepository by lazy {
-        InMemoryCartRepository()
+class ShoppingApplication : Application() {
+    lateinit var appContainer: AppContainer
+    val viewModelFactory: AutoDIViewModelFactory<AppContainer> by lazy {
+        AutoDIViewModelFactory()
     }
 
-    @RoomDb
-    override val roomCartRepository: CartRepository by lazy {
-        DefaultCartRepository(ShoppingDatabase.getDatabase(this).cartProductDao())
-    }
+    override fun onCreate() {
+        super.onCreate()
 
-    @InMemory
-    override val productRepository: ProductRepository by lazy {
-        DefaultProductRepository()
+        appContainer = AppContainer(this)
     }
-
-    val viewModelFactory = AutoDIViewModelFactory<AppDependencies>()
 }
