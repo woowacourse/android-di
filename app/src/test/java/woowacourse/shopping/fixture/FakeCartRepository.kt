@@ -11,7 +11,14 @@ class FakeCartRepository : CartRepository {
         products.add(product)
     }
 
-    override suspend fun getAllCartProducts(): List<CartProduct> = products.toList()
+    override suspend fun getAllCartProducts(): List<CartProduct> =
+        products.mapIndexed { index: Int, product: Product ->
+            CartProduct(
+                id = index.toLong(),
+                product = product,
+                createdAt = index.toLong(),
+            )
+        }
 
     override suspend fun deleteCartProduct(id: Long) {
         products.removeAt(id.toInt())
