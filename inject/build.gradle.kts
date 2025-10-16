@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
+    id("com.android.library")
     alias(libs.plugins.kotlin.android)
 }
 
@@ -39,7 +39,6 @@ tasks.withType<Test> {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
 
     // Reflection
