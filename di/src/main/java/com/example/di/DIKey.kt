@@ -1,4 +1,4 @@
-package com.example.di.container
+package com.example.di
 
 import kotlin.reflect.KClass
 

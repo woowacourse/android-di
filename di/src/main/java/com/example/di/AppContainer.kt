@@ -1,6 +1,5 @@
 package com.example.di
 
-import com.example.di.container.DIKey
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
@@ -35,5 +34,3 @@ class AppContainer(
         viewModelCache.clear()
     }
 }
-
-enum class Scope { Singleton, Activity, ViewModel }
