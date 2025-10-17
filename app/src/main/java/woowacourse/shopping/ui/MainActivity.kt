@@ -97,4 +97,9 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToCart() {
         startActivity(Intent(this, CartActivity::class.java))
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isChangingConfigurations) activityContainer.clear()
+    }
 }

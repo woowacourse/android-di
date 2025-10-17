@@ -39,6 +39,10 @@ internal class Container(
 
     override fun child(scope: KClass<out Annotation>): AppContainer = Container(parent = this, scope = scope, providers = providers)
 
+    override fun clear() {
+        cache.clear()
+    }
+
     private fun findOwner(targetScope: KClass<out Annotation>): Container =
         when (targetScope) {
             AppScope::class -> root()

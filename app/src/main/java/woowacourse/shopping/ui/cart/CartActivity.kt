@@ -99,4 +99,9 @@ class CartActivity :
     override fun onDeleteClicked(id: Long) {
         viewModel.deleteCartProduct(id)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isChangingConfigurations) activityContainer.clear()
+    }
 }

@@ -12,4 +12,6 @@ interface AppContainer {
     ): Any
 
     fun child(scope: KClass<out Annotation>): AppContainer
+
+    fun clear()
 }
