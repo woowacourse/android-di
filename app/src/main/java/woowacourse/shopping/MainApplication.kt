@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import com.daedan.di.DiApplication
+import woowacourse.shopping.di.activityModule
 import woowacourse.shopping.di.dataModule
 import woowacourse.shopping.di.repositoryModule
 import woowacourse.shopping.di.viewModelModule
@@ -12,6 +13,7 @@ class MainApplication : DiApplication() {
             dataModule(),
             repositoryModule(),
             viewModelModule(),
+            activityModule(),
         )
     }
 }

@@ -6,6 +6,7 @@ import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.scope.CreateRule
 import com.daedan.di.scope.Scope
 import com.daedan.di.scope.SingleTonScope
+import com.daedan.di.scope.UniqueScope
 import com.daedan.di.util.getQualifier
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -41,6 +42,8 @@ class AppContainerStore {
         factory.putAll(newFactoryMap)
     }
 
+    fun isScopeOpen(scope: Scope): Boolean = cache.containsKey(scope)
+
     fun createScope(scope: Scope) {
         cache[scope] = DependencyContainer()
     }
@@ -62,7 +65,7 @@ class AppContainerStore {
         val creator = factory[qualifier] ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
 
         // 모듈에 등록된 스코프와 다른 스코프로 객체 생성 요청 거부
-        if (creator.scope != scope && creator.scope != SingleTonScope) {
+        if (isDifferentScopeRequested(creator, scope)) {
             error("$ERR_ILLEGAL_SCPE_REQUESTED,  request $scope but actual ${creator.scope} at $qualifier")
         }
 
@@ -72,7 +75,7 @@ class AppContainerStore {
 
         inProgress.add(qualifier)
         try {
-            val instance = creator.invoke()
+            val instance = creator.invoke(scope)
             injectField(instance, scope)
             creator.scope.save(qualifier, instance)
             return instance
@@ -126,6 +129,25 @@ class AppContainerStore {
             }
             CreateRule.FACTORY -> Unit
         }
+    }
+
+    private fun isDifferentScopeRequested(
+        creator: DependencyFactory<*>,
+        scope: Scope,
+    ): Boolean {
+        // 1. 의존성 생성자가 싱글턴 스코프를 요구하는 경우, 어떤 스코프가 요청되든 true가 아님 (무시).
+        if (creator.scope == SingleTonScope) {
+            return false
+        }
+
+        // 2. 의존성 생성자가 요구하는 스코프 (requiredScope)를 결정합니다.
+        val requiredScope =
+            when (scope) {
+                is UniqueScope -> scope.keyScope
+                else -> scope
+            }
+
+        return creator.scope != requiredScope
     }
 
     companion object {

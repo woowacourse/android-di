@@ -19,7 +19,7 @@ class DependencyModuleBuilder(
 
     inline fun <reified T : ViewModel> viewModel(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) {
         val createRule = CreateRule.FACTORY
         factories.add(DependencyFactory(qualifier, createRule, create))
@@ -27,7 +27,7 @@ class DependencyModuleBuilder(
 
     inline fun <reified T : Any> factory(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) {
         val createRule = CreateRule.FACTORY
         factories.add(DependencyFactory(qualifier, createRule, create))
@@ -35,7 +35,7 @@ class DependencyModuleBuilder(
 
     inline fun <reified T : Any> single(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) {
         val createRule = CreateRule.SINGLE
         factories.add(DependencyFactory(qualifier, createRule, create))

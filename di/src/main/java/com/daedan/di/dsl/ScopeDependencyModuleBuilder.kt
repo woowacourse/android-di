@@ -13,17 +13,17 @@ class ScopeDependencyModuleBuilder(
 ) {
     inline fun <reified T : Any> factory(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) = dependencyModuleBuilder.factory(qualifier, create)
 
     inline fun <reified T : Any> single(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) = dependencyModuleBuilder.single(qualifier, create)
 
     inline fun <reified T : Any> scoped(
         qualifier: Qualifier = TypeQualifier(T::class),
-        noinline create: () -> T,
+        noinline create: (Scope) -> T,
     ) {
         dependencyModuleBuilder.factories.add(
             DependencyFactory(
@@ -35,5 +35,8 @@ class ScopeDependencyModuleBuilder(
         )
     }
 
-    inline fun <reified T : Any> get(qualifier: Qualifier = TypeQualifier(T::class)): T = dependencyModuleBuilder.get(qualifier, scope)
+    inline fun <reified T : Any> get(
+        qualifier: Qualifier = TypeQualifier(T::class),
+        scope: Scope = this.scope,
+    ): T = dependencyModuleBuilder.get(qualifier, scope)
 }
