@@ -14,8 +14,8 @@ class AppContainerImplTest {
     fun `등록한_Repository는_저장되어_있다면_정상적으로_조회된다`() {
         val container =
             AppContainerImpl().apply {
-                register(typeOf<ProductRepository>()) { FakeProductRepository() }
-                register(typeOf<CartRepository>()) { FakeCartRepository() }
+                register(typeOf<ProductRepository>(), FakeProductRepository::class) { FakeProductRepository() }
+                register(typeOf<CartRepository>(), FakeCartRepository::class) { FakeCartRepository() }
             }
 
         val productRepository = container.resolve<ProductRepository>()
@@ -34,14 +34,14 @@ class AppContainerImplTest {
     }
 
     @Test
-    fun `Qualifier에_따라_서로_다른_구현체를_구분할_수_있다`() {
+    fun `Qualifier에_따라_서로_다른_구현체를_구분하여_조회할_수_있다`() {
         val databaseQualifier = Database()
         val inMemoryQualifier = InMemory()
 
         val container =
             AppContainerImpl().apply {
-                register(typeOf<ProductRepository>(), databaseQualifier) { DefaultProductRepository() }
-                register(typeOf<ProductRepository>(), inMemoryQualifier) { FakeProductRepository() } // ← 여기!
+                register(typeOf<ProductRepository>(), DefaultProductRepository::class, databaseQualifier) { DefaultProductRepository() }
+                register(typeOf<ProductRepository>(), FakeProductRepository::class, inMemoryQualifier) { FakeProductRepository() }
             }
 
         val databaseRepository = container.resolve<ProductRepository>(databaseQualifier)
@@ -50,5 +50,22 @@ class AppContainerImplTest {
         assertThat(databaseRepository).isNotNull
         assertThat(inMemoryRepository).isNotNull
         assertThat(databaseRepository).isNotSameAs(inMemoryRepository)
+        assertThat(databaseRepository).isInstanceOf(DefaultProductRepository::class.java)
+        assertThat(inMemoryRepository).isInstanceOf(FakeProductRepository::class.java)
+    }
+
+    @Test
+    fun `싱글톤_스코프로_등록된_객체는_항상_같은_인스턴스를_반환한다`() {
+        val container =
+            AppContainerImpl().apply {
+                register(typeOf<CartRepository>(), FakeCartRepository::class) { FakeCartRepository() }
+            }
+
+        val instance1 = container.resolve<CartRepository>()
+        val instance2 = container.resolve<CartRepository>()
+
+        assertThat(instance1).isNotNull
+        assertThat(instance2).isNotNull
+        assertThat(instance1).isSameAs(instance2)
     }
 }

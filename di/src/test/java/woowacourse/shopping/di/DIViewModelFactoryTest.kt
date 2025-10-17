@@ -21,7 +21,7 @@ class DIViewModelFactoryTest {
         val appContainer = AppContainerImpl()
         val fakeRepository = FakeRepository()
 
-        appContainer.register(typeOf<Repository>()) { fakeRepository }
+        appContainer.register(typeOf<Repository>(), FakeRepository::class) { fakeRepository }
         val factory = DIViewModelFactory(appContainer)
 
         val viewModel =
