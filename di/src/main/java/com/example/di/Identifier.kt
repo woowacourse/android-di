@@ -7,7 +7,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.hasAnnotation
 
 data class Identifier(
-    val tType: KType,
+    val kType: KType,
     val qualifier: Annotation?,
 ) {
     companion object {
