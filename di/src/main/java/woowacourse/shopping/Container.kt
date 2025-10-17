@@ -22,15 +22,7 @@ class Container {
     fun <T : Any> bind(
         type: KClass<T>,
         provider: Provider<T>,
-    ) {
-        val key = Key.from(type)
-        providers[key] = provider
-    }
-
-    fun <T : Any> bind(
-        type: KClass<T>,
-        provider: Provider<T>,
-        qualifier: KClass<out Annotation>,
+        qualifier: KClass<out Annotation>? = null,
     ) {
         val key = Key.of(type, qualifier)
         providers[key] = provider
