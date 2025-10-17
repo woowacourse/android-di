@@ -13,7 +13,5 @@ class ShoppingApplication : Application() {
         appContainer = DIContainer()
         val module = ShoppingDIModule(applicationContext)
         module.register(appContainer)
-
-        appContainer.printBindings()
     }
 }
