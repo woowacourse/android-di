@@ -33,7 +33,7 @@ class CartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setupContentView()
-        setupDateFormatter()
+        diFactory.inject(this)
         setupBinding()
         setupToolbar()
         setupViewData()

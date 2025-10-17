@@ -20,7 +20,7 @@ class DiFactory(
     fun <T : Any> create(
         key: String,
         modelClass: KClass<T>,
-        handle: SavedStateHandle,
+        handle: SavedStateHandle? = null,
     ): T {
         val constructor =
             modelClass.primaryConstructor
@@ -74,5 +74,28 @@ class DiFactory(
                 mutable.setter.call(instance, dependency)
             }
         return instance
+    }
+
+    fun inject(target: Any) {
+        val kClass = target::class
+        kClass.memberProperties
+            .filter { it.findAnnotation<Inject>() != null }
+            .forEach { property ->
+                val mutable =
+                    property as? KMutableProperty1<Any, Any?>
+                        ?: error("@Inject target must be var: ${property.name}")
+
+                val targetType =
+                    property.returnType.classifier as? KClass<*>
+                        ?: error("@Inject target must be a valid class: ${property.name}")
+
+                val qualifier = property.findAnnotation<Qualifier>()?.value
+                val dependency =
+                    container.get(targetType, qualifier)
+                        ?: create(property.name, targetType)
+
+                mutable.isAccessible = true
+                mutable.setter.call(target, dependency)
+            }
     }
 }
