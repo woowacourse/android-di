@@ -1,5 +1,6 @@
 package woowacourse.shopping.app.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,10 @@ import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
 class MainViewModel : ViewModel() {
+    init {
+        Log.d("DI_LIFECYCLE", "MainViewModel 생성됨 (SCOPED: ViewModel)")
+    }
+
     @Inject
     @Database
     lateinit var productRepository: ProductRepository

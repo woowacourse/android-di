@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import android.util.Log
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.di.Database
@@ -12,6 +13,10 @@ import woowacourse.shopping.model.Product
 class DefaultCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
+    init {
+        Log.d("DI_LIFECYCLE", "CartRepository 생성됨 (SCOPED: Singleton)")
+    }
+
     override suspend fun addCartProduct(product: Product) = dao.insert(product.toEntity())
 
     override suspend fun getAllCartProducts(): List<Product> = dao.getAll().map { it.toDomain() }

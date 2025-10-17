@@ -1,6 +1,7 @@
 package woowacourse.shopping.app.ui.cart
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -48,6 +49,8 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
+        Log.d("DI_LIFECYCLE", "DateFormatter 생성됨 (SCOPED: Activity)")
+
         val container = ShoppingApplication.getContainer(applicationContext)
 
         dateFormatter = container.resolve<DateFormatter>()
