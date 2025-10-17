@@ -29,3 +29,8 @@
 - [x] DIContainer의 수동 매핑 생성자를 제거하고 인터페이스를 통해 구현체를 자동 연동
 - [x] 하나의 인터페이스의 여러 구현체가 DIContainer에 등록된 경우를 Qualifier로 개선
 - [x] DI 라이브러리를 모듈로 분리
+
+
+### step4
+
+- [x] [뒤 로 미 루 기](https://www.youtube.com/watch?v=Lee9LCyWhTs) 
