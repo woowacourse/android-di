@@ -8,7 +8,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.di.DIFactory
+import woowacourse.di.DIScopeManager
 import woowacourse.di.DIViewModelFactory
+import woowacourse.di.ScopeType
 import woowacourse.di.annotation.ActivityScope
 import woowacourse.di.annotation.Inject
 import woowacourse.shopping.R
@@ -84,5 +86,10 @@ class CartActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DIScopeManager.clearScope(ScopeType.Activity)
     }
 }
