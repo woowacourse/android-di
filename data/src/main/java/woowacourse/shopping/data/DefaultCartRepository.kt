@@ -3,9 +3,11 @@ package woowacourse.shopping.data
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.di.Database
+import woowacourse.shopping.di.Singleton
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 
+@Singleton
 @Database
 class DefaultCartRepository(
     private val dao: CartProductDao,
