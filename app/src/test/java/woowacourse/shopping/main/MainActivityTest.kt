@@ -1,9 +1,7 @@
 package woowacourse.shopping.main
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -18,9 +16,6 @@ import woowacourse.shopping.ui.main.vm.MainViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
-
     @Test
     fun `Activity 실행 테스트`() {
         // given
