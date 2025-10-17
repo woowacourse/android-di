@@ -6,9 +6,9 @@ import kotlin.reflect.full.createInstance
 class AppContainer(
     private val bindings: Map<DIKey, () -> Any> = emptyMap(),
 ) {
-    private val singletonCache = mutableMapOf<DIKey, Any>() // 앱 전체
-    private val activityCache = mutableMapOf<DIKey, Any>() // Activity
-    private val viewModelCache = mutableMapOf<DIKey, Any>() // ViewModel
+    private val singletonCache = mutableMapOf<DIKey, Any>()
+    private val activityCache = mutableMapOf<DIKey, Any>()
+    private val viewModelCache = mutableMapOf<DIKey, Any>()
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> resolve(
