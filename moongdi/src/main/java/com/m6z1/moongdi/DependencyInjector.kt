@@ -1,6 +1,5 @@
 package com.m6z1.moongdi
 
-import android.util.Log
 import com.m6z1.moongdi.annotation.InjectClass
 import com.m6z1.moongdi.annotation.InjectField
 import kotlin.reflect.KClass
@@ -51,10 +50,7 @@ object DependencyInjector {
         fields.forEach { field ->
 
             val fieldClass =
-                field.returnType.classifier as? KClass<*> ?: run {
-                    Log.e("moongchi", "injectField: ${field.name}의 타입을 가져올 수 없습니다")
-                    return@forEach
-                }
+                field.returnType.classifier as? KClass<*> ?: return@forEach
 
             val instance =
                 if (fieldClass.isAbstract || fieldClass.java.isInterface) {
@@ -66,10 +62,7 @@ object DependencyInjector {
             val javaField =
                 field.javaField ?: field.javaGetter?.let { getter ->
                     target::class.java.getDeclaredField(field.name)
-                } ?: run {
-                    Log.e("moongchi", "injectField: ${field.name}의 Java 필드를 찾을 수 없습니다")
-                    return@forEach
-                }
+                } ?: return@forEach
 
             javaField.isAccessible = true
             javaField.set(target, instance)
