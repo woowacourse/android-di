@@ -12,6 +12,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacouse.shopping.di.ViewModelFactory
+import woowacouse.shopping.di.annotation.Inject
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
@@ -25,6 +26,7 @@ class CartActivity : AppCompatActivity() {
         )
     }
 
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
