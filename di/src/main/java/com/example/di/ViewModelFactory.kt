@@ -38,10 +38,18 @@ class ViewModelFactory(
                     prop.returnType.classifier as? KClass<*>
                         ?: throw IllegalArgumentException("${prop.name} 타입 정보를 가져올 수 없습니다")
 
+                val scope =
+                    when {
+                        javaField.isAnnotationPresent(Singleton::class.java) -> Scope.Singleton
+                        javaField.isAnnotationPresent(ActivityScope::class.java) -> Scope.Activity
+                        javaField.isAnnotationPresent(ViewModelScope::class.java) -> Scope.ViewModel
+                        else -> Scope.ViewModel
+                    }
+
                 val dependency =
                     when (clazz) {
                         SavedStateHandle::class -> savedStateHandle
-                        else -> clazz.let { appContainer.resolve(it, qualifier) }
+                        else -> appContainer.resolve(clazz, qualifier, scope)
                     }
 
                 prop.isAccessible = true

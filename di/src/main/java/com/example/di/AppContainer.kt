@@ -1,32 +1,39 @@
 package com.example.di
 
+import com.example.di.container.DIKey
 import kotlin.reflect.KClass
-
-data class DIKey(
-    val kClass: KClass<*>,
-    val qualifierClass: KClass<*>? = null,
-)
+import kotlin.reflect.full.createInstance
 
 class AppContainer(
-    private val bindings: Map<DIKey, () -> Any>,
+    private val bindings: Map<DIKey, () -> Any> = emptyMap(),
 ) {
-    private val instances = mutableMapOf<DIKey, Any>()
+    private val singletonCache = mutableMapOf<DIKey, Any>() // 앱 전체
+    private val activityCache = mutableMapOf<DIKey, Any>() // Activity
+    private val viewModelCache = mutableMapOf<DIKey, Any>() // ViewModel
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> resolve(
         clazz: KClass<T>,
-        qualifier: KClass<*>? = null,
+        qualifier: KClass<out Annotation>? = null,
+        scope: Scope = Scope.Singleton,
     ): T {
         val key = DIKey(clazz, qualifier)
-        instances[key]?.let { return it as T }
+        return when (scope) {
+            Scope.Singleton -> singletonCache.getOrPut(key) { createInstance(key) } as T
+            Scope.Activity -> activityCache.getOrPut(key) { createInstance(key) } as T
+            Scope.ViewModel -> viewModelCache.getOrPut(key) { createInstance(key) } as T
+        }
+    }
 
-        val provider =
-            bindings[key] ?: bindings.entries
-                .firstOrNull { it.key.kClass == clazz && it.key.qualifierClass == null }
-                ?.value
-                ?: throw IllegalArgumentException("No binding for $clazz with qualifier ${qualifier?.simpleName}")
-        val instance = provider() as T
-        instances[key] = instance
-        return instance
+    private fun createInstance(key: DIKey): Any = bindings[key]?.invoke() ?: key.clazz.createInstance()
+
+    fun clearActivityScope() {
+        activityCache.clear()
+    }
+
+    fun clearViewModelScope() {
+        viewModelCache.clear()
     }
 }
+
+enum class Scope { Singleton, Activity, ViewModel }
