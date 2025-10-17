@@ -72,6 +72,21 @@ class Container {
         }
     }
 
+    fun <T : Any> injectField(instance: T) {
+        instance::class.java
+            .declaredFields
+            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val type = field.type.kotlin
+                val qualifier =
+                    field.annotations
+                        .map { it.annotationClass }
+                        .firstOrNull { it != Inject::class }
+                field.isAccessible = true
+                field.set(instance, get(type, qualifier))
+            }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> createAndReturn(
         type: KClass<T>,
@@ -106,21 +121,6 @@ class Container {
         } finally {
             creatingSet.remove(key)
         }
-    }
-
-    private fun <T : Any> injectField(instance: T) {
-        instance::class.java
-            .declaredFields
-            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
-            .forEach { field ->
-                val type = field.type.kotlin
-                val qualifier =
-                    field.annotations
-                        .map { it.annotationClass }
-                        .firstOrNull { it != Inject::class }
-                field.isAccessible = true
-                field.set(instance, get(type, qualifier))
-            }
     }
 
     private fun <T> createProvider(
