@@ -26,12 +26,6 @@ class ViewModelFactory(
                 modelClass.kotlin,
                 handle = handle,
             )
-
-        val field = modelClass.declaredFields.find { it.type == SavedStateHandle::class.java }
-        field?.let {
-            it.isAccessible = true
-            it.set(viewModel, handle)
-        }
-        return viewModel as T
+        return viewModel
     }
 }
