@@ -21,9 +21,21 @@ class FakeActivity : ComponentActivity() {
     val activityRetainedArgument by inject<Child3>(activityRetainedScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel
         activityArgument
         activityRetainedArgument
+    }
+}
+
+class FakeInvalidScopeActivity : ComponentActivity() {
+    val activityScope = activityScope()
+
+    val activityArgument by inject<Parent>(activityScope)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        activityArgument
+        super.onCreate(savedInstanceState)
     }
 }
 
@@ -39,4 +51,13 @@ fun DiApplication.testModule() =
         viewModel {
             TestViewModel(get(scope = it))
         }
+    }
+
+fun DiApplication.invalidScopeModule() =
+    module {
+        single { Child2() }
+        scope<FakeInvalidScopeActivity> {
+            scoped { Child1() }
+        }
+        single { Parent(get(), get()) }
     }

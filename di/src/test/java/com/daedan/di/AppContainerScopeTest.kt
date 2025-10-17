@@ -3,7 +3,10 @@ package com.daedan.di
 import androidx.test.core.app.ApplicationProvider
 import com.daedan.di.fixture.FakeActivity
 import com.daedan.di.fixture.FakeApplication
+import com.daedan.di.fixture.FakeInvalidScopeActivity
+import com.daedan.di.fixture.invalidScopeModule
 import com.daedan.di.fixture.testModule
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -18,20 +21,15 @@ class AppContainerScopeTest {
         // given
         val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         app.register(app.testModule())
-
-        // when
-        val activity =
+        val controller =
             Robolectric
                 .buildActivity(FakeActivity::class.java)
                 .create()
-                .get()
+        val before = controller.get().viewModel.arg1
 
-        val before = activity.viewModel.arg1
-
-        activity.recreate()
-
-        val after =
-            activity.viewModel.arg1
+        // when
+        controller.recreate()
+        val after = controller.get().viewModel.arg1
 
         // then
         assert(before === after)
@@ -42,20 +40,52 @@ class AppContainerScopeTest {
         // given
         val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         app.register(app.testModule())
-        val activity =
+        val controller =
             Robolectric
                 .buildActivity(FakeActivity::class.java)
                 .create()
-                .get()
-
-        val before = activity.activityArgument
+        val before = controller.get().activityArgument
 
         // when
-        activity.recreate()
-
-        val after = activity.activityArgument
+        controller.recreate()
+        val after = controller.get().activityArgument
 
         // then
         assert(before !== after)
+    }
+
+    @Test
+    fun `인스턴스를 ActivityRetainedScope에 등록하면 액티비티가 파괴되도 살아남는다`() {
+        // given
+        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
+        app.register(app.testModule())
+        val controller =
+            Robolectric
+                .buildActivity(FakeActivity::class.java)
+                .create()
+        val before = controller.get().activityRetainedArgument
+
+        // when
+        controller.recreate()
+        val after = controller.get().activityRetainedArgument
+
+        // then
+        assert(before === after)
+    }
+
+    @Test
+    fun `다른 스코프에 등록된 객체를 가져올 수 없다`() {
+        // given
+        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
+        val module = app.invalidScopeModule()
+        val controller =
+            Robolectric
+                .buildActivity(FakeInvalidScopeActivity::class.java)
+        app.register(module)
+
+        // when - then
+        assertThatThrownBy {
+            controller.create().get().activityArgument
+        }.message().contains("등록된 스코프와 다른 스코프에서는 객체 생성이 불가능합니다")
     }
 }
