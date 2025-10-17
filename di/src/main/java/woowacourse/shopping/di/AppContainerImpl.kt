@@ -38,13 +38,13 @@ class AppContainerImpl : Container {
 
         val singleton = singletonInstances[key]
         if (singleton != null) {
-            Log.d("DI_LIFECYCLE", "캐시 재활용: 요청 타입 $requestedType")
+//            Log.d("DI_LIFECYCLE", "캐시 재활용: 요청 타입 $requestedType")
             return singleton
         }
 
         val factory = registry[key] ?: return null
 
-        Log.d("DI_LIFECYCLE", "팩토리 실행/인스턴스 생성: 요청 타입 $requestedType")
+//        Log.d("DI_LIFECYCLE", "팩토리 실행/인스턴스 생성: 요청 타입 $requestedType")
 
         return factory(this)
     }

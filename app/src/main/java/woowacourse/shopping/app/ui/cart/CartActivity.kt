@@ -49,7 +49,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        Log.d("DI_LIFECYCLE", "DateFormatter 생성됨 (SCOPED: Activity)")
+//        Log.d("DI_LIFECYCLE", "DateFormatter 생성됨 (SCOPED: Activity)")
 
         val container = ShoppingApplication.getContainer(applicationContext)
 

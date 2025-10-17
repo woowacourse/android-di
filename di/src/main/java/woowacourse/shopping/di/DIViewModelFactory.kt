@@ -1,6 +1,5 @@
 package woowacourse.shopping.di
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -18,10 +17,10 @@ class DIViewModelFactory(
         modelClass: Class<T>,
         extras: CreationExtras,
     ): T {
-        Log.d(
-            "DI_LIFECYCLE",
-            "${modelClass.simpleName} LifeCycle 시작: DIViewModelFactory 실행",
-        )
+//        Log.d(
+//            "DI_LIFECYCLE",
+//            "${modelClass.simpleName} LifeCycle 시작: DIViewModelFactory 실행",
+//        )
 
         val viewModelKClass = modelClass.kotlin
 
@@ -57,10 +56,10 @@ class DIViewModelFactory(
                             "필드 타입 ${requestedType}에 대한 제공자가 AppContainer에 없습니다.",
                         )
 
-                Log.d(
-                    "DI_LIFECYCLE",
-                    "${modelClass.simpleName} -> ${property.name} 주입됨",
-                )
+//                Log.d(
+//                    "DI_LIFECYCLE",
+//                    "${modelClass.simpleName} -> ${property.name} 주입됨",
+//                )
                 mutableProperty.setter.call(instance, dependency)
             }
 

@@ -11,7 +11,7 @@ class CartProductViewHolder(
     private val dateFormatter: DateFormatter,
     onClickDelete: (id: Long) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-    private var productId: Long? = null // ← 현재 바인딩된 아이템의 id 저장
+    private var productId: Long? = null
 
     init {
         binding.ivCartProductDelete.setOnClickListener {
