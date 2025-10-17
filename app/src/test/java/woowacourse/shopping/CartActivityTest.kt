@@ -15,9 +15,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
 import org.robolectric.shadows.ShadowToast
+import woowacourse.bibi.di.core.ActivityScope
+import woowacourse.bibi.di.core.AppScope
 import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
+import woowacourse.bibi.di.core.ViewModelScope
 import woowacourse.shopping.common.withOverriddenContainer
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
@@ -26,6 +29,7 @@ import woowacourse.shopping.fake.FakeProductRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.cart.CartActivity
 import woowacourse.shopping.ui.cart.CartViewModel
+import woowacourse.shopping.ui.cart.DateFormatter
 
 @RunWith(RobolectricTestRunner::class)
 class CartActivityTest {
@@ -87,6 +91,7 @@ class CartActivityTest {
 
     private suspend fun launchWithFakes(preloadProducts: List<Product> = ProductFixture.AllProducts): CartActivity {
         val app = ApplicationProvider.getApplicationContext<Context>() as ShoppingApplication
+        val applicationContext = app.applicationContext
 
         val fakeCartRepo =
             FakeCartRepository().apply {
@@ -96,12 +101,14 @@ class CartActivityTest {
         val testContainer =
             ContainerBuilder()
                 .apply {
-                    register(ProductRepository::class, Local::class) {
+                    register(Context::class, AppScope::class) { applicationContext }
+                    register(DateFormatter::class, ActivityScope::class) { DateFormatter(applicationContext) }
+                    register(ProductRepository::class, Local::class, ViewModelScope::class) {
                         FakeProductRepository(
                             ProductFixture.AllProducts,
                         )
                     }
-                    register(CartRepository::class, Local::class) { fakeCartRepo }
+                    register(CartRepository::class, Local::class, ActivityScope::class) { fakeCartRepo }
                 }.build()
 
         return withOverriddenContainer(app, testContainer) {

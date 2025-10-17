@@ -7,6 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.bibi.di.androidx.InjectingViewModelFactory
+import woowacourse.bibi.di.core.ActivityScope
 import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
@@ -73,7 +74,7 @@ class CartViewModelTest {
     private fun createViewModelWith(fakeRepo: CartRepository): CartViewModel {
         val container =
             ContainerBuilder()
-                .apply { register(CartRepository::class, Local::class) { fakeRepo } }
+                .apply { register(CartRepository::class, Local::class, ActivityScope::class) { fakeRepo } }
                 .build()
         val factory = InjectingViewModelFactory(container)
 
