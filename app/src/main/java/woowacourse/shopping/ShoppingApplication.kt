@@ -7,6 +7,6 @@ import woowacourse.shopping.di.RepositoryModule
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        DependencyContainer.initialize(RepositoryModule(this))
+        DependencyContainer.initialize(this, RepositoryModule(this))
     }
 }
