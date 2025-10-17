@@ -22,7 +22,7 @@ class CartActivity : AppCompatActivity() {
     private val scope = activityScope()
 
     private val retainedScope = activityRetainedScope()
-    private val dateFormatter by inject<DateFormatter>(retainedScope)
+    private val dateFormatter by inject<DateFormatter>(scope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

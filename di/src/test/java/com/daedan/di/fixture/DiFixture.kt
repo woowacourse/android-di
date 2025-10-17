@@ -9,6 +9,8 @@ class Child1
 
 class Child2
 
+class Child3
+
 class NestedDependency(
     private val parent: Parent,
 )
