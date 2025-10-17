@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.bibi.di.androidx.injectedViewModel
+import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -20,13 +22,16 @@ class CartActivity :
         injectedViewModel<CartViewModel> { (application as ShoppingApplication).container }
     }
 
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val container = (application as ShoppingApplication).container
+        MemberInjector.inject(this, container)
+
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -45,10 +50,6 @@ class CartActivity :
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

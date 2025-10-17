@@ -3,11 +3,9 @@ package woowacourse.bibi.di.androidx
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.bibi.di.core.AppContainer
-import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.bibi.di.core.Qualifier
-import kotlin.jvm.java
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createType
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
 
@@ -31,23 +29,7 @@ class InjectingViewModelFactory(
                 }.toTypedArray()
 
         val instance = constructor.call(*args) as T
-        injectAnnotatedFields(instance)
+        MemberInjector.inject(instance, container)
         return instance
-    }
-
-    private fun injectAnnotatedFields(target: Any) {
-        target::class.java.declaredFields
-            .filter { it.isAnnotationPresent(Inject::class.java) }
-            .forEach { field ->
-                field.isAccessible = true
-                val kType = field.type.kotlin.createType()
-                val qualifier =
-                    field.annotations
-                        .firstOrNull {
-                            it.annotationClass.hasAnnotation<Qualifier>()
-                        }?.annotationClass
-                val value = container.resolve(kType, qualifier)
-                field.set(target, value)
-            }
     }
 }
