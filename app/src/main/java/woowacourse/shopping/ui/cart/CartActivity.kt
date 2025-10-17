@@ -28,6 +28,11 @@ class CartActivity : AppCompatActivity() {
         setupViewData()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        (application as MeepleApplication).appContainer.clearActivityScope()
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
