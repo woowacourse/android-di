@@ -1,12 +1,10 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.m6z1.moongdi.DependencyContainer
 import com.m6z1.moongdi.startMoong
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AppContainer
 
 class ShoppingApplication : Application() {
@@ -17,7 +15,6 @@ class ShoppingApplication : Application() {
 
         appContainer = AppContainer(this)
 
-        DependencyContainer.register(ShoppingDatabase.getDatabase(this).cartProductDao())
         startMoong(
             appContainer.cartProductDao,
             DefaultCartRepository::class,
