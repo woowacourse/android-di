@@ -4,9 +4,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import org.mockito.Mockito.`when`
 import woowacourse.shopping.fixture.FakeCartRepository
-import woowacourse.shopping.fixture.PRODUCT_A_1000
+import woowacourse.shopping.fixture.PRODUCT_1L_A_1000
 
 class CartRepositoryTest :
     BehaviorSpec({
@@ -17,7 +16,7 @@ class CartRepositoryTest :
             }
 
             `when`("상품 하나를 추가하면") {
-                repository.addCartProduct(PRODUCT_A_1000)
+                repository.addCartProduct(PRODUCT_1L_A_1000)
                 val expectedName = "A"
                 val expectedPrice = 1_000
                 then("저장된 상품을 확인할 수 있다") {
@@ -32,8 +31,8 @@ class CartRepositoryTest :
             }
 
             `when`("상품을 제거하면") {
-                repository.addCartProduct(PRODUCT_A_1000)
-                val id = repository.getAllCartProducts().indexOfFirst { it == PRODUCT_A_1000 }
+                repository.addCartProduct(PRODUCT_1L_A_1000)
+                val id = repository.getAllCartProducts().first { it.id == 1L }.id
                 repository.deleteCartProduct(id)
                 then("정상적으로 삭제되었음을 확인할 수 있다") {
                     repository.getAllCartProducts().shouldBeEmpty()

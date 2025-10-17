@@ -53,6 +53,8 @@ tasks.withType<Test> {
 }
 
 dependencies {
+
+    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -67,8 +69,6 @@ dependencies {
     androidTestImplementation(libs.assertj.core)
     androidTestImplementation(libs.truth)
 
-    // Reflection
-    implementation(libs.kotlin.reflect)
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -88,4 +88,7 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.junit.vintage.engine)
     testImplementation(libs.androidx.core.testing)
+
+    // mockk
+    testImplementation(libs.mockk.android)
 }
