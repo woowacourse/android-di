@@ -9,6 +9,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacouse.shopping.di.Container
+import woowacouse.shopping.di.DiFactory
 
 class ShoppingApplication : Application() {
     private val database: ShoppingDatabase by lazy {
@@ -20,6 +21,9 @@ class ShoppingApplication : Application() {
             ).build()
     }
 
+    private val container by lazy { Container() }
+    val diFactory by lazy { DiFactory(container, this) }
+
     private val cartProductDao by lazy { database.cartProductDao() }
 
     private val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
@@ -27,8 +31,6 @@ class ShoppingApplication : Application() {
     private val roomCartRepository: CartRepository by lazy { CartRepositoryImpl(cartProductDao) }
 
     private val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
-
-    val container = Container()
 
     override fun onCreate() {
         super.onCreate()
