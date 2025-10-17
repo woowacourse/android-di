@@ -1,6 +1,5 @@
 package woowacourse.shopping.di
 
-import android.util.Log
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.findAnnotation

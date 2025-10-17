@@ -1,7 +1,6 @@
 package woowacourse.shopping.app.ui.cart
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
