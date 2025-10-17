@@ -8,7 +8,7 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.di.AppContainer
 
 class ShoppingApplication : Application() {
-    lateinit var appContainer: AppContainer
+    private lateinit var appContainer: AppContainer
 
     override fun onCreate() {
         super.onCreate()
