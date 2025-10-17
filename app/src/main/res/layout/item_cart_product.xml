@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="item"
-            type="woowacourse.shopping.model.Product" />
+            type="woowacourse.shopping.model.CartProduct" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

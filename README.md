@@ -27,7 +27,7 @@ Annotation (다음 문제점을 해결한다.)
 
 Recursive DI
 - [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
-- [ ] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+- [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
 
 ## step3 요구 사항 
 Qualifier (다음 문제점을 해결한다.)
