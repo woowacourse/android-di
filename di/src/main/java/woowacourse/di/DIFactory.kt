@@ -45,7 +45,7 @@ object DIFactory {
         return constructor.callBy(args.filterValues { it != null })
     }
 
-    private fun <T : Any> injectFields(instance: T) {
+    fun <T : Any> injectFields(instance: T) {
         val kClass = instance::class
         kClass.memberProperties
             .filterIsInstance<KMutableProperty1<T, Any?>>()
