@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import woowacourse.bibi.di.core.AppContainer
 import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.bibi.di.core.Qualifier
+import woowacourse.bibi.di.core.ViewModelScope
 import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -14,6 +15,8 @@ class InjectingViewModelFactory(
     private val container: AppContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val viewModelContainer = container.child(ViewModelScope::class)
+
         val kClass: KClass<out ViewModel> = modelClass.kotlin
         val constructor =
             kClass.primaryConstructor
@@ -25,7 +28,7 @@ class InjectingViewModelFactory(
                 .map { parameter ->
                     val qualifier =
                         parameter.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
-                    container.resolve(parameter.type, qualifier)
+                    viewModelContainer.resolve(parameter.type, qualifier)
                 }.toTypedArray()
 
         val instance = constructor.call(*args) as T

@@ -8,6 +8,8 @@ interface AppContainer {
 
     fun resolve(
         type: KType,
-        qualifier: KClass<out Annotation>?,
+        qualifier: KClass<out Annotation>? = null,
     ): Any
+
+    fun child(scope: KClass<out Annotation>): AppContainer
 }

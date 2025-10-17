@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.bibi.di.androidx.injectedViewModel
+import woowacourse.bibi.di.core.ActivityScope
 import woowacourse.bibi.di.core.Inject
 import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.shopping.R
@@ -28,8 +29,9 @@ class CartActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val container = (application as ShoppingApplication).container
-        MemberInjector.inject(this, container)
+        val appContainer = (application as ShoppingApplication).container
+        val activityContainer = appContainer.child(ActivityScope::class)
+        MemberInjector.inject(this, activityContainer)
 
         setupContentView()
         setupBinding()
