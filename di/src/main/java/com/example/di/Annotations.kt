@@ -11,8 +11,13 @@ annotation class RoomDatabase
 annotation class InMemory
 
 @Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ViewModelScoped
+annotation class Singleton
+
+@Target(AnnotationTarget.FIELD)
+annotation class ActivityScope
+
+@Target(AnnotationTarget.FIELD)
+annotation class ViewModelScope
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
