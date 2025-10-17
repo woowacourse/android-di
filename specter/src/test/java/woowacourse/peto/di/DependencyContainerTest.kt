@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.peto.di.annotation.Qualifier
+import woowacourse.peto.di.annotation.Scope
 import woowacourse.peto.di.fake.FakeDependencyModule
 import woowacourse.peto.di.fake.FakeRepositoryModule
 import woowacourse.peto.di.fake.FakeViewModel
@@ -40,8 +41,8 @@ class DependencyContainerTest {
 
     @Test
     fun `등록된 인터페이스 타입으로 의존성을 조회하면 정상적으로 반환된다`() {
-        val productRepository = diContainer.get(typeOf<ProductRepository>())
-        val cartRepository = diContainer.get(typeOf<CartRepository>())
+        val productRepository = diContainer.get(typeOf<ProductRepository>(), Scope.SINGLETON)
+        val cartRepository = diContainer.get(typeOf<CartRepository>(), Scope.SINGLETON)
 
         assertNotNull(productRepository)
         assertNotNull(cartRepository)
@@ -53,11 +54,11 @@ class DependencyContainerTest {
         val exception =
             assertThrows(IllegalArgumentException::class.java) {
                 // when
-                diContainer.get(typeOf<NotRegisteredProductRepository>())
+                diContainer.get(typeOf<NotRegisteredProductRepository>(), Scope.SINGLETON)
             }
 
         // then
-        val expected = "NotRegisteredProductRepository 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "NotRegisteredProductRepository 타입의 의존성이 등록 되어있지 않습니다."
         val actual = exception.message
         assertEquals(expected, actual)
     }
@@ -65,11 +66,11 @@ class DependencyContainerTest {
     @Test
     fun `get 호출 시 실제 인스턴스가 생성되고, 이후 호출에는 동일 인스턴스를 반환한다`() {
         // when
-        val productRepository1 = diContainer.get(typeOf<ProductRepository>())
-        val cart1 = diContainer.get(typeOf<CartRepository>())
+        val productRepository1 = diContainer.get(typeOf<ProductRepository>(), Scope.SINGLETON)
+        val cart1 = diContainer.get(typeOf<CartRepository>(), Scope.SINGLETON)
 
-        val productRepository2 = diContainer.get(typeOf<ProductRepository>())
-        val cart2 = diContainer.get(typeOf<CartRepository>())
+        val productRepository2 = diContainer.get(typeOf<ProductRepository>(), Scope.SINGLETON)
+        val cart2 = diContainer.get(typeOf<CartRepository>(), Scope.SINGLETON)
 
         // then
         assertNotNull(productRepository1)
@@ -90,7 +91,11 @@ class DependencyContainerTest {
                 coroutineScope {
                     repeat(concurrentCalls) {
                         launch(Dispatchers.Default) {
-                            val repo = diContainer.get(typeOf<ProductRepository>()) as ProductRepository
+                            val repo =
+                                diContainer.get(
+                                    typeOf<ProductRepository>(),
+                                    Scope.SINGLETON,
+                                ) as ProductRepository
                             results.add(repo)
                         }
                     }
@@ -106,7 +111,7 @@ class DependencyContainerTest {
         val viewModel = ViewModelFactoryInjector(diContainer).create(FakeViewModel::class.java)
 
         // when
-        diContainer.inject(viewModel)
+        diContainer.inject(viewModel, Scope.SINGLETON)
         val myCartProperties =
             viewModel::class.declaredMemberProperties
                 .first { it.name == "myCartRepository" }
