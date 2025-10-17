@@ -53,7 +53,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
+        dateFormatter = diContainer.resolve(DateFormatter::class, owner = this)
     }
 
     private fun setupToolbar() {
