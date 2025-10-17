@@ -13,11 +13,12 @@ import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
 import com.daedan.di.scope.Scope
 import com.daedan.di.scope.TypeScope
+import com.daedan.di.scope.UniqueScope
 
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
     qualifier: Qualifier = TypeQualifier(VM::class),
-    scope: Scope = TypeScope(VM::class),
+    scope: Scope = UniqueScope(TypeScope(VM::class), this.javaClass.name),
     noinline extrasProducer: (() -> CreationExtras)? = null,
 ): Lazy<VM> {
     val factory =
