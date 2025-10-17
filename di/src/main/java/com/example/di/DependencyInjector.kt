@@ -12,7 +12,6 @@ import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
     private val instances = mutableMapOf<DependencyKey<*>, () -> Any>()
-    private val creating = mutableSetOf<KClass<*>>()
 
     fun setInstance(container: Any) {
         container::class
@@ -89,19 +88,12 @@ object DependencyInjector {
         handle: SavedStateHandle?,
         key: DependencyKey<*>,
     ): Any {
-        if (creating.contains(kClass)) throw IllegalStateException("순환 참조")
-        creating.add(kClass)
+        val primaryConstructor = kClass.primaryConstructor
+        primaryConstructor?.let { return createPrimaryConstructor(it, handle, key.qualifier) }
 
-        try {
-            val primaryConstructor = kClass.primaryConstructor
-            primaryConstructor?.let { return createPrimaryConstructor(it, handle, key.qualifier) }
+        kClass.objectInstance?.let { obj -> return obj }
 
-            kClass.objectInstance?.let { obj -> return obj }
-
-            return kClass.java.getDeclaredConstructor().newInstance()
-        } finally {
-            creating.remove(kClass)
-        }
+        return kClass.java.getDeclaredConstructor().newInstance()
     }
 
     private fun createPrimaryConstructor(
