@@ -15,8 +15,8 @@ class DIContainer {
 
     // 스코프별 인스턴스 캐시
     private val appCache = mutableMapOf<KClass<*>, Any>()
-    private val activityCache = mutableMapOf<Any, MutableMap<KClass<*>, Any>>() // Activity별
-    private val viewModelCache = mutableMapOf<Any, MutableMap<KClass<*>, Any>>() // ViewModel별
+    private val activityCache = mutableMapOf<Any, MutableMap<KClass<*>, Any>>()
+    private val viewModelCache = mutableMapOf<Any, MutableMap<KClass<*>, Any>>()
 
     // Lifecycle 추적 중인 Owner 기록
     private val observedOwners = mutableSetOf<Any>()
@@ -27,15 +27,18 @@ class DIContainer {
         owner: Any? = null,
     ): T {
         val scope = inferScopeFromAnnotations(type)
+        println("[DI] Resolving ${type.simpleName} (scope=$scope, owner=${owner?.javaClass?.simpleName})")
 
         // LifecycleOwner 자동 추적 등록
         if (owner is LifecycleOwner && !observedOwners.contains(owner)) {
+            println("[DI] Observing lifecycle of ${owner::class.simpleName}")
             owner.lifecycle.addObserver(ScopedLifecycleObserver(this, owner))
             observedOwners.add(owner)
         }
 
         // ViewModel 자동 추적 등록
         if (owner is ViewModel && !observedOwners.contains(owner)) {
+            println("[DI] Observing ViewModel lifecycle of ${owner::class.simpleName}")
             if (owner is ScopedViewModel) {
                 owner.diContainer = this
             }
@@ -146,7 +149,11 @@ class DIContainer {
         type: KClass<T>,
         cache: MutableMap<KClass<*>, Any>,
         qualifier: KClass<*>?,
-    ): T = cache.getOrPut(type) { getInstance(type, qualifier) } as T
+    ): T =
+        cache.getOrPut(type) {
+            println("[DI] Created new AppScoped instance for ${type.simpleName}")
+            getInstance(type, qualifier)
+        } as T
 
     // Activity / ViewModel 스코프
     private fun <T : Any> resolveOwnerScopedInstance(
@@ -156,12 +163,23 @@ class DIContainer {
         qualifier: KClass<*>?,
     ): T {
         if (owner == null) return getInstance(type, qualifier)
-        val ownerCache = cacheMap.getOrPut(owner) { mutableMapOf() }
-        return ownerCache.getOrPut(type) { autoCreate(type, owner) } as T
+        val ownerCache =
+            cacheMap.getOrPut(owner) {
+                println("[DI] Created new owner cache for ${owner::class.simpleName}")
+                mutableMapOf()
+            }
+        val instance =
+            ownerCache.getOrPut(type) {
+                println("[DI] Created new scoped instance for ${type.simpleName} (owner=${owner::class.simpleName})")
+                autoCreate(type, owner)
+            }
+        return instance as T
     }
 
     // 스코프 해제 (onDestroy, onCleared에서 자동 호출)
     fun clearScope(owner: Any) {
+        println("[DI] Clearing scope for ${owner::class.simpleName}")
+
         activityCache.remove(owner)
         viewModelCache.remove(owner)
         observedOwners.remove(owner)

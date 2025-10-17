@@ -4,6 +4,10 @@ import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.ProductRepository
 
 class DefaultProductRepository : ProductRepository {
+    init {
+        println("[DI] ProductRepository created (ViewModelScoped)")
+    }
+
     private val products: List<Product> =
         listOf(
             Product(

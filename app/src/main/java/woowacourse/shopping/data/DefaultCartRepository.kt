@@ -11,6 +11,10 @@ class DefaultCartRepository
     constructor(
         private val dao: CartProductDao,
     ) : CartRepository {
+        init {
+            println("[DI] CartRepository created (AppScoped)")
+        }
+
         override suspend fun addCartProduct(product: Product) {
             dao.insert(product.toEntity())
         }

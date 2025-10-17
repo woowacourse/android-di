@@ -11,6 +11,10 @@ import java.util.Locale
 class DateFormatter(
     context: Context,
 ) {
+    init {
+        println("[DI] DateFormatter created (ActivityScoped, context=${context::class.simpleName})")
+    }
+
     private val formatter =
         SimpleDateFormat(
             context.getString(R.string.date_format),
