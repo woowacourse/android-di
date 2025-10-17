@@ -17,10 +17,7 @@ fun ComponentActivity.activityRetainedScope(scope: Scope = TypeScope(this::class
         val store = (application as DiApplication).appContainerStore
         if (viewModel.scope == null) {
             val uniqueScope =
-                UniqueScope(
-                    scope,
-                    hashCode().toString(),
-                )
+                UniqueScope(scope)
             store.createScope(uniqueScope)
             registerCurrentContext(store, uniqueScope)
             viewModel.scope = uniqueScope

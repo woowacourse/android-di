@@ -88,7 +88,7 @@ class AppContainerStore {
         try {
             val instance = creator.invoke(scope)
             injectField(instance, scope)
-            creator.scope.save(qualifier, instance)
+            scope.save(qualifier, instance)
             return instance
         } finally {
             inProgress.remove(qualifier)

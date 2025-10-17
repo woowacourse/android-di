@@ -24,7 +24,6 @@ inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
     val uniqueScope =
         UniqueScope(
             scope,
-            hashCode().toString(),
         )
     val factory =
         viewModelFactory {

@@ -17,7 +17,7 @@ import com.daedan.di.scope.UniqueScope
 fun ComponentActivity.activityScope(scope: Scope = TypeScope(this::class)): Lazy<UniqueScope> =
     lazy {
         val store = (this.application as DiApplication).appContainerStore
-        val uniqueScope = UniqueScope(scope, hashCode().toString())
+        val uniqueScope = UniqueScope(scope)
 
         if (!store.isScopeOpen(uniqueScope)) {
             initialize(store, uniqueScope)
