@@ -19,8 +19,12 @@ class CartActivity :
     CartProductClickListener {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
+    private val activityContainer by lazy {
+        (application as ShoppingApplication).container.child(ActivityScope::class)
+    }
+
     private val viewModel by lazy {
-        injectedViewModel<CartViewModel> { (application as ShoppingApplication).container }
+        injectedViewModel<CartViewModel> { activityContainer }
     }
 
     @Inject
@@ -29,8 +33,6 @@ class CartActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appContainer = (application as ShoppingApplication).container
-        val activityContainer = appContainer.child(ActivityScope::class)
         MemberInjector.inject(this, activityContainer)
 
         setupContentView()
