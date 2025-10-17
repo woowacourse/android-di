@@ -1,22 +1,28 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.repository.CartDefaultRepository
+import androidx.room.Room
+import com.medandro.di.DIContainer
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.repository.CartInMemoryRepository
+import woowacourse.shopping.data.repository.CartRoomRepository
 import woowacourse.shopping.data.repository.ProductDefaultRepository
-import woowacourse.shopping.di.DIContainer
-import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
-import kotlin.reflect.KClass
 
 class ShoppingApplication : Application() {
-    val diContainer by lazy {
-        DIContainer(createInterfaceMapping())
+    private val database by lazy {
+        Room
+            .databaseBuilder(
+                applicationContext,
+                ShoppingDatabase::class.java,
+                "shopping_database",
+            ).build()
     }
 
-    private fun createInterfaceMapping(): Map<KClass<*>, KClass<*>> {
-        return mapOf(
-            ProductRepository::class to ProductDefaultRepository::class,
-            CartRepository::class to CartDefaultRepository::class
-        )
+    val diContainer by lazy {
+        DIContainer(
+            ProductDefaultRepository::class,
+            CartRoomRepository::class,
+            CartInMemoryRepository::class,
+        ).registerSingleton(database).registerSingleton(database.cartProductDao())
     }
 }
