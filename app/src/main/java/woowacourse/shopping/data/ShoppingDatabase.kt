@@ -18,7 +18,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ShoppingDatabase =
             INSTANCE ?: synchronized(LOCK) {
-                Room
+                INSTANCE ?: Room
                     .databaseBuilder(
                         context.applicationContext,
                         ShoppingDatabase::class.java,
