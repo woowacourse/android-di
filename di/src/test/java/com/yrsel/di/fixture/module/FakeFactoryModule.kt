@@ -5,11 +5,11 @@ import com.yrsel.di.annotation.Provides
 import com.yrsel.di.fixture.FakeDataSource
 import com.yrsel.di.fixture.FakeInMemoryDataSource
 import com.yrsel.di.fixture.FakeRepository
-import com.yrsel.di.fixture.FakeRepositoryConstructorFixture
+import com.yrsel.di.fixture.FakeRepositoryConstructorInject
 
-class FakeConstructorFixtureModule : Module {
+class FakeFactoryModule : Module {
     @Provides
-    fun provideCartRepository(dataSource: FakeDataSource): FakeRepository = FakeRepositoryConstructorFixture(dataSource)
+    fun provideCartRepository(dataSource: FakeDataSource): FakeRepository = FakeRepositoryConstructorInject(dataSource)
 
     @Provides
     fun provideDataSource(): FakeDataSource = FakeInMemoryDataSource()

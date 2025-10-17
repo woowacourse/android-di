@@ -2,20 +2,17 @@ package com.yrsel.di.fixture.module
 
 import com.yrsel.di.Module
 import com.yrsel.di.annotation.Provides
+import com.yrsel.di.annotation.Singleton
 import com.yrsel.di.fixture.FakeDataSource
 import com.yrsel.di.fixture.FakeInMemoryDataSource
 import com.yrsel.di.fixture.FakeRepository
-import com.yrsel.di.fixture.FakeRepositoryConstructorFixture
-import com.yrsel.di.fixture.InMemory
+import com.yrsel.di.fixture.FakeRepositoryConstructorInject
 
-class FakeInMemoryFixtureModule : Module {
+class FakeSingletonModule : Module {
     @Provides
-    @InMemory
-    fun provideCartRepository(
-        @InMemory dataSource: FakeDataSource,
-    ): FakeRepository = FakeRepositoryConstructorFixture(dataSource)
+    @Singleton
+    fun provideCartRepository(dataSource: FakeDataSource): FakeRepository = FakeRepositoryConstructorInject(dataSource)
 
     @Provides
-    @InMemory
     fun provideDataSource(): FakeDataSource = FakeInMemoryDataSource()
 }
