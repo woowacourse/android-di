@@ -2,6 +2,7 @@ package woowacourse.shopping.app
 
 import android.app.Application
 import android.content.Context
+import woowacourse.shopping.app.ui.cart.DateFormatter
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -56,6 +57,13 @@ class ShoppingApplication : Application() {
             qualifier = Database::class.createInstance(),
         ) { _ ->
             DefaultProductRepository()
+        }
+
+        container.register(
+            type = typeOf<DateFormatter>(),
+            implementationClass = DateFormatter::class,
+        ) { _ ->
+            DateFormatter(context)
         }
 
         container.register(

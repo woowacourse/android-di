@@ -11,6 +11,7 @@ import woowacourse.shopping.R
 import woowacourse.shopping.app.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.DIViewModelFactory
+import woowacourse.shopping.di.resolve
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
@@ -47,7 +48,10 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
+        val container = ShoppingApplication.getContainer(applicationContext)
+
+        dateFormatter = container.resolve<DateFormatter>()
+            ?: throw IllegalStateException("DateFormatter가 DI 컨테이너에 등록되지 않았습니다.")
     }
 
     private fun setupToolbar() {
