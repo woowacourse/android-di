@@ -5,6 +5,7 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.ActivityLifecycleManager
 import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.di.AppContainer.get
 import woowacourse.shopping.di.qualifier.Qualifiers.DATABASE
@@ -16,6 +17,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        registerActivityLifecycleCallbacks(ActivityLifecycleManager)
         appContainer = AppContainer
         appContainer.registerImplementation(CartRepository::class, CartRepositoryImpl::class)
         appContainer.registerImplementation(ProductRepository::class, ProductRepositoryImpl::class)
