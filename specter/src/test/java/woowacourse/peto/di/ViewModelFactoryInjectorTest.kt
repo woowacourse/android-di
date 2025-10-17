@@ -45,7 +45,7 @@ class ViewModelFactoryInjectorTest {
             }
 
         // then
-        val expected = "String 타입의 의존성이 등록되어있지 않습니다."
+        val expected = "String 타입의 의존성이 등록 되어있지 않습니다."
         val actual = exception.message
         assertEquals(expected, actual)
     }
