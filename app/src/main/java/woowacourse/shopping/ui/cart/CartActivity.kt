@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.daedan.di.util.activityRetainedScope
 import com.daedan.di.util.activityScope
 import com.daedan.di.util.autoViewModels
 import com.daedan.di.util.inject
@@ -19,11 +20,12 @@ class CartActivity : AppCompatActivity() {
     private val viewModel by autoViewModels<CartViewModel>()
 
     private val scope = activityScope()
-    private val dateFormatter by inject<DateFormatter>(scope)
+
+    private val retainedScope = activityRetainedScope()
+    private val dateFormatter by inject<DateFormatter>(retainedScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupContentView()
         setupBinding()
         setupToolbar()

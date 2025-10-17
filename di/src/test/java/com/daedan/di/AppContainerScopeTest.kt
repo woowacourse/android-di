@@ -5,7 +5,6 @@ import com.daedan.di.fixture.Child1
 import com.daedan.di.fixture.FakeActivity
 import com.daedan.di.fixture.FakeApplication
 import com.daedan.di.fixture.TestViewModel
-import com.daedan.di.util.withScope
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -25,7 +24,7 @@ class AppContainerScopeTest {
                     scoped { Child1() }
                 }
                 viewModel {
-                    TestViewModel(get(scope = withScope<TestViewModel>()))
+                    TestViewModel(get(scope = it))
                 }
             }
 

@@ -2,4 +2,6 @@ package com.daedan.di.scope
 
 import androidx.lifecycle.ViewModel
 
-class SavedHandleViewModel : ViewModel()
+internal class SavedHandleViewModel : ViewModel() {
+    var scope: UniqueScope? = null
+}

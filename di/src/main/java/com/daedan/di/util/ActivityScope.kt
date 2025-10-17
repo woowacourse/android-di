@@ -1,6 +1,7 @@
 package com.daedan.di.util
 
 import android.annotation.SuppressLint
+import androidx.annotation.MainThread
 import androidx.core.app.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -12,6 +13,7 @@ import com.daedan.di.scope.Scope
 import com.daedan.di.scope.TypeScope
 import com.daedan.di.scope.UniqueScope
 
+@MainThread
 fun ComponentActivity.activityScope(scope: Scope = TypeScope(this::class)): Lazy<UniqueScope> =
     lazy {
         val store = (this.application as DiApplication).appContainerStore
