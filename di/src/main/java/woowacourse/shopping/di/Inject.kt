@@ -12,3 +12,7 @@ annotation class Database
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class InMemory
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Singleton
