@@ -35,7 +35,6 @@ class ContainerTest {
             instance2.shouldNotBeNull()
             instance1.shouldBeInstanceOf<InMemoryTestRepository>()
             instance2.shouldBeInstanceOf<InMemoryTestRepository>()
-            instance1 shouldNotBeSameInstanceAs instance2
         }
     }
 
@@ -90,7 +89,7 @@ class ContainerTest {
         }
     }
 
-    @DisplayName("@Singleton 어노테이션이 있는 클래스는 싱글톤으로 관리된다")
+    @DisplayName("@Singleton 어노테이션이 있으면 클래스는 싱글톤으로 관리된다")
     @Test
     fun singletonTest() {
         // when
@@ -99,6 +98,17 @@ class ContainerTest {
 
         // then
         instance1 shouldBeSameInstanceAs instance2
+    }
+
+    @DisplayName("@Singleton 어노테이션이 없으면 인스턴스를 다시 생성한다")
+    @Test
+    fun withoutSingletonTest() {
+        // when
+        val instance1 = container.get<NonAnnotatedSingletonService>()
+        val instance2 = container.get<NonAnnotatedSingletonService>()
+
+        // then
+        instance1 shouldNotBeSameInstanceAs instance2
     }
 
     @DisplayName("순환 참조가 발생하면 DependencyCycleException이 발생한다")

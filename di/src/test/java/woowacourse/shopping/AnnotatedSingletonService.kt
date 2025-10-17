@@ -7,3 +7,7 @@ import woowacourse.shopping.annotation.Singleton
 class AnnotatedSingletonService
     @Inject
     constructor()
+
+class NonAnnotatedSingletonService
+    @Inject
+    constructor()
