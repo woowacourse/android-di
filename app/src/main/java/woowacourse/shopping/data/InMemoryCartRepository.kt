@@ -6,17 +6,16 @@ import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
-class CartRepositoryImpl(
-    private val dao: CartProductDao,
-) : CartRepository {
+class InMemoryCartRepository : CartRepository {
+    private val carts: MutableList<CartProductEntity> = mutableListOf()
+
     override suspend fun addCartProduct(product: Product) {
-        dao.insert(product.toEntity())
+        carts.add(product.toEntity())
     }
 
-    override suspend fun getAllCartProducts(): List<CartProduct> = dao.getAll().map { it.toModel() }
+    override suspend fun getAllCartProducts(): List<CartProduct> = carts.map { it.toModel() }
 
     override suspend fun deleteCartProduct(id: Long) {
-        dao.delete(id.toLong())
+        carts.removeAt(0)
     }
 }
