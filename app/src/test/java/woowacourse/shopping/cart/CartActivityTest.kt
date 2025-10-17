@@ -1,8 +1,8 @@
 package woowacourse.shopping.cart
 
 import androidx.lifecycle.ViewModelProvider
-import com.google.common.truth.Truth
 import org.junit.Test
+import org.junit.jupiter.api.assertNotNull
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -12,6 +12,7 @@ import woowacourse.fake.FakeRepositoryModule
 import woowacourse.peto.di.DependencyContainer
 import woowacourse.peto.di.ViewModelFactoryInjector
 import woowacourse.shopping.ui.cart.CartActivity
+import woowacourse.shopping.ui.cart.DateFormatterModule
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 
 @RunWith(RobolectricTestRunner::class)
@@ -27,6 +28,7 @@ class CartActivityTest {
         val dependencyContainer =
             DependencyContainer(
                 listOf(
+                    DateFormatterModule(activity),
                     FakeDatabaseModule(),
                     FakeRepositoryModule(FakeCartProductDao()),
                 ),
@@ -37,6 +39,7 @@ class CartActivityTest {
         val viewModel = ViewModelProvider(activity, factory)[CartViewModel::class.java]
 
         // then
-        Truth.assertThat(viewModel).isNotNull()
+        assertNotNull(viewModel)
+        assertNotNull(activity.dateFormatter)
     }
 }
