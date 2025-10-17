@@ -26,7 +26,7 @@ class InjectAnnotationTest {
     @Test
     fun `@Inject가 붙은 필드, 생성자 주입이 모두 성공하고, @Inject를 붙이지 않으면 주입되지 않는다`() {
         // given
-        diContainer.inject(vm)
+        diContainer.inject(vm, Scope.SINGLETON)
 
         val injectedStringField =
             vm::class.java.getDeclaredField("injectedString")

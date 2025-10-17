@@ -22,7 +22,7 @@ class QualifierAnnotationTest {
         val viewModel = ViewModelFactoryInjector(dependencyContainer).create(FakeViewModel::class.java)
 
         // when
-        dependencyContainer.inject(viewModel)
+        dependencyContainer.inject(viewModel, Scope.VIEWMODEL)
 
         // then
         assertNotEquals(viewModel.myCartRepository, viewModel.othersCartRepository)
