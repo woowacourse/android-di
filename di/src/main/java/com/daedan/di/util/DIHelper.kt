@@ -2,15 +2,12 @@ package com.daedan.di.util
 
 import android.content.Context
 import com.daedan.di.AppContainerStore
-import com.daedan.di.DependencyFactory
-import com.daedan.di.DependencyModule
 import com.daedan.di.annotation.Component
 import com.daedan.di.annotation.Inject
 import com.daedan.di.qualifier.AnnotationQualifier
 import com.daedan.di.qualifier.NamedQualifier
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
-import com.daedan.di.scope.CreateRule
 import com.daedan.di.scope.NamedScope
 import com.daedan.di.scope.TypeScope
 import com.daedan.di.scope.UniqueScope
@@ -70,16 +67,9 @@ internal fun Context.registerCurrentContext(
     store: AppContainerStore,
     scope: UniqueScope,
 ) {
-    store.registerFactory(
-        DependencyModule(
-            listOf(
-                DependencyFactory(
-                    qualifier = TypeQualifier(Context::class),
-                    createRule = CreateRule.SINGLE,
-                    create = { this },
-                    scope = scope.keyScope,
-                ),
-            ),
-        ),
+    store.putToCache(
+        qualifier = TypeQualifier(Context::class),
+        scope = scope,
+        instance = this,
     )
 }

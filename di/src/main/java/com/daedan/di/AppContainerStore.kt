@@ -27,6 +27,14 @@ class AppContainerStore {
             mutableSetOf(),
         )
 
+    internal fun putToCache(
+        scope: Scope,
+        qualifier: Qualifier,
+        instance: Any,
+    ) {
+        cache[scope]?.set(qualifier, instance)
+    }
+
     fun registerFactory(vararg modules: DependencyModule) {
         val newFactories = modules.flatMap { it.factories }
 
@@ -34,7 +42,10 @@ class AppContainerStore {
         val newFactoryMap = newFactories.associateBy { it.qualifier }
         require(newFactoryMap.size == newFactories.size) { ERR_CONFLICT_KEY }
 
-        val conflictingKeys = newFactoryMap.keys.filter { factory.containsKey(it) }
+        val conflictingKeys =
+            newFactoryMap.keys.filter {
+                factory.containsKey(it)
+            }
         require(conflictingKeys.isEmpty()) {
             "$ERR_CONFLICT_KEY ${conflictingKeys.joinToString()}"
         }

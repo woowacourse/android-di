@@ -18,16 +18,21 @@ import com.daedan.di.scope.UniqueScope
 @MainThread
 inline fun <reified VM : ViewModel> ComponentActivity.autoViewModels(
     qualifier: Qualifier = TypeQualifier(VM::class),
-    scope: Scope = UniqueScope(TypeScope(VM::class), this.javaClass.name),
+    scope: Scope = TypeScope(VM::class),
     noinline extrasProducer: (() -> CreationExtras)? = null,
 ): Lazy<VM> {
+    val uniqueScope =
+        UniqueScope(
+            scope,
+            hashCode().toString(),
+        )
     val factory =
         viewModelFactory {
             initializer {
                 val store = (this[APPLICATION_KEY] as DiApplication).appContainerStore
-                store.createScope(scope)
-                val viewModel = store.instantiate(qualifier, scope) as VM
-                viewModel.addCloseable { store.closeScope(scope) }
+                store.createScope(uniqueScope)
+                val viewModel = store.instantiate(qualifier, uniqueScope) as VM
+                viewModel.addCloseable { store.closeScope(uniqueScope) }
                 viewModel
             }
         }
