@@ -4,30 +4,19 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.core.di.DependencyContainer.instance
-import woowacourse.shopping.core.di.DependencyContainer.register
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 class FieldInjectionTest {
+    private lateinit var dependencyContainer: DependencyContainer
+
     @Before
     fun resetDependencyContainer() {
-        @Suppress("UNCHECKED_CAST")
-        val dependencies =
-            DependencyContainer::class
-                .memberProperties
-                .first { it.name == "dependencies" }
-                .apply { isAccessible = true }
-                .getter
-                .call() as MutableMap<*, *>
-
-        dependencies.clear()
+        dependencyContainer = DependencyContainer()
     }
 
     @Test
     fun `클래스 타입은 등록 없이 자동 주입된다`() {
         // given
-        val service = instance(ServiceDependsOnConcrete::class)
+        val service = dependencyContainer.instance(ServiceDependsOnConcrete::class)
 
         // then
         assertThat(service.repository).isNotNull()
@@ -36,15 +25,15 @@ class FieldInjectionTest {
     @Test
     fun `인터페이스 타입은 등록되지 않으면 생성될 수 없다`() {
         assertThrows(IllegalStateException::class.java) {
-            instance(ServiceDependsOnAbstract::class)
+            dependencyContainer.instance(ServiceDependsOnAbstract::class)
         }
     }
 
     @Test
     fun `인터페이스 타입이 등록되어 있다면 주입된다`() {
         // given
-        register(Repository::class) { DefaultRepository() }
-        val service = instance(ServiceDependsOnAbstract::class)
+        dependencyContainer.register(Repository::class) { DefaultRepository() }
+        val service = dependencyContainer.instance(ServiceDependsOnAbstract::class)
 
         // then
         assertThat(service.repository).isInstanceOf(DefaultRepository::class.java)
@@ -53,19 +42,19 @@ class FieldInjectionTest {
     @Test
     fun `변경 불가능한 필드는 주입될 수 없다`() {
         // given
-        register(Repository::class) { DefaultRepository() }
+        dependencyContainer.register(Repository::class) { DefaultRepository() }
 
         // then
         assertThrows(IllegalStateException::class.java) {
-            instance(ServiceHasImmutableField::class)
+            dependencyContainer.instance(ServiceHasImmutableField::class)
         }
     }
 
     @Test
     fun `값이 이미 할당되어 있어도 주입된다`() {
         // given
-        register(Repository::class) { DefaultRepository() }
-        val service = instance(ServiceHasPreAssignedField::class)
+        dependencyContainer.register(Repository::class) { DefaultRepository() }
+        val service = dependencyContainer.instance(ServiceHasPreAssignedField::class)
 
         // then
         assertThat(service.repository).isInstanceOf(DefaultRepository::class.java)

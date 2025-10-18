@@ -13,7 +13,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object DependencyContainer {
+class DependencyContainer {
     private val dependencies: MutableMap<Pair<KClass<*>, String?>, Any> = mutableMapOf()
 
     fun <T : Any> register(
