@@ -12,11 +12,7 @@ object DependencyInjection {
                     .firstOrNull { it.annotationClass.annotations.any { meta -> meta.annotationClass.simpleName == "Qualifier" } }
                     ?.annotationClass ?: Remote::class
 
-
-                val dependency = DIContainer.get(
-                    field.type.kotlin,
-                    qualifier,
-                )
+                val dependency = DIContainer.get(field.type.kotlin, qualifier)
                 field.set(instance, dependency)
             }
         }

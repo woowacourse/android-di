@@ -12,7 +12,7 @@ import woowacourse.shopping.model.CartProduct
 
 class CartViewModel: ViewModel() {
 
-    @com.example.di.Inject
+    @Inject
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<CartProduct>> =

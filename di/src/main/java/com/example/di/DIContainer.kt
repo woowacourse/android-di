@@ -2,6 +2,12 @@ package com.example.di
 
 import kotlin.reflect.KClass
 
+data class CacheKey(
+    val type: KClass<*>,
+    val qualifier: KClass<out Annotation>,
+    val scope: KClass<out Annotation>?
+)
+
 object DIContainer {
     val providers = mutableMapOf<Pair<KClass<*>, KClass<out Annotation>>, () -> Any>()
     private val cache = mutableMapOf<KClass<*>, Any>()
@@ -11,9 +17,17 @@ object DIContainer {
     }
 
     fun get(type: KClass<*>, qualifier: KClass<out Annotation>): Any {
-        return cache.getOrPut(type) {
-            providers[type to qualifier]?.invoke()
-                ?: throw IllegalArgumentException("No provider for $type with qualifier $qualifier")
-        }
+        val provider = providers[type to qualifier]
+            ?: throw IllegalArgumentException("No provider for $type with qualifier $qualifier")
+
+        val scopeAnnotation = type.annotations
+            .firstOrNull { it.annotationClass in setOf(Singleton::class, ViewModelScope::class, ActivityScope::class) }
+
+        val cacheKey = CacheKey(type, qualifier, scopeAnnotation?.annotationClass)
+        return cache.getOrPut(cacheKey.type) { provider() }
+    }
+
+    fun clearScope(scopeAnnotation: KClass<out Annotation>) {
+        cache.entries.removeIf { it.key.annotations.any { a -> a.annotationClass == scopeAnnotation } }
     }
 }

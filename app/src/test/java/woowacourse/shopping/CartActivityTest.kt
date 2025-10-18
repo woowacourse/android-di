@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.di.DependencyInjection
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +32,7 @@ class CartActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val viewModel = com.example.di.DependencyInjection.inject(MainViewModel::class.java)
+        val viewModel = DependencyInjection.inject(MainViewModel::class.java)
 
         // then
         assertThat(viewModel).isNotNull()
