@@ -1,5 +1,6 @@
 package com.medandro.di
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import com.medandro.di.annotation.InjectField
@@ -14,6 +15,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class DIContainer(
+    private val applicationContext: Context,
     vararg registerClasses: KClass<*>,
 ) {
     private val applicationInstances = mutableMapOf<DependencyKey, Any>()
@@ -143,18 +145,24 @@ class DIContainer(
             LifecycleScope.ACTIVITY -> {
                 val activity =
                     context as? ComponentActivity
-                        ?: throw IllegalStateException("ACTIVITY scope는 Activity 에서만 사용 가능합니다")
+                        ?: throw IllegalStateException(
+                            "ACTIVITY 스코프는 Activity에서만 사용할 수 있습니다. " +
+                                "현재 컨텍스트: ${context?.javaClass?.simpleName ?: "null"}",
+                        )
                 activityScopedInstances.getOrPut(activity) { mutableMapOf() }
             }
 
             LifecycleScope.VIEWMODEL -> {
                 val viewModel =
                     context as? ViewModel
-                        ?: throw IllegalStateException("VIEWMODEL scope는 ViewModel에서만 사용 가능합니다")
+                        ?: throw IllegalStateException(
+                            "VIEWMODEL 스코프는 ViewModel에서만 사용할 수 있습니다. " +
+                                "현재 컨텍스트: ${context?.javaClass?.simpleName ?: "null"}",
+                        )
                 viewModelScopedInstances.getOrPut(viewModel) { mutableMapOf() }
             }
 
-            LifecycleScope.AUTO -> throw IllegalStateException("AUTO scope는 storage 결정 전에 처리되어야 합니다")
+            LifecycleScope.AUTO -> throw IllegalStateException("AUTO 스코프는 실제 스코프로 변환된 후 사용되어야 합니다.")
         }
 
     private fun generateInterfaceMapping(registerClasses: Array<out KClass<*>>) {
@@ -189,7 +197,23 @@ class DIContainer(
                 .filterNot { it.isOptional }
                 .associateWith { param ->
                     val paramType = param.type.classifier as KClass<*>
-                    getInstance(DependencyKey(paramType), scope, context)
+
+                    when {
+                        paramType == Context::class -> {
+                            when (scope) {
+                                LifecycleScope.ACTIVITY ->
+                                    context as? ComponentActivity
+                                        ?: throw IllegalStateException(
+                                            "${kClass.simpleName} 생성 시 Activity Context가 필요하지만 Activity 컨텍스트를 찾을 수 없습니다." +
+                                                "ACTIVITY 스코프에서만 Activity Context를 사용할 수 있습니다.",
+                                        )
+
+                                else -> applicationContext
+                            }
+                        }
+
+                        else -> getInstance(DependencyKey(paramType), scope, context)
+                    }
                 }
         return constructor.callBy(parameterMap)
     }
