@@ -1,17 +1,13 @@
 package com.example.di.annotation
 
-import kotlin.reflect.KClass
-
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Scope(
-    val value: KClass<out ScopeType>,
+    val value: ScopeType,
 )
 
-sealed class ScopeType {
-    object Singleton : ScopeType()
-
-    object ActivityScoped : ScopeType()
-
-    object ViewModelScoped : ScopeType()
+enum class ScopeType {
+    SINGLETON,
+    ACTIVITY_SCOPED,
+    VIEWMODEL_SCOPED,
 }
