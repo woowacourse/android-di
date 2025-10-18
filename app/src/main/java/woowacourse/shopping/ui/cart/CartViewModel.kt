@@ -11,10 +11,10 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.model.Product
 
-class CartViewModel() : ViewModel() {
+class CartViewModel : ViewModel() {
     @Inject
     @Qualifier(DefaultCartRepository::class)
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> =
         MutableLiveData(emptyList())
