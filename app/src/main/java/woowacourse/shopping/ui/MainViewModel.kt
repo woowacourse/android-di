@@ -2,22 +2,23 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.medandro.di.BaseViewModel
 import com.medandro.di.annotation.InjectField
+import com.medandro.di.annotation.LifecycleScope
 import com.medandro.di.annotation.Qualifier
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel : ViewModel() {
+class MainViewModel : BaseViewModel() {
     @InjectField
-    lateinit var productRepository: ProductRepository
+    private lateinit var productRepository: ProductRepository
 
-    @InjectField
+    @InjectField(scope = LifecycleScope.APPLICATION)
     @Qualifier("RoomDB") // InMemory 로 바꾸면 InMemory 사용 (클린빌드 필요)
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products
 
