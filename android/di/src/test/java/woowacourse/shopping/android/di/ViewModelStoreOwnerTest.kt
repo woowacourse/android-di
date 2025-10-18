@@ -16,7 +16,7 @@ import woowacourse.shopping.core.di.NewDependencyContainer.register
 class ViewModelStoreOwnerTest {
     @Before
     fun setUp() {
-        register(DeclaredDependency::class, DefaultDeclaredDependency())
+        register(DeclaredDependency::class) { DefaultDeclaredDependency() }
     }
 
     @Test

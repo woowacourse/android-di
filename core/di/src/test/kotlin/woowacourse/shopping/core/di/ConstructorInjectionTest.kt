@@ -43,7 +43,7 @@ class ConstructorInjectionTest {
     @Test
     fun `인터페이스 타입이 등록되어 있다면 주입된다`() {
         // given
-        register(Repository::class, DefaultRepository())
+        register(Repository::class) { DefaultRepository() }
         val service = instance(ServiceDependsOnAbstract::class)
 
         // then
@@ -60,7 +60,7 @@ class ConstructorInjectionTest {
     @Test
     fun `생성자 파라미터에 기본값이 있더라도 의존성이 등록되어 있으면 등록된 의존성을 사용한다`() {
         // given
-        register(Repository::class, DefaultRepository())
+        register(Repository::class) { DefaultRepository() }
         val service = instance(ServiceWithDefaultParameter::class)
 
         // then

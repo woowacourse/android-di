@@ -43,7 +43,7 @@ class FieldInjectionTest {
     @Test
     fun `인터페이스 타입이 등록되어 있다면 주입된다`() {
         // given
-        register(Repository::class, DefaultRepository())
+        register(Repository::class) { DefaultRepository() }
         val service = instance(ServiceDependsOnAbstract::class)
 
         // then
@@ -53,7 +53,7 @@ class FieldInjectionTest {
     @Test
     fun `변경 불가능한 필드는 주입될 수 없다`() {
         // given
-        register(Repository::class, DefaultRepository())
+        register(Repository::class) { DefaultRepository() }
 
         // then
         assertThrows(IllegalStateException::class.java) {
@@ -64,7 +64,7 @@ class FieldInjectionTest {
     @Test
     fun `값이 이미 할당되어 있어도 주입된다`() {
         // given
-        register(Repository::class, DefaultRepository())
+        register(Repository::class) { DefaultRepository() }
         val service = instance(ServiceHasPreAssignedField::class)
 
         // then

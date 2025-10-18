@@ -18,10 +18,17 @@ object NewDependencyContainer {
 
     fun <T : Any> register(
         clazz: KClass<T>,
-        instance: T,
-        qualifier: String? = null,
+        provider: () -> T,
     ) {
-        dependencies[clazz to qualifier] = instance
+        dependencies[clazz to null] = provider()
+    }
+
+    fun <T : Any> register(
+        clazz: KClass<T>,
+        qualifier: String,
+        provider: () -> T,
+    ) {
+        dependencies[clazz to qualifier] = provider()
     }
 
     fun <T : Any> instance(

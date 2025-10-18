@@ -26,7 +26,7 @@ class QualifierTest {
     @Test
     fun `Qualifier 이름이 일치하는 의존성이 생성자 주입된다`() {
         // given
-        register(Repository::class, DefaultRepository(), "default")
+        register(Repository::class, "default") { DefaultRepository() }
 
         val service = instance(ServiceWithQualifiedConstructor::class)
 
@@ -37,7 +37,7 @@ class QualifierTest {
     @Test
     fun `Qualifier 이름이 일치하는 의존성이 필드 주입된다`() {
         // given
-        register(Repository::class, DefaultRepository(), "default")
+        register(Repository::class, "default") { DefaultRepository() }
 
         val service = instance(ServiceWithQualifiedField::class)
 
@@ -48,7 +48,7 @@ class QualifierTest {
     @Test
     fun `등록되지 않은 Qualifier를 사용하면 예외가 발생한다`() {
         // given
-        register(Repository::class, DefaultRepository(), "default")
+        register(Repository::class, "default") { DefaultRepository() }
 
         assertThrows(IllegalStateException::class.java) {
             instance(ServiceWithUnknownQualifier::class)
