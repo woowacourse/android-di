@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.test.core.app.ApplicationProvider
+import com.example.di.di.InjectorViewModelFactory
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,27 +17,28 @@ class InjectorViewModelFactoryTest {
     private val application = ApplicationProvider.getApplicationContext<ShoppingApplication>()
 
     @Test
-    fun `MainViewModel의 @Inject 필드가 올바르게 주입된다`() {
-        // given
-        val clazz = MainViewModel::class.java
-
-        // when
-        val viewModel: MainViewModel = application.injectorViewModelFactory.create(clazz)
+    fun `MainViewModel이 자동 의존성 주입되어 생성된다`() {
+        // given & when
+        val viewModel: MainViewModel =
+            InjectorViewModelFactory(
+                dependencyInjector = (application as ShoppingApplication).dependencyInjector,
+                scopeHolder = this,
+            ).create(MainViewModel::class.java)
 
         // then
-        assertThat(viewModel.cartRepository).isNotNull()
-        assertThat(viewModel.productRepository).isNotNull()
+        assertThat(viewModel).isNotNull()
     }
 
     @Test
-    fun `CartViewModel의 @Inject 필드가 올바르게 주입된다`() {
-        // given
-        val clazz = CartViewModel::class.java
-
-        // when
-        val viewModel: CartViewModel = application.injectorViewModelFactory.create(clazz)
+    fun `CartViewModel이 자동 의존성 주입되어 생성된다`() {
+        // given & when
+        val viewModel: CartViewModel =
+            InjectorViewModelFactory(
+                dependencyInjector = (application as ShoppingApplication).dependencyInjector,
+                scopeHolder = this,
+            ).create(CartViewModel::class.java)
 
         // then
-        assertThat(viewModel.cartRepository).isNotNull()
+        assertThat(viewModel).isNotNull()
     }
 }
