@@ -14,7 +14,7 @@ annotation class InMemory
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Qualifier
-annotation class Local
+annotation class LocalDatabase
 
 class RepositoryModule : Module {
     @Provides
@@ -23,9 +23,9 @@ class RepositoryModule : Module {
 
     @Provides
     @Singleton
-    @Local
+    @LocalDatabase
     fun provideLocalCartRepository(
-        @Local dao: CartProductDao,
+        @LocalDatabase dao: CartProductDao,
     ): CartRepository = CartRepositoryImpl(dao)
 
     @Provides

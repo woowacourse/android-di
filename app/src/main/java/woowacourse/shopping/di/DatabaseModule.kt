@@ -1,7 +1,7 @@
 package woowacourse.shopping.di
 
 import InMemory
-import Local
+import LocalDatabase
 import android.content.Context
 import androidx.room.Room
 import com.yrsel.di.Module
@@ -15,7 +15,7 @@ class DatabaseModule(
 ) : Module {
     @Provides
     @Singleton
-    @Local
+    @LocalDatabase
     fun provideRoomDatabase(): ShoppingDatabase = Room.databaseBuilder(context, ShoppingDatabase::class.java, DATABASE_NAME).build()
 
     @Provides
@@ -25,9 +25,9 @@ class DatabaseModule(
 
     @Provides
     @Singleton
-    @Local
+    @LocalDatabase
     fun provideLocalCartProductDao(
-        @Local shoppingDatabase: ShoppingDatabase,
+        @LocalDatabase shoppingDatabase: ShoppingDatabase,
     ): CartProductDao = shoppingDatabase.cartProductDao()
 
     @Provides
