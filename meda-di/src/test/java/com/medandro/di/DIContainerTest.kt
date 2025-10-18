@@ -1,11 +1,24 @@
 package com.medandro.di
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.medandro.di.annotation.InjectField
 import com.medandro.di.annotation.Qualifier
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class DIContainerTest {
+    private lateinit var applicationContext: Context
+
+    @Before
+    fun setup() {
+        applicationContext = ApplicationProvider.getApplicationContext()
+    }
+
     data class Brand(
         val name: String = "카카오",
     )
@@ -45,7 +58,7 @@ class DIContainerTest {
             lateinit var brand: Brand
         }
         // when
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -62,7 +75,7 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -78,7 +91,7 @@ class DIContainerTest {
             lateinit var driver: Driver
         }
         // when
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -96,7 +109,7 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -113,7 +126,7 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer(ThreeWheels::class)
+        val diContainer = DIContainer(applicationContext, ThreeWheels::class)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -138,7 +151,8 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer(ThreeWheels::class, FourWheels::class, SixWheels::class)
+        val diContainer =
+            DIContainer(applicationContext, ThreeWheels::class, FourWheels::class, SixWheels::class)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -159,7 +173,7 @@ class DIContainerTest {
         }
 
         // when
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val car = TestCar(Driver(Person()))
         diContainer.injectFields(car)
 
@@ -182,7 +196,7 @@ class DIContainerTest {
             }
 
         // when
-        val diContainer = DIContainer().registerSingleton(tenWheels)
+        val diContainer = DIContainer(applicationContext).registerSingleton(tenWheels)
         val car = TestCar()
         diContainer.injectFields(car)
 
@@ -197,7 +211,7 @@ class DIContainerTest {
     fun `부 생성자만 존재하는 인스턴스는 자동으로 생성할 수 없다`() {
         // given
         class Train {
-            constructor(name: String) { }
+            constructor(name: String)
         }
 
         class Vehicle {
@@ -205,7 +219,7 @@ class DIContainerTest {
             lateinit var train: Train
         }
 
-        val diContainer = DIContainer()
+        val diContainer = DIContainer(applicationContext)
         val vehicle = Vehicle()
 
         // when
