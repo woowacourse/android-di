@@ -5,17 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import woowacourse.shopping.core.di.InjectedProperty
+import woowacourse.shopping.core.di.Inject
 import woowacourse.shopping.di.InjectPersistentCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
 class MainViewModel : ViewModel() {
-    @InjectedProperty
+    @Inject
     private lateinit var productRepository: ProductRepository
 
-    @InjectedProperty
+    @Inject
     @InjectPersistentCartRepository
     private lateinit var cartRepository: CartRepository
 
