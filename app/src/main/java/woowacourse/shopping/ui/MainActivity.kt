@@ -8,8 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import woowacourse.shopping.DIContainer
-import woowacourse.shopping.DependencyFactory
+import com.example.di.DIContainer
+import com.example.di.DependencyFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DIContainer.registerDependencies(applicationContext)
         viewModel = DependencyFactory.create(MainViewModel::class.java)
 
         setupContentView()

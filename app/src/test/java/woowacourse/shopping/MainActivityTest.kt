@@ -31,7 +31,7 @@ class MainActivityTest {
     @Test
     fun `ViewModel 주입 테스트`() {
         // given
-        val viewModel = DependencyInjection.inject(MainViewModel::class.java)
+        val viewModel = com.example.di.DependencyInjection.inject(MainViewModel::class.java)
 
         // then
         assertThat(viewModel).isNotNull()

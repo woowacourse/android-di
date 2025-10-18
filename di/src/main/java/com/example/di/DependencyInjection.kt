@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package com.example.di
 
 object DependencyInjection {
     fun <T : Any> inject(instance: T) {
@@ -8,9 +8,14 @@ object DependencyInjection {
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
 
+                val qualifier = field.annotations
+                    .firstOrNull { it.annotationClass.annotations.any { meta -> meta.annotationClass.simpleName == "Qualifier" } }
+                    ?.annotationClass ?: Remote::class
+
+
                 val dependency = DIContainer.get(
                     field.type.kotlin,
-                    Remote::class,
+                    qualifier,
                 )
                 field.set(instance, dependency)
             }

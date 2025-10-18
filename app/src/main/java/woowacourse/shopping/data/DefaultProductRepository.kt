@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.Remote
+import com.example.di.Remote
 import woowacourse.shopping.model.Product
 
 @Remote
