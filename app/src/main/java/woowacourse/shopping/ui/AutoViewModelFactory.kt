@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
 import com.example.di.DependencyInjector
+import com.example.di.scope.ViewModelScopeHandler
 
 class AutoViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -26,6 +27,11 @@ class AutoViewModelFactory(
 
         DependencyInjector
             .injectAnnotatedProperties(kClass, instance)
+
+        modelClass.cast(instance)?.addCloseable {
+            ViewModelScopeHandler.removeInstance(instance)
+        }
+
         return instance
     }
 }
