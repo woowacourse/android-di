@@ -7,6 +7,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Scope
+import com.example.di.annotation.ScopeType
+import com.example.di.di.InjectorViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -15,16 +19,17 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels {
-        (application as ShoppingApplication).injectorViewModelFactory
+        InjectorViewModelFactory((application as ShoppingApplication).dependencyInjector, this)
     }
 
+    @Inject
+    @Scope(ScopeType.ACTIVITY_SCOPED)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        (application as ShoppingApplication).dependencyInjector.injectFields(this, this)
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -43,10 +48,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

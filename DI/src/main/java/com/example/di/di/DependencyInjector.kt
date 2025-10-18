@@ -63,6 +63,13 @@ class DependencyInjector(
         return instance
     }
 
+    fun <T : Any> injectFields(
+        instance: T,
+        scopeHolder: Any?,
+    ) {
+        injectFields(instance, instance::class as KClass<T>, scopeHolder)
+    }
+
     // @Inject 어노테이션이 붙은 필드 주입
     fun <T : Any> injectFields(
         instance: T,

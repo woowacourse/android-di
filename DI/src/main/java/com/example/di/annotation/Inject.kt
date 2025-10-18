@@ -1,5 +1,5 @@
 package com.example.di.annotation
 
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject
