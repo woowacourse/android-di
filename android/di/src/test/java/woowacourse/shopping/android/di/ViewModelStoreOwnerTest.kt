@@ -4,21 +4,14 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertThrows
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.core.di.DependencyContainer.register
 import woowacourse.shopping.core.di.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class ViewModelStoreOwnerTest {
-    @Before
-    fun setUp() {
-        register(DeclaredDependency::class) { DefaultDeclaredDependency() }
-    }
-
     @Test
     fun `ViewModel 생성자에 의존성이 불필요한 경우 - 성공`() {
         // given
@@ -48,6 +41,10 @@ class ViewModelStoreOwnerTest {
                 .buildActivity(TestActivity::class.java)
                 .create()
                 .get()
+
+        AndroidContainer
+            .ofActivity(activity)
+            .register(DeclaredDependency::class) { DefaultDeclaredDependency() }
 
         // then
         assertThat(activity.viewModel.declaredDependency).isNotNull
@@ -83,6 +80,10 @@ class ViewModelStoreOwnerTest {
                 .create()
                 .get()
 
+        AndroidContainer
+            .ofActivity(activity)
+            .register(DeclaredDependency::class) { DefaultDeclaredDependency() }
+
         // then
         assertThat(activity.viewModel.declaredDependency).isInstanceOf(DefaultDeclaredDependency::class.java)
     }
@@ -99,6 +100,10 @@ class ViewModelStoreOwnerTest {
                 .buildActivity(TestActivity::class.java)
                 .create()
                 .get()
+
+        AndroidContainer
+            .ofActivity(activity)
+            .register(DeclaredDependency::class) { DefaultDeclaredDependency() }
 
         // then
         assertThat(activity.viewModel.declaredDependency).isInstanceOf(DefaultDeclaredDependency::class.java)
@@ -150,6 +155,10 @@ class ViewModelStoreOwnerTest {
                 .buildActivity(TestActivity::class.java)
                 .create()
                 .get()
+
+        AndroidContainer
+            .ofActivity(activity)
+            .register(DeclaredDependency::class) { DefaultDeclaredDependency() }
 
         // then
         assertThat(activity.viewModel.declaredDependency).isInstanceOf(DefaultDeclaredDependency::class.java)
