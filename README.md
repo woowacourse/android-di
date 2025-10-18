@@ -30,7 +30,9 @@
 - [x] 하나의 인터페이스의 여러 구현체가 DIContainer에 등록된 경우를 Qualifier로 개선
 - [x] DI 라이브러리를 모듈로 분리
 
-
 ### step4
 
-- [x] [뒤 로 미 루 기](https://www.youtube.com/watch?v=Lee9LCyWhTs) 
+- [ ] DI컨테이너에서 사용되는 인스턴스의 생명주기 관리
+    - [ ] InjectField 어노테이션에서 scope를 함께 입력받도록 변경
+    - [ ] scope에 따라 생성한 인스턴스를 자동 정리하도록 변경
+- [ ] step4에서 변경된 사양의 테스트 작성
