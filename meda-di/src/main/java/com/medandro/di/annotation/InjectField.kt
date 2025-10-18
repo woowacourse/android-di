@@ -1,5 +1,7 @@
 package com.medandro.di.annotation
 
-@Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class InjectField
+@Target(AnnotationTarget.PROPERTY)
+annotation class InjectField(
+    val scope: LifecycleScope = LifecycleScope.APPLICATION,
+)
