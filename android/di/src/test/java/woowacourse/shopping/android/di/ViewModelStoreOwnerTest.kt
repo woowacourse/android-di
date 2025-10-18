@@ -9,8 +9,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.core.di.DependencyContainer.register
 import woowacourse.shopping.core.di.Inject
-import woowacourse.shopping.core.di.NewDependencyContainer.register
 
 @RunWith(RobolectricTestRunner::class)
 class ViewModelStoreOwnerTest {

@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import woowacourse.shopping.core.di.NewDependencyContainer.instance
-import woowacourse.shopping.core.di.NewDependencyContainer.register
+import woowacourse.shopping.core.di.DependencyContainer.instance
+import woowacourse.shopping.core.di.DependencyContainer.register
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -14,7 +14,7 @@ class ConstructorInjectionTest {
     fun resetDependencyContainer() {
         @Suppress("UNCHECKED_CAST")
         val dependencies =
-            NewDependencyContainer::class
+            DependencyContainer::class
                 .memberProperties
                 .first { it.name == "dependencies" }
                 .apply { isAccessible = true }

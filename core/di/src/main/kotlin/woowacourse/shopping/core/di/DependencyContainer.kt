@@ -13,7 +13,7 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object NewDependencyContainer {
+object DependencyContainer {
     private val dependencies: MutableMap<Pair<KClass<*>, String?>, Any> = mutableMapOf()
 
     fun <T : Any> register(
@@ -58,7 +58,7 @@ object NewDependencyContainer {
             parameters
                 .map { parameter: KParameter ->
                     val parameterClass: KClass<*> = parameter.type.kClass
-                    this@NewDependencyContainer.instance(parameterClass, parameter.qualifier)
+                    this@DependencyContainer.instance(parameterClass, parameter.qualifier)
                 }.toTypedArray()
 
     private fun <T : Any> T.injectFields() {

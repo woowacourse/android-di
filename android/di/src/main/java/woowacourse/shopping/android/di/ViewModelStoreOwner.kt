@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
-import woowacourse.shopping.core.di.NewDependencyContainer.instance
+import woowacourse.shopping.core.di.DependencyContainer.instance
 
 inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> =
     lazy {
