@@ -1,7 +1,7 @@
 package com.medandro.di
 
-import androidx.lifecycle.ViewModel
 import com.medandro.di.annotation.InjectField
+import com.medandro.di.annotation.LifecycleScope
 import com.medandro.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -14,7 +14,9 @@ import kotlin.reflect.jvm.isAccessible
 class DIContainer(
     vararg registerClasses: KClass<*>,
 ) {
-    private val instances = mutableMapOf<DependencyKey, Any>()
+    private val applicationInstances = mutableMapOf<DependencyKey, Any>()
+    private val activityInstances = mutableMapOf<DependencyKey, Any>()
+    private val viewModelInstances = mutableMapOf<DependencyKey, Any>()
     private val interfaceMapping = mutableMapOf<DependencyKey, KClass<*>>()
 
     init {
@@ -26,13 +28,13 @@ class DIContainer(
         qualifier: String? = null,
     ): DIContainer {
         // 구현체 자신의 타입으로 등록
-        instances[DependencyKey(instance::class, qualifier)] = instance
+        applicationInstances[DependencyKey(instance::class, qualifier)] = instance
 
         // 상위 타입들(인터페이스 포함)도 같이 등록
         instance::class.supertypes.forEach { superType ->
             val superClass = superType.classifier as? KClass<*>
             if (superClass != null && superClass != Any::class) {
-                instances[DependencyKey(superClass, qualifier)] = instance
+                applicationInstances[DependencyKey(superClass, qualifier)] = instance
             }
         }
         return this
@@ -44,31 +46,60 @@ class DIContainer(
             .filterIsInstance<KMutableProperty1<Any, Any?>>()
             .filter { it.hasAnnotation<InjectField>() }
             .forEach { property ->
-                injectSingleField(target, property)
+                val annotation = property.findAnnotation<InjectField>()
+                val scope = annotation?.scope ?: LifecycleScope.APPLICATION
+                injectFieldWithScope(target, property, scope)
             }
     }
 
-    fun getInstance(dependencyKey: DependencyKey): Any {
-        // ViewModel은 매번 새로 생성
-        if (ViewModel::class.java.isAssignableFrom(dependencyKey.type.java)) {
-            return createNewInstance(dependencyKey.type)
-        }
-
-        // DIContainer 내부에서 생성&관리되는 싱글턴 인스턴스에서 반환
-        instances[dependencyKey]?.let { return it }
-
+    fun getInstance(
+        dependencyKey: DependencyKey,
+        scope: LifecycleScope = LifecycleScope.APPLICATION,
+    ): Any {
         // 인터페이스일 경우 매핑된 클래스로 반환
         interfaceMapping[dependencyKey]?.let { implClass ->
-            val instance = createNewInstance(implClass)
-            instances[dependencyKey] = instance
-            return instance
+            val implKey = DependencyKey(implClass, dependencyKey.qualifier)
+            return getInstance(implKey, scope)
         }
 
+        // DIContainer 내부에서 생성&관리되는 인스턴스에서 반환
+        val instances = getInstanceStorage(scope)
+        instances[dependencyKey]?.let { return it }
+
         // 인스턴스가 존재하지 않을 경우 생성
-        val createdInstance = createNewInstance(dependencyKey.type)
+        val createdInstance = createNewInstance(dependencyKey.type, scope)
         instances[dependencyKey] = createdInstance
         return createdInstance
     }
+
+    private fun injectFieldWithScope(
+        target: Any,
+        property: KMutableProperty1<Any, Any?>,
+        scope: LifecycleScope,
+    ) {
+        try {
+            val fieldType = property.returnType.classifier as KClass<*>
+            val qualifier = getFieldQualifier(property)
+            val dependencyKey = DependencyKey(fieldType, qualifier)
+
+            val instance = getInstance(dependencyKey, scope)
+
+            property.isAccessible = true
+            property.set(target, instance)
+        } catch (e: Exception) {
+            throw IllegalStateException(
+                "${target::class.simpleName}의 '${getFieldQualifier(property)} Qualifier의 ${property.name}, 필드 주입 실패 : ${e.message}",
+                e,
+            )
+        }
+    }
+
+    private fun getInstanceStorage(scope: LifecycleScope) =
+        when (scope) {
+            LifecycleScope.APPLICATION -> applicationInstances
+            LifecycleScope.ACTIVITY -> activityInstances
+            LifecycleScope.VIEWMODEL -> viewModelInstances
+        }
 
     private fun generateInterfaceMapping(registerClasses: Array<out KClass<*>>) {
         registerClasses.forEach { implClass ->
@@ -85,26 +116,10 @@ class DIContainer(
         }
     }
 
-    private fun injectSingleField(
-        target: Any,
-        property: KMutableProperty1<Any, Any?>,
-    ) {
-        try {
-            val fieldType = property.returnType.classifier as KClass<*>
-            val qualifier = getFieldQualifier(property)
-            val dependency = getInstance(DependencyKey(fieldType, qualifier))
-
-            property.isAccessible = true
-            property.set(target, dependency)
-        } catch (e: Exception) {
-            throw IllegalStateException(
-                "${target::class.simpleName}의 '${getFieldQualifier(property)} Qualifier의 ${property.name}, 필드 주입 실패 : ${e.message}",
-                e,
-            )
-        }
-    }
-
-    private fun createNewInstance(kClass: KClass<*>): Any {
+    private fun createNewInstance(
+        kClass: KClass<*>,
+        scope: LifecycleScope,
+    ): Any {
         val constructor =
             kClass.primaryConstructor
                 ?: throw IllegalStateException(
@@ -117,7 +132,7 @@ class DIContainer(
                 .filterNot { it.isOptional }
                 .associateWith { param ->
                     val paramType = param.type.classifier as KClass<*>
-                    getInstance(DependencyKey(paramType))
+                    getInstance(DependencyKey(paramType), scope)
                 }
         return constructor.callBy(parameterMap)
     }
