@@ -7,7 +7,11 @@ object DependencyInjection {
         for (field in fields) {
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
-                val dependency = DIContainer.get(field.type.kotlin)
+
+                val dependency = DIContainer.get(
+                    field.type.kotlin,
+                    Remote::class,
+                )
                 field.set(instance, dependency)
             }
         }

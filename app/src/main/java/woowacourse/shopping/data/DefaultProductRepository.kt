@@ -1,7 +1,9 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.Remote
 import woowacourse.shopping.model.Product
 
+@Remote
 class DefaultProductRepository : ProductRepository {
     private val products: List<Product> =
         listOf(

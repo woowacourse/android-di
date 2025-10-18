@@ -1,9 +1,10 @@
 package woowacourse.shopping.data
 
+import woowacourse.shopping.Remote
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 
-// TODO: Step2 - CartProductDao를 참조하도록 변경
+@Remote
 class DefaultCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
