@@ -30,11 +30,20 @@ class DependencyInjector(
         kClass: KClass<T>,
         scopeHolder: Any? = null,
     ): T {
+        val instance = injectConstructor(kClass, scopeHolder)
+        injectFields(instance, kClass, scopeHolder)
+        return instance
+    }
+
+    // 생성자 주입 후 인스턴스 반환
+    fun <T : Any> injectConstructor(
+        kClass: KClass<T>,
+        scopeHolder: Any? = null,
+    ): T {
         val constructor: KFunction<T> =
             kClass.primaryConstructor ?: throw IllegalArgumentException("주생성자가 없습니다.")
         val arguments = mutableMapOf<KParameter, Any?>()
 
-        // 생성자 주입
         constructor.parameters.forEach { param: KParameter ->
             val injectAnnotation = param.findAnnotation<Inject>()
             if (injectAnnotation != null) {
@@ -51,8 +60,15 @@ class DependencyInjector(
 
         // 인스턴스 생성
         val instance: T = constructor.callBy(arguments)
+        return instance
+    }
 
-        // @Inject 어노테이션이 붙은 필드 주입
+    // @Inject 어노테이션이 붙은 필드 주입
+    fun <T : Any> injectFields(
+        instance: T,
+        kClass: KClass<T>,
+        scopeHolder: Any? = null,
+    ) {
         kClass.declaredMemberProperties.forEach { prop: KProperty1<T, *> ->
             val injectAnnotation = prop.findAnnotation<Inject>()
             if (injectAnnotation != null && prop is KMutableProperty1) {
@@ -70,7 +86,5 @@ class DependencyInjector(
                 prop.setter.call(instance, dependencyInstance)
             }
         }
-
-        return instance
     }
 }
