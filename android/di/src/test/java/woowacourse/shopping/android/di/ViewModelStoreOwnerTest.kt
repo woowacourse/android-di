@@ -1,23 +1,24 @@
 package woowacourse.shopping.android.di
 
-import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertThrows
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import woowacourse.shopping.core.di.DependencyContainer
-import woowacourse.shopping.core.di.InjectedProperty
-import kotlin.reflect.KType
-import kotlin.reflect.full.createType
+import woowacourse.shopping.core.di.Inject
+import woowacourse.shopping.core.di.NewDependencyContainer.register
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = FakeApplication::class)
 class ViewModelStoreOwnerTest {
+    @Before
+    fun setUp() {
+        register(DeclaredDependency::class, DefaultDeclaredDependency())
+    }
+
     @Test
     fun `ViewModel 생성자에 의존성이 불필요한 경우 - 성공`() {
         // given
@@ -155,26 +156,13 @@ class ViewModelStoreOwnerTest {
     }
 }
 
-class FakeApplication :
-    Application(),
-    DependencyContainer {
-    override fun dependency(
-        type: KType,
-        qualifiers: List<Annotation>,
-    ): Any =
-        when (type) {
-            DeclaredDependency::class.createType() -> DefaultDeclaredDependency()
-            else -> error("Don't know how to inject $type")
-        }
-}
-
 interface DeclaredDependency
 
 class DefaultDeclaredDependency : DeclaredDependency
 
 class DefaultParameterDependency : DeclaredDependency
 
-class UnknownDependency
+interface UnknownDependency
 
 class NoDependencyViewModel : ViewModel()
 
@@ -191,7 +179,7 @@ class DeclaredDependenciesWithDefaultParameterViewModel(
 ) : ViewModel()
 
 class PropertyInjectViewModel : ViewModel() {
-    @InjectedProperty
+    @Inject
     lateinit var declaredDependency: DeclaredDependency
 }
 
@@ -200,11 +188,11 @@ class PropertyWithoutInjectViewModel : ViewModel() {
 }
 
 class UnknownPropertyInjectViewModel : ViewModel() {
-    @InjectedProperty
+    @Inject
     lateinit var declaredDependency: UnknownDependency
 }
 
 class PropertyInjectWithDefaultValueViewModel : ViewModel() {
-    @InjectedProperty
+    @Inject
     var declaredDependency: DeclaredDependency = object : DeclaredDependency {}
 }
