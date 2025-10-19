@@ -22,7 +22,7 @@ class DependencyMapping(
     }
 
     fun clear(scope: Scope) {
-        dependencyGetters[scope] ?: error("Getters for $scope has not been initialized.")
+        dependencyGetters[scope]?.clear() ?: error("Getters for $scope has not been initialized.")
     }
 
     private fun initialize(module: Module) {
