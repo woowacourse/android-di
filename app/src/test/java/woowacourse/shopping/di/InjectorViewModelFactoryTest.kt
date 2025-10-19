@@ -26,7 +26,7 @@ class InjectorViewModelFactoryTest {
             ).create(MainViewModel::class.java)
 
         // then
-        assertThat(viewModel).isNotNull()
+        assertThat(viewModel).isInstanceOf(MainViewModel::class.java)
     }
 
     @Test
@@ -39,6 +39,6 @@ class InjectorViewModelFactoryTest {
             ).create(CartViewModel::class.java)
 
         // then
-        assertThat(viewModel).isNotNull()
+        assertThat(viewModel).isInstanceOf(CartViewModel::class.java)
     }
 }
