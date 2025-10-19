@@ -3,10 +3,16 @@ package com.example.di
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.lifecycle.ViewModel
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.typeOf
 
 object DependencyContainer {
     private lateinit var dependencyMapping: DependencyMapping
 
+    private val liveViewModelOwners: MutableSet<Activity> = mutableSetOf()
     private val liveActivities: MutableSet<Activity> = mutableSetOf()
 
     fun initialize(
@@ -28,6 +34,7 @@ object DependencyContainer {
                     bundle: Bundle?,
                 ) {
                     liveActivities.add(activity)
+                    if (activity.hasViewModel()) liveViewModelOwners.add(activity)
                 }
 
                 override fun onActivityStarted(activity: Activity) = Unit
@@ -46,8 +53,18 @@ object DependencyContainer {
                 override fun onActivityDestroyed(activity: Activity) {
                     liveActivities.remove(activity)
                     if (liveActivities.isEmpty()) dependencyMapping.clear(Scope.ACTIVITY)
+
+                    if (activity.isFinishing) liveViewModelOwners.remove(activity)
+                    if (liveViewModelOwners.isEmpty()) dependencyMapping.clear(Scope.VIEWMODEL)
                 }
             },
         )
     }
+
+    private fun Activity.hasViewModel(): Boolean =
+        this::class
+            .memberProperties
+            .any { property: KProperty1<out Activity, *> ->
+                property.returnType.isSubtypeOf(typeOf<ViewModel>())
+            }
 }
