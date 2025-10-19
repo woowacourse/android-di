@@ -10,7 +10,9 @@ import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.Scope
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Scoped
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
@@ -22,6 +24,7 @@ class CartActivity : AppCompatActivity() {
     private val scopeName: String = this::class.java.name
 
     @Inject
+    @Scoped(Scope.ACTIVITY)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
