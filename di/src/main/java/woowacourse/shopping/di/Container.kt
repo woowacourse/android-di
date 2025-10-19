@@ -2,9 +2,11 @@ package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
 
+@Suppress("UNCHECKED_CAST")
 class Container {
     private val providers = mutableMapOf<DependencyKey, () -> Any>()
-    private val dependencies = mutableMapOf<DependencyKey, Any>()
+    private val singletonInstances = mutableMapOf<DependencyKey, Any>()
+    private val scopedContainers = mutableMapOf<String, MutableMap<DependencyKey, Any>>()
 
     fun <T : Any> registerProvider(
         kClass: KClass<T>,
@@ -21,25 +23,29 @@ class Container {
         qualifier: String? = null,
     ) {
         val key = DependencyKey(kClass, qualifier)
-        dependencies[key] = instance
+        singletonInstances[key] = instance
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(
         kClass: KClass<T>,
         qualifier: String?,
+        scope: Scope,
+        scopeName: String,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        return if (dependencies.containsKey(key)) {
-            dependencies[key] as T
-        } else {
-            val provider =
-                providers[key]
-                    ?: throw IllegalArgumentException("${kClass.simpleName} 의존성이 등록되어 있지 않습니다.")
-            val instance = provider()
-            dependencies[key] = instance
-            instance as T
+        return when (scope) {
+            Scope.SINGLETON -> getSingletonInstance(key)
+            Scope.ACTIVITY, Scope.VIEWMODEL -> getScopedInstance(key, scopeName)
+            Scope.FACTORY -> createNewInstance(key)
         }
+    }
+
+    fun createScope(scopeName: String) {
+        scopedContainers[scopeName] = mutableMapOf()
+    }
+
+    fun clearScope(scopeName: String) {
+        scopedContainers.remove(scopeName)
     }
 
     fun <T : Any> canResolve(
@@ -47,6 +53,41 @@ class Container {
         qualifier: String?,
     ): Boolean {
         val key = DependencyKey(kClass, qualifier)
-        return dependencies.containsKey(key) || providers.containsKey(key)
+        return singletonInstances.containsKey(key) || providers.containsKey(key)
+    }
+
+    private fun <T : Any> getSingletonInstance(key: DependencyKey): T {
+        if (singletonInstances.containsKey(key)) {
+            return singletonInstances[key] as T
+        }
+
+        val instance = createNewInstance(key) as T
+        singletonInstances[key] = instance
+        return instance
+    }
+
+    private fun <T : Any> getScopedInstance(
+        key: DependencyKey,
+        scopeName: String,
+    ): T {
+        val scopeContainer = scopedContainers.getOrPut(scopeName) { mutableMapOf() }
+        if (scopeContainer.containsKey(key)) {
+            return scopeContainer[key] as T
+        }
+
+        val instance = createNewInstance(key) as T
+        scopeContainer[key] = instance
+        return instance
+    }
+
+    private fun <T : Any> createNewInstance(key: DependencyKey): T {
+        val provider =
+            providers[key]
+                ?: throw IllegalArgumentException(ERROR_NO_SUCH_DEPENDENCY.format(key.type.simpleName))
+        return provider() as T
+    }
+
+    companion object {
+        private const val ERROR_NO_SUCH_DEPENDENCY = "%s 의존성이 등록되어 있지 않습니다."
     }
 }

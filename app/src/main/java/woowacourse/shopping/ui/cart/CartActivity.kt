@@ -19,17 +19,26 @@ class CartActivity : AppCompatActivity() {
         (application as ShoppingApplication).viewModelFactory
     }
 
+    private val scopeName: String = this::class.java.name
+
     @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        (application as ShoppingApplication).dependencyInjector.injectFields(this, this::class)
         setupContentView()
+
+        val app: ShoppingApplication = application as ShoppingApplication
+        app.appContainer.createScope(scopeName)
+        app.dependencyInjector.injectFields(this, this::class, scopeName)
         setupBinding()
         setupToolbar()
         setupViewData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (application as ShoppingApplication).appContainer.clearScope(scopeName)
     }
 
     override fun onSupportNavigateUp(): Boolean {
