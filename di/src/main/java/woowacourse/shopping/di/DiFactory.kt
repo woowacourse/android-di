@@ -1,9 +1,9 @@
-package woowacouse.shopping.di
+package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
-import woowacouse.shopping.di.annotation.Inject
-import woowacouse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -34,6 +34,7 @@ class DiFactory(
                     when (kParameter) {
                         Context::class -> context
                         SavedStateHandle::class -> handle
+
                         else ->
                             container.get(
                                 kParameter,

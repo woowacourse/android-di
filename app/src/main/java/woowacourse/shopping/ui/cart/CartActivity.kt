@@ -11,8 +11,8 @@ import androidx.lifecycle.SavedStateHandle
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacouse.shopping.di.ViewModelFactory
-import woowacouse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.di.annotation.Inject
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
