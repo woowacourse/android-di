@@ -1,6 +1,5 @@
 package com.example.di
 
-import android.util.Log
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -23,15 +22,7 @@ class DependencyMapping(
     }
 
     fun clear(scope: Scope) {
-        Log.wtf("asdf", "Clear: $scope")
         dependencyGetters[scope]?.clear() ?: error("Getters for $scope has not been initialized.")
-        dependencyGetters.forEach {
-            Log.wtf("asdf", "    ${it.key}")
-            it.value.forEach {
-                Log.wtf("asdf", "        $it")
-            }
-            Log.wtf("asdf", " ")
-        }
     }
 
     private fun initialize(module: Module) {
