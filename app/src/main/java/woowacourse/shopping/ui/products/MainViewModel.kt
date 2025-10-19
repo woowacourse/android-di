@@ -5,19 +5,31 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import woowacourse.shopping.core.di.Inject
-import woowacourse.shopping.core.di.Qualifier
+import woowacourse.shopping.android.di.AndroidContainer
+import woowacourse.shopping.android.di.Scope
+import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.PersistentCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
 class MainViewModel : ViewModel() {
-    @Inject
-    lateinit var productRepository: ProductRepository
+    init {
+        AndroidContainer.register(
+            ProductRepository::class,
+            Scope.ViewModelScope(this),
+        ) { DefaultProductRepository() }
+    }
 
-    @Inject
-    @Qualifier("persistent")
-    lateinit var cartRepository: CartRepository
+    private val productRepository: ProductRepository =
+        AndroidContainer.instance(ProductRepository::class, Scope.ViewModelScope(this))
+
+    private val cartRepository: CartRepository =
+        AndroidContainer.instance(
+            CartRepository::class,
+            Scope.ApplicationScope,
+            PersistentCartRepository.QUALIFIER,
+        )
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

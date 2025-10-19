@@ -1,28 +1,31 @@
 package woowacourse.shopping.ui
 
 import android.app.Application
-import woowacourse.shopping.core.di.DependencyContainer.instance
-import woowacourse.shopping.core.di.DependencyContainer.register
+import woowacourse.shopping.android.di.AndroidContainer
+import woowacourse.shopping.android.di.Scope
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.PersistentCartRepository
 import woowacourse.shopping.model.CartRepository
-import woowacourse.shopping.model.ProductRepository
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        register(CartProductDao::class) { CartProductDao(this) }
-        register(ProductRepository::class) { DefaultProductRepository() }
-        register(CartRepository::class, "persistent") {
+        AndroidContainer.register(CartProductDao::class, Scope.ApplicationScope) {
+            CartProductDao(this)
+        }
+
+        AndroidContainer.register(
+            CartRepository::class,
+            Scope.ApplicationScope,
+            PersistentCartRepository.QUALIFIER,
+        ) {
             PersistentCartRepository(
-                instance(
+                AndroidContainer.instance(
                     CartProductDao::class,
+                    Scope.ApplicationScope,
                 ),
             )
         }
-        register(CartRepository::class, "inMemory") { InMemoryCartRepository() }
     }
 }
