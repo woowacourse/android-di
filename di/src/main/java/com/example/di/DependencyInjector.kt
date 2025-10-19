@@ -1,7 +1,9 @@
 package com.example.di
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import com.example.di.scope.AppScope
+import com.example.di.scope.AppScopeHandler
+import com.example.di.scope.ScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -28,30 +30,12 @@ object DependencyInjector {
 
     fun <T : Any> getInstance(
         kClass: KClass<T>,
-        savedStateHandle: SavedStateHandle? = null,
         qualifier: KClass<out Annotation>? = null,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        val isViewModel = kClass.findAnnotation<ViewModelScope>() != null
-        if (isViewModel && !ViewModel::class.java.isAssignableFrom(kClass.java)) error("${kClass.java.simpleName}:viewModel만 사용 가능한 어노테이션")
-        if (ViewModel::class.java.isAssignableFrom(kClass.java) && !isViewModel) error("${kClass.java.simpleName}:@ViewModelScope 필요")
 
-        return if (isViewModel) {
-            createInstance(kClass, savedStateHandle, key) as T
-        } else {
-            val factory =
-                instances[key] ?: run {
-                    val newFactory = { createInstance(kClass, savedStateHandle, key) }
-                    instances[key] = newFactory
-                    newFactory
-                }
-
-            val instance = factory.invoke() as T
-
-            instances[key] = { instance }
-
-            return instance
-        }
+        val instance = instances[key]?.invoke()
+        return instance as? T ?: error("등록되지 않은 의존성: $kClass, qualifier=$qualifier")
     }
 
     fun <T : Any> injectAnnotatedProperties(
@@ -61,16 +45,29 @@ object DependencyInjector {
         kClass.members
             .filterIsInstance<KMutableProperty1<Any, Any>>()
             .forEach { property ->
-                if (property.findAnnotation<RequireInjection>() == null) return@forEach
-                property.isAccessible = true
-                val dependencyClass = property.returnType.classifier as? KClass<*>
-
                 val qualifier = findAnnotation(property)
+                val requireInjection = property.findAnnotation<RequireInjection>() ?: return@forEach
+                property.isAccessible = true
 
-                dependencyClass?.let {
-                    property.setter.call(
-                        instance,
-                        getInstance(it, qualifier = qualifier),
+                val implClass = requireInjection.impl
+                val handler =
+                    ScopeContainer.getHandler(requireInjection.scope)
+                        ?: error("등록 안된 스코프 ${requireInjection.scope}")
+
+                val dependencyInstance =
+                    handler.getInstance(
+                        kClass = implClass,
+                        qualifier = qualifier,
+                        savedStateHandle = null,
+                        context = null,
+                    )
+                property.setter.call(instance, dependencyInstance)
+
+                if (requireInjection.scope == AppScope::class) {
+                    AppScopeHandler.putInstance(
+                        dependencyInstance::class,
+                        qualifier,
+                        dependencyInstance,
                     )
                 }
             }
@@ -83,17 +80,27 @@ object DependencyInjector {
             else -> null
         }
 
-    private fun createInstance(
-        kClass: KClass<*>,
+    fun <T : Any> createInstance(
+        kClass: KClass<T>,
         handle: SavedStateHandle?,
         key: DependencyKey<*>,
-    ): Any {
+    ): T {
         val primaryConstructor = kClass.primaryConstructor
-        primaryConstructor?.let { return createPrimaryConstructor(it, handle, key.qualifier) }
+        primaryConstructor?.let {
+            val instance = createPrimaryConstructor(it, handle, key.qualifier)
+            injectAnnotatedProperties(kClass, instance as T)
+            return instance
+        }
 
-        kClass.objectInstance?.let { obj -> return obj }
+        kClass.objectInstance?.let { obj ->
+            injectAnnotatedProperties(kClass, obj)
+            return obj
+        }
 
-        return kClass.java.getDeclaredConstructor().newInstance()
+        val defaultConstructor =
+            kClass.java.getDeclaredConstructor().newInstance()
+        injectAnnotatedProperties(kClass, defaultConstructor)
+        return defaultConstructor
     }
 
     private fun createPrimaryConstructor(

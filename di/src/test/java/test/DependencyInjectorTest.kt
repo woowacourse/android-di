@@ -4,7 +4,6 @@ import com.example.di.DatabaseLogger
 import com.example.di.DependencyInjector
 import com.example.di.InMemoryLogger
 import org.assertj.core.api.SoftAssertions
-import org.checkerframework.checker.units.qual.A
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

@@ -1,5 +1,6 @@
 package woowacourse.shopping.ui.main
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,19 +11,19 @@ import com.example.di.RequireInjection
 import com.example.di.scope.AppScope
 import com.example.di.scope.ViewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
-    @RequireInjection
+    @RequireInjection(impl = ProductRepositoryImpl::class, scope = ViewModelScope::class)
     @InMemoryLogger
-    @ViewModelScope
     private lateinit var productRepository: ProductRepository
 
-    @RequireInjection
+    @RequireInjection(impl = CartRepositoryImpl::class, scope = AppScope::class)
     @DatabaseLogger
-    @AppScope
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData()
@@ -40,5 +41,10 @@ class MainViewModel : ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("TAG", "onCleared: ")
     }
 }

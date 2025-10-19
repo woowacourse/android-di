@@ -3,7 +3,7 @@ package com.example.di.scope
 import kotlin.reflect.KClass
 
 object ScopeContainer {
-    val registry = mutableMapOf<KClass<out Annotation>, ScopeHandler>()
+    private val registry = mutableMapOf<KClass<out Annotation>, ScopeHandler>()
 
     fun setHandler(
         annotation: KClass<out Annotation>,
@@ -11,4 +11,6 @@ object ScopeContainer {
     ) {
         registry[annotation] = handler
     }
+
+    fun getHandler(annotation: KClass<out Annotation>): ScopeHandler? = registry[annotation]
 }

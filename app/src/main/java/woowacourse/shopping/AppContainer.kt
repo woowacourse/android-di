@@ -20,10 +20,11 @@ class AppContainer(
 
     @DatabaseLogger
     private val cartRepository: CartRepository by lazy {
-        CartRepositoryImpl(cardDao)
+        CartRepositoryImpl(cartProductDao)
     }
 
-    private val cardDao: CartProductDao by lazy {
+    @DatabaseLogger
+    private val cartProductDao: CartProductDao by lazy {
         database.cartProductDao()
     }
 

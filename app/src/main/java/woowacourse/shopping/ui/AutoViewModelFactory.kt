@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
-import com.example.di.DependencyInjector
 import com.example.di.scope.ViewModelScopeHandler
 
 class AutoViewModelFactory(
@@ -21,18 +20,13 @@ class AutoViewModelFactory(
         handle: SavedStateHandle,
     ): T {
         val kClass = modelClass.kotlin
-        val instance =
-            DependencyInjector
-                .getInstance(kClass, handle)
 
-        DependencyInjector
-            .injectAnnotatedProperties(kClass, instance)
+        val viewModel = ViewModelScopeHandler.getInstance(kClass, savedStateHandle = handle)
 
-        modelClass.cast(instance)?.addCloseable {
-            ViewModelScopeHandler.removeInstance(instance)
+        viewModel.addCloseable {
+            ViewModelScopeHandler.removeInstance(viewModel)
         }
-
-        return instance
+        return viewModel
     }
 }
 

@@ -8,13 +8,13 @@ import com.example.di.DatabaseLogger
 import com.example.di.RequireInjection
 import com.example.di.scope.AppScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 
 class CartViewModel : ViewModel() {
-    @RequireInjection
+    @RequireInjection(impl = CartRepositoryImpl::class, scope = AppScope::class)
     @DatabaseLogger
-    @AppScope
     private lateinit var cartRepository: CartRepository
 
     private val _cartProducts: MutableLiveData<List<Product>> = MutableLiveData()
