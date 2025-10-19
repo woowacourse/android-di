@@ -8,9 +8,14 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 object DependencyContainer {
-    private val applicationDependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
-    private val viewModelDependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
-    private val activityDependencyGetters: MutableMap<Identifier, () -> Any> = mutableMapOf()
+    private val scopeMapping: MutableMap<Identifier, Scope> = mutableMapOf()
+
+    private val dependencyGettersByScope: Map<Scope, MutableMap<Identifier, () -> Any>> =
+        mapOf(
+            Scope.Application to mutableMapOf(),
+            Scope.Activity to mutableMapOf(),
+            Scope.ViewModel to mutableMapOf(),
+        )
 
     fun initialize(
         application: Application,
@@ -21,13 +26,9 @@ object DependencyContainer {
     }
 
     fun dependency(identifier: Identifier): Any {
-        val getters: MutableMap<Identifier, () -> Any> =
-            when (identifier.lifespan) {
-                is ViewModelLifespan -> viewModelDependencyGetters
-                is ActivityLifespan -> activityDependencyGetters
-                else -> applicationDependencyGetters
-            }
-        return getters[identifier]?.invoke() ?: error("No dependency defined for $identifier.")
+        val scope: Scope = scopeMapping[identifier] ?: error("No scope defined for $identifier")
+        return dependencyGettersByScope[scope]?.get(identifier)?.invoke()
+            ?: error("No dependency defined for $identifier with $scope.")
     }
 
     private fun initialize(module: Module) {
@@ -35,15 +36,13 @@ object DependencyContainer {
             if (!property.hasAnnotation<Dependency>()) return@forEach
 
             val identifier = Identifier.from(property)
-            val getters: MutableMap<Identifier, () -> Any> =
-                when (identifier.lifespan) {
-                    is ViewModelLifespan -> viewModelDependencyGetters
-                    is ActivityLifespan -> activityDependencyGetters
-                    else -> applicationDependencyGetters
+            val scope: Scope = Scope.from(property)
+            scopeMapping[identifier] = scope
+            dependencyGettersByScope[scope]?.let { getters: MutableMap<Identifier, () -> Any> ->
+                getters[identifier] = {
+                    property.getter.call(module) ?: error("$property's getter returned null.")
                 }
-            getters[identifier] = {
-                property.getter.call(module) ?: error("$property's getter returned null.")
-            }
+            } ?: error("No dependencies defined for $scope")
         }
     }
 
@@ -69,7 +68,9 @@ object DependencyContainer {
 
                 override fun onActivityStopped(activity: Activity) = Unit
 
-                override fun onActivityDestroyed(activity: Activity) = activityDependencyGetters.clear()
+                override fun onActivityDestroyed(activity: Activity) {
+                    dependencyGettersByScope[Scope.Activity]?.clear()
+                }
             },
         )
     }
