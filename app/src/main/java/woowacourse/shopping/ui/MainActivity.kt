@@ -14,7 +14,6 @@ import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
-import woowacouse.shopping.di.DiFactory
 import woowacouse.shopping.di.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
