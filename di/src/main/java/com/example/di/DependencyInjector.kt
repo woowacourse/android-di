@@ -31,7 +31,11 @@ object DependencyInjector {
                 val kClass = property.returnType.classifier as KClass<*>
                 val qualifier = findQualifier(property)
                 val key = DependencyKey(kClass, qualifier)
-                instances[key] = { property.get(container)!! }
+                property
+                    .get(container)
+                    ?.let {
+                        instances[key] = { it }
+                    } ?: run { error("${property.get(container)}가 null") }
             }
     }
 
@@ -104,21 +108,26 @@ object DependencyInjector {
                     getOrCreateInstance(
                         kClass = requireInjection.impl,
                         qualifier = findQualifier(prop),
-                        context =
-                            when (val activityContext = prop.findAnnotation<RequireContext>()) {
-                                null -> instance
-                                else ->
-                                    when (activityContext.contextType) {
-                                        RequireContext.ContextType.ACTIVITY -> context
-                                        RequireContext.ContextType.APPLICATION -> context as? Application
-                                    }
-                            },
+                        context = createContext(prop, instance, context),
                         scope = requireInjection.scope,
                         savedStateHandle = null,
                     )
 
                 prop.isAccessible = true
                 prop.setter.call(instance, dependency)
+            }
+    }
+
+    private fun <T : Any> createContext(
+        prop: KMutableProperty1<Any, Any>,
+        instance: T,
+        context: Any?,
+    ) = when (val activityContext = prop.findAnnotation<RequireContext>()) {
+        null -> instance
+        else ->
+            when (activityContext.contextType) {
+                RequireContext.ContextType.ACTIVITY -> context
+                RequireContext.ContextType.APPLICATION -> context as? Application
             }
     }
 
