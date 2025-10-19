@@ -1,8 +1,10 @@
 package woowacourse.shopping.data
 
+import com.example.di.annotation.ViewModelScoped
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.ProductRepository
 
+@ViewModelScoped
 class DefaultProductRepository : ProductRepository {
     init {
         println("[DI] ProductRepository created (ViewModelScoped)")

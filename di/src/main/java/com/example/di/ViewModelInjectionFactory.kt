@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 
 class ViewModelInjectionFactory(
     private val container: DIContainer,
+    private val owner: Any,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -12,10 +13,7 @@ class ViewModelInjectionFactory(
         val kClass = modelClass.kotlin
 
         // resolve()로 생성자 주입
-        val viewModelInstance = container.resolve(kClass)
-
-        // inject()로 필드 주입
-        container.inject(viewModelInstance)
+        val viewModelInstance = container.get(kClass, owner = owner)
 
         return viewModelInstance
     }

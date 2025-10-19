@@ -1,8 +1,10 @@
 package woowacourse.shopping.data
 
+import com.example.di.annotation.AppScoped
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
+@AppScoped
 class InMemoryCartRepository : CartRepository {
     private val cartProducts: MutableList<Product> = mutableListOf()
 

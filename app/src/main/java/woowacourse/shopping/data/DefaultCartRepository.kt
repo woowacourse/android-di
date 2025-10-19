@@ -1,11 +1,13 @@
 package woowacourse.shopping.data
 
+import com.example.di.annotation.AppScoped
 import com.example.di.annotation.Inject
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository
 
+@AppScoped
 class DefaultCartRepository
     @Inject
     constructor(

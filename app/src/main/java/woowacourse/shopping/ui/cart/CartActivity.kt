@@ -20,18 +20,19 @@ class CartActivity : AppCompatActivity() {
     private val diContainer: DIContainer
         get() = (application as ShoppingApplication).appContainer
     private val viewModelFactory: ViewModelProvider.Factory by lazy {
-        ViewModelInjectionFactory(diContainer)
+        ViewModelInjectionFactory(diContainer, this)
     }
 
     private val viewModel: CartViewModel by viewModels { viewModelFactory }
 
-    private lateinit var dateFormatter: DateFormatter
+    private val dateFormatter: DateFormatter by lazy {
+        diContainer.get(DateFormatter::class, owner = this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -50,10 +51,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = diContainer.resolve(DateFormatter::class, owner = this)
     }
 
     private fun setupToolbar() {
@@ -82,7 +79,7 @@ class CartActivity : AppCompatActivity() {
                     items = it,
                     dateFormatter = dateFormatter,
                     onClickDelete = { id ->
-                        viewModel.deleteCartProduct(id.toLong())
+                        viewModel.deleteCartProduct(id)
                     },
                 )
             binding.rvCartProducts.adapter = adapter

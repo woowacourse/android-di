@@ -11,6 +11,7 @@ class ShoppingApplication : Application() {
         super.onCreate()
 
         appContainer = DIContainer()
+
         val module = ShoppingDIModule(applicationContext)
         module.register(appContainer)
     }

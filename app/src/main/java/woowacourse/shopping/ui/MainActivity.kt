@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val diContainer: DIContainer
         get() = (application as ShoppingApplication).appContainer
     private val viewModelFactory: ViewModelProvider.Factory by lazy {
-        ViewModelInjectionFactory(diContainer)
+        ViewModelInjectionFactory(diContainer, this)
     }
 
     private val viewModel: MainViewModel by viewModels { viewModelFactory }
