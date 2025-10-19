@@ -5,9 +5,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.hasAnnotation
 
 object DependencyContainer {
-    private val dependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val singletons: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val factories: MutableMap<KClass<*>, () -> Any> = mutableMapOf()
     private val qualifierDependencies: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val singletonCache: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     fun register(instance: Any) {
         val clazz = instance::class
@@ -15,10 +15,8 @@ object DependencyContainer {
 
         if (isQualifier) {
             qualifierDependencies[clazz] = instance
-
             clazz.supertypes.forEach { superType ->
                 val superClass = superType.classifier as? KClass<*>
-
                 if (superClass != null &&
                     superClass != Any::class &&
                     (superClass.isAbstract || superClass.java.isInterface)
@@ -27,16 +25,14 @@ object DependencyContainer {
                 }
             }
         } else {
-            dependencies[clazz] = instance
-
+            singletons[clazz] = instance
             clazz.supertypes.forEach { superType ->
                 val superClass = superType.classifier as? KClass<*>
-
                 if (superClass != null &&
                     superClass != Any::class &&
                     (superClass.isAbstract || superClass.java.isInterface)
                 ) {
-                    dependencies[superClass] = instance
+                    singletons[superClass] = instance
                 }
             }
         }
@@ -50,10 +46,8 @@ object DependencyContainer {
 
         if (isQualifier) {
             qualifierDependencies[clazz] = instance
-
             clazz.supertypes.forEach { superType ->
                 val superClass = superType.classifier as? KClass<*>
-
                 if (superClass != null &&
                     superClass != Any::class &&
                     (superClass.isAbstract || superClass.java.isInterface)
@@ -61,18 +55,16 @@ object DependencyContainer {
                     qualifierDependencies[superClass] = instance
                 }
             }
-        }
-
-        singletonCache[clazz] = instance
-
-        clazz.supertypes.forEach { superType ->
-            val superClass = superType.classifier as? KClass<*>
-
-            if (superClass != null &&
-                superClass != Any::class &&
-                (superClass.isAbstract || superClass.java.isInterface)
-            ) {
-                singletonCache[superClass] = instance
+        } else {
+            singletons[clazz] = instance
+            clazz.supertypes.forEach { superType ->
+                val superClass = superType.classifier as? KClass<*>
+                if (superClass != null &&
+                    superClass != Any::class &&
+                    (superClass.isAbstract || superClass.java.isInterface)
+                ) {
+                    singletons[superClass] = instance
+                }
             }
         }
     }
@@ -85,12 +77,10 @@ object DependencyContainer {
                 ?: throw IllegalStateException("@Qualifier가 붙은 $kClazz 가 등록되지 않았습니다.")
         }
 
-        singletonCache[kClazz]?.let { return it }
+        singletons[kClazz]?.let { return it }
 
-        val result =
-            dependencies[kClazz]
-                ?: throw IllegalStateException("$kClazz 가 등록되지 않았습니다.")
+        factories[kClazz]?.let { return it() }
 
-        return result
+        throw IllegalStateException("$kClazz 가 등록되지 않았습니다.")
     }
 }
