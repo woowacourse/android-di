@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.di.DependencyInjector
+import com.example.di.RequireContext
 import com.example.di.RequireInjection
 import com.example.di.scope.ActivityScope
-import com.example.di.scope.RequireContext
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.ProductClickListener

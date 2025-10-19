@@ -3,7 +3,6 @@ package com.example.di
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.SavedStateHandle
-import com.example.di.scope.RequireContext
 import com.example.di.scope.ScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
