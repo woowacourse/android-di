@@ -2,7 +2,7 @@ package com.example.di
 
 @Target(
     AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.FIELD
+    AnnotationTarget.FIELD,
 )
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Inject

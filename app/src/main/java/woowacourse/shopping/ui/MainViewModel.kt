@@ -35,7 +35,6 @@ class MainViewModel() : ViewModel() {
         _products.value = productRepository.getAllProducts()
     }
 
-
     override fun onCleared() {
         closeViewModelComponent()
         super.onCleared()

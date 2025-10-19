@@ -9,9 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-
 class InjectorTest {
-
     private val appComponent = Component.Singleton
 
     @Test

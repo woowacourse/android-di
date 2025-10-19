@@ -8,7 +8,6 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaField
 
 object DiContainer {
-
     private data class Key(
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>?,
@@ -35,17 +34,19 @@ object DiContainer {
         qualifier: KClass<out Annotation>? = null,
     ) {
         require(
-            fromInterface != toImplementation && fromInterface.java.isAssignableFrom(
-                toImplementation.java
+            fromInterface != toImplementation &&
+                fromInterface.java.isAssignableFrom(
+                    toImplementation.java,
+                ),
+        )
+        bindingMap[Key(fromInterface, qualifier)] =
+            Binding(
+                implementationOrType = toImplementation,
+                componentConstructor = installIn,
+                isScoped = isScoped,
+                factoryFunction = null,
+                isInterfaceBinding = true,
             )
-        )
-        bindingMap[Key(fromInterface, qualifier)] = Binding(
-            implementationOrType = toImplementation,
-            componentConstructor = installIn,
-            isScoped = isScoped,
-            factoryFunction = null,
-            isInterfaceBinding = true,
-        )
     }
 
     fun <Type : Any> bindProvides(
@@ -55,13 +56,14 @@ object DiContainer {
         qualifier: KClass<out Annotation>? = null,
         factoryFunction: (Any?) -> Type,
     ) {
-        bindingMap[Key(type, qualifier)] = Binding(
-            implementationOrType = type,
-            componentConstructor = installIn,
-            isScoped = isScoped,
-            factoryFunction = factoryFunction,
-            isInterfaceBinding = false,
-        )
+        bindingMap[Key(type, qualifier)] =
+            Binding(
+                implementationOrType = type,
+                componentConstructor = installIn,
+                isScoped = isScoped,
+                factoryFunction = factoryFunction,
+                isInterfaceBinding = false,
+            )
     }
 
     fun openActivityComponent(activityOwner: Any) {
@@ -94,56 +96,61 @@ object DiContainer {
         val implementationClass = binding.implementationOrType
         val isScoped = binding.isScoped
 
-        val currentCache = when (ownerComponent) {
-            is Component.Singleton -> singletonCache
-            is Component.Activity -> activityCacheMap[ownerComponent.owner]
-            is Component.ViewModel -> viewModelCacheMap[ownerComponent.owner]
-        }
+        val currentCache =
+            when (ownerComponent) {
+                is Component.Singleton -> singletonCache
+                is Component.Activity -> activityCacheMap[ownerComponent.owner]
+                is Component.ViewModel -> viewModelCacheMap[ownerComponent.owner]
+            }
 
         if (!isScoped) {
             return createNewInstance(implementationClass, ownerComponent) as Type
         }
 
-        val lazyInstance = when (ownerComponent) {
-            is Component.Singleton -> currentCache!!.getOrPut(Key(implementationClass, qualifier)) {
-                lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                    provideOrCreate(binding, ownerComponent)
-                }
-            }
+        val lazyInstance =
+            when (ownerComponent) {
+                is Component.Singleton ->
+                    currentCache!!.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                            provideOrCreate(binding, ownerComponent)
+                        }
+                    }
 
-            is Component.Activity -> {
-                val activityScopedCache = currentCache ?: throw IllegalStateException()
-                activityScopedCache.getOrPut(Key(implementationClass, qualifier)) {
-                    lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                        provideOrCreate(binding, ownerComponent)
+                is Component.Activity -> {
+                    val activityScopedCache = currentCache ?: throw IllegalStateException()
+                    activityScopedCache.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                            provideOrCreate(binding, ownerComponent)
+                        }
+                    }
+                }
+
+                is Component.ViewModel -> {
+                    val viewModelScopedCache = currentCache ?: throw IllegalStateException()
+                    viewModelScopedCache.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                            provideOrCreate(binding, ownerComponent)
+                        }
                     }
                 }
             }
-
-            is Component.ViewModel -> {
-                val viewModelScopedCache = currentCache ?: throw IllegalStateException()
-                viewModelScopedCache.getOrPut(Key(implementationClass, qualifier)) {
-                    lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                        provideOrCreate(binding, ownerComponent)
-                    }
-                }
-            }
-        }
         return lazyInstance.value as Type
     }
 
-    private fun getOwnerFrom(component: Component): Any? = when (component) {
-        is Component.Singleton -> null
-        is Component.Activity -> component.owner
-        is Component.ViewModel -> component.owner
-    }
+    private fun getOwnerFrom(component: Component): Any? =
+        when (component) {
+            is Component.Singleton -> null
+            is Component.Activity -> component.owner
+            is Component.ViewModel -> component.owner
+        }
 
     private fun <Type : Any> createUnbound(
         type: KClass<Type>,
         ownerComponent: Component,
     ): Any {
-        val primaryConstructor = type.primaryConstructor
-            ?: throw IllegalStateException()
+        val primaryConstructor =
+            type.primaryConstructor
+                ?: throw IllegalStateException()
 
         if (!primaryConstructor.annotations.any { it is Inject }) {
             throw IllegalStateException()
@@ -171,14 +178,16 @@ object DiContainer {
         ownerComponent: Component,
     ): Any {
         val injectableConstructor = findInjectableConstructor(targetClass)
-        val argumentMap = injectableConstructor.parameters
-            .filter { it.kind == KParameter.Kind.VALUE }
-            .associateWith { parameter ->
-                val dependencyClass = parameter.type.classifier as? KClass<*>
-                    ?: throw IllegalStateException()
-                val qualifierAnnotation = findQualifier(parameter.annotations)
-                get(dependencyClass, ownerComponent, qualifierAnnotation)
-            }
+        val argumentMap =
+            injectableConstructor.parameters
+                .filter { it.kind == KParameter.Kind.VALUE }
+                .associateWith { parameter ->
+                    val dependencyClass =
+                        parameter.type.classifier as? KClass<*>
+                            ?: throw IllegalStateException()
+                    val qualifierAnnotation = findQualifier(parameter.annotations)
+                    get(dependencyClass, ownerComponent, qualifierAnnotation)
+                }
 
         val instance = injectableConstructor.callBy(argumentMap)
 
@@ -198,9 +207,10 @@ object DiContainer {
     }
 
     private fun findInjectableConstructor(targetClass: KClass<*>): KFunction<*> {
-        val constructorWithInjectAnnotation = targetClass.constructors.firstOrNull { constructor ->
-            constructor.annotations.any { it is Inject }
-        }
+        val constructorWithInjectAnnotation =
+            targetClass.constructors.firstOrNull { constructor ->
+                constructor.annotations.any { it is Inject }
+            }
         return constructorWithInjectAnnotation
             ?: targetClass.primaryConstructor
             ?: throw IllegalStateException()

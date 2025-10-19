@@ -25,7 +25,7 @@ class ShoppingApplication : Application() {
             type = CartProductDao::class,
             installIn = { Component.Singleton },
             isScoped = true,
-            factoryFunction = { DatabaseModule.cartProductDao(applicationContext) }
+            factoryFunction = { DatabaseModule.cartProductDao(applicationContext) },
         )
 
         DiContainer.bindProvides(
@@ -33,7 +33,7 @@ class ShoppingApplication : Application() {
             installIn = { Component.Singleton },
             isScoped = true,
             qualifier = InMemoryCartProductDaoQualifier::class,
-            factoryFunction = { InMemoryCartProductDao() }
+            factoryFunction = { InMemoryCartProductDao() },
         )
 
         DiContainer.bindProvides(

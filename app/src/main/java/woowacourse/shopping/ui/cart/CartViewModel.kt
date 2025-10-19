@@ -9,8 +9,7 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 
-class CartViewModel(
-) : ViewModel() {
+class CartViewModel() : ViewModel() {
     @field:Inject
     private lateinit var cartRepository: CartRepository
 

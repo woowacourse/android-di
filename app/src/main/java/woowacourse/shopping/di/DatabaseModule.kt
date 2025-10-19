@@ -5,7 +5,6 @@ import androidx.room.Room
 import woowacourse.shopping.data.ShoppingDatabase
 
 object DatabaseModule {
-
     @Volatile
     private var INSTANCE: ShoppingDatabase? = null
 

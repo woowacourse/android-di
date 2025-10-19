@@ -18,13 +18,11 @@ fun registerApplicationContext(appContext: Context) {
 }
 
 fun ComponentActivity.openActivityComponent() = DiContainer.openActivityComponent(this)
+
 fun ComponentActivity.closeActivityComponent() = DiContainer.closeActivityComponent(this)
 
-fun ViewModel.openViewModelComponent() =
-    DiContainer.openViewModelComponent(this)
+fun ViewModel.openViewModelComponent() = DiContainer.openViewModelComponent(this)
 
-fun ViewModel.closeViewModelComponent() =
-    DiContainer.closeViewModelComponent(this)
+fun ViewModel.closeViewModelComponent() = DiContainer.closeViewModelComponent(this)
 
-fun ViewModel.injectViewModel() =
-    Injector.inject(this, Component.ViewModel(this))
+fun ViewModel.injectViewModel() = Injector.inject(this, Component.ViewModel(this))
