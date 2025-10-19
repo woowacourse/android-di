@@ -39,7 +39,6 @@ class MainViewModelTest {
         Dispatchers.setMain(testDispatcher)
         val application = ApplicationProvider.getApplicationContext<Application>()
         DependencyContainer.initialize(application, FakeRepositoryModule())
-        viewModel = MainViewModel()
         viewModel = ViewModelFactory.create(MainViewModel::class.java)
         viewModel.getAllProducts()
     }
