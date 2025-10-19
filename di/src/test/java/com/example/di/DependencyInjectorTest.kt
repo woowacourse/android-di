@@ -1,13 +1,19 @@
 package com.example.di
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class DependencyInjectorTest {
     @Before
     fun setUp() {
-        DependencyContainer.initialize(RepositoryModule())
+        val application = ApplicationProvider.getApplicationContext<Application>()
+        DependencyContainer.initialize(application, RepositoryModule())
     }
 
     @Test
