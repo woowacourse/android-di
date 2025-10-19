@@ -25,18 +25,6 @@ class AppContainer {
     // 자동 cleanup을 위한 LifecycleObservers
     private val lifecycleObservers = mutableMapOf<Any, LifecycleEventObserver>()
 
-    // TODO 디버깅용 코드 제거
-    fun showInstances() {
-        Log.d("AppContainer", "singletonInstances: $singletonInstances")
-        singletonInstances.forEach {
-            Log.d("AppContainer", "singletonInstances: ${it.key.simpleName} = ${it.value}")
-        }
-        Log.d("AppContainer", "scopedInstances: $scopedInstances")
-        scopedInstances.forEach {
-            Log.d("AppContainer", "scopedInstances: ${it.key} = ${it.value}")
-        }
-    }
-
     // 스코프, Observer 정리
     fun clearScope(scopeHolder: Any) {
         Log.d("AppContainer", "clearScope: $scopeHolder")
