@@ -6,7 +6,7 @@ fun startMoong(vararg items: Any) {
     items.forEach { item ->
         when (item) {
             is KClass<*> -> {
-                val instance = item.instantiate()
+                val instance = DependencyInjector.inject(item)
                 DependencyContainer.register(instance)
             }
 
