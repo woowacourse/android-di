@@ -11,16 +11,13 @@ sealed interface Provider<T> {
 class SingletonProvider<T>(
     private val creator: () -> T,
 ) : Provider<T> {
+    @Volatile
     private var instance: T? = null
 
-    override fun get(): T {
-        if (instance == null) {
-            synchronized(this) {
-                if (instance == null) instance = creator()
-            }
+    override fun get(): T =
+        instance ?: synchronized(this) {
+            instance ?: creator().also { instance = it }
         }
-        return instance!!
-    }
 }
 
 class FactoryProvider<T>(
