@@ -35,7 +35,7 @@ android {
 dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.appcompat)
-    implementation(libs.core.ktx)
+    testImplementation(libs.core.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.assertj.core)
     testImplementation(libs.robolectric)
