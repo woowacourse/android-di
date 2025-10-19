@@ -7,6 +7,8 @@ import android.os.Bundle
 object DependencyContainer {
     private lateinit var dependencyMapping: DependencyMapping
 
+    private val liveActivities: MutableSet<Activity> = mutableSetOf()
+
     fun initialize(
         application: Application,
         vararg module: Module,
@@ -24,7 +26,9 @@ object DependencyContainer {
                 override fun onActivityCreated(
                     activity: Activity,
                     bundle: Bundle?,
-                ) = Unit
+                ) {
+                    liveActivities.add(activity)
+                }
 
                 override fun onActivityStarted(activity: Activity) = Unit
 
@@ -40,7 +44,8 @@ object DependencyContainer {
                 override fun onActivityStopped(activity: Activity) = Unit
 
                 override fun onActivityDestroyed(activity: Activity) {
-                    dependencyMapping.clear(Scope.ACTIVITY)
+                    liveActivities.remove(activity)
+                    if (liveActivities.isEmpty()) dependencyMapping.clear(Scope.ACTIVITY)
                 }
             },
         )
