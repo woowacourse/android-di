@@ -7,29 +7,33 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.SavedStateHandle
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacouse.shopping.di.ViewModelFactory
+import woowacourse.shopping.di.ViewModelFactory
+import woowacourse.shopping.di.annotation.Inject
 
 class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
+    private val diFactory by lazy { (application as ShoppingApplication).diFactory }
+
     private val viewModel: CartViewModel by viewModels {
         ViewModelFactory(
-            (application as ShoppingApplication).container,
-            owner = this,
-            defaultArgs = intent.extras,
+            diFactory = diFactory,
+            handle = SavedStateHandle(),
         )
     }
 
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupContentView()
-        setupDateFormatter()
+        diFactory.inject(this)
         setupBinding()
         setupToolbar()
         setupViewData()

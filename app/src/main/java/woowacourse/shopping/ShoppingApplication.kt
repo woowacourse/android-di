@@ -6,9 +6,11 @@ import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.Container
+import woowacourse.shopping.di.DiFactory
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
-import woowacouse.shopping.di.Container
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     private val database: ShoppingDatabase by lazy {
@@ -20,20 +22,22 @@ class ShoppingApplication : Application() {
             ).build()
     }
 
-    private val cartProductDao by lazy { database.cartProductDao() }
+    private val container by lazy { Container() }
+    val diFactory by lazy { DiFactory(container, this) }
 
-    private val productRepository: ProductRepository by lazy { ProductRepositoryImpl() }
+    private val cartProductDao by lazy { database.cartProductDao() }
 
     private val roomCartRepository: CartRepository by lazy { CartRepositoryImpl(cartProductDao) }
 
     private val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
-
-    val container = Container()
+    private val dateFormatter: DateFormatter by lazy { DateFormatter(this) }
 
     override fun onCreate() {
         super.onCreate()
-        container.registerInstances(ProductRepository::class, productRepository)
         container.registerInstances(CartRepository::class, roomCartRepository, "room")
         container.registerInstances(CartRepository::class, inMemoryCartRepository, "inMemory")
+        container.registerInstances(DateFormatter::class, dateFormatter)
+
+        container.registerProvider(ProductRepository::class) { ProductRepositoryImpl() }
     }
 }
