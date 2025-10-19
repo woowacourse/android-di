@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
@@ -13,15 +12,14 @@ import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.Scope
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Scoped
+import woowacourse.shopping.ui.BaseScopedActivity
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : BaseScopedActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels {
         (application as ShoppingApplication).viewModelFactory
     }
-
-    private val scopeName: String = this::class.java.name
 
     @Inject
     @Scoped(Scope.ACTIVITY)
@@ -30,10 +28,6 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupContentView()
-
-        val app: ShoppingApplication = application as ShoppingApplication
-        app.appContainer.createScope(scopeName)
-        app.dependencyInjector.injectFields(this, this::class, scopeName)
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -41,7 +35,6 @@ class CartActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (application as ShoppingApplication).appContainer.clearScope(scopeName)
     }
 
     override fun onSupportNavigateUp(): Boolean {
