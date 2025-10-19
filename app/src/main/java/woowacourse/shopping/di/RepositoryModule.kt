@@ -1,7 +1,8 @@
 import com.yrsel.di.Module
 import com.yrsel.di.annotation.Provides
 import com.yrsel.di.annotation.Qualifier
-import com.yrsel.di.annotation.Singleton
+import com.yrsel.di.annotation.SingletonScope
+import com.yrsel.di.annotation.ViewModelScope
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepositoryImpl
 import woowacourse.shopping.data.ProductRepositoryImpl
@@ -18,18 +19,18 @@ annotation class LocalDatabase
 
 class RepositoryModule : Module {
     @Provides
-    @Singleton
+    @ViewModelScope
     fun provideProductRepository(): ProductRepository = ProductRepositoryImpl()
 
     @Provides
-    @Singleton
+    @SingletonScope
     @LocalDatabase
     fun provideLocalCartRepository(
         @LocalDatabase dao: CartProductDao,
     ): CartRepository = CartRepositoryImpl(dao)
 
     @Provides
-    @Singleton
+    @SingletonScope
     @InMemory
     fun provideInMemoryCartRepository(
         @InMemory dao: CartProductDao,
