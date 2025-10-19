@@ -16,6 +16,7 @@ import woowacourse.shopping.domain.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
     @Inject
+    @Scoped(Scope.VIEWMODEL)
     private lateinit var productRepository: ProductRepository
 
     @Inject
