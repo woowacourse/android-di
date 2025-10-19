@@ -3,6 +3,7 @@ package com.example.di
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -22,9 +23,9 @@ object DependencyInjector {
                 ?: error("Unable to find the primary constructor of $targetClass.")
         val parameters: Array<Any> =
             constructor.parameters
-                .map(Identifier::from)
-                .map(DependencyContainer::dependency)
-                .toTypedArray()
+                .map { parameter: KParameter ->
+                    DependencyContainer.dependency(Identifier.from(parameter))
+                }.toTypedArray()
         return constructor.call(*parameters)
     }
 
@@ -33,7 +34,7 @@ object DependencyInjector {
             property.isAccessible = true
             if (!property.hasAnnotation<Inject>()) return@forEach
 
-            val identifier = Identifier.from(property)
+            val identifier: Identifier = Identifier.from(property)
             val mutableProperty =
                 property as? KMutableProperty1
                     ?: error("Cannot inject dependency to $property because it is an immutable property.")
