@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import com.example.di.DatabaseLogger
 import com.example.di.InMemoryLogger
 import woowacourse.shopping.data.CartProductDao
@@ -30,5 +31,8 @@ class AppContainer(
 
     private val database: ShoppingDatabase by lazy {
         ShoppingDatabase.getInstance(application)
+    }
+    private val context: Context by lazy {
+        application.applicationContext
     }
 }
