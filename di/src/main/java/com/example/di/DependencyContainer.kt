@@ -12,9 +12,9 @@ object DependencyContainer {
 
     private val dependencyGettersByScope: Map<Scope, MutableMap<Identifier, () -> Any>> =
         mapOf(
-            Scope.Application to mutableMapOf(),
-            Scope.Activity to mutableMapOf(),
-            Scope.ViewModel to mutableMapOf(),
+            Scope.APPLICATION to mutableMapOf(),
+            Scope.ACTIVITY to mutableMapOf(),
+            Scope.VIEWMODEL to mutableMapOf(),
         )
 
     fun initialize(
@@ -69,7 +69,7 @@ object DependencyContainer {
                 override fun onActivityStopped(activity: Activity) = Unit
 
                 override fun onActivityDestroyed(activity: Activity) {
-                    dependencyGettersByScope[Scope.Activity]?.clear()
+                    dependencyGettersByScope[Scope.ACTIVITY]?.clear()
                 }
             },
         )

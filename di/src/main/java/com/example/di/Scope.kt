@@ -3,12 +3,11 @@ package com.example.di
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.hasAnnotation
 
-sealed class Scope {
-    object Application : Scope()
-
-    object Activity : Scope()
-
-    object ViewModel : Scope()
+enum class Scope {
+    APPLICATION,
+    VIEWMODEL,
+    ACTIVITY,
+    ;
 
     companion object {
         fun from(element: KAnnotatedElement): Scope {
@@ -20,9 +19,9 @@ sealed class Scope {
 
             val lifespan: Annotation? = lifespans.firstOrNull()
             return when (lifespan) {
-                is ViewModelLifespan -> ViewModel
-                is ActivityLifespan -> Activity
-                else -> Application
+                is ViewModelLifespan -> VIEWMODEL
+                is ActivityLifespan -> ACTIVITY
+                else -> APPLICATION
             }
         }
     }
