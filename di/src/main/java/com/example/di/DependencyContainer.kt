@@ -8,13 +8,13 @@ import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
 object DependencyContainer {
-    private val scopeMapping: MutableMap<Identifier, Scope> = mutableMapOf()
+    private val identifierScopes: MutableMap<Identifier, Scope> = mutableMapOf()
 
-    private val dependencyGettersByScope: Map<Scope, MutableMap<Identifier, () -> Any>> =
+    private val dependencyGetters: Map<Scope, MutableMap<Identifier, () -> Any>> =
         mapOf(
             Scope.APPLICATION to mutableMapOf(),
-            Scope.ACTIVITY to mutableMapOf(),
             Scope.VIEWMODEL to mutableMapOf(),
+            Scope.ACTIVITY to mutableMapOf(),
         )
 
     fun initialize(
@@ -26,8 +26,8 @@ object DependencyContainer {
     }
 
     fun dependency(identifier: Identifier): Any {
-        val scope: Scope = scopeMapping[identifier] ?: error("No scope defined for $identifier")
-        return dependencyGettersByScope[scope]?.get(identifier)?.invoke()
+        val scope: Scope = identifierScopes[identifier] ?: error("No scope defined for $identifier")
+        return dependencyGetters[scope]?.get(identifier)?.invoke()
             ?: error("No dependency defined for $identifier with $scope.")
     }
 
@@ -37,8 +37,8 @@ object DependencyContainer {
 
             val identifier = Identifier.from(property)
             val scope: Scope = Scope.from(property)
-            scopeMapping[identifier] = scope
-            dependencyGettersByScope[scope]?.let { getters: MutableMap<Identifier, () -> Any> ->
+            identifierScopes[identifier] = scope
+            dependencyGetters[scope]?.let { getters: MutableMap<Identifier, () -> Any> ->
                 getters[identifier] = {
                     property.getter.call(module) ?: error("$property's getter returned null.")
                 }
@@ -69,7 +69,7 @@ object DependencyContainer {
                 override fun onActivityStopped(activity: Activity) = Unit
 
                 override fun onActivityDestroyed(activity: Activity) {
-                    dependencyGettersByScope[Scope.ACTIVITY]?.clear()
+                    dependencyGetters[Scope.ACTIVITY]?.clear()
                 }
             },
         )
