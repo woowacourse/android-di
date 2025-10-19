@@ -25,14 +25,12 @@ class AutoViewModelFactory(
         val viewModelKey = DependencyKey(kClass)
 
         val viewModel =
-            ViewModelScopeHandler.getOrCreate(viewModelKey) {
-                DependencyInjector.getOrCreateInstance(
-                    kClass = kClass,
-                    savedStateHandle = handle,
-                    context = owner,
-                    scope = ViewModelScopeHandler.scopeAnnotation,
-                )
-            }
+            DependencyInjector.getOrCreateInstance(
+                kClass = kClass,
+                savedStateHandle = handle,
+                context = owner,
+                scope = null,
+            )
 
         viewModel.addCloseable {
             ViewModelScopeHandler.clear(viewModelKey)

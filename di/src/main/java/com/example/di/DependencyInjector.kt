@@ -3,6 +3,8 @@ package com.example.di
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.SavedStateHandle
+import com.example.di.scope.ActivityScopeHandler
+import com.example.di.scope.AppScopeHandler
 import com.example.di.scope.ScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -14,6 +16,11 @@ import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
     private val instances = mutableMapOf<DependencyKey<*>, () -> Any>()
+
+    init {
+        AppScopeHandler
+        ActivityScopeHandler
+    }
 
     fun setInstance(container: Any) {
         container::class
