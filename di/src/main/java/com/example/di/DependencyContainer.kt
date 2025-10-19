@@ -33,6 +33,7 @@ object DependencyContainer {
                     activity: Activity,
                     bundle: Bundle?,
                 ) {
+                    DependencyInjector.injectFields(activity)
                     liveActivities.add(activity)
                     if (activity.hasViewModel()) liveViewModelOwners.add(activity)
                 }
