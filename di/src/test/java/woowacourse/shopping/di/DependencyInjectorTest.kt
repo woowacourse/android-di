@@ -30,11 +30,11 @@ class DependencyInjectorTest {
             val repo1: FakeRepository1,
             val repo2: FakeRepository2,
         )
-        container.registerInstance(FakeRepository1::class, fakeRepository1)
-        container.registerInstance(FakeRepository2::class, fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
@@ -51,19 +51,11 @@ class DependencyInjectorTest {
             val repo2: FakeRepository,
         )
 
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo1",
-            instance = fakeRepository1,
-        )
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo2",
-            instance = fakeRepository2,
-        )
+        container.registerProvider(FakeRepository::class, "repo1") { fakeRepository1 }
+        container.registerProvider(FakeRepository::class, "repo2") { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
@@ -79,7 +71,7 @@ class DependencyInjectorTest {
 
         // when & then
         Assert.assertThrows(IllegalArgumentException::class.java) {
-            injector.create(TestClass::class)
+            injector.create(TestClass::class, TestClass::class.java.name)
         }
     }
 
@@ -97,11 +89,11 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
-        container.registerInstance(FakeRepository2::class, instance = fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isRepo1Initialized()).isTrue
@@ -127,19 +119,11 @@ class DependencyInjectorTest {
             fun isDatabaseInitialized(): Boolean = ::repo2.isInitialized
         }
 
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo1",
-            instance = fakeRepository1,
-        )
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo2",
-            instance = fakeRepository2,
-        )
+        container.registerProvider(FakeRepository::class, "repo1") { fakeRepository1 }
+        container.registerProvider(FakeRepository::class, "repo2") { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isInMemoryInitialized()).isTrue
@@ -162,10 +146,10 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isRepo1Initialized()).isTrue
@@ -181,11 +165,11 @@ class DependencyInjectorTest {
             @Inject
             lateinit var repo2: FakeRepository2
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
-        container.registerInstance(FakeRepository2::class, instance = fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)

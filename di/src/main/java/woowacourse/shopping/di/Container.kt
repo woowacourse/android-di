@@ -17,15 +17,6 @@ class Container {
         providers[key] = provider
     }
 
-    fun <T : Any> registerInstance(
-        kClass: KClass<T>,
-        instance: T,
-        qualifier: String? = null,
-    ) {
-        val key = DependencyKey(kClass, qualifier)
-        singletonInstances[key] = instance
-    }
-
     fun <T : Any> get(
         kClass: KClass<T>,
         qualifier: String?,
