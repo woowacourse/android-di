@@ -1,8 +1,6 @@
 package com.example.di
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.di.scope.AppScope
-import com.example.di.scope.AppScopeHandler
 import com.example.di.scope.ScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -60,20 +58,13 @@ object DependencyInjector {
                         qualifier = qualifier,
                         savedStateHandle = null,
                         context = null,
+                        hasScope = handler.scopeAnnotation == requireInjection.scope,
                     )
                 property.setter.call(instance, dependencyInstance)
-
-                if (requireInjection.scope == AppScope::class) {
-                    AppScopeHandler.putInstance(
-                        dependencyInstance::class,
-                        qualifier,
-                        dependencyInstance,
-                    )
-                }
             }
     }
 
-    private fun findAnnotation(property: KProperty1<Any, *>) =
+    fun findAnnotation(property: KProperty1<Any, *>) =
         when {
             property.findAnnotation<InMemoryLogger>() != null -> InMemoryLogger::class
             property.findAnnotation<DatabaseLogger>() != null -> DatabaseLogger::class

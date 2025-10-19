@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.isAccessible
 
 object ViewModelScopeHandler : ScopeHandler {
     override val scopeAnnotation = ViewModelScope::class
-    private val instances = mutableMapOf<Any, MutableMap<KClass<*>, Any>>()
+    private val instances = mutableMapOf<DependencyKey<*>, Any>()
 
     init {
         ScopeContainer.setHandler(scopeAnnotation, this)
@@ -23,28 +23,30 @@ object ViewModelScopeHandler : ScopeHandler {
         qualifier: KClass<out Annotation>?,
         savedStateHandle: SavedStateHandle?,
         context: Any?,
+        hasScope: Boolean,
     ): T {
-        val instance =
-            DependencyInjector.createInstance(
-                kClass,
-                savedStateHandle,
-                DependencyKey(kClass),
-            )
+        val key = DependencyKey(kClass, qualifier)
 
-        kClass.members
-            .filterIsInstance<KMutableProperty1<Any, Any>>()
-            .forEach { property ->
-                val requireInjection = property.findAnnotation<RequireInjection>()
-                if (requireInjection?.scope == scopeAnnotation) {
-                    property.isAccessible = true
-                    val dependencyInstance = property.get(instance)
-                    instances.getOrPut(dependencyInstance) { mutableMapOf() }
+        val instance =
+            if (hasScope) {
+                instances.getOrPut(key) {
+                    DependencyInjector.createInstance(
+                        kClass,
+                        savedStateHandle,
+                        key,
+                    )
                 }
+            } else {
+                DependencyInjector.createInstance(
+                    kClass,
+                    savedStateHandle,
+                    key,
+                )
             }
 
         Log.d("TAG", "ViewModelScopeHandler : $instances")
 
-        return instance
+        return instance as T
     }
 
     fun removeInstance(instance: Any) {
@@ -55,8 +57,12 @@ object ViewModelScopeHandler : ScopeHandler {
                 val requireInjection = property.findAnnotation<RequireInjection>()
                 if (requireInjection?.scope == scopeAnnotation) {
                     property.isAccessible = true
-                    val dependencyInstance = property.get(instance)
-                    instances.remove(dependencyInstance)
+                    val key =
+                        DependencyKey(
+                            requireInjection.impl,
+                            DependencyInjector.findAnnotation(property),
+                        )
+                    instances.remove(key)
                 }
             }
         Log.d("TAG", "ViewModelScopeHandler 제거: $instances")

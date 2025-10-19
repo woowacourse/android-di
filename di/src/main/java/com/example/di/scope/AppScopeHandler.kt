@@ -19,34 +19,15 @@ object AppScopeHandler : ScopeHandler {
         qualifier: KClass<out Annotation>?,
         savedStateHandle: SavedStateHandle?,
         context: Any?,
+        hasScope: Boolean,
     ): T {
         val key = DependencyKey(kClass, qualifier)
         val instance =
             instances.getOrPut(key) {
                 DependencyInjector.createInstance(kClass, savedStateHandle, key)
             }
-//        kClass
-//            .members
-//            .filterIsInstance<KMutableProperty1<Any, Any>>()
-//            .forEach { property ->
-//                val requireInjection = property.findAnnotation<RequireInjection>()
-//                if (requireInjection?.scope == scopeAnnotation) {
-//                    property.isAccessible = true
-//                    val dependencyInstance = property.get(instance)
-//                    instances.getOrPut(dependencyInstance) { mutableMapOf() }
-//                }
-//            }
         Log.d("TAG", "AppScopeHandler : $instances")
 
         return instance as T
-    }
-
-    fun putInstance(
-        kClass: KClass<*>,
-        qualifier: KClass<out Annotation>?,
-        instance: Any,
-    ) {
-        val key = DependencyKey(kClass, qualifier)
-        instances[key] = instance
     }
 }

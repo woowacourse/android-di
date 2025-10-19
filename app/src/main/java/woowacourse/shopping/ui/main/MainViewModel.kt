@@ -42,9 +42,4 @@ class MainViewModel : ViewModel() {
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("TAG", "onCleared: ")
-    }
 }

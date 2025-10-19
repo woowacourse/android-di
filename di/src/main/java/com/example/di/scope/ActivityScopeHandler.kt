@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 object ActivityScopeHandler : ScopeHandler {
     override val scopeAnnotation: KClass<out Annotation> = ActivityScope::class
-    private val instances = mutableMapOf<Any, MutableMap<KClass<*>, Any>>()
+    private val instances = mutableMapOf<DependencyKey<*>, Any>()
 
     init {
         ScopeContainer.setHandler(scopeAnnotation, this)
@@ -22,25 +22,31 @@ object ActivityScopeHandler : ScopeHandler {
         qualifier: KClass<out Annotation>?,
         savedStateHandle: SavedStateHandle?,
         context: Any?,
+        hasScope: Boolean,
     ): T {
         val activity = context as ComponentActivity
+        val key = DependencyKey(kClass, qualifier)
         val container =
-            instances.getOrPut(activity) {
-                addLifecycleObserver(activity)
-                mutableMapOf()
+            instances.getOrPut(key) {
+                addLifecycleObserver(activity, key)
+                DependencyInjector.createInstance(
+                    kClass,
+                    savedStateHandle,
+                    key,
+                )
             }
-        return container.getOrPut(kClass) {
-            Log.d("TAG", "ActivityScopeHandler: $instances")
-            DependencyInjector.createInstance(kClass, savedStateHandle, DependencyKey(kClass, null))
-        } as T
+        return container as T
     }
 
-    private fun addLifecycleObserver(activity: ComponentActivity) {
+    private fun addLifecycleObserver(
+        activity: ComponentActivity,
+        key: DependencyKey<*>,
+    ) {
         activity.lifecycle.addObserver(
             object : DefaultLifecycleObserver {
                 override fun onDestroy(owner: LifecycleOwner) {
                     super.onDestroy(owner)
-                    instances.remove(activity)
+                    instances.remove(key)
                     Log.d("TAG", "ActivityScopeHandler 삭제: $instances")
                 }
             },

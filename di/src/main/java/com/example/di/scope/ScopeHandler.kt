@@ -11,5 +11,6 @@ interface ScopeHandler {
         qualifier: KClass<out Annotation>? = null,
         savedStateHandle: SavedStateHandle? = null,
         context: Any? = null,
+        hasScope: Boolean = false,
     ): T
 }
