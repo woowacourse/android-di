@@ -22,6 +22,25 @@ class DependencyInjector(
         return instance
     }
 
+    // @Inject 어노테이션이 붙은 필드에 의존성 주입
+    fun <T : Any> injectFields(
+        instance: T,
+        kClass: KClass<out T>,
+    ) {
+        kClass.memberProperties.forEach { property: KProperty1<out T, *> ->
+            property.findAnnotation<Inject>() ?: return@forEach
+            if (property !is KMutableProperty<*>) return@forEach
+
+            val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
+            val qualifier: String? = property.findAnnotation<Qualifier>()?.value
+            if (container.canResolve(propertyType, qualifier)) {
+                val dependency = container.get(propertyType, qualifier)
+                property.isAccessible = true
+                property.setter.call(instance, dependency)
+            }
+        }
+    }
+
     // 생성자 주입으로 인스턴스 생성
     private fun <T : Any> createInstance(kClass: KClass<T>): T {
         val constructor: KFunction<T>? = findInjectableConstructor(kClass)
@@ -48,23 +67,4 @@ class DependencyInjector(
                 paramClass != null && container.canResolve(paramClass, qualifier)
             }
         }
-
-    // @Inject 어노테이션이 붙은 필드에 의존성 주입
-    private fun <T : Any> injectFields(
-        instance: T,
-        kClass: KClass<T>,
-    ) {
-        kClass.memberProperties.forEach { property: KProperty1<T, *> ->
-            property.findAnnotation<Inject>() ?: return@forEach
-            if (property !is KMutableProperty<*>) return@forEach
-
-            val propertyType = property.returnType.classifier as? KClass<*> ?: return@forEach
-            val qualifier: String? = property.findAnnotation<Qualifier>()?.value
-            if (container.canResolve(propertyType, qualifier)) {
-                val dependency = container.get(propertyType, qualifier)
-                property.isAccessible = true
-                property.setter.call(instance, dependency)
-            }
-        }
-    }
 }

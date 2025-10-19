@@ -11,10 +11,11 @@ import woowacourse.shopping.di.DependencyInjector
 import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     private val appContainer: Container by lazy { Container() }
-    private val dependencyInjector: DependencyInjector by lazy { DependencyInjector(appContainer) }
+    val dependencyInjector: DependencyInjector by lazy { DependencyInjector(appContainer) }
     val viewModelFactory: ViewModelFactory by lazy { ViewModelFactory(dependencyInjector) }
 
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(this) }
@@ -28,6 +29,9 @@ class ShoppingApplication : Application() {
         }
         appContainer.registerProvider(CartRepository::class, RepositoryType.IN_MEMORY) {
             CartInMemoryRepository()
+        }
+        appContainer.registerProvider(DateFormatter::class) {
+            DateFormatter(this)
         }
     }
 }
