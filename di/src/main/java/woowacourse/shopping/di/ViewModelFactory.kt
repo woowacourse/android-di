@@ -7,7 +7,7 @@ class ViewModelFactory(
     private val injector: DependencyInjector,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val scopeName: String = modelClass.simpleName
+        val scopeName = "${modelClass.simpleName}_${modelClass.hashCode()}"
         injector.container.createScope(scopeName)
 
         val viewModel = injector.create(modelClass.kotlin, scopeName)
