@@ -1,6 +1,6 @@
 package woowacourse.shopping.model.repository
 
-import com.example.di_v2.annotation.ViewModelScoped
+import com.example.di.annotation.ViewModelScoped
 import woowacourse.shopping.model.Product
 
 @ViewModelScoped

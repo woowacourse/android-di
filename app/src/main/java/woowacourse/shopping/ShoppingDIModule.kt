@@ -2,10 +2,10 @@ package woowacourse.shopping
 
 import android.content.Context
 import androidx.room.Room
-import com.example.di_v2.DIContainer
-import com.example.di_v2.DIModule
-import com.example.di_v2.annotation.Database
-import com.example.di_v2.annotation.InMemory
+import com.example.di.DIContainer
+import com.example.di.DIModule
+import com.example.di.annotation.Database
+import com.example.di.annotation.InMemory
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository

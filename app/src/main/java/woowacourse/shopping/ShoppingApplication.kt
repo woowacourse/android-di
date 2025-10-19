@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import com.example.di_v2.DIContainer
+import com.example.di.DIContainer
 
 class ShoppingApplication : Application() {
     lateinit var appContainer: DIContainer

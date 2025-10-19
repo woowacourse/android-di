@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import com.example.di_v2.annotation.Inject
+import com.example.di.annotation.Inject
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product

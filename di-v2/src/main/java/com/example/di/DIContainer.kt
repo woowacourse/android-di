@@ -1,8 +1,8 @@
-package com.example.di_v2
+package com.example.di
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.example.di_v2.annotation.*
+import com.example.di.annotation.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation

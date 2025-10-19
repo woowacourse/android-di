@@ -1,11 +1,11 @@
-package com.example.di_v2
+package com.example.di
 
-import com.example.di_v2.annotation.ActivityScoped
-import com.example.di_v2.annotation.AppScoped
-import com.example.di_v2.annotation.Inject
-import com.example.di_v2.annotation.Qualifier
-import com.example.di_v2.annotation.Unscoped
-import com.example.di_v2.annotation.ViewModelScoped
+import com.example.di.annotation.ActivityScoped
+import com.example.di.annotation.AppScoped
+import com.example.di.annotation.Inject
+import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Unscoped
+import com.example.di.annotation.ViewModelScoped
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame

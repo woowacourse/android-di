@@ -1,6 +1,6 @@
 package woowacourse.shopping.model.repository
 
-import com.example.di_v2.annotation.AppScoped
+import com.example.di.annotation.AppScoped
 import woowacourse.shopping.model.Product
 
 @AppScoped

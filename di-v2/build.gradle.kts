@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.di_v2"
+    namespace = "com.example.di"
     compileSdk = 36
 
     defaultConfig {

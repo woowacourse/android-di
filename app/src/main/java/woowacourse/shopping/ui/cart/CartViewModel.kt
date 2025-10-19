@@ -3,9 +3,9 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.di_v2.ScopedViewModel
-import com.example.di_v2.annotation.Database
-import com.example.di_v2.annotation.Inject
+import com.example.di.ScopedViewModel
+import com.example.di.annotation.Database
+import com.example.di.annotation.Inject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.repository.CartRepository

@@ -1,4 +1,4 @@
-package com.example.di_v2
+package com.example.di
 
 interface DIModule {
     fun register(container: DIContainer)

@@ -1,4 +1,4 @@
-package com.example.di_v2.annotation
+package com.example.di.annotation
 
 @Target(
     AnnotationTarget.PROPERTY,

@@ -1,7 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import com.example.di_v2.annotation.ActivityScoped
+import com.example.di.annotation.ActivityScoped
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
