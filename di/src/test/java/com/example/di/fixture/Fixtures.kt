@@ -19,14 +19,14 @@ class DefaultCartRepository : CartRepository
 class FakeCartRepository : CartRepository
 
 interface UserRepository
-class CartViewModel(val cartRepository: CartRepository)
+class CartViewModel @Inject constructor(val cartRepository: CartRepository)
 
-class CartUseCase(
+class CartUseCase @Inject constructor(
     @InMemory val fakeCartRepository: CartRepository,
     @LocalDatabase val realCartRepository: CartRepository,
 )
 
-class MainViewModel {
+class MainViewModel @Inject constructor() {
     @field: Inject
     lateinit var productRepository: ProductRepository
 

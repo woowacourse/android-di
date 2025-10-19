@@ -13,64 +13,109 @@ import com.example.di.fixture.ProductRepository
 import com.example.di.fixture.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DiContainerTest {
+    private val appComponent = Component.Singleton
 
     @Test
     fun `클래스 타입으로 인스턴스를 생성할 수 있다`() {
-        DiContainer.bind(ProductRepository::class, DefaultProductRepository::class)
-        val productRepository = DiContainer.getProvider(ProductRepository::class)
+        DiContainer.bindBinds(
+            fromInterface = ProductRepository::class,
+            toImplementation = DefaultProductRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+        )
+
+        val productRepository =
+            DiContainer.get(ProductRepository::class, appComponent)
+
         assertNotNull(productRepository)
-        assertTrue(productRepository is DefaultProductRepository)
+        assertThat(productRepository).isInstanceOf(DefaultProductRepository::class.java)
     }
 
     @Test
     fun `캐싱한 동일한 인스턴스를 반환한다`() {
-        DiContainer.bind(ProductRepository::class, DefaultProductRepository::class)
-        val instance1 = DiContainer.getProvider(ProductRepository::class)
-        val instance2 = DiContainer.getProvider(ProductRepository::class)
+        DiContainer.bindBinds(
+            fromInterface = ProductRepository::class,
+            toImplementation = DefaultProductRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+        )
+
+        val instance1 = DiContainer.get(ProductRepository::class, appComponent)
+        val instance2 = DiContainer.get(ProductRepository::class, appComponent)
+
         assertThat(instance1).isSameAs(instance2)
     }
 
     @Test
     fun `생성자 주입을 통해 의존성을 해결할 수 있다`() {
-        DiContainer.bind(CartRepository::class, DefaultCartRepository::class)
-        val cartViewModel = DiContainer.getProvider(CartViewModel::class)
-        val cartRepository = DiContainer.getProvider(CartRepository::class)
+        DiContainer.bindBinds(
+            fromInterface = CartRepository::class,
+            toImplementation = DefaultCartRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+        )
 
-        assertThat(cartRepository).isSameAs(cartViewModel.cartRepository)
+        val cartViewModel = DiContainer.get(CartViewModel::class, appComponent)
+        val cartRepository = DiContainer.get(CartRepository::class, appComponent)
+
+        assertThat(cartViewModel.cartRepository).isSameAs(cartRepository)
     }
 
     @Test
     fun `Inject 어노테이션으로 필드 주입을 할 수 있다`() {
-        DiContainer.bind(ProductRepository::class, DefaultProductRepository::class)
-        DiContainer.bind(CartRepository::class, DefaultCartRepository::class)
+        DiContainer.bindBinds(
+            fromInterface = ProductRepository::class,
+            toImplementation = DefaultProductRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+        )
+        DiContainer.bindBinds(
+            fromInterface = CartRepository::class,
+            toImplementation = DefaultCartRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+        )
 
-        val mainViewModel = DiContainer.getProvider(MainViewModel::class)
-        val productRepository = DiContainer.getProvider(ProductRepository::class)
-        val cartRepository = DiContainer.getProvider(CartRepository::class)
+        val mainViewModel = DiContainer.get(MainViewModel::class, appComponent)
+        val productRepository = DiContainer.get(ProductRepository::class, appComponent)
+        val cartRepository = DiContainer.get(CartRepository::class, appComponent)
 
-        assertThat(productRepository).isSameAs(mainViewModel.productRepository)
-        assertThat(cartRepository).isSameAs(mainViewModel.cartRepository)
+        assertThat(mainViewModel.productRepository).isSameAs(productRepository)
+        assertThat(mainViewModel.cartRepository).isSameAs(cartRepository)
     }
-
 
     @Test
     fun `CartRepository의 Qualifier를 사용하여 의존성을 구분할 수 있다`() {
-        DiContainer.bind(CartRepository::class, FakeCartRepository::class, InMemory::class)
-        DiContainer.bind(CartRepository::class, DefaultCartRepository::class, LocalDatabase::class)
+        DiContainer.bindBinds(
+            fromInterface = CartRepository::class,
+            toImplementation = FakeCartRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+            qualifier = InMemory::class,
+        )
+        DiContainer.bindBinds(
+            fromInterface = CartRepository::class,
+            toImplementation = DefaultCartRepository::class,
+            installIn = { Component.Singleton },
+            isScoped = true,
+            qualifier = LocalDatabase::class,
+        )
 
-        val cartUsecase = DiContainer.getProvider(CartUseCase::class)
+        val cartUseCase = DiContainer.get(CartUseCase::class, appComponent)
 
-        assertThat(cartUsecase.fakeCartRepository).isExactlyInstanceOf(FakeCartRepository::class.java)
-        assertThat(cartUsecase.realCartRepository).isExactlyInstanceOf(DefaultCartRepository::class.java)
-        assertThat(cartUsecase.fakeCartRepository).isNotSameAs(cartUsecase.realCartRepository)
+        assertThat(cartUseCase.fakeCartRepository)
+            .isExactlyInstanceOf(FakeCartRepository::class.java)
+        assertThat(cartUseCase.realCartRepository)
+            .isExactlyInstanceOf(DefaultCartRepository::class.java)
+        assertThat(cartUseCase.fakeCartRepository)
+            .isNotSameAs(cartUseCase.realCartRepository)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test(expected = IllegalStateException::class)
     fun `바인딩되지 않은 인터페이스를 요청하면 예외가 발생한다`() {
-        DiContainer.getProvider(UserRepository::class)
+        DiContainer.get(UserRepository::class, appComponent)
     }
 }
