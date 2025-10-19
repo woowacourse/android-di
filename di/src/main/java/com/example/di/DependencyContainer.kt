@@ -3,48 +3,19 @@ package com.example.di
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
 
 object DependencyContainer {
-    private val identifierScopes: MutableMap<Identifier, Scope> = mutableMapOf()
-
-    private val dependencyGetters: Map<Scope, MutableMap<Identifier, () -> Any>> =
-        mapOf(
-            Scope.APPLICATION to mutableMapOf(),
-            Scope.VIEWMODEL to mutableMapOf(),
-            Scope.ACTIVITY to mutableMapOf(),
-        )
+    private lateinit var dependencyMapping: DependencyMapping
 
     fun initialize(
         application: Application,
         vararg module: Module,
     ) {
         registerActivityLifecycleCallbacks(application)
-        module.forEach(::initialize)
+        dependencyMapping = DependencyMapping(*module)
     }
 
-    fun dependency(identifier: Identifier): Any {
-        val scope: Scope = identifierScopes[identifier] ?: error("No scope defined for $identifier")
-        return dependencyGetters[scope]?.get(identifier)?.invoke()
-            ?: error("No dependency defined for $identifier with $scope.")
-    }
-
-    private fun initialize(module: Module) {
-        module::class.memberProperties.forEach { property: KProperty1<out Module, *> ->
-            if (!property.hasAnnotation<Dependency>()) return@forEach
-
-            val identifier = Identifier.from(property)
-            val scope: Scope = Scope.from(property)
-            identifierScopes[identifier] = scope
-            dependencyGetters[scope]?.let { getters: MutableMap<Identifier, () -> Any> ->
-                getters[identifier] = {
-                    property.getter.call(module) ?: error("$property's getter returned null.")
-                }
-            } ?: error("No dependencies defined for $scope")
-        }
-    }
+    fun dependency(identifier: Identifier): Any = dependencyMapping.get(identifier)
 
     private fun registerActivityLifecycleCallbacks(application: Application) {
         application.registerActivityLifecycleCallbacks(
@@ -69,7 +40,7 @@ object DependencyContainer {
                 override fun onActivityStopped(activity: Activity) = Unit
 
                 override fun onActivityDestroyed(activity: Activity) {
-                    dependencyGetters[Scope.ACTIVITY]?.clear()
+                    dependencyMapping.clear(Scope.ACTIVITY)
                 }
             },
         )
