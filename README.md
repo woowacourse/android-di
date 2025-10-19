@@ -36,4 +36,4 @@
 
 - [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
 - [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
-- [ ] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
