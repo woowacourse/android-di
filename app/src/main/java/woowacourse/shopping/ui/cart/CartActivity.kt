@@ -9,11 +9,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.di.DependencyInjector
 import com.example.di.RequireContext
 import com.example.di.RequireInjection
+import com.example.di.autoViewModel
 import com.example.di.scope.ActivityScope
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.ProductClickListener
-import woowacourse.shopping.ui.autoViewModel
 
 class CartActivity :
     AppCompatActivity(),

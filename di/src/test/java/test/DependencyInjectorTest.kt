@@ -11,7 +11,6 @@ import test.fixture.FakeAppContainer
 import test.fixture.FakeCartRepositoryImpl
 import test.fixture.FakeCartViewModel
 import test.fixture.FakeProductRepository
-import test.fixture.NoAnnotationViewModel
 
 class DependencyInjectorTest {
     private lateinit var fakeCartRepository: FakeCartRepositoryImpl
@@ -34,8 +33,7 @@ class DependencyInjectorTest {
 
         // when
         val viewModel =
-            DependencyInjector.getInstance(FakeCartViewModel::class)
-        DependencyInjector.injectAnnotatedProperties(FakeCartViewModel::class, viewModel)
+            DependencyInjector.getOrCreateInstance(FakeCartViewModel::class)
 
         // then
         Assert.assertEquals(fakeCartRepository, viewModel.fakeCartRepository)
@@ -49,12 +47,12 @@ class DependencyInjectorTest {
 
         // when
         val databaseLogger =
-            DependencyInjector.getInstance(
+            DependencyInjector.getOrCreateInstance(
                 FakeProductRepository::class,
                 qualifier = DatabaseLogger::class,
             )
         val inMemoryLogger =
-            DependencyInjector.getInstance(
+            DependencyInjector.getOrCreateInstance(
                 FakeProductRepository::class,
                 qualifier = InMemoryLogger::class,
             )
@@ -63,19 +61,5 @@ class DependencyInjectorTest {
         softly.assertThat(inMemoryLogger).isSameAs(fakeProductRepository)
         softly.assertThat(databaseLogger).isSameAs(fakeProductRepository2)
         softly.assertAll()
-    }
-
-    @Test
-    fun `viewModel에 ViewModelScope어노테이션이 존재하지 않으면 예외가 발생한다`() {
-        // given
-
-        // when
-
-        // then
-        Assert.assertThrows(IllegalStateException::class.java) {
-            DependencyInjector.getInstance(
-                NoAnnotationViewModel::class,
-            )
-        }
     }
 }

@@ -1,4 +1,4 @@
-package woowacourse.shopping.ui
+package com.example.di
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider.Factory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
-import com.example.di.DependencyInjector
-import com.example.di.DependencyKey
 import com.example.di.scope.ViewModelScopeHandler
 
 class AutoViewModelFactory(
