@@ -30,9 +30,7 @@ object AppContainer : Container() {
             scopeType = ScopeType.ACTIVITY,
         ) {
             val scopeContext = requireScopeContext()
-            val identifier = scopeContext.identifierOf(ScopeType.ACTIVITY)
-            require(identifier is Context) { "Activity scope identifier must be an Android Context" }
-            identifier
+            scopeContext.identifierOf<Context>(ScopeType.ACTIVITY)
         }
 
         bindSingleton(ShoppingDatabase::class) {

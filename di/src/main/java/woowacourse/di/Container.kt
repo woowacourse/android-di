@@ -16,7 +16,16 @@ enum class ScopeType {
 class ScopeContext private constructor(
     private val identifiers: Map<ScopeType, Any>,
 ) {
-    fun identifierOf(scopeType: ScopeType): Any =
+    inline fun <reified T : Any> identifierOf(scopeType: ScopeType): T {
+        val identifier = findIdentifier(scopeType)
+        require(identifier is T) {
+            "Scope ${scopeType.name} identifier must be an instance of ${T::class.qualifiedName}"
+        }
+        @Suppress("UNCHECKED_CAST")
+        return identifier
+    }
+
+    fun findIdentifier(scopeType: ScopeType): Any =
         identifiers[scopeType]
             ?: error("Scope ${scopeType.name} is not registered in this context")
 
@@ -113,7 +122,7 @@ open class Container {
         return when (provider.scopeType) {
             ScopeType.NONE -> invokeWithScopeContext(effectiveContext) { provider.creator.invoke() } as T
             else -> {
-                val identifier = effectiveContext.identifierOf(provider.scopeType)
+                val identifier = effectiveContext.findIdentifier(provider.scopeType)
                 val instanceKey = ScopedInstanceKey(key, provider.scopeType, identifier)
                 scopedInstances.getOrPut(instanceKey) {
                     invokeWithScopeContext(effectiveContext) { provider.creator.invoke() }
