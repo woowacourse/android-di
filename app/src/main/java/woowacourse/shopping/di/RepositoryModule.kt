@@ -15,7 +15,7 @@ import woowacourse.shopping.domain.ProductRepository
 class RepositoryModule(
     context: Context,
 ) : Module {
-    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.Companion.instance(context)
+    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
 
     @Dependency
     @ViewModelLifespan
