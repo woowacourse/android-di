@@ -15,7 +15,7 @@ object AndroidContainer {
     fun <T : Any> register(
         clazz: KClass<T>,
         scope: Scope,
-        qualifier: String? = null,
+        qualifier: KClass<out Annotation>? = null,
         provider: () -> T,
     ) {
         when (scope) {
@@ -38,7 +38,7 @@ object AndroidContainer {
     fun <T : Any> instance(
         clazz: KClass<T>,
         scope: Scope,
-        qualifier: String? = null,
+        qualifier: KClass<out Annotation>? = null,
     ): T =
         when (scope) {
             is Scope.ApplicationScope ->
