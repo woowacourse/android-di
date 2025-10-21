@@ -20,13 +20,16 @@ object AndroidContainer {
     ) {
         when (scope) {
             is Scope.ApplicationScope -> appContainer.register(clazz, qualifier, provider)
-            is Scope.ActivityScope -> {
-                val container = activityContainers[scope.owner] ?: scope.owner.newContainer()
-                container.register(clazz, qualifier, provider)
-            }
 
             is Scope.ViewModelScope -> {
                 val container = viewModelContainers[scope.owner] ?: scope.owner.newContainer()
+                container.register(clazz, qualifier, provider)
+            }
+
+            is Scope.ActivityScope -> {
+                val container =
+                    activityContainers[scope.owner]
+                        ?: if (scope.retained) scope.owner.newRetainedContainer() else scope.owner.newContainer()
                 container.register(clazz, qualifier, provider)
             }
         }
@@ -41,16 +44,16 @@ object AndroidContainer {
             is Scope.ApplicationScope ->
                 appContainer.instance(clazz, qualifier)
 
-            is Scope.ActivityScope -> {
+            is Scope.ViewModelScope -> {
                 val container =
-                    activityContainers[scope.owner]
+                    viewModelContainers[scope.owner]
                         ?: error("No container found for ${scope.owner::class.simpleName}")
                 container.instance(clazz, qualifier)
             }
 
-            is Scope.ViewModelScope -> {
+            is Scope.ActivityScope -> {
                 val container =
-                    viewModelContainers[scope.owner]
+                    activityContainers[scope.owner]
                         ?: error("No container found for ${scope.owner::class.simpleName}")
                 container.instance(clazz, qualifier)
             }
@@ -62,6 +65,21 @@ object AndroidContainer {
             object : DefaultLifecycleObserver {
                 override fun onDestroy(owner: LifecycleOwner) {
                     activityContainers.remove(this@newContainer)
+                }
+            },
+        )
+        activityContainers[this] = container
+        return container
+    }
+
+    private fun ComponentActivity.newRetainedContainer(): DependencyContainer {
+        val container = DependencyContainer()
+        lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    if (isFinishing) {
+                        activityContainers.remove(this@newRetainedContainer)
+                    }
                 }
             },
         )

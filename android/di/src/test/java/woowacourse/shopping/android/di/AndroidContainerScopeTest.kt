@@ -3,6 +3,7 @@ package woowacourse.shopping.android.di
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -77,28 +78,72 @@ class AndroidContainerScopeTest {
 
     @Test
     fun `ActivityScope 는 Activity 가 종료되면 제거된다`() {
+        // given
         val controller = Robolectric.buildActivity(TestActivity::class.java).create()
         val activity = controller.get()
 
+        // when
         AndroidContainer.register(
             clazz = Any::class,
             scope = Scope.ActivityScope(activity),
         ) { Any() }
 
-        val beforeDestroy = AndroidContainer.instance(Any::class, Scope.ActivityScope(activity))
+        controller.configurationChange()
         controller.destroy()
 
-        val recreatedActivity = Robolectric.buildActivity(TestActivity::class.java).create().get()
+        // then
+        assertThrows(IllegalStateException::class.java) {
+            AndroidContainer.instance(Any::class, Scope.ActivityScope(activity))
+        }
+    }
+
+    @Test
+    fun `ActivityScope의 retained 속성을 true로 주면 Activity에 configuration change가 발생해도 유지된다`() {
+        // given
+        val controller = Robolectric.buildActivity(TestActivity::class.java).create()
+        val activity = controller.get()
 
         AndroidContainer.register(
             clazz = Any::class,
-            scope = Scope.ActivityScope(recreatedActivity),
+            scope = Scope.ActivityScope(activity, true),
         ) { Any() }
 
-        val afterDestroy =
-            AndroidContainer.instance(Any::class, Scope.ActivityScope(recreatedActivity))
+        val beforeConfigurationChange =
+            AndroidContainer.instance(Any::class, Scope.ActivityScope(activity, true))
 
-        assertThat(beforeDestroy).isNotSameInstanceAs(afterDestroy)
+        // when
+        controller.configurationChange()
+        controller.destroy()
+
+        val afterConfigurationChange =
+            AndroidContainer.instance(Any::class, Scope.ActivityScope(activity, true))
+
+        // then
+        assertThat(beforeConfigurationChange).isSameInstanceAs(afterConfigurationChange)
+    }
+
+    @Test
+    fun `ActivityScope의 retained 속성을 true로 주어도 Activity 가 finish()로 종료되면 제거된다`() {
+        // given
+        val controller = Robolectric.buildActivity(TestActivity::class.java).create()
+        val activity = controller.get()
+
+        AndroidContainer.register(
+            clazz = Any::class,
+            scope = Scope.ActivityScope(activity, true),
+        ) { Any() }
+
+        // when
+        activity.finish()
+        controller.destroy()
+
+        // then
+        assertThrows(IllegalStateException::class.java) {
+            AndroidContainer.instance(
+                Any::class,
+                Scope.ActivityScope(activity, true),
+            )
+        }
     }
 
     class TestActivity : ComponentActivity()
