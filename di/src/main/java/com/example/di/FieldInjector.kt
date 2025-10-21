@@ -33,4 +33,19 @@ object FieldInjector {
                 field.set(target, dependency)
             }
     }
+
+    fun inject(
+        target: Any,
+        scope: ActivityContainer,
+    ) {
+        val clazz = target.javaClass
+        clazz.declaredFields
+            .filter { it.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val qualifier = field.getAnnotation(Qualifier::class.java)?.name
+                val dependency = scope.get(field.type.kotlin, qualifier)
+                field.isAccessible = true
+                field.set(target, dependency)
+            }
+    }
 }

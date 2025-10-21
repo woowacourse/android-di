@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.ActivityContainer
 import com.example.di.FieldInjector
 import com.example.di.Inject
 import woowacourse.shopping.AutoViewModelFactory
@@ -25,12 +26,16 @@ class CartActivity : AppCompatActivity() {
             (application as ShoppingApplication).container,
         )
     }
+    private lateinit var activityScope: ActivityContainer
 
     @field:Inject
     lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activityScope = (application as ShoppingApplication).container.createActivityScope()
+        FieldInjector.inject(this, activityScope)
 
         FieldInjector.inject(
             target = this,
@@ -46,6 +51,11 @@ class CartActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
+    }
+
+    override fun onDestroy() {
+        activityScope.clear()
+        super.onDestroy()
     }
 
     private fun setupContentView() {

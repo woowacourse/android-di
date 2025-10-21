@@ -34,4 +34,6 @@ class ShoppingContainer {
     }
 
     fun createViewModelScope(): ViewModelContainer = ViewModelContainer(makers)
+
+    fun createActivityScope(): ActivityContainer = ActivityContainer(makers)
 }
