@@ -202,7 +202,7 @@ object DiContainer {
 
     private fun findInjectableConstructor(targetClass: KClass<*>): KFunction<*> {
         val constructorWithInjectAnnotation =
-            targetClass.constructors.firstOrNull { constructor ->
+            targetClass.constructors.find { constructor ->
                 constructor.annotations.any { it is Inject }
             }
         return constructorWithInjectAnnotation
@@ -211,9 +211,9 @@ object DiContainer {
     }
 
     private fun findQualifier(annotations: List<Annotation>): KClass<out Annotation>? {
-        return annotations.firstOrNull { annotation ->
+        return annotations.find { annotation ->
             annotation.annotationClass.annotations.any { metaAnnotation ->
-                metaAnnotation is Qualifier
+                metaAnnotation.annotationClass == Qualifier::class
             }
         }?.annotationClass
     }
