@@ -25,7 +25,7 @@ object Injector {
 
             val qualifierAnnotation =
                 javaField.annotations.firstOrNull { annotation ->
-                    annotation.annotationClass.annotations.any { metaAnnotation -> metaAnnotation is Qualifier }
+                    annotation.annotationClass.annotations.any { metaAnnotation -> metaAnnotation.annotationClass == Qualifier::class.java }
                 }?.annotationClass
 
             val dependencyInstance =
