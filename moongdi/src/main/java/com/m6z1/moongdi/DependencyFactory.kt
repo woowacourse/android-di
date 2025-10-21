@@ -8,10 +8,9 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
-fun KClass<*>.instantiate(): Any {
+fun KClass<*>.instantiate(context: ScopedDependencyInjector.InjectionContext): Any {
     val constructor =
-        primaryConstructor
-            ?: constructors.maxByOrNull { it.parameters.size }
+        primaryConstructor ?: constructors.maxByOrNull { it.parameters.size }
             ?: throw IllegalStateException("생성자를 찾을 수 없음: $simpleName")
 
     val instance =
@@ -20,7 +19,11 @@ fun KClass<*>.instantiate(): Any {
         } else {
             val args =
                 constructor.parameters.associateWith { param ->
-                    DependencyContainer.provide(param.type.jvmErasure.java)
+                    ScopedDependencyContainer.provide(
+                        param.type.jvmErasure.java,
+                        context.activityId,
+                        context.viewModelId,
+                    )
                 }
             constructor.callBy(args)
         }
@@ -31,7 +34,12 @@ fun KClass<*>.instantiate(): Any {
         .forEach { prop ->
             val field = prop.javaField ?: return@forEach
             field.isAccessible = true
-            val value = DependencyContainer.provide(prop.returnType.jvmErasure.java)
+            val value =
+                ScopedDependencyContainer.provide(
+                    prop.returnType.jvmErasure.java,
+                    context.activityId,
+                    context.viewModelId,
+                )
             field.set(instance, value)
         }
     return instance
