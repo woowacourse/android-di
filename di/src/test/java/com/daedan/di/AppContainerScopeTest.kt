@@ -7,6 +7,7 @@ import com.daedan.di.fixture.FakeInvalidScopeActivity
 import com.daedan.di.fixture.invalidScopeModule
 import com.daedan.di.fixture.testModule
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -16,10 +17,16 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(application = FakeApplication::class) // 👈 클래스 레벨에서 Application 지정
 class AppContainerScopeTest {
+    private lateinit var app: FakeApplication
+
+    @Before
+    fun setup() {
+        app = ApplicationProvider.getApplicationContext()
+    }
+
     @Test
     fun `인스턴스를 ViewModel Scope에 등록하면 액티비티가 파괴되어도 살아남는다`() {
         // given
-        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         app.register(app.testModule())
         val controller =
             Robolectric
@@ -38,7 +45,6 @@ class AppContainerScopeTest {
     @Test
     fun `인스턴스를 ActivityScope에 등록하면 액티비티가 파괴될 때 해제된다`() {
         // given
-        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         app.register(app.testModule())
         val controller =
             Robolectric
@@ -57,7 +63,6 @@ class AppContainerScopeTest {
     @Test
     fun `인스턴스를 ActivityRetainedScope에 등록하면 액티비티가 파괴되도 살아남는다`() {
         // given
-        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         app.register(app.testModule())
         val controller =
             Robolectric
@@ -76,7 +81,6 @@ class AppContainerScopeTest {
     @Test
     fun `다른 스코프에 등록된 객체를 가져올 수 없다`() {
         // given
-        val app = ApplicationProvider.getApplicationContext<FakeApplication>()
         val module = app.invalidScopeModule()
         val controller =
             Robolectric
