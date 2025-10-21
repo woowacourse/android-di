@@ -24,14 +24,21 @@ fun installAllBindings(
         ProductRepository::class,
         Local::class,
         ViewModelScope::class,
-    ) { ProductRepositoryImpl() }
-    builder.register(CartRepository::class, Local::class, AppScope::class) {
-        CartRepositoryImpl(
-            cartDao,
-        )
+    ) {
+        ProductRepositoryImpl()
+    }
+    builder.register(
+        CartRepository::class,
+        Local::class,
+        AppScope::class,
+    ) {
+        CartRepositoryImpl(cartDao)
     }
 
-    builder.register(Context::class, AppScope::class) { appContext.applicationContext }
+    builder.register(
+        Context::class,
+        AppScope::class,
+    ) { appContext.applicationContext }
     builder.register(
         DateFormatter::class,
         ActivityScope::class,
