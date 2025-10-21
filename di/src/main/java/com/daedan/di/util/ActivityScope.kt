@@ -1,8 +1,8 @@
 package com.daedan.di.util
 
 import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
-import androidx.core.app.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.daedan.di.AppContainerStore
