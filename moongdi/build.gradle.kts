@@ -25,4 +25,5 @@ android {
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.kotlin.reflect)
+    implementation(libs.appcompat)
 }
