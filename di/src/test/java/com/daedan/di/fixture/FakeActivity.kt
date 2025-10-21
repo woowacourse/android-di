@@ -2,7 +2,7 @@ package com.daedan.di.fixture
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import com.daedan.di.DiApplication
+import com.daedan.di.DiComponent
 import com.daedan.di.module
 import com.daedan.di.util.activityRetainedScope
 import com.daedan.di.util.activityScope
@@ -39,7 +39,7 @@ class FakeInvalidScopeActivity : ComponentActivity() {
     }
 }
 
-fun DiApplication.testModule() =
+fun DiComponent.testModule() =
     module {
         scope<TestViewModel> {
             scoped { Child1() }
@@ -53,7 +53,7 @@ fun DiApplication.testModule() =
         }
     }
 
-fun DiApplication.invalidScopeModule() =
+fun DiComponent.invalidScopeModule() =
     module {
         single { Child2() }
         scope<FakeInvalidScopeActivity> {

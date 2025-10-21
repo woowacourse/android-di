@@ -6,7 +6,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.daedan.di.AppContainerStore
-import com.daedan.di.DiApplication
+import com.daedan.di.DiComponent
 import com.daedan.di.qualifier.Qualifier
 import com.daedan.di.qualifier.TypeQualifier
 import com.daedan.di.scope.Scope
@@ -16,7 +16,7 @@ import com.daedan.di.scope.UniqueScope
 @MainThread
 fun ComponentActivity.activityScope(scope: Scope = TypeScope(this::class)): Lazy<UniqueScope> =
     lazy {
-        val store = (this.application as DiApplication).appContainerStore
+        val store = (this.application as DiComponent).appContainerStore
         val uniqueScope = UniqueScope(scope)
 
         if (!store.isScopeOpen(uniqueScope)) {
@@ -30,7 +30,7 @@ inline fun <reified T> ComponentActivity.inject(
     qualifier: Qualifier = TypeQualifier(T::class),
 ): Lazy<T> =
     lazy {
-        val store = (this.application as DiApplication).appContainerStore
+        val store = (this.application as DiComponent).appContainerStore
         store.instantiate(qualifier, scope.value) as T
     }
 

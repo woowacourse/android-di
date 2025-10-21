@@ -6,7 +6,7 @@ data class DependencyModule(
     val factories: List<DependencyFactory<*>>,
 )
 
-fun DiApplication.module(block: DependencyModuleBuilder.() -> Unit): DependencyModule = module(appContainerStore, block)
+fun DiComponent.module(block: DependencyModuleBuilder.() -> Unit): DependencyModule = module(appContainerStore, block)
 
 fun module(
     container: AppContainerStore,
