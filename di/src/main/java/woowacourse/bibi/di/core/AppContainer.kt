@@ -53,7 +53,19 @@ internal class AppContainer(
 
     private fun root(): AppContainer = parent?.root() ?: this
 
-    private fun nearest(target: KClass<out Annotation>): AppContainer? = if (this.scope == target) this else parent?.nearest(target)
+    private fun nearest(
+        target: KClass<out Annotation>,
+        orElse: (() -> AppContainer)? = null,
+    ): AppContainer {
+        var current: AppContainer? = this
+        while (current != null) {
+            if (current.scope == target) return current
+            current = current.parent
+        }
+
+        return orElse?.invoke()
+            ?: error("요청한 스코프(${target.simpleName})에 해당하는 컨테이너를 찾을 수 없습니다.")
+    }
 
     private fun createByConstructorInjection(target: KClass<*>): Any {
         val constructor =
