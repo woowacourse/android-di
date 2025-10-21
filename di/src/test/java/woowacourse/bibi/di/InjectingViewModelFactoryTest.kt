@@ -1,6 +1,8 @@
 package woowacourse.bibi.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
@@ -29,32 +31,38 @@ class InjectingViewModelFactoryTest {
 
     class TestFormatter
 
-    class ConstructorTestViewModel(
+    private class ConstructorTestViewModel(
         @Remote val product: ProductRepository,
         @Local val cart: CartRepository,
     ) : ViewModel()
 
-    class FieldTestViewModel : ViewModel() {
+    private class FieldTestViewModel : ViewModel() {
         @Inject
         @Remote
         lateinit var product: ProductRepository
         var notInjected: CartRepository? = null
     }
 
-    class ScopedViewModel(
+    private class ScopedViewModel(
         @Local val cart: CartRepository,
         @Local val product: ProductRepository,
         val formatter: TestFormatter,
     ) : ViewModel()
 
+    private class TestOwner : ViewModelStoreOwner {
+        override val viewModelStore = ViewModelStore()
+    }
+
     private lateinit var factory: InjectingViewModelFactory
     private lateinit var productRepo: ProductRepository
     private lateinit var cartRepo: CartRepository
+    private lateinit var owner: ViewModelStoreOwner
 
     @Before
     fun setup() {
         productRepo = FakeProductRepository()
         cartRepo = FakeCartRepository()
+        owner = TestOwner()
 
         val container =
             MapBackedContainer(
@@ -64,7 +72,7 @@ class InjectingViewModelFactoryTest {
                 ),
             )
 
-        factory = InjectingViewModelFactory(container)
+        factory = InjectingViewModelFactory(container, owner)
     }
 
     @Test
@@ -96,7 +104,7 @@ class InjectingViewModelFactoryTest {
             MapBackedContainer(
                 mapOf(Key(ProductRepository::class, Remote::class) to productRepo),
             )
-        val brokenFactory = InjectingViewModelFactory(brokenContainer)
+        val brokenFactory = factoryFor(brokenContainer, owner)
 
         // when
         brokenFactory.create(ConstructorTestViewModel::class.java)
@@ -125,11 +133,11 @@ class InjectingViewModelFactoryTest {
 
         // when
         val activity1 = appContainer.child(ActivityScope::class)
-        val factory1 = InjectingViewModelFactory(activity1)
+        val factory1 = factoryFor(activity1, TestOwner())
         val viewModel1OfActivity1 = factory1.create(ScopedViewModel::class.java)
 
         val activity2 = appContainer.child(ActivityScope::class)
-        val factory2 = InjectingViewModelFactory(activity2)
+        val factory2 = factoryFor(activity2, TestOwner())
         val viewModel2OfActivity1 = factory2.create(ScopedViewModel::class.java)
 
         // then
@@ -159,8 +167,10 @@ class InjectingViewModelFactoryTest {
                 }
             }
         val appContainer = builder.build()
+
         val activity = appContainer.child(ActivityScope::class)
-        val factory = InjectingViewModelFactory(activity)
+        val sameOwner = TestOwner()
+        val factory = factoryFor(activity, sameOwner)
 
         // when
         val viewModel1 = factory.create(ScopedViewModel::class.java)
@@ -200,18 +210,25 @@ class InjectingViewModelFactoryTest {
 
         // when
         val activity1 = appContainer.child(ActivityScope::class)
-        val factory1 = InjectingViewModelFactory(activity1)
+        val owner1 = TestOwner()
+        val factory1 = factoryFor(activity1, owner1)
         val viewModel1OfActivity1 = factory1.create(ScopedViewModel::class.java)
         val viewModel2OfActivity1 = factory1.create(ScopedViewModel::class.java)
 
         val activity2 = appContainer.child(ActivityScope::class)
-        val factory2 = InjectingViewModelFactory(activity2)
+        val owner2 = TestOwner()
+        val factory2 = factoryFor(activity2, owner2)
         val viewModel1OfActivity2 = factory2.create(ScopedViewModel::class.java)
 
         // then
         assertSame(viewModel1OfActivity1.formatter, viewModel2OfActivity1.formatter)
         assertNotSame(viewModel1OfActivity1.formatter, viewModel1OfActivity2.formatter)
     }
+
+    private fun factoryFor(
+        container: Container,
+        owner: ViewModelStoreOwner,
+    ) = InjectingViewModelFactory(container, owner)
 
     private class MapBackedContainer(
         private val map: Map<Key, Any>,
