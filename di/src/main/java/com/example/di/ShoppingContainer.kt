@@ -2,11 +2,6 @@ package com.example.di
 
 import kotlin.reflect.KClass
 
-private data class Key(
-    val type: KClass<*>,
-    val qualifier: String?,
-)
-
 class ShoppingContainer {
     private val instances = mutableMapOf<Key, Any>()
     private val makers = mutableMapOf<Key, () -> Any>()
@@ -37,4 +32,6 @@ class ShoppingContainer {
         instances[key] = newInstance
         return newInstance as T
     }
+
+    fun createViewModelScope(): ViewModelContainer = ViewModelContainer(makers)
 }
