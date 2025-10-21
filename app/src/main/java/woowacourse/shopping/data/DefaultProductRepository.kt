@@ -1,7 +1,9 @@
 package woowacourse.shopping.data
 
+import com.m6z1.moongdi.annotation.ViewModelScope
 import woowacourse.shopping.model.Product
 
+@ViewModelScope
 class DefaultProductRepository : ProductRepository {
     private val products: List<Product> =
         listOf(

@@ -2,8 +2,8 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.m6z1.moongdi.BaseViewModel
 import com.m6z1.moongdi.annotation.InjectClass
 import com.m6z1.moongdi.annotation.InjectField
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ import woowacourse.shopping.di.RoomDB
 import woowacourse.shopping.model.Product
 
 @InjectClass
-class MainViewModel : ViewModel() {
+class MainViewModel : BaseViewModel() {
     @InjectField
     private lateinit var productRepository: ProductRepository
 
