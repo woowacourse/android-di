@@ -1,17 +1,67 @@
 package woowacourse.bibi.di.core
 
+import kotlin.concurrent.getOrSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+import kotlin.reflect.full.primaryConstructor
 
-interface AppContainer {
-    fun resolve(type: KType): Any = resolve(type, null)
+internal class AppContainer(
+    private val parent: AppContainer?,
+    private val scope: KClass<out Annotation>,
+    private val providers: Map<Key, Binding>,
+) : Container {
+    private val cache = mutableMapOf<Key, Any>()
+    private val resolving = ThreadLocal<MutableSet<KType>>()
 
-    fun resolve(
+    override fun resolve(
         type: KType,
-        qualifier: KClass<out Annotation>? = null,
-    ): Any
+        qualifier: KClass<out Annotation>?,
+    ): Any {
+        val kClass =
+            type.classifier as? KClass<*>
+                ?: error("지원하지 않는 타입: $type")
 
-    fun child(scope: KClass<out Annotation>): AppContainer
+        val key = Key(kClass, qualifier)
+        val binding = providers[key]
 
-    fun clear()
+        if (binding != null) {
+            val owner = findOwner(binding.scope)
+            return owner.cache.computeIfAbsent(key) { binding.provider() }
+        }
+
+        if (kClass.isAbstract || kClass.isSealed || kClass.java.isInterface) {
+            error("바인딩 누락: $kClass (qualifier=${qualifier?.simpleName})")
+        }
+
+        val seen = resolving.getOrSet { mutableSetOf() }
+        return seen.withElement(type) { createByConstructorInjection(kClass) }
+    }
+
+    override fun child(scope: KClass<out Annotation>): AppContainer = AppContainer(parent = this, scope = scope, providers = providers)
+
+    override fun clear() {
+        cache.clear()
+    }
+
+    private fun findOwner(targetScope: KClass<out Annotation>): AppContainer =
+        when (targetScope) {
+            AppScope::class -> root()
+            ActivityScope::class -> nearest(ActivityScope::class) ?: root()
+            ViewModelScope::class -> nearest(ViewModelScope::class) ?: this
+            else -> this
+        }
+
+    private fun root(): AppContainer = parent?.root() ?: this
+
+    private fun nearest(target: KClass<out Annotation>): AppContainer? = if (this.scope == target) this else parent?.nearest(target)
+
+    private fun createByConstructorInjection(target: KClass<*>): Any {
+        val constructor =
+            target.primaryConstructor
+                ?: target.constructors.maxByOrNull { it.parameters.size }
+                ?: error("생성자 없음: ${target.qualifiedName}")
+
+        val args = constructor.parameters.map { resolve(it.type, null) }.toTypedArray()
+        return constructor.call(*args)
+    }
 }

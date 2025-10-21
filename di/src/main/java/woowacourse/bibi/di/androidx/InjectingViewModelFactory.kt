@@ -2,7 +2,7 @@ package woowacourse.bibi.di.androidx
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.Container
 import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.bibi.di.core.Qualifier
 import woowacourse.bibi.di.core.ViewModelScope
@@ -12,7 +12,7 @@ import kotlin.reflect.full.primaryConstructor
 
 @Suppress("UNCHECKED_CAST")
 class InjectingViewModelFactory(
-    private val container: AppContainer,
+    private val container: Container,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModelContainer = container.child(ViewModelScope::class)

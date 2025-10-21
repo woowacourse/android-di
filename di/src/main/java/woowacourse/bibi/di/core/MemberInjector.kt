@@ -6,7 +6,7 @@ import kotlin.reflect.full.hasAnnotation
 object MemberInjector {
     fun inject(
         target: Any,
-        container: AppContainer,
+        container: Container,
     ) {
         target::class.java.declaredFields
             .filter { it.isAnnotationPresent(Inject::class.java) }

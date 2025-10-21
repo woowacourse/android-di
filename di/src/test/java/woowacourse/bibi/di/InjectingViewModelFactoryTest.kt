@@ -1,18 +1,16 @@
 package woowacourse.bibi.di
 
 import androidx.lifecycle.ViewModel
-import org.junit.Assert
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import woowacourse.bibi.di.androidx.InjectingViewModelFactory
 import woowacourse.bibi.di.core.ActivityScope
-import woowacourse.bibi.di.core.AppContainer
 import woowacourse.bibi.di.core.AppScope
+import woowacourse.bibi.di.core.Container
 import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.Inject
 import woowacourse.bibi.di.core.Local
@@ -37,7 +35,8 @@ class InjectingViewModelFactoryTest {
     ) : ViewModel()
 
     class FieldTestViewModel : ViewModel() {
-        @Inject @Remote
+        @Inject
+        @Remote
         lateinit var product: ProductRepository
         var notInjected: CartRepository? = null
     }
@@ -111,7 +110,11 @@ class InjectingViewModelFactoryTest {
                 register(CartRepository::class, Local::class, AppScope::class) {
                     FakeCartRepository()
                 }
-                register(ProductRepository::class, Local::class, woowacourse.bibi.di.core.ViewModelScope::class) {
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
                     FakeProductRepository()
                 }
                 register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
@@ -137,10 +140,18 @@ class InjectingViewModelFactoryTest {
     fun `ViewModelScope ProductRepository는 같은 Activity 내에서도 ViewModel마다 서로 다르다`() {
         val builder =
             ContainerBuilder().apply {
-                register(CartRepository::class, Local::class, woowacourse.bibi.di.core.AppScope::class) {
+                register(
+                    CartRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.AppScope::class,
+                ) {
                     FakeCartRepository()
                 }
-                register(ProductRepository::class, Local::class, woowacourse.bibi.di.core.ViewModelScope::class) {
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
                     FakeProductRepository()
                 }
                 register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
@@ -167,10 +178,18 @@ class InjectingViewModelFactoryTest {
         // given
         val builder =
             ContainerBuilder().apply {
-                register(CartRepository::class, Local::class, woowacourse.bibi.di.core.AppScope::class) {
+                register(
+                    CartRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.AppScope::class,
+                ) {
                     FakeCartRepository()
                 }
-                register(ProductRepository::class, Local::class, woowacourse.bibi.di.core.ViewModelScope::class) {
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
                     FakeProductRepository()
                 }
                 register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
@@ -196,7 +215,7 @@ class InjectingViewModelFactoryTest {
 
     private class MapBackedContainer(
         private val map: Map<Key, Any>,
-    ) : AppContainer {
+    ) : Container {
         override fun resolve(
             type: KType,
             qualifier: KClass<out Annotation>?,
@@ -208,7 +227,9 @@ class InjectingViewModelFactoryTest {
                 ?: error("No binding for $kClass (qualifier=${qualifier?.simpleName})")
         }
 
-        override fun child(scope: KClass<out Annotation>): AppContainer = this
+        override fun child(scope: KClass<out Annotation>): Container = this
+
+        override fun clear() = Unit
     }
 
     private data class Key(

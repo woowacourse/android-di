@@ -23,9 +23,9 @@ class ContainerBuilder {
         provider: () -> A,
     ): ContainerBuilder = apply { providers[Key(abstractType, qualifier)] = Binding(provider as () -> Any, scope) }
 
-    fun build(): AppContainer {
+    fun build(): Container {
         val providersSnap = providers.toMap()
-        return Container(
+        return AppContainer(
             parent = null,
             scope = AppScope::class,
             providers = providersSnap,

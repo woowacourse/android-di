@@ -6,8 +6,8 @@ import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
 import woowacourse.bibi.di.core.ActivityScope
-import woowacourse.bibi.di.core.AppContainer
 import woowacourse.bibi.di.core.AppScope
+import woowacourse.bibi.di.core.Container
 import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.ViewModelScope
 import kotlin.reflect.typeOf
@@ -29,12 +29,12 @@ class ScopeBehaviorTest {
         val df: DateFormatter,
     ) : ViewModel()
 
-    private lateinit var app: AppContainer
-    private lateinit var activity1: AppContainer
-    private lateinit var activity2: AppContainer
-    private lateinit var vm1OfActivity1: AppContainer
-    private lateinit var vm2OfActivity1: AppContainer
-    private lateinit var vm1OfActivity2: AppContainer
+    private lateinit var app: Container
+    private lateinit var activity1: Container
+    private lateinit var activity2: Container
+    private lateinit var vm1OfActivity1: Container
+    private lateinit var vm2OfActivity1: Container
+    private lateinit var vm1OfActivity2: Container
 
     @Before
     fun setup() {
