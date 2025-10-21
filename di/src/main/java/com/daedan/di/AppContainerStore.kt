@@ -79,19 +79,24 @@ class AppContainerStore {
         if (isDifferentScopeRequested(creator, scope)) {
             error("$ERR_ILLEGAL_SCPE_REQUESTED,  request $scope but actual ${creator.scope} at $qualifier")
         }
+        synchronized(this) {
+            // 성능 이점을 위하여 락의 범위를 세분화함에 따라 더블 체킹 로직을 수행합니다
+            if (scopedContainer.containsKey(qualifier)) {
+                return scopedContainer[qualifier] ?: error("$ERR_CANNOT_FIND_INSTANCE : $qualifier")
+            }
+            if (inProgress.contains(qualifier)) {
+                error("$ERR_CIRCULAR_DEPENDENCY_DETECTED : $qualifier")
+            }
 
-        if (inProgress.contains(qualifier)) {
-            error("$ERR_CIRCULAR_DEPENDENCY_DETECTED : $qualifier")
-        }
-
-        inProgress.add(qualifier)
-        try {
-            val instance = creator.invoke(scope)
-            injectField(instance, scope)
-            scope.save(qualifier, instance)
-            return instance
-        } finally {
-            inProgress.remove(qualifier)
+            inProgress.add(qualifier)
+            try {
+                val instance = creator.invoke(scope)
+                injectField(instance, scope)
+                scope.save(qualifier, instance)
+                return instance
+            } finally {
+                inProgress.remove(qualifier)
+            }
         }
     }
 
@@ -132,12 +137,14 @@ class AppContainerStore {
         qualifier: Qualifier,
         instance: Any,
     ) {
-        val createRule = factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
+        val createRule =
+            factory[qualifier]?.createRule ?: error("$ERR_CONSTRUCTOR_NOT_FOUND : $qualifier")
         when (createRule) {
             CreateRule.SINGLE -> {
                 val container = cache.getOrPut(this) { DependencyContainer() }
                 container[qualifier] = instance
             }
+
             CreateRule.FACTORY -> Unit
         }
     }

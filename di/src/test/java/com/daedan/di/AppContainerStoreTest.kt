@@ -25,6 +25,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import kotlin.concurrent.thread
 
 class AppContainerStoreTest {
     @Test
@@ -313,5 +314,35 @@ class AppContainerStoreTest {
                 TypeQualifier(FieldAndConstructorInjection::class),
             ) as FieldAndConstructorInjection
         }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `동시에 같은 스레드에서 요청해도 한 번만 객체가 생성된다`() {
+        // given
+        val appContainerStore = AppContainerStore()
+        val module =
+            module(appContainerStore) {
+                single { Child1() }
+                single { Child2() }
+                single { Parent(get(), get()) }
+            }
+        appContainerStore.registerFactory(module)
+        var actual1: Parent? = null
+        var actual2: Parent? = null
+
+        // when
+        val thread1 =
+            thread {
+                actual1 = appContainerStore.instantiate(TypeQualifier(Parent::class)) as Parent
+            }
+        val thread2 =
+            thread {
+                actual2 = appContainerStore.instantiate(TypeQualifier(Parent::class)) as Parent
+            }
+        thread1.join()
+        thread2.join()
+
+        // then
+        assertThat(actual1).isSameAs(actual2)
     }
 }
