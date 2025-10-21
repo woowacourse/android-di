@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import woowacourse.di.DIScopeManager
-import woowacourse.di.ScopeType
 import woowacourse.di.annotation.Inject
 import woowacourse.di.annotation.RoomDB
 import woowacourse.di.annotation.SingletonScope
@@ -22,7 +21,7 @@ class MainViewModel : ViewModel() {
     lateinit var cartRepository: CartRepository
 
     @Inject
-    @ViewModelScope
+    @ViewModelScope(SCOPE_KEY)
     lateinit var productRepository: ProductRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
@@ -44,6 +43,10 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        DIScopeManager.clearScope(ScopeType.ViewModel)
+        DIScopeManager.clearScope(SCOPE_KEY)
+    }
+
+    companion object {
+        private const val SCOPE_KEY: String = "MainViewModel"
     }
 }

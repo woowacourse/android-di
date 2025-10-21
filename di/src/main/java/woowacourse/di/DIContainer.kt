@@ -17,16 +17,18 @@ object DIContainer {
         clazz: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scope: ScopeType = ScopeType.Singleton,
+        scopeKey: String = "",
     ): T {
-        val key = clazz to qualifier
-        val creator =
-            providers[key]
-                ?: throw Exception("No provider for $clazz with qualifier $qualifier")
+        val dependencyKey = clazz to qualifier
 
-        DIScopeManager.getInstance(scope, key)?.let { return it as T }
+        val creator =
+            providers[dependencyKey]
+                ?: throw IllegalStateException("No provider for $clazz with qualifier $qualifier")
+
+        DIScopeManager.getInstance(scope, scopeKey, dependencyKey)?.let { return it as T }
 
         val instance = creator()
-        DIScopeManager.putInstance(scope, key, instance)
+        DIScopeManager.putInstance(scope, scopeKey, dependencyKey, instance)
         return instance as T
     }
 }

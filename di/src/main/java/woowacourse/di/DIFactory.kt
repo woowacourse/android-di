@@ -32,11 +32,13 @@ object DIFactory {
                         param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
                     val scopeAnnotation =
                         param.annotations.firstOrNull { it.annotationClass.hasAnnotation<Scope>() }?.annotationClass
-                    val scope = extractScopeFromAnnotations(scopeAnnotation)
+                    val (scopeType, scopeKey) = extractScopeFromAnnotations(scopeAnnotation)
+
                     val typeKClass =
                         param.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("Unsupported parameter type: ${param.type}")
-                    DIContainer.get(typeKClass, qualifier, scope)
+
+                    DIContainer.get(typeKClass, qualifier, scopeType, scopeKey)
                 } else {
                     null
                 }
@@ -61,19 +63,24 @@ object DIFactory {
                     property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Qualifier>() }?.annotationClass
                 val scopeAnnotation =
                     property.annotations.firstOrNull { it.annotationClass.hasAnnotation<Scope>() }?.annotationClass
-                val scope = extractScopeFromAnnotations(scopeAnnotation)
+                val (scopeType, scopeKey) = extractScopeFromAnnotations(scopeAnnotation)
 
-                val dependency = DIContainer.get(dependencyClass, qualifier, scope)
+                val dependency = DIContainer.get(dependencyClass, qualifier, scopeType, scopeKey)
                 property.set(instance, dependency)
             }
     }
 
-    private fun extractScopeFromAnnotations(scopeAnnotation: KClass<out Annotation>?): ScopeType {
+    private fun extractScopeFromAnnotations(scopeAnnotation: KClass<out Annotation>?): Pair<ScopeType, String> {
         return when (scopeAnnotation) {
-            SingletonScope::class -> ScopeType.Singleton
-            ActivityScope::class -> ScopeType.Activity
-            ViewModelScope::class -> ScopeType.ViewModel
-            else -> ScopeType.Singleton
+            SingletonScope::class -> ScopeType.Singleton to ""
+            ActivityScope::class -> ScopeType.Activity to getScopeKey(scopeAnnotation)
+            ViewModelScope::class -> ScopeType.ViewModel to getScopeKey(scopeAnnotation)
+            else -> ScopeType.Singleton to ""
         }
+    }
+
+    private fun getScopeKey(scopeAnnotation: KClass<out Annotation>): String {
+        val keyProp = scopeAnnotation.memberProperties.firstOrNull { it.name == "key" }
+        return keyProp?.getter?.call(scopeAnnotation.objectInstance ?: return "") as? String ?: ""
     }
 }

@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import woowacourse.di.DIFactory
 import woowacourse.di.DIScopeManager
 import woowacourse.di.DIViewModelFactory
-import woowacourse.di.ScopeType
 import woowacourse.di.annotation.ActivityScope
 import woowacourse.di.annotation.Inject
 import woowacourse.shopping.R
@@ -24,7 +23,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     @Inject
-    @ActivityScope
+    @ActivityScope(SCOPE_KEY)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +89,10 @@ class CartActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        DIScopeManager.clearScope(ScopeType.Activity)
+        DIScopeManager.clearScope(SCOPE_KEY)
+    }
+
+    companion object {
+        private const val SCOPE_KEY: String = "CartActivity"
     }
 }

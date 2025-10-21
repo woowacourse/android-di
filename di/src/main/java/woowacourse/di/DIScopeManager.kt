@@ -1,28 +1,36 @@
 package woowacourse.di
 
-import kotlin.reflect.KClass
-
 object DIScopeManager {
-    private val scopedInstances =
-        mutableMapOf<ScopeType, MutableMap<Pair<KClass<*>, KClass<out Annotation>?>, Any>>()
+    private val singletonInstances = mutableMapOf<Any, Any>()
+    private val scopedInstances = mutableMapOf<String, MutableMap<Any, Any>>()
 
     fun getInstance(
         scope: ScopeType,
-        key: Pair<KClass<*>, KClass<out Annotation>?>,
+        scopeKey: String,
+        dependencyKey: Any,
     ): Any? {
-        return scopedInstances[scope]?.get(key)
+        return when (scope) {
+            ScopeType.Singleton -> singletonInstances[dependencyKey]
+            ScopeType.Activity, ScopeType.ViewModel -> scopedInstances[scopeKey]?.get(dependencyKey)
+        }
     }
 
     fun putInstance(
         scope: ScopeType,
-        key: Pair<KClass<*>, KClass<out Annotation>?>,
+        scopeKey: String,
+        dependencyKey: Any,
         instance: Any,
     ) {
-        val map = scopedInstances.getOrPut(scope) { mutableMapOf() }
-        map[key] = instance
+        when (scope) {
+            ScopeType.Singleton -> singletonInstances[dependencyKey] = instance
+            ScopeType.Activity, ScopeType.ViewModel -> {
+                scopedInstances.computeIfAbsent(scopeKey) { mutableMapOf() }[dependencyKey] =
+                    instance
+            }
+        }
     }
 
-    fun clearScope(scope: ScopeType) {
-        scopedInstances.remove(scope)
+    fun clearScope(scopeKey: String) {
+        scopedInstances.remove(scopeKey)
     }
 }
