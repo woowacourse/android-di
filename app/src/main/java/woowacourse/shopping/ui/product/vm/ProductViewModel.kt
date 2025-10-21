@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.Inject
+import com.example.di.Qualifier
 import com.example.domain.model.Product
 import com.example.domain.repository.CartRepository
 import com.example.domain.repository.ProductRepository
@@ -15,6 +16,7 @@ class ProductViewModel : ViewModel() {
     private lateinit var productRepository: ProductRepository
 
     @field:Inject
+    @Qualifier("room")
     lateinit var cartRepository: CartRepository
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

@@ -28,7 +28,7 @@ class ShoppingContainer {
         val key = Key(type, qualifier)
         instances[key]?.let { return it as T }
 
-        val maker: () -> Any = makers[key] ?: error("${type.simpleName} 만드는 방법이 없습니다.")
+        val maker: () -> Any = makers[key] ?: error(  "${type.simpleName}[qualifier=$qualifier] 만드는 방법이 없습니다. 등록된 키=${makers.keys}")
         val newInstance: Any = maker()
         instances[key] = newInstance
         return newInstance as T
