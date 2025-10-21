@@ -19,15 +19,15 @@ class RepositoryModule(
 
     @Dependency
     @ViewModelLifespan
-    val productRepository: ProductRepository by lazy { DefaultProductRepository() }
+    fun productRepository(): ProductRepository = DefaultProductRepository()
 
     @Dependency
     @ApplicationLifespan
     @DatabaseRepository
-    val databaseCartRepository: CartRepository by lazy { DatabaseCartRepository(shoppingDatabase.cartProductDao()) }
+    fun databaseCartRepository(): CartRepository = DatabaseCartRepository(shoppingDatabase.cartProductDao())
 
     @Dependency
     @ApplicationLifespan
     @InMemoryRepository
-    val inMemoryCartRepository: CartRepository by lazy { InMemoryCartRepository() }
+    fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 }

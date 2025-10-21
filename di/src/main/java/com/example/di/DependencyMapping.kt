@@ -1,8 +1,8 @@
 package com.example.di
 
-import kotlin.reflect.KProperty1
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
 
 class DependencyMapping(
     vararg module: Module,
@@ -11,31 +11,40 @@ class DependencyMapping(
     private val dependencyGetters: Map<Scope, MutableMap<Identifier, () -> Any>> =
         Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
 
+    private val dependencyMapping: Map<Scope, MutableMap<Identifier, Any>> =
+        Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
+
     init {
         module.forEach(::initialize)
     }
 
     fun get(identifier: Identifier): Any {
         val scope: Scope = scope(identifier)
-        val getter: MutableMap<Identifier, () -> Any> = getters(scope)
-        return getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
+        val mapping: MutableMap<Identifier, Any> = mapping(scope)
+
+        return mapping[identifier] ?: run {
+            val getter: MutableMap<Identifier, () -> Any> = getters(scope)
+            val instance =
+                getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
+            mapping[identifier] = instance
+            return instance
+        }
     }
 
     fun clear(scope: Scope) {
-        getters(scope).clear()
+        mapping(scope).clear()
     }
 
     private fun initialize(module: Module) {
-        module::class.memberProperties.forEach { property: KProperty1<out Module, *> ->
-            if (!property.hasAnnotation<Dependency>()) return@forEach
+        module::class.functions.forEach { function: KFunction<*> ->
+            if (!function.hasAnnotation<Dependency>()) return@forEach
 
-            val identifier = Identifier.from(property)
-            val scope = Scope.from(property)
+            val identifier = Identifier.from(function)
+            val scope = Scope.from(function)
             identifierScopes[identifier] = scope
-            getters(scope)[identifier] =
-                {
-                    property.getter.call(module) ?: error("$property's getter returned null.")
-                }
+            getters(scope)[identifier] = {
+                function.call(module) ?: error("${function.returnType}'s getter returned null.")
+            }
         }
     }
 
@@ -44,4 +53,7 @@ class DependencyMapping(
 
     private fun getters(scope: Scope): MutableMap<Identifier, () -> Any> =
         dependencyGetters[scope] ?: error("Getters for $scope has not been initialized.")
+
+    private fun mapping(scope: Scope): MutableMap<Identifier, Any> =
+        dependencyMapping[scope] ?: error("Dependency for $scope has not been initialized.")
 }

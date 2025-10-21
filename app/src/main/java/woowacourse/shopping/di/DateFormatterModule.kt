@@ -7,9 +7,9 @@ import com.example.di.Module
 import woowacourse.shopping.ui.cart.DateFormatter
 
 class DateFormatterModule(
-    context: Context,
+    private val context: Context,
 ) : Module {
     @Dependency
     @ActivityLifespan
-    val dateFormatter: DateFormatter by lazy { DateFormatter(context) }
+    fun dateFormatter(): DateFormatter = DateFormatter(context)
 }

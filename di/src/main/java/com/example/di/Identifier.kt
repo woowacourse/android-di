@@ -1,6 +1,7 @@
 package com.example.di
 
 import kotlin.reflect.KAnnotatedElement
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
@@ -11,6 +12,12 @@ data class Identifier(
     val qualifier: Annotation? = null,
 ) {
     companion object {
+        fun from(function: KFunction<*>): Identifier =
+            Identifier(
+                function.returnType,
+                qualifier(function),
+            )
+
         fun from(property: KProperty1<*, *>): Identifier =
             Identifier(
                 property.returnType,
