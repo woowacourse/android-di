@@ -1,6 +1,5 @@
 package com.example.di
 
-import java.rmi.server.LogStream
 import kotlin.jvm.java
 
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
