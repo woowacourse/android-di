@@ -2,6 +2,7 @@ package woowacourse.bibi.di.androidx
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import woowacourse.bibi.di.core.Container
 import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.bibi.di.core.Qualifier
@@ -12,10 +13,17 @@ import kotlin.reflect.full.primaryConstructor
 
 @Suppress("UNCHECKED_CAST")
 class InjectingViewModelFactory(
-    private val container: Container,
+    private val activityContainer: Container,
+    private val owner: ViewModelStoreOwner,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModelContainer = container.child(ViewModelScope::class)
+        val key = modelClass.name + VIEWMODEL_SCOPE_SUFFIX
+        val holder = ViewModelProvider(owner).get(key, ViewModelScopeHolder::class.java)
+
+        val viewModelContainer =
+            holder.getOrCreate {
+                activityContainer.child(ViewModelScope::class)
+            }
 
         val kClass: KClass<out ViewModel> = modelClass.kotlin
         val constructor =
@@ -32,7 +40,11 @@ class InjectingViewModelFactory(
                 }.toTypedArray()
 
         val instance = constructor.call(*args) as T
-        MemberInjector.inject(instance, container)
+        MemberInjector.inject(instance, viewModelContainer)
         return instance
+    }
+
+    companion object {
+        private const val VIEWMODEL_SCOPE_SUFFIX = ".scope"
     }
 }

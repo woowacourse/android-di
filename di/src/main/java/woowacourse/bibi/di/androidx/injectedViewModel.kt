@@ -7,5 +7,6 @@ import woowacourse.bibi.di.core.Container
 
 inline fun <reified T : ViewModel> ComponentActivity.injectedViewModel(crossinline appContainerProvider: () -> Container): T {
     val container = appContainerProvider()
-    return ViewModelProvider(this, InjectingViewModelFactory(container))[T::class.java]
+    val factory = InjectingViewModelFactory(container, this)
+    return ViewModelProvider(this, factory)[T::class.java]
 }
