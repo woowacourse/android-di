@@ -35,9 +35,9 @@ object DiContainer {
     ) {
         require(
             fromInterface != toImplementation &&
-                fromInterface.java.isAssignableFrom(
-                    toImplementation.java,
-                ),
+                    fromInterface.java.isAssignableFrom(
+                        toImplementation.java,
+                    ),
         )
         bindingMap[Key(fromInterface, qualifier)] =
             Binding(
@@ -111,26 +111,20 @@ object DiContainer {
             when (ownerComponent) {
                 is Component.Singleton ->
                     currentCache!!.getOrPut(Key(implementationClass, qualifier)) {
-                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                            provideOrCreate(binding, ownerComponent)
-                        }
+                        lazy { provideOrCreate(binding, ownerComponent) }
                     }
 
                 is Component.Activity -> {
                     val activityScopedCache = currentCache ?: throw IllegalStateException()
                     activityScopedCache.getOrPut(Key(implementationClass, qualifier)) {
-                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                            provideOrCreate(binding, ownerComponent)
-                        }
+                        lazy { provideOrCreate(binding, ownerComponent) }
                     }
                 }
 
                 is Component.ViewModel -> {
                     val viewModelScopedCache = currentCache ?: throw IllegalStateException()
                     viewModelScopedCache.getOrPut(Key(implementationClass, qualifier)) {
-                        lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-                            provideOrCreate(binding, ownerComponent)
-                        }
+                        lazy { provideOrCreate(binding, ownerComponent) }
                     }
                 }
             }
