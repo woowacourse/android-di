@@ -7,7 +7,6 @@ import com.on.di_library.di.annotation.MyModule
 import com.on.di_library.di.annotation.MyProvider
 import com.on.di_library.di.annotation.MyQualifier
 import dalvik.system.DexFile
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -21,17 +20,16 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DiContainer {
-    private val instancePool: ConcurrentHashMap<KClass<*>, Any> = ConcurrentHashMap()
     private val dependencyProviders = mutableMapOf<KClass<*>, MutableList<DependencyIdentifier>>()
 
     /** DiContainer에서 Context를 사용할 수 있도록 설정 **/
     fun setContext(context: Context) {
-        instancePool[Context::class] = context
+        ScopeContainer.setSingleton(Context::class, context)
     }
 
     /** 현재 패키지에 있는 클래스들 중 MyModule의 어노테이션이 붙어있는 모듈 찾기**/
     fun getAnnotatedModules() {
-        val context = instancePool[Context::class] as Application
+        val context = ScopeContainer.getSingleton(Context::class) as Application
         val dexFile = DexFile(context.packageCodePath)
         val entries = dexFile.entries()
 
@@ -90,10 +88,10 @@ object DiContainer {
         qualifier: String? = null,
         scopeId: Long = 0,
     ): T {
-        instancePool[kClass]?.let {
-            return kClass.cast(it)
+        if (kClass == Context::class) {
+            return ScopeContainer.getSingleton(kClass)
+                ?: error(ERROR_MESSAGE_NOT_SET)
         }
-
         val scopeType = getScopeType(kClass)
         return ScopeContainer.getOrCreate(kClass, scopeType, scopeId) {
             createInstance(kClass, qualifier, scopeId)
@@ -240,4 +238,6 @@ object DiContainer {
     private const val ERROR_MESSAGE_DUPLICATED_PROVIDER_ERROR =
         "중복된 Provider 감지: %s 타입의 기본 Provider가 여러 개 존재합니다."
     private const val ERROR_MESSAGE_INVALID_PARAMETER_TYPE = "모듈 %s의 함수 %s에서 파라미터 타입을 확인할 수 없습니다."
+    private const val ERROR_MESSAGE_NOT_SET =
+        "Context가 설정되지 않았습니다. DiContainer.setContext()를 먼저 호출하세요."
 }

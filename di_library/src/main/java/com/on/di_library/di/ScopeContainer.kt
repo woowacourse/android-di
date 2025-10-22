@@ -44,6 +44,15 @@ object ScopeContainer {
         }
     }
 
+    fun <T : Any> setSingleton(kClass: KClass<T>, instance: T) {
+        singletonPool[kClass] = instance
+    }
+
+    fun <T : Any> getSingleton(kClass: KClass<T>): T? {
+        val instance = singletonPool[kClass]?.let { kClass.cast(it) }
+        return instance
+    }
+
     /**
      * Activity 스코프 인스턴스 정리
      */
