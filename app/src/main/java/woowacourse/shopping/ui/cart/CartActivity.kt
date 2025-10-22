@@ -3,19 +3,20 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.m6z1.moongdi.injectedViewModelFactory
+import com.m6z1.moongdi.BaseActivity
+import com.m6z1.moongdi.annotation.InjectField
+import com.m6z1.moongdi.scopedViewModel
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : BaseActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel: CartViewModel by viewModels { injectedViewModelFactory<CartViewModel>() }
+    private val viewModel: CartViewModel by scopedViewModel()
 
+    @InjectField
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
