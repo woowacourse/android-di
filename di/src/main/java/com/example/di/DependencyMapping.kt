@@ -65,7 +65,7 @@ class DependencyMapping(
                                     parameter.kind == KParameter.Kind.VALUE
                                 }.map { parameter: KParameter ->
                                     temp[Identifier.from(parameter)]?.invoke()
-                                        ?: error("${Identifier.from(parameter)} not defined in module")
+                                        ?: error("${Identifier.from(parameter)} not defined in any module")
                                 }.toTypedArray()
                         function.call(module, *arguments)
                             ?: error("${function.returnType}'s getter returned null.")
