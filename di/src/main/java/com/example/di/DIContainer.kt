@@ -35,7 +35,7 @@ object DIContainer {
             ?.annotationClass
 
         val provider = providers[type to qualifier]
-            ?: throw IllegalArgumentException(
+            ?: throw IllegalStateException(
                 "No provider for $type" + (qualifier?.let { " with qualifier $it" } ?: "")
             )
 
