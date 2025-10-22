@@ -57,23 +57,14 @@ object ScopeContainer {
     fun clearViewModelScope(viewModelId: Long) {
         viewModelPools.remove(viewModelId)
     }
-
-    /**
-     * 모든 스코프 초기화
-     */
-    fun clearAll() {
-        singletonPool.clear()
-        activityPools.clear()
-        viewModelPools.clear()
-    }
 }
 
 /**
  * 스코프 타입 정의
  */
 enum class ScopeType {
-    SINGLETON,   // 앱 전체 생명주기
-    ACTIVITY,    // Activity 생명주기
-    VIEWMODEL,   // ViewModel 생명주기
-    TRANSIENT    // 매번 새로운 인스턴스
+    SINGLETON,
+    ACTIVITY,
+    VIEWMODEL,
+    TRANSIENT,
 }
