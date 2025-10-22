@@ -3,10 +3,21 @@ package com.on.di_library.di
 import androidx.lifecycle.ViewModel
 
 abstract class DiViewModel : ViewModel() {
-    val viewModelID: Long = System.currentTimeMillis()
+    var viewModelId: Long = 0L
+        internal set
+
+    init {
+        DiContainer.injectFieldProperties(
+            implementClass = this::class,
+            instance = this,
+            scopeId = viewModelId
+        )
+    }
 
     override fun onCleared() {
         super.onCleared()
-        ScopeContainer.clearViewModelScope(viewModelID)
+        if (viewModelId != 0L) {
+            ScopeContainer.clearViewModelScope(viewModelId)
+        }
     }
 }

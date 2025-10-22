@@ -2,11 +2,21 @@ package com.on.di_library.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 
-object DiViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(
-        modelClass: Class<T>,
-        extras: CreationExtras,
-    ): T = DiContainer.getInstance(modelClass.kotlin)
+class DiViewModelFactory(
+    private val activityID: Long,
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val viewModel = DiContainer.getInstance(
+            kClass = modelClass.kotlin,
+            scopeId = activityID
+        )
+
+        if (viewModel is DiViewModel) {
+            viewModel.viewModelId = System.currentTimeMillis()
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return viewModel as T
+    }
 }

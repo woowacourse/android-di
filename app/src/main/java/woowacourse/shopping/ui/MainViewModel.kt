@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.on.di_library.di.DiViewModel
-import com.on.di_library.di.ViewmodelScope
 import com.on.di_library.di.annotation.MyInjector
 import com.on.di_library.di.annotation.MyQualifier
 import kotlinx.coroutines.launch
@@ -13,7 +12,6 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
-@ViewmodelScope
 class MainViewModel : DiViewModel() {
     @MyInjector
     private lateinit var productRepository: ProductRepository

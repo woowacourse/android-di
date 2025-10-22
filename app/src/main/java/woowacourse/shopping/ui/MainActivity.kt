@@ -5,21 +5,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.on.di_library.di.ActivityScope
 import com.on.di_library.di.DiActivity
-import com.on.di_library.di.annotation.MyInjector
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
-@ActivityScope
 class MainActivity : DiActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    @MyInjector
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
