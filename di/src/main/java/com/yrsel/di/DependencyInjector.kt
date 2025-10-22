@@ -14,7 +14,10 @@ private const val ERROR_NO_PRIMARY_CONSTRUCTOR = "대상의 주 생성자가 존
 private const val ERROR_CANNOT_RESOLVE_PARAMETER_TYPE = "대상을 Class 로 변환할 수 없습니다. parameter = %s"
 
 object DependencyInjector {
-    fun <T : Any> injectConstructor(modelClass: Class<T>): T {
+    fun <T : Any> injectConstructor(
+        modelClass: Class<T>,
+        identifier: Any? = null,
+    ): T {
         val constructor =
             modelClass.kotlin.primaryConstructor ?: error(ERROR_NO_PRIMARY_CONSTRUCTOR)
 
@@ -28,14 +31,31 @@ object DependencyInjector {
                     val qualifier = parameter.findMetaAnnotationClass<Qualifier>()
 
                     val definitionKey = DefinitionKey(parameterClass, qualifier)
-                    val provider = DependencyContainer.get(definitionKey)
-                    provider.get()
+                    val scope =
+                        when (val scopeType = DependencyContainer.get(definitionKey).scope) {
+                            is ScopeType.Activity ->
+                                identifier?.let { ScopeType.Activity(it) } ?: scopeType
+
+                            is ScopeType.ViewModel ->
+                                identifier?.let { ScopeType.ViewModel(it.toString()) } ?: scopeType
+
+                            else -> scopeType
+                        }
+//                    Log.d(
+//                        "CN",
+//                        "injectConstructor: parameter = ${parameter.name}, scope =$scope ",
+//                    )
+
+                    ScopeContainer.getOrCreate(definitionKey, scope) as T
                 }
 
         return constructor.callBy(arguments)
     }
 
-    fun <T : Any> injectFields(instance: T): T {
+    fun <T : Any> injectFields(
+        instance: T,
+        identifier: Any? = null,
+    ): T {
         val instanceClass: KClass<out T> = instance::class
         instanceClass.declaredMemberProperties
             .filterIsInstance<KMutableProperty1<T, Any?>>()
@@ -47,11 +67,23 @@ object DependencyInjector {
                 val qualifier = field.findMetaAnnotationClass<Qualifier>()
 
                 val key = DefinitionKey(fieldClass, qualifier)
-                val provider = DependencyContainer.get(key)
+                val scope =
+                    when (val scopeType = DependencyContainer.get(key).scope) {
+                        is ScopeType.Activity ->
+                            identifier?.let { ScopeType.Activity(it) } ?: scopeType
 
+                        is ScopeType.ViewModel ->
+                            identifier?.let { ScopeType.ViewModel(it.toString()) } ?: scopeType
+
+                        else -> scopeType
+                    }
+//                Log.d(
+//                    "CN",
+//                    "injectFields: fieldClass = ${fieldClass.simpleName}, scope =$scope ",
+//                )
                 field.apply {
                     isAccessible = true
-                    setter.call(instance, provider.get())
+                    setter.call(instance, ScopeContainer.getOrCreate(key, scope) as T)
                 }
             }
 

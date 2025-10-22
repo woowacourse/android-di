@@ -16,8 +16,8 @@ class DIViewModelFactory(
         modelClass: Class<VM>,
         handle: SavedStateHandle,
     ): VM {
-        val instance = DependencyInjector.injectConstructor(modelClass)
-        return DependencyInjector.injectFields(instance)
+        val instance = DependencyInjector.injectConstructor(modelClass, key)
+        return DependencyInjector.injectFields(instance, key)
     }
 }
 

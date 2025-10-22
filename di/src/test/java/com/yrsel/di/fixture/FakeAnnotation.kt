@@ -8,4 +8,4 @@ annotation class InMemory
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Qualifier
-annotation class Local
+annotation class Room
