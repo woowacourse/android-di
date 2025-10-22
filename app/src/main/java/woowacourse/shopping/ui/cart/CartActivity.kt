@@ -9,7 +9,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.di.ActivityScope
 import com.example.di.Inject
-import com.example.di.Scope
 import woowacourse.shopping.MeepleApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -27,22 +26,13 @@ class CartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        (application as MeepleApplication)
-            .appContainer
-            .resolve(
-                DateFormatter::class,
-                scope = Scope.Activity,
-            ).also { dateFormatter = it }
+        val app = application as MeepleApplication
+        dateFormatter = app.appContainer.resolve(DateFormatter::class)
 
         setupContentView()
         setupBinding()
         setupToolbar()
         setupViewData()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (application as MeepleApplication).appContainer.clearActivityScope()
     }
 
     override fun onSupportNavigateUp(): Boolean {
