@@ -7,7 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.DIFactory
+import woowacourse.di.DIScopeManager
 import woowacourse.di.DIViewModelFactory
+import woowacourse.di.annotation.ActivityScope
+import woowacourse.di.annotation.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
@@ -17,13 +21,17 @@ class CartActivity : AppCompatActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this, DIViewModelFactory())[CartViewModel::class.java]
     }
+
+    @Inject
+    @ActivityScope(SCOPE_KEY)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        DIFactory.injectFields(this)
+
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -42,10 +50,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -81,5 +85,14 @@ class CartActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DIScopeManager.clearScope(SCOPE_KEY)
+    }
+
+    companion object {
+        private const val SCOPE_KEY: String = "CartActivity"
     }
 }
