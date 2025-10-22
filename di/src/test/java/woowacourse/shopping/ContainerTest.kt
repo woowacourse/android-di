@@ -11,8 +11,6 @@ import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import woowacourse.shopping.annotation.InMemory
-import woowacourse.shopping.annotation.Room
 
 class ContainerTest {
     private lateinit var container: Container
@@ -37,25 +35,6 @@ class ContainerTest {
             instance2.shouldNotBeNull()
             instance1.shouldBeInstanceOf<InMemoryTestRepository>()
             instance2.shouldBeInstanceOf<InMemoryTestRepository>()
-            instance1 shouldNotBeSameInstanceAs instance2
-        }
-    }
-
-    @DisplayName("컨테이너에 존재하는 싱글톤 인스턴스를 반환한다")
-    @Test
-    fun getSingletonTest() {
-        // given
-        container.bindSingleton(TestRepository::class, ::InMemoryTestRepository)
-
-        // when
-        val instance1 = container.get<TestRepository>()
-        val instance2 = container.get<TestRepository>()
-
-        // then
-        assertSoftly {
-            instance1.shouldNotBeNull()
-            instance2.shouldNotBeNull()
-            instance1 shouldBeSameInstanceAs instance2
         }
     }
 
@@ -63,12 +42,12 @@ class ContainerTest {
     @Test
     fun getInstanceWithQualifier() {
         // given
-        container.bind(TestRepository::class, ::InMemoryTestRepository, InMemory::class)
-        container.bind(TestRepository::class, ::RoomTestRepository, Room::class)
+        container.bind(TestRepository::class, ::InMemoryTestRepository, QualifierA::class)
+        container.bind(TestRepository::class, ::RoomTestRepository, QualifierB::class)
 
         // when
-        val inMemoryInstance = container.get(TestRepository::class, InMemory::class)
-        val roomInstance = container.get(TestRepository::class, Room::class)
+        val inMemoryInstance = container.get(TestRepository::class, QualifierA::class)
+        val roomInstance = container.get(TestRepository::class, QualifierB::class)
 
         assertSoftly {
             inMemoryInstance.shouldBeTypeOf<InMemoryTestRepository>()
@@ -110,7 +89,7 @@ class ContainerTest {
         }
     }
 
-    @DisplayName("@Singleton 어노테이션이 있는 클래스는 싱글톤으로 관리된다")
+    @DisplayName("@Singleton 어노테이션이 있으면 클래스는 싱글톤으로 관리된다")
     @Test
     fun singletonTest() {
         // when
@@ -119,6 +98,17 @@ class ContainerTest {
 
         // then
         instance1 shouldBeSameInstanceAs instance2
+    }
+
+    @DisplayName("@Singleton 어노테이션이 없으면 인스턴스를 다시 생성한다")
+    @Test
+    fun withoutSingletonTest() {
+        // when
+        val instance1 = container.get<NonAnnotatedSingletonService>()
+        val instance2 = container.get<NonAnnotatedSingletonService>()
+
+        // then
+        instance1 shouldNotBeSameInstanceAs instance2
     }
 
     @DisplayName("순환 참조가 발생하면 DependencyCycleException이 발생한다")
@@ -144,9 +134,23 @@ class ContainerTest {
         container.installModule(TestModule)
 
         // when
-        val roomInstance = container.get(TestRepository::class, Room::class)
+        val roomInstance = container.get(TestRepository::class, QualifierA::class)
 
         // then
         roomInstance.shouldBeTypeOf<RoomTestRepository>()
+    }
+
+    @DisplayName("@Singleton이 붙은 메소드는 생성된 인스턴스가 싱글톤으로 관리된다")
+    @Test
+    fun installModuleSingletonTest() {
+        // given
+        container.installModule(TestModule)
+
+        // when
+        val instance1 = container.get(TestRepository::class)
+        val instance2 = container.get(TestRepository::class)
+
+        // then
+        instance1 shouldBeSameInstanceAs instance2
     }
 }

@@ -1,14 +1,12 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.annotation.InMemory
 import woowacourse.shopping.annotation.Inject
-import woowacourse.shopping.annotation.Room
+import woowacourse.shopping.annotation.Qualifier
 import woowacourse.shopping.annotation.Singleton
 import woowacourse.shopping.model.Key
-import kotlin.reflect.KCallable
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -24,43 +22,10 @@ class Container {
     fun <T : Any> bind(
         type: KClass<T>,
         provider: Provider<T>,
-    ) {
-        val key = Key.from(type)
-        providers[key] = provider
-    }
-
-    fun <T : Any> bind(
-        type: KClass<T>,
-        provider: Provider<T>,
-        qualifier: KClass<out Annotation>,
+        qualifier: KClass<out Annotation>? = null,
     ) {
         val key = Key.of(type, qualifier)
         providers[key] = provider
-    }
-
-    fun <T : Any> bindSingleton(
-        type: KClass<T>,
-        provider: Provider<T>,
-    ) {
-        val key = Key.from(type)
-        providers[key] = {
-            synchronized(singletons) {
-                singletons.getOrPut(key) { provider() }
-            }
-        }
-    }
-
-    fun <T : Any> bindSingleton(
-        type: KClass<T>,
-        provider: Provider<T>,
-        qualifier: KClass<out Annotation>,
-    ) {
-        val key = Key.of(type, qualifier)
-        providers[key] = {
-            synchronized(singletons) {
-                singletons.getOrPut(key) { provider() }
-            }
-        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -84,21 +49,34 @@ class Container {
             val qualifier = findQualifierAnnotation(function)
             val key = Key.of(returnType, qualifier)
 
-            providers[key] = {
-                val args =
-                    function.parameters
-                        .drop(1)
-                        .map { param ->
-                            val paramClass =
-                                param.type.classifier as? KClass<*>
-                                    ?: throw NoProviderException("지원하지 않는 타입입니다: ${param.type}")
-                            val paramQualifier = findQualifierAnnotation(param)
-                            get(paramClass, paramQualifier)
-                        }.toTypedArray()
-                function.isAccessible = true
-                function.call(module, *args)
+            val provider = createProvider(module, function)
+            if (function.hasAnnotation<Singleton>()) {
+                providers[key] = {
+                    singletons[key] ?: synchronized(this) {
+                        singletons[key] ?: (provider.invoke() as Any).also { instance ->
+                            singletons[key] = instance
+                        }
+                    }
+                }
+            } else {
+                providers[key] = provider
             }
         }
+    }
+
+    fun <T : Any> injectField(instance: T) {
+        instance::class.java
+            .declaredFields
+            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val type = field.type.kotlin
+                val qualifier =
+                    field.annotations
+                        .map { it.annotationClass }
+                        .firstOrNull { it != Inject::class }
+                field.isAccessible = true
+                field.set(instance, get(type, qualifier))
+            }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -137,34 +115,29 @@ class Container {
         }
     }
 
-    private fun <T : Any> injectField(instance: T) {
-        instance::class.java
-            .declaredFields
-            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
-            .forEach { field ->
-                val type = field.type.kotlin
-                val qualifier =
-                    field.annotations
-                        .map { it.annotationClass }
-                        .firstOrNull { it != Inject::class }
-                field.isAccessible = true
-                field.set(instance, get(type, qualifier))
-            }
-    }
-
-    private fun findQualifierAnnotation(callable: KCallable<*>): KClass<out Annotation>? =
-        when {
-            callable.hasAnnotation<InMemory>() -> InMemory::class
-            callable.hasAnnotation<Room>() -> Room::class
-            else -> null
+    private fun <T> createProvider(
+        module: Any,
+        function: KFunction<T>,
+    ): Provider<T> =
+        {
+            val args =
+                function.parameters
+                    .drop(1)
+                    .map { param ->
+                        val paramClass =
+                            param.type.classifier as? KClass<*>
+                                ?: throw NoProviderException("지원하지 않는 타입입니다: ${param.type}")
+                        val paramQualifier = findQualifierAnnotation(param)
+                        get(paramClass, paramQualifier)
+                    }.toTypedArray()
+            function.isAccessible = true
+            function.call(module, *args)
         }
 
-    private fun findQualifierAnnotation(param: KParameter): KClass<out Annotation>? =
-        when {
-            param.hasAnnotation<InMemory>() -> InMemory::class
-            param.hasAnnotation<Room>() -> Room::class
-            else -> null
-        }
+    private fun findQualifierAnnotation(element: KAnnotatedElement): KClass<out Annotation>? =
+        element.annotations
+            .map { annotation -> annotation.annotationClass }
+            .find { annotationClass -> annotationClass.hasAnnotation<Qualifier>() }
 
     private fun <T : Any> findInjectableConstructor(type: KClass<T>): KFunction<T>? =
         type.constructors.firstOrNull { it.hasAnnotation<Inject>() } ?: type.primaryConstructor

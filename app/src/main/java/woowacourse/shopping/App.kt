@@ -10,7 +10,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        container.bind(Context::class) { this }
+        container.bind(type = Context::class, provider = { this })
         container.installModule(DatabaseModule)
         container.installModule(RepositoryModule)
     }

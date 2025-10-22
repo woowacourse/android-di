@@ -1,11 +1,9 @@
 package woowacourse.shopping.data.repository
 
 import woowacourse.shopping.annotation.Inject
-import woowacourse.shopping.annotation.Singleton
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.ProductRepository
 
-@Singleton
 class ProductRepositoryImpl
     @Inject
     constructor() : ProductRepository {
