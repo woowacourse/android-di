@@ -1,6 +1,7 @@
 package com.example.di
 
 import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
@@ -15,7 +16,8 @@ class DependencyMapping(
         Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
 
     init {
-        module.forEach(::initialize)
+        initialize2(*module)
+//        module.forEach(::initialize)
     }
 
     fun get(identifier: Identifier): Any {
@@ -35,6 +37,43 @@ class DependencyMapping(
         mapping(scope).clear()
     }
 
+    private fun initialize2(vararg module: Module) {
+        val temp = mutableMapOf<Identifier, () -> Any>()
+
+        module.forEach { module: Module ->
+            module::class.functions.forEach { function: KFunction<*> ->
+                if (!function.hasAnnotation<Dependency>()) return@forEach
+
+                val identifier = Identifier.from(function)
+                temp[identifier] = { function.call(module) ?: error("") }
+            }
+        }
+
+        module.forEach { module: Module ->
+            module::class.functions.forEach { function: KFunction<*> ->
+                if (!function.hasAnnotation<Dependency>()) return@forEach
+
+                val identifier = Identifier.from(function)
+                val scope = Scope.from(function)
+                identifierScopes[identifier] = scope
+
+                getters(scope)[identifier] =
+                    {
+                        val arguments =
+                            function.parameters
+                                .filter { parameter: KParameter ->
+                                    parameter.kind == KParameter.Kind.VALUE
+                                }.map { parameter: KParameter ->
+                                    temp[Identifier.from(parameter)]?.invoke()
+                                        ?: error("${Identifier.from(parameter)} not defined in module")
+                                }.toTypedArray()
+                        function.call(module, *arguments)
+                            ?: error("${function.returnType}'s getter returned null.")
+                    }
+            }
+        }
+    }
+
     private fun initialize(module: Module) {
         module::class.functions.forEach { function: KFunction<*> ->
             if (!function.hasAnnotation<Dependency>()) return@forEach
@@ -42,9 +81,10 @@ class DependencyMapping(
             val identifier = Identifier.from(function)
             val scope = Scope.from(function)
             identifierScopes[identifier] = scope
-            getters(scope)[identifier] = {
-                function.call(module) ?: error("${function.returnType}'s getter returned null.")
-            }
+            getters(scope)[identifier] =
+                {
+                    function.call(module) ?: error("${function.returnType}'s getter returned null.")
+                }
         }
     }
 

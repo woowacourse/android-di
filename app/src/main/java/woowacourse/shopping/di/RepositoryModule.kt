@@ -1,22 +1,17 @@
 package woowacourse.shopping.di
 
-import android.content.Context
 import com.example.di.ApplicationLifespan
 import com.example.di.Dependency
 import com.example.di.Module
 import com.example.di.ViewModelLifespan
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DatabaseCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
-import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 
-class RepositoryModule(
-    context: Context,
-) : Module {
-    private val shoppingDatabase: ShoppingDatabase = ShoppingDatabase.instance(context)
-
+class RepositoryModule : Module {
     @Dependency
     @ViewModelLifespan
     fun productRepository(): ProductRepository = DefaultProductRepository()
@@ -24,7 +19,7 @@ class RepositoryModule(
     @Dependency
     @ApplicationLifespan
     @DatabaseRepository
-    fun databaseCartRepository(): CartRepository = DatabaseCartRepository(shoppingDatabase.cartProductDao())
+    fun databaseCartRepository(dao: CartProductDao): CartRepository = DatabaseCartRepository(dao)
 
     @Dependency
     @ApplicationLifespan

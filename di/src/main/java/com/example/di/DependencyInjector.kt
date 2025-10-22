@@ -1,9 +1,9 @@
 package com.example.di
 
+import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
@@ -11,10 +11,21 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
-    fun <T : Any> instance(targetClass: KClass<T>): T {
-        val instance: T = injectParameters(targetClass)
-        injectFields(instance)
-        return instance
+    fun <T : Any> instance(
+        targetClass: KClass<T>,
+        qualifier: Annotation? = null,
+    ): T {
+        targetClass.primaryConstructor?.let { primaryConstructor: KFunction<T> ->
+            val parameters: Array<Any> =
+                primaryConstructor.parameters
+                    .map { parameter ->
+                        val qualifier = qualifier(parameter)
+                        instance(parameter.type.classifier as KClass<*>, qualifier)
+                    }.toTypedArray()
+            return primaryConstructor.call(*parameters)
+        }
+
+        return DependencyContainer.dependency(Identifier(targetClass, qualifier)) as? T ?: error("")
     }
 
     fun injectFields(target: Any) {
@@ -30,15 +41,12 @@ object DependencyInjector {
         }
     }
 
-    private fun <T : Any> injectParameters(targetClass: KClass<T>): T {
-        val constructor: KFunction<T> =
-            targetClass.primaryConstructor
-                ?: error("Unable to find the primary constructor of $targetClass.")
-        val parameters: Array<Any> =
-            constructor.parameters
-                .map { parameter: KParameter ->
-                    DependencyContainer.dependency(Identifier.from(parameter))
-                }.toTypedArray()
-        return constructor.call(*parameters)
+    private fun qualifier(element: KAnnotatedElement): Annotation? {
+        val qualifiers: List<Annotation> =
+            element.annotations.filter { annotation: Annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
+        if (qualifiers.size > 1) error("$element has more than one qualifier: $qualifiers")
+        return qualifiers.firstOrNull()
     }
 }

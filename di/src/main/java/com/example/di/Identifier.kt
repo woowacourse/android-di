@@ -1,32 +1,38 @@
 package com.example.di
 
 import kotlin.reflect.KAnnotatedElement
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
-import kotlin.reflect.KType
 import kotlin.reflect.full.hasAnnotation
 
 data class Identifier(
-    val kType: KType,
+    val kClass: KClass<*>,
     val qualifier: Annotation? = null,
 ) {
     companion object {
-        fun from(function: KFunction<*>): Identifier =
+        fun from(kClass: KClass<*>): Identifier =
             Identifier(
-                function.returnType,
-                qualifier(function),
+                kClass,
+                qualifier(kClass),
             )
 
         fun from(property: KProperty1<*, *>): Identifier =
             Identifier(
-                property.returnType,
+                property.returnType.classifier as KClass<*>,
                 qualifier(property),
+            )
+
+        fun from(function: KFunction<*>): Identifier =
+            Identifier(
+                function.returnType.classifier as KClass<*>,
+                qualifier(function),
             )
 
         fun from(parameter: KParameter): Identifier =
             Identifier(
-                parameter.type,
+                parameter.type.classifier as KClass<*>,
                 qualifier(parameter),
             )
 
