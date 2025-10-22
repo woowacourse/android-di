@@ -7,8 +7,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.Component
+import com.example.di.Inject
+import com.example.di.Injector.inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.closeActivityComponent
+import woowacourse.shopping.di.openActivityComponent
 import woowacourse.shopping.ui.ViewModelDIFactory
 
 class CartActivity : AppCompatActivity() {
@@ -16,13 +21,15 @@ class CartActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<CartViewModel> { ViewModelDIFactory() }
 
+    @field:Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        openActivityComponent()
+        inject(this, Component.Activity(this))
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -41,10 +48,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -80,5 +83,10 @@ class CartActivity : AppCompatActivity() {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        closeActivityComponent()
     }
 }

@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.di.DiContainer
-import com.example.di.Injector
-import kotlin.reflect.KClass
+import woowacourse.shopping.di.injectViewModel
+import woowacourse.shopping.di.openViewModelComponent
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelDIFactory : ViewModelProvider.Factory {
@@ -15,22 +15,21 @@ class ViewModelDIFactory : ViewModelProvider.Factory {
         modelClass: Class<T>,
         extras: CreationExtras,
     ): T {
-        val kClass = modelClass.kotlin
-        val constructor =
-            kClass.primaryConstructor
-                ?: throw IllegalArgumentException()
-
-        val arguments =
-            constructor.parameters.associateWith { parameter ->
-                val clazz = parameter.type.classifier as KClass<*>
-                when (clazz) {
-                    SavedStateHandle::class -> extras.createSavedStateHandle()
-                    else -> DiContainer.getProvider(clazz)
+        val k = modelClass.kotlin
+        val ctor = k.primaryConstructor ?: error("No primary constructor: $k")
+        val args =
+            ctor.parameters
+                .filter { it.kind == KParameter.Kind.VALUE }
+                .associateWith { p ->
+                    when (p.type.classifier) {
+                        SavedStateHandle::class -> extras.createSavedStateHandle()
+                        else -> error("Only SavedStateHandle is allowed in $k constructor")
+                    }
                 }
-            }
-
-        val vm = constructor.callBy(arguments)
-        Injector.inject(vm)
-        return vm
+        @Suppress("UNCHECKED_CAST")
+        return (ctor.callBy(args) as T).apply {
+            openViewModelComponent()
+            injectViewModel()
+        }
     }
 }

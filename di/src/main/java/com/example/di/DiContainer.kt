@@ -1,74 +1,220 @@
 package com.example.di
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.javaField
 
 object DiContainer {
-    private data class Key(val type: KClass<*>, val qualifier: KClass<out Annotation>?)
+    private data class Key(
+        val type: KClass<*>,
+        val qualifier: KClass<out Annotation>?,
+    )
 
-    private val providers = mutableMapOf<Key, Lazy<Any>>()
-    private val bindings = mutableMapOf<Key, KClass<*>>()
+    private data class Binding(
+        val implementationOrType: KClass<*>,
+        val componentConstructor: (Any?) -> Component,
+        val isScoped: Boolean,
+        val factoryFunction: ((Any?) -> Any)? = null,
+        val isInterfaceBinding: Boolean = false,
+    )
 
-    fun <T : Any> addProviders(
-        kClazz: KClass<T>,
+    private val bindingMap = mutableMapOf<Key, Binding>()
+    private val singletonCache = mutableMapOf<Key, Lazy<Any>>()
+    private val activityCacheMap = mutableMapOf<Any, MutableMap<Key, Lazy<Any>>>()
+    private val viewModelCacheMap = mutableMapOf<Any, MutableMap<Key, Lazy<Any>>>()
+
+    fun <InterfaceType : Any> bindBinds(
+        fromInterface: KClass<InterfaceType>,
+        toImplementation: KClass<out InterfaceType>,
+        installIn: (Any?) -> Component,
+        isScoped: Boolean = true,
         qualifier: KClass<out Annotation>? = null,
-        provider: () -> T,
     ) {
-        val key = Key(kClazz, qualifier)
-        providers[key] = lazy(LazyThreadSafetyMode.SYNCHRONIZED) { provider() }
+        require(
+            fromInterface != toImplementation &&
+                    fromInterface.java.isAssignableFrom(
+                        toImplementation.java,
+                    ),
+        )
+        bindingMap[Key(fromInterface, qualifier)] =
+            Binding(
+                implementationOrType = toImplementation,
+                componentConstructor = installIn,
+                isScoped = isScoped,
+                factoryFunction = null,
+                isInterfaceBinding = true,
+            )
     }
 
-    fun <I : Any> bind(
-        from: KClass<I>,
-        to: KClass<out I>,
+    fun <Type : Any> bindProvides(
+        type: KClass<Type>,
+        installIn: (Any?) -> Component,
+        isScoped: Boolean = true,
         qualifier: KClass<out Annotation>? = null,
+        factoryFunction: (Any?) -> Type,
     ) {
-        require(from != to)
-        require(from.java.isAssignableFrom(to.java))
-        bindings[Key(from, qualifier)] = to
+        bindingMap[Key(type, qualifier)] =
+            Binding(
+                implementationOrType = type,
+                componentConstructor = installIn,
+                isScoped = isScoped,
+                factoryFunction = factoryFunction,
+                isInterfaceBinding = false,
+            )
     }
 
-    fun <T : Any> getProvider(
-        kClazz: KClass<T>,
+    fun openActivityComponent(activityOwner: Any) {
+        activityCacheMap.getOrPut(activityOwner) { mutableMapOf() }
+    }
+
+    fun closeActivityComponent(activityOwner: Any) {
+        activityCacheMap.remove(activityOwner)
+    }
+
+    fun openViewModelComponent(viewModelOwner: Any) {
+        viewModelCacheMap.getOrPut(viewModelOwner) { mutableMapOf() }
+    }
+
+    fun closeViewModelComponent(viewModelOwner: Any) {
+        viewModelCacheMap.remove(viewModelOwner)
+    }
+
+    fun <Type : Any> get(
+        requestedType: KClass<Type>,
+        ownerComponent: Component,
         qualifier: KClass<out Annotation>? = null,
-    ): T {
-        val key = Key(kClazz, qualifier)
-        providers[key]?.let {
-            return it.value as T
-        }
-        val concreteClazz = bindings[key] ?: kClazz
+    ): Type {
+        val key = Key(requestedType, qualifier)
+        val binding = bindingMap[key] ?: return createUnbound(requestedType, ownerComponent) as Type
 
-        if (concreteClazz.java.isInterface) {
-            throw IllegalArgumentException()
-        }
+        val targetComponent = binding.componentConstructor(getOwnerFrom(ownerComponent))
+        require(targetComponent::class == ownerComponent::class || targetComponent is Component.Singleton)
 
-        val lazyProvider =
-            providers.getOrPut(Key(concreteClazz, qualifier)) {
-                lazy(LazyThreadSafetyMode.SYNCHRONIZED) { createInstance(concreteClazz) }
+        val implementationClass = binding.implementationOrType
+        val isScoped = binding.isScoped
+
+        val currentCache =
+            when (ownerComponent) {
+                is Component.Singleton -> singletonCache
+                is Component.Activity -> activityCacheMap[ownerComponent.owner]
+                is Component.ViewModel -> viewModelCacheMap[ownerComponent.owner]
             }
 
-        if (kClazz != concreteClazz) {
-            providers[Key(concreteClazz, qualifier)] = lazyProvider
+        if (!isScoped) {
+            return createNewInstance(implementationClass, ownerComponent) as Type
         }
 
-        return lazyProvider.value as T
+        val lazyInstance =
+            when (ownerComponent) {
+                is Component.Singleton ->
+                    currentCache!!.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy { provideOrCreate(binding, ownerComponent) }
+                    }
+
+                is Component.Activity -> {
+                    val activityScopedCache = currentCache ?: throw IllegalStateException()
+                    activityScopedCache.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy { provideOrCreate(binding, ownerComponent) }
+                    }
+                }
+
+                is Component.ViewModel -> {
+                    val viewModelScopedCache = currentCache ?: throw IllegalStateException()
+                    viewModelScopedCache.getOrPut(Key(implementationClass, qualifier)) {
+                        lazy { provideOrCreate(binding, ownerComponent) }
+                    }
+                }
+            }
+        return lazyInstance.value as Type
     }
 
-    private fun <T : Any> createInstance(kClazz: KClass<T>): T {
-        val constructor =
-            kClazz.primaryConstructor
-                ?: throw IllegalArgumentException()
-        val arguments =
-            constructor.parameters.associateWith { parameter ->
-                val parameterClass = parameter.type.classifier as KClass<*>
-                val qualifier =
-                    parameter.annotations.firstOrNull { annotation ->
-                        annotation.annotationClass.annotations.any { it is Qualifier }
-                    }?.annotationClass
-                getProvider(parameterClass, qualifier)
+    private fun getOwnerFrom(component: Component): Any? =
+        when (component) {
+            is Component.Singleton -> null
+            is Component.Activity -> component.owner
+            is Component.ViewModel -> component.owner
+        }
+
+    private fun <Type : Any> createUnbound(
+        type: KClass<Type>,
+        ownerComponent: Component,
+    ): Any {
+        val primaryConstructor =
+            type.primaryConstructor
+                ?: throw IllegalStateException()
+
+        if (!primaryConstructor.annotations.any { it is Inject }) {
+            throw IllegalStateException()
+        }
+
+        return callWithInjectedArguments(type, ownerComponent)
+    }
+
+    private fun provideOrCreate(
+        binding: Binding,
+        ownerComponent: Component,
+    ): Any {
+        val owner = getOwnerFrom(ownerComponent)
+        return binding.factoryFunction?.invoke(owner)
+            ?: createNewInstance(binding.implementationOrType, ownerComponent)
+    }
+
+    private fun createNewInstance(
+        implementationClass: KClass<*>,
+        ownerComponent: Component,
+    ): Any = callWithInjectedArguments(implementationClass, ownerComponent)
+
+    private fun callWithInjectedArguments(
+        targetClass: KClass<*>,
+        ownerComponent: Component,
+    ): Any {
+        val injectableConstructor = findInjectableConstructor(targetClass)
+        val argumentMap =
+            injectableConstructor.parameters
+                .filter { it.kind == KParameter.Kind.VALUE }
+                .associateWith { parameter ->
+                    val dependencyClass =
+                        parameter.type.classifier as? KClass<*>
+                            ?: throw IllegalStateException()
+                    val qualifierAnnotation = findQualifier(parameter.annotations)
+                    get(dependencyClass, ownerComponent, qualifierAnnotation)
+                }
+
+        val instance = injectableConstructor.callBy(argumentMap)
+
+        for (property in targetClass.declaredMemberProperties) {
+            val javaField = property.javaField ?: continue
+            val hasInjectAnnotation = javaField.isAnnotationPresent(Inject::class.java)
+            if (!hasInjectAnnotation) continue
+
+            javaField.isAccessible = true
+            val dependencyClass = javaField.type.kotlin
+            val qualifierAnnotation = findQualifier(javaField.annotations.toList())
+            val dependencyInstance = get(dependencyClass, ownerComponent, qualifierAnnotation)
+            javaField.set(instance, dependencyInstance)
+        }
+
+        return instance!!
+    }
+
+    private fun findInjectableConstructor(targetClass: KClass<*>): KFunction<*> {
+        val constructorWithInjectAnnotation =
+            targetClass.constructors.find { constructor ->
+                constructor.annotations.any { it is Inject }
             }
-        val instance = constructor.callBy(arguments)
-        Injector.inject(instance)
-        return instance
+        return constructorWithInjectAnnotation
+            ?: targetClass.primaryConstructor
+            ?: throw IllegalStateException()
+    }
+
+    private fun findQualifier(annotations: List<Annotation>): KClass<out Annotation>? {
+        return annotations.find { annotation ->
+            annotation.annotationClass.annotations.any { metaAnnotation ->
+                metaAnnotation.annotationClass == Qualifier::class
+            }
+        }?.annotationClass
     }
 }

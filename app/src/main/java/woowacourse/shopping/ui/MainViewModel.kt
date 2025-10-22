@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.di.Inject
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.closeViewModelComponent
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 import woowacourse.shopping.model.Product
@@ -32,5 +33,10 @@ class MainViewModel() : ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
+    }
+
+    override fun onCleared() {
+        closeViewModelComponent()
+        super.onCleared()
     }
 }

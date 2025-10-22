@@ -5,19 +5,32 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
 object Injector {
-    fun inject(target: Any) {
-        val kClass = target::class
-        for (property in kClass.declaredMemberProperties) {
-            property.javaField?.let { field ->
-                if (field.isAnnotationPresent(Inject::class.java)) {
-                    field.isAccessible = true
+    fun inject(
+        targetInstance: Any,
+        ownerComponent: Component,
+    ) {
+        val targetKClass = targetInstance::class
 
-                    val propertyType = property.returnType.classifier as KClass<*>
-                    val instance = DiContainer.getProvider(propertyType)
+        for (property in targetKClass.declaredMemberProperties) {
+            val javaField = property.javaField ?: continue
 
-                    field.set(target, instance)
-                }
-            }
+            val hasInjectAnnotation = javaField.isAnnotationPresent(Inject::class.java)
+            if (!hasInjectAnnotation) continue
+
+            javaField.isAccessible = true
+
+            val dependencyKClass =
+                property.returnType.classifier as? KClass<*>
+                    ?: throw IllegalStateException()
+
+            val qualifierAnnotation =
+                javaField.annotations.firstOrNull { annotation ->
+                    annotation.annotationClass.annotations.any { metaAnnotation -> metaAnnotation.annotationClass == Qualifier::class.java }
+                }?.annotationClass
+
+            val dependencyInstance =
+                DiContainer.get(dependencyKClass, ownerComponent, qualifierAnnotation)
+            javaField.set(targetInstance, dependencyInstance)
         }
     }
 }
