@@ -14,10 +14,10 @@ class ViewModelB : ViewModel() {
 
 class ViewModelC : ViewModel() {
     @Inject
-    @DatabaseRepository
+    @ExampleDatabaseRepository
     lateinit var cartRepositoryA: CartRepository
 
     @Inject
-    @InMemoryRepository
+    @ExampleInMemoryRepository
     lateinit var cartRepositoryB: CartRepository
 }

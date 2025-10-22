@@ -9,9 +9,9 @@ import woowacourse.shopping.fixture.FakeProductRepository
 
 class FakeRepositoryModule : Module {
     @Dependency
-    val productRepository: ProductRepository by lazy { FakeProductRepository() }
+    fun productRepository(): ProductRepository = FakeProductRepository()
 
     @Dependency
     @DatabaseRepository
-    val databaseCartRepository: CartRepository by lazy { DatabaseCartRepository(FakeCartProductDao()) }
+    fun databaseCartRepository(dao: CartProductDao = FakeCartProductDao()): CartRepository = DatabaseCartRepository(dao)
 }
