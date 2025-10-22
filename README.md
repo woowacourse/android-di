@@ -31,3 +31,9 @@
 
 - [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 있다.
 - [x] DI 라이브러리를 모듈로 분리한다.
+
+## 4단계
+
+- [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+- [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.

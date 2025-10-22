@@ -17,4 +17,8 @@ class PersistentCartRepository(
     override suspend fun deleteCartProduct(id: Long) {
         dao.delete(id)
     }
+
+    companion object {
+        const val QUALIFIER = "persistent"
+    }
 }

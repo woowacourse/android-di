@@ -14,4 +14,6 @@ kotlin {
 dependencies {
     // Reflection
     implementation(libs.kotlin.reflect)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.truth)
 }
