@@ -1,22 +1,18 @@
 package com.example.di
 
-@Target(AnnotationTarget.FIELD)
-annotation class Inject
-
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class Qualifier
 
 @Qualifier
-annotation class Local
-
-@Qualifier
+@Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
 annotation class Remote
 
 @Qualifier
-annotation class InMemory
+@Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
+annotation class Local
 
-@Qualifier
-annotation class RoomDB
+@Target(AnnotationTarget.FIELD)
+annotation class Inject
 
 @Target(AnnotationTarget.CLASS)
 annotation class Singleton

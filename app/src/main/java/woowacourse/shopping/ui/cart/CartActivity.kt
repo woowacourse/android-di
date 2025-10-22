@@ -95,6 +95,8 @@ class CartActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        DIContainer.clearScope(ActivityScope::class)
+        if (isFinishing) {
+            DIContainer.clearScope(ActivityScope::class)
+        }
     }
 }
