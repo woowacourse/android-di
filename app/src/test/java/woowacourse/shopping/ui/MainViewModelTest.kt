@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.daedan.di.AppContainerStore
 import com.daedan.di.module
 import com.daedan.di.qualifier.NamedQualifier
+import com.daedan.di.util.annotated
 import com.daedan.di.util.getQualifier
+import com.daedan.di.util.named
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

@@ -1,11 +1,12 @@
 package woowacourse.shopping.di
 
+import android.content.Context
 import androidx.room.Room
-import com.daedan.di.DiApplication
+import com.daedan.di.DiComponent
 import com.daedan.di.module
 import woowacourse.shopping.data.ShoppingDatabase
 
-fun DiApplication.dataModule() =
+fun DiComponent.dataModule(applicationContext: Context) =
     module {
         single {
             Room
