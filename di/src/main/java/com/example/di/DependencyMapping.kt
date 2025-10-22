@@ -16,8 +16,7 @@ class DependencyMapping(
         Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
 
     init {
-        initialize2(*module)
-//        module.forEach(::initialize)
+        initialize(*module)
     }
 
     fun get(identifier: Identifier): Any {
@@ -37,7 +36,7 @@ class DependencyMapping(
         mapping(scope).clear()
     }
 
-    private fun initialize2(vararg module: Module) {
+    private fun initialize(vararg module: Module) {
         val temp = mutableMapOf<Identifier, () -> Any>()
 
         module.forEach { module: Module ->
@@ -71,20 +70,6 @@ class DependencyMapping(
                             ?: error("${function.returnType}'s getter returned null.")
                     }
             }
-        }
-    }
-
-    private fun initialize(module: Module) {
-        module::class.functions.forEach { function: KFunction<*> ->
-            if (!function.hasAnnotation<Dependency>()) return@forEach
-
-            val identifier = Identifier.from(function)
-            val scope = Scope.from(function)
-            identifierScopes[identifier] = scope
-            getters(scope)[identifier] =
-                {
-                    function.call(module) ?: error("${function.returnType}'s getter returned null.")
-                }
         }
     }
 
