@@ -6,7 +6,6 @@ import com.example.di.Singleton
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.Product
 
-@Remote
 @Singleton
 class DefaultCartRepository(
     private val dao: CartProductDao,
