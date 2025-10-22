@@ -2,7 +2,6 @@ package com.on.di_library.di
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
 import com.on.di_library.di.annotation.MyInjector
 import com.on.di_library.di.annotation.MyModule
 import com.on.di_library.di.annotation.MyProvider
@@ -13,7 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
-import kotlin.reflect.cast
+import kotlin.reflect.full.cast
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -89,25 +88,45 @@ object DiContainer {
     fun <T : Any> getInstance(
         kClass: KClass<T>,
         qualifier: String? = null,
+        scopeId: Long = 0,
     ): T {
-        if (ViewModel::class.java.isAssignableFrom(kClass.java)) {
-            return createInstance(kClass)
-        }
-
         instancePool[kClass]?.let {
             return kClass.cast(it)
         }
 
-        val newInstance = createInstance(kClass, qualifier)
-        instancePool[kClass] = newInstance
+        val scopeType = getScopeType(kClass)
+        return ScopeContainer.getOrCreate(kClass, scopeType, scopeId) {
+            createInstance(kClass, qualifier, scopeId)
+        }
+    }
 
-        return kClass.cast(newInstance)
+    /**
+     * 클래스의 스코프 타입을 결정
+     */
+    private fun getScopeType(kClass: KClass<*>): ScopeType {
+        return when {
+            kClass.hasAnnotation<MySingleTon>() -> ScopeType.SINGLETON
+            kClass.hasAnnotation<ActivityScope>() -> ScopeType.ACTIVITY
+            kClass.hasAnnotation<ViewmodelScope>() -> ScopeType.VIEWMODEL
+            else -> {
+                val providers = dependencyProviders[kClass] ?: return ScopeType.TRANSIENT
+                providers.firstOrNull()?.let { identifier ->
+                    when {
+                        identifier.function.hasAnnotation<MySingleTon>() -> ScopeType.SINGLETON
+                        identifier.function.hasAnnotation<ActivityScope>() -> ScopeType.ACTIVITY
+                        identifier.function.hasAnnotation<ViewmodelScope>() -> ScopeType.VIEWMODEL
+                        else -> ScopeType.TRANSIENT
+                    }
+                } ?: ScopeType.TRANSIENT
+            }
+        }
     }
 
     /** MyInjector어노테이션이 붙어 있는 프로퍼티를 찾아 인스턴스 주입 **/
-    private fun <T : Any> injectFieldProperties(
+    fun <T : Any> injectFieldProperties(
         implementClass: KClass<out Any>,
         instance: T,
+        scopeId: Long,
     ) {
         implementClass.declaredMemberProperties
             .filter { it.hasAnnotation<MyInjector>() }
@@ -119,6 +138,7 @@ object DiContainer {
                         property.returnType.classifier as? KClass<*>
                             ?: error(""),
                         property.findAnnotation<MyQualifier>()?.type,
+                        scopeId
                     )
                 property.setter.call(instance, propertyInstance)
             }
@@ -132,6 +152,7 @@ object DiContainer {
     private fun <T : Any> createInstance(
         kClass: KClass<T>,
         qualifier: String? = null,
+        scopeId: Long = 0,
     ): T {
         val possibleProviders: List<DependencyIdentifier> =
             dependencyProviders[kClass] ?: emptyList()
@@ -140,11 +161,11 @@ object DiContainer {
             possibleProviders.find { it.qualifier == qualifier }
 
         matchedProvider?.let { key ->
-            return createFromModule(key.function, kClass, key.module)
+            return createFromModule(key.function, kClass, key.module, scopeId)
         }
 
-        val instance: T = createFromConstructor(kClass)
-        injectFieldProperties(kClass, instance)
+        val instance: T = createFromConstructor(kClass, scopeId)
+        injectFieldProperties(kClass, instance, scopeId)
         return instance
     }
 
@@ -157,6 +178,7 @@ object DiContainer {
         function: KFunction<*>,
         kClass: KClass<T>,
         module: KClass<*>,
+        scopeId: Long,
     ): T {
         val constructorArguments: Map<KParameter, Any> =
             function.parameters.associateWith { parameter ->
@@ -172,12 +194,12 @@ object DiContainer {
                                     function.name,
                                 ),
                             )
-                    getInstance(parameterClass)
+                    getInstance(parameterClass, scopeId = scopeId)
                 }
             }
 
         val instance = kClass.cast(function.callBy(constructorArguments))
-        injectFieldProperties(kClass, instance)
+        injectFieldProperties(kClass, instance, scopeId)
 
         return instance
     }
@@ -186,7 +208,7 @@ object DiContainer {
      * 클래스의 기본 생성자를 이용해 인스턴스를 생성하는 메서드
      * 생성자 파라미터에 필요한 의존성을 재귀로 주입
      **/
-    private fun <T : Any> createFromConstructor(kClass: KClass<T>): T {
+    private fun <T : Any> createFromConstructor(kClass: KClass<T>, scopeId: Long): T {
         val constructor: KFunction<Any> =
             kClass.primaryConstructor
                 ?: error(ERROR_MESSAGE_NOT_HAVE_DEFAULT_CONSTRUCTOR.format(kClass.simpleName))
@@ -201,12 +223,13 @@ object DiContainer {
                                 parameter,
                             ),
                         ),
+                    scopeId = scopeId
                 )
             }
 
         val instance: T = kClass.cast(constructor.callBy(arguments))
 
-        injectFieldProperties(kClass, instance)
+        injectFieldProperties(kClass, instance, scopeId)
 
         return instance
     }
