@@ -8,11 +8,7 @@ object DependencyInjection {
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
 
-                val qualifier = field.annotations
-                    .firstOrNull { it.annotationClass.annotations.any { meta -> meta.annotationClass.simpleName == "Qualifier" } }
-                    ?.annotationClass ?: Remote::class
-
-                val dependency = DIContainer.get(field.type.kotlin, qualifier)
+                val dependency = DIContainer.get(field.type.kotlin)
                 field.set(instance, dependency)
             }
         }

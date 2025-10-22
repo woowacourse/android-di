@@ -50,12 +50,12 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        DIContainer.register(DateFormatter::class, Remote::class) {
+        DIContainer.register(DateFormatter::class) {
             DateFormatter(this)
         }
 
         DependencyInjection.inject(this)
-        dateFormatter = DIContainer.get(DateFormatter::class, Remote::class) as DateFormatter
+        dateFormatter = DIContainer.get(DateFormatter::class)
     }
 
     private fun setupToolbar() {
