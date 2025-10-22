@@ -24,14 +24,12 @@ class DatabaseModule(
     fun provideInMemoryDatabase(): ShoppingDatabase = Room.inMemoryDatabaseBuilder(context, ShoppingDatabase::class.java).build()
 
     @Provides
-    @SingletonScope
     @LocalDatabase
     fun provideLocalCartProductDao(
         @LocalDatabase shoppingDatabase: ShoppingDatabase,
     ): CartProductDao = shoppingDatabase.cartProductDao()
 
     @Provides
-    @SingletonScope
     @InMemory
     fun provideInMemoryCartProductDao(
         @InMemory shoppingDatabase: ShoppingDatabase,
