@@ -10,10 +10,10 @@ class DependencyMapping(
 ) {
     private val identifierScopes: MutableMap<Identifier, Scope> = mutableMapOf()
     private val dependencyGetters: Map<Scope, MutableMap<Identifier, () -> Any>> =
-        Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
+        Scope.entries.associateWith { mutableMapOf() }
 
     private val dependencyMapping: Map<Scope, MutableMap<Identifier, Any>> =
-        Scope.entries.associateWith { scope: Scope -> mutableMapOf() }
+        Scope.entries.associateWith { mutableMapOf() }
 
     init {
         initialize(*module)
