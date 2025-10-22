@@ -16,7 +16,6 @@ class DiViewModelFactory(
             viewModel.viewModelId = System.currentTimeMillis()
         }
 
-        @Suppress("UNCHECKED_CAST")
-        return viewModel as T
+        return viewModel
     }
 }
