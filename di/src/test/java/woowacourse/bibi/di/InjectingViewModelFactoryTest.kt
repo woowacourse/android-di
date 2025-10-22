@@ -1,15 +1,19 @@
 package woowacourse.bibi.di
 
 import androidx.lifecycle.ViewModel
-import org.junit.Assert
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import woowacourse.bibi.di.androidx.InjectingViewModelFactory
-import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.ActivityScope
+import woowacourse.bibi.di.core.AppScope
+import woowacourse.bibi.di.core.Container
+import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.Inject
 import woowacourse.bibi.di.core.Local
 import woowacourse.bibi.di.core.Remote
@@ -25,25 +29,40 @@ class InjectingViewModelFactoryTest {
 
     class FakeCartRepository : CartRepository
 
-    class ConstructorTestViewModel(
+    class TestFormatter
+
+    private class ConstructorTestViewModel(
         @Remote val product: ProductRepository,
         @Local val cart: CartRepository,
     ) : ViewModel()
 
-    class FieldTestViewModel : ViewModel() {
-        @Inject @Remote
+    private class FieldTestViewModel : ViewModel() {
+        @Inject
+        @Remote
         lateinit var product: ProductRepository
         var notInjected: CartRepository? = null
+    }
+
+    private class ScopedViewModel(
+        @Local val cart: CartRepository,
+        @Local val product: ProductRepository,
+        val formatter: TestFormatter,
+    ) : ViewModel()
+
+    private class TestOwner : ViewModelStoreOwner {
+        override val viewModelStore = ViewModelStore()
     }
 
     private lateinit var factory: InjectingViewModelFactory
     private lateinit var productRepo: ProductRepository
     private lateinit var cartRepo: CartRepository
+    private lateinit var owner: ViewModelStoreOwner
 
     @Before
     fun setup() {
         productRepo = FakeProductRepository()
         cartRepo = FakeCartRepository()
+        owner = TestOwner()
 
         val container =
             MapBackedContainer(
@@ -53,7 +72,7 @@ class InjectingViewModelFactoryTest {
                 ),
             )
 
-        factory = InjectingViewModelFactory(container)
+        factory = InjectingViewModelFactory(container, owner)
     }
 
     @Test
@@ -85,15 +104,135 @@ class InjectingViewModelFactoryTest {
             MapBackedContainer(
                 mapOf(Key(ProductRepository::class, Remote::class) to productRepo),
             )
-        val brokenFactory = InjectingViewModelFactory(brokenContainer)
+        val brokenFactory = factoryFor(brokenContainer, owner)
 
         // when
         brokenFactory.create(ConstructorTestViewModel::class.java)
     }
 
+    @Test
+    fun `AppScope CartRepository는 ViewModel과 Activity를 넘어 동일 인스턴스가 재사용된다`() {
+        // given
+        val builder =
+            ContainerBuilder().apply {
+                register(CartRepository::class, Local::class, AppScope::class) {
+                    FakeCartRepository()
+                }
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
+                    FakeProductRepository()
+                }
+                register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
+                    TestFormatter()
+                }
+            }
+        val appContainer = builder.build()
+
+        // when
+        val activity1 = appContainer.child(ActivityScope::class)
+        val factory1 = factoryFor(activity1, TestOwner())
+        val viewModel1OfActivity1 = factory1.create(ScopedViewModel::class.java)
+
+        val activity2 = appContainer.child(ActivityScope::class)
+        val factory2 = factoryFor(activity2, TestOwner())
+        val viewModel2OfActivity1 = factory2.create(ScopedViewModel::class.java)
+
+        // then
+        assertSame(viewModel1OfActivity1.cart, viewModel2OfActivity1.cart)
+    }
+
+    @Test
+    fun `ViewModelScope ProductRepository는 같은 Activity 내에서도 ViewModel마다 서로 다르다`() {
+        val builder =
+            ContainerBuilder().apply {
+                register(
+                    CartRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.AppScope::class,
+                ) {
+                    FakeCartRepository()
+                }
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
+                    FakeProductRepository()
+                }
+                register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
+                    TestFormatter()
+                }
+            }
+        val appContainer = builder.build()
+
+        val activity = appContainer.child(ActivityScope::class)
+        val sameOwner = TestOwner()
+        val factory = factoryFor(activity, sameOwner)
+
+        // when
+        val viewModel1 = factory.create(ScopedViewModel::class.java)
+        val viewModel2 = factory.create(ScopedViewModel::class.java)
+
+        // then
+        assertNotNull(viewModel1.product)
+        assertNotNull(viewModel2.product)
+        assertSame(viewModel1.cart, viewModel2.cart)
+        assertNotSame(viewModel1.product, viewModel2.product)
+    }
+
+    @Test
+    fun `ActivityScope 의존성은 같은 Activity에서는 동일하고 다른 Activity에서는 다르다`() {
+        // given
+        val builder =
+            ContainerBuilder().apply {
+                register(
+                    CartRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.AppScope::class,
+                ) {
+                    FakeCartRepository()
+                }
+                register(
+                    ProductRepository::class,
+                    Local::class,
+                    woowacourse.bibi.di.core.ViewModelScope::class,
+                ) {
+                    FakeProductRepository()
+                }
+                register(TestFormatter::class, woowacourse.bibi.di.core.ActivityScope::class) {
+                    TestFormatter()
+                }
+            }
+        val appContainer = builder.build()
+
+        // when
+        val activity1 = appContainer.child(ActivityScope::class)
+        val owner1 = TestOwner()
+        val factory1 = factoryFor(activity1, owner1)
+        val viewModel1OfActivity1 = factory1.create(ScopedViewModel::class.java)
+        val viewModel2OfActivity1 = factory1.create(ScopedViewModel::class.java)
+
+        val activity2 = appContainer.child(ActivityScope::class)
+        val owner2 = TestOwner()
+        val factory2 = factoryFor(activity2, owner2)
+        val viewModel1OfActivity2 = factory2.create(ScopedViewModel::class.java)
+
+        // then
+        assertSame(viewModel1OfActivity1.formatter, viewModel2OfActivity1.formatter)
+        assertNotSame(viewModel1OfActivity1.formatter, viewModel1OfActivity2.formatter)
+    }
+
+    private fun factoryFor(
+        container: Container,
+        owner: ViewModelStoreOwner,
+    ) = InjectingViewModelFactory(container, owner)
+
     private class MapBackedContainer(
         private val map: Map<Key, Any>,
-    ) : AppContainer {
+    ) : Container {
         override fun resolve(
             type: KType,
             qualifier: KClass<out Annotation>?,
@@ -104,6 +243,10 @@ class InjectingViewModelFactoryTest {
             return map[Key(kClass, qualifier)]
                 ?: error("No binding for $kClass (qualifier=${qualifier?.simpleName})")
         }
+
+        override fun child(scope: KClass<out Annotation>): Container = this
+
+        override fun clear() = Unit
     }
 
     private data class Key(

@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.bibi.di.androidx.injectedViewModel
+import woowacourse.bibi.di.core.ActivityScope
+import woowacourse.bibi.di.core.Inject
+import woowacourse.bibi.di.core.MemberInjector
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -16,17 +19,23 @@ class CartActivity :
     CartProductClickListener {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        injectedViewModel<CartViewModel> { (application as ShoppingApplication).container }
+    private val activityContainer by lazy {
+        (application as ShoppingApplication).container.child(ActivityScope::class)
     }
 
+    private val viewModel by lazy {
+        injectedViewModel<CartViewModel> { activityContainer }
+    }
+
+    @Inject
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        MemberInjector.inject(this, activityContainer)
+
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -45,10 +54,6 @@ class CartActivity :
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -93,5 +98,10 @@ class CartActivity :
 
     override fun onDeleteClicked(id: Long) {
         viewModel.deleteCartProduct(id)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isChangingConfigurations) activityContainer.clear()
     }
 }

@@ -1,15 +1,15 @@
 package woowacourse.shopping.common
 
-import woowacourse.bibi.di.core.AppContainer
+import woowacourse.bibi.di.core.Container
 import woowacourse.shopping.ShoppingApplication
 
 inline fun <R> withOverriddenContainer(
     app: ShoppingApplication,
-    newContainer: AppContainer,
+    container: Container,
     block: () -> R,
 ): R {
     val old = app.container
-    app.overrideContainerForTest(newContainer)
+    app.overrideContainerForTest(container)
     return try {
         block()
     } finally {

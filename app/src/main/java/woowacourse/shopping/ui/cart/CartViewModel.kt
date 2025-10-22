@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import woowacourse.bibi.di.core.Inject
 import woowacourse.bibi.di.core.Local
-import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.model.Product
 

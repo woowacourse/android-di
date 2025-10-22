@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.bibi.di.androidx.injectedViewModel
+import woowacourse.bibi.di.core.ActivityScope
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityMainBinding
@@ -17,8 +18,12 @@ import woowacourse.shopping.ui.cart.CartActivity
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
+    private val activityContainer by lazy {
+        (application as ShoppingApplication).container.child(ActivityScope::class)
+    }
+
     private val viewModel by lazy {
-        injectedViewModel<MainViewModel> { (application as ShoppingApplication).container }
+        injectedViewModel<MainViewModel> { activityContainer }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,5 +96,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToCart() {
         startActivity(Intent(this, CartActivity::class.java))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isChangingConfigurations) activityContainer.clear()
     }
 }

@@ -1,15 +1,17 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import woowacourse.bibi.di.androidx.InjectingViewModelFactory
+import woowacourse.bibi.di.core.ActivityScope
 import woowacourse.bibi.di.core.ContainerBuilder
 import woowacourse.bibi.di.core.Local
-import woowacourse.bibi.di.core.Remote
 import woowacourse.shopping.common.MainDispatcherRule
 import woowacourse.shopping.common.getOrAwaitValue
 import woowacourse.shopping.domain.CartRepository
@@ -70,12 +72,23 @@ class CartViewModelTest {
             )
         }
 
+    private class TestOwner : ViewModelStoreOwner {
+        override val viewModelStore: ViewModelStore = ViewModelStore()
+    }
+
     private fun createViewModelWith(fakeRepo: CartRepository): CartViewModel {
         val container =
             ContainerBuilder()
-                .apply { register(CartRepository::class, Local::class) { fakeRepo } }
-                .build()
-        val factory = InjectingViewModelFactory(container)
+                .apply {
+                    register(
+                        CartRepository::class,
+                        Local::class,
+                        ActivityScope::class,
+                    ) { fakeRepo }
+                }.build()
+        val activityContainer = container.child(ActivityScope::class)
+        val owner = TestOwner()
+        val factory = InjectingViewModelFactory(activityContainer, owner)
 
         return factory.create(CartViewModel::class.java)
     }
