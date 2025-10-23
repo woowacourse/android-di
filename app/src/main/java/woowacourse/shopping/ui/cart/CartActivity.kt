@@ -6,7 +6,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.medandro.di.annotation.InjectField
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.di.myDiViewModels
 
@@ -14,18 +16,25 @@ class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by myDiViewModels()
+
+    @InjectField
     private lateinit var dateFormatter: DateFormatter
     private lateinit var adapter: CartProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setupDI()
         setupContentView()
-        setupDateFormatter()
         setupAdapter()
         setupBinding()
         setupToolbar()
         setupViewData()
+    }
+
+    private fun setupDI() {
+        val diContainer = (application as ShoppingApplication).diContainer
+        diContainer.injectFields(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -41,10 +50,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
