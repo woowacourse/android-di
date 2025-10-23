@@ -1,6 +1,11 @@
 package com.example.di
 
+import android.app.Application
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.SavedStateHandle
+import com.example.di.scope.ActivityScopeHandler
+import com.example.di.scope.AppScopeHandler
+import com.example.di.scope.ScopeContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -10,8 +15,12 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 object DependencyInjector {
-    private val instances = mutableMapOf<DependencyKey<*>, Any>()
-    private val creating = mutableSetOf<KClass<*>>()
+    private val instances = mutableMapOf<DependencyKey<*>, () -> Any>()
+
+    init {
+        AppScopeHandler
+        ActivityScopeHandler
+    }
 
     fun setInstance(container: Any) {
         container::class
@@ -19,88 +28,113 @@ object DependencyInjector {
             .filterIsInstance<KProperty1<Any, *>>()
             .forEach { property ->
                 property.isAccessible = true
-                val instance = property.get(container) ?: return@forEach
                 val kClass = property.returnType.classifier as KClass<*>
-                val qualifier = findAnnotation(property)
+                val qualifier = findQualifier(property)
                 val key = DependencyKey(kClass, qualifier)
-                instances[key] = instance
+                property
+                    .get(container)
+                    ?.let {
+                        instances[key] = { it }
+                    } ?: run { error("${property.get(container)}가 null") }
             }
     }
 
-    fun <T : Any> getInstance(
+    fun <T : Any> getOrCreateInstance(
         kClass: KClass<T>,
-        savedStateHandle: SavedStateHandle? = null,
         qualifier: KClass<out Annotation>? = null,
+        savedStateHandle: SavedStateHandle? = null,
+        context: Any? = null,
+        scope: KClass<out Annotation>? = null,
     ): T {
         val key = DependencyKey(kClass, qualifier)
-        return instances[key] as? T ?: run {
-            instances[key] = createInstance(kClass, savedStateHandle, key)
-            return (instances[key] as T).also { instances.remove(key) }
-        }
+
+        instances[key]?.invoke()?.let { return it as T }
+
+        val handler = scope?.let { ScopeContainer.getHandler(it) }
+        return handler?.getOrCreate(
+            key = key,
+            activity = context as? ComponentActivity,
+        ) { createInstance(kClass, savedStateHandle, context, qualifier) }
+            ?: createInstance(kClass, savedStateHandle, context, qualifier)
     }
 
-    fun <T : Any> injectAnnotatedProperties(
+    private fun <T : Any> createInstance(
         kClass: KClass<T>,
-        instance: T,
-    ) {
-        kClass.members
-            .filterIsInstance<KMutableProperty1<Any, Any>>()
-            .forEach { property ->
-                if (property.findAnnotation<RequireInjection>() == null) return@forEach
-                property.isAccessible = true
-                val dependencyClass = property.returnType.classifier as? KClass<*>
-
-                val qualifier = findAnnotation(property)
-
-                dependencyClass?.let {
-                    property.setter.call(
-                        instance,
-                        getInstance(it, qualifier = qualifier),
-                    )
-                }
-            }
-    }
-
-    private fun findAnnotation(property: KProperty1<Any, *>) =
-        when {
-            property.findAnnotation<InMemoryLogger>() != null -> InMemoryLogger::class
-            property.findAnnotation<DatabaseLogger>() != null -> DatabaseLogger::class
-            else -> null
-        }
-
-    private fun createInstance(
-        kClass: KClass<*>,
         handle: SavedStateHandle?,
-        key: DependencyKey<*>,
-    ): Any {
-        if (creating.contains(kClass)) throw IllegalStateException("순환 참조")
-        creating.add(kClass)
+        context: Any?,
+        qualifier: KClass<out Annotation>?,
+    ): T {
+        val primaryConstructor = kClass.primaryConstructor
+        val instance =
+            primaryConstructor?.let {
+                createPrimaryConstructor(it, handle, qualifier)
+            } ?: kClass.java.getDeclaredConstructor().newInstance()
 
-        try {
-            val primaryConstructor = kClass.primaryConstructor
-            primaryConstructor?.let { return createPrimaryConstructor(it, handle, key.qualifier) }
-
-            kClass.objectInstance?.let { obj -> return obj }
-
-            return kClass.java.getDeclaredConstructor().newInstance()
-        } finally {
-            creating.remove(kClass)
-            instances.remove(key)
-        }
+        injectField(instance, context)
+        return instance
     }
 
-    private fun createPrimaryConstructor(
-        primaryConstructor: KFunction<Any>,
+    private fun <T : Any> createPrimaryConstructor(
+        it: KFunction<T>,
         handle: SavedStateHandle?,
         qualifier: KClass<out Annotation>?,
-    ): Any {
-        val params =
-            primaryConstructor.parameters.associateWith { param ->
-                when (param.type.classifier) {
-                    SavedStateHandle::class -> requireNotNull(handle) { "SavedStateHandle 필요" }
-                    else -> getInstance(param.type.classifier as KClass<*>, qualifier = qualifier)
-                }
+    ): T {
+        val args =
+            it.parameters.associateWith { param ->
+                when (val paramType = param.type.classifier) {
+                    SavedStateHandle::class -> handle
+                    else ->
+                        instances[
+                            DependencyKey(
+                                paramType as KClass<*>,
+                                qualifier,
+                            ),
+                        ]?.invoke()
+                } ?: getOrCreateInstance(param.type.classifier as KClass<*>, qualifier)
             }
-        return primaryConstructor.callBy(params)
+        return it.callBy(args)
     }
+
+    fun <T : Any> injectField(
+        instance: T,
+        context: Any? = null,
+    ) {
+        instance::class
+            .members
+            .filterIsInstance<KMutableProperty1<Any, Any>>()
+            .forEach { prop ->
+                val requireInjection = prop.findAnnotation<RequireInjection>() ?: return@forEach
+                val dependency =
+                    getOrCreateInstance(
+                        kClass = requireInjection.impl,
+                        qualifier = findQualifier(prop),
+                        context = createContext(prop, instance, context),
+                        scope = requireInjection.scope,
+                        savedStateHandle = null,
+                    )
+
+                prop.isAccessible = true
+                prop.setter.call(instance, dependency)
+            }
+    }
+
+    private fun <T : Any> createContext(
+        prop: KMutableProperty1<Any, Any>,
+        instance: T,
+        context: Any?,
+    ) = when (val activityContext = prop.findAnnotation<RequireContext>()) {
+        null -> instance
+        else ->
+            when (activityContext.contextType) {
+                RequireContext.ContextType.ACTIVITY -> context
+                RequireContext.ContextType.APPLICATION -> context as? Application
+            }
+    }
+
+    private fun findQualifier(prop: KProperty1<Any, *>): KClass<out Annotation>? =
+        when {
+            prop.findAnnotation<InMemoryLogger>() != null -> InMemoryLogger::class
+            prop.findAnnotation<DatabaseLogger>() != null -> DatabaseLogger::class
+            else -> null
+        }
 }

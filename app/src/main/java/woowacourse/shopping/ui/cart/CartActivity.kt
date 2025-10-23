@@ -6,19 +6,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.DependencyInjector
+import com.example.di.RequireContext
+import com.example.di.RequireInjection
+import com.example.di.autoViewModel
+import com.example.di.scope.ActivityScope
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 import woowacourse.shopping.ui.ProductClickListener
-import woowacourse.shopping.ui.autoViewModel
 
 class CartActivity :
     AppCompatActivity(),
     ProductClickListener {
+    init {
+        DependencyInjector.injectField(this, this)
+    }
+
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by autoViewModel()
 
-    private val dateFormatter by lazy { DateFormatter(this) }
+    @RequireContext(RequireContext.ContextType.ACTIVITY)
+    @RequireInjection(impl = DateFormatter::class, scope = ActivityScope::class)
+    private lateinit var dateFormatter: DateFormatter
 
     private val cartProductAdapter by lazy {
         CartProductAdapter(this, dateFormatter)
@@ -26,7 +36,6 @@ class CartActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupContentView()
         setupBinding()
         setupToolbar()

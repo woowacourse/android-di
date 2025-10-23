@@ -1,3 +1,3 @@
 package test.fixture
 
-class FakeProductRepositoryImpl
+class FakeProductRepositoryImpl : FakeProductRepository

@@ -10,11 +10,12 @@ import org.junit.Test
 import test.fixture.FakeAppContainer
 import test.fixture.FakeCartRepositoryImpl
 import test.fixture.FakeCartViewModel
-import test.fixture.FakeProductRepositoryImpl
+import test.fixture.FakeProductRepository
 
 class DependencyInjectorTest {
     private lateinit var fakeCartRepository: FakeCartRepositoryImpl
-    private lateinit var fakeProductRepository: FakeProductRepositoryImpl
+    private lateinit var fakeProductRepository: FakeProductRepository
+    private lateinit var fakeProductRepository2: FakeProductRepository
     private lateinit var fakeAppContainer: FakeAppContainer
 
     @Before
@@ -22,6 +23,7 @@ class DependencyInjectorTest {
         fakeAppContainer = FakeAppContainer()
         fakeCartRepository = fakeAppContainer.cartRepository
         fakeProductRepository = fakeAppContainer.productRepository
+        fakeProductRepository2 = fakeAppContainer.productRepository2
     }
 
     @Test
@@ -31,8 +33,7 @@ class DependencyInjectorTest {
 
         // when
         val viewModel =
-            DependencyInjector.getInstance(FakeCartViewModel::class)
-        DependencyInjector.injectAnnotatedProperties(FakeCartViewModel::class, viewModel)
+            DependencyInjector.getOrCreateInstance(FakeCartViewModel::class)
 
         // then
         Assert.assertEquals(fakeCartRepository, viewModel.fakeCartRepository)
@@ -46,19 +47,19 @@ class DependencyInjectorTest {
 
         // when
         val databaseLogger =
-            DependencyInjector.getInstance(
-                FakeCartRepositoryImpl::class,
+            DependencyInjector.getOrCreateInstance(
+                FakeProductRepository::class,
                 qualifier = DatabaseLogger::class,
             )
         val inMemoryLogger =
-            DependencyInjector.getInstance(
-                FakeProductRepositoryImpl::class,
+            DependencyInjector.getOrCreateInstance(
+                FakeProductRepository::class,
                 qualifier = InMemoryLogger::class,
             )
 
         // then
-        softly.assertThat(databaseLogger).isSameAs(fakeCartRepository)
         softly.assertThat(inMemoryLogger).isSameAs(fakeProductRepository)
+        softly.assertThat(databaseLogger).isSameAs(fakeProductRepository2)
         softly.assertAll()
     }
 }

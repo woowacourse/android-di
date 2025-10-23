@@ -8,7 +8,7 @@ import org.junit.Test
 import test.fixture.FakeCartViewModel
 import kotlin.reflect.full.findAnnotation
 
-class AnnotationTest {
+class QualifierTest {
     private lateinit var fakeCartViewModel: FakeCartViewModel
 
     @Before

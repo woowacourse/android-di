@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [CartProductEntity::class], version = 1, exportSchema = false)
+@Database(entities = [CartProductEntity::class], version = 2, exportSchema = false)
 abstract class ShoppingDatabase : RoomDatabase() {
     abstract fun cartProductDao(): CartProductDao
 
@@ -18,7 +18,7 @@ abstract class ShoppingDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ShoppingDatabase =
             INSTANCE ?: synchronized(LOCK) {
-                Room
+                INSTANCE ?: Room
                     .databaseBuilder(
                         context.applicationContext,
                         ShoppingDatabase::class.java,

@@ -7,17 +7,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.di.DatabaseLogger
 import com.example.di.InMemoryLogger
 import com.example.di.RequireInjection
+import com.example.di.scope.AppScope
+import com.example.di.scope.ViewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.data.CartRepositoryImpl
+import woowacourse.shopping.data.ProductRepositoryImpl
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
 
 class MainViewModel : ViewModel() {
-    @RequireInjection
+    @RequireInjection(impl = ProductRepositoryImpl::class, scope = ViewModelScope::class)
     @InMemoryLogger
     private lateinit var productRepository: ProductRepository
 
-    @RequireInjection
+    @RequireInjection(impl = CartRepositoryImpl::class, scope = AppScope::class)
     @DatabaseLogger
     private lateinit var cartRepository: CartRepository
 
