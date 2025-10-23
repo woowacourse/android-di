@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package com.example.di
 
 object DependencyFactory {
     fun <T : Any> create(modelClass: Class<T>): T {

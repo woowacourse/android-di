@@ -1,8 +1,18 @@
 package woowacourse.shopping.data
 
+import android.util.Log
+import com.example.di.Remote
+import com.example.di.ViewModelScope
 import woowacourse.shopping.model.Product
 
+@Remote
+@ViewModelScope
 class DefaultProductRepository : ProductRepository {
+
+    init {
+        Log.d("TAG", "DI 생명주기: DefaultProductRepository 생성")
+    }
+
     private val products: List<Product> =
         listOf(
             Product(

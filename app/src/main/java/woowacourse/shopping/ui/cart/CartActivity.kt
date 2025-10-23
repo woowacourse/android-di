@@ -1,12 +1,17 @@
 package woowacourse.shopping.ui.cart
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import woowacourse.shopping.DependencyFactory
+import com.example.di.ActivityScope
+import com.example.di.DIContainer
+import com.example.di.DependencyFactory
+import com.example.di.DependencyInjection
+import com.example.di.Remote
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
@@ -45,7 +50,12 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
+        DIContainer.register(DateFormatter::class) {
+            DateFormatter(this)
+        }
+
+        DependencyInjection.inject(this)
+        dateFormatter = DIContainer.get(DateFormatter::class)
     }
 
     private fun setupToolbar() {
@@ -80,6 +90,13 @@ class CartActivity : AppCompatActivity() {
         viewModel.onCartProductDeleted.observe(this) {
             if (!it) return@observe
             Toast.makeText(this, getString(R.string.cart_deleted), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            DIContainer.clearScope(ActivityScope::class)
         }
     }
 }

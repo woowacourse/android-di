@@ -16,7 +16,7 @@
 
 
   
-# step2 요구 사항 (사전에 주어진 테스트 코드가 모두 성공해야 한다.)
+## step2 요구 사항 (사전에 주어진 테스트 코드가 모두 성공해야 한다.)
 필드 주입
 - [x] ViewModel 내 필드 주입을 구현한다.
 
@@ -27,12 +27,21 @@ Annotation (다음 문제점을 해결한다.)
 
 Recursive DI
 - [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
-- [ ] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
+- [x] CartProductViewHolder의 bind 함수에 다음 구문을 추가하여 뷰에서도 날짜 정보를 확인할 수 있도록 한다.
 
-# step3 요구 사항 
+## step3 요구 사항 
 Qualifier (다음 문제점을 해결한다.)
-- [ ] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 없다.
-- [ ] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
+- [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 없다.
+- [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
 
 모듈 분리
-- [ ] 내가 만든 DI 라이브러리를 모듈로 분리한다.
+- [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
+
+## step4 요구 사항 (다음 문제점을 해결한다.)
+- [x] CartActivity에서 사용하는 DateFormatter의 인스턴스를 매번 개발자가 관리해야 한다.
+- [x] 모든 의존성이 싱글 오브젝트로 만들어질 필요 없다.
+  - [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+  - [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+  - [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+

@@ -1,4 +1,4 @@
-package woowacourse.shopping
+package com.example.di
 
 object DependencyInjection {
     fun <T : Any> inject(instance: T) {
@@ -7,6 +7,7 @@ object DependencyInjection {
         for (field in fields) {
             if (field.isAnnotationPresent(Inject::class.java)) {
                 field.isAccessible = true
+
                 val dependency = DIContainer.get(field.type.kotlin)
                 field.set(instance, dependency)
             }

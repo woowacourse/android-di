@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.di.DependencyInjection
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test

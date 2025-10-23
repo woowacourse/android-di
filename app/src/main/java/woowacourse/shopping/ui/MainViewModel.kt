@@ -1,11 +1,14 @@
 package woowacourse.shopping.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.di.DIContainer
 import kotlinx.coroutines.launch
-import woowacourse.shopping.Inject
+import com.example.di.Inject
+import com.example.di.ViewModelScope
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
@@ -33,5 +36,11 @@ class MainViewModel: ViewModel() {
 
     fun getAllProducts() {
         _products.value = productRepository.getAllProducts()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("TAG", "ViewModel onCleared() called")
+        DIContainer.clearScope(ViewModelScope::class)
     }
 }
