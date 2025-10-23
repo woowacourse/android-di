@@ -1,6 +1,8 @@
 package woowacourse.shopping.ui.cart
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
 import com.example.di.DependencyContainer
 import com.example.di.ViewModelFactory
 import com.google.common.truth.Truth.assertThat
@@ -15,6 +17,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.FakeDatabaseModule
 import woowacourse.shopping.data.FakeRepositoryModule
 import woowacourse.shopping.fixture.PRODUCT_1
 import woowacourse.shopping.fixture.PRODUCT_2
@@ -22,6 +27,7 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.getOrAwaitValue
 
+@RunWith(RobolectricTestRunner::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
     @get:Rule
@@ -32,7 +38,8 @@ class CartViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        DependencyContainer.initialize(FakeRepositoryModule())
+        val application = ApplicationProvider.getApplicationContext<Application>()
+        DependencyContainer.initialize(application, FakeRepositoryModule(), FakeDatabaseModule())
         viewModel = ViewModelFactory.create(CartViewModel::class.java)
         viewModel.getAllCartProducts()
     }

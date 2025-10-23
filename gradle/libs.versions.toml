@@ -19,6 +19,7 @@ robolectric = "4.16"
 room-runtime = "2.6.1"
 truth = "1.4.5"
 junit = "4.13.2"
+core-ktx = "1.7.0"
 
 [libraries]
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity-ktx" }
@@ -42,6 +43,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "core-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }

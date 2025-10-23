@@ -1,12 +1,10 @@
 package com.example.di
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Qualifier
-annotation class DatabaseRepository
+annotation class ExampleDatabaseRepository
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
 @Qualifier
-annotation class InMemoryRepository
+annotation class ExampleInMemoryRepository
 
 interface ProductRepository
 

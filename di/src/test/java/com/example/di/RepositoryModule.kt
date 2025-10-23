@@ -2,13 +2,14 @@ package com.example.di
 
 class RepositoryModule : Module {
     @Dependency
-    val productRepository: ProductRepository = DefaultProductRepository()
+    @ViewModelLifespan
+    fun productRepository(): ProductRepository = DefaultProductRepository()
 
     @Dependency
-    @DatabaseRepository
-    val databaseCartRepository: CartRepository = DatabaseCartRepository()
+    @ExampleDatabaseRepository
+    fun databaseCartRepository(): CartRepository = DatabaseCartRepository()
 
     @Dependency
-    @InMemoryRepository
-    val inMemoryCartRepository: CartRepository = InMemoryCartRepository()
+    @ExampleInMemoryRepository
+    fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 }

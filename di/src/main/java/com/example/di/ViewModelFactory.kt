@@ -6,7 +6,11 @@ import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 
 object ViewModelFactory : ViewModelProvider.Factory {
-    override fun <VM : ViewModel> create(modelClass: Class<VM>): VM = DependencyInjector.instance(modelClass.kotlin)
+    override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
+        val instance: VM = DependencyInjector.instance(modelClass.kotlin)
+        DependencyInjector.injectFields(instance)
+        return instance
+    }
 }
 
 inline fun <reified VM : ViewModel> ComponentActivity.injectableViewModel(): Lazy<VM> =
