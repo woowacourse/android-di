@@ -1,5 +1,6 @@
 package com.example.di
 
+import android.util.Log
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
@@ -13,10 +14,17 @@ class DependencyMapping(
         Scope.entries.associateWith { mutableMapOf() }
 
     private val dependencyMapping: Map<Scope, MutableMap<Identifier, Any>> =
-        Scope.entries.associateWith { mutableMapOf() }
+        Scope.entries.filterNot { entry -> entry == Scope.NONE }.associateWith { mutableMapOf() }
 
     init {
         initialize(*module)
+        dependencyGetters.forEach {
+            Log.wtf("asdf", "${it.key}")
+            it.value.forEach {
+                Log.wtf("asdf", "    $it")
+            }
+            Log.wtf("asdf", " ")
+        }
     }
 
     fun get(identifier: Identifier): Any {
@@ -27,7 +35,7 @@ class DependencyMapping(
             val getter: MutableMap<Identifier, () -> Any> = getters(scope)
             val instance =
                 getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
-            mapping[identifier] = instance
+            if (scope != Scope.NONE) mapping[identifier] = instance
             instance
         }
     }
