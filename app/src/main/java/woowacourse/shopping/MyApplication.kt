@@ -1,13 +1,5 @@
 package woowacourse.shopping
 
-import android.app.Application
-import com.on.di_library.di.DiContainer
+import com.on.di_library.di.DiApplication
 
-class MyApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-
-        DiContainer.setContext(this)
-        DiContainer.getAnnotatedModules()
-    }
-}
+class MyApplication : DiApplication()
