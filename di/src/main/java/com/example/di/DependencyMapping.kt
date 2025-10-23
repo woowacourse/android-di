@@ -28,7 +28,7 @@ class DependencyMapping(
             val instance =
                 getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
             mapping[identifier] = instance
-            return instance
+            instance
         }
     }
 

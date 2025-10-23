@@ -25,8 +25,7 @@ object DependencyInjector {
         }
 
         val identifier = Identifier(targetClass, qualifier)
-        return DependencyContainer.dependency(identifier) as? T
-            ?: error("Dependency for $identifier could not be cast to the requested type.")
+        return DependencyContainer.dependency(identifier) as T
     }
 
     fun injectFields(target: Any) {
