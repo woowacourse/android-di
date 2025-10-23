@@ -21,13 +21,17 @@ class DependencyMapping(
 
     fun get(identifier: Identifier): Any {
         val scope: Scope = scope(identifier)
-        val mapping: MutableMap<Identifier, Any> = mapping(scope)
+        val getter: MutableMap<Identifier, () -> Any> = getters(scope)
+        if (scope == Scope.NONE) {
+            return getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
+        }
 
+        val mapping: MutableMap<Identifier, Any> = mapping(scope)
         return mapping[identifier] ?: run {
             val getter: MutableMap<Identifier, () -> Any> = getters(scope)
             val instance =
                 getter[identifier]?.invoke() ?: error("No dependency found for $identifier.")
-            if (scope != Scope.NONE) mapping[identifier] = instance
+            mapping[identifier] = instance
             instance
         }
     }
