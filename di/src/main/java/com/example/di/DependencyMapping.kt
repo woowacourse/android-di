@@ -1,6 +1,5 @@
 package com.example.di
 
-import android.util.Log
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
@@ -18,13 +17,6 @@ class DependencyMapping(
 
     init {
         initialize(*module)
-        dependencyGetters.forEach {
-            Log.wtf("asdf", "${it.key}")
-            it.value.forEach {
-                Log.wtf("asdf", "    $it")
-            }
-            Log.wtf("asdf", " ")
-        }
     }
 
     fun get(identifier: Identifier): Any {
