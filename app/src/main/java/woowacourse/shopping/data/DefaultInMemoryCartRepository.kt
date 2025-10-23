@@ -5,17 +5,17 @@ import com.example.domain.model.Product
 import com.example.domain.repository.CartRepository
 
 class DefaultInMemoryCartRepository : CartRepository {
-
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {
-        val cartProduct = CartProduct(
-            id = System.currentTimeMillis(),
-            name = product.name,
-            price = product.price,
-            imageUrl = product.imageUrl,
-            createdAt = System.currentTimeMillis(),
-        )
+        val cartProduct =
+            CartProduct(
+                id = System.currentTimeMillis(),
+                name = product.name,
+                price = product.price,
+                imageUrl = product.imageUrl,
+                createdAt = System.currentTimeMillis(),
+            )
         cartProducts.add(cartProduct)
     }
 

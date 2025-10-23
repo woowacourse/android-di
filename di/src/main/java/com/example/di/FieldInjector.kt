@@ -1,14 +1,6 @@
 package com.example.di
 
-import com.sun.tools.javac.code.TypeAnnotationPosition.field
 import kotlin.jvm.java
-
-@Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Inject
-
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier(val name: String)
 
 object FieldInjector {
     fun inject(
@@ -18,11 +10,42 @@ object FieldInjector {
         val clazz = target.javaClass
         clazz.declaredFields
             .filter { field ->
-            field.isAnnotationPresent(Inject::class.java)
+                field.isAnnotationPresent(Inject::class.java)
             }.forEach { field ->
-            val dependency = container.get(field.type.kotlin)
-            field.isAccessible = true
-            field.set(target, dependency)
-        }
+                val qualifier = field.getAnnotation(Qualifier::class.java)?.name
+                val dependency = container.get(field.type.kotlin, qualifier)
+                field.isAccessible = true
+                field.set(target, dependency)
+            }
+    }
+
+    fun inject(
+        target: Any,
+        scope: ViewModelContainer,
+    ) {
+        val clazz = target.javaClass
+        clazz.declaredFields
+            .filter { it.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val qualifier = field.getAnnotation(Qualifier::class.java)?.name
+                val dependency = scope.get(field.type.kotlin, qualifier)
+                field.isAccessible = true
+                field.set(target, dependency)
+            }
+    }
+
+    fun inject(
+        target: Any,
+        scope: ActivityContainer,
+    ) {
+        val clazz = target.javaClass
+        clazz.declaredFields
+            .filter { it.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                val qualifier = field.getAnnotation(Qualifier::class.java)?.name
+                val dependency = scope.get(field.type.kotlin, qualifier)
+                field.isAccessible = true
+                field.set(target, dependency)
+            }
     }
 }

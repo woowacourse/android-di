@@ -7,9 +7,10 @@ import com.example.domain.repository.CartRepository
 import com.example.domain.repository.ProductRepository
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultInMemoryCartRepository
-import woowacourse.shopping.data.DefaultRoomCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
+import woowacourse.shopping.data.DefaultRoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     val container: ShoppingContainer by lazy {
@@ -39,8 +40,12 @@ class ShoppingApplication : Application() {
 
         container.register(
             type = CartRepository::class,
-            qualifier = "in_memory"
+            qualifier = "in_memory",
         ) { DefaultInMemoryCartRepository() }
+
+        container.register(DateFormatter::class) {
+            DateFormatter(applicationContext)
+        }
 
         container
     }

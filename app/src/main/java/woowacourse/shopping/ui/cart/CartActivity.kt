@@ -7,10 +7,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.ActivityContainer
+import com.example.di.FieldInjector
+import com.example.di.Inject
+import woowacourse.shopping.AutoViewModelFactory
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
-import woowacourse.shopping.AutoViewModelFactory
 import woowacourse.shopping.ui.cart.adapter.CartProductAdapter
 import woowacourse.shopping.ui.cart.vm.CartViewModel
 import kotlin.getValue
@@ -23,14 +26,23 @@ class CartActivity : AppCompatActivity() {
             (application as ShoppingApplication).container,
         )
     }
+    private lateinit var activityScope: ActivityContainer
 
-    private lateinit var dateFormatter: DateFormatter
+    @field:Inject
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        activityScope = (application as ShoppingApplication).container.createActivityScope()
+        FieldInjector.inject(this, activityScope)
+
+        FieldInjector.inject(
+            target = this,
+            container = (application as ShoppingApplication).container,
+        )
+
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -41,6 +53,11 @@ class CartActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onDestroy() {
+        activityScope.clear()
+        super.onDestroy()
+    }
+
     private fun setupContentView() {
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -49,10 +66,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
