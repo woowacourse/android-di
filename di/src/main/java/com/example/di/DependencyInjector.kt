@@ -14,18 +14,19 @@ object DependencyInjector {
         targetClass: KClass<T>,
         qualifier: Annotation? = null,
     ): T {
-        targetClass.primaryConstructor?.let { primaryConstructor: KFunction<T> ->
+        val identifier = Identifier(targetClass, qualifier)
+        return runCatching { DependencyContainer.dependency(identifier) }.getOrElse {
+            val constructor: KFunction<T> =
+                targetClass.primaryConstructor
+                    ?: error("Unable to retrieve nor instantiate $targetClass with qualifier $qualifier.")
             val parameters: Array<Any> =
-                primaryConstructor.parameters
+                constructor.parameters
                     .map { parameter ->
                         val qualifier = Qualifier.from(parameter)
                         instance(parameter.type.classifier as KClass<*>, qualifier)
                     }.toTypedArray()
-            return primaryConstructor.call(*parameters)
-        }
-
-        val identifier = Identifier(targetClass, qualifier)
-        return DependencyContainer.dependency(identifier) as T
+            constructor.call(*parameters)
+        } as T
     }
 
     fun injectFields(target: Any) {
