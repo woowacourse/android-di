@@ -24,7 +24,9 @@ object DependencyInjector {
             return primaryConstructor.call(*parameters)
         }
 
-        return DependencyContainer.dependency(Identifier(targetClass, qualifier)) as? T ?: error("")
+        val identifier = Identifier(targetClass, qualifier)
+        return DependencyContainer.dependency(identifier) as? T
+            ?: error("Dependency for $identifier could not be cast to the requested type.")
     }
 
     fun injectFields(target: Any) {
@@ -35,7 +37,7 @@ object DependencyInjector {
             val identifier: Identifier = Identifier.from(property)
             val mutableProperty =
                 property as? KMutableProperty1
-                    ?: error("Cannot inject dependency to $property because it is an immutable property.")
+                    ?: error("Cannot inject dependency to field $property because it is immutable.")
             mutableProperty.setter.call(target, DependencyContainer.dependency(identifier))
         }
     }
