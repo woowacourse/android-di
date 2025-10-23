@@ -19,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.FakeDatabaseModule
 import woowacourse.shopping.data.FakeRepositoryModule
 import woowacourse.shopping.fixture.PRODUCT_1
 import woowacourse.shopping.fixture.PRODUCT_2
@@ -38,7 +39,7 @@ class CartViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         val application = ApplicationProvider.getApplicationContext<Application>()
-        DependencyContainer.initialize(application, FakeRepositoryModule())
+        DependencyContainer.initialize(application, FakeRepositoryModule(), FakeDatabaseModule())
         viewModel = ViewModelFactory.create(CartViewModel::class.java)
         viewModel.getAllCartProducts()
     }
