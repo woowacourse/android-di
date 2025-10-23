@@ -2,6 +2,7 @@ package com.example.di
 
 class RepositoryModule : Module {
     @Dependency
+    @ViewModelLifespan
     fun productRepository(): ProductRepository = DefaultProductRepository()
 
     @Dependency

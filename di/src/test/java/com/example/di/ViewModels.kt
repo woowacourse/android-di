@@ -2,22 +2,15 @@ package com.example.di
 
 import androidx.lifecycle.ViewModel
 
-class ViewModelA : ViewModel() {
-    @Inject
-    lateinit var productRepository: ProductRepository
-}
+class ViewModelA(
+    val productRepository: ProductRepository,
+) : ViewModel()
 
-class ViewModelB : ViewModel() {
-    @Inject
-    lateinit var productRepository: ProductRepository
-}
+class ViewModelB(
+    val productRepository: ProductRepository,
+) : ViewModel()
 
-class ViewModelC : ViewModel() {
-    @Inject
-    @ExampleDatabaseRepository
-    lateinit var cartRepositoryA: CartRepository
-
-    @Inject
-    @ExampleInMemoryRepository
-    lateinit var cartRepositoryB: CartRepository
-}
+class ViewModelC(
+    @ExampleDatabaseRepository val cartRepositoryA: CartRepository,
+    @ExampleInMemoryRepository val cartRepositoryB: CartRepository,
+) : ViewModel()
