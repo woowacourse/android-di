@@ -2,6 +2,7 @@ package woowacourse.shopping.app
 
 import android.app.Application
 import android.content.Context
+import woowacourse.shopping.app.ui.cart.DateFormatter
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -33,11 +34,17 @@ class ShoppingApplication : Application() {
         container: AppContainerImpl,
         context: Context,
     ) {
-        container.register(typeOf<ShoppingDatabase>()) { _ ->
+        container.register(
+            type = typeOf<ShoppingDatabase>(),
+            implementationClass = ShoppingDatabase::class,
+        ) { _ ->
             ShoppingDatabase.getInstance(context)
         }
 
-        container.register(typeOf<CartProductDao>()) { di ->
+        container.register(
+            type = typeOf<CartProductDao>(),
+            implementationClass = CartProductDao::class,
+        ) { di ->
             val database =
                 di.resolve<ShoppingDatabase>()
                     ?: throw IllegalStateException("ShoppingDatabase가 등록되지 않았습니다")
@@ -46,17 +53,22 @@ class ShoppingApplication : Application() {
 
         container.register(
             type = typeOf<ProductRepository>(),
+            implementationClass = DefaultProductRepository::class,
             qualifier = Database::class.createInstance(),
         ) { _ ->
             DefaultProductRepository()
         }
 
-        container.register(typeOf<ProductRepository>()) { _ ->
-            DefaultProductRepository()
+        container.register(
+            type = typeOf<DateFormatter>(),
+            implementationClass = DateFormatter::class,
+        ) { _ ->
+            DateFormatter(context)
         }
 
         container.register(
-            typeOf<CartRepository>(),
+            type = typeOf<CartRepository>(),
+            implementationClass = DefaultCartRepository::class,
             qualifier = Database::class.createInstance(),
         ) { di ->
             val dao =
