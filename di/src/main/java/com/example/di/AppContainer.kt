@@ -2,31 +2,44 @@ package com.example.di
 
 import kotlin.reflect.KClass
 
-data class DIKey(
-    val kClass: KClass<*>,
-    val qualifierClass: KClass<*>? = null,
-)
+class AppContainer {
+    private val providers = mutableMapOf<DIKey, Provider<*>>()
+    private val singletonCache = mutableMapOf<DIKey, Any>()
+    private val activityCache = mutableMapOf<DIKey, Any>()
+    private val viewModelCache = mutableMapOf<DIKey, Any>()
 
-class AppContainer(
-    private val bindings: Map<DIKey, () -> Any>,
-) {
-    private val instances = mutableMapOf<DIKey, Any>()
+    fun <T : Any> register(
+        clazz: KClass<T>,
+        scope: Scope = Scope.Singleton,
+        factory: () -> T,
+    ) {
+        providers[DIKey(clazz)] = Provider(factory, scope)
+    }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> resolve(
-        clazz: KClass<T>,
-        qualifier: KClass<*>? = null,
-    ): T {
-        val key = DIKey(clazz, qualifier)
-        instances[key]?.let { return it as T }
-
+    fun <T : Any> resolve(clazz: KClass<T>): T {
+        val key = DIKey(clazz)
         val provider =
-            bindings[key] ?: bindings.entries
-                .firstOrNull { it.key.kClass == clazz && it.key.qualifierClass == null }
-                ?.value
-                ?: throw IllegalArgumentException("No binding for $clazz with qualifier ${qualifier?.simpleName}")
-        val instance = provider() as T
-        instances[key] = instance
-        return instance
+            providers[key] ?: throw IllegalArgumentException("${clazz.simpleName}가 등록되지 않았습니다.")
+
+        return when (provider.scope) {
+            Scope.Singleton ->
+                singletonCache.getOrPut(key) { provider.factory() } as T
+
+            Scope.Activity ->
+                activityCache.getOrPut(key) { provider.factory() } as T
+
+            Scope.ViewModel ->
+                viewModelCache.getOrPut(key) { provider.factory() } as T
+        }
+    }
+
+    fun clearActivityScope() {
+        activityCache.clear()
     }
 }
+
+data class Provider<T : Any>(
+    val factory: () -> T,
+    val scope: Scope,
+)

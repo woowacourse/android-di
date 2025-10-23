@@ -7,6 +7,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.di.ActivityScope
+import com.example.di.Inject
 import woowacourse.shopping.MeepleApplication
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
@@ -16,13 +18,18 @@ class CartActivity : AppCompatActivity() {
     private val viewModel: CartViewModel by viewModels {
         (application as MeepleApplication).viewModelFactory
     }
-    private lateinit var dateFormatter: DateFormatter
+
+    @Inject
+    @ActivityScope
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val app = application as MeepleApplication
+        dateFormatter = app.appContainer.resolve(DateFormatter::class)
+
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -41,10 +48,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {

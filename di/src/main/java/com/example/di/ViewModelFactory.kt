@@ -27,13 +27,6 @@ class ViewModelFactory(
                 val javaField = kClass.java.getDeclaredField(prop.name)
                 if (!javaField.isAnnotationPresent(Inject::class.java)) return@forEach
 
-                val qualifier =
-                    when {
-                        javaField.isAnnotationPresent(RoomDatabase::class.java) -> RoomDatabase::class
-                        javaField.isAnnotationPresent(InMemory::class.java) -> InMemory::class
-                        else -> null
-                    }
-
                 val clazz =
                     prop.returnType.classifier as? KClass<*>
                         ?: throw IllegalArgumentException("${prop.name} 타입 정보를 가져올 수 없습니다")
@@ -41,7 +34,7 @@ class ViewModelFactory(
                 val dependency =
                     when (clazz) {
                         SavedStateHandle::class -> savedStateHandle
-                        else -> clazz.let { appContainer.resolve(it, qualifier) }
+                        else -> appContainer.resolve(clazz)
                     }
 
                 prop.isAccessible = true
