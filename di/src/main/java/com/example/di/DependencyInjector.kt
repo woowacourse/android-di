@@ -1,6 +1,5 @@
 package com.example.di
 
-import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -19,7 +18,7 @@ object DependencyInjector {
             val parameters: Array<Any> =
                 primaryConstructor.parameters
                     .map { parameter ->
-                        val qualifier = qualifier(parameter)
+                        val qualifier = Qualifier.from(parameter)
                         instance(parameter.type.classifier as KClass<*>, qualifier)
                     }.toTypedArray()
             return primaryConstructor.call(*parameters)
@@ -39,14 +38,5 @@ object DependencyInjector {
                     ?: error("Cannot inject dependency to $property because it is an immutable property.")
             mutableProperty.setter.call(target, DependencyContainer.dependency(identifier))
         }
-    }
-
-    private fun qualifier(element: KAnnotatedElement): Annotation? {
-        val qualifiers: List<Annotation> =
-            element.annotations.filter { annotation: Annotation ->
-                annotation.annotationClass.hasAnnotation<Qualifier>()
-            }
-        if (qualifiers.size > 1) error("$element has more than one qualifier: $qualifiers")
-        return qualifiers.firstOrNull()
     }
 }
