@@ -10,28 +10,10 @@ data class Identifier(
     val qualifier: Annotation? = null,
 ) {
     companion object {
-        fun from(kClass: KClass<*>): Identifier =
-            Identifier(
-                kClass,
-                Qualifier.from(kClass),
-            )
+        fun from(function: KFunction<*>): Identifier = Identifier(function.returnType.classifier as KClass<*>, Qualifier.from(function))
 
-        fun from(property: KProperty1<*, *>): Identifier =
-            Identifier(
-                property.returnType.classifier as KClass<*>,
-                Qualifier.from(property),
-            )
+        fun from(property: KProperty1<*, *>): Identifier = Identifier(property.returnType.classifier as KClass<*>, Qualifier.from(property))
 
-        fun from(function: KFunction<*>): Identifier =
-            Identifier(
-                function.returnType.classifier as KClass<*>,
-                Qualifier.from(function),
-            )
-
-        fun from(parameter: KParameter): Identifier =
-            Identifier(
-                parameter.type.classifier as KClass<*>,
-                Qualifier.from(parameter),
-            )
+        fun from(parameter: KParameter): Identifier = Identifier(parameter.type.classifier as KClass<*>, Qualifier.from(parameter))
     }
 }
