@@ -2,19 +2,23 @@ package woowacourse.shopping.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.BaseViewModel
 import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.qualifier.Singleton
+import woowacourse.shopping.di.qualifier.ViewModelScope
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
 
-class MainViewModel : ViewModel() {
+class MainViewModel : BaseViewModel() {
     @Inject
+    @ViewModelScope
     private lateinit var productRepository: ProductRepository
 
     @Inject
+    @Singleton
     private lateinit var cartRepository: CartRepository
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
