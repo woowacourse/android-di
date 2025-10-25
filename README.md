@@ -46,3 +46,9 @@
 ### 3단계 기능 요구 사항
 - [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
 - [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우 이를 판별 할 수 있어야 한다.
+
+### 4단계 기능 요구 사항
+- [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+- [x]ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [x]DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
+- [] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.peto.di.annotation.Qualifier
+import woowacourse.peto.di.annotation.Scope
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
@@ -32,19 +33,20 @@ class ViewModelFactoryInjector(
             ERROR_NO_CONSTRUCTOR.format(kClass.simpleName)
         }
 
-    private fun resolveConstructorParameters(constructor: KFunction<*>): Array<Any> =
-        constructor.parameters.map { param ->
+    private fun resolveConstructorParameters(constructor: KFunction<*>): Array<Any> {
+        return constructor.parameters.map { param ->
             val qualifier = param.findAnnotation<Qualifier>()?.name
-            qualifier?.let { dependencyContainer.get(param.type, it) }
-                ?: dependencyContainer.get(param.type)
+            qualifier?.let { dependencyContainer.get(param.type, it, Scope.VIEWMODEL) }
+                ?: dependencyContainer.get(param.type, Scope.VIEWMODEL)
         }.toTypedArray()
+    }
 
     private fun <T> createInstance(
         constructor: KFunction<T>,
         params: Array<Any>,
     ): T {
         val instance = constructor.call(*params)
-        dependencyContainer.inject(instance as Any)
+        dependencyContainer.inject(instance as Any, Scope.VIEWMODEL)
         return instance
     }
 
