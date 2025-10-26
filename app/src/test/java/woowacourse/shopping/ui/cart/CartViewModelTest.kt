@@ -1,6 +1,8 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
+import com.example.di.di.InjectorViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -13,18 +15,31 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import woowacourse.shopping.fixture.FakeCartRepository
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.getOrAwaitValue
-import woowacourse.shopping.model.Product
 
+@RunWith(RobolectricTestRunner::class)
+@Config(application = ShoppingApplication::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModelTest {
+    private val application = ApplicationProvider.getApplicationContext<ShoppingApplication>()
+    private lateinit var cartViewModel: CartViewModel
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
+
+        cartViewModel =
+            InjectorViewModelFactory(
+                dependencyInjector = (application as ShoppingApplication).dependencyInjector,
+                scopeHolder = this,
+            ).create(CartViewModel::class.java)
     }
 
     @After
@@ -33,43 +48,27 @@ class CartViewModelTest {
     }
 
     @Test
-    fun `장바구니 상품을 조회하면 목록에 반영된다`() = runTest {
-        // given
-        val cartViewModel =
-            CartViewModel().apply {
-                cartRepository = FakeCartRepository().apply {
-                    cartProducts.add(Product(0, "과자", 1000, "", 0L))
-                    cartProducts.add(Product(1, "음료수", 1000, "", 0L))
-                }
-            }
+    fun `장바구니 상품을 조회하면 목록에 반영된다`() =
+        runTest {
+            // given & when
+            cartViewModel.getAllCartProducts()
+            advanceUntilIdle()
 
-        // when
-        cartViewModel.getAllCartProducts()
-        advanceUntilIdle()
-
-        // then
-        val cartProducts = cartViewModel.cartProducts.getOrAwaitValue()
-        assertThat(cartProducts.isNotEmpty()).isEqualTo(true)
-    }
+            // then
+            val cartProducts = cartViewModel.cartProducts.getOrAwaitValue()
+            assertThat(cartProducts.isNotEmpty()).isEqualTo(true)
+        }
 
     @Test
-    fun `장바구니 상품을 삭제하면 목록에 반영된다`() = runTest {
-        // given
-        val cartViewModel =
-            CartViewModel().apply {
-                cartRepository = FakeCartRepository().apply {
-                    cartProducts.add(Product(0, "과자", 1000, "", 0L))
-                    cartProducts.add(Product(1, "음료수", 1000, "", 0L))
-                }
-            }
+    fun `장바구니 상품을 삭제하면 목록에 반영된다`() =
+        runTest {
+            // given & when
+            cartViewModel.deleteCartProduct(0)
+            cartViewModel.getAllCartProducts()
+            advanceUntilIdle()
 
-        // when
-        cartViewModel.deleteCartProduct(0)
-        cartViewModel.getAllCartProducts()
-        advanceUntilIdle()
-
-        // then
-        val cartProducts = cartViewModel.cartProducts.getOrAwaitValue()
-        assertThat(cartProducts.size).isEqualTo(1)
-    }
+            // then
+            val cartProducts = cartViewModel.cartProducts.getOrAwaitValue()
+            assertThat(cartProducts.size).isEqualTo(1)
+        }
 }

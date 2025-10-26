@@ -2,14 +2,16 @@ package com.example.di.di
 
 import com.example.di.annotation.Inject
 import com.example.di.annotation.Qualifier
+import com.example.di.annotation.Scope
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * 의존성 주입(Dependency Injection)을 처리하는 클래스.
@@ -21,13 +23,27 @@ import kotlin.reflect.jvm.javaField
  *
  * @property appContainer 의존성 인스턴스를 관리하고 제공하는 컨테이너.
  */
-class DependencyInjector(private val appContainer: AppContainer) {
-    fun <T : Any> inject(kClass: KClass<T>): T {
+class DependencyInjector(
+    private val appContainer: AppContainer,
+) {
+    fun <T : Any> inject(
+        kClass: KClass<T>,
+        scopeHolder: Any? = null,
+    ): T {
+        val instance = injectConstructor(kClass, scopeHolder)
+        injectFields(instance, kClass, scopeHolder)
+        return instance
+    }
+
+    // 생성자 주입 후 인스턴스 반환
+    fun <T : Any> injectConstructor(
+        kClass: KClass<T>,
+        scopeHolder: Any? = null,
+    ): T {
         val constructor: KFunction<T> =
             kClass.primaryConstructor ?: throw IllegalArgumentException("주생성자가 없습니다.")
         val arguments = mutableMapOf<KParameter, Any?>()
 
-        // 생성자 주입
         constructor.parameters.forEach { param: KParameter ->
             val injectAnnotation = param.findAnnotation<Inject>()
             if (injectAnnotation != null) {
@@ -35,33 +51,47 @@ class DependencyInjector(private val appContainer: AppContainer) {
                 val qualifier = param.findAnnotation<Qualifier>()
                 val dependencyClass: KClass<out Any> =
                     qualifier?.value ?: param.type.classifier as? KClass<out Any>
-                    ?: throw IllegalStateException("의존성 타입을 확인할 수 없습니다: ${param.name}")
+                        ?: throw IllegalStateException("의존성 타입을 확인할 수 없습니다: ${param.name}")
 
-                val dependencyInstance = appContainer.getInstance(dependencyClass)
+                val dependencyInstance = appContainer.getInstance(dependencyClass, scopeHolder)
                 arguments[param] = dependencyInstance
             }
         }
 
         // 인스턴스 생성
         val instance: T = constructor.callBy(arguments)
+        return instance
+    }
 
-        // @Inject 어노테이션이 붙은 필드 주입
+    fun <T : Any> injectFields(
+        instance: T,
+        scopeHolder: Any?,
+    ) {
+        injectFields(instance, instance::class as KClass<T>, scopeHolder)
+    }
+
+    // @Inject 어노테이션이 붙은 필드 주입
+    fun <T : Any> injectFields(
+        instance: T,
+        kClass: KClass<T>,
+        scopeHolder: Any? = null,
+    ) {
         kClass.declaredMemberProperties.forEach { prop: KProperty1<T, *> ->
-            val field = prop.javaField
-            val injectAnnotation = field?.getAnnotation(Inject::class.java)
-            if (field != null && injectAnnotation != null) {
+            val injectAnnotation = prop.findAnnotation<Inject>()
+            if (injectAnnotation != null && prop is KMutableProperty1) {
                 // Qualifier가 있으면 해당 타입으로, 아니면 파라미터 타입으로
                 val qualifier = prop.findAnnotation<Qualifier>()
                 val dependencyClass: KClass<out Any> =
                     qualifier?.value ?: prop.returnType.classifier as? KClass<out Any>
-                    ?: throw IllegalStateException("의존성 타입을 확인할 수 없습니다: ${prop.name}")
+                        ?: throw IllegalStateException("의존성 타입을 확인할 수 없습니다: ${prop.name}")
 
-                val dependencyInstance = appContainer.getInstance(dependencyClass)
-                // 필드 주입
-                field.isAccessible = true
-                field.set(instance, dependencyInstance)
+                val scope = prop.findAnnotation<Scope>()
+                val dependencyInstance =
+                    appContainer.getInstance(dependencyClass, scopeHolder, scope?.value)
+                // 프로퍼티 setter 호출
+                prop.isAccessible = true
+                prop.setter.call(instance, dependencyInstance)
             }
         }
-        return instance
     }
 }

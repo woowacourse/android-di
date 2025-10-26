@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 
 class InjectorViewModelFactory(
     private val dependencyInjector: DependencyInjector,
+    private val scopeHolder: Any,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return dependencyInjector.inject(modelClass.kotlin)
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = dependencyInjector.inject(modelClass.kotlin, scopeHolder)
 }
