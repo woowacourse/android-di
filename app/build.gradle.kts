@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -49,12 +50,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.material)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.androidx.core.testing)
