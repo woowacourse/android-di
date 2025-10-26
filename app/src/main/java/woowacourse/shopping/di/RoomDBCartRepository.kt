@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
-import com.daedan.di.annotation.Component
+import jakarta.inject.Qualifier
 
-@Component
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
 annotation class RoomDBCartRepository

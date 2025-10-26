@@ -1,25 +1,18 @@
 package woowacourse.shopping.di
 
-import com.daedan.di.DiComponent
-import com.daedan.di.module
-import com.daedan.di.util.annotated
-import com.daedan.di.util.named
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import woowacourse.shopping.data.repository.DefaultCartRepository
-import woowacourse.shopping.data.repository.DefaultProductRepository
 import woowacourse.shopping.domain.repository.CartRepository
-import woowacourse.shopping.domain.repository.ProductRepository
-import woowacourse.shopping.ui.MainViewModel
+import javax.inject.Singleton
 
-fun DiComponent.repositoryModule() =
-    module {
-        single<CartRepository>(annotated<RoomDBCartRepository>()) {
-            DefaultCartRepository(
-                get(),
-            )
-        }
-        scope<MainViewModel> {
-            scoped<ProductRepository>(named("productRepository")) {
-                DefaultProductRepository()
-            }
-        }
-    }
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+    @Singleton
+    @Binds
+    @RoomDBCartRepository
+    abstract fun bindCartRepository(defaultCartRepository: DefaultCartRepository): CartRepository
+}
