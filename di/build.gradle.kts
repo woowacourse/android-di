@@ -54,7 +54,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.oungsi2000"
                 artifactId = "android-di"
-                version = "beta-1.0.0"
+                version = "beta-1.1.0"
 
                 pom {
                     name.set("DI")
