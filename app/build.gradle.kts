@@ -78,4 +78,7 @@ dependencies {
     testImplementation(libs.robolectric)
     // myDI
     implementation(project(":di_library"))
+    // hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 }
