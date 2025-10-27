@@ -1,12 +1,13 @@
 package woowacourse.shopping.di
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 class Container {
     private val providers = mutableMapOf<DependencyKey, () -> Any>()
-    private val singletonInstances = mutableMapOf<DependencyKey, Any>()
-    private val scopedContainers = mutableMapOf<String, MutableMap<DependencyKey, Any>>()
+    private val singletonInstances = ConcurrentHashMap<DependencyKey, Any>()
+    private val scopedContainers = ConcurrentHashMap<String, MutableMap<DependencyKey, Any>>()
 
     fun <T : Any> registerProvider(
         kClass: KClass<T>,
@@ -47,28 +48,17 @@ class Container {
         return singletonInstances.containsKey(key) || providers.containsKey(key)
     }
 
-    private fun <T : Any> getSingletonInstance(key: DependencyKey): T {
-        if (singletonInstances.containsKey(key)) {
-            return singletonInstances[key] as T
-        }
-
-        val instance = createNewInstance(key) as T
-        singletonInstances[key] = instance
-        return instance
-    }
+    private fun <T : Any> getSingletonInstance(key: DependencyKey): T =
+        singletonInstances.computeIfAbsent(key) {
+            createNewInstance(key) as Any
+        } as T
 
     private fun <T : Any> getScopedInstance(
         key: DependencyKey,
         scopeName: String,
     ): T {
-        val scopeContainer = scopedContainers.getOrPut(scopeName) { mutableMapOf() }
-        if (scopeContainer.containsKey(key)) {
-            return scopeContainer[key] as T
-        }
-
-        val instance = createNewInstance(key) as T
-        scopeContainer[key] = instance
-        return instance
+        val scopeContainer = scopedContainers.computeIfAbsent(scopeName) { ConcurrentHashMap() }
+        return scopeContainer.computeIfAbsent(key) { createNewInstance(key) as Any } as T
     }
 
     private fun <T : Any> createNewInstance(key: DependencyKey): T {
