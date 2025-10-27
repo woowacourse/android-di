@@ -52,3 +52,6 @@ fun bind(product: ...) {
 ### 선택 요구 사항
 - [] `DateFormatter`가 Configuration Changes에도 살아남을 수 있도록 구현한다.
 - [] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.
+
+## 5단계 기능 요구 사항
+- [] 지금까지 만든 쇼핑 장바구니 앱에 적용된 DI 라이브러리를 Hilt 코드로 교체한다. 기존에 만들어 둔 모듈과 테스트 코드를 삭제하진 않아도 된다. 이전 요구 사항을 동일하게 만족해야 한다.
