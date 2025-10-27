@@ -4,8 +4,14 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    alias(libs.plugins.hilt.android) apply false
 }
 
 allprojects {
-    apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint
+                .get()
+                .pluginId,
+    )
 }
