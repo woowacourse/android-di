@@ -20,7 +20,8 @@ class ShoppingApplication : Application() {
 
     private val database: ShoppingDatabase by lazy { ShoppingDatabase.getDatabase(this) }
 
-    init {
+    override fun onCreate() {
+        super.onCreate()
         appContainer.registerProvider(kClass = ProductRepository::class) {
             ProductDefaultRepository()
         }
