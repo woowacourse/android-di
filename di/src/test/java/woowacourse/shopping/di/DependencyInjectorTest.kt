@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
+import woowacourse.shopping.di.annotation.Scoped
 import woowacourse.shopping.fixture.FakeRepository
 import woowacourse.shopping.fixture.FakeRepository1
 import woowacourse.shopping.fixture.FakeRepository2
@@ -30,11 +31,11 @@ class DependencyInjectorTest {
             val repo1: FakeRepository1,
             val repo2: FakeRepository2,
         )
-        container.registerInstance(FakeRepository1::class, fakeRepository1)
-        container.registerInstance(FakeRepository2::class, fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
@@ -51,19 +52,11 @@ class DependencyInjectorTest {
             val repo2: FakeRepository,
         )
 
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo1",
-            instance = fakeRepository1,
-        )
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo2",
-            instance = fakeRepository2,
-        )
+        container.registerProvider(FakeRepository::class, "repo1") { fakeRepository1 }
+        container.registerProvider(FakeRepository::class, "repo2") { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
@@ -79,7 +72,7 @@ class DependencyInjectorTest {
 
         // when & then
         Assert.assertThrows(IllegalArgumentException::class.java) {
-            injector.create(TestClass::class)
+            injector.create(TestClass::class, TestClass::class.java.name)
         }
     }
 
@@ -97,11 +90,11 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
-        container.registerInstance(FakeRepository2::class, instance = fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isRepo1Initialized()).isTrue
@@ -127,19 +120,11 @@ class DependencyInjectorTest {
             fun isDatabaseInitialized(): Boolean = ::repo2.isInitialized
         }
 
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo1",
-            instance = fakeRepository1,
-        )
-        container.registerInstance(
-            FakeRepository::class,
-            qualifier = "repo2",
-            instance = fakeRepository2,
-        )
+        container.registerProvider(FakeRepository::class, "repo1") { fakeRepository1 }
+        container.registerProvider(FakeRepository::class, "repo2") { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isInMemoryInitialized()).isTrue
@@ -162,10 +147,10 @@ class DependencyInjectorTest {
 
             fun isRepo2Initialized(): Boolean = ::repo2.isInitialized
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.isRepo1Initialized()).isTrue
@@ -181,14 +166,109 @@ class DependencyInjectorTest {
             @Inject
             lateinit var repo2: FakeRepository2
         }
-        container.registerInstance(FakeRepository1::class, instance = fakeRepository1)
-        container.registerInstance(FakeRepository2::class, instance = fakeRepository2)
+        container.registerProvider(FakeRepository1::class) { fakeRepository1 }
+        container.registerProvider(FakeRepository2::class) { fakeRepository2 }
 
         // when
-        val instance = injector.create(TestClass::class)
+        val instance = injector.create(TestClass::class, TestClass::class.java.name)
 
         // then
         assertThat(instance.repo1).isEqualTo(fakeRepository1)
         assertThat(instance.repo2).isEqualTo(fakeRepository2)
+    }
+
+    @Test
+    fun `Singleton - 여러 번 요청해도 같은 인스턴스가 반환된다`() {
+        // given
+        class TestClass(
+            @Scoped(Scope.SINGLETON)
+            val repo: FakeRepository1,
+        )
+        container.registerProvider(FakeRepository1::class) { FakeRepository1() }
+
+        // when
+        val instance1 = injector.create(TestClass::class, "test_scope_1")
+        val instance2 = injector.create(TestClass::class, "test_scope_2")
+
+        // then
+        assertThat(instance1.repo).isSameAs(instance2.repo)
+    }
+
+    @Test
+    fun `Scoped - 같은 스코프에서는 같은 인스턴스가 반환된다`() {
+        // given
+        class TestClass(
+            @Scoped(Scope.VIEWMODEL)
+            val repo: FakeRepository1,
+        )
+        container.registerProvider(FakeRepository1::class) { FakeRepository1() }
+        container.createScope("test_scope_1")
+
+        // when
+        val instance1 = injector.create(TestClass::class, "test_scope_1")
+        val instance2 = injector.create(TestClass::class, "test_scope_1")
+
+        // then
+        assertThat(instance1.repo).isSameAs(instance2.repo)
+    }
+
+    @Test
+    fun `Scoped - 다른 스코프에서는 다른 인스턴스가 반환된다`() {
+        // given
+        class TestClass(
+            @Scoped(Scope.VIEWMODEL)
+            val repo: FakeRepository1,
+        )
+        container.registerProvider(FakeRepository1::class) { FakeRepository1() }
+        container.createScope("test_scope_1")
+        container.createScope("test_scope_2")
+
+        // when
+        val instance1 = injector.create(TestClass::class, "test_scope_1")
+        val instance2 = injector.create(TestClass::class, "test_scope_2")
+
+        // then
+        assertThat(instance1.repo).isNotSameAs(instance2.repo)
+    }
+
+    @Test
+    fun `Factory - 매번 새로운 인스턴스가 반환된다`() {
+        // given
+        class TestClass(
+            @Scoped(Scope.FACTORY)
+            val repo: FakeRepository1,
+        )
+        container.registerProvider(FakeRepository1::class) { FakeRepository1() }
+
+        // when
+        val instance1 = injector.create(TestClass::class, "test_scope_1")
+        val instance2 = injector.create(TestClass::class, "test_scope_1")
+
+        // then
+        assertThat(instance1.repo).isNotSameAs(instance2.repo)
+    }
+
+    @Test
+    fun `스코프 정리 후 다시 요청하면 새로운 인스턴스가 생성된다`() {
+        // given
+        class TestClass(
+            @Scoped(Scope.ACTIVITY)
+            val repo: FakeRepository1,
+        )
+        container.registerProvider(FakeRepository1::class) { FakeRepository1() }
+        container.createScope("test_scope_1")
+
+        // when
+        val instance1 = injector.create(TestClass::class, "test_scope_1")
+        val repo1 = instance1.repo
+
+        container.clearScope("test_scope_1")
+        container.createScope("test_scope_1")
+
+        val instance2 = injector.create(TestClass::class, "test_scope_1")
+        val repo2 = instance2.repo
+
+        // then
+        assertThat(repo1).isNotSameAs(repo2)
     }
 }

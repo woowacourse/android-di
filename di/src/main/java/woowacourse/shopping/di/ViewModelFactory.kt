@@ -6,5 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 class ViewModelFactory(
     private val injector: DependencyInjector,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = injector.create(modelClass.kotlin)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val scopeName = "${modelClass.simpleName}_${modelClass.hashCode()}"
+        injector.container.createScope(scopeName)
+
+        val viewModel = injector.create(modelClass.kotlin, scopeName)
+        viewModel.addCloseable { injector.container.clearScope(scopeName) }
+        return viewModel
+    }
 }

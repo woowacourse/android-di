@@ -4,30 +4,37 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import woowacourse.shopping.R
 import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
+import woowacourse.shopping.di.Scope
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Scoped
+import woowacourse.shopping.ui.BaseScopedActivity
 
-class CartActivity : AppCompatActivity() {
+class CartActivity : BaseScopedActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels {
         (application as ShoppingApplication).viewModelFactory
     }
 
+    @Inject
+    @Scoped(Scope.ACTIVITY)
     private lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -43,10 +50,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
