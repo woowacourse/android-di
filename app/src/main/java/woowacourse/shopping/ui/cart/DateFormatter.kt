@@ -1,18 +1,25 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
+import com.example.di.annotation.ActivityScoped
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class DateFormatter(context: Context) {
-
-    private val formatter = SimpleDateFormat(
-        context.getString(R.string.date_format), Locale.KOREA
-    )
-
-    fun formatDate(timestamp: Long): String {
-        return formatter.format(Date(timestamp))
+@ActivityScoped
+class DateFormatter(
+    context: Context,
+) {
+    init {
+        println("[DI] DateFormatter created (ActivityScoped, context=${context::class.simpleName})")
     }
+
+    private val formatter =
+        SimpleDateFormat(
+            context.getString(R.string.date_format),
+            Locale.KOREA,
+        )
+
+    fun formatDate(timestamp: Long): String = formatter.format(Date(timestamp))
 }

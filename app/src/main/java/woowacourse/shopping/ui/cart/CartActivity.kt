@@ -3,28 +3,36 @@ package woowacourse.shopping.ui.cart
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.di.DIContainer
+import com.example.di.ViewModelInjectionFactory
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
-
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CartViewModel::class.java]
+    private val diContainer: DIContainer
+        get() = (application as ShoppingApplication).appContainer
+    private val viewModelFactory: ViewModelProvider.Factory by lazy {
+        ViewModelInjectionFactory(diContainer, this)
     }
 
-    private lateinit var dateFormatter: DateFormatter
+    private val viewModel: CartViewModel by viewModels { viewModelFactory }
+
+    private val dateFormatter: DateFormatter by lazy {
+        diContainer.get(DateFormatter::class, owner = this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setupContentView()
-        setupDateFormatter()
         setupBinding()
         setupToolbar()
         setupViewData()
@@ -43,10 +51,6 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-    }
-
-    private fun setupDateFormatter() {
-        dateFormatter = DateFormatter(this)
     }
 
     private fun setupToolbar() {
@@ -70,11 +74,14 @@ class CartActivity : AppCompatActivity() {
 
     private fun setupCartProductList() {
         viewModel.cartProducts.observe(this) {
-            val adapter = CartProductAdapter(
-                items = it,
-                dateFormatter = dateFormatter,
-                onClickDelete = viewModel::deleteCartProduct
-            )
+            val adapter =
+                CartProductAdapter(
+                    items = it,
+                    dateFormatter = dateFormatter,
+                    onClickDelete = { id ->
+                        viewModel.deleteCartProduct(id)
+                    },
+                )
             binding.rvCartProducts.adapter = adapter
         }
         viewModel.onCartProductDeleted.observe(this) {
