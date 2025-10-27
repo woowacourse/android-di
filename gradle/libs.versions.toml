@@ -17,7 +17,7 @@ kotlinx-coroutines-core = "1.8.1"
 kotlinx-coroutines-test = "1.8.0"
 ktlint = "12.1.0"
 robolectric = "4.16"
-room-runtime = "2.6.1"
+room-runtime = "2.8.3"
 truth = "1.4.5"
 junit = "4.13.2"
 hilt = "2.57.1"
@@ -37,6 +37,7 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version.ref =
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj-core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "google-material" }
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest-runner-junit5" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest-runner-junit5" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -55,3 +56,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kotlin-kapt = { id = "kotlin-kapt" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
