@@ -1,10 +1,9 @@
 package woowacourse.shopping.di
 
-import com.on.di_library.di.MySingleTon
-import com.on.di_library.di.ViewmodelScope
-import com.on.di_library.di.annotation.MyModule
-import com.on.di_library.di.annotation.MyProvider
-import com.on.di_library.di.annotation.MyQualifier
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
@@ -12,19 +11,15 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
-@MyModule
+@Module
+@InstallIn(SingletonComponent::class)
 object RepositoryModule {
-    @MyProvider
-    @MySingleTon
-    @MyQualifier("default")
+    @Provides
     fun defaultCartRepository(dao: CartProductDao): CartRepository = DefaultCartRepository(dao)
 
-    @MyProvider
-    @MySingleTon
-    @MyQualifier("inMemory")
+    @Provides
     fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 
-    @MyProvider
-    @ViewmodelScope
+    @Provides
     fun productRepository(): ProductRepository = DefaultProductRepository()
 }
