@@ -6,14 +6,16 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.on.di_library.di.DiActivity
+import dagger.hilt.android.AndroidEntryPoint
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityMainBinding
 import woowacourse.shopping.ui.cart.CartActivity
 
-class MainActivity : DiActivity() {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val viewModel: MainViewModel by viewModels()

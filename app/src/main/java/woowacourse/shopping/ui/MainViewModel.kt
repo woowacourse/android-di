@@ -3,22 +3,20 @@ package woowacourse.shopping.ui
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.on.di_library.di.DiViewModel
-import com.on.di_library.di.annotation.MyInjector
-import com.on.di_library.di.annotation.MyQualifier
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.model.ProductRepository
 
-class MainViewModel : DiViewModel() {
-    @MyInjector
-    private lateinit var productRepository: ProductRepository
-
-    @MyInjector
-    @MyQualifier("default")
-    private lateinit var cartRepository: CartRepository
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository,
+) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
     val products: LiveData<List<Product>> get() = _products

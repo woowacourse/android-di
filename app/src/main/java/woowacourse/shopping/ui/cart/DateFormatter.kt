@@ -1,13 +1,16 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import com.on.di_library.di.ActivityScope
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@ActivityScope
+@Module
+@InstallIn(ActivityComponent::class)
 class DateFormatter(
     context: Context,
 ) {
