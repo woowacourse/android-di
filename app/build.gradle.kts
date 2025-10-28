@@ -56,7 +56,7 @@ android {
 
 dependencies {
 
-    implementation(project(":di"))
+//    implementation(project(":di"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
