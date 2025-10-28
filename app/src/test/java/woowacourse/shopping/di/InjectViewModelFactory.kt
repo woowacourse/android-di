@@ -3,6 +3,8 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.fixture.TestAppContainer
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 class InjectViewModelFactory(
     private val container: TestAppContainer,

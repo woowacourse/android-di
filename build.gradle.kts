@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.android.library) apply false
+    id("com.google.dagger.hilt.android") version "2.48" apply false
 }
 
 allprojects {

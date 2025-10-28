@@ -28,14 +28,14 @@ class DIInjectionTest {
     @Test
     fun `AppContainer에 선언된 의존성은 주입됨`() {
         val vm = factory.create(ConstructorTestViewModelWithDependency::class.java)
-        assertThat(vm.repository).isEqualTo(container.fakeRepository)
+        assertThat(vm.repository).isEqualTo(container.fakeCartRepository)
     }
 
     @Test
     fun `AppContainer에 선언되고 default parameter가 있으면 Container 것 주입됨`() {
         val vm = factory.create(ConstructorTestViewModelWithDefaultDependency::class.java)
         // Default 값 무시하고 Container의 인스턴스 사용
-        assertThat(vm.repository).isEqualTo(container.fakeRepository)
+        assertThat(vm.repository).isEqualTo(container.fakeCartRepository)
     }
 
     @Test(expected = IllegalArgumentException::class)
