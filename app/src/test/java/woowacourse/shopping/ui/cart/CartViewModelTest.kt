@@ -31,8 +31,7 @@ class CartViewModelTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
 
         fakeCartRepository = FakeCartRepository()
-        viewModel = CartViewModel()
-        viewModel.cartRepository = fakeCartRepository
+        viewModel = CartViewModel(fakeCartRepository)
     }
 
     @Test
