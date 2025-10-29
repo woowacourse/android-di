@@ -1,25 +1,21 @@
 package woowacourse.shopping.ui
 
-import InMemory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yrsel.di.annotation.Inject
-import com.yrsel.di.annotation.SingletonScope
-import com.yrsel.di.annotation.ViewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.domain.CartRepository
 import woowacourse.shopping.domain.ProductRepository
 import woowacourse.shopping.model.Product
+import javax.inject.Inject
 
+@HiltViewModel
 class MainViewModel
     @Inject
     constructor(
-        @ViewModelScope
         private val productRepository: ProductRepository,
-        @InMemory
-        @SingletonScope
         private val cartRepository: CartRepository,
     ) : ViewModel() {
         private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
