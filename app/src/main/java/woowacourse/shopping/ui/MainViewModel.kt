@@ -14,8 +14,8 @@ import woowacourse.shopping.model.ProductRepository
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
+    val productRepository: ProductRepository,
+    val cartRepository: CartRepository,
 ) : ViewModel() {
 
     private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())

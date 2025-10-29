@@ -19,7 +19,7 @@ class CartActivity : AppCompatActivity() {
     private val viewModel: CartViewModel by viewModels()
 
     @Inject
-    private lateinit var dateFormatter: DateFormatter
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
