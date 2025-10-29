@@ -1,11 +1,10 @@
 package woowacourse.shopping.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
-import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
 import woowacourse.shopping.data.InMemoryCartRepository
@@ -14,18 +13,18 @@ import woowacourse.shopping.model.ProductRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepositoryModule {
+abstract class RepositoryModule {
     @Default
-    @Provides
+    @Binds
     @Singleton
-    fun defaultCartRepository(dao: CartProductDao): CartRepository = DefaultCartRepository(dao)
+    abstract fun defaultCartRepository(defaultCartRepository: DefaultCartRepository): CartRepository
 
     @InMemory
-    @Provides
+    @Binds
     @Singleton
-    fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
+    abstract fun inMemoryCartRepository(inMemoryCartRepository: InMemoryCartRepository): CartRepository
 
-    @Provides
+    @Binds
     @Singleton
-    fun productRepository(): ProductRepository = DefaultProductRepository()
+    abstract fun productRepository(defaultProductRepository: DefaultProductRepository): ProductRepository
 }

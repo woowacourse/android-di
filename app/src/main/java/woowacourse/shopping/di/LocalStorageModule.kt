@@ -17,7 +17,7 @@ object LocalStorageModule {
     @Singleton
     fun shoppingDatabase(
         @ApplicationContext context: Context,
-    ) = ShoppingDatabase.getDataBase(context)
+    ): ShoppingDatabase = ShoppingDatabase.getDataBase(context)
 
     @Provides
     @Singleton

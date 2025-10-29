@@ -1,11 +1,12 @@
 package woowacourse.shopping.data
 
+import jakarta.inject.Inject
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
-class DefaultCartRepository(
+class DefaultCartRepository @Inject constructor(
     private val cartProductDao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {
