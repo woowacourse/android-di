@@ -7,7 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.DefaultProductRepository
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.ProductRepository
 
@@ -16,9 +15,9 @@ import woowacourse.shopping.model.ProductRepository
 object RepositoryModule {
     @Provides
     fun defaultCartRepository(dao: CartProductDao): CartRepository = DefaultCartRepository(dao)
-
-    @Provides
-    fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
+//
+//    @Provides
+//    fun inMemoryCartRepository(): CartRepository = InMemoryCartRepository()
 
     @Provides
     fun productRepository(): ProductRepository = DefaultProductRepository()
