@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import woowacourse.shopping.di.Default
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
+    @Default
     val cartRepository: CartRepository,
 ) : ViewModel() {
 
