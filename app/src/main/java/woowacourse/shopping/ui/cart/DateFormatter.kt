@@ -1,18 +1,15 @@
 package woowacourse.shopping.ui.cart
 
 import android.content.Context
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import woowacourse.shopping.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-@Module
-@InstallIn(ActivityComponent::class)
-class DateFormatter(
-    context: Context,
+class DateFormatter @Inject constructor(
+    @ApplicationContext context: Context,
 ) {
     private val formatter =
         SimpleDateFormat(
