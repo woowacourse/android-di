@@ -61,3 +61,17 @@
 - [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
 - [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
 - [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+
+## 5단계 - Hilt
+
+지금까지 만든 쇼핑 장바구니 앱에 적용된 DI 라이브러리를 Hilt 코드로 교체한다.
+기존에 만들어 둔 모듈과 테스트 코드를 삭제하진 않아도 된다.
+이전 요구 사항을 동일하게 만족해야 한다.
+
+- [x] ViewModel에서 참조하는 Repository가 정상적으로 주입된다.
+- [x] 하나의 인터페이스의 여러 구현체가 DI 컨테이너에 등록된 경우, 어떤 의존성을 가져와야 할지 알 수 없다.
+- [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
+- [x] 모든 의존성이 싱글 오브젝트로 만들어질 필요 없다.
+- [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
+- [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
+- [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
