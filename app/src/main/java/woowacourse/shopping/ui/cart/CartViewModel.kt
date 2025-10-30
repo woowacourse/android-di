@@ -12,35 +12,36 @@ import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
 
 @HiltViewModel
-class CartViewModel @Inject constructor(
-    @Default
-    val cartRepository: CartRepository,
-) : ViewModel() {
+class CartViewModel
+    @Inject
+    constructor(
+        @Default
+        val cartRepository: CartRepository,
+    ) : ViewModel() {
+        private val _cartProducts: MutableLiveData<List<Product>> =
+            MutableLiveData(emptyList())
+        val cartProducts: LiveData<List<Product>> get() = _cartProducts
 
-    private val _cartProducts: MutableLiveData<List<Product>> =
-        MutableLiveData(emptyList())
-    val cartProducts: LiveData<List<Product>> get() = _cartProducts
+        private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
+        val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
 
-    private val _onCartProductDeleted: MutableLiveData<Boolean> = MutableLiveData(false)
-    val onCartProductDeleted: LiveData<Boolean> get() = _onCartProductDeleted
+        fun getAllCartProducts() {
+            viewModelScope.launch {
+                runCatching {
+                    cartRepository.getAllCartProducts()
+                }.onSuccess {
+                    _cartProducts.value = it
+                }.onFailure {}
+            }
+        }
 
-    fun getAllCartProducts() {
-        viewModelScope.launch {
-            runCatching {
-                cartRepository.getAllCartProducts()
-            }.onSuccess {
-                _cartProducts.value = it
-            }.onFailure {}
+        fun deleteCartProduct(id: Long) {
+            viewModelScope.launch {
+                runCatching {
+                    cartRepository.deleteCartProduct(id)
+                }.onSuccess {
+                    _onCartProductDeleted.value = true
+                }.onFailure {}
+            }
         }
     }
-
-    fun deleteCartProduct(id: Long) {
-        viewModelScope.launch {
-            runCatching {
-                cartRepository.deleteCartProduct(id)
-            }.onSuccess {
-                _onCartProductDeleted.value = true
-            }.onFailure {}
-        }
-    }
-}

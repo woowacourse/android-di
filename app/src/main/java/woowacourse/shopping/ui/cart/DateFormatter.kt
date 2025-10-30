@@ -10,14 +10,16 @@ import java.util.Date
 import java.util.Locale
 
 @ActivityScoped
-class DateFormatter @Inject constructor(
-    @ActivityContext context: Context,
-) {
-    private val formatter =
-        SimpleDateFormat(
-            context.getString(R.string.date_format),
-            Locale.KOREA,
-        )
+class DateFormatter
+    @Inject
+    constructor(
+        @ActivityContext context: Context,
+    ) {
+        private val formatter =
+            SimpleDateFormat(
+                context.getString(R.string.date_format),
+                Locale.KOREA,
+            )
 
-    fun formatDate(timestamp: Long): String = formatter.format(Date(timestamp))
-}
+        fun formatDate(timestamp: Long): String = formatter.format(Date(timestamp))
+    }
