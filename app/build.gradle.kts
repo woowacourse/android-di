@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -88,7 +89,9 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.junit.vintage.engine)
     testImplementation(libs.androidx.core.testing)
-
     // mockk
     testImplementation(libs.mockk.android)
+    // hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 }
