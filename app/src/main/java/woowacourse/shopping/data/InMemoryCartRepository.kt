@@ -1,8 +1,8 @@
 package woowacourse.shopping.data
 
+import jakarta.inject.Inject
 import woowacourse.shopping.model.CartRepository
 import woowacourse.shopping.model.Product
-import javax.inject.Inject
 
 class InMemoryCartRepository @Inject constructor() : CartRepository {
     private val products = mutableListOf<Product>()
