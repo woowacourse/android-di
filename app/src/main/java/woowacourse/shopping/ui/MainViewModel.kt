@@ -4,34 +4,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daedan.di.annotation.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import woowacourse.shopping.di.RoomDBCartRepository
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.domain.repository.ProductRepository
+import javax.inject.Inject
+import javax.inject.Named
 
-class MainViewModel : ViewModel() {
-    @Inject("productRepository")
-    private lateinit var productRepository: ProductRepository
+@HiltViewModel
+class MainViewModel
+    @Inject
+    constructor(
+        @Named("productRepository")
+        private val productRepository: ProductRepository,
+        @RoomDBCartRepository
+        private val cartRepository: CartRepository,
+    ) : ViewModel() {
+        private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+        val products: LiveData<List<Product>> get() = _products
 
-    @RoomDBCartRepository
-    private lateinit var cartRepository: CartRepository
+        private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
+        val onProductAdded: LiveData<Boolean> get() = _onProductAdded
 
-    private val _products: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-    val products: LiveData<List<Product>> get() = _products
+        fun addCartProduct(product: Product) {
+            viewModelScope.launch {
+                cartRepository.addCartProduct(product)
+                _onProductAdded.value = true
+            }
+        }
 
-    private val _onProductAdded: MutableLiveData<Boolean> = MutableLiveData(false)
-    val onProductAdded: LiveData<Boolean> get() = _onProductAdded
-
-    fun addCartProduct(product: Product) {
-        viewModelScope.launch {
-            cartRepository.addCartProduct(product)
-            _onProductAdded.value = true
+        fun getAllProducts() {
+            _products.value = productRepository.getAllProducts()
         }
     }
-
-    fun getAllProducts() {
-        _products.value = productRepository.getAllProducts()
-    }
-}
