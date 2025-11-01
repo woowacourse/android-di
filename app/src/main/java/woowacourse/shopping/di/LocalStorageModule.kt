@@ -1,19 +1,25 @@
 package woowacourse.shopping.di
 
 import android.content.Context
-import com.on.di_library.di.MySingleTon
-import com.on.di_library.di.annotation.MyModule
-import com.on.di_library.di.annotation.MyProvider
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import jakarta.inject.Singleton
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 
-@MyModule
+@Module
+@InstallIn(SingletonComponent::class)
 object LocalStorageModule {
-    @MyProvider
-    @MySingleTon
-    fun shoppingDatabase(context: Context) = ShoppingDatabase.getDataBase(context)
+    @Provides
+    @Singleton
+    fun shoppingDatabase(
+        @ApplicationContext context: Context,
+    ): ShoppingDatabase = ShoppingDatabase.getDataBase(context)
 
-    @MyProvider
-    @MySingleTon
+    @Provides
+    @Singleton
     fun cartProductDao(database: ShoppingDatabase): CartProductDao = database.cartProductDao()
 }

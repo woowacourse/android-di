@@ -12,14 +12,15 @@ core-testing = "2.2.0"
 glide = "4.15.1"
 google-material = "1.12.0"
 kotest-runner-junit5 = "5.7.2"
-kotlin = "1.9.25"
+kotlin = "2.2.0"
 kotlinx-coroutines-core = "1.8.1"
 kotlinx-coroutines-test = "1.8.0"
 ktlint = "12.1.0"
 robolectric = "4.16"
-room-runtime = "2.6.1"
+room-runtime = "2.8.3"
 truth = "1.4.5"
 junit = "4.13.2"
+hilt = "2.57.1"
 
 [libraries]
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity-ktx" }
@@ -45,6 +46,8 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
@@ -52,3 +55,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kotlin-kapt = { id = "kotlin-kapt" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

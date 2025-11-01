@@ -1,5 +1,7 @@
 package woowacourse.shopping
 
-import com.on.di_library.di.DiApplication
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class MyApplication : DiApplication()
+@HiltAndroidApp
+class MyApplication : Application()

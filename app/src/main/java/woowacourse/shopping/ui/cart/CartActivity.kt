@@ -4,20 +4,22 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.on.di_library.di.DiActivity
-import com.on.di_library.di.annotation.MyInjector
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import woowacourse.shopping.R
 import woowacourse.shopping.databinding.ActivityCartBinding
 
-class CartActivity : DiActivity() {
+@AndroidEntryPoint
+class CartActivity : AppCompatActivity() {
     private val binding by lazy { ActivityCartBinding.inflate(layoutInflater) }
 
     private val viewModel: CartViewModel by viewModels()
 
-    @MyInjector
-    private lateinit var dateFormatter: DateFormatter
+    @Inject
+    lateinit var dateFormatter: DateFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
