@@ -58,7 +58,12 @@ Qualifier
     - [x] CartRepository는 앱 전체 LifeCycle 동안 유지되도록 구현한다.
     - [x] ProductRepository는 ViewModel LifeCycle 동안 유지되도록 구현한다.
     - [x] DateFormatter는 Activity LifeCycle 동안 유지되도록 구현한다.
-- [ ] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+- [x] 내가 만든 DI 라이브러리가 잘 작동하는지 테스트를 작성한다.
+
+## 5단계 기능 요구 사항
+
+- [x] 지금까지 만든 쇼핑 장바구니 앱에 적용된 DI 라이브러리를 Hilt 코드로 교체한다. 기존에 만들어 둔 모듈과 테스트 코드를 삭제하진 않아도 된다.
+- [x] 이전 요구 사항을 동일하게 만족해야 한다.
 
 ## 선택 요구 사항
 
@@ -71,9 +76,6 @@ Qualifier
 - [x] 상품의 position과 CartRepository::deleteCartProduct의 id가 동일한 값임을 보장할 수 없다는 문제를 해결한다.
 
 - [x] 뷰에서 CartProductEntity를 직접 참조하지 않는다.
-
-- [ ] DateFormatter가 Configuration Changes에도 살아남을 수 있도록 구현한다.
-- [ ] Activity, ViewModel 외에도 다양한 컴포넌트(Fragment, Service 등)별 유지될 의존성을 관리한다.
 
 ## 프로그래밍 요구 사항
 
