@@ -1,8 +1,8 @@
 package woowacourse.shopping.data.repository
 
-import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.domain.model.Product
 import woowacourse.shopping.domain.repository.ProductRepository
+import javax.inject.Inject
 
 class ProductRepositoryImpl
     @Inject

@@ -2,9 +2,11 @@ package woowacourse.shopping
 
 import android.app.Application
 import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 import woowacourse.shopping.di.DatabaseModule
 import woowacourse.shopping.di.RepositoryModule
 
+@HiltAndroidApp
 class App : Application() {
     val container: Container by lazy { Container() }
 

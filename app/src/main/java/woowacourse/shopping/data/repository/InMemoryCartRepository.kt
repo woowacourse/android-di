@@ -1,8 +1,8 @@
 package woowacourse.shopping.data.repository
 
-import woowacourse.shopping.annotation.Inject
 import woowacourse.shopping.domain.model.CartProduct
 import woowacourse.shopping.domain.repository.CartRepository
+import javax.inject.Inject
 
 class InMemoryCartRepository
     @Inject
