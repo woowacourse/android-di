@@ -1,6 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,5 +35,15 @@ class CartViewModel(
         cartRepository.deleteCartProduct(id)
         getAllCartProducts()
         viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
+    }
+
+    companion object {
+        fun cartViewModelFactory(cartRepository: CartRepository): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return CartViewModel(cartRepository) as T
+                }
+            }
     }
 }
