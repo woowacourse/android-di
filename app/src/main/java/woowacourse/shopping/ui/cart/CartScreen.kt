@@ -43,7 +43,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(),
+    viewModel: CartViewModel = viewModel(factory = CartViewModel.Factory()),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
