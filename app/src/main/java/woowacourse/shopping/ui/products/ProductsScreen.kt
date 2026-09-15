@@ -45,16 +45,17 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProductsViewModel(
-                    productRepository = ProductRepository(),
-                    cartRepository = CartRepository(),
-                ) as T
-            }
-        }
-    ),
+    viewModel: ProductsViewModel =
+        viewModel(
+            factory =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                        ProductsViewModel(
+                            productRepository = ProductRepository(),
+                            cartRepository = CartRepository(),
+                        ) as T
+                },
+        ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
