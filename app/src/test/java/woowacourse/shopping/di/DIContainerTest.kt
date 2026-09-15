@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -20,5 +21,14 @@ class DIContainerTest {
         val viewModel = container.get(ProductsViewModel::class)
 
         assertThat(viewModel).isInstanceOf(ProductsViewModel::class.java)
+    }
+
+    @Test
+    fun `같은 타입은 최초 생성한 인스턴스를 재사용한다`() {
+        val first = container.get(CartRepository::class)
+
+        val second = container.get(CartRepository::class)
+
+        assertThat(second).isSameInstanceAs(first)
     }
 }
