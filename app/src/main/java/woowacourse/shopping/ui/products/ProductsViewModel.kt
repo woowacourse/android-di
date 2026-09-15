@@ -41,12 +41,15 @@ class ProductsViewModel(
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory =
+        fun factory(
+            productRepository: ProductRepository,
+            cartRepository: CartRepository,
+        ): ViewModelProvider.Factory =
             viewModelFactory {
                 initializer {
                     ProductsViewModel(
-                        productRepository = ProductRepository(),
-                        cartRepository = CartRepository(),
+                        productRepository = productRepository,
+                        cartRepository = cartRepository,
                     )
                 }
             }

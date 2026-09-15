@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.cart.CartScreen
 import woowacourse.shopping.ui.products.ProductsScreen
 import woowacourse.shopping.ui.products.ProductsViewModel
@@ -22,7 +24,14 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         startDestination = ShoppingRoute.PRODUCTS,
     ) {
         composable(ShoppingRoute.PRODUCTS) {
-            val viewModel: ProductsViewModel = viewModel(factory = ProductsViewModel.Factory)
+            val viewModel: ProductsViewModel =
+                viewModel(
+                    factory =
+                        ProductsViewModel.factory(
+                            productRepository = ProductRepository(),
+                            cartRepository = CartRepository(),
+                        ),
+                )
             ProductsScreen(
                 onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
                 viewModel = viewModel,
