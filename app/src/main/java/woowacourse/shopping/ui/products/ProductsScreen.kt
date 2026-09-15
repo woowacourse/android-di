@@ -30,14 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.AppContainer
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -47,15 +44,7 @@ fun ProductsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProductsViewModel =
         viewModel(
-            factory =
-                object : ViewModelProvider.Factory {
-                    @Suppress("UNCHECKED_CAST")
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                        ProductsViewModel(
-                            productRepository = ProductRepository(),
-                            cartRepository = CartRepository(),
-                        ) as T
-                },
+            factory = AppContainer.viewModelFactory,
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
