@@ -29,11 +29,15 @@ viewModel: ProductsViewModel =
 >
 > OT에서는 수동 DI 구현을 먼저 PR로 리뷰받는다. 진행 순서와 오늘의 리뷰 기준은 OT 문서를 따른다.
 
-### 구현할 기능 목록
+### 구현할(확인할) 기능 목록
 
 - 의도적으로 실패하는 `MainActivityTest`를 수동 주입으로 통과시킨다.
 - DI 컨테이너를 만들지 않는다.
 - 컴포저블에서 `viewModel()`을 호출할 때 `ViewModelProvider.Factory`를 직접 전달한다.
 - 화면에 필요한 `Repository`를 직접 생성해 `ViewModel`의 생성자로 주입한다.
 - 화면이 늘어날 때마다 Factory를 새로 작성해야 하는 문제를 확인한다.
+  - 다음 변경으로 확인함 (ed8053bc)
 - Repository 객체를 교체할 때 `ViewModel`을 직접 변경해야 하는 문제를 확인한다.
+  - `ProductRepository`를 다른 구현체로 교체하는 상황을 가정한다.
+  - `ProductsViewModel`의 생성자가 구체 타입인 `ProductRepository`를 직접 의존하고 있어, Factory의 생성 코드만 변경해서는 교체할 수 없다.
+  - 다른 Repository 구현체를 주입하려면 `ProductsViewModel`의 생성자 타입도 함께 변경해야 한다.
