@@ -4,7 +4,7 @@
 
 ### 0.5단계
 
-- [ ] `ProductsScreen`에 `ProductsViewModel` 생성자 수동 주입
+- [x] `ProductsScreen`에 `ProductsViewModel` 생성자 수동 주입
 
 ### 1단계
 
