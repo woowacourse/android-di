@@ -4,47 +4,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
 
 object AoDi : ViewModelProvider.Factory {
-    var store = listOf<Any>()
+    var store = mutableMapOf<KClass<*>, Any>()
 
     override fun <T : ViewModel> create(
         modelClass: KClass<T>,
         extras: CreationExtras,
-    ): T {
-        val constructor = modelClass.primaryConstructor!!
+    ): T = instantiate(modelClass)
 
-        val dependencies = getByConstructor(constructor)
+    fun <T : Any> instantiate(type: KClass<T>): T {
+        val constructor =
+            requireNotNull(type.primaryConstructor) {
+                "생성자가 없습니다."
+            }
 
-        val viewModel = constructor.call(*dependencies.toTypedArray())
-        return viewModel
-    }
+        val dependencies =
+            constructor.parameters.map { parameter ->
+                val type = parameter.type.classifier as KClass<*>
 
-    fun getByConstructor(constructor: KFunction<Any>): List<Any> {
-        val types = constructor.parameters.map { it.type.classifier as KClass<*> }
-        val dependencies: List<Any> =
-            types.map { type ->
-                if (store.find { it::class == type } != null) {
-                    store.find { it::class == type }!!
-                } else {
-                    val subConstructor = type.primaryConstructor!!
-
-                    val subConstructorParameters =
-                        subConstructor.parameters.map { it.type.classifier as KClass<*> }
-                    var subDependencies = listOf<Any>()
-                    if (subConstructorParameters.isNotEmpty()) {
-                        subDependencies = getByConstructor(subConstructor)
-                    }
-                    val dependency = subConstructor.call(*subDependencies.toTypedArray())
-                    store = store.plus(dependency)
-
-                    dependency
+                store.getOrPut(type) {
+                    instantiate(type)
                 }
             }
 
-        return dependencies
+        return constructor.call(*dependencies.toTypedArray())
     }
 }
 
