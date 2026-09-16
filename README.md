@@ -1,9 +1,9 @@
 # android-di
 ## 0.5단계
 ---
-- [ ] `MainActivityTest`를 수동으로 주입시켜 테스트를 통과시킨다.
-- [ ] DI 컨테이너를 만들지 않는다
-- [ ] `viewModel()`을 호출하는 자리에 `ViewModelProvider.Factory`를 직접 넘겨서 repository를 넘겨준다.
+- [x] `MainActivityTest`를 수동으로 주입시켜 테스트를 통과시킨다.
+- [x] DI 컨테이너를 만들지 않는다
+- [x] `viewModel()`을 호출하는 자리에 `ViewModelProvider.Factory`를 직접 넘겨서 repository를 넘겨준다.
 
 ## 1단계
 ---
