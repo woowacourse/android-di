@@ -5,6 +5,8 @@ import kotlin.reflect.full.primaryConstructor
 
 object Injector {
     fun<T: Any> create(type: KClass<T>): T {
+        type.objectInstance?.let { return it }
+
         val constructor = requireNotNull(type.primaryConstructor) {
             "${type.simpleName}의 주 생성자를 찾을 수 없습니다."
         }
