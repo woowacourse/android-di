@@ -39,16 +39,4 @@ class ProductsViewModel(
         cartRepository.addCartProduct(product)
         viewModelScope.launch { _onProductAdded.emit(Unit) }
     }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    ProductsViewModel(
-                        productRepository = ProductRepository(),
-                        cartRepository = CartRepository(),
-                    )
-                }
-            }
-    }
 }

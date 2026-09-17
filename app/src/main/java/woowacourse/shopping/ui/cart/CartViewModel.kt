@@ -38,13 +38,4 @@ class CartViewModel(
         getAllCartProducts()
         viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
     }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    CartViewModel(cartRepository = CartRepository())
-                }
-            }
-    }
 }

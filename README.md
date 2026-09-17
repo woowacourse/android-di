@@ -76,15 +76,15 @@ ReflectionViewModelFactory vs DependencyContainer
 
 ### 8. 실제 화면에 공통 Factory 적용
 
-- [ ] `ProductsScreen`과 `CartScreen`이 동일한 컨테이너를 사용하는 공통 Factory를 참조하도록 한다.
-- [ ] 컨테이너가 Composable이 다시 그려질 때마다 생성되지 않도록 한다.
-- [ ] `ProductsViewModel.Factory`와 `CartViewModel.Factory`를 제거한다.
-- [ ] 상품을 담은 뒤 장바구니 화면에서 같은 상품이 표시되는지 확인한다.
-- [ ] 장바구니 화면에 다시 진입해도 담은 상품이 유지되는지 확인한다.
+- [x] `ProductsScreen`과 `CartScreen`이 동일한 컨테이너를 사용하는 공통 Factory를 참조하도록 한다.
+- [x] 컨테이너가 Composable이 다시 그려질 때마다 생성되지 않도록 한다.
+- [x] `ProductsViewModel.Factory`와 `CartViewModel.Factory`를 제거한다.
+- [x] 상품을 담은 뒤 장바구니 화면에서 같은 상품이 표시되는지 확인한다.
+- [x] 장바구니 화면에 다시 진입해도 담은 상품이 유지되는지 확인한다.
 
 ### 9. 최종 검증
 
-- [ ] 사전에 제공된 `MainActivityTest`를 포함한 전체 단위 테스트가 통과한다.
-- [ ] ktlint 검사가 통과한다.
-- [ ] Annotation을 사용하지 않았는지 확인한다.
-- [ ] 새로운 ViewModel을 추가해도 컨테이너와 Factory를 수정하지 않는지 확인한다.
+- [x] 사전에 제공된 `MainActivityTest`를 포함한 전체 단위 테스트가 통과한다.
+- [x] ktlint 검사가 통과한다.
+- [x] Annotation을 사용하지 않았는지 확인한다.
+- [x] 새로운 ViewModel을 추가해도 컨테이너와 Factory를 수정하지 않는지 확인한다.
