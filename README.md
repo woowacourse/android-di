@@ -47,11 +47,20 @@
 
 ### 5. 범용 ViewModelProvider.Factory 구현
 
-- [ ] 테스트용 Repository를 생성자로 받는 테스트용 ViewModel을 작성한다.
-- [ ] Factory가 테스트용 ViewModel을 생성하는 테스트를 작성한다.
-- [ ] `modelClass`의 주 생성자와 파라미터 타입을 Reflection으로 조회한다.
-- [ ] 각 파라미터 타입의 인스턴스를 컨테이너에서 가져온다.
-- [ ] 조회한 의존성으로 ViewModel을 생성해 반환한다.
+- [x] 테스트용 Repository를 생성자로 받는 테스트용 ViewModel을 작성한다.
+- [x] Factory가 테스트용 ViewModel을 생성하는 테스트를 작성한다.
+- [x] `modelClass`의 주 생성자와 파라미터 타입을 Reflection으로 조회한다.
+- [x] 각 파라미터 타입의 인스턴스를 컨테이너에서 가져온다.
+- [x] 조회한 의존성으로 ViewModel을 생성해 반환한다.
+
+```text
+ReflectionViewModelFactory vs DependencyContainer
+
+- factory와 container의 구조는 비슷하지만 하는 일과 목적이 다름
+- factory는 container에 저장되어있는 의존성을 사용해 viewModel을 만듬
+- container는 앱이 시작되고 메모리에 객체가 살아있음.
+- viewModelStore가 생명주기에 맞춰서 factory로 viewModel 생성
+```
 
 ### 6. 새로운 ViewModel에 Factory 재사용
 
