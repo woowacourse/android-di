@@ -44,9 +44,10 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(
-        factory = AutoViewModelFactory()
-    ),
+    viewModel: CartViewModel =
+        viewModel(
+            factory = AutoViewModelFactory(),
+        ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -99,9 +100,10 @@ fun CartContent(
         },
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             itemsIndexed(uiState.cartProducts) { index, cartProduct ->
                 CartProductItem(

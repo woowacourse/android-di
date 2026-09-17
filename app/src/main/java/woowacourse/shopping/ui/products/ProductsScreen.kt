@@ -42,9 +42,10 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel = viewModel(
-        factory = AutoViewModelFactory()
-    ),
+    viewModel: ProductsViewModel =
+        viewModel(
+            factory = AutoViewModelFactory(),
+        ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -93,9 +94,10 @@ fun ProductsContent(
     ) { innerPadding ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             items(uiState.products) { product ->
                 ProductItem(
@@ -114,19 +116,21 @@ fun ProductItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         AsyncImage(
             model = product.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
         )
         Text(
             text = product.name,
@@ -148,12 +152,14 @@ fun ProductItem(
 private fun ProductsContentPreview() {
     ShoppingTheme {
         ProductsContent(
-            uiState = ProductsUiState(
-                products = listOf(
-                    Product(name = "우테코 과자", price = 10_000, imageUrl = ""),
-                    Product(name = "우테코 쥬스", price = 8_000, imageUrl = ""),
+            uiState =
+                ProductsUiState(
+                    products =
+                        listOf(
+                            Product(name = "우테코 과자", price = 10_000, imageUrl = ""),
+                            Product(name = "우테코 쥬스", price = 8_000, imageUrl = ""),
+                        ),
                 ),
-            ),
             onProductClick = {},
             onCartClick = {},
         )

@@ -1,3 +1,5 @@
+@file:Suppress("NonAsciiCharacters")
+
 package woowacourse.shopping
 
 import com.google.common.truth.Truth.assertThat

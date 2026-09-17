@@ -10,12 +10,14 @@ class AutoViewModelFactory : ViewModelProvider.Factory {
         val classReflection = modelClass.kotlin
         val constructor = classReflection.primaryConstructor ?: throw IllegalArgumentException()
         val parameters = constructor.parameters
-        val args = parameters.map { parameter ->
-            val dependencyClass = parameter.type.classifier as? KClass<*>
-                ?: throw IllegalArgumentException()
+        val args =
+            parameters.map { parameter ->
+                val dependencyClass =
+                    parameter.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException()
 
-            DependencyContainer.getInstance(dependencyClass)
-        }
+                DependencyContainer.getInstance(dependencyClass)
+            }
         return constructor.call(*args.toTypedArray())
     }
 }
