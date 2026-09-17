@@ -7,12 +7,14 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object AutoDi : ViewModelProvider.Factory {
+    private val instances = mutableMapOf<KClass<*>, Any>()
+
     override fun <T : ViewModel> create(
         modelClass: KClass<T>,
         extras: CreationExtras,
-    ): T = getInstance(targetClass = modelClass)
+    ): T = createInstance(targetClass = modelClass)
 
-    private fun <T : Any> getInstance(targetClass: KClass<T>): T {
+    private fun <T : Any> createInstance(targetClass: KClass<T>): T {
         val constructor =
             targetClass.primaryConstructor
                 ?: throw IllegalArgumentException("${targetClass.simpleName}의 주 생성자가 없습니다.")
@@ -28,4 +30,9 @@ object AutoDi : ViewModelProvider.Factory {
 
         return constructor.call(*dependencyClasses.toTypedArray())
     }
+
+    private fun getInstance(targetClass: KClass<*>): Any =
+        instances.getOrPut(targetClass) {
+            createInstance(targetClass)
+        }
 }
