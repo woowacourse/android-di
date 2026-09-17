@@ -6,6 +6,10 @@ import org.junit.Test
 class DependencyContainerTest {
     class TestRepository
 
+    class TestService(
+        val repository: TestRepository,
+    )
+
     @Test
     fun `요청한 타입의 인스턴스를 생성한다`() {
         val container = DependencyContainer()
@@ -23,5 +27,15 @@ class DependencyContainerTest {
         val repo2 = container.resolve(TestRepository::class)
 
         assertThat(repo1).isEqualTo(repo2)
+    }
+
+    @Test
+    fun `생성자에 필요한 의존성을 자동으로 주입한다`() {
+        val container = DependencyContainer()
+
+        val service = container.resolve(TestService::class)
+        val repository = container.resolve(TestRepository::class)
+
+        assertThat(service.repository).isSameAs(repository)
     }
 }

@@ -35,10 +35,15 @@
 
 ### 4. 생성자 의존성 재귀 생성
 
-- [ ] `TestRepository`를 생성자로 받는 테스트용 Service 클래스를 작성한다.
-- [ ] 컨테이너가 Service 생성자에 필요한 Repository를 자동으로 주입하는 테스트를 작성한다.
-- [ ] 생성자 파라미터 타입마다 컨테이너의 `resolve()`를 재귀적으로 호출한다.
-- [ ] 조회한 의존성들을 `constructor.call()`에 전달한다.
+- [x] `TestRepository`를 생성자로 받는 테스트용 Service 클래스를 작성한다.
+- [x] 컨테이너가 Service 생성자에 필요한 Repository를 자동으로 주입하는 테스트를 작성한다.
+- [x] 생성자 파라미터 타입마다 컨테이너의 `resolve()`를 재귀적으로 호출한다.
+- [x] 조회한 의존성들을 `constructor.call()`에 전달한다.
+
+```text
+재귀적으로 instances에 객체들이 저장됨
+이미 저장되었으면 꺼내서 사용
+```
 
 ### 5. 범용 ViewModelProvider.Factory 구현
 
