@@ -11,9 +11,8 @@
 
 ### 1. 생성자 Reflection 학습
 
-- [ ] `ProductsViewModel`의 주 생성자를 조회하는 테스트를 작성한다.
-- [ ] 주 생성자의 파라미터 타입이 `ProductRepository`, `CartRepository` 순서인지 검증한다.
-- [ ] `constructor.call()`에 Repository 인스턴스를 전달해 `ProductsViewModel`을 생성한다.
+- [x] `ProductsViewModel`의 주 생성자를 조회하는 테스트를 작성한다.
+- [x] `constructor.call()`에 Repository 인스턴스를 전달해 `ProductsViewModel`을 생성한다.
 
 ### 2. 요청한 타입의 인스턴스 생성
 
