@@ -34,8 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.AutoViewModelFactory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -44,10 +43,7 @@ fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductsViewModel = viewModel(
-        factory = ProductsViewModelFactory(
-            productRepository = ProductRepository,
-            cartRepository = CartRepository,
-        )
+        factory = AutoViewModelFactory()
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -118,11 +114,10 @@ fun ProductItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         AsyncImage(
@@ -153,14 +148,12 @@ fun ProductItem(
 private fun ProductsContentPreview() {
     ShoppingTheme {
         ProductsContent(
-            uiState =
-                ProductsUiState(
-                    products =
-                        listOf(
-                            Product(name = "우테코 과자", price = 10_000, imageUrl = ""),
-                            Product(name = "우테코 쥬스", price = 8_000, imageUrl = ""),
-                        ),
+            uiState = ProductsUiState(
+                products = listOf(
+                    Product(name = "우테코 과자", price = 10_000, imageUrl = ""),
+                    Product(name = "우테코 쥬스", price = 8_000, imageUrl = ""),
                 ),
+            ),
             onProductClick = {},
             onCartClick = {},
         )
