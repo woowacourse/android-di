@@ -14,9 +14,7 @@ object ShoppingRoute {
 }
 
 @Composable
-fun ShoppingNavHost(
-    navController: NavHostController = rememberNavController()
-) {
+fun ShoppingNavHost(navController: NavHostController = rememberNavController()) {
     NavHost(
         navController = navController,
         startDestination = ShoppingRoute.PRODUCTS,

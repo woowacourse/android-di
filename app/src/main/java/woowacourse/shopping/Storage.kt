@@ -19,22 +19,21 @@ object DiFactory {
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
         val repos = Storage::class.memberProperties
 
-        val inst = types.map { type ->
-            val property = repos.single {
-                it.returnType.classifier == type
-            }
+        val inst =
+            types.map { type ->
+                val property =
+                    repos.single {
+                        it.returnType.classifier == type
+                    }
 
-            property.getter.call(Storage)
-        }
+                property.getter.call(Storage)
+            }
 
         return constructor.call(*inst.toTypedArray())
     }
 
-    fun viewModelFactory(): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return resolve(modelClass.kotlin) as T
-            }
+    fun viewModelFactory(): ViewModelProvider.Factory =
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T = resolve(modelClass.kotlin) as T
         }
-    }
 }
