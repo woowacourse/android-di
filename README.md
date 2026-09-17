@@ -51,7 +51,48 @@ DiContainer의 핵심 아이디어는 다음과 같습니다.
 ### 2. 한 가지 자동 주입 로직으로 ViewModel에 의존성 주입 구현
 `viewModel(factory = ...)`에 `DiContainer.DiViewModelFactory()`라는 한 가지 로직을 넣어줌으로써 개발자가 직접 ViewModel에 필요한 파라미터를 주입하지 않아도 되도록 구현하였습니다.
 
-이는 `DiViewModelFactory()` 함수가 `createObject()` 함수를 호출함으로써 객체를 자동으로 탐색하고 생성할 수 있도록 구현하였습니다.
+이는 `DiViewModelFactory()`의 `create()`함수가 `createObject()` 함수를 호출함으로써 객체를 자동으로 탐색하고 생성할 수 있도록 구현하였습니다.
+
+## DiContainer 실행 흐름
+```text
+ProductsViewModel 요청
+        ↓
+DiViewModelFactory
+        ↓
+createObject(ProductsViewModel)
+        ↓
+생성자 분석
+        ↓
+ProductRepository 필요
+        ↓
+searchObject(ProductRepository)
+        ↓
+    ┌───────────────┐
+    │ 이미 존재함? │
+    └───────┬───────┘
+        Yes │ No
+         ↓  │  ↓
+       반환 │ 생성
+            │  ↓
+            └→ Map 저장
+                ↓
+ProductRepository 반환
+        ↓
+ProductsViewModel 생성
+```
+
+## 사용하는 방법
+
+의존성 주입을 받고자 하는 ViewModel의 생성자를 다음과 같이 주입한다.
+
+```kotlin
+@Composable
+fun ProductScreen(
+    viewModel: ProductsViewModel = viewModel(factory = DiContainer.DiViewModelFactory())
+)
+```
+
+이를 통해 ViewModel마다 직접 Repository를 생성하고 주입해줘야하는 불편함을 해결할 수 있다.
 
 ## 기능 요구 사항
 다음 문제점을 해결한다.
