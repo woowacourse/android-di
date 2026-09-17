@@ -64,9 +64,9 @@ ReflectionViewModelFactory vs DependencyContainer
 
 ### 6. 새로운 ViewModel에 Factory 재사용
 
-- [ ] 다른 의존성을 받는 두 번째 테스트용 ViewModel을 작성한다.
-- [ ] Factory 코드를 변경하지 않고 두 번째 ViewModel을 생성하는 테스트를 작성한다.
-- [ ] 새로운 ViewModel이 추가되어도 Factory에 ViewModel별 로직이 추가되지 않는지 확인한다.
+- [x] 다른 의존성을 받는 두 번째 테스트용 ViewModel을 작성한다.
+- [x] Factory 코드를 변경하지 않고 두 번째 ViewModel을 생성하는 테스트를 작성한다.
+- [x] 새로운 ViewModel이 추가되어도 Factory에 ViewModel별 로직이 추가되지 않는지 확인한다.
 
 ### 7. ViewModel과 의존성의 생명주기 분리
 
