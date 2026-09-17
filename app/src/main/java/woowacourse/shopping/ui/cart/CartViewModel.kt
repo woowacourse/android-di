@@ -1,10 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -37,14 +34,5 @@ class CartViewModel(
         cartRepository.deleteCartProduct(id)
         getAllCartProducts()
         viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
-    }
-
-    companion object {
-        fun Factory(): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    CartViewModel(CartRepository())
-                }
-            }
     }
 }
