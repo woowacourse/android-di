@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,20 +13,16 @@ import woowacourse.shopping.ui.products.ProductsViewModel
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-
-val productRepository = ProductRepository()
-val cartRepository = CartRepository()
-
-class DiViewModel : ViewModel() {
+object DiContainer {
     // 객체 목록 (Key, Value) -> (클래스, 클래스 객체)
     val objectsMap: MutableMap<Any, Any> = mutableMapOf()
 
     fun hasObject(modelClass: Class<*>): Boolean = objectsMap.keys.contains(modelClass)
 
     // 객체를 탐색한다.
-    fun <T : Any> searchObject(modelClass: Class<T>): Any {
+    fun <T : Any> searchObject(modelClass: Class<T>): T {
         if (hasObject(modelClass)) {
-            return objectsMap[modelClass]!!
+            return objectsMap[modelClass] as? T ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
         } else {
             val instance = createObject(modelClass)
             objectsMap[modelClass] = instance
@@ -35,8 +32,7 @@ class DiViewModel : ViewModel() {
 
     // 만약 객체 목록 안에 클래스 key가 존재한다면, 해당 객체를 반환한다.
     // 그게 아니라면, 객체를 만들어서 추가하고 반환한다.
-    // 지금 구조에서는 찾기와 객체 생성이 함께 꼬여있다. 이를 분리하면 객체를 잘 탐색하는지, 생성하는지를 알 수 있지 않을까?
-    fun <T : Any> createObject(modelClass: Class<T>): Any {
+    fun <T : Any> createObject(modelClass: Class<T>): T {
         val constructor = modelClass.kotlin.primaryConstructor!!
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
         if (types.isEmpty()) { // 파라미터가 없으면 그냥 생성한다.
@@ -49,18 +45,10 @@ class DiViewModel : ViewModel() {
         }
     }
 
-    fun <T : ViewModel> create(modelClass: Class<T>): T {
-        // 전달받은 뷰모델의 타입을 런타임시점에 생성한다.
-        val constructor = modelClass.kotlin.primaryConstructor!!
-
-        // 해당 뷰모델의 생성자의 파라미터의 클래스 타입을 알아낸다.
-        val types = constructor.parameters.map { it.type.classifier as KClass<*> }
-
-        val typesConstructors = types.map { type ->
-            type.primaryConstructor!!.call()
+    class DiViewModelFactory : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return createObject(modelClass)
         }
-
-        return constructor.call(*typesConstructors.toTypedArray())
     }
 }
 
@@ -69,27 +57,38 @@ class DiViewModelTest {
     @Test
     fun `ViewModel을 받았을 때 해당 ViewModel이 어떤 클래스인지 알 수 있다`() {
         // given
-        val diViewModel = DiViewModel()
+        val diContainer = DiContainer
 
         // when
-        val productsViewModel = diViewModel.create(ProductsViewModel::class.java)
-        val cartViewModel = diViewModel.create(CartViewModel::class.java)
+        val productsViewModel = diContainer.createObject(ProductsViewModel::class.java)
+        val cartViewModel = diContainer.createObject(CartViewModel::class.java)
 
         // then
-        assertThat(productsViewModel::class.simpleName).isEqualTo("ProductsViewModel")
-        assertThat(cartViewModel::class.simpleName).isEqualTo("CartViewModel")
+        assertThat(productsViewModel).isInstanceOf(ProductsViewModel::class.java)
+        assertThat(cartViewModel).isInstanceOf(CartViewModel::class.java)
     }
 
     @Test
     fun `ViewModel이 알맞은 파라미터 객체를 찾을 수 있다`() {
         // given
-        val diViewModel = DiViewModel()
+        val diContainer = DiContainer
 
         // when
-        diViewModel.objectsMap[ProductRepository::class.java] = ProductRepository()
+        diContainer.objectsMap.clear()
+        diContainer.objectsMap[ProductRepository::class.java] = ProductRepository()
 
         // then
-        assertThat(diViewModel.hasObject(ProductRepository::class.java)).isTrue()
-        assertThat(diViewModel.hasObject(CartRepository::class.java)).isFalse()
+        assertThat(diContainer.hasObject(ProductRepository::class.java)).isTrue()
+        assertThat(diContainer.hasObject(CartRepository::class.java)).isFalse()
+    }
+
+    @Test
+    fun `다른 ViewModel을 만들어도 ViewModel 객체를 생성할 수 있다`() {
+        // given
+        val diContainer = DiContainer
+
+        // when
+        diContainer.objectsMap.clear()
+        assertThat(diContainer.createObject(TestViewModel::class.java)).isInstanceOf(TestViewModel::class.java)
     }
 }
