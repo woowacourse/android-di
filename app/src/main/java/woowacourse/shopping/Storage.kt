@@ -13,7 +13,7 @@ object Storage {
     val productRepository: ProductRepository = ProductRepository()
 }
 
-object SsamDI {
+object DiFactory {
     fun resolve(modelClass: KClass<*>): Any {
         val constructor = modelClass.primaryConstructor!!
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
