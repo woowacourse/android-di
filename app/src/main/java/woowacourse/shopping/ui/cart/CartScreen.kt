@@ -45,7 +45,7 @@ fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CartViewModel = viewModel(
-        factory = CartViewModelFactory(CartRepository())
+        factory = CartViewModelFactory(CartRepository),
     ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

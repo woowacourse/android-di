@@ -45,8 +45,8 @@ fun ProductsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProductsViewModel = viewModel(
         factory = ProductsViewModelFactory(
-            productRepository = ProductRepository(),
-            cartRepository = CartRepository()
+            productRepository = ProductRepository,
+            cartRepository = CartRepository,
         )
     ),
 ) {
