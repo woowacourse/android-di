@@ -10,19 +10,19 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class ViewModelConstructorReflectionTest {
-
     @Test
     fun `ProductsViewModel 생성자의 파라미터 타입을 확인한다`() {
         // given
         val constructor = ProductsViewModel::class.primaryConstructor!!
 
-        val parameterTypes = constructor.parameters.map{
-            parameter -> parameter.type.classifier as KClass<*>
-        }
+        val parameterTypes =
+            constructor.parameters.map { parameter ->
+                parameter.type.classifier as KClass<*>
+            }
 
         assertThat(parameterTypes).containsExactly(
             ProductRepository::class,
-            CartRepository::class
+            CartRepository::class,
         )
     }
 
@@ -31,12 +31,13 @@ class ViewModelConstructorReflectionTest {
         // given
         val constructor = CartViewModel::class.primaryConstructor!!
 
-        val parameterTypes = constructor.parameters.map{
-            parameter -> parameter.type.classifier as KClass<*>
-        }
+        val parameterTypes =
+            constructor.parameters.map { parameter ->
+                parameter.type.classifier as KClass<*>
+            }
 
         assertThat(parameterTypes).containsExactly(
-            CartRepository::class
+            CartRepository::class,
         )
     }
 }
