@@ -33,14 +33,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.ViewModelFactoryDsl
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.KirbyDIFactory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -48,17 +44,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel =
-        viewModel(
-            factory =
-                viewModelFactory {
-                    initializer {
-                        CartViewModel(
-                            cartRepository = CartRepository(),
-                        )
-                    }
-                }
-        )
+    viewModel: CartViewModel = viewModel(factory = KirbyDIFactory),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
