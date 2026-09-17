@@ -43,4 +43,17 @@ class ReflectionViewModelFactoryTest {
 
         assertThat(viewModel.testService.repository).isEqualTo(repository)
     }
+
+    @Test
+    fun `ViewModel은 매번 생성하지만 의존성은 재사용한다`() {
+        val container = DependencyContainer()
+
+        val factory = ReflectionViewModelFactory(container)
+
+        val viewModel1 = factory.create(TestViewModel::class.java)
+        val viewModel2 = factory.create(TestViewModel::class.java)
+
+        assertThat(viewModel1).isNotEqualTo(viewModel2)
+        assertThat(viewModel1.repository).isEqualTo(viewModel2.repository)
+    }
 }

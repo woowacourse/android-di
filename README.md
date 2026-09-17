@@ -70,9 +70,9 @@ ReflectionViewModelFactory vs DependencyContainer
 
 ### 7. ViewModel과 의존성의 생명주기 분리
 
-- [ ] Factory에 같은 ViewModel을 두 번 요청하면 서로 다른 ViewModel이 생성되는지 검증한다.
-- [ ] 두 ViewModel에 주입된 동일한 타입의 Repository는 같은 인스턴스인지 검증한다.
-- [ ] Repository는 컨테이너가 재사용하고 ViewModel은 컨테이너가 보관하지 않도록 한다.
+- [x] Factory에 같은 ViewModel을 두 번 요청하면 서로 다른 ViewModel이 생성되는지 검증한다.
+- [x] 두 ViewModel에 주입된 동일한 타입의 Repository는 같은 인스턴스인지 검증한다.
+- [x] Repository는 컨테이너가 재사용하고 ViewModel은 컨테이너가 보관하지 않도록 한다.
 
 ### 8. 실제 화면에 공통 Factory 적용
 
