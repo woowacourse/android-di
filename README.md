@@ -1,6 +1,24 @@
 # android-di
 
 ## Step 1
+
+### 리팩토링 목록
+
+- [ ] `ProductRepository`와 `CartRepository`를 `class`로 변경하고,
+  `DependencyContainer`에서 인스턴스를 생성·캐싱하도록 수정한다.
+- [ ] `DependencyContainer`가 생성자 파라미터를 분석하여
+  필요한 의존성을 재귀적으로 생성하도록 수정한다.
+- [ ] `AutoViewModelFactory`가 의존성 생성 로직을 직접 처리하지 않고
+  `DependencyContainer`에 위임하도록 단순화한다.
+- [ ] 의존성을 생성할 수 없는 경우 원인을 알 수 있는 예외 메시지를 제공한다.
+
+### 테스트 보완 목록
+
+- [ ] `ProductsViewModel`과 `CartViewModel`이 자동으로 생성되는지 검증한다.
+- [ ] Repository를 여러 번 요청해도 동일한 인스턴스가 반환되는지 검증한다.
+- [ ] 생성자 파라미터가 있는 클래스와 중첩된 의존성이 재귀적으로 생성되는지 검증한다.
+- [ ] `object` 클래스와 생성에 실패하는 경우를 검증한다.
+
 ### 구현할 기능 목록
 
 - [x] `ProductRepository`와 `CartRepository`를 `object`로 변경하여 애플리케이션에서 단일 인스턴스를 공유한다.
