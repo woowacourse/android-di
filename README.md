@@ -4,7 +4,7 @@
 
 ### 리팩토링 목록
 
-- [ ] `ProductRepository`와 `CartRepository`를 `class`로 변경하고,
+- [x] `ProductRepository`와 `CartRepository`를 `class`로 변경하고,
   `DependencyContainer`에서 인스턴스를 생성·캐싱하도록 수정한다.
 - [ ] `DependencyContainer`가 생성자 파라미터를 분석하여
   필요한 의존성을 재귀적으로 생성하도록 수정한다.
