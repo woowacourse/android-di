@@ -4,6 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -11,8 +13,15 @@ import woowacourse.shopping.ui.products.ProductsViewModel
 class DIViewModelFactoryTest {
     @Test
     fun `두 ViewModel이 같은 장바구니를 사용한다`() {
-        val productsViewModel = DIViewModelFactory.create(ProductsViewModel::class.java)
-        val cartViewModel = DIViewModelFactory.create(CartViewModel::class.java)
+        val factory =
+            DependencyViewModelFactory(
+                mapOf(
+                    ProductRepository::class to ProductRepository(),
+                    CartRepository::class to CartRepository(),
+                ),
+            )
+        val productsViewModel = factory.create(ProductsViewModel::class.java)
+        val cartViewModel = factory.create(CartViewModel::class.java)
         val product =
             productsViewModel.run {
                 getAllProducts()
@@ -22,6 +31,6 @@ class DIViewModelFactoryTest {
         productsViewModel.addCartProduct(product)
         cartViewModel.getAllCartProducts()
 
-        assertThat(cartViewModel.uiState.value.cartProducts).contains(product)
+        assertThat(cartViewModel.uiState.value.cartProducts).containsExactly(product)
     }
 }
