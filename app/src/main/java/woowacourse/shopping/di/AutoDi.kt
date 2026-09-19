@@ -1,20 +1,12 @@
 package woowacourse.shopping.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object AutoDi : ViewModelProvider.Factory {
+object AutoDi {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    override fun <T : ViewModel> create(
-        modelClass: KClass<T>,
-        extras: CreationExtras,
-    ): T = createInstance(targetClass = modelClass)
-
-    private fun <T : Any> createInstance(targetClass: KClass<T>): T {
+    fun <T : Any> createInstance(targetClass: KClass<T>): T {
         val constructor =
             targetClass.primaryConstructor
                 ?: throw IllegalArgumentException("${targetClass.simpleName}의 주 생성자가 없습니다.")
