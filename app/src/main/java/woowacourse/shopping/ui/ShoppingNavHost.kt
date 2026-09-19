@@ -20,10 +20,14 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         startDestination = ShoppingRoute.PRODUCTS,
     ) {
         composable(ShoppingRoute.PRODUCTS) {
-            ProductsScreen(onNavigateToCart = { navController.navigate(ShoppingRoute.CART) })
+            ProductsScreen(
+                onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
+            )
         }
         composable(ShoppingRoute.CART) {
-            CartScreen(onNavigateUp = { navController.navigateUp() })
+            CartScreen(
+                onNavigateUp = { navController.navigateUp() },
+            )
         }
     }
 }
