@@ -11,7 +11,16 @@ import woowacourse.shopping.ui.products.ProductsViewModel
 @RunWith(RobolectricTestRunner::class)
 class DependencyContainerTest {
     @Test
-    fun `ViewModel을 자동 생성하고 Repository를 공유한다`() {
+    fun `ViewModel을 자동 생성한다`() {
+        val productsViewModel = DependencyContainer.create(ProductsViewModel::class.java)
+        val cartViewModel = DependencyContainer.create(CartViewModel::class.java)
+
+        assertThat(productsViewModel).isNotNull()
+        assertThat(cartViewModel).isNotNull()
+    }
+
+    @Test
+    fun `두 ViewModel이 같은 Repository를 공유한다`() {
         val productsViewModel = DependencyContainer.create(ProductsViewModel::class.java)
         val cartViewModel = DependencyContainer.create(CartViewModel::class.java)
         val product = Product(name = "우테코 과자", price = 10_000, imageUrl = "")
