@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object AoDi : ViewModelProvider.Factory {
-    var store = mutableMapOf<KClass<*>, Any>()
+    private val store = mutableMapOf<KClass<*>, Any>()
 
     override fun <T : ViewModel> create(
         modelClass: KClass<T>,
