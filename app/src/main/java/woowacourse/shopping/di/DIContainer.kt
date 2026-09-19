@@ -4,12 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    fun findInstances(types: List<KClass<*>>): List<Any> =
+    fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
+        val types = constructor.parameters.map { it.type.classifier as KClass<*> }
+        return getInstances(types)
+    }
+
+    private fun getInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
             if (instances.keys.contains(type)) {
                 instances[type]!!
@@ -25,8 +31,7 @@ object DIContainer {
 class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructor = modelClass.kotlin.primaryConstructor!!
-        val types = constructor.parameters.map { it.type.classifier as KClass<*> }
-        val dependencies = DIContainer.findInstances(types)
+        val dependencies = DIContainer.findDependencies(constructor)
         return constructor.call(*dependencies.toTypedArray())
     }
 }
