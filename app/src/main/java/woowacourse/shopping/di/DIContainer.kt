@@ -17,13 +17,9 @@ object DIContainer {
 
     private fun getInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
-            if (instances.keys.contains(type)) {
-                instances[type]!!
-            } else {
+            instances.getOrPut(type) {
                 val constructor = type.primaryConstructor!!
-                val instance = constructor.call()
-                instances[type] = instance
-                instances[type]!!
+                constructor.call()
             }
         }
 }
