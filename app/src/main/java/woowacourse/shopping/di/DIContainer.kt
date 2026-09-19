@@ -7,17 +7,17 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    val dependencies = mutableListOf<Pair<KClass<*>, Any>>()
+    val instances = mutableMapOf<KClass<*>, Any>()
 
-    fun findDependencies(types: List<KClass<*>>): List<Any> =
+    fun findInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
-            if (dependencies.map { it.first }.contains(type)) {
-                dependencies.find { it.first == type }!!.second
+            if (instances.keys.contains(type)) {
+                instances[type]!!
             } else {
                 val constructor = type.primaryConstructor!!
-                val dependency = constructor.call()
-                dependencies.add(type to dependency)
-                dependency
+                val instance = constructor.call()
+                instances[type] = instance
+                instances[type]!!
             }
         }
 }
@@ -26,7 +26,7 @@ class ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val constructor = modelClass.kotlin.primaryConstructor!!
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
-        val dependencies = DIContainer.findDependencies(types)
+        val dependencies = DIContainer.findInstances(types)
         return constructor.call(*dependencies.toTypedArray())
     }
 }
