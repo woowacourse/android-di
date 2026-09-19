@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    val instances = mutableMapOf<KClass<*>, Any>()
+    private val instances = mutableMapOf<KClass<*>, Any>()
 
     fun findInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
