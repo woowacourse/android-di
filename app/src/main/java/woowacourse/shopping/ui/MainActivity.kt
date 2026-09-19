@@ -13,12 +13,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val app = application as ShoppingApplication
+        val repositoryContainer = app.repositoryContainer
 
         enableEdgeToEdge()
         setContent {
             ShoppingTheme {
                 ShoppingNavHost(
-                    viewModelFactory = CommonViewModelFactory(app.repositoryContainer)
+                    viewModelFactory = CommonViewModelFactory(repositoryContainer)
                 )
             }
         }
