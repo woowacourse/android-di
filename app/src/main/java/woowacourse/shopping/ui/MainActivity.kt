@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import woowacourse.shopping.ShoppingApplication
-import woowacourse.shopping.ui.di.CommonViewModelFactory
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,13 +12,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val app = application as ShoppingApplication
-        val repositoryContainer = app.repositoryContainer
 
         enableEdgeToEdge()
         setContent {
             ShoppingTheme {
                 ShoppingNavHost(
-                    viewModelFactory = CommonViewModelFactory(repositoryContainer)
+                    viewModelFactory = app.viewModelFactory
                 )
             }
         }
