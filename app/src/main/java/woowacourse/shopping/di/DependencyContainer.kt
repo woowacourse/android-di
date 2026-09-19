@@ -10,16 +10,22 @@ object DependencyContainer {
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
-        val constructor = type.primaryConstructor
-            ?: throw IllegalArgumentException()
+        val constructor =
+            type.primaryConstructor
+                ?: throw IllegalArgumentException(
+                    "${type.simpleName}에 primary constructor가 없습니다.",
+                )
         val parameters = constructor.parameters
-        val args = parameters.map { parameter ->
-            val dependencyClass =
-                parameter.type.classifier as? KClass<*>
-                    ?: throw IllegalArgumentException()
+        val args =
+            parameters.map { parameter ->
+                val dependencyClass =
+                    parameter.type.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException(
+                            "${type.simpleName}의 ${parameter.name} 파라미터 타입을 확인할 수 없습니다.",
+                        )
 
-            getInstance(dependencyClass)
-        }
+                getInstance(dependencyClass)
+            }
         return constructor.call(*args.toTypedArray())
     }
 
