@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 
 object ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(
-        modelClass: Class<T>,
-        extras: CreationExtras,
+        modelClass: Class<T>
     ): T = Injector.create(modelClass.kotlin)
 }
