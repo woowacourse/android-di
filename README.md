@@ -17,10 +17,10 @@
   - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
   
 ### Recursive DI
-- [ ] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
-    - [ ] CartProduct 도메인 모델을 만든다.
-    - [ ] 장바구니 상태를 List<CartProduct>로 변경한다.
-    - [ ] data/mapper에 CartProductMapper를 만든다.
+- [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
+    - [x] CartProduct 도메인 모델을 만든다.
+    - [x] 장바구니 상태를 List<CartProduct>로 변경한다.
+    - [x] data/mapper에 CartProductMapper를 만든다.
 - [ ] 장바구니 화면에 담은 시각을 표시한다. 날짜 포맷팅은 DateFormatter가 담당한다.
 
 ### 선택 요구 사항
