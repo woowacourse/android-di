@@ -26,7 +26,7 @@ class DependencyContainerTest {
         val repo1 = container.resolve(TestRepository::class)
         val repo2 = container.resolve(TestRepository::class)
 
-        assertThat(repo1).isEqualTo(repo2)
+        assertThat(repo1).isSameAs(repo2)
     }
 
     @Test

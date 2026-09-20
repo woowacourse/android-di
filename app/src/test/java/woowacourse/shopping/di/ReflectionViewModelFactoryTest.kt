@@ -28,7 +28,7 @@ class ReflectionViewModelFactoryTest {
         val viewModel = factory.create(TestViewModel::class.java)
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(viewModel.repository).isEqualTo(repository)
+        assertThat(viewModel.repository).isSameAs(repository)
     }
 
     @Test
@@ -41,7 +41,7 @@ class ReflectionViewModelFactoryTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(viewModel.testService.repository).isEqualTo(repository)
+        assertThat(viewModel.testService.repository).isSameAs(repository)
     }
 
     @Test
@@ -53,7 +53,7 @@ class ReflectionViewModelFactoryTest {
         val viewModel1 = factory.create(TestViewModel::class.java)
         val viewModel2 = factory.create(TestViewModel::class.java)
 
-        assertThat(viewModel1).isNotEqualTo(viewModel2)
-        assertThat(viewModel1.repository).isEqualTo(viewModel2.repository)
+        assertThat(viewModel1).isNotSameAs(viewModel2)
+        assertThat(viewModel1.repository).isSameAs(viewModel2.repository)
     }
 }
