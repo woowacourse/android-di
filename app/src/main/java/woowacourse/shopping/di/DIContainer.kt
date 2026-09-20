@@ -29,6 +29,6 @@ object DIContainer {
         }
 }
 
-class ViewModelFactory : ViewModelProvider.Factory {
+object ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T = DIContainer.createInstance(modelClass.kotlin)
 }
