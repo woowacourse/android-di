@@ -11,7 +11,10 @@ object HunnitFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
 
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
-        val constructor = targetClass.primaryConstructor!!
+        val constructor =
+            targetClass.primaryConstructor
+                ?: throw IllegalArgumentException("$targetClass : 주 생성자를 찾을 수 없습니다.")
+
         val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
 
         val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
