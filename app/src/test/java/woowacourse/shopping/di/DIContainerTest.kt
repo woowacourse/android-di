@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -64,4 +65,19 @@ class DIContainerTest {
             Dispatchers.resetMain()
         }
     }
+
+    @Test
+    fun `순환 의존성의 경로를 오류로 알려준다`() {
+        val exception = assertThrows(IllegalArgumentException::class.java) { container.get(FirstDependency::class) }
+
+        assertThat(exception).hasMessageThat().contains("FirstDependency → SecondDependency → FirstDependency")
+    }
+
+    class FirstDependency(
+        val second: SecondDependency,
+    )
+
+    class SecondDependency(
+        val first: FirstDependency,
+    )
 }
