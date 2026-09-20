@@ -1,6 +1,11 @@
 package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
@@ -40,5 +45,23 @@ class DIContainerTest {
         val second = container.get(CartViewModel::class)
 
         assertThat(second).isNotSameInstanceAs(first)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `상품 화면에서 담은 상품을 장바구니 화면에서 조회한다`() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        try {
+            val productsViewModel = container.get(ProductsViewModel::class)
+            val cartViewModel = container.get(CartViewModel::class)
+            val product = container.get(ProductRepository::class).getAllProducts().first()
+
+            productsViewModel.addCartProduct(product)
+            cartViewModel.getAllCartProducts()
+
+            assertThat(cartViewModel.uiState.value.cartProducts).containsExactly(product)
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }
