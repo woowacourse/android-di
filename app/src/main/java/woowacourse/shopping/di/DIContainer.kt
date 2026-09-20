@@ -10,7 +10,13 @@ import kotlin.reflect.full.primaryConstructor
 object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
 
-    fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
+    fun <T : Any> createInstance(modelClass: KClass<T>): T {
+        val constructor = modelClass.primaryConstructor!!
+        val dependencies = findDependencies(constructor)
+        return constructor.call(*dependencies.toTypedArray())
+    }
+
+    private fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
         return getInstances(types)
     }
@@ -18,16 +24,11 @@ object DIContainer {
     private fun getInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
             instances.getOrPut(type) {
-                val constructor = type.primaryConstructor!!
-                constructor.call()
+                createInstance(type)
             }
         }
 }
 
 class ViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val constructor = modelClass.kotlin.primaryConstructor!!
-        val dependencies = DIContainer.findDependencies(constructor)
-        return constructor.call(*dependencies.toTypedArray())
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = DIContainer.createInstance(modelClass.kotlin)
 }
