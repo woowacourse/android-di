@@ -21,7 +21,7 @@
     - [x] CartProduct 도메인 모델을 만든다.
     - [x] 장바구니 상태를 List<CartProduct>로 변경한다.
     - [x] data/mapper에 CartProductMapper를 만든다.
-- [ ] 장바구니 화면에 담은 시각을 표시한다. 날짜 포맷팅은 DateFormatter가 담당한다.
+- [x] 장바구니 화면에 담은 시각을 표시한다. 날짜 포맷팅은 DateFormatter가 담당한다.
 
 ### 선택 요구 사항
 - [ ] LazyColumn의 items에 key를 지정한다. 지정 전후에 어떤 차이가 생기는지 관찰한다.
