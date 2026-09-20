@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
 import kotlin.reflect.full.primaryConstructor
@@ -24,7 +25,9 @@ class DIContainer {
             }
 
         return constructor.call(*dependencies.toTypedArray()).also { instance ->
-            instances[type] = instance
+            if (instance !is ViewModel) {
+                instances[type] = instance
+            }
         }
     }
 }

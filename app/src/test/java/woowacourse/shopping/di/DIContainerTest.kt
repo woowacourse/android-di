@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 class DIContainerTest {
@@ -30,5 +31,14 @@ class DIContainerTest {
         val second = container.get(CartRepository::class)
 
         assertThat(second).isSameInstanceAs(first)
+    }
+
+    @Test
+    fun `ViewModel은 다시 요청하면 새로 생성한다`() {
+        val first = container.get(CartViewModel::class)
+
+        val second = container.get(CartViewModel::class)
+
+        assertThat(second).isNotSameInstanceAs(first)
     }
 }
