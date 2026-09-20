@@ -22,12 +22,8 @@ object HunnitFactory : ViewModelProvider.Factory {
         return instance
     }
 
-    fun getInstance(kClass: KClass<*>): Any {
-        instances[kClass]?.let { return it }
-
-        val newInstance = createInstance(kClass)
-        instances[kClass] = newInstance
-
-        return newInstance
-    }
+    fun getInstance(kClass: KClass<*>): Any =
+        instances.getOrPut(kClass) {
+            createInstance(kClass)
+        }
 }
