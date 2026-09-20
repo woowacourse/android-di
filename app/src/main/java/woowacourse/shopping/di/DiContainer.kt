@@ -31,16 +31,15 @@ object DiContainer {
         if (types.isEmpty()) { // 파라미터가 없으면 그냥 생성한다.
             return constructor.call()
         } else { // 그게 아니라면 다시 탐색해서 객체를 찾아온다.
-            val typesConstructors = types.map { type ->
-                searchObject(type.java)
-            }
+            val typesConstructors =
+                types.map { type ->
+                    searchObject(type.java)
+                }
             return constructor.call(*typesConstructors.toTypedArray())
         }
     }
 
     class DiViewModelFactory : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return createObject(modelClass)
-        }
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = createObject(modelClass)
     }
 }
