@@ -40,9 +40,9 @@ import woowacourse.shopping.viewModelFactory
 
 @Composable
 fun ProductsScreen(
-    viewModel: ProductsViewModel = viewModel(factory = viewModelFactory<ProductsViewModel>()),
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ProductsViewModel = viewModel(factory = viewModelFactory<ProductsViewModel>()),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
