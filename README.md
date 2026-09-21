@@ -24,3 +24,28 @@
 
 - [x] 특정 ViewModel에서만이 아닌, 범용적으로 활용될 수 있는 자동 주입 로직을 작성한다.
 - [x] DIContainer에 인스턴스를 생성하고 보관하는 로직을 추가한다.
+
+## 2단계
+
+### 목적
+Annotation을 붙여서 필요한 요소에만 의존성을 주입하는 방식으로 ViewModel 내 필드 주입을 구현한다. 
+
+### 기능 목록 
+
+- [ ] ViewModel 내 필드 주입을 구현한다.
+  - [ ] Annotation 학습 테스트를 학습한다.
+  - [ ] 필드 주입 테스트를 작성한다. 
+- [ ] `CartRepository`가 DAO 객체를 참조하도록 변경한다.
+  - [ ] `CartProduct`를 만든다.
+  - [ ] 엔티티에서 `CartProduct` 도메인으로 바꾸는 매퍼 함수를 추가한다.
+  - [ ] `CartContentTest`를 `CartProduct`를 사용하도록 수정한다. 
+  - [ ] `CartContentPreview`를 `CartProduct`를 사용하도록 수정한다.
+  - [ ] `deleteCartProduct`의 인자가 인덱스가 아닌 id를 받도록 수정한다. 
+  - [ ] `ProductsViewModel.addCartProduct`를 `viewModelScope.launch` 안으로 옮긴다. 
+  - [ ] `CartViewModel.getAllCartProducts` 결과를 조회한 후 `update { }` 람다에서 갱신하도록 구조를 변경한다.
+  - [ ] `CartViewModel.deleteCartProduct`를 `viewModelScope.launch` 안으로 옮긴다. 
+  - [ ] 장바구니 화면에 담은 시각을 표시한다.
+  - [ ] 재귀 주입을 구현한다. 
+  - [ ] 재귀 주입 테스트를 작성한다. 
+  - [ ] `LazyColumn`의 `items`에 `key`를 지정한다.
+  - [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않는다. 
