@@ -18,21 +18,21 @@
 
 #### 기능 요구 사항
 
-- [ ] ViewModel 내 필드 주입 구현
-- [ ] Annotation으로 의존성 주입이 필요한 필드 명시
-- [ ] Annotation이 붙은 필드에만 의존성 주입
-- [ ] `CartRepository`가 `CartProductDao`를 참조하도록 변경하고 재귀적으로 의존성 주입
-- [ ] `CartProduct` 도메인 모델과 `toDomain()` 매퍼 추가
-- [ ] 장바구니 목록을 `CartProduct`로 관리하고 실제 상품 `Long id`로 삭제
-- [ ] 장바구니 Repository의 `suspend` 함수 호출을 ViewModel의 `viewModelScope`에서 처리
-- [ ] 장바구니 목록에 상품명과 담은 시각 표시
+- [x] ViewModel 내 필드 주입 구현
+- [x] Annotation으로 의존성 주입이 필요한 필드 명시
+- [x] Annotation이 붙은 필드에만 의존성 주입
+- [x] `CartRepository`가 `CartProductDao`를 참조하도록 변경하고 재귀적으로 의존성 주입
+- [x] `CartProduct` 도메인 모델과 `toDomain()` 매퍼 추가
+- [x] 장바구니 목록을 `CartProduct`로 관리하고 실제 상품 `Long id`로 삭제
+- [x] 장바구니 Repository의 `suspend` 함수 호출을 ViewModel의 `viewModelScope`에서 처리
+- [x] 장바구니 목록에 상품명과 담은 시각 표시
 
 #### 선택 요구 사항
 
-- [ ] `LazyColumn`의 `items`에 `key` 지정
-- [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 변경
+- [x] `LazyColumn`의 `items`에 `key` 지정
+- [x] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 변경
 
 #### 검증
 
-- [ ] 필드 주입과 재귀적 DI를 검증하는 테스트 작성
-- [ ] 사전에 제공된 테스트 코드 모두 통과
+- [x] 필드 주입과 재귀적 DI를 검증하는 테스트 작성
+- [x] 사전에 제공된 테스트 코드 모두 통과

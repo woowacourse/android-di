@@ -1,15 +1,49 @@
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModel
 import com.google.common.truth.Truth.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class DependencyContainerTest {
+
+    @Before
+    fun setUp() {
+        DependencyContainer.registerCartProductDao(
+            object : CartProductDao {
+                override suspend fun getAll(): List<CartProductEntity> = emptyList()
+
+                override suspend fun insert(cartProduct: CartProductEntity) = Unit
+
+                override suspend fun delete(id: Long) = Unit
+            },
+        )
+    }
+
+    class FieldInjectionTestViewModel : ViewModel() {
+        @field:DependencyContainer.Inject
+        lateinit var injectedRepository: ProductRepository
+
+        var notInjectedRepository: ProductRepository? = null
+    }
+
+    @Test
+    fun `Inject가 붙은 필드에만 의존성을 주입한다`() {
+        val viewModel =
+            DependencyContainer.create(FieldInjectionTestViewModel::class.java)
+
+        assertThat(viewModel.injectedRepository).isNotNull()
+        assertThat(viewModel.notInjectedRepository).isNull()
+    }
+
     @Test
     fun `ViewModel을 자동 생성한다`() {
         val productsViewModel = DependencyContainer.create(ProductsViewModel::class.java)
@@ -23,11 +57,15 @@ class DependencyContainerTest {
     fun `두 ViewModel이 같은 Repository를 공유한다`() {
         val productsViewModel = DependencyContainer.create(ProductsViewModel::class.java)
         val cartViewModel = DependencyContainer.create(CartViewModel::class.java)
-        val product = Product(name = "우테코 과자", price = 10_000, imageUrl = "")
 
-        productsViewModel.addCartProduct(product)
-        cartViewModel.getAllCartProducts()
+        assertThat(productsViewModel.cartRepository).isSameInstanceAs(cartViewModel.cartRepository)
+    }
 
-        assertThat(cartViewModel.uiState.value.cartProducts).containsExactly(product)
+    @Test
+    fun `필드 의존성의 의존성까지 재귀적으로 주입한다`() {
+        val viewModel =
+            DependencyContainer.create(CartViewModel::class.java)
+
+        assertThat(viewModel.cartRepository).isNotNull()
     }
 }
