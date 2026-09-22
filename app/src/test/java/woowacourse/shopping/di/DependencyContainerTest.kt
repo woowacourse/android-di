@@ -17,7 +17,8 @@ class DependencyContainerTest {
 
     @Before
     fun setUp() {
-        DependencyContainer.registerCartProductDao(
+        DependencyContainer.register(
+            CartProductDao::class,
             object : CartProductDao {
                 override suspend fun getAll(): List<CartProductEntity> = emptyList()
 

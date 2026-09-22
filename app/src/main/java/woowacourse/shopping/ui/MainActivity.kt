@@ -5,13 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.room.Room
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 class MainActivity : ComponentActivity() {
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val database =
@@ -21,7 +20,10 @@ class MainActivity : ComponentActivity() {
                 "shopping.db",
             ).build()
 
-        DependencyContainer.registerCartProductDao(database.cartProductDao())
+        DependencyContainer.register(
+            CartProductDao::class,
+            database.cartProductDao(),
+        )
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -2,11 +2,8 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.ProductRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
-
 
 object DependencyContainer : ViewModelProvider.Factory {
 
@@ -20,15 +17,13 @@ object DependencyContainer : ViewModelProvider.Factory {
     annotation class Inject
 
     private val dependencies: MutableMap<DependencyKey, Any> =
-        mutableMapOf(
-            DependencyKey(ProductRepository::class) to ProductRepository(),
-        )
+        mutableMapOf()
 
     private fun resolve(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
     ): Any {
-        dependencies[DependencyKey(type,qualifier)]?.let { return it }
+        dependencies[DependencyKey(type, qualifier)]?.let { return it }
 
         val constructor =
             type.primaryConstructor
@@ -79,11 +74,7 @@ object DependencyContainer : ViewModelProvider.Factory {
 
         injectFields(viewModel)
 
-        return modelClass.cast(viewModel)
-    }
-
-    fun registerCartProductDao(cartProductDao: CartProductDao) {
-        dependencies[DependencyKey(CartProductDao::class)] = cartProductDao
+        return modelClass.cast(viewModel)!!
     }
 
     fun register(
@@ -92,5 +83,12 @@ object DependencyContainer : ViewModelProvider.Factory {
         dependency: Any,
     ) {
         dependencies[DependencyKey(type, qualifier)] = dependency
+    }
+
+    fun register(
+        type: KClass<*>,
+        dependency: Any,
+    ) {
+        dependencies[DependencyKey(type)] = dependency
     }
 }
