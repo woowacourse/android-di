@@ -68,4 +68,49 @@ class DependencyContainerTest {
 
         assertThat(viewModel.cartRepository).isNotNull()
     }
+
+    @Test
+    fun `Qualifier를 통해 구현체를 주입한다`() {
+        DependencyContainer.register(
+            TestRepository::class,
+            Local::class,
+            LocalRepository(),
+        )
+        DependencyContainer.register(
+            TestRepository::class,
+            Remote::class,
+            RemoteRepository(),
+        )
+
+        val viewModel =
+            DependencyContainer.create(QualifierTestViewModel::class.java)
+
+        assertThat(viewModel.localRepository)
+            .isInstanceOf(LocalRepository::class.java)
+
+        assertThat(viewModel.remoteRepository)
+            .isInstanceOf(RemoteRepository::class.java)
+
+    }
+    interface TestRepository
+    private class LocalRepository : TestRepository
+    private class RemoteRepository : TestRepository
+
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    private annotation class Local
+
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    private annotation class Remote
+
+    class QualifierTestViewModel : ViewModel(){
+        @field:DependencyContainer.Inject
+        @field:Local
+        lateinit var localRepository: TestRepository
+
+        @field:DependencyContainer.Inject
+        @field:Remote
+        lateinit var remoteRepository: TestRepository
+    }
 }

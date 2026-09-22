@@ -8,20 +8,27 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 
-
 object DependencyContainer : ViewModelProvider.Factory {
+
+    private data class DependencyKey(
+        val type: KClass<*>,
+        val qualifier: KClass<out Annotation>? = null,
+    )
 
     @Target(AnnotationTarget.FIELD)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Inject
 
-    private val dependencies: MutableMap<KClass<*>, Any> =
+    private val dependencies: MutableMap<DependencyKey, Any> =
         mutableMapOf(
-            ProductRepository::class to ProductRepository(),
+            DependencyKey(ProductRepository::class) to ProductRepository(),
         )
 
-    private fun resolve(type: KClass<*>): Any {
-        dependencies[type]?.let { return it }
+    private fun resolve(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ): Any {
+        dependencies[DependencyKey(type,qualifier)]?.let { return it }
 
         val constructor =
             type.primaryConstructor
@@ -42,7 +49,7 @@ object DependencyContainer : ViewModelProvider.Factory {
 
         return constructor.call(*arguments.toTypedArray()).also { instance ->
             injectFields(instance)
-            dependencies[type] = instance
+            dependencies[DependencyKey(type)] = instance
         }
     }
 
@@ -52,7 +59,12 @@ object DependencyContainer : ViewModelProvider.Factory {
                 field.isAnnotationPresent(Inject::class.java)
             }
             .forEach { field ->
-                val dependency = resolve(field.type.kotlin)
+                val qualifier =
+                    field.annotations
+                        .firstOrNull { it.annotationClass != Inject::class }
+                        ?.annotationClass
+
+                val dependency = resolve(field.type.kotlin, qualifier)
 
                 field.isAccessible = true
                 field.set(instance, dependency)
@@ -71,6 +83,14 @@ object DependencyContainer : ViewModelProvider.Factory {
     }
 
     fun registerCartProductDao(cartProductDao: CartProductDao) {
-        dependencies[CartProductDao::class] = cartProductDao
+        dependencies[DependencyKey(CartProductDao::class)] = cartProductDao
+    }
+
+    fun register(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>,
+        dependency: Any,
+    ) {
+        dependencies[DependencyKey(type, qualifier)] = dependency
     }
 }
