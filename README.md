@@ -9,8 +9,8 @@
 
 ### 1단계 점검
 
-- [x] ViewModel 생성자 타입을 읽어 등록된 Repository를 주입하고, 두 화면에서 같은 인스턴스를 사용한다.
-- [x] 기존 Repository를 받는 새 ViewModel에는 DI 변경이 필요 없다. 새 ViewModel과 사용하는 화면은 작성해야 한다.
+- [x] ViewModel 생성자 타입을 읽어 필요한 Repository를 자동 생성하고, 두 화면에서 같은 인스턴스를 사용한다.
+- [x] 새 구체 Repository를 추가해도 DI 등록을 변경하지 않는다.
 
 ## 0.5단계: 생성자 주입 - 수동
 
@@ -53,16 +53,15 @@ viewModel(
 
 ## 1단계: 생성자 주입 - 자동
 
-[`DIViewModelFactory`](app/src/main/java/woowacourse/shopping/DIViewModelFactory.kt)가
-`ProductRepository`와 `CartRepository`를 한 번씩 생성해 타입별 Map에 보관한다.
-ViewModel의 주 생성자 파라미터 타입으로 필요한 Repository를 찾아 주입하므로,
-`ProductsViewModel`과 `CartViewModel`은 같은 Factory를 사용한다.
+[`DIViewModelFactory`](app/src/main/java/woowacourse/shopping/DIViewModelFactory.kt)는
+ViewModel의 주 생성자 파라미터 타입을 읽고 필요한 의존성을 자동으로 생성한다.
+의존성도 다른 객체를 생성자로 받으면 같은 방식으로 재귀적으로 생성한다.
+생성한 객체는 타입별 Map에 보관하므로 `ProductsViewModel`과 `CartViewModel`은
+같은 `CartRepository` 인스턴스를 사용한다.
 
-새 ViewModel이 기존 Repository를 사용하면 Factory를 새로 만들 필요가 없다.
-현재는 Map에 등록한 두 구체 Repository만 주입한다. 생성자 파라미터 타입과
-Map 키가 정확히 일치해야 하며, 등록되지 않은 타입은 자동 생성하지 않는다.
-인터페이스를 키로 등록하면 주입할 수 있지만, 같은 인터페이스의 여러 구현체를
-구분하는 기능은 없다. DI 어노테이션은 사용하지 않는다.
+새 구체 Repository를 추가해도 Factory에 등록할 필요가 없다. 다만 인터페이스는
+생성할 수 없으며, 같은 인터페이스의 여러 구현체를 구분하는 기능도 없다.
+DI 어노테이션은 사용하지 않는다.
 
 [`DIViewModelFactoryTest`](app/src/test/java/woowacourse/shopping/DIViewModelFactoryTest.kt)는
 `ProductsViewModel`에서 담은 상품이 `CartViewModel`에서도 보이는지 확인한다.
