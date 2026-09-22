@@ -1,5 +1,43 @@
 # android-di
 
+## Step 2 - Annotation
+
+### 구현할 기능 목록
+
+#### 필드 주입
+
+- [ ] 런타임에 조회 가능한 주입용 Annotation을 정의한다.
+- [ ] DI 컨테이너가 ViewModel을 생성한 뒤 Annotation이 붙은 필드에만 의존성을 주입하도록 구현한다.
+
+#### 장바구니 데이터 처리
+
+- [ ] `id`, 상품 정보, `createdAt`을 가진 `CartProduct` 도메인 모델을 생성한다.
+- [ ] `CartProductEntity`를 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
+- [ ] `CartRepository`가 `CartProductDao`를 주입받아 추가·조회·삭제하도록 변경한다.
+- [ ] Room Database와 DAO의 제공 방법을 정하고 기존 재귀 주입에 연결한다.
+- [ ] `ProductsViewModel`과 `CartViewModel`에서 Repository의 suspend 함수를 `viewModelScope` 안에서 호출한다.
+- [ ] 장바구니 상태를 `List<CartProduct>`로 변경하고, 삭제 기준을 인덱스에서 실제 `id`로 변경한다.
+
+#### 장바구니 화면
+
+- [ ] `DateFormatter`로 담은 시각을 포맷하여 상품명과 함께 표시한다.
+- [ ] 삭제 이벤트가 실제 상품의 `id`를 전달하도록 변경한다.
+- [ ] 변경된 모델에 맞게 `CartContentPreview`와 기존 테스트를 수정한다.
+
+### 테스트 목록
+
+- [ ] Annotation이 붙은 필드에만 의존성이 주입되는지 검증한다.
+- [ ] DAO까지 연결된 재귀적 의존성 주입을 검증한다.
+- [ ] 매핑 과정에서 `id`와 `createdAt`이 유지되는지 검증한다.
+- [ ] 목록 중간 항목을 삭제해도 선택한 상품이 삭제되는지 검증한다.
+- [ ] 상품명과 담은 시각이 화면에 표시되는지 검증한다.
+- [ ] 사전 제공 테스트가 모두 통과하는지 확인한다.
+
+### 선택 구현 목록
+
+- [ ] `LazyColumn`의 항목에 `id`를 key로 지정하고 삭제 전후 동작을 확인한다.
+- [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 한다.
+
 ## Step 1
 
 ### 리팩토링 목록
