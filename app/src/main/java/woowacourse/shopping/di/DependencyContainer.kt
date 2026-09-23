@@ -26,7 +26,9 @@ object DependencyContainer {
 
                 getInstance(dependencyClass)
             }
-        return constructor.call(*args.toTypedArray())
+        val instance =  constructor.call(*args.toTypedArray())
+        injectFields(instance)
+        return instance
     }
 
     fun getInstance(type: KClass<*>): Any {
@@ -35,6 +37,18 @@ object DependencyContainer {
 
         return instances.getOrPut(type) {
             create(type)
+        }
+    }
+
+    fun injectFields(instance: Any) {
+        val fields = instance.javaClass.declaredFields
+        fields.forEach { field ->
+            if (field.isAnnotationPresent(Inject::class.java)) {
+                val dependencyType = field.type.kotlin
+                val dependency = getInstance(dependencyType)
+                field.isAccessible = true
+                field.set(instance, dependency)
+            }
         }
     }
 }
