@@ -13,11 +13,11 @@
 
 - [x] `id`, 상품 정보, `createdAt`을 가진 `CartProduct` 도메인 모델을 생성한다.
 - [x] `CartProductEntity`를 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
-- [ ] `CartRepository` 인터페이스를 정의한다.
-    - [ ] 장바구니 상품 추가, 조회, 삭제 함수를 선언한다.
-- [ ] `DefaultCartRepository`가 `CartRepository`를 구현하도록 변경한다.
-- [ ] `DefaultCartRepository`가 `CartProductDao`를 생성자로 주입받도록 변경한다.
-- [ ] `DefaultCartRepository`에서 DAO 결과를 `CartProduct`로 변환한다.
+- [x] `CartRepository` 인터페이스를 정의한다.
+    - [x] 장바구니 상품 추가, 조회, 삭제 함수를 선언한다.
+- [x] `DefaultCartRepository`가 `CartRepository`를 구현하도록 변경한다.
+- [x] `DefaultCartRepository`가 `CartProductDao`를 생성자로 주입받도록 변경한다.
+- [x] `DefaultCartRepository`에서 DAO 결과를 `CartProduct`로 변환한다.
 - [ ] DI 컨테이너가 `CartRepository` 요청 시 `DefaultCartRepository`를 생성하도록 연결한다.
 - [ ] Room Database에서 `CartProductDao`를 제공하고 DI 컨테이너에 등록한다.
 - [ ] `ProductsViewModel`과 `CartViewModel`에서 Repository의 `suspend` 함수를 `viewModelScope` 안에서 호출한다.
@@ -34,7 +34,6 @@
 
 - [x] Annotation이 붙은 필드에만 의존성이 주입되는지 검증한다.
 - [x] 매핑 과정에서 `id`와 `createdAt`이 유지되는지 검증한다.
-- [ ] `DefaultCartRepository`가 `CartProductDao`를 통해 데이터를 처리하는지 검증한다.
 - [ ] `CartRepository` 인터페이스 요청 시 `DefaultCartRepository`가 주입되는지 검증한다.
 - [ ] `CartViewModel`에서 `CartRepository`와 `CartProductDao`가 재귀적으로 주입되는지 검증한다.
 - [ ] 목록 중간 항목을 삭제해도 선택한 상품이 삭제되는지 검증한다.
