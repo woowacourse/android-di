@@ -15,3 +15,11 @@
 3. 선택 요구사향
    - [x] LazyColumn의 items에 key 지정
    - [x] UI 계층에서 CartProductEntity를 직접 참조하지 않도록 구현
+
+## 3단계 구현 목록
+
+1. Qualifier
+    - [] 하나의 인터페이스에 여러 구현체를 `Qualifier` 어노테이션으로 구분
+
+2. 모듈 분리
+   - [] DI 관련 코드를 별도의 모듈로 분리
