@@ -83,3 +83,27 @@ Application으로 Room DAO를 최초 한 번 생성하고, 화면에서는
 장바구니 화면은 Room 엔티티 대신 `CartProduct` 도메인 모델을 사용한다.
 각 항목은 데이터베이스 식별자를 key와 삭제 인자로 사용하고, `createdAt`은
 `DateFormatter`를 통해 화면에 표시한다.
+
+## 3단계: Qualifier와 DI 모듈 분리
+
+### 기능 목록
+
+- [ ] Qualifier 애노테이션으로 같은 타입의 여러 구현체를 구분한다.
+- [ ] 장바구니 저장소로 Room 구현체와 In-Memory 구현체 중 하나를 선택할 수 있다.
+- [ ] 같은 타입의 구현체가 여러 개일 때 Qualifier가 없으면 명확한 오류를 낸다.
+- [ ] Qualifier 해석과 누락 오류를 DI 모듈 테스트로 검증한다.
+- [ ] DI 코드를 순수 JVM `:di` 모듈로 분리한다.
+- [ ] `:di` 모듈이 쇼핑 앱의 도메인 타입과 Android 타입을 참조하지 않도록 한다.
+
+### 설계 선택
+
+Qualifier는 문자열 키 대신 메타 애노테이션으로 표현한다. 앱에서 `@RoomCart`와
+`@InMemoryCart`처럼 의미가 드러나는 애노테이션을 선언할 수 있고, 문자열 오타 없이
+컴파일 시점에 참조를 확인할 수 있기 때문이다. DI 모듈은 각 애노테이션의 구체적인
+이름을 알지 않고 `@Qualifier`가 붙었는지만 확인한다.
+
+`:di`는 순수 JVM 모듈로 만든다. 의존성 탐색과 생성에는 Kotlin Reflection만 필요하고,
+Android의 `ViewModelProvider.Factory`는 앱 모듈에 남길 수 있기 때문이다. 따라서 DI
+모듈의 `build.gradle.kts`에는 Android 플러그인과 쇼핑 앱 의존성이 들어가지 않는다.
+4단계의 화면 스코프도 Android 객체를 DI 모듈에 전달하는 대신 앱에서 컨테이너의
+생명주기를 관리하는 방식으로 확장한다.
