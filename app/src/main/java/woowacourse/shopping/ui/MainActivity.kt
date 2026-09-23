@@ -9,7 +9,9 @@ import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.di.qualifier.InMemory
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +35,14 @@ class MainActivity : ComponentActivity() {
 
         DependencyContainer.register(
             CartRepository::class,
+            woowacourse.shopping.di.qualifier.Room::class,
             DefaultCartRepository(dao),
+        )
+
+        DependencyContainer.register(
+            CartRepository::class,
+            InMemory::class,
+            InMemoryCartRepository(),
         )
 
         enableEdgeToEdge()

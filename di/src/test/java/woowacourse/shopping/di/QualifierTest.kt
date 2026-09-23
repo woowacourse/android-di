@@ -16,40 +16,45 @@ class QualifierTest {
 
     class SecondRepository : Repository
 
-    class TestViewModel {
+    class FieldInjectionViewModel {
         @Inject
         @First
         lateinit var repository: Repository
     }
 
-    class TestViewModelWithoutQualifier {
+    class ConstructorInjectionViewModel(
+        @param:First
+        val repository: Repository,
+    )
+
+    class ViewModelWithoutQualifier {
         @Inject
         lateinit var repository: Repository
     }
 
-    class TestViewModelWithUnknownQualifier {
+    class ViewModelWithUnknownQualifier {
         @Inject
         @Unknown
         lateinit var repository: Repository
     }
 
     @Qualifier
-    @Target(AnnotationTarget.FIELD)
+    @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class First
 
     @Qualifier
-    @Target(AnnotationTarget.FIELD)
+    @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Second
 
     @Qualifier
-    @Target(AnnotationTarget.FIELD)
+    @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Unknown
 
     @Test
-    fun `Qualifier가 지정된 구현체를 주입한다`() {
+    fun `필드의 Qualifier에 맞는 구현체를 주입한다`() {
         DependencyContainer.register(
             Repository::class,
             First::class,
@@ -62,9 +67,34 @@ class QualifierTest {
             SecondRepository(),
         )
 
-        val viewModel = DependencyContainer.create(TestViewModel::class) as TestViewModel
+        val viewModel =
+            DependencyContainer.create(FieldInjectionViewModel::class)
+                    as FieldInjectionViewModel
 
-        assertThat(viewModel.repository).isInstanceOf(FirstRepository::class.java)
+        assertThat(viewModel.repository)
+            .isInstanceOf(FirstRepository::class.java)
+    }
+
+    @Test
+    fun `생성자 파라미터의 Qualifier에 맞는 구현체를 주입한다`() {
+        DependencyContainer.register(
+            Repository::class,
+            First::class,
+            FirstRepository(),
+        )
+
+        DependencyContainer.register(
+            Repository::class,
+            Second::class,
+            SecondRepository(),
+        )
+
+        val viewModel =
+            DependencyContainer.create(ConstructorInjectionViewModel::class)
+                    as ConstructorInjectionViewModel
+
+        assertThat(viewModel.repository)
+            .isInstanceOf(FirstRepository::class.java)
     }
 
     @Test
@@ -83,10 +113,11 @@ class QualifierTest {
 
         val exception =
             assertThrows(IllegalArgumentException::class.java) {
-                DependencyContainer.create(TestViewModelWithoutQualifier::class)
+                DependencyContainer.create(ViewModelWithoutQualifier::class)
             }
 
-        assertThat(exception).hasMessageContaining("Qualifier")
+        assertThat(exception)
+            .hasMessageContaining("Qualifier")
     }
 
     @Test
@@ -99,7 +130,7 @@ class QualifierTest {
 
         val exception =
             assertThrows(IllegalArgumentException::class.java) {
-                DependencyContainer.create(TestViewModelWithUnknownQualifier::class)
+                DependencyContainer.create(ViewModelWithUnknownQualifier::class)
             }
 
         assertThat(exception)

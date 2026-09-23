@@ -29,7 +29,12 @@ object DependencyContainer {
                             "${type.simpleName}의 ${parameter.name} 파라미터 타입을 확인할 수 없습니다.",
                         )
 
-                getInstance(dependencyClass)
+                val qualifier = findQualifier(parameter.annotations)
+
+                getInstance(
+                    type = dependencyClass,
+                    qualifier = qualifier,
+                )
             }
         val instance = constructor.call(*args.toTypedArray())
         injectFields(instance)
@@ -105,5 +110,19 @@ object DependencyContainer {
         instance: Any,
     ) {
         instances[DependencyKey(type, qualifier)] = instance
+    }
+
+    private fun findQualifier(annotations: Iterable<Annotation>): KClass<out Annotation>? {
+        val qualifiers =
+            annotations.filter { annotation ->
+                annotation.annotationClass.java
+                    .isAnnotationPresent(Qualifier::class.java)
+            }
+
+        if (qualifiers.size > 1) {
+            throw IllegalArgumentException("하나의 필드 또는 파라미터에는 Qualifier를 하나만 지정해야 합니다.")
+        }
+
+        return qualifiers.firstOrNull()?.annotationClass
     }
 }

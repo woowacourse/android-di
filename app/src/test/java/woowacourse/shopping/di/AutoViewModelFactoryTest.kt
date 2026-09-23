@@ -9,6 +9,7 @@ import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartProductDao
+import woowacourse.shopping.di.qualifier.Room
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.cart.CartViewModel
@@ -31,6 +32,7 @@ class AutoViewModelFactoryTest {
         )
         DependencyContainer.register(
             CartRepository::class,
+            Room::class,
             FakeRepository(),
         )
     }
