@@ -2,6 +2,10 @@ package woowacourse.shopping.di
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.model.CartProduct
+import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.cart.CartViewModel
 
 class AoDiTest {
     @Test
@@ -35,6 +39,31 @@ class AoDiTest {
 
         val result = AoDi.instantiate(InterfaceClass::class)
         assertThat(result::class).isSameAs(InterfaceImpl::class)
+    }
+
+    @Test
+    fun `뷰모델에 의존성 객체를 필드 주입한다`() {
+        val cartViewModel = CartViewModel()
+
+        val fakeRepository =
+            object : CartRepository {
+                override suspend fun addCartProduct(product: Product) {
+                    TODO("Not yet implemented")
+                }
+
+                override suspend fun getAllCartProducts(): List<CartProduct> {
+                    TODO("Not yet implemented")
+                }
+
+                override suspend fun deleteCartProduct(id: Long) {
+                    TODO("Not yet implemented")
+                }
+            }
+
+        AoDi.register(CartRepository::class, fakeRepository)
+        AoDi.inject(cartViewModel)
+
+        assertThat(cartViewModel.cartRepository::class).isSameAs(fakeRepository::class)
     }
 
     class Root(

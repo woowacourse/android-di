@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.cast
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object AoDi : ViewModelProvider.Factory {
@@ -15,7 +17,12 @@ object AoDi : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(
         modelClass: KClass<T>,
         extras: CreationExtras,
-    ): T = instantiate(modelClass)
+    ): T {
+        val vm = instantiate(modelClass)
+        inject(vm)
+
+        return vm
+    }
 
     fun <T : Any> instantiate(type: KClass<T>): T {
         val implementationType =
@@ -52,6 +59,26 @@ object AoDi : ViewModelProvider.Factory {
         implType: KClass<*>,
     ) {
         interfaceRule[type] = implType
+    }
+
+    fun <T : ViewModel> inject(vm: T) {
+        val annotatedProperties =
+            vm::class
+                .declaredMemberProperties
+                .filter { property -> property.annotations.any { it is FieldInject } }
+
+        annotatedProperties.forEach { property ->
+            val mutableProperty =
+                property as? KMutableProperty1<*, *>
+                    ?: error("주입 대상은 var여야 합니다")
+            val dependencyType = mutableProperty.returnType.classifier
+
+            val actualDependency =
+                store[dependencyType]
+                    ?: error("주입할 의존성 객체가 없습니다.")
+
+            mutableProperty.setter.call(vm, actualDependency)
+        }
     }
 }
 
