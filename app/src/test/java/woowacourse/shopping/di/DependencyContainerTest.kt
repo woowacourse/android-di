@@ -2,9 +2,15 @@
 
 package woowacourse.shopping.di
 
+import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertSame
 import org.junit.Test
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.FakeCartProductDao
 
 class DependencyContainerTest {
     class Child
@@ -42,5 +48,13 @@ class DependencyContainerTest {
         val parent2 = DependencyContainer.getInstance(Parent::class)
 
         assertSame(parent1, parent2)
+    }
+
+    @Test
+    fun `CartRepository를 요청하면 DefaultCartRepository가 생성된다`() {
+        DependencyContainer.register(CartProductDao::class, FakeCartProductDao())
+        val repository = DependencyContainer.getInstance(CartRepository::class)
+
+        assertThat(repository).isInstanceOf(DefaultCartRepository::class.java)
     }
 }
