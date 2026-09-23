@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         DependencyContainer.register(
             CartRepository::class,
-            DefaultCartRepository(dao)
+            DefaultCartRepository(dao),
         )
 
         enableEdgeToEdge()

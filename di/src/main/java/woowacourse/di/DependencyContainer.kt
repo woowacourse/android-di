@@ -4,7 +4,12 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
+    private data class DependencyKey(
+        val type: KClass<*>,
+        val qualifier: KClass<out Annotation>?,
+    )
+
+    private val instances = mutableMapOf<DependencyKey, Any>()
 
     fun create(type: KClass<*>): Any {
         val objectInstance = type.objectInstance
@@ -31,11 +36,35 @@ object DependencyContainer {
         return instance
     }
 
-    fun getInstance(type: KClass<*>): Any {
+    fun getInstance(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ): Any {
+        val key = DependencyKey(type, qualifier)
+
+        instances[key]?.let { return it }
+
+        val qualifiedInstances =
+            instances.keys.filter { dependencyKey ->
+                dependencyKey.type == type && dependencyKey.qualifier != null
+            }
+
+        if (qualifier == null && qualifiedInstances.isNotEmpty()) {
+            throw IllegalArgumentException(
+                "${type.simpleName} 타입에는 Qualifier가 필요합니다.",
+            )
+        }
+
+        if (qualifier != null) {
+            throw IllegalArgumentException(
+                "${type.simpleName} 타입에 ${qualifier.simpleName} Qualifier가 등록되지 않았습니다.",
+            )
+        }
+
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
-        return instances.getOrPut(type) {
+        return instances.getOrPut(key) {
             create(type)
         }
     }
@@ -43,12 +72,23 @@ object DependencyContainer {
     fun injectFields(instance: Any) {
         val fields = instance.javaClass.declaredFields
         fields.forEach { field ->
-            if (field.isAnnotationPresent(Inject::class.java)) {
-                val dependencyType = field.type.kotlin
-                val dependency = getInstance(dependencyType)
-                field.isAccessible = true
-                field.set(instance, dependency)
-            }
+            if (!field.isAnnotationPresent(Inject::class.java)) return@forEach
+
+            val qualifier =
+                field.annotations
+                    .map { it.annotationClass.java }
+                    .firstOrNull { annotationClass ->
+                        annotationClass.isAnnotationPresent(Qualifier::class.java)
+                    }?.kotlin
+
+            val dependency =
+                getInstance(
+                    type = field.type.kotlin,
+                    qualifier = qualifier,
+                )
+
+            field.isAccessible = true
+            field.set(instance, dependency)
         }
     }
 
@@ -56,6 +96,14 @@ object DependencyContainer {
         type: KClass<*>,
         instance: Any,
     ) {
-        instances[type] = instance
+        register(type, null, instance)
+    }
+
+    fun register(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>?,
+        instance: Any,
+    ) {
+        instances[DependencyKey(type, qualifier)] = instance
     }
 }

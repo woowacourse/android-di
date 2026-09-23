@@ -15,11 +15,11 @@ import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 class AutoViewModelFactoryTest {
-    class FakeRepository: CartRepository {
+    class FakeRepository : CartRepository {
         override suspend fun addCartProduct(product: Product) {}
-        override suspend fun getAllCartProducts(): List<CartProduct> {
-            return emptyList()
-        }
+
+        override suspend fun getAllCartProducts(): List<CartProduct> = emptyList()
+
         override suspend fun deleteCartProduct(id: Long) {}
     }
 
@@ -31,7 +31,7 @@ class AutoViewModelFactoryTest {
         )
         DependencyContainer.register(
             CartRepository::class,
-            FakeRepository()
+            FakeRepository(),
         )
     }
 
