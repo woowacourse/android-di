@@ -2,8 +2,10 @@
 
 package woowacourse.shopping.di
 
-import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import woowacourse.di.DependencyContainer
+import woowacourse.di.Inject
+import kotlin.test.Test
 
 class FieldInjectionTest {
     class TestViewModel(

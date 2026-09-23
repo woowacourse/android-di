@@ -1,16 +1,10 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
-    private val bindings =
-        mutableMapOf<KClass<*>, KClass<*>>(
-            CartRepository::class to DefaultCartRepository::class,
-        )
 
     fun create(type: KClass<*>): Any {
         val objectInstance = type.objectInstance
@@ -41,10 +35,8 @@ object DependencyContainer {
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
-        val targetType = bindings[type] ?: type
-
-        return instances.getOrPut(targetType) {
-            create(targetType)
+        return instances.getOrPut(type) {
+            create(type)
         }
     }
 
