@@ -69,7 +69,7 @@ class QualifierTest {
 
         val viewModel =
             DependencyContainer.create(FieldInjectionViewModel::class)
-                    as FieldInjectionViewModel
+                as FieldInjectionViewModel
 
         assertThat(viewModel.repository)
             .isInstanceOf(FirstRepository::class.java)
@@ -91,7 +91,7 @@ class QualifierTest {
 
         val viewModel =
             DependencyContainer.create(ConstructorInjectionViewModel::class)
-                    as ConstructorInjectionViewModel
+                as ConstructorInjectionViewModel
 
         assertThat(viewModel.repository)
             .isInstanceOf(FirstRepository::class.java)
