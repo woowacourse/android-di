@@ -19,6 +19,16 @@ class AoDiTest {
         assertThat(first.dependency).isSameAs(second.dependency)
     }
 
+    @Test
+    fun `의존성 타입을 정의하고 그 타입에 맞는 객체를 DI에 입력한다`() {
+        val depen = SharedDependency()
+
+        AoDi.register(SharedDependency::class, depen)
+        val first = AoDi.instantiate(FirstConsumer::class)
+
+        assertThat(first.dependency).isSameAs(depen)
+    }
+
     class Root(
         val branch: Branch,
     )

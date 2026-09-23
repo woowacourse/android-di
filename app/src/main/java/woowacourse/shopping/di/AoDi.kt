@@ -31,6 +31,13 @@ object AoDi : ViewModelProvider.Factory {
 
         return constructor.call(*dependencies.toTypedArray())
     }
+
+    fun <T : Any> register(
+        type: KClass<T>,
+        instance: T,
+    ) {
+        store[type] = instance
+    }
 }
 
 /*
