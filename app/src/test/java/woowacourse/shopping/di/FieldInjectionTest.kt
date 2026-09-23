@@ -17,7 +17,9 @@ class FieldInjectionTest {
     }
 
     class TestRepo1
+
     class TestRepo2
+
     class TestRepo3
 
     @Test

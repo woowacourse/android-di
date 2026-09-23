@@ -107,7 +107,8 @@ fun CartContent(
         ) {
             items(
                 items = uiState.cartProducts,
-                key = { cartProduct -> cartProduct.id }) { cartProduct ->
+                key = { cartProduct -> cartProduct.id },
+            ) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
@@ -176,15 +177,16 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(
-                        CartProduct(
-                            id = 1L,
-                            name = "우테코 과자",
-                            price = 10_000,
-                            imageUrl = "",
-                            createdAt = 12345678L
-                        )
-                    ),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                                createdAt = 12345678L,
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},

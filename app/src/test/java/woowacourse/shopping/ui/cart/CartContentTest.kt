@@ -30,7 +30,6 @@ class CartContentTest {
     private val product3 =
         CartProduct(id = 3L, name = "우테코 군것질거리", price = 10_000, imageUrl = "", createdAt = 12345680L)
 
-
     @Test
     fun `장바구니에 담긴 상품의 이름이 화면에 보인다`() {
         composeRule.setContent {
@@ -71,7 +70,7 @@ class CartContentTest {
                 uiState = CartUiState(cartProducts = listOf(product1, product2, product3)),
                 dateFormatter = DateFormatter(LocalContext.current),
                 onDelete = { deletedId = it },
-                onNavigateUp = {}
+                onNavigateUp = {},
             )
         }
         composeRule
@@ -89,9 +88,10 @@ class CartContentTest {
 
         composeRule.setContent {
             CartContent(
-                uiState = CartUiState(
-                    cartProducts = listOf(product1),
-                ),
+                uiState =
+                    CartUiState(
+                        cartProducts = listOf(product1),
+                    ),
                 dateFormatter = dateFormatter,
                 onDelete = {},
                 onNavigateUp = {},

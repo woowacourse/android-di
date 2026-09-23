@@ -38,12 +38,12 @@
 - [x] `CartViewModel`에서 `CartRepository`와 `CartProductDao`가 재귀적으로 주입되는지 검증한다.
 - [x] 목록 중간 항목을 삭제해도 선택한 상품이 삭제되는지 검증한다.
 - [x] 상품명과 담은 시각이 화면에 표시되는지 검증한다.
-- [ ] 사전 제공 테스트가 모두 통과하는지 확인한다.
+- [x] 사전 제공 테스트가 모두 통과하는지 확인한다.
 
 ### 선택 구현 목록
 
 - [x] `LazyColumn`의 항목에 `id`를 key로 지정한다.
-- [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 한다.
+- [x] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 한다.
 
 ## Step 1
 

@@ -14,7 +14,8 @@ class AutoViewModelFactoryTest {
     @Before
     fun setUp() {
         DependencyContainer.register(
-            CartProductDao::class, FakeCartProductDao()
+            CartProductDao::class,
+            FakeCartProductDao(),
         )
     }
 

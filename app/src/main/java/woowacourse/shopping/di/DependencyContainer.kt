@@ -7,9 +7,10 @@ import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
-    private val bindings = mutableMapOf<KClass<*>, KClass<*>>(
-        CartRepository::class to DefaultCartRepository::class
-    )
+    private val bindings =
+        mutableMapOf<KClass<*>, KClass<*>>(
+            CartRepository::class to DefaultCartRepository::class,
+        )
 
     fun create(type: KClass<*>): Any {
         val objectInstance = type.objectInstance
@@ -31,7 +32,7 @@ object DependencyContainer {
 
                 getInstance(dependencyClass)
             }
-        val instance =  constructor.call(*args.toTypedArray())
+        val instance = constructor.call(*args.toTypedArray())
         injectFields(instance)
         return instance
     }
@@ -59,7 +60,10 @@ object DependencyContainer {
         }
     }
 
-    fun register(type: KClass<*>, instance: Any) {
+    fun register(
+        type: KClass<*>,
+        instance: Any,
+    ) {
         instances[type] = instance
     }
 }

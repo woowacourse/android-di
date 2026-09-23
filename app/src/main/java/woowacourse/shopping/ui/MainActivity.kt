@@ -15,11 +15,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val database =
-            Room.databaseBuilder(
-                applicationContext,
-                ShoppingDatabase::class.java,
-                "shopping.db",
-            ).build()
+            Room
+                .databaseBuilder(
+                    applicationContext,
+                    ShoppingDatabase::class.java,
+                    "shopping.db",
+                ).build()
 
         DependencyContainer.register(
             CartProductDao::class,

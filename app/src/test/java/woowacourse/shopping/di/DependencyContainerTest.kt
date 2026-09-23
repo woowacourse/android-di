@@ -7,7 +7,6 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertSame
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.FakeCartProductDao
@@ -16,7 +15,7 @@ class DependencyContainerTest {
     class Child
 
     class Parent(
-        val child: Child
+        val child: Child,
     )
 
     @Test

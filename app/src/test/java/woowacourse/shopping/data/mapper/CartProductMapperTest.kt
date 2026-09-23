@@ -9,14 +9,15 @@ import woowacourse.shopping.data.CartProductEntity
 class CartProductMapperTest {
     @Test
     fun `CartProductEntity를 CartProduct로 매핑하는 과정에서 id와 createdAt이 유지된다`() {
-        val entity = CartProductEntity(
-            name = "별터초코비",
-            price = 600000,
-            imageUrl = "주소"
-        ).apply {
-            id = 25L
-            createdAt = 12345678L
-        }
+        val entity =
+            CartProductEntity(
+                name = "별터초코비",
+                price = 600000,
+                imageUrl = "주소",
+            ).apply {
+                id = 25L
+                createdAt = 12345678L
+            }
         val domain = entity.toDomain()
 
         assertEquals(entity.id, domain.id)
