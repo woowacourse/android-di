@@ -1,13 +1,16 @@
 package woowacourse.shopping.di
 
+import android.R.attr.type
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
+import kotlin.reflect.cast
 import kotlin.reflect.full.primaryConstructor
 
 object AoDi : ViewModelProvider.Factory {
     private val store = mutableMapOf<KClass<*>, Any>()
+    private val interfaceRule = mutableMapOf<KClass<*>, KClass<*>>()
 
     override fun <T : ViewModel> create(
         modelClass: KClass<T>,
@@ -15,21 +18,26 @@ object AoDi : ViewModelProvider.Factory {
     ): T = instantiate(modelClass)
 
     fun <T : Any> instantiate(type: KClass<T>): T {
+        val implementationType =
+            interfaceRule[type]
+                ?: type
         val constructor =
-            requireNotNull(type.primaryConstructor) {
+            requireNotNull(implementationType.primaryConstructor) {
                 "생성자가 없습니다."
             }
 
         val dependencies =
             constructor.parameters.map { parameter ->
-                val type = parameter.type.classifier as KClass<*>
+
+                val type =
+                    parameter.type.classifier as KClass<*>
 
                 store.getOrPut(type) {
                     instantiate(type)
                 }
             }
 
-        return constructor.call(*dependencies.toTypedArray())
+        return type.cast(constructor.call(*dependencies.toTypedArray()))
     }
 
     fun <T : Any> register(
@@ -37,6 +45,13 @@ object AoDi : ViewModelProvider.Factory {
         instance: T,
     ) {
         store[type] = instance
+    }
+
+    fun registerInterfaceRule(
+        type: KClass<*>,
+        implType: KClass<*>,
+    ) {
+        interfaceRule[type] = implType
     }
 }
 
