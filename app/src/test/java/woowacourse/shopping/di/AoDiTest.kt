@@ -29,6 +29,14 @@ class AoDiTest {
         assertThat(consumer.dependency).isSameAs(registeredDependency)
     }
 
+    @Test
+    fun `인터페이스 정보와 구현체 정보 연결 규칙을 설정하고 인터페이스를 불러도 구현체를 가져온다`() {
+        AoDi.registerInterfaceRule(InterfaceClass::class, InterfaceImpl::class)
+
+        val result = AoDi.instantiate(InterfaceClass::class)
+        assertThat(result::class).isSameAs(InterfaceImpl::class)
+    }
+
     class Root(
         val branch: Branch,
     )
@@ -54,4 +62,8 @@ class AoDiTest {
     class RegisteredConsumer(
         val dependency: RegisteredDependency,
     )
+
+    interface InterfaceClass
+
+    class InterfaceImpl : InterfaceClass
 }
