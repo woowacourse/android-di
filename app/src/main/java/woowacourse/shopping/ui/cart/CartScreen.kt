@@ -37,7 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
 import woowacourse.shopping.di.AoDi
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
@@ -115,7 +115,7 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
+    cartProduct: CartProduct,
     dateFormatter: DateFormatter,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -172,7 +172,14 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
