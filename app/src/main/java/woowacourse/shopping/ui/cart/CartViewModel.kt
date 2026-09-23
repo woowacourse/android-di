@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.di.CustomFieldInjection
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
 data class CartUiState(
-    val cartProducts: List<Product> = emptyList(),
+    val cartProducts: List<CartProduct> = emptyList(),
 )
 
 class CartViewModel: ViewModel() {
@@ -30,12 +30,17 @@ class CartViewModel: ViewModel() {
     val onCartProductDeleted: SharedFlow<Unit> get() = _onCartProductDeleted.asSharedFlow()
 
     fun getAllCartProducts() {
-        _uiState.update { it.copy(cartProducts = cartRepository.getAllCartProducts()) }
+        viewModelScope.launch {
+            val cartProducts = cartRepository.getAllCartProducts()
+            _uiState.update { it.copy(cartProducts = cartProducts) }
+        }
     }
 
-    fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        getAllCartProducts()
-        viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            getAllCartProducts()
+            _onCartProductDeleted.emit(Unit)
+        }
     }
 }
