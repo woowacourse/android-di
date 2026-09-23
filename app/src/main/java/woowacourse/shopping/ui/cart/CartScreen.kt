@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,16 +35,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import woowacourse.shopping.DIViewModelFactory
 import woowacourse.shopping.R
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.di.AppDI
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(factory = DIViewModelFactory),
+    viewModel: CartViewModel = viewModel(factory = AppDI.viewModelFactory),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -76,7 +76,7 @@ fun CartScreen(
 fun CartContent(
     uiState: CartUiState,
     dateFormatter: DateFormatter,
-    onDelete: (Int) -> Unit,
+    onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,11 +99,14 @@ fun CartContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
-            itemsIndexed(uiState.cartProducts) { index, cartProduct ->
+            items(
+                items = uiState.cartProducts,
+                key = CartProduct::id,
+            ) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
-                    dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index) },
+                    formattedCreatedAt = dateFormatter.formatDate(cartProduct.createdAt),
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
@@ -112,8 +115,8 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
-    dateFormatter: DateFormatter,
+    cartProduct: CartProduct,
+    formattedCreatedAt: String,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,8 +127,10 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
-        Text(text = "", style = MaterialTheme.typography.labelSmall)
+        Text(
+            text = formattedCreatedAt,
+            style = MaterialTheme.typography.labelSmall,
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,
@@ -169,7 +174,16 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1,
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                                createdAt = System.currentTimeMillis(),
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
