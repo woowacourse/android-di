@@ -142,6 +142,7 @@ fun CartProductItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+            Text(dateFormatter.formatDate(cartProduct.createdAt))
             IconButton(onClick = onDelete) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
