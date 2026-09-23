@@ -2,6 +2,7 @@
 
 package woowacourse.shopping.ui.cart
 
+import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -9,6 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -77,5 +79,27 @@ class CartContentTest {
             .performClick()
 
         assertThat(deletedId).isEqualTo(2L)
+    }
+
+    @Test
+    fun `장바구니 상품을 담은 시각이 화면에 보인다`() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val dateFormatter = DateFormatter(context)
+        val formattedDate = dateFormatter.formatDate(product1.createdAt)
+
+        composeRule.setContent {
+            CartContent(
+                uiState = CartUiState(
+                    cartProducts = listOf(product1),
+                ),
+                dateFormatter = dateFormatter,
+                onDelete = {},
+                onNavigateUp = {},
+            )
+        }
+
+        composeRule
+            .onNodeWithText(formattedDate)
+            .assertIsDisplayed()
     }
 }
