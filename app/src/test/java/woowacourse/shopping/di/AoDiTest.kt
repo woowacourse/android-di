@@ -20,13 +20,13 @@ class AoDiTest {
     }
 
     @Test
-    fun `의존성 타입을 정의하고 그 타입에 맞는 객체를 DI에 입력한다`() {
-        val depen = SharedDependency()
+    fun `등록한 객체를 생성자 의존성으로 사용한다`() {
+        val registeredDependency = object : RegisteredDependency {}
 
-        AoDi.register(SharedDependency::class, depen)
-        val first = AoDi.instantiate(FirstConsumer::class)
+        AoDi.register(RegisteredDependency::class, registeredDependency)
+        val consumer = AoDi.instantiate(RegisteredConsumer::class)
 
-        assertThat(first.dependency).isSameAs(depen)
+        assertThat(consumer.dependency).isSameAs(registeredDependency)
     }
 
     class Root(
@@ -48,4 +48,10 @@ class AoDiTest {
     )
 
     class SharedDependency
+
+    interface RegisteredDependency
+
+    class RegisteredConsumer(
+        val dependency: RegisteredDependency,
+    )
 }
