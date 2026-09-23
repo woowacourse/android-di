@@ -9,5 +9,5 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlin.reflect)
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 }
