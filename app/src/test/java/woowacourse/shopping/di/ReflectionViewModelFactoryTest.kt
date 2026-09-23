@@ -5,6 +5,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.di.DependencyContainer
+import woowacourse.di.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class ReflectionViewModelFactoryTest {

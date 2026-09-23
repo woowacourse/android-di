@@ -1,11 +1,11 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
-internal class DependencyContainer(
+class DependencyContainer(
     dependencies: Map<KClass<*>, Any> = emptyMap(),
     private val bindings: Map<KClass<*>, KClass<*>> = emptyMap(),
 ) {

@@ -2,6 +2,8 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.DependencyContainer
+import woowacourse.di.Inject
 import kotlin.reflect.full.cast
 
 internal class ReflectionViewModelFactory(
