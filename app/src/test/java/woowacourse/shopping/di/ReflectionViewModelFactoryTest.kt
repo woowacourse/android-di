@@ -6,6 +6,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.di.DependencyContainer
+import woowacourse.di.DependencyKey
 import woowacourse.di.Inject
 
 @RunWith(RobolectricTestRunner::class)
@@ -14,7 +15,7 @@ class ReflectionViewModelFactoryTest {
     fun `애노테이션이 붙은 필드에만 의존성을 재귀적으로 주입한다`() {
         val container =
             DependencyContainer(
-                bindings = mapOf(TestRepository::class to DefaultTestRepository::class),
+                bindings = mapOf(DependencyKey(TestRepository::class) to DefaultTestRepository::class),
             )
         val factory = ReflectionViewModelFactory(container)
 

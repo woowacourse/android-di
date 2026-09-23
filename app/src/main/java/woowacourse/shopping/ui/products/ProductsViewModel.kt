@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import woowacourse.di.Inject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.RoomCart
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(
@@ -24,6 +25,7 @@ class ProductsViewModel : ViewModel() {
     private lateinit var productRepository: ProductRepository
 
     @Inject
+    @RoomCart
     private lateinit var cartRepository: CartRepository
 
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())

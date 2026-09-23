@@ -6,15 +6,21 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.room.Room
 import woowacourse.di.DependencyContainer
+import woowacourse.di.DependencyKey
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 object AppDI {
     private val container =
         DependencyContainer(
-            bindings = mapOf(CartRepository::class to DefaultCartRepository::class),
+            bindings =
+                mapOf(
+                    DependencyKey(CartRepository::class, RoomCart::class) to DefaultCartRepository::class,
+                    DependencyKey(CartRepository::class, InMemoryCart::class) to InMemoryCartRepository::class,
+                ),
         )
     private val factory = ReflectionViewModelFactory(container)
 
