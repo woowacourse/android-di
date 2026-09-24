@@ -40,18 +40,18 @@
 
 ### 재귀 의존성 주입
 
-- [ ] 생성자 의존성을 재귀적으로 탐색하고, 등록된 인스턴스와 직접 생성할 의존성의 경계를 정한다.
-- [ ] 앱에서 생성한 Room Database 인스턴스를 컨테이너에 등록하고 재귀 생성 경계를 정한다.
-- [ ] 순환 의존성이 생기면 무한 재귀 대신 의존성 경로를 포함한 오류를 낸다.
-- [ ] `CartRepository`가 `CartProductDao`를 사용하도록 변경한다.
-- [ ] 장바구니 상품 엔티티를 도메인 모델 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
-- [ ] `CartProduct`에 상품 식별자, 화면 표시 정보, 장바구니에 담은 시각을 제공한다.
-- [ ] 장바구니 조회와 삭제를 실제 상품 식별자(`Long`) 기준으로 처리한다.
-- [ ] DAO와 Repository의 비동기 함수를 `suspend`로 변경하고, ViewModel에서 `viewModelScope`로 호출한다.
-- [ ] 장바구니 화면에 `DateFormatter`로 포맷한 담은 시각을 표시한다.
-- [ ] UI 계층에서 `CartProductEntity`를 참조하지 않는다.
-- [ ] `LazyColumn` 항목에 상품 식별자를 `key`로 지정한다.
-- [ ] 재귀 주입과 장바구니 변경 사항을 검증하고 사전 제공 테스트를 통과한다.
+- [x] 생성자 의존성을 재귀적으로 탐색하고, 등록된 인스턴스와 직접 생성할 의존성의 경계를 정한다.
+- [x] 앱에서 생성한 Room Database 인스턴스를 컨테이너에 등록하고 재귀 생성 경계를 정한다.
+- [x] 순환 의존성이 생기면 무한 재귀 대신 의존성 경로를 포함한 오류를 낸다.
+- [x] `CartRepository`가 `CartProductDao`를 사용하도록 변경한다.
+- [x] 장바구니 상품 엔티티를 도메인 모델 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
+- [x] `CartProduct`에 상품 식별자, 화면 표시 정보, 장바구니에 담은 시각을 제공한다.
+- [x] 장바구니 조회와 삭제를 실제 상품 식별자(`Long`) 기준으로 처리한다.
+- [x] DAO와 Repository의 비동기 함수를 `suspend`로 변경하고, ViewModel에서 `viewModelScope`로 호출한다.
+- [x] 장바구니 화면에 `DateFormatter`로 포맷한 담은 시각을 표시한다.
+- [x] UI 계층에서 `CartProductEntity`를 참조하지 않는다.
+- [x] `LazyColumn` 항목에 상품 식별자를 `key`로 지정한다.
+- [x] 재귀 주입과 장바구니 변경 사항을 검증하고 사전 제공 테스트를 통과한다.
 
 ## 3단계 - Qualifier 기능 목록
 

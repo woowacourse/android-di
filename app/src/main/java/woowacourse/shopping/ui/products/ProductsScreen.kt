@@ -31,36 +31,37 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.di.AutoViewModelFactory
+import woowacourse.shopping.di.ShoppingApplication
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
+import androidx.lifecycle.viewmodel.compose.viewModel as composeViewModel
 
 @Composable
 fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel =
-        viewModel(factory = AutoViewModelFactory),
+    viewModel: ProductsViewModel? = null,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val application = context.applicationContext as ShoppingApplication
+    val productsViewModel = viewModel ?: composeViewModel(factory = application.viewModelFactory)
+    val uiState by productsViewModel.uiState.collectAsStateWithLifecycle()
     val addedMessage = stringResource(R.string.cart_added)
 
     LaunchedEffect(Unit) {
-        viewModel.getAllProducts()
+        productsViewModel.getAllProducts()
     }
     LaunchedEffect(Unit) {
-        viewModel.onProductAdded.collect {
+        productsViewModel.onProductAdded.collect {
             Toast.makeText(context, addedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
     ProductsContent(
         uiState = uiState,
-        onProductClick = viewModel::addCartProduct,
+        onProductClick = productsViewModel::addCartProduct,
         onCartClick = onNavigateToCart,
         modifier = modifier,
     )
