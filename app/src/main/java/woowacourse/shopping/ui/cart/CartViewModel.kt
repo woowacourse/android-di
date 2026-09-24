@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCart
-import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.model.CartProduct
 
 data class CartUiState(
