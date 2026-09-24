@@ -11,7 +11,7 @@ object DiManager {
     // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
     private val providerMap: MutableMap<Any, Any> = mutableMapOf()
 
-    fun hasObject(modelClass: Class<*>): Boolean = instanceMap.keys.contains(modelClass)
+    fun hasInstance(modelClass: Class<*>): Boolean = instanceMap.keys.contains(modelClass)
 
     fun addInstance(
         key: Class<*>,
@@ -35,18 +35,18 @@ object DiManager {
         } as Class<T>
 
     // 객체를 탐색한다.
-    fun <T : Any> searchObject(modelClass: Class<T>): T {
-        if (hasObject(modelClass)) {
+    fun <T : Any> searchInstance(modelClass: Class<T>): T {
+        if (hasInstance(modelClass)) {
             return instanceMap[modelClass] as? T ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
         } else {
             val modelClass = filterModelClass(modelClass)
-            val instance = createObject(modelClass)
+            val instance = createInstance(modelClass)
             instanceMap[modelClass] = instance
             return instance
         }
     }
 
-    fun <T : Any> createObject(modelClass: Class<T>): T {
+    fun <T : Any> createInstance(modelClass: Class<T>): T {
         val constructor =
             modelClass.kotlin.primaryConstructor
                 ?: throw IllegalArgumentException("생성자를 찾을 수 없습니다 : $modelClass")
@@ -56,13 +56,13 @@ object DiManager {
         } else { // 그게 아니라면 다시 탐색해서 객체를 찾아온다.
             val typesConstructors =
                 types.map { type ->
-                    searchObject(type.java)
+                    searchInstance(type.java)
                 }
             return constructor.call(*typesConstructors.toTypedArray())
         }
     }
 
     class DiViewModelFactory : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = createObject(modelClass)
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass)
     }
 }
