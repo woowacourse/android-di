@@ -2,10 +2,11 @@ package woowacourse.shopping.di
 
 import android.app.Application
 import androidx.room.Room
+import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.domain.repository.CartRepository
 
 class ShoppingApplication : Application() {
     lateinit var viewModelFactory: AutoViewModelFactory

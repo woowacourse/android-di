@@ -9,10 +9,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.data.CartRepository
+import woowacourse.di.DependencyContainer
+import woowacourse.di.Inject
 import woowacourse.shopping.di.AutoViewModelFactory
-import woowacourse.shopping.di.DependencyContainer
-import woowacourse.shopping.di.Inject
+import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
@@ -75,7 +75,7 @@ class CartRepositoryTestViewModel(
 ) : ViewModel()
 
 class MissingDependencyTestViewModel(
-    val repository: UnregisteredDependency,
+    val repository: MissingFactoryDependency,
 ) : ViewModel()
 
 class FieldInjectionTestViewModel : ViewModel() {
@@ -87,8 +87,10 @@ class FieldInjectionTestViewModel : ViewModel() {
 
 class MissingFieldInjectionTestViewModel : ViewModel() {
     @field:Inject
-    lateinit var repository: UnregisteredDependency
+    lateinit var repository: MissingFactoryDependency
 }
+
+interface MissingFactoryDependency
 
 class FakeCartRepository : CartRepository {
     override suspend fun addCartProduct(product: Product) = Unit

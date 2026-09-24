@@ -1,13 +1,12 @@
-package woowacourse.shopping
+package woowacourse.di
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import woowacourse.shopping.di.DependencyContainer
 
 class DependencyContainerTest {
     @Test
-    fun `등록된 객체를 같은 인스턴스로 반환한다`() {
+    fun `등록한 객체를 같은 인스턴스로 반환한다`() {
         val container = DependencyContainer()
         val dependency = RegisteredDependency()
         container.registerInstance(RegisteredDependency::class, dependency)
@@ -16,7 +15,7 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `생성자 의존성을 재귀적으로 만들고 공유한다`() {
+    fun `주 생성자 의존성을 재귀적으로 만들고 공유한다`() {
         val container = DependencyContainer()
         val dependency = RegisteredDependency()
         container.registerInstance(RegisteredDependency::class, dependency)
@@ -26,6 +25,19 @@ class DependencyContainerTest {
 
         assertThat(first.dependency).isSameAs(dependency)
         assertThat(second).isSameAs(first)
+    }
+
+    @Test
+    fun `필드 Annotation이 붙은 필드만 주입한다`() {
+        val container = DependencyContainer()
+        val dependency = RegisteredDependency()
+        container.registerInstance(RegisteredDependency::class, dependency)
+        val target = FieldInjectionFixture()
+
+        container.injectMembers(target)
+
+        assertThat(target.injectedDependency).isSameAs(dependency)
+        assertThat(target.unannotatedDependency).isNull()
     }
 
     @Test
@@ -52,6 +64,13 @@ class RegisteredDependency
 class IntermediateDependency(
     val dependency: RegisteredDependency,
 )
+
+class FieldInjectionFixture {
+    @field:Inject
+    lateinit var injectedDependency: RegisteredDependency
+
+    var unannotatedDependency: RegisteredDependency? = null
+}
 
 interface UnregisteredDependency
 

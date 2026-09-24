@@ -2,8 +2,8 @@ package woowacourse.study
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 import kotlin.reflect.KClass

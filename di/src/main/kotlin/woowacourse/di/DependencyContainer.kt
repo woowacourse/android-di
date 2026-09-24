@@ -1,10 +1,10 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-class DependencyContainer {
+class DependencyContainer : DependencyResolver {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val factories: MutableMap<KClass<*>, (DependencyContainer) -> Any> = mutableMapOf()
     private val resolutionPath: ThreadLocal<MutableList<KClass<*>>> = ThreadLocal()
@@ -40,6 +40,12 @@ class DependencyContainer {
         }
     }
 
+    override fun <T : Any> create(type: KClass<T>): T {
+        val instance = get(type)
+        injectMembers(instance)
+        return instance
+    }
+
     fun injectMembers(instance: Any) {
         var currentType: Class<*>? = instance.javaClass
         while (currentType != null && currentType != Any::class.java) {
@@ -70,7 +76,9 @@ class DependencyContainer {
 
         val cycleStart = path.indexOf(type)
         check(cycleStart < 0) {
-            val cycle = (path.subList(cycleStart, path.size) + type).joinToString(" -> ") { it.simpleName ?: it.toString() }
+            val cycle =
+                (path.subList(cycleStart, path.size) + type)
+                    .joinToString(" -> ") { it.simpleName ?: it.toString() }
             "순환 의존성이 발견되었습니다: $cycle"
         }
 
