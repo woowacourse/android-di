@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.di.DiManager
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -44,7 +43,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(factory = DiManager.DiViewModelFactory()),
+    viewModel: CartViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

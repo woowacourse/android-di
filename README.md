@@ -25,7 +25,7 @@
 
 ### 선택 요구 사항
 - [ ] LazyColumn의 items에 key를 지정한다. 지정 전후에 어떤 차이가 생기는지 관찰한다.
-- [ ] UI 계층에서 CartProductEntity를 직접 참조하지 않는다.
+- [x] UI 계층에서 CartProductEntity를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구 사항
 - [ ] 사전에 주어진 테스트 코드가 모두 성공해야 한다.

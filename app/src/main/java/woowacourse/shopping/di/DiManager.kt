@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
 
-object DiManager {
+class DiManager {
     private val instanceMap: MutableMap<Any, Any> = mutableMapOf()
 
     // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
@@ -41,7 +40,6 @@ object DiManager {
         if (hasInstance(modelClass)) {
             return instanceMap[modelClass] as? T ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
         } else {
-            val modelClass = filterModelClass(modelClass)
             val instance = createInstance(modelClass)
             instanceMap[modelClass] = instance
             return instance
@@ -49,6 +47,7 @@ object DiManager {
     }
 
     fun <T : Any> createInstance(modelClass: Class<T>): T {
+        val modelClass = filterModelClass(modelClass)
         val constructor =
             modelClass.kotlin.primaryConstructor
                 ?: throw IllegalArgumentException("생성자를 찾을 수 없습니다 : $modelClass")
@@ -80,7 +79,7 @@ object DiManager {
         return instance
     }
 
-    class DiViewModelFactory : ViewModelProvider.Factory {
+    inner class DiViewModelFactory : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = fieldInject(modelClass)
     }
 }
