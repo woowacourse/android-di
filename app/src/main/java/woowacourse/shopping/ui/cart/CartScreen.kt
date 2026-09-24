@@ -103,6 +103,7 @@ fun CartContent(
         ) {
             items(
                 items = uiState.cartProducts,
+                key = { it.id },
             ) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,

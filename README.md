@@ -23,7 +23,7 @@
 - [x] 장바구니 화면에 담은 시각을 표시한다. 날짜 포맷팅은 DateFormatter가 담당한다.
 
 ### 선택 요구 사항
-- [ ] LazyColumn의 items에 key를 지정한다. 지정 전후에 어떤 차이가 생기는지 관찰한다.
+- [x] LazyColumn의 items에 key를 지정한다. 지정 전후에 어떤 차이가 생기는지 관찰한다.
 - [x] UI 계층에서 CartProductEntity를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구 사항
