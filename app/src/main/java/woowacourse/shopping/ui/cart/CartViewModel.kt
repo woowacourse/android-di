@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.di.CustomFieldInjection
+import woowacourse.shopping.data.di.RoomBacked
 import woowacourse.shopping.model.CartProduct
 
 data class CartUiState(
@@ -21,6 +22,7 @@ data class CartUiState(
 class CartViewModel: ViewModel() {
 
     @field:CustomFieldInjection
+    @field:RoomBacked
     lateinit var cartRepository: CartRepository
 
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
