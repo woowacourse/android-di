@@ -1,5 +1,6 @@
 package woowacourse.shopping.data
 
+import com.harodi.Qualifier
 import woowacourse.shopping.data.mapper.toDomain
 import woowacourse.shopping.data.mapper.toEntity
 import woowacourse.shopping.model.CartProduct
@@ -26,3 +27,7 @@ class DefaultCartRepository(
         dao.delete(id)
     }
 }
+
+@Qualifier
+@Target(AnnotationTarget.PROPERTY)
+annotation class DefaultCart

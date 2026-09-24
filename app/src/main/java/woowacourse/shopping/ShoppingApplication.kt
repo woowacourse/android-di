@@ -2,11 +2,12 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import com.harodi.DiManager
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCart
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import com.harodi.DiManager
 
 class ShoppingApplication : Application() {
     val diManager = DiManager()
@@ -18,9 +19,21 @@ class ShoppingApplication : Application() {
                 .databaseBuilder(applicationContext, ShoppingDatabase::class.java, "shopping.db")
                 .build()
         val cartProductDao = database.cartProductDao()
-        diManager.addInstance(key = ShoppingDatabase::class.java, value = database)
-        diManager.addInstance(key = CartProductDao::class.java, value = cartProductDao)
+        diManager.addInstance(
+            classType = ShoppingDatabase::class.java,
+            qualifier = null,
+            value = database
+        )
+        diManager.addInstance(
+            classType = CartProductDao::class.java,
+            qualifier = null,
+            value = cartProductDao
+        )
 
-        diManager.addProvider(key = CartRepository::class.java, value = DefaultCartRepository::class.java)
+        diManager.addProvider(
+            classType = CartRepository::class.java,
+            qualifier = DefaultCart::class,
+            value = DefaultCartRepository::class.java
+        )
     }
 }
