@@ -47,12 +47,12 @@
 - [x] App Container 사용하는 방향으로 코드 수정
   - [x] AutoDi를 Class로 변경하고 생성자 파라미터에 Container 추가
 - [ ] DAO 생성로직 추가
-- [ ] CartRepository가 DAO 객체를 참조하도록 변경
-  - [ ] 호출부 suspend 처리
+- [x] CartRepository가 DAO 객체를 참조하도록 변경
+  - [x] 호출부 suspend 처리
 - [x] CartProduct 도메인 모댈 생성
   - [x] toDomain() 매퍼 추가
   - [x] 식별자 존재 (id)
-  - [ ] deleteCartProduct의 인자 idx -> id로 교체
+  - [x] deleteCartProduct의 인자 idx -> id로 교체
 - [ ] DAO를 구별하고, 주입해주는 로직 추가
 - [ ] 장바구니 화면에 담은 시각 표시
   - [ ] 날짜 포맷팅은 DateFormatter가 담당

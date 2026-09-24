@@ -33,7 +33,10 @@ class ProductsViewModel(
     }
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        viewModelScope.launch { _onProductAdded.emit(Unit) }
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+
+            _onProductAdded.emit(Unit)
+        }
     }
 }
