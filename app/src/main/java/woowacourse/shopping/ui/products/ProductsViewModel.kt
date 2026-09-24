@@ -18,10 +18,10 @@ data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
-class ProductsViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class ProductsViewModel : ViewModel() {
+    lateinit var productRepository: ProductRepository
+    lateinit var cartRepository: CartRepository
+
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 

@@ -3,7 +3,9 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 object DiManager {
     private val instanceMap: MutableMap<Any, Any> = mutableMapOf()
@@ -62,7 +64,23 @@ object DiManager {
         }
     }
 
+    fun <T : Any> fieldInject(modelClass: Class<T>): T {
+        val instance = modelClass.kotlin.primaryConstructor?.call() ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
+        val lateinitProperties =
+            modelClass.kotlin.memberProperties.filter { property ->
+                property.isLateinit
+            }
+        lateinitProperties.forEach {
+            modelClass.getDeclaredField(it.name).apply {
+                val dependancyKClass = it.returnType.classifier as? KClass<*> ?: throw IllegalArgumentException("프로퍼티 타입을 찾울 수 없어요: $it")
+                isAccessible = true
+                set(instance, searchInstance(dependancyKClass.java))
+            }
+        }
+        return instance
+    }
+
     class DiViewModelFactory : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass)
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = fieldInject(modelClass)
     }
 }
