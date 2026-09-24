@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import woowacourse.shopping.ShoppingApplication
+import woowacourse.shopping.di.DiViewModelFactory
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShoppingTheme {
                 ShoppingNavHost(
-                    viewModelFactory = diManager.DiViewModelFactory(),
+                    viewModelFactory = DiViewModelFactory(diManager = diManager),
                 )
             }
         }

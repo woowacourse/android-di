@@ -1,7 +1,5 @@
 package woowacourse.shopping.di
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -77,9 +75,5 @@ class DiManager {
             }
         }
         return instance
-    }
-
-    inner class DiViewModelFactory : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = fieldInject(modelClass)
     }
 }
