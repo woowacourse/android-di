@@ -64,11 +64,13 @@ class DiManager {
         } else { // 그게 아니라면 다시 탐색해서 객체를 찾아온다.
             val typesConstructors =
                 types.map { type ->
-                    val qualifier = type.annotations.firstOrNull { annotation ->
-                        annotation.annotationClass.annotations.any {
-                            it is Qualifier
-                        }
-                    }?.annotationClass
+                    val qualifier =
+                        type.annotations
+                            .firstOrNull { annotation ->
+                                annotation.annotationClass.annotations.any {
+                                    it is Qualifier
+                                }
+                            }?.annotationClass
                     val dependencyKey = DependencyKey(type.java, qualifier)
                     searchInstance(dependencyKey)
                 }
@@ -77,21 +79,25 @@ class DiManager {
     }
 
     fun <T : Any> fieldInject(modelClass: Class<T>): T {
-        val instance = modelClass.kotlin.primaryConstructor?.call()
-            ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
+        val instance =
+            modelClass.kotlin.primaryConstructor?.call()
+                ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
         val lateinitProperties =
             modelClass.kotlin.memberProperties.filter { property ->
                 property.isLateinit && property.annotations.any { it is Inject }
             }
         lateinitProperties.forEach {
             modelClass.getDeclaredField(it.name).apply {
-                val dependancyKClass = it.returnType.classifier as? KClass<*>
-                    ?: throw IllegalArgumentException("프로퍼티 타입을 찾울 수 없어요: $it")
-                val qualifier = it.annotations.firstOrNull { annotation ->
-                    annotation.annotationClass.annotations.any {
-                        it is Qualifier
-                    }
-                }?.annotationClass
+                val dependancyKClass =
+                    it.returnType.classifier as? KClass<*>
+                        ?: throw IllegalArgumentException("프로퍼티 타입을 찾울 수 없어요: $it")
+                val qualifier =
+                    it.annotations
+                        .firstOrNull { annotation ->
+                            annotation.annotationClass.annotations.any {
+                                it is Qualifier
+                            }
+                        }?.annotationClass
                 val dependencyKey = DependencyKey(dependancyKClass.java, qualifier)
 
                 isAccessible = true

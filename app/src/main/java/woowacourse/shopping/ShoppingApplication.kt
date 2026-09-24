@@ -7,6 +7,8 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCart
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCart
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingApplication : Application() {
@@ -22,18 +24,24 @@ class ShoppingApplication : Application() {
         diManager.addInstance(
             classType = ShoppingDatabase::class.java,
             qualifier = null,
-            value = database
+            value = database,
         )
         diManager.addInstance(
             classType = CartProductDao::class.java,
             qualifier = null,
-            value = cartProductDao
+            value = cartProductDao,
         )
 
         diManager.addProvider(
             classType = CartRepository::class.java,
             qualifier = DefaultCart::class,
-            value = DefaultCartRepository::class.java
+            value = DefaultCartRepository::class.java,
+        )
+
+        diManager.addProvider(
+            classType = CartRepository::class.java,
+            qualifier = InMemoryCart::class,
+            value = InMemoryCartRepository::class.java,
         )
     }
 }
