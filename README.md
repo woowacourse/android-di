@@ -49,9 +49,9 @@
 - [ ] DAO 생성로직 추가
 - [ ] CartRepository가 DAO 객체를 참조하도록 변경
   - [ ] 호출부 suspend 처리
-- [ ] CartProduct 도메인 모댈 생성
-  - [ ] toDomain() 매퍼 추가
-  - [ ] 식별자 존재 (id)
+- [x] CartProduct 도메인 모댈 생성
+  - [x] toDomain() 매퍼 추가
+  - [x] 식별자 존재 (id)
   - [ ] deleteCartProduct의 인자 idx -> id로 교체
 - [ ] DAO를 구별하고, 주입해주는 로직 추가
 - [ ] 장바구니 화면에 담은 시각 표시
