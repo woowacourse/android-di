@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.harodi
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties

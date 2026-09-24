@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import com.harodi.Inject
 import woowacourse.shopping.data.ProductRepository
 
 class TestViewModel(

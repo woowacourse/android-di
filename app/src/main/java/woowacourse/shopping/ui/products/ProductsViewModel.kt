@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.Inject
+import com.harodi.Inject
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(

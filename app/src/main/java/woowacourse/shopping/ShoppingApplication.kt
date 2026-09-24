@@ -6,7 +6,7 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DiManager
+import com.harodi.DiManager
 
 class ShoppingApplication : Application() {
     val diManager = DiManager()
