@@ -5,7 +5,13 @@ import woowacourse.shopping.di.AutoDi
 import woowacourse.shopping.di.ShoppingContainer
 
 class ShoppingApplication : Application() {
-    private val container = ShoppingContainer()
+    lateinit var container: ShoppingContainer
+        private set
 
     val autoDi = AutoDi(container)
+
+    override fun onCreate() {
+        super.onCreate()
+        container = ShoppingContainer(applicationContext)
+    }
 }
