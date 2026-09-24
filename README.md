@@ -54,6 +54,6 @@
   - [x] 식별자 존재 (id)
   - [x] deleteCartProduct의 인자 idx -> id로 교체
 - [ ] DAO를 구별하고, 주입해주는 로직 추가
-- [ ] 장바구니 화면에 담은 시각 표시
-  - [ ] 날짜 포맷팅은 DateFormatter가 담당
+- [x] 장바구니 화면에 담은 시각 표시
+  - [x] 날짜 포맷팅은 DateFormatter가 담당
 - [ ] ViewModel 내 필드 주입 구현
