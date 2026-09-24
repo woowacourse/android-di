@@ -2,11 +2,12 @@ package woowacourse.shopping.di
 
 import android.app.Application
 import androidx.room.Room
-import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.di.dependencyContainer as buildDependencyContainer
 
 class ShoppingApplication : Application() {
     lateinit var viewModelFactory: AutoViewModelFactory
@@ -24,13 +25,16 @@ class ShoppingApplication : Application() {
         val database = databaseBuilder.build()
 
         val dependencyContainer =
-            DependencyContainer().apply {
+            buildDependencyContainer {
                 registerInstance(ShoppingDatabase::class, database)
                 registerFactory(CartProductDao::class) { container ->
                     container.get(ShoppingDatabase::class).cartProductDao()
                 }
-                registerFactory(CartRepository::class) { container ->
-                    container.get(DefaultCartRepository::class)
+                registerFactory(CartRepository::class, RoomCart::class) { container ->
+                    container.get(RoomCartRepository::class)
+                }
+                registerFactory(CartRepository::class, InMemoryCart::class) { container ->
+                    container.get(InMemoryCartRepository::class)
                 }
             }
 

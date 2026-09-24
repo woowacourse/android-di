@@ -6,7 +6,7 @@ import woowacourse.shopping.domain.repository.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-class DefaultCartRepository(
+class RoomCartRepository(
     private val dao: CartProductDao,
 ) : CartRepository {
     override suspend fun addCartProduct(product: Product) {

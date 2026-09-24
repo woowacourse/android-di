@@ -5,7 +5,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
@@ -13,7 +13,7 @@ class CartRepositoryTest {
     @Test
     fun `상품을 도메인 모델로 변환하고 실제 식별자로 삭제한다`() =
         runTest {
-            val repository = DefaultCartRepository(FakeCartProductDao())
+            val repository = RoomCartRepository(FakeCartProductDao())
             val firstProduct = Product(name = "첫 상품", price = 1_000, imageUrl = "first")
             val secondProduct = Product(name = "둘째 상품", price = 2_000, imageUrl = "second")
 
