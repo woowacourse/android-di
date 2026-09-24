@@ -6,7 +6,7 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DiContainer
+import woowacourse.shopping.di.DiManager
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -17,9 +17,9 @@ class ShoppingApplication : Application() {
                 .build()
         val cartProductDao = database.cartProductDao()
 
-        DiContainer.addInstance(key = ShoppingDatabase::class.java, value = database)
-        DiContainer.addInstance(key = CartProductDao::class.java, value = cartProductDao)
+        DiManager.addInstance(key = ShoppingDatabase::class.java, value = database)
+        DiManager.addInstance(key = CartProductDao::class.java, value = cartProductDao)
 
-        DiContainer.addProvider(key = CartRepository::class.java, value = DefaultCartRepository::class.java)
+        DiManager.addProvider(key = CartRepository::class.java, value = DefaultCartRepository::class.java)
     }
 }

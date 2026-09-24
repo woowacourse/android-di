@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object DiContainer {
+object DiManager {
     private val instanceMap: MutableMap<Any, Any> = mutableMapOf()
 
     // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
