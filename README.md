@@ -34,4 +34,26 @@
 - 사전에 주어진 테스트 코드가 모두 성공해야 한다.
 - Annotation은 이 단계에서 활용하지 않는다.
 
+## 2단계 기능 요구 사항
+- ViewModel 내 필드 주입을 구현한다.
+- 의존성 주입이 필요한 필드와 그렇지 않은 필드를 구분할 수 없는 문제를 Annotation을 통해 해결한다.
+- CartRepository가 DAO 객체를 참조하도록 변경한다.
+- CartProduct 도메인 모델을 새로 만든다.
+  - 식별자가 있어야 한다.
+- DAO가 suspend임을 인지하고, 이에 맞게 호출하는 곳을 수정한다.
+- 장바구니 화면에 담은 시각을 표시한다.
 
+## 2단계 구현 기능
+- [x] App Container 사용하는 방향으로 코드 수정
+  - [x] AutoDi를 Class로 변경하고 생성자 파라미터에 Container 추가
+- [ ] DAO 생성로직 추가
+- [ ] CartRepository가 DAO 객체를 참조하도록 변경
+  - [ ] 호출부 suspend 처리
+- [ ] CartProduct 도메인 모댈 생성
+  - [ ] toDomain() 매퍼 추가
+  - [ ] 식별자 존재 (id)
+  - [ ] deleteCartProduct의 인자 idx -> id로 교체
+- [ ] DAO를 구별하고, 주입해주는 로직 추가
+- [ ] 장바구니 화면에 담은 시각 표시
+  - [ ] 날짜 포맷팅은 DateFormatter가 담당
+- [ ] ViewModel 내 필드 주입 구현

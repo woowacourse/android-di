@@ -3,9 +3,9 @@ package woowacourse.shopping.di
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object AutoDi {
-    private val instances = mutableMapOf<KClass<*>, Any>()
-
+class AutoDi(
+    private val container: ShoppingContainer,
+) {
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
         val constructor =
             targetClass.primaryConstructor
@@ -23,8 +23,14 @@ object AutoDi {
         return constructor.call(*dependencyClasses.toTypedArray())
     }
 
-    private fun getInstance(targetClass: KClass<*>): Any =
-        instances.getOrPut(targetClass) {
-            createInstance(targetClass)
+    private fun getInstance(targetClass: KClass<*>): Any {
+        container.getInstance(targetClass)?.let {
+            return it
         }
+
+        val instance = createInstance(targetClass)
+        container.saveInstance(targetClass, instance)
+
+        return instance
+    }
 }
