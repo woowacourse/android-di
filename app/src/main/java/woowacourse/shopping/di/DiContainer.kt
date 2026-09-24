@@ -6,27 +6,50 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DiContainer {
-    // 객체 목록 (Key, Value) -> (클래스, 클래스 객체)
-    val objectsMap: MutableMap<Any, Any> = mutableMapOf()
+    private val instanceMap: MutableMap<Any, Any> = mutableMapOf()
 
-    fun hasObject(modelClass: Class<*>): Boolean = objectsMap.keys.contains(modelClass)
+    // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
+    private val providerMap: MutableMap<Any, Any> = mutableMapOf()
+
+    fun hasObject(modelClass: Class<*>): Boolean = instanceMap.keys.contains(modelClass)
+
+    fun addInstance(
+        key: Class<*>,
+        value: Any,
+    ) {
+        instanceMap[key] = value
+    }
+
+    fun addProvider(
+        key: Class<*>,
+        value: Any,
+    ) {
+        providerMap[key] = value
+    }
+
+    // 인터페이스를 받았을 때 구현할 구현체의 클래스가 무엇인지 조건을 구분한다.
+    // 만약 providerMap에 없으면 modelClass를 반환한다.
+    fun <T : Any> filterModelClass(modelClass: Class<T>): Class<T> =
+        providerMap.getOrElse(modelClass) {
+            modelClass
+        } as Class<T>
 
     // 객체를 탐색한다.
     fun <T : Any> searchObject(modelClass: Class<T>): T {
         if (hasObject(modelClass)) {
-            return objectsMap[modelClass] as? T ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
+            return instanceMap[modelClass] as? T ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
         } else {
+            val modelClass = filterModelClass(modelClass)
             val instance = createObject(modelClass)
-            objectsMap[modelClass] = instance
+            instanceMap[modelClass] = instance
             return instance
         }
     }
 
-    // 만약 객체 목록 안에 클래스 key가 존재한다면, 해당 객체를 반환한다.
-    // 그게 아니라면, 객체를 만들어서 추가하고 반환한다.
-    // 지금 구조에서는 찾기와 객체 생성이 함께 꼬여있다. 이를 분리하면 객체를 잘 탐색하는지, 생성하는지를 알 수 있지 않을까?
     fun <T : Any> createObject(modelClass: Class<T>): T {
-        val constructor = modelClass.kotlin.primaryConstructor!!
+        val constructor =
+            modelClass.kotlin.primaryConstructor
+                ?: throw IllegalArgumentException("생성자를 찾을 수 없습니다 : $modelClass")
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
         if (types.isEmpty()) { // 파라미터가 없으면 그냥 생성한다.
             return constructor.call()

@@ -101,3 +101,6 @@ fun createCartRepository(): CartRepository = DefaultCartRepository(
 
 - 내 생각에는요 인터페이스의 구현체는 개발자가 직접 명시해줘야 한다.
   - 왜냐하면 코드는 내가 무슨 구현체를 쓸지 모른다. 그렇기 때문에 이 규칙은 개발자가 직접 명시해줘야 한다고 생각했다.
+  - 그래서 Application에서 내가 Repository interface의 구현체를 무엇을 쓸지 명시해주는 방식으로 구현했다.
+  - 그러면 왜 DAO는 Provider에 제공하는 방식으로 구현하지 않았어요?
+    - DAO는 클래스 타입을 통해 생성자를 만드는 방식이 아닌 Database를 통해 만들어지는 객체이기 때문에, Repository와는 성격이 다른 생성 방식이 필요하다고 생각했다.
