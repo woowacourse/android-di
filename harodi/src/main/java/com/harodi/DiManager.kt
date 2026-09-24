@@ -37,10 +37,44 @@ class DiManager {
 
     // 인터페이스를 받았을 때 구현할 구현체의 클래스가 무엇인지 조건을 구분한다.
     // 만약 providerMap에 없으면 modelClass를 반환한다.
-    fun filterModelClass(dependencyKey: DependencyKey): Class<*> =
-        providerMap.getOrElse(dependencyKey) {
-            dependencyKey.classType
-        } as Class<*>
+    fun filterModelClass(dependencyKey: DependencyKey): Class<*> {
+        // 1. 타입과 Qualifier가 정확히 일치하는 binding
+        val exactProvider = providerMap[dependencyKey]
+
+        if (exactProvider != null) {
+            return exactProvider as Class<*>
+        }
+
+        // 2. 같은 타입으로 등록된 모든 후보
+        val candidates =
+            providerMap.filterKeys { registeredKey ->
+                registeredKey.classType == dependencyKey.classType
+            }
+
+        // 3. Qualifier를 지정했지만 정확히 일치하는 binding이 없음
+        if (dependencyKey.qualifier != null) {
+            throw IllegalArgumentException(
+                "${dependencyKey.classType.simpleName}에 " +
+                    "${dependencyKey.qualifier.simpleName}으로 등록된 구현체가 없습니다.",
+            )
+        }
+
+        // 4. Qualifier가 없고 후보가 여러 개
+        if (candidates.size > 1) {
+            throw IllegalArgumentException(
+                "${dependencyKey.classType.simpleName}에 " +
+                    "여러 구현체가 등록되어 있습니다. Qualifier를 지정해주세요.",
+            )
+        }
+
+        // 5. Qualifier가 없고 후보가 하나
+        if (candidates.size == 1) {
+            return candidates.values.single() as Class<*>
+        }
+
+        // 6. provider가 없다면 구체 클래스 자체 생성 시도
+        return dependencyKey.classType
+    }
 
     // 객체를 탐색한다.
     fun searchInstance(dependencyKey: DependencyKey): Any {

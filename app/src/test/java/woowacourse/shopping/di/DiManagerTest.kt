@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
+import com.harodi.DependencyKey
 import com.harodi.DiManager
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,8 +19,18 @@ class DiManagerTest {
         val diManager = DiManager()
 
         // when
-        val productsViewModel = diManager.createInstance(ProductsViewModel::class.java)
-        val cartViewModel = diManager.createInstance(CartViewModel::class.java)
+        val productsViewModel = diManager.createInstance(
+            dependencyKey = DependencyKey(
+                classType = ProductsViewModel::class.java,
+                qualifier = null
+            )
+        )
+        val cartViewModel = diManager.createInstance(
+            dependencyKey = DependencyKey(
+                classType = CartViewModel::class.java,
+                qualifier = null
+            )
+        )
 
         // then
         assertThat(productsViewModel).isInstanceOf(ProductsViewModel::class.java)
@@ -30,13 +41,20 @@ class DiManagerTest {
     fun `ViewModel이 알맞은 파라미터 객체를 찾을 수 있다`() {
         // given
         val diManager = DiManager()
-
+        val productDependencyKey = DependencyKey(
+            classType = ProductRepository::class.java,
+            qualifier = null,
+        )
+        val cartDependencyKey = DependencyKey(
+            classType = CartRepository::class.java,
+            qualifier = null,
+        )
         // when
-        diManager.addInstance(ProductRepository::class.java, ProductRepository())
+        diManager.addInstance(ProductRepository::class.java, null, ProductRepository())
 
         // then
-        assertThat(diManager.hasInstance(ProductRepository::class.java)).isTrue()
-        assertThat(diManager.hasInstance(CartRepository::class.java)).isFalse()
+        assertThat(diManager.hasInstance(productDependencyKey)).isTrue()
+        assertThat(diManager.hasInstance(cartDependencyKey)).isFalse()
     }
 
     @Test
@@ -56,8 +74,12 @@ class DiManagerTest {
     fun `다른 ViewModel을 만들어도 ViewModel 객체를 생성할 수 있다`() {
         // given
         val diManager = DiManager()
+        val testDependencyKey = DependencyKey(
+            classType = TestViewModel::class.java,
+            qualifier = null,
+        )
 
         // when
-        assertThat(diManager.createInstance(TestViewModel::class.java)).isInstanceOf(TestViewModel::class.java)
+        assertThat(diManager.createInstance(testDependencyKey)).isInstanceOf(TestViewModel::class.java)
     }
 }
