@@ -13,4 +13,5 @@ kotlin {
 }
 dependencies {
     implementation(kotlin("reflect"))
+    testImplementation(kotlin("test"))
 }

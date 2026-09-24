@@ -91,5 +91,5 @@ class InMemoryCartRepository : CartRepository, InMemory
 - [x] Qualifier 없이 모호한 상황이 되면 명확한 예외 메시지가 나온다.
 - [x] DI 라이브러리가 별도 모듈로 분리되어 있다.
 - [x] :di 모듈이 앱의 도메인 타입에 의존하지 않는다.
-- [ ] Qualifier 동작에 대한 테스트가 있다.
+- [x] Qualifier 동작에 대한 테스트가 있다.
 - [x] Qualifier 표현 방식과 :di 모듈 형태(안드로이드 / 순수 JVM)의 선택 근거가 README.md에 있다.
