@@ -10,7 +10,7 @@ import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 @RunWith(RobolectricTestRunner::class)
-class DiContainerTest {
+class DiManagerTest {
     @Test
     fun `ViewModel을 받았을 때 해당 ViewModel이 어떤 클래스인지 알 수 있다`() {
         // given
@@ -36,6 +36,19 @@ class DiContainerTest {
         // then
         assertThat(diManager.hasInstance(ProductRepository::class.java)).isTrue()
         assertThat(diManager.hasInstance(CartRepository::class.java)).isFalse()
+    }
+
+    @Test
+    fun `Inject 애노테이션이 붙은 필드만 주입한다`() {
+        // given
+        val diManager = DiManager()
+
+        // when
+        val viewModel = diManager.fieldInject(FieldInjectionTestViewModel::class.java)
+
+        // then
+        assertThat(viewModel.isInjectedRepositoryInitialized()).isTrue()
+        assertThat(viewModel.isIgnoredRepositoryInitialized()).isFalse()
     }
 
     @Test

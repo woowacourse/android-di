@@ -67,7 +67,7 @@ class DiManager {
         val instance = modelClass.kotlin.primaryConstructor?.call() ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
         val lateinitProperties =
             modelClass.kotlin.memberProperties.filter { property ->
-                property.isLateinit
+                property.isLateinit && property.annotations.any { it is Inject }
             }
         lateinitProperties.forEach {
             modelClass.getDeclaredField(it.name).apply {
