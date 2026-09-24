@@ -1,5 +1,6 @@
 package woowacourse.shopping.di
 
+import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -36,6 +37,22 @@ class DependencyContainer {
             return dependency as T
         } finally {
             if (path.isEmpty()) resolutionPath.remove()
+        }
+    }
+
+    fun injectMembers(instance: Any) {
+        var currentType: Class<*>? = instance.javaClass
+        while (currentType != null && currentType != Any::class.java) {
+            currentType.declaredFields
+                .filter { it.isAnnotationPresent(Inject::class.java) }
+                .forEach { field ->
+                    check(!Modifier.isFinal(field.modifiers)) {
+                        "@Inject 필드는 변경 가능한 필드여야 합니다: ${field.declaringClass.name}.${field.name}"
+                    }
+                    field.isAccessible = true
+                    field.set(instance, get(field.type.kotlin))
+                }
+            currentType = currentType.superclass
         }
     }
 

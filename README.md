@@ -32,11 +32,11 @@
 
 ### 필드 주입
 
-- [ ] 주입 대상 필드를 표시하는 런타임 Annotation을 정의한다.
-- [ ] ViewModel 생성 후 Annotation이 붙은 필드에 의존성을 주입한다.
-- [ ] Annotation이 없는 필드는 주입 대상에서 제외한다.
-- [ ] Annotation이 붙은 필드만 주입되고, 붙지 않은 필드는 주입되지 않는지 테스트한다.
-- [ ] Robolectric에서 ViewModel 생성과 필드 주입 성공, 의존성 누락 시 실패를 시나리오로 검증한다.
+- [x] 주입 대상 필드를 표시하는 런타임 Annotation을 정의한다.
+- [x] ViewModel 생성 후 Annotation이 붙은 필드에 의존성을 주입한다.
+- [x] Annotation이 없는 필드는 주입 대상에서 제외한다.
+- [x] Annotation이 붙은 필드만 주입되고, 붙지 않은 필드는 주입되지 않는지 테스트한다.
+- [x] Robolectric에서 ViewModel 생성과 필드 주입 성공, 의존성 누락 시 실패를 시나리오로 검증한다.
 
 ### 재귀 의존성 주입
 

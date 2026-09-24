@@ -22,6 +22,10 @@ class AutoViewModelFactory(
                 dependencyContainer.get(dependencyType)
             }
 
-        return constructor.call(*dependencies.toTypedArray())
+        val viewModel =
+            modelClass.cast(constructor.call(*dependencies.toTypedArray()))
+                ?: error("ViewModel 생성 결과가 요청한 타입과 다릅니다: ${modelClass.name}")
+        dependencyContainer.injectMembers(viewModel)
+        return viewModel
     }
 }
