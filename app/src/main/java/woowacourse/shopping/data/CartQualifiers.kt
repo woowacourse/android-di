@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.Qualifier
+import woowacourse.di.Qualifier
 
 @Qualifier
 @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)

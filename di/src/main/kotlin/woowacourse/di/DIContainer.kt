@@ -1,6 +1,5 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
-import androidx.lifecycle.ViewModel
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
@@ -32,12 +31,20 @@ class DIContainer {
         qualifier: KClass<out Annotation>? = null,
     ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf()))
 
+    fun <T : Any> create(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf(), cacheResult = false))
+
     private fun resolve(
         requestedKey: DependencyKey,
         resolving: MutableList<DependencyKey>,
+        cacheResult: Boolean = true,
     ): Any {
         val key = resolveKey(requestedKey)
-        instances[key]?.let { instance -> return instance }
+        if (cacheResult) {
+            instances[key]?.let { instance -> return instance }
+        }
 
         val cycleStart = resolving.indexOf(key)
         require(cycleStart == -1) {
@@ -64,7 +71,7 @@ class DIContainer {
 
             val instance = constructor.call(*dependencies.toTypedArray())
             injectFields(instance, resolving)
-            if (instance !is ViewModel) {
+            if (cacheResult) {
                 instances[key] = instance
                 instances[DependencyKey(implementationType, key.qualifier)] = instance
             }

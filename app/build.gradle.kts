@@ -51,6 +51,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":di"))
+
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))

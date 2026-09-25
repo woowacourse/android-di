@@ -8,6 +8,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import woowacourse.di.DIContainer
+import woowacourse.di.Inject
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
@@ -36,14 +38,14 @@ class DIContainerTest {
 
     @Test
     fun `생성자에 필요한 의존성을 자동으로 주입한다`() {
-        val viewModel = container.get(ProductsViewModel::class)
+        val viewModel = container.create(ProductsViewModel::class)
 
         assertThat(viewModel).isInstanceOf(ProductsViewModel::class.java)
     }
 
     @Test
     fun `애노테이션이 붙은 ViewModel 필드에만 의존성을 주입한다`() {
-        val viewModel = container.get(FieldInjectionViewModel::class)
+        val viewModel = container.create(FieldInjectionViewModel::class)
 
         assertThat(viewModel.injectedRepository).isSameInstanceAs(container.get(ProductRepository::class))
         assertThrows(UninitializedPropertyAccessException::class.java) { viewModel.notInjectedRepository }
@@ -80,7 +82,7 @@ class DIContainerTest {
     fun `주입 지점의 Qualifier에 해당하는 구현체를 필드에 주입한다`() {
         val qualifiedContainer = createQualifiedContainer()
 
-        val viewModel = qualifiedContainer.get(QualifiedFieldInjectionViewModel::class)
+        val viewModel = qualifiedContainer.create(QualifiedFieldInjectionViewModel::class)
 
         assertThat(viewModel.cartRepository).isInstanceOf(DefaultCartRepository::class.java)
     }
@@ -101,9 +103,9 @@ class DIContainerTest {
 
     @Test
     fun `ViewModel은 다시 요청하면 새로 생성한다`() {
-        val first = container.get(CartViewModel::class)
+        val first = container.create(CartViewModel::class)
 
-        val second = container.get(CartViewModel::class)
+        val second = container.create(CartViewModel::class)
 
         assertThat(second).isNotSameInstanceAs(first)
     }
@@ -113,8 +115,8 @@ class DIContainerTest {
     fun `상품 화면에서 담은 상품을 장바구니 화면에서 조회한다`() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         try {
-            val productsViewModel = container.get(ProductsViewModel::class)
-            val cartViewModel = container.get(CartViewModel::class)
+            val productsViewModel = container.create(ProductsViewModel::class)
+            val cartViewModel = container.create(CartViewModel::class)
             val product = container.get(ProductRepository::class).getAllProducts().first()
 
             productsViewModel.addCartProduct(product)

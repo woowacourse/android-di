@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import woowacourse.di.DIContainer
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.model.CartProduct
