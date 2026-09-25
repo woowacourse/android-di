@@ -19,12 +19,13 @@ class DataContainerTest {
         val dao = FakeCartProductDao()
         var providerCallCount = 0
 
-        val container = DataContainer.testInstanceCreate(
-            CartProductDao::class to {
-                providerCallCount++
-                dao
-            }
-        )
+        val container =
+            DataContainer.testInstanceCreate(
+                CartProductDao::class to {
+                    providerCallCount++
+                    dao
+                },
+            )
 
         // when: 등록된 Dao 객체 생성을 요청하면
         val firstDao = container.getInstanceOrNull(CartProductDao::class)
@@ -41,7 +42,7 @@ class DataContainerTest {
         assertThat(secondDao).isSameInstanceAs(firstDao)
     }
 
-    private class FakeCartProductDao: CartProductDao {
+    private class FakeCartProductDao : CartProductDao {
         override suspend fun getAll(): List<CartProductEntity> = emptyList()
 
         override suspend fun insert(cartProduct: CartProductEntity) = Unit

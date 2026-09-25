@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.firstwoosun.di.CustomFieldInjection
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.di.CustomFieldInjection
 import woowacourse.shopping.data.di.RoomBacked
 import woowacourse.shopping.model.CartProduct
 
@@ -19,8 +19,7 @@ data class CartUiState(
     val cartProducts: List<CartProduct> = emptyList(),
 )
 
-class CartViewModel: ViewModel() {
-
+class CartViewModel : ViewModel() {
     @field:CustomFieldInjection
     @field:RoomBacked
     lateinit var cartRepository: CartRepository

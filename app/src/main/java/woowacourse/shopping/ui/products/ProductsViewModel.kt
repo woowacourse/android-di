@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.firstwoosun.di.CustomFieldInjection
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.data.di.CustomFieldInjection
 import woowacourse.shopping.data.di.InMemory
 import woowacourse.shopping.data.di.RoomBacked
 import woowacourse.shopping.model.Product
@@ -22,7 +22,6 @@ data class ProductsUiState(
 )
 
 class ProductsViewModel : ViewModel() {
-
     @field:CustomFieldInjection
     @field:InMemory
     lateinit var productRepository: ProductRepository
