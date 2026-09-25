@@ -22,4 +22,17 @@
     - [x] 하나의 인터페이스에 여러 구현체를 `Qualifier` 어노테이션으로 구분
 
 2. 모듈 분리
-   - [] DI 관련 코드를 별도의 모듈로 분리
+   - [x] DI 관련 코드를 별도의 모듈로 분리
+
+## 설계 선택 근거
+
+### 1. Qualifier를 애노테이션으로 표현
+
+1. `@field:RoomBacked`처럼 의존성을 받는 위치에서 주입 의도가 잘 보임
+2. 선언과 사용이 어노테이션 타입으로 연결되 오타와 이름 충돌을 방지할 수 있음
+
+### 2. `:di`를 순수 JVM 모듈로 구성
+
+DI 관련 파일을 DependencyContainer로 변경하고 별도의 모듈로 분리했음
+DependencyContainer는 도메인 객체와 Android Room에 대한 의존성을 갖지 않기 때문에 따로 분리함
+Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 조립하는 `ShoppingApplication`은 앱에 남겼음
