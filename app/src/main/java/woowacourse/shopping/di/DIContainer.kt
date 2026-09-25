@@ -4,43 +4,50 @@ import androidx.lifecycle.ViewModel
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class DIContainer {
-    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val bindings: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
+    private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
+    private val bindings: MutableMap<DependencyKey, KClass<*>> = mutableMapOf()
 
     fun <T : Any, I : T> bind(
         type: KClass<T>,
         implementation: KClass<I>,
+        qualifier: KClass<out Annotation>? = null,
     ) {
-        bindings[type] = implementation
+        bindings[DependencyKey(type, qualifier)] = implementation
     }
 
     fun <T : Any> register(
         type: KClass<T>,
         instance: T,
+        qualifier: KClass<out Annotation>? = null,
     ) {
-        instances[type] = instance
+        instances[DependencyKey(type, qualifier)] = instance
     }
 
-    fun <T : Any> get(type: KClass<T>): T = get(type, mutableListOf())
-
-    private fun <T : Any> get(
+    fun <T : Any> get(
         type: KClass<T>,
-        resolving: MutableList<KClass<*>>,
-    ): T {
-        instances[type]?.let { instance -> return type.cast(instance) }
+        qualifier: KClass<out Annotation>? = null,
+    ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf()))
 
-        val cycleStart = resolving.indexOf(type)
+    private fun resolve(
+        requestedKey: DependencyKey,
+        resolving: MutableList<DependencyKey>,
+    ): Any {
+        val key = resolveKey(requestedKey)
+        instances[key]?.let { instance -> return instance }
+
+        val cycleStart = resolving.indexOf(key)
         require(cycleStart == -1) {
-            val cycle = (resolving.drop(cycleStart) + type).joinToString(" → ") { it.simpleName.orEmpty() }
+            val cycle = (resolving.drop(cycleStart) + key).joinToString(" → ") { it.displayName }
             "순환 의존성: $cycle"
         }
 
-        resolving.add(type)
+        resolving.add(key)
         try {
-            val implementationType = bindings[type] ?: type
+            val implementationType = bindings[key] ?: key.type
             val constructor =
                 requireNotNull(implementationType.primaryConstructor) {
                     "${implementationType.simpleName}의 주 생성자를 찾을 수 없습니다."
@@ -51,16 +58,17 @@ class DIContainer {
                         requireNotNull(parameter.type.classifier as? KClass<*>) {
                             "${parameter.name}의 타입을 확인할 수 없습니다."
                         }
-                    get(dependencyType, resolving)
+                    val qualifier = findQualifier(parameter.annotations)
+                    resolve(DependencyKey(dependencyType, qualifier), resolving)
                 }
 
             val instance = constructor.call(*dependencies.toTypedArray())
             injectFields(instance, resolving)
             if (instance !is ViewModel) {
-                instances[type] = instance
-                instances[implementationType] = instance
+                instances[key] = instance
+                instances[DependencyKey(implementationType, key.qualifier)] = instance
             }
-            return type.cast(instance)
+            return instance
         } finally {
             resolving.removeAt(resolving.lastIndex)
         }
@@ -68,13 +76,50 @@ class DIContainer {
 
     private fun injectFields(
         instance: Any,
-        resolving: MutableList<KClass<*>>,
+        resolving: MutableList<DependencyKey>,
     ) {
         instance.javaClass.declaredFields
             .filter { field -> field.isAnnotationPresent(Inject::class.java) }
             .forEach { field ->
                 field.isAccessible = true
-                field.set(instance, get(field.type.kotlin, resolving))
+                val qualifier = findQualifier(field.annotations.toList())
+                field.set(instance, resolve(DependencyKey(field.type.kotlin, qualifier), resolving))
             }
+    }
+
+    private fun resolveKey(requestedKey: DependencyKey): DependencyKey {
+        if (requestedKey.qualifier != null) {
+            require(requestedKey in bindings || requestedKey in instances) {
+                "${requestedKey.displayName} 의존성이 등록되지 않았습니다."
+            }
+            return requestedKey
+        }
+
+        val candidates =
+            (bindings.keys + instances.keys)
+                .filter { key -> key.type == requestedKey.type }
+                .distinct()
+        require(candidates.size <= 1) {
+            val qualifiers = candidates.joinToString { key -> key.qualifier?.simpleName ?: "Qualifier 없음" }
+            "${requestedKey.type.simpleName} 의존성이 모호합니다. Qualifier를 지정하세요: $qualifiers"
+        }
+        return candidates.singleOrNull() ?: requestedKey
+    }
+
+    private fun findQualifier(annotations: List<Annotation>): KClass<out Annotation>? {
+        val qualifiers =
+            annotations
+                .map { annotation -> annotation.annotationClass }
+                .filter { annotationType -> annotationType.findAnnotation<Qualifier>() != null }
+        require(qualifiers.size <= 1) { "Qualifier는 하나만 지정할 수 있습니다: $qualifiers" }
+        return qualifiers.singleOrNull()
+    }
+
+    private data class DependencyKey(
+        val type: KClass<*>,
+        val qualifier: KClass<out Annotation>?,
+    ) {
+        val displayName: String
+            get() = listOfNotNull(qualifier?.simpleName, type.simpleName).joinToString(" ")
     }
 }

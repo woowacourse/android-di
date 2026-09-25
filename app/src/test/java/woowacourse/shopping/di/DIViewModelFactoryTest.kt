@@ -3,6 +3,7 @@ package woowacourse.shopping.di
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.cart.CartViewModel
@@ -12,7 +13,7 @@ class DIViewModelFactoryTest {
     private val factory =
         DIViewModelFactory(
             DIContainer().apply {
-                register(CartRepository::class, FakeCartRepository())
+                register(CartRepository::class, FakeCartRepository(), RoomCart::class)
             },
         )
 

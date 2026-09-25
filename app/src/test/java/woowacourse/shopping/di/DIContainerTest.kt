@@ -12,7 +12,10 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCart
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -21,7 +24,7 @@ class DIContainerTest {
     private val container =
         DIContainer().apply {
             register(CartProductDao::class, cartProductDao)
-            bind(CartRepository::class, DefaultCartRepository::class)
+            bind(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
         }
 
     @Test
@@ -60,6 +63,40 @@ class DIContainerTest {
         val repository = container.get(CartRepository::class)
 
         assertThat(repository).isInstanceOf(DefaultCartRepository::class.java)
+    }
+
+    @Test
+    fun `Qualifier에 해당하는 구현체를 주입한다`() {
+        val qualifiedContainer = createQualifiedContainer()
+
+        val roomRepository = qualifiedContainer.get(CartRepository::class, RoomCart::class)
+        val inMemoryRepository = qualifiedContainer.get(CartRepository::class, InMemoryCart::class)
+
+        assertThat(roomRepository).isInstanceOf(DefaultCartRepository::class.java)
+        assertThat(inMemoryRepository).isInstanceOf(InMemoryCartRepository::class.java)
+    }
+
+    @Test
+    fun `주입 지점의 Qualifier에 해당하는 구현체를 필드에 주입한다`() {
+        val qualifiedContainer = createQualifiedContainer()
+
+        val viewModel = qualifiedContainer.get(QualifiedFieldInjectionViewModel::class)
+
+        assertThat(viewModel.cartRepository).isInstanceOf(DefaultCartRepository::class.java)
+    }
+
+    @Test
+    fun `같은 타입의 구현체가 여러 개이고 Qualifier가 없으면 예외가 발생한다`() {
+        val qualifiedContainer = createQualifiedContainer()
+
+        val exception =
+            assertThrows(IllegalArgumentException::class.java) {
+                qualifiedContainer.get(CartRepository::class)
+            }
+
+        assertThat(exception).hasMessageThat().contains("CartRepository 의존성이 모호합니다")
+        assertThat(exception).hasMessageThat().contains("RoomCart")
+        assertThat(exception).hasMessageThat().contains("InMemoryCart")
     }
 
     @Test
@@ -113,6 +150,12 @@ class DIContainerTest {
         lateinit var notInjectedRepository: ProductRepository
     }
 
+    class QualifiedFieldInjectionViewModel : androidx.lifecycle.ViewModel() {
+        @Inject
+        @RoomCart
+        lateinit var cartRepository: CartRepository
+    }
+
     private class FakeCartProductDao : CartProductDao {
         private val entities = mutableListOf<CartProductEntity>()
         private var nextId = 1L
@@ -128,4 +171,11 @@ class DIContainerTest {
             entities.removeAll { entity -> entity.id == id }
         }
     }
+
+    private fun createQualifiedContainer(): DIContainer =
+        DIContainer().apply {
+            register(CartProductDao::class, FakeCartProductDao())
+            bind(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
+            bind(CartRepository::class, InMemoryCartRepository::class, InMemoryCart::class)
+        }
 }
