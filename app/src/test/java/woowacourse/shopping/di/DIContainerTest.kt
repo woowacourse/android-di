@@ -8,13 +8,21 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 class DIContainerTest {
-    private val container = DIContainer()
+    private val cartProductDao = FakeCartProductDao()
+    private val container =
+        DIContainer().apply {
+            register(CartProductDao::class, cartProductDao)
+            bind(CartRepository::class, DefaultCartRepository::class)
+        }
 
     @Test
     fun `타입으로 인스턴스를 생성한다`() {
@@ -48,6 +56,13 @@ class DIContainerTest {
     }
 
     @Test
+    fun `인터페이스 구현체의 생성자 의존성을 재귀적으로 주입한다`() {
+        val repository = container.get(CartRepository::class)
+
+        assertThat(repository).isInstanceOf(DefaultCartRepository::class.java)
+    }
+
+    @Test
     fun `ViewModel은 다시 요청하면 새로 생성한다`() {
         val first = container.get(CartViewModel::class)
 
@@ -68,7 +83,9 @@ class DIContainerTest {
             productsViewModel.addCartProduct(product)
             cartViewModel.getAllCartProducts()
 
-            assertThat(cartViewModel.uiState.value.cartProducts).containsExactly(product)
+            val cartProducts = cartViewModel.uiState.value.cartProducts
+            val cartProduct = cartProducts.single()
+            assertThat(cartProduct.name).isEqualTo(product.name)
         } finally {
             Dispatchers.resetMain()
         }
@@ -94,5 +111,21 @@ class DIContainerTest {
         lateinit var injectedRepository: ProductRepository
 
         lateinit var notInjectedRepository: ProductRepository
+    }
+
+    private class FakeCartProductDao : CartProductDao {
+        private val entities = mutableListOf<CartProductEntity>()
+        private var nextId = 1L
+
+        override suspend fun getAll(): List<CartProductEntity> = entities.toList()
+
+        override suspend fun insert(cartProduct: CartProductEntity) {
+            cartProduct.id = nextId++
+            entities.add(cartProduct)
+        }
+
+        override suspend fun delete(id: Long) {
+            entities.removeAll { entity -> entity.id == id }
+        }
     }
 }

@@ -39,27 +39,27 @@
 
 ### 재귀 의존성 주입
 
-- [ ] `CartRepository`를 인터페이스로 변경하고 `CartProductDao`를 생성자 주입받는 `DefaultCartRepository`를 구현한다.
-- [ ] DI 컨테이너가 객체 생성에 필요한 의존성을 재귀적으로 해결하도록 구현한다.
-- [ ] `CartRepository`에 `DefaultCartRepository`를 연결하고, `CartProductDao`까지 재귀적으로 주입되는지 테스트한다.
+- [x] `CartRepository`를 인터페이스로 변경하고 `CartProductDao`를 생성자 주입받는 `DefaultCartRepository`를 구현한다.
+- [x] DI 컨테이너가 객체 생성에 필요한 의존성을 재귀적으로 해결하도록 구현한다.
+- [x] `CartRepository`에 `DefaultCartRepository`를 연결하고, `CartProductDao`까지 재귀적으로 주입되는지 테스트한다.
 
 ### 장바구니 도메인 및 데이터 계층
 
-- [ ] 식별자, 상품명, 가격, 담은 시각을 갖는 `CartProduct` 도메인 모델을 추가한다.
-- [ ] `CartProductEntity`를 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
-- [ ] `CartRepository`의 조회 결과를 `List<CartProduct>`로 변경한다.
-- [ ] `CartRepository`의 추가·조회·삭제 함수를 `suspend` 함수로 변경한다.
-- [ ] 장바구니 삭제가 목록 인덱스가 아닌 엔티티의 `Long` 타입 식별자를 사용하도록 변경한다.
+- [x] 식별자, 상품명, 가격, 담은 시각을 갖는 `CartProduct` 도메인 모델을 추가한다.
+- [x] `CartProductEntity`를 `CartProduct`로 변환하는 `toDomain()` 매퍼를 추가한다.
+- [x] `CartRepository`의 조회 결과를 `List<CartProduct>`로 변경한다.
+- [x] `CartRepository`의 추가·조회·삭제 함수를 `suspend` 함수로 변경한다.
+- [x] 장바구니 삭제가 목록 인덱스가 아닌 엔티티의 `Long` 타입 식별자를 사용하도록 변경한다.
 
 ### ViewModel 및 장바구니 UI
 
-- [ ] `ProductsViewModel`이 `viewModelScope`에서 장바구니 상품을 추가하도록 변경한다.
-- [ ] `CartViewModel`이 `viewModelScope`에서 장바구니 상품을 조회하고 상태를 갱신하도록 변경한다.
-- [ ] `CartViewModel`이 `viewModelScope`에서 식별자로 장바구니 상품을 삭제하도록 변경한다.
-- [ ] 장바구니 UI 상태의 상품 타입을 `List<CartProduct>`로 변경한다.
-- [ ] 장바구니 화면과 미리보기, 테스트가 `CartProduct`를 사용하도록 변경한다.
+- [x] `ProductsViewModel`이 `viewModelScope`에서 장바구니 상품을 추가하도록 변경한다.
+- [x] `CartViewModel`이 `viewModelScope`에서 장바구니 상품을 조회하고 상태를 갱신하도록 변경한다.
+- [x] `CartViewModel`이 `viewModelScope`에서 식별자로 장바구니 상품을 삭제하도록 변경한다.
+- [x] 장바구니 UI 상태의 상품 타입을 `List<CartProduct>`로 변경한다.
+- [x] 장바구니 화면과 미리보기, 테스트가 `CartProduct`를 사용하도록 변경한다.
 - [ ] `DateFormatter`를 적절한 UI 계층에 주입하고 장바구니 상품을 담은 시각을 표시한다.
-- [ ] 삭제 버튼이 `ic_delete` 드로어블을 사용하고 선택한 상품의 식별자를 전달하도록 변경한다.
+- [x] 삭제 버튼이 `ic_delete` 드로어블을 사용하고 선택한 상품의 식별자를 전달하도록 변경한다.
 - [ ] 기존 테스트와 새로 추가한 DI 테스트를 모두 통과시킨다.
 
 ### 선택 기능 목록

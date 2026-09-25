@@ -8,6 +8,21 @@ import kotlin.reflect.full.primaryConstructor
 
 class DIContainer {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val bindings: MutableMap<KClass<*>, KClass<*>> = mutableMapOf()
+
+    fun <T : Any, I : T> bind(
+        type: KClass<T>,
+        implementation: KClass<I>,
+    ) {
+        bindings[type] = implementation
+    }
+
+    fun <T : Any> register(
+        type: KClass<T>,
+        instance: T,
+    ) {
+        instances[type] = instance
+    }
 
     fun <T : Any> get(type: KClass<T>): T = get(type, mutableListOf())
 
@@ -25,9 +40,10 @@ class DIContainer {
 
         resolving.add(type)
         try {
+            val implementationType = bindings[type] ?: type
             val constructor =
-                requireNotNull(type.primaryConstructor) {
-                    "${type.simpleName}의 주 생성자를 찾을 수 없습니다."
+                requireNotNull(implementationType.primaryConstructor) {
+                    "${implementationType.simpleName}의 주 생성자를 찾을 수 없습니다."
                 }
             val dependencies =
                 constructor.parameters.map { parameter ->
@@ -38,12 +54,13 @@ class DIContainer {
                     get(dependencyType, resolving)
                 }
 
-            return constructor.call(*dependencies.toTypedArray()).also { instance ->
-                injectFields(instance, resolving)
-                if (instance !is ViewModel) {
-                    instances[type] = instance
-                }
+            val instance = constructor.call(*dependencies.toTypedArray())
+            injectFields(instance, resolving)
+            if (instance !is ViewModel) {
+                instances[type] = instance
+                instances[implementationType] = instance
             }
+            return type.cast(instance)
         } finally {
             resolving.removeAt(resolving.lastIndex)
         }

@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
 import woowacourse.shopping.di.AppContainer
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
@@ -79,7 +79,7 @@ fun CartScreen(
 fun CartContent(
     uiState: CartUiState,
     dateFormatter: DateFormatter,
-    onDelete: (Int) -> Unit,
+    onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -102,11 +102,11 @@ fun CartContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
-            itemsIndexed(uiState.cartProducts) { index, cartProduct ->
+            items(uiState.cartProducts) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index) },
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
@@ -115,7 +115,7 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
+    cartProduct: CartProduct,
     dateFormatter: DateFormatter,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -172,7 +172,16 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                                createdAt = 0L,
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
