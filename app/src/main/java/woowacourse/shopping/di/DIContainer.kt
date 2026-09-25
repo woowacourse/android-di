@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
 import kotlin.reflect.full.primaryConstructor
@@ -38,6 +39,7 @@ class DIContainer {
                 }
 
             return constructor.call(*dependencies.toTypedArray()).also { instance ->
+                injectFields(instance, resolving)
                 if (instance !is ViewModel) {
                     instances[type] = instance
                 }
@@ -45,5 +47,17 @@ class DIContainer {
         } finally {
             resolving.removeAt(resolving.lastIndex)
         }
+    }
+
+    private fun injectFields(
+        instance: Any,
+        resolving: MutableList<KClass<*>>,
+    ) {
+        instance.javaClass.declaredFields
+            .filter { field -> field.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                field.isAccessible = true
+                field.set(instance, get(field.type.kotlin, resolving))
+            }
     }
 }

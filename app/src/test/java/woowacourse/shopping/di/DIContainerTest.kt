@@ -31,6 +31,14 @@ class DIContainerTest {
     }
 
     @Test
+    fun `애노테이션이 붙은 ViewModel 필드에만 의존성을 주입한다`() {
+        val viewModel = container.get(FieldInjectionViewModel::class)
+
+        assertThat(viewModel.injectedRepository).isSameInstanceAs(container.get(ProductRepository::class))
+        assertThrows(UninitializedPropertyAccessException::class.java) { viewModel.notInjectedRepository }
+    }
+
+    @Test
     fun `같은 타입은 최초 생성한 인스턴스를 재사용한다`() {
         val first = container.get(CartRepository::class)
 
@@ -80,4 +88,11 @@ class DIContainerTest {
     class SecondDependency(
         val first: FirstDependency,
     )
+
+    class FieldInjectionViewModel : androidx.lifecycle.ViewModel() {
+        @Inject
+        lateinit var injectedRepository: ProductRepository
+
+        lateinit var notInjectedRepository: ProductRepository
+    }
 }
