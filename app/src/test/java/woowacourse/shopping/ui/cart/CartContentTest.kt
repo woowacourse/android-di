@@ -12,20 +12,20 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 
 @RunWith(RobolectricTestRunner::class)
 class CartContentTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val product = CartProduct(
-        id = 1,
-        name = "우테코 과자",
-        price = 10_000,
-        imageUrl = "",
-        createdAt = 1231231
-    )
+    private val product =
+        CartProduct(
+            id = 1,
+            name = "우테코 과자",
+            price = 10_000,
+            imageUrl = "",
+            createdAt = 1231231,
+        )
 
     @Test
     fun `장바구니에 담긴 상품의 이름이 화면에 보인다`() {
