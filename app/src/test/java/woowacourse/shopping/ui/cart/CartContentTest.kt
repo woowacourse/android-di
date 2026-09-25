@@ -42,6 +42,24 @@ class CartContentTest {
     }
 
     @Test
+    fun `장바구니에 상품을 담은 시각이 화면에 보인다`() {
+        lateinit var formattedDate: String
+
+        composeRule.setContent {
+            val dateFormatter = DateFormatter(LocalContext.current)
+            formattedDate = dateFormatter.formatDate(product.createdAt)
+            CartContent(
+                uiState = CartUiState(cartProducts = listOf(product)),
+                dateFormatter = dateFormatter,
+                onDelete = {},
+                onNavigateUp = {},
+            )
+        }
+
+        composeRule.onNodeWithText(formattedDate).assertIsDisplayed()
+    }
+
+    @Test
     fun `삭제 버튼을 누르면 그 상품의 식별자가 전달된다`() {
         var deleted: Long? = null
 

@@ -58,14 +58,14 @@
 - [x] `CartViewModel`이 `viewModelScope`에서 식별자로 장바구니 상품을 삭제하도록 변경한다.
 - [x] 장바구니 UI 상태의 상품 타입을 `List<CartProduct>`로 변경한다.
 - [x] 장바구니 화면과 미리보기, 테스트가 `CartProduct`를 사용하도록 변경한다.
-- [ ] `DateFormatter`를 적절한 UI 계층에 주입하고 장바구니 상품을 담은 시각을 표시한다.
+- [x] `DateFormatter`를 적절한 UI 계층에 주입하고 장바구니 상품을 담은 시각을 표시한다.
 - [x] 삭제 버튼이 `ic_delete` 드로어블을 사용하고 선택한 상품의 식별자를 전달하도록 변경한다.
-- [ ] 기존 테스트와 새로 추가한 DI 테스트를 모두 통과시킨다.
+- [x] 기존 테스트와 새로 추가한 DI 테스트를 모두 통과시킨다.
 
 ### 선택 기능 목록
 
-- [ ] `LazyColumn`의 `items`에 상품 식별자를 `key`로 지정한다.
-- [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 한다.
+- [x] `LazyColumn`의 `items`에 상품 식별자를 `key`로 지정한다.
+- [x] UI 계층에서 `CartProductEntity`를 직접 참조하지 않도록 한다.
 
 ## 3단계 기능 목록 - Qualifier
 

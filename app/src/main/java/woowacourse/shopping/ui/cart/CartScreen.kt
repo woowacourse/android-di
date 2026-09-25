@@ -102,7 +102,10 @@ fun CartContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
-            items(uiState.cartProducts) { cartProduct ->
+            items(
+                items = uiState.cartProducts,
+                key = { cartProduct -> cartProduct.id },
+            ) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
@@ -127,8 +130,10 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
-        Text(text = "", style = MaterialTheme.typography.labelSmall)
+        Text(
+            text = dateFormatter.formatDate(cartProduct.createdAt),
+            style = MaterialTheme.typography.labelSmall,
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,
