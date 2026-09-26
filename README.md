@@ -101,3 +101,19 @@
 - `:di`는 순수 JVM 모듈로 구성한다. 컨테이너의 역할을 타입 분석, 객체 생성, 의존성 등록과 조회로 제한하면 Android API가 필요하지 않고, 다른 JVM 프로젝트에서도 재사용할 수 있으며 Gradle 의존성만으로 앱 도메인과의 경계를 검증할 수 있기 때문이다.
 - Android `ViewModel` 생성과 앱 의존성 등록은 `:app`의 연동 계층인 `DIViewModelFactory`와 `AppContainer`가 담당한다. 이를 위해 코어는 매번 새 객체를 만드는 `create()`와 인스턴스를 재사용하는 `get()`을 구분한다.
 - 4단계 화면 스코프에서는 화면 생명주기의 시작과 종료 신호를 Android/Compose를 아는 `:app` 연동 계층이 받아 코어의 스코프를 열고 닫도록 구현한다. 따라서 `:di`는 Android 생명주기에 의존하지 않고 스코프와 인스턴스 관리 규칙만 담당한다.
+
+### JitPack 적용 방법
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// app/build.gradle.kts
+dependencies {
+    implementation("com.github.nadajinny.android-di:di:3.0.0")
+}
+```
