@@ -8,7 +8,7 @@ class ShoppingApplication : Application() {
     lateinit var container: ShoppingContainer
         private set
 
-    val autoDi = AutoDi(container)
+    val autoDi by lazy { AutoDi(container) }
 
     override fun onCreate() {
         super.onCreate()
