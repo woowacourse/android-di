@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package com.cksckckcks.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -8,7 +8,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class AutoDi(
-    private val container: ShoppingContainer,
+    private val container: DiContainer,
 ) {
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
         val constructor =
@@ -57,7 +57,7 @@ class AutoDi(
         val qualifiers = annotations.map { it.annotationClass }.filter { it.findAnnotation<Qualifier>() != null }
 
         require(qualifiers.size <= 1) {
-            "Qualifier은 하나만 지정할 수 있습니다."
+            "Qualifier는 하나만 지정할 수 있습니다."
         }
 
         return qualifiers.singleOrNull()

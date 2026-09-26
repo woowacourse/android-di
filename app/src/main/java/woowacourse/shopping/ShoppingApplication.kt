@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.AutoDi
+import com.cksckckcks.di.AutoDi
 import woowacourse.shopping.di.ShoppingContainer
 
 class ShoppingApplication : Application() {

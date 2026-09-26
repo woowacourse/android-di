@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.Qualifier
+import com.cksckckcks.di.Qualifier
 
 @Qualifier
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
