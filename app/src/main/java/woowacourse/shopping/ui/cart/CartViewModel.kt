@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.LocalMemoryCart
 import woowacourse.shopping.di.InjectProperty
 import woowacourse.shopping.model.CartProduct
 
@@ -20,6 +21,7 @@ data class CartUiState(
 
 class CartViewModel : ViewModel() {
     @InjectProperty
+    @LocalMemoryCart
     lateinit var cartRepository: CartRepository
 
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
