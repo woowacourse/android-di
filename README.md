@@ -93,7 +93,7 @@
 ### 선택 기능 목록
 
 - [x] DSL로 의존성 등록 API를 구성한다.
-- [ ] DI 라이브러리를 JitPack에 배포하고 앱에 외부 의존성으로 적용한다.
+- [x] DI 라이브러리를 JitPack에 배포하고 앱에 외부 의존성으로 적용한다.
 
 ### 설계 선택
 
@@ -114,6 +114,6 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.nadajinny.android-di:di:3.0.0")
+    implementation("com.github.nadajinny:android-di:3.0.0")
 }
 ```
