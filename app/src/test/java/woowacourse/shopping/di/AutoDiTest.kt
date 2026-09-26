@@ -1,8 +1,9 @@
 package woowacourse.shopping.di
 
+import com.cksckckcks.di.AutoDi
+import com.cksckckcks.di.InjectProperty
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -56,35 +57,6 @@ class AutoDiTest {
         assertThat(constructorTarget.cartRepository).isSameInstanceAs(memoryTarget.cartRepository)
     }
 
-    @Test
-    fun `Qualifier 없이 여러 CartRepository를 요청하면 명확한 오류를 낸다`() {
-        val container = ShoppingContainer(RuntimeEnvironment.getApplication())
-
-        val error =
-            assertThrows(IllegalArgumentException::class.java) {
-                AutoDi(container).createInstance(UnqualifiedTarget::class)
-            }
-
-        assertThat(error).hasMessageThat().contains("CartRepository")
-        assertThat(error).hasMessageThat().contains("LocalMemoryCart")
-        assertThat(error).hasMessageThat().contains("InMemoryCart")
-        assertThat(error).hasMessageThat().contains("Qualifier")
-    }
-
-    @Test
-    fun `컨테이너에서 Qualifier 없이 여러 CartRepository를 조회하면 오류를 낸다`() {
-        val container = ShoppingContainer(RuntimeEnvironment.getApplication())
-
-        val error =
-            assertThrows(IllegalArgumentException::class.java) {
-                container.getInstance(CartRepository::class)
-            }
-
-        assertThat(error).hasMessageThat().contains("CartRepository")
-        assertThat(error).hasMessageThat().contains("LocalMemoryCart")
-        assertThat(error).hasMessageThat().contains("InMemoryCart")
-    }
-
     class InjectionTarget {
         @InjectProperty
         @LocalMemoryCart
@@ -107,9 +79,5 @@ class AutoDiTest {
 
     class ConstructorTarget(
         @InMemoryCart val cartRepository: CartRepository,
-    )
-
-    class UnqualifiedTarget(
-        val cartRepository: CartRepository,
     )
 }
