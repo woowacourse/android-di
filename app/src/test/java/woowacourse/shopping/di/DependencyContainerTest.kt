@@ -14,7 +14,6 @@ import woowacourse.shopping.ui.products.ProductsViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class DependencyContainerTest {
-
     @Before
     fun setUp() {
         DependencyContainer.register(
@@ -91,10 +90,12 @@ class DependencyContainerTest {
 
         assertThat(viewModel.remoteRepository)
             .isInstanceOf(RemoteRepository::class.java)
-
     }
+
     interface TestRepository
+
     private class LocalRepository : TestRepository
+
     private class RemoteRepository : TestRepository
 
     @Target(AnnotationTarget.FIELD)
@@ -105,7 +106,7 @@ class DependencyContainerTest {
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Remote
 
-    class QualifierTestViewModel : ViewModel(){
+    class QualifierTestViewModel : ViewModel() {
         @field:DependencyContainer.Inject
         @field:Local
         lateinit var localRepository: TestRepository

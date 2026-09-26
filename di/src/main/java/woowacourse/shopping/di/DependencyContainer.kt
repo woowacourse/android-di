@@ -6,7 +6,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer : ViewModelProvider.Factory {
-
     private data class DependencyKey(
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>? = null,
@@ -52,8 +51,7 @@ object DependencyContainer : ViewModelProvider.Factory {
         instance::class.java.declaredFields
             .filter { field ->
                 field.isAnnotationPresent(Inject::class.java)
-            }
-            .forEach { field ->
+            }.forEach { field ->
                 val qualifier =
                     field.annotations
                         .firstOrNull { it.annotationClass != Inject::class }
@@ -67,10 +65,11 @@ object DependencyContainer : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel = modelClass.kotlin
-            .primaryConstructor
-            ?.call()
-            ?: throw IllegalArgumentException()
+        val viewModel =
+            modelClass.kotlin
+                .primaryConstructor
+                ?.call()
+                ?: throw IllegalArgumentException()
 
         injectFields(viewModel)
 

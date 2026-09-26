@@ -13,13 +13,12 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 
 data class CartUiState(
     val cartProducts: List<CartProduct> = emptyList(),
 )
 
-class CartViewModel: ViewModel() {
+class CartViewModel : ViewModel() {
     @field:DependencyContainer.Inject
     lateinit var cartRepository: CartRepository
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
@@ -33,6 +32,7 @@ class CartViewModel: ViewModel() {
             it.copy(cartProducts = cartRepository.getAllCartProducts())
         }
     }
+
     fun getAllCartProducts() {
         viewModelScope.launch {
             refreshCartProducts()

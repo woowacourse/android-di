@@ -78,7 +78,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
-
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)

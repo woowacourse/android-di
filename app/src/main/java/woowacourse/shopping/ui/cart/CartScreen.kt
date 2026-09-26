@@ -97,9 +97,10 @@ fun CartContent(
         },
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             items(
                 items = uiState.cartProducts,
@@ -130,7 +131,8 @@ fun CartProductItem(
                 .padding(20.dp),
     ) {
         Text(
-            text = dateFormatter.formatDate(cartProduct.createdAt), style = MaterialTheme.typography.labelSmall
+            text = dateFormatter.formatDate(cartProduct.createdAt),
+            style = MaterialTheme.typography.labelSmall,
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -175,15 +177,16 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(
-                        CartProduct(
-                            id = 1L,
-                            name = "우테코 과자",
-                            price = 10_000,
-                            imageUrl = "",
-                            createdAt = 0L
-                        )
-                    ),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                                createdAt = 0L,
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
