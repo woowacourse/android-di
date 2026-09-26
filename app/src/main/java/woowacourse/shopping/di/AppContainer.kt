@@ -2,7 +2,9 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
-import woowacourse.di.DIContainer
+import woowacourse.di.bind
+import woowacourse.di.diContainer
+import woowacourse.di.register
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -24,10 +26,10 @@ object AppContainer {
                     "shopping.db",
                 ).build()
         val container =
-            DIContainer().apply {
-                register(CartProductDao::class, database.cartProductDao())
-                bind(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
-                bind(CartRepository::class, InMemoryCartRepository::class, InMemoryCart::class)
+            diContainer {
+                register<CartProductDao>(database.cartProductDao())
+                bind<CartRepository, DefaultCartRepository>(RoomCart::class)
+                bind<CartRepository, InMemoryCartRepository>(InMemoryCart::class)
             }
         viewModelFactory = DIViewModelFactory(container)
     }
