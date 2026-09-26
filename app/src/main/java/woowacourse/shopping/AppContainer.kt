@@ -1,17 +1,29 @@
 package woowacourse.shopping
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.repository_impl.DefaultCartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.repository_impl.DefaultCartRepository
 import woowacourse.shopping.data.repository_impl.FakeCartRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object Storage {
-    val cartRepository: CartRepository = FakeCartRepository() // TODO: DAO 주입
+class MyApplication: Application() {
+    val appContainer = AppContainer(applicationContext)
+}
+
+class AppContainer(context: Context) {
+    val database: ShoppingDatabase = Room.databaseBuilder<ShoppingDatabase>(context, "db_name")
+        .setDriver(AndroidSQLiteDriver())
+        .build()
+
+    val cartRepository: CartRepository = DefaultCartRepository(database.cartProductDao())
     val productRepository: ProductRepository = ProductRepository()
 }
 
