@@ -6,6 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.InMemoryCart
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.RoomCart
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.ui.theme.ShoppingTheme
@@ -20,9 +25,17 @@ class MainActivity : ComponentActivity() {
                     "shopping.db",
                 ).build()
 
+        val cartProductDao = database.cartProductDao()
+        DependencyContainer.register(CartProductDao::class, cartProductDao)
         DependencyContainer.register(
-            CartProductDao::class,
-            database.cartProductDao(),
+            CartRepository::class,
+            RoomCart::class,
+            RoomCartRepository(cartProductDao),
+        )
+        DependencyContainer.register(
+            CartRepository::class,
+            InMemoryCart::class,
+            InMemoryCartRepository(),
         )
 
         super.onCreate(savedInstanceState)

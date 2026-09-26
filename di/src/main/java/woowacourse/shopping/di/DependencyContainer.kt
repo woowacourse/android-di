@@ -15,6 +15,10 @@ object DependencyContainer : ViewModelProvider.Factory {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Inject
 
+    @Target(AnnotationTarget.ANNOTATION_CLASS)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class Qualifier
+
     private val dependencies: MutableMap<DependencyKey, Any> =
         mutableMapOf()
 
@@ -23,6 +27,24 @@ object DependencyContainer : ViewModelProvider.Factory {
         qualifier: KClass<out Annotation>? = null,
     ): Any {
         dependencies[DependencyKey(type, qualifier)]?.let { return it }
+
+        val registeredBindings = dependencies.keys.filter { it.type == type }
+        if (registeredBindings.isNotEmpty()) {
+            val availableQualifiers =
+                registeredBindings
+                    .mapNotNull { it.qualifier?.simpleName }
+                    .distinct()
+                    .sorted()
+
+            val message =
+                if (qualifier == null && availableQualifiers.isNotEmpty()) {
+                    "Qualifier required for ${type.qualifiedName}. Available qualifiers: ${availableQualifiers.joinToString()}"
+                } else {
+                    "No dependency registered for ${type.qualifiedName} with qualifier ${qualifier?.simpleName ?: "none"}"
+                }
+
+            throw IllegalArgumentException(message)
+        }
 
         val constructor =
             type.primaryConstructor
@@ -54,8 +76,9 @@ object DependencyContainer : ViewModelProvider.Factory {
             }.forEach { field ->
                 val qualifier =
                     field.annotations
-                        .firstOrNull { it.annotationClass != Inject::class }
-                        ?.annotationClass
+                        .firstOrNull {
+                            it.annotationClass.java.isAnnotationPresent(Qualifier::class.java)
+                        }?.annotationClass
 
                 val dependency = resolve(field.type.kotlin, qualifier)
 

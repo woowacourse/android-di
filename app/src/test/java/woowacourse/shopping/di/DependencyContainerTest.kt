@@ -8,7 +8,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.InMemoryCart
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.RoomCart
+import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -16,15 +21,28 @@ import woowacourse.shopping.ui.products.ProductsViewModel
 class DependencyContainerTest {
     @Before
     fun setUp() {
-        DependencyContainer.register(
-            CartProductDao::class,
+        val cartProductDao =
             object : CartProductDao {
                 override suspend fun getAll(): List<CartProductEntity> = emptyList()
 
                 override suspend fun insert(cartProduct: CartProductEntity) = Unit
 
                 override suspend fun delete(id: Long) = Unit
-            },
+            }
+
+        DependencyContainer.register(
+            CartProductDao::class,
+            cartProductDao,
+        )
+        DependencyContainer.register(
+            CartRepository::class,
+            RoomCart::class,
+            RoomCartRepository(cartProductDao),
+        )
+        DependencyContainer.register(
+            CartRepository::class,
+            InMemoryCart::class,
+            InMemoryCartRepository(),
         )
     }
 
@@ -59,6 +77,7 @@ class DependencyContainerTest {
         val cartViewModel = DependencyContainer.create(CartViewModel::class.java)
 
         assertThat(productsViewModel.cartRepository).isSameInstanceAs(cartViewModel.cartRepository)
+        assertThat(cartViewModel.cartRepository).isInstanceOf(RoomCartRepository::class.java)
     }
 
     @Test
@@ -92,16 +111,59 @@ class DependencyContainerTest {
             .isInstanceOf(RemoteRepository::class.java)
     }
 
+    @Test
+    fun `Qualifier 없이 요청하면 사용 가능한 Qualifier를 안내한다`() {
+        DependencyContainer.register(
+            TestRepository::class,
+            Local::class,
+            LocalRepository(),
+        )
+        DependencyContainer.register(
+            TestRepository::class,
+            Remote::class,
+            RemoteRepository(),
+        )
+
+        val exception =
+            runCatching {
+                DependencyContainer.create(UnqualifiedQualifierTestViewModel::class.java)
+            }.exceptionOrNull()
+
+        assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(exception?.message).contains("TestRepository")
+        assertThat(exception?.message).contains("Local")
+        assertThat(exception?.message).contains("Remote")
+    }
+
+    @Test
+    fun `Qualifier 메타 애노테이션이 없는 애노테이션은 의존성 식별자로 사용하지 않는다`() {
+        val repository = LocalUnqualifiedRepository()
+        DependencyContainer.register(UnqualifiedRepository::class, repository)
+
+        val viewModel = DependencyContainer.create(NonQualifierTestViewModel::class.java)
+
+        assertThat(viewModel.repository).isSameInstanceAs(repository)
+    }
+
+    @Test
+    fun `InMemory Qualifier로 실제 InMemory 구현체를 선택한다`() {
+        val viewModel = DependencyContainer.create(InMemoryCartTestViewModel::class.java)
+
+        assertThat(viewModel.cartRepository).isInstanceOf(InMemoryCartRepository::class.java)
+    }
+
     interface TestRepository
 
     private class LocalRepository : TestRepository
 
     private class RemoteRepository : TestRepository
 
+    @DependencyContainer.Qualifier
     @Target(AnnotationTarget.FIELD)
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Local
 
+    @DependencyContainer.Qualifier
     @Target(AnnotationTarget.FIELD)
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Remote
@@ -114,5 +176,30 @@ class DependencyContainerTest {
         @field:DependencyContainer.Inject
         @field:Remote
         lateinit var remoteRepository: TestRepository
+    }
+
+    class UnqualifiedQualifierTestViewModel : ViewModel() {
+        @field:DependencyContainer.Inject
+        lateinit var repository: TestRepository
+    }
+
+    interface UnqualifiedRepository
+
+    private class LocalUnqualifiedRepository : UnqualifiedRepository
+
+    @Target(AnnotationTarget.FIELD)
+    @Retention(AnnotationRetention.RUNTIME)
+    private annotation class DisplayOnly
+
+    class NonQualifierTestViewModel : ViewModel() {
+        @field:DependencyContainer.Inject
+        @field:DisplayOnly
+        lateinit var repository: UnqualifiedRepository
+    }
+
+    class InMemoryCartTestViewModel : ViewModel() {
+        @field:DependencyContainer.Inject
+        @field:InMemoryCart
+        lateinit var cartRepository: CartRepository
     }
 }
