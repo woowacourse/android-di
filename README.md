@@ -25,7 +25,7 @@
   - [x] `CartRepository`가 Dao를 참조하도록 변경
   - [x] `Product`에 식별자 추가
   - [x] Repository 에 suspend 추가
-  - [ ] 담은 시각을 표시한다. (`createAt`이 언제 담겼는지 들고 있다. 날짜 포맷팅은 `DateFormatter`가 담당한다.)
+  - [x] 담은 시각을 표시한다. (`createAt`이 언제 담겼는지 들고 있다. 날짜 포맷팅은 `DateFormatter`가 담당한다.)
 - [ ] 의존성 주입이 필요한 필드와 그렇지 않은 필드 구분
   - [ ] Annotation을 붙여서 필요한 요소에만 의존성 주입
   - [ ] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드 작성

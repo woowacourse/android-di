@@ -110,7 +110,7 @@ fun CartContent(
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index.toLong()) },
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
