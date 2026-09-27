@@ -47,7 +47,7 @@ fun CartScreen(
     modifier: Modifier = Modifier,
     viewModel: CartViewModel =
         viewModel(
-            factory = SamDi.viewModelFactory(),
+            factory = SamDi.viewModelFactory(context = LocalContext.current),
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

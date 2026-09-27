@@ -44,7 +44,7 @@ fun ProductsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProductsViewModel =
         viewModel(
-            factory = SamDi.viewModelFactory(),
+            factory = SamDi.viewModelFactory(LocalContext.current),
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

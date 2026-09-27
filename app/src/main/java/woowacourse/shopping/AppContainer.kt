@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
@@ -27,8 +28,10 @@ class AppContainer(context: Context) {
     val database: ShoppingDatabase = Room.databaseBuilder<ShoppingDatabase>(context, "db_name")
         .setDriver(AndroidSQLiteDriver())
         .build()
+    val cartProductDao: CartProductDao = database.cartProductDao()
 
-    val cartRepository: CartRepository = DefaultCartRepository(database.cartProductDao())
+    val bindings: Map<KClass<*>, KClass<*>> = mapOf(CartRepository::class to DefaultCartRepository::class)
+
     val productRepository: ProductRepository = ProductRepository()
 }
 
@@ -47,7 +50,8 @@ object SamDi {
             return property.call(container)!!
         }
 
-        val constructor = modelClass.primaryConstructor!! // 생성자 확인
+        val implType = container.bindings[modelClass] ?: modelClass
+        val constructor = implType.primaryConstructor!! // 생성자 확인
         val types = constructor.parameters.map { it.type.classifier as KClass<*> }
 
         val inst =
