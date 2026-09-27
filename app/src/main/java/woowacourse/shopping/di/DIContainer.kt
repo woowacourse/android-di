@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
@@ -26,9 +27,23 @@ object DIContainer {
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
-        val constructor = modelClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
+        val implementationClass =
+            if (modelClass.java.isInterface) {
+                findImplementation(modelClass)
+            } else {
+                modelClass
+            }
+        val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
         val dependencies = findDependencies(constructor)
         return constructor.call(*dependencies.toTypedArray())
+    }
+
+    fun <T : Any> findImplementation(modelClass: KClass<T>): KClass<out T> {
+        if (modelClass == CartRepository::class) {
+            return CartRepositoryModule.provideCartRepository() as KClass<out T>
+        }
+
+        throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass")
     }
 
     private fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
