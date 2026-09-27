@@ -90,6 +90,18 @@ class AoDiTest {
         assertThat(viewModel.hasSameDependency(dependency)).isTrue()
     }
 
+    @Test
+    fun `애노테이션이 붙은 필드만 주입한다`() {
+        val dependency = PrivateFieldDependency()
+        AoDi.register(PrivateFieldDependency::class, dependency)
+        val viewModel = SelectiveFieldViewModel()
+
+        AoDi.inject(viewModel)
+
+        assertThat(viewModel.annotatedDependency).isSameAs(dependency)
+        assertThat(viewModel.unannotatedDependency).isNull()
+    }
+
     class Root(
         val branch: Branch,
     )
@@ -145,5 +157,12 @@ class AoDiTest {
         private lateinit var dependency: PrivateFieldDependency
 
         fun hasSameDependency(expected: PrivateFieldDependency): Boolean = dependency === expected
+    }
+
+    class SelectiveFieldViewModel : ViewModel() {
+        @FieldInject
+        var annotatedDependency: PrivateFieldDependency? = null
+
+        var unannotatedDependency: PrivateFieldDependency? = null
     }
 }
