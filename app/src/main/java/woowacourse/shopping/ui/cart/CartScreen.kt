@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,15 +36,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.di.KirbyDIFactory
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.di.KirbyViewModelFactory
+import woowacourse.shopping.di.LocalDIContainer
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(factory = KirbyDIFactory),
+    viewModel: CartViewModel = viewModel(factory = KirbyViewModelFactory(LocalDIContainer.current)),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -62,9 +62,19 @@ fun CartScreen(
         }
     }
 
+    val cartProducts =
+        uiState.cartProducts.map { cartProduct ->
+            CartProductUiModel(
+                id = cartProduct.id,
+                name = cartProduct.name,
+                price = cartProduct.price,
+                imageUrl = cartProduct.imageUrl,
+                formattedDate = dateFormatter.formatDate(cartProduct.createdAt),
+            )
+        }
+
     CartContent(
-        uiState = uiState,
-        dateFormatter = dateFormatter,
+        cartProducts = cartProducts,
         onDelete = viewModel::deleteCartProduct,
         onNavigateUp = onNavigateUp,
         modifier = modifier,
@@ -74,9 +84,8 @@ fun CartScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartContent(
-    uiState: CartUiState,
-    dateFormatter: DateFormatter,
-    onDelete: (Int) -> Unit,
+    cartProducts: List<CartProductUiModel>,
+    onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,11 +108,10 @@ fun CartContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
-            itemsIndexed(uiState.cartProducts) { index, cartProduct ->
+            items(cartProducts, key = { it.id }) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
-                    dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index) },
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
@@ -112,8 +120,7 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
-    dateFormatter: DateFormatter,
+    cartProduct: CartProductUiModel,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,8 +131,7 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
-        Text(text = "", style = MaterialTheme.typography.labelSmall)
+        Text(text = cartProduct.formattedDate, style = MaterialTheme.typography.labelSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,
@@ -167,11 +173,16 @@ fun CartProductItem(
 private fun CartContentPreview() {
     ShoppingTheme {
         CartContent(
-            uiState =
-                CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+            cartProducts =
+                listOf(
+                    CartProductUiModel(
+                        id = 1L,
+                        name = "우테코 과자",
+                        price = 10_000,
+                        imageUrl = "",
+                        formattedDate = "2026-09-26 12:00",
+                    ),
                 ),
-            dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
             onNavigateUp = {},
         )
