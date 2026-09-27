@@ -5,7 +5,9 @@ import woowacourse.shopping.model.CartProduct
 
 fun CartProductEntity.toDomain(): CartProduct =
     CartProduct(
+        id = id,
         name = name,
         price = price,
         imageUrl = imageUrl,
+        createdAt = createdAt,
     )
