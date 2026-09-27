@@ -1,66 +1,79 @@
 # android-di
 
-## 0.5단계 · 생성자 주입(수동)
+## 2단계 · 필드 주입과 재귀 주입
 
-### 목표
+### 구현할 기능
 
-의도적으로 실패하는 `MainActivityTest`를 수동 주입으로 통과시킨다.
+**장바구니 데이터**
 
-이번 단계에서는 **DI 컨테이너를 사용하지 않는다.** 컴포저블이 `viewModel()`을 호출하는 자리에 `ViewModelProvider.Factory`를 직접 전달하고, 화면에 필요한 `Repository`를 직접 생성해 주입한다.
+- `id`와 `createdAt`을 가진 `CartProduct` 도메인 모델을 만든다.
+- `CartProductEntity`를 도메인으로 변환하는 `toDomain()`을 추가한다.
+- `CartRepository`를 인터페이스와 DAO 기반 구현체로 분리한다.
+- DAO를 호출하는 Repository 함수를 `suspend`로 변경한다.
+- 상품 삭제에는 목록 인덱스가 아닌 실제 `id: Long`을 사용한다.
 
-### 구현 예시
+**의존성 주입**
 
-```kotlin
-viewModel: ProductsViewModel =
-    viewModel(
-        factory = /* 여기서 직접 만들어 넣는다 */,
-    )
+- `@KirbyInject`가 붙은 프로퍼티에만 필드 주입을 수행한다.
+- 어노테이션은 `PROPERTY` 대상에 `RUNTIME`으로 보존한다.
+- 생성자 의존성을 재귀적으로 해결한다.
+- 순환 의존성이 있으면 명확한 오류를 낸다.
+- 두 화면의 ViewModel을 공용 컨테이너로 생성한다.
+
+**화면**
+
+- Repository의 `suspend` 함수를 `viewModelScope`에서 호출한다.
+- 장바구니에 상품명과 담은 시각을 표시한다.
+- 담은 시각은 `DateFormatter`로 포맷한다.
+- `LazyColumn` 항목은 상품 `id`를 key로 사용한다.
+
+### 설계 선택
+
+**필드 주입을 사용한 이유**
+
+Activity·Fragment처럼 OS가 직접 만드는 객체는 생성자 인자를
+전달하기 어려워 필드 주입이 필요할 수 있다.
+ViewModel은 Factory를 통한 생성자 주입이 가능하다.
+이 단계에서는 필드 주입을 학습하지만, 가능한 곳에서는 생성자 주입을 우선한다.
+
+**어디까지 자동으로 생성하는가?**
+
+컨테이너는 일반 객체의 생성자를 따라 의존성을 해결한다.
+
+```text
+CartViewModel
+  → CartRepository
+  → CartProductDao
 ```
 
-위와 같이 구현한 뒤 다음 문제점을 확인한다. 이 문제가 1단계의 출발점이다.
+`CartRepository` 요청은 등록된 `DefaultCartRepository`로 연결한다.
+그 생성자가 요구하는 `CartProductDao`는 등록된 인스턴스를 사용한다.
 
-### 확인할 문제점
+**Room은 왜 수동으로 준비하는가?**
 
-- 화면이 늘어날 때마다 Factory를 하나씩 새로 작성해야 한다.
-- Repository 객체를 교체하려면 또 다른 객체로 바꿔줘야 한다.
-- Repository 교체로 인해 `ViewModel`에 직접적인 변경사항이 발생한다.
+`ShoppingDatabase`는 추상 `RoomDatabase`다.
+현재 컨테이너의 생성자 리플렉션만으로 만들 수 없다.
 
-> 💡 **0.5단계는 1단계의 출발점이다.**
->
-> OT에서는 수동 DI 구현을 먼저 PR로 리뷰받는다. 진행 순서와 오늘의 리뷰 기준은 OT 문서를 따른다.
+- `ShoppingApplication`이 `Room.databaseBuilder(...)`로 DB를 만든다.
+- DB에서 `CartProductDao`를 얻어 컨테이너에 등록한다.
+- DB 자체는 컨테이너에 등록하지 않는다.
 
-### 구현할(확인할) 기능 목록
+프레임워크 생성 API나 외부 설정이 필요한 객체는 앱에서 준비한다.
+그 객체에 의존하는 일반 객체는 컨테이너가 생성한다.
 
-- 의도적으로 실패하는 `MainActivityTest`를 수동 주입으로 통과시킨다.
-- DI 컨테이너를 만들지 않는다.
-- 컴포저블에서 `viewModel()`을 호출할 때 `ViewModelProvider.Factory`를 직접 전달한다.
-- 화면에 필요한 `Repository`를 직접 생성해 `ViewModel`의 생성자로 주입한다.
-- 화면이 늘어날 때마다 Factory를 새로 작성해야 하는 문제를 확인한다.
-  - 다음 변경으로 확인함 (ed8053bc)
-- Repository 객체를 교체할 때 `ViewModel`을 직접 변경해야 하는 문제를 확인한다.
-  - `ProductRepository`를 다른 구현체로 교체하는 상황을 가정한다.
-  - `ProductsViewModel`의 생성자가 구체 타입인 `ProductRepository`를 직접 의존하고 있어, Factory의 생성 코드만 변경해서는 교체할 수 없다.
-  - 다른 Repository 구현체를 주입하려면 `ProductsViewModel`의 생성자 타입도 함께 변경해야 한다.
+**순환 의존성은 어떻게 처리하는가?**
 
-## 1단계 · 생성자 주입(자동)
+컨테이너는 현재 생성 중인 타입을 추적한다.
+`A → B → A`처럼 같은 타입을 다시 만나면 무한 재귀하지 않는다.
 
-다음 문제점을 해결한다.
+`순환 의존성이 발견되었습니다`라는 오류를 낸다.
+성공하거나 실패해도 생성 경로에서 해당 타입을 제거한다.
 
-- ViewModel에서 참조하는 Repository가 정상적으로 주입되지 않는다.
-- Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 만들어줘야 한다.
-  - ViewModel에 수동으로 주입되고 있는 의존성들을 자동으로 주입되도록 바꿔본다.
-  - 특정 ViewModel에서만이 아닌, 범용적으로 활용될 수 있는 자동 주입 로직을 작성한다. (ProductsViewModel, CartViewModel 모두 하나의 로직만 참조한다)
-  - 100개의 ViewModel이 생긴다고 가정했을 때, 자동 주입 로직 100개가 생기는 것이 아니다. 하나의 자동 주입 로직을 재사용할 수 있어야 한다.
-- 0.5단계처럼 화면 진입 지점마다 CartRepository를 직접 만들면, 상품 목록 화면과 장바구니 화면이 서로 다른 인스턴스를 갖게 된다. CartRepository는 담은 상품을 메모리에만 들고 있으므로, 상품을 장바구니에 담고 장바구니 화면으로 이동하면 목록이 비어 있다. 앱을 실행해 직접 확인해 보자.
-  - 여러 번 인스턴스화할 필요 없는 객체는 최초 한 번만 인스턴스화한다. (이 단계에서는 너무 깊게 생각하지 말고 싱글 오브젝트로 구현해도 된다.)
+### 검증
 
-### 구현할 기능 목록
-
-- 생성자를 탐색해 의존성을 자동 주입하는 공용 `ViewModelProvider.Factory`를 만들고, 화면 간 `CartRepository` 인스턴스를 재사용한다. ViewModel 종류별 분기 없이 새 ViewModel에도 적용한다.
-- 상품 목록 화면과 장바구니 화면의 수동 Factory를 공용 Factory로 교체한다.
-
-### 완료 기준
-
-- 상품을 장바구니에 담고 화면을 이동해도 같은 상품이 보이며, 삭제와 재진입도 정상 동작한다.
-- 사전에 제공된 테스트가 모두 통과한다.
-- DI 구현에 Annotation을 사용하지 않는다.
+- 어노테이션이 없는 프로퍼티에는 주입하지 않는다.
+- `CartRepository`의 DAO 의존성을 재귀적으로 해결한다.
+- 순환 의존성 테스트가 통과한다.
+- 목록 중간 항목을 삭제해도 누른 상품이 지워진다.
+- UI 계층은 `CartProductEntity`를 직접 참조하지 않는다.
+- 사전 제공 테스트가 통과한다.
