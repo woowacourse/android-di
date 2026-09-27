@@ -106,6 +106,7 @@ fun CartContent(
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
+                    // 목록 인덱스는 재조회나 삭제 후 달라지므로 DB의 고정 ID로 삭제 대상을 지정한다.
                     onDelete = { onDelete(cartProduct.id) },
                 )
             }

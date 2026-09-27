@@ -37,6 +37,7 @@ class CartViewModel : ViewModel() {
 
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
+            // 삭제 완료 후 목록을 다시 읽고 성공 신호를 보내야 화면과 알림이 실제 DB 상태를 따른다.
             cartRepository.deleteCartProduct(id)
             refreshCartProducts()
             _onCartProductDeleted.emit(Unit)
