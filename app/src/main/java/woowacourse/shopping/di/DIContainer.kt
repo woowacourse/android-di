@@ -5,12 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
-import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import kotlin.collections.forEach
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
@@ -22,8 +23,9 @@ object DIContainer {
                 .databaseBuilder<ShoppingDatabase>(context, "shopping-database")
                 .setDriver(AndroidSQLiteDriver())
                 .build()
-        val cartDao = db.cartProductDao()
-        instances[CartProductDao::class] = cartDao
+        ShoppingDatabase::class.declaredFunctions.forEach { function ->
+            instances[(function.returnType.classifier as? KClass<*>)!!] = function.call(db) as Any
+        }
     }
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
