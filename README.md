@@ -58,3 +58,48 @@ JDK 21 환경에서 다음 명령으로 검증했다.
 - Android lint 오류 0개, 기존 빌드 도구·의존성의 새 버전 알림 12개
 - Room 재연결 후 데이터 유지, 중복 상품의 중간 항목 및 연속 삭제 검증
 - 애노테이션 필드 주입, 재귀 생성, 싱글톤 공유, 순환 의존성 오류 검증
+
+## 3단계 기능 구현 목록
+
+- [ ] DI 코어를 순수 JVM `:di` 모듈로 분리
+  - Injector와 Inject를 `woowacourse.di` 패키지로 옮긴다.
+  - 코어 테스트는 `:di`에서, ViewModel·Room 연동 테스트는 `:app`에서 실행한다.
+  - `:app -> :di` 방향으로만 의존하고 코어에 Android 및 쇼핑 도메인 의존성을 두지 않는다.
+- [ ] 애노테이션 타입을 사용하는 Qualifier 지원
+  - `@Qualifier`로 표시한 애노테이션 타입과 의존성 타입을 함께 등록 키로 사용한다.
+  - 생성자 파라미터와 `@Inject` 필드의 Qualifier를 해석한다.
+  - 같은 타입이 둘 이상 등록되어 있는데 Qualifier가 없으면 후보를 포함한 오류를 낸다.
+  - Qualifier별 싱글톤, 미등록 Qualifier, 중복 등록, 복수 Qualifier 및 순환 의존성을 테스트한다.
+- [ ] 의존성 등록 및 조회 DSL 제공
+  - `injector { singleton<T> { ... } }`와 `get<T>()`를 제공한다.
+  - DSL에서도 Qualifier 선택과 모호한 의존성 오류가 동일하게 동작하는지 테스트한다.
+- [ ] Room·In-Memory 장바구니 구현체 선택 및 앱 적용
+  - ID와 담은 시각을 관리하는 InMemoryCartRepository를 추가하고 CRUD를 테스트한다.
+  - `@RoomCart`와 `@InMemoryCart`를 정의하고 두 구현체를 앱에서 등록한다.
+  - 두 ViewModel에 기본 저장소로 `@RoomCart`를 명시하고 메모리 구현체 선택 방법을 문서화한다.
+  - 실제 앱 컨테이너의 두 구현체 선택, 데이터 분리, 모호한 요청의 실패를 검증한다.
+- [ ] 모듈 독립성과 전체 동작 검증
+  - DI 모듈의 테스트와 의존성 목록으로 Android·앱 의존성이 없는지 확인한다.
+  - 앱 전체 테스트, ktlint, 디버그 APK 빌드와 Android lint 검사를 실행한다.
+
+### 3단계 설계 선택
+
+**Qualifier는 애노테이션 타입으로 표현한다.** 코어의 `@Qualifier`를 붙인 `@RoomCart`,
+`@InMemoryCart`를 앱에서 정의한다. 등록 키는 `(의존성 타입, Qualifier 애노테이션 타입)`이다.
+문자열 대신 타입을 참조하므로 사용처에서 이름을 잘못 쓰면 컴파일 단계에서 확인할 수 있다.
+리플렉션으로 읽기 위해 사용자 Qualifier는 `RUNTIME` 보존 정책과 `FIELD`, `VALUE_PARAMETER`
+대상을 사용한다. 값을 가진 애노테이션으로 인스턴스를 구별하는 기능은 이번 단계의 범위가 아니다.
+
+Qualifier를 지정한 요청은 해당 키만 조회한다. 한 타입에 여러 등록이 있을 때 Qualifier 없는
+요청은 기본값을 임의로 선택하지 않는다. 하나만 등록되어 있어도 Qualifier를 붙여 등록한
+의존성은 주입받는 쪽에서도 같은 Qualifier를 명시한다.
+
+**DI 코어는 순수 JVM 모듈로 만든다.** 코어의 책임은 타입·생성 함수 등록, 리플렉션과 객체
+수명 관리이므로 Android API가 필요하지 않다. `:di`의 빌드에는 Kotlin/JVM과 리플렉션,
+테스트 라이브러리만 포함하며 `:app`, Room, AndroidX 의존성을 넣지 않는다. 앱에서 생성 방법을
+등록하므로 코어는 CartRepository나 Context라는 구체적인 이름을 몰라도 객체를 해결할 수 있다.
+
+등록은 ShoppingApplication이 소유한 컨테이너를 처음 사용할 때 한 번 수행하고 각 싱글톤은
+처음 요청할 때 생성한다. ViewModelFactory와 Room 생성은 앱의 연동 계층에 남긴다.
+4단계에서 화면 스코프를 여닫는 Android·Compose 생명주기 신호도 앱의 연동 계층에서 받아
+코어에 전달한다. 이번 단계에서는 외부 배포 없이 `implementation(project(":di"))`로 적용한다.
