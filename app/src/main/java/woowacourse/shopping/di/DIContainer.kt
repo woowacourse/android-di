@@ -21,6 +21,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
+    private val creating = mutableSetOf<KClass<*>>()
 
     fun initialize(context: Context) {
         val db =
@@ -35,18 +36,29 @@ object DIContainer {
 
     fun <T : Any> createInstance(modelClass: KClass<T>): T {
         if (instances[modelClass] != null) return instances[modelClass] as T
-        val implementationClass =
-            if (modelClass.java.isInterface) {
-                findImplementation(modelClass)
-            } else {
-                modelClass
-            }
-        val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
-        val dependencies = findDependencies(constructor)
-        val instance = constructor.call(*dependencies.toTypedArray())
-        instances[implementationClass] = instance
-        if (modelClass != implementationClass) instances[modelClass] = instance
-        return instance
+
+        if (modelClass in creating) {
+            throw IllegalStateException("순환 의존성이 발생했어요: $modelClass")
+        }
+
+        creating += modelClass
+
+        try {
+            val implementationClass =
+                if (modelClass.java.isInterface) {
+                    findImplementation(modelClass)
+                } else {
+                    modelClass
+                }
+            val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
+            val dependencies = findDependencies(constructor)
+            val instance = constructor.call(*dependencies.toTypedArray())
+            instances[implementationClass] = instance
+            if (modelClass != implementationClass) instances[modelClass] = instance
+            return instance
+        } finally {
+            creating -= modelClass
+        }
     }
 
     fun <T : Any> injectFields(instance: T) {

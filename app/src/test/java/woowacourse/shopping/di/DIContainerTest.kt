@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -41,6 +42,23 @@ class DIContainerTest {
         // then
         assertFalse(target.isDependencyInitialized())
     }
+
+    @Test
+    fun `순환 의존성이 있으면 예외가 발생한다`() {
+        assertThrows(
+            IllegalStateException::class.java,
+        ) {
+            DIContainer.createInstance(A::class)
+        }
+    }
+
+    private class A(
+        val b: B,
+    )
+
+    private class B(
+        val a: A,
+    )
 
     class TestDependency
 
