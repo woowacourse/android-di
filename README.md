@@ -73,7 +73,7 @@ JDK 21 환경에서 다음 명령으로 검증했다.
 - [x] 의존성 등록 및 조회 DSL 제공
   - `injector { singleton<T> { ... } }`와 `get<T>()`를 제공한다.
   - DSL에서도 Qualifier 선택과 모호한 의존성 오류가 동일하게 동작하는지 테스트한다.
-- [ ] Room·In-Memory 장바구니 구현체 선택 및 앱 적용
+- [x] Room·In-Memory 장바구니 구현체 선택 및 앱 적용
   - ID와 담은 시각을 관리하는 InMemoryCartRepository를 추가하고 CRUD를 테스트한다.
   - `@RoomCart`와 `@InMemoryCart`를 정의하고 두 구현체를 앱에서 등록한다.
   - 두 ViewModel에 기본 저장소로 `@RoomCart`를 명시하고 메모리 구현체 선택 방법을 문서화한다.
@@ -103,3 +103,30 @@ Qualifier를 지정한 요청은 해당 키만 조회한다. 한 타입에 여�
 처음 요청할 때 생성한다. ViewModelFactory와 Room 생성은 앱의 연동 계층에 남긴다.
 4단계에서 화면 스코프를 여닫는 Android·Compose 생명주기 신호도 앱의 연동 계층에서 받아
 코어에 전달한다. 이번 단계에서는 외부 배포 없이 `implementation(project(":di"))`로 적용한다.
+
+
+### 저장소 선택 방법
+
+앱의 `ShoppingModule.kt`에서 다음과 같이 두 구현체를 같은 인터페이스로 등록한다.
+생성 함수를 등록한 시점에는 Database나 Repository를 생성하지 않는다.
+
+```kotlin
+singleton<CartRepository>(RoomCart::class) { get<DefaultCartRepository>() }
+singleton<CartRepository>(InMemoryCart::class) { get<InMemoryCartRepository>() }
+```
+
+기본값은 두 ViewModel의 `cartRepository` 필드에 명시한 `@RoomCart`다. 메모리 저장소로
+실행하려면 ProductsViewModel과 CartViewModel의 해당 필드를 **모두** 다음과 같이 바꾼다.
+두 화면이 서로 다른 저장소를 선택하면 데이터도 공유되지 않는다.
+
+```kotlin
+@Inject
+@InMemoryCart
+lateinit var cartRepository: CartRepository
+```
+
+생성자 주입에서는 `@InMemoryCart repository: CartRepository`로 지정한다.
+직접 조회할 때는 `injector.get<CartRepository>(InMemoryCart::class)`를 사용한다.
+`injector.get<CartRepository>()`는 두 구현체 중 임의의 하나를 선택하지 않고 후보를 포함한
+오류를 낸다. InMemoryCartRepository는 컨테이너 안에서 공유되지만 새 컨테이너를 만들거나
+프로세스를 다시 시작하면 내용이 사라진다. Room 구현체는 기존처럼 영구 저장한다.

@@ -13,7 +13,7 @@ class ViewModelInjectionTest {
 
     @Test
     fun `두 ViewModel의 필드에 동일한 Repository를 주입한다`() {
-        injector.registerSingleton(CartRepository::class) { FakeCartRepository() }
+        injector.registerSingleton(CartRepository::class, RoomCart::class) { FakeCartRepository() }
         val products = injector.create(ProductsViewModel::class)
         val cart = injector.create(CartViewModel::class)
 
