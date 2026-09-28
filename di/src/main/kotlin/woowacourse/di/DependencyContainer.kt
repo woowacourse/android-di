@@ -10,6 +10,7 @@ class DependencyContainer(
     private val bindings: Map<DependencyKey, KClass<*>> = emptyMap(),
 ) {
     private val dependencies: MutableMap<DependencyKey, Any> = dependencies.toMutableMap()
+    private val creating = mutableListOf<KClass<*>>()
 
     fun register(
         type: KClass<*>,
@@ -20,18 +21,26 @@ class DependencyContainer(
     }
 
     fun create(type: KClass<*>): Any {
-        val constructor = type.primaryConstructor ?: error("주 생성자를 찾을 수 없습니다: ${type.qualifiedName}")
-        constructor.isAccessible = true
-        val arguments =
-            constructor.parameters.associateWith { parameter ->
-                resolve(
-                    DependencyKey(
-                        type = parameter.type.jvmErasure,
-                        qualifier = parameter.annotations.findQualifier(),
-                    ),
-                )
-            }
-        return constructor.callBy(arguments)
+        check(type !in creating) {
+            "순환 의존성: ${(creating + type).joinToString(" -> ") { it.simpleName ?: it.toString() }}"
+        }
+        creating += type
+        return try {
+            val constructor = type.primaryConstructor ?: error("주 생성자를 찾을 수 없습니다: ${type.qualifiedName}")
+            constructor.isAccessible = true
+            val arguments =
+                constructor.parameters.associateWith { parameter ->
+                    resolve(
+                        DependencyKey(
+                            type = parameter.type.jvmErasure,
+                            qualifier = parameter.annotations.findQualifier(),
+                        ),
+                    )
+                }
+            constructor.callBy(arguments)
+        } finally {
+            creating.removeAt(creating.lastIndex)
+        }
     }
 
     fun inject(target: Any) {

@@ -21,6 +21,13 @@ class DependencyContainerTest {
     }
 
     @Test
+    fun `생성자 파라미터의 Qualifier에 해당하는 구현체를 주입한다`() {
+        val target = assertIs<ConstructorQualifiedTarget>(qualifiedContainer().create(ConstructorQualifiedTarget::class))
+
+        assertIs<RoomTestRepository>(target.repository)
+    }
+
+    @Test
     fun `같은 타입의 구현체가 여러 개이고 Qualifier가 없으면 오류가 발생한다`() {
         val container = qualifiedContainer()
         val target = UnqualifiedTarget()
@@ -43,6 +50,13 @@ class DependencyContainerTest {
         val exception = assertFailsWith<IllegalStateException> { container.inject(UnqualifiedTarget()) }
 
         assertContains(exception.message.orEmpty(), RoomTest::class.simpleName.orEmpty())
+    }
+
+    @Test
+    fun `순환 의존성이 있으면 원인을 알 수 있는 오류가 발생한다`() {
+        val exception = assertFailsWith<IllegalStateException> { DependencyContainer().create(CycleA::class) }
+
+        assertContains(exception.message.orEmpty(), "CycleA -> CycleB -> CycleA")
     }
 
     @Test
@@ -74,12 +88,12 @@ class DependencyContainerTest {
 }
 
 @Qualifier
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 private annotation class RoomTest
 
 @Qualifier
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)
 private annotation class InMemoryTest
 
@@ -115,6 +129,18 @@ private class UnqualifiedTarget {
     @Inject
     lateinit var repository: TestRepository
 }
+
+private class ConstructorQualifiedTarget(
+    @RoomTest val repository: TestRepository,
+)
+
+private class CycleA(
+    val dependency: CycleB,
+)
+
+private class CycleB(
+    val dependency: CycleA,
+)
 
 private class RecursiveTarget {
     @Inject
