@@ -28,8 +28,8 @@
 
 ### 5. 장바구니 도메인 모델과 매퍼
 
-- [ ] UI에서 사용할 식별자와 담은 시각을 가진 `CartProduct` 도메인 모델을 추가한다.
-- [ ] `CartProductEntity`를 `CartProduct`로 변환하는 매퍼를 추가한다.
+- [x] UI에서 사용할 식별자와 담은 시각을 가진 `CartProduct` 도메인 모델을 추가한다.
+- [x] `CartProductEntity`를 `CartProduct`로 변환하는 매퍼를 추가한다.
 - [ ] UI 계층이 `CartProductEntity`를 직접 참조하지 않도록 한다.
 
 ### 6. Room을 사용하는 CartRepository
