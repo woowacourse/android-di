@@ -5,11 +5,11 @@ import androidx.room.Room
 import com.harodi.DiManager
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCart
-import woowacourse.shopping.data.DefaultCartRepository
-import woowacourse.shopping.data.InMemoryCart
-import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.data.repositoryImpl.DefaultCart
+import woowacourse.shopping.data.repositoryImpl.DefaultCartRepository
+import woowacourse.shopping.data.repositoryImpl.InMemoryCart
+import woowacourse.shopping.data.repositoryImpl.InMemoryCartRepository
 
 class ShoppingApplication : Application() {
     val diManager = DiManager()
