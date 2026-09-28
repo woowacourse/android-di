@@ -41,7 +41,7 @@ Annotation을 붙여서 필요한 요소에만 의존성을 주입하는 방식�
   - [x] `ProductsViewModel.addCartProduct`를 `viewModelScope.launch` 안으로 옮긴다. 
   - [x] `CartViewModel.getAllCartProducts` 결과를 조회한 후 `update { }` 람다에서 갱신하도록 구조를 변경한다.
   - [x] `CartViewModel.deleteCartProduct`를 `viewModelScope.launch` 안으로 옮긴다. 
-  - [ ] 장바구니 화면에 담은 시각을 표시한다.
+  - [x] 장바구니 화면에 담은 시각을 표시한다.
 - [x] ViewModel 내 필드 주입을 구현한다.
   - [x] DAO가 자동으로 생성되도록 변경한다. 
   - [x] ViewModel의 생성자 파라미터가 인터페이스를 받도록 변경한다. 
