@@ -15,9 +15,9 @@
 
 ### 3. ViewModel 필드 주입
 
-- [ ] ViewModel의 생성자 의존성을 애노테이션이 붙은 필드 의존성으로 변경한다.
-- [ ] Factory가 ViewModel을 생성한 뒤 필드 의존성을 주입하도록 변경한다.
-- [ ] ViewModel에 필요한 의존성이 필드 주입되는지 테스트한다.
+- [x] ViewModel의 생성자 의존성을 애노테이션이 붙은 필드 의존성으로 변경한다.
+- [x] Factory가 ViewModel을 생성한 뒤 필드 의존성을 주입하도록 변경한다.
+- [x] ViewModel에 필요한 의존성이 필드 주입되는지 테스트한다.
 
 ### 4. CartRepository의 DAO 의존성 주입
 

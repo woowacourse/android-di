@@ -19,6 +19,11 @@ class ReflectionViewModelFactoryTest {
         val testService: TestService,
     ) : ViewModel()
 
+    class TestFieldInjectionViewModel : ViewModel() {
+        @MyInject
+        lateinit var repository: TestRepository
+    }
+
     @Test
     fun `ViewModel 생성자에 필요한 의존성을 자동으로 주입한다`() {
         val container = DependencyContainer()
@@ -55,5 +60,17 @@ class ReflectionViewModelFactoryTest {
 
         assertThat(viewModel1).isNotSameAs(viewModel2)
         assertThat(viewModel1.repository).isSameAs(viewModel2.repository)
+    }
+
+    @Test
+    fun `ViewModel을 생성한 후 어노테이션이 붙은 필드에 의존성을 주입한다`() {
+        val container = DependencyContainer()
+
+        val factory = ReflectionViewModelFactory(container)
+
+        val viewModel = factory.create(TestFieldInjectionViewModel::class.java)
+        val repository = container.resolve(TestRepository::class)
+
+        assertThat(viewModel.repository).isSameAs(repository)
     }
 }

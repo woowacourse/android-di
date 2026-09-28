@@ -28,7 +28,7 @@ class ReflectionViewModelFactory(
 
         val viewModel =
             constructor.call(*dependencies.toTypedArray())
-
+        container.inject(viewModel)
         return modelClass.cast(viewModel)
     }
 }
