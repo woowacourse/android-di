@@ -64,6 +64,13 @@ class KirbyDIContainerTest {
         var notInjected: LeafDependency? = null
     }
 
+    class ProvidedTarget(
+        val constructorDependency: LeafDependency,
+    ) {
+        @KirbyInject
+        lateinit var fieldDependency: LeafDependency
+    }
+
     class CyclicA(
         val b: CyclicB,
     )
@@ -113,6 +120,35 @@ class KirbyDIContainerTest {
 
         assertThat(first).isNotSameAs(second)
         assertThat(first.dependency).isSameAs(second.dependency)
+    }
+
+    @Test
+    fun `등록된 인스턴스는 조회와 생성자 및 필드 주입에서 같은 객체를 사용한다`() {
+        val container = KirbyDIContainer()
+        val provided = LeafDependency()
+        container.registerInstance(type = LeafDependency::class, instance = provided)
+
+        val target = container.createInstance(ProvidedTarget::class)
+
+        assertThat(container.resolve(LeafDependency::class)).isSameAs(provided)
+        assertThat(target.constructorDependency).isSameAs(provided)
+        assertThat(target.fieldDependency).isSameAs(provided)
+        assertThatThrownBy { container.createInstance(LeafDependency::class) }
+            .hasMessageContaining("등록된 인스턴스를 새로 생성할 수 없습니다")
+    }
+
+    @Test
+    fun `자격이 있는 등록 인스턴스가 유일한 후보면 Qualifier 미지정 요청도 같은 객체를 반환한다`() {
+        val container = KirbyDIContainer()
+        val provided = RealSampleRepository(LeafDependency())
+        container.registerInstance(
+            type = SampleRepository::class,
+            instance = provided,
+            qualifier = First::class,
+        )
+
+        assertThat(container.resolve(SampleRepository::class)).isSameAs(provided)
+        assertThat(container.resolve(type = SampleRepository::class, qualifier = First::class)).isSameAs(provided)
     }
 
     @Test
