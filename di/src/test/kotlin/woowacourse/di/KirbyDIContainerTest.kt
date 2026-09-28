@@ -94,7 +94,10 @@ class KirbyDIContainerTest {
     @Test
     fun `인터페이스를 요청하면 바인딩된 구현체로 생성한다`() {
         val container = KirbyDIContainer()
-        container.registerBinding(SampleRepository::class, RealSampleRepository::class)
+        container.registerBinding(
+            from = SampleRepository::class,
+            to = RealSampleRepository::class,
+        )
 
         val repository = container.resolve(SampleRepository::class)
 
@@ -124,9 +127,9 @@ class KirbyDIContainerTest {
     fun `같은 인터페이스의 두 구현체를 Qualifier로 각각 선택한다`() {
         val container = containerWithTwoRepositories()
 
-        assertThat(container.resolve(SampleRepository::class, First::class))
+        assertThat(container.resolve(type = SampleRepository::class, qualifier = First::class))
             .isInstanceOf(RealSampleRepository::class.java)
-        assertThat(container.resolve(SampleRepository::class, Second::class))
+        assertThat(container.resolve(type = SampleRepository::class, qualifier = Second::class))
             .isInstanceOf(OtherSampleRepository::class.java)
     }
 
@@ -146,10 +149,14 @@ class KirbyDIContainerTest {
     @Test
     fun `후보가 하나면 Qualifier 없이 조회해도 같은 인스턴스를 반환한다`() {
         val container = KirbyDIContainer()
-        container.registerBinding(SampleRepository::class, RealSampleRepository::class, First::class)
+        container.registerBinding(
+            from = SampleRepository::class,
+            to = RealSampleRepository::class,
+            qualifier = First::class,
+        )
 
         val withoutQualifier = container.resolve(SampleRepository::class)
-        val withQualifier = container.resolve(SampleRepository::class, First::class)
+        val withQualifier = container.resolve(type = SampleRepository::class, qualifier = First::class)
 
         assertThat(withoutQualifier).isSameAs(withQualifier)
     }
@@ -158,21 +165,29 @@ class KirbyDIContainerTest {
     fun `서로 다른 Qualifier의 캐시는 섞이지 않는다`() {
         val container = containerWithTwoRepositories()
 
-        val first = container.resolve(SampleRepository::class, First::class)
-        val second = container.resolve(SampleRepository::class, Second::class)
+        val first = container.resolve(type = SampleRepository::class, qualifier = First::class)
+        val second = container.resolve(type = SampleRepository::class, qualifier = Second::class)
 
         assertThat(first).isNotSameAs(second)
-        assertThat(container.resolve(SampleRepository::class, First::class)).isSameAs(first)
-        assertThat(container.resolve(SampleRepository::class, Second::class)).isSameAs(second)
+        assertThat(container.resolve(type = SampleRepository::class, qualifier = First::class)).isSameAs(first)
+        assertThat(container.resolve(type = SampleRepository::class, qualifier = Second::class)).isSameAs(second)
     }
 
     @Test
     fun `같은 타입과 Qualifier를 중복 등록하면 오류를 낸다`() {
         val container = KirbyDIContainer()
-        container.registerBinding(SampleRepository::class, RealSampleRepository::class, First::class)
+        container.registerBinding(
+            from = SampleRepository::class,
+            to = RealSampleRepository::class,
+            qualifier = First::class,
+        )
 
         assertThatThrownBy {
-            container.registerBinding(SampleRepository::class, OtherSampleRepository::class, First::class)
+            container.registerBinding(
+                from = SampleRepository::class,
+                to = OtherSampleRepository::class,
+                qualifier = First::class,
+            )
         }.hasMessageContaining("이미 등록")
     }
 
@@ -182,7 +197,10 @@ class KirbyDIContainerTest {
         container.resolve(LeafDependency::class)
 
         assertThatThrownBy {
-            container.registerBinding(LeafDependency::class, LeafDependency::class)
+            container.registerBinding(
+                from = LeafDependency::class,
+                to = LeafDependency::class,
+            )
         }.hasMessageContaining("이미 해결한 타입")
     }
 
@@ -193,7 +211,10 @@ class KirbyDIContainerTest {
         assertThatThrownBy { container.createInstance(NeedsRepository::class) }
             .hasMessageContaining("구현체가 등록되지 않았습니다")
 
-        container.registerBinding(SampleRepository::class, RealSampleRepository::class)
+        container.registerBinding(
+            from = SampleRepository::class,
+            to = RealSampleRepository::class,
+        )
 
         assertThat(container.createInstance(NeedsRepository::class).repository)
             .isInstanceOf(RealSampleRepository::class.java)
@@ -202,9 +223,13 @@ class KirbyDIContainerTest {
     @Test
     fun `등록되지 않은 Qualifier를 요청하면 오류를 낸다`() {
         val container = KirbyDIContainer()
-        container.registerBinding(SampleRepository::class, RealSampleRepository::class, First::class)
+        container.registerBinding(
+            from = SampleRepository::class,
+            to = RealSampleRepository::class,
+            qualifier = First::class,
+        )
 
-        assertThatThrownBy { container.resolve(SampleRepository::class, Second::class) }
+        assertThatThrownBy { container.resolve(type = SampleRepository::class, qualifier = Second::class) }
             .hasMessageContaining("등록되지 않았습니다")
     }
 
@@ -217,7 +242,7 @@ class KirbyDIContainerTest {
 
         assertThat(field.repository).isInstanceOf(RealSampleRepository::class.java)
         assertThat(constructor.repository).isInstanceOf(OtherSampleRepository::class.java)
-        assertThat(field.repository).isSameAs(container.resolve(SampleRepository::class, First::class))
+        assertThat(field.repository).isSameAs(container.resolve(type = SampleRepository::class, qualifier = First::class))
     }
 
     @Test
@@ -241,7 +266,15 @@ class KirbyDIContainerTest {
 
     private fun containerWithTwoRepositories(): KirbyDIContainer =
         KirbyDIContainer().apply {
-            registerBinding(SampleRepository::class, RealSampleRepository::class, First::class)
-            registerBinding(SampleRepository::class, OtherSampleRepository::class, Second::class)
+            registerBinding(
+                from = SampleRepository::class,
+                to = RealSampleRepository::class,
+                qualifier = First::class,
+            )
+            registerBinding(
+                from = SampleRepository::class,
+                to = OtherSampleRepository::class,
+                qualifier = Second::class,
+            )
         }
 }

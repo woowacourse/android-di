@@ -20,9 +20,9 @@ class ShoppingApplicationTest {
         val activity = Robolectric.buildActivity(MainActivity::class.java).setup().get()
         val container = (activity.application as ShoppingApplication).container
 
-        assertThat(container.resolve(CartRepository::class, RoomCart::class))
+        assertThat(container.resolve(type = CartRepository::class, qualifier = RoomCart::class))
             .isInstanceOf(DefaultCartRepository::class.java)
-        assertThat(container.resolve(CartRepository::class, InMemoryCart::class))
+        assertThat(container.resolve(type = CartRepository::class, qualifier = InMemoryCart::class))
             .isInstanceOf(InMemoryCartRepository::class.java)
         assertThatThrownBy { container.resolve(CartRepository::class) }
             .hasMessageContaining("Qualifier 없이")

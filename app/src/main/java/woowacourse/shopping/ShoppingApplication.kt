@@ -23,9 +23,20 @@ class ShoppingApplication : Application() {
                 .build()
         container =
             KirbyDIContainer().apply {
-                registerInstance(CartProductDao::class, database.cartProductDao())
-                registerBinding(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
-                registerBinding(CartRepository::class, InMemoryCartRepository::class, InMemoryCart::class)
+                registerInstance(
+                    type = CartProductDao::class,
+                    instance = database.cartProductDao(),
+                )
+                registerBinding(
+                    from = CartRepository::class,
+                    to = DefaultCartRepository::class,
+                    qualifier = RoomCart::class,
+                )
+                registerBinding(
+                    from = CartRepository::class,
+                    to = InMemoryCartRepository::class,
+                    qualifier = InMemoryCart::class,
+                )
             }
     }
 }
