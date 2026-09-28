@@ -6,6 +6,8 @@ import org.junit.Test
 class DependencyContainerTest {
     class TestRepository
 
+    interface TestDao
+
     class TestService(
         val repository: TestRepository,
     )
@@ -20,6 +22,12 @@ class DependencyContainerTest {
         lateinit var testAnnotationRepository: TestRepository
         var testRepository: TestRepository? = null
     }
+
+    class FakeTestDao : TestDao
+
+    class TestDaoRepository(
+        val dao: TestDao,
+    )
 
     @Test
     fun `요청한 타입의 인스턴스를 생성한다`() {
@@ -73,5 +81,28 @@ class DependencyContainerTest {
 
         assertThat(service.testRepository).isNull()
         assertThat(service.testAnnotationRepository).isSameAs(repository)
+    }
+
+    @Test
+    fun `외부에서 생성한 인스턴스를 등록하면 해당 타입으로 반환한다`() {
+        val container = DependencyContainer()
+        val dao = FakeTestDao()
+
+        container.register(TestDao::class, dao)
+
+        val resolvedDao = container.resolve(TestDao::class)
+
+        assertThat(resolvedDao).isSameAs(dao)
+    }
+
+    @Test
+    fun `등록된 의존성을 생성자에 재귀적으로 주입한다`() {
+        val container = DependencyContainer()
+        val dao = FakeTestDao()
+        container.register(TestDao::class, dao)
+
+        val repository = container.resolve(TestDaoRepository::class)
+
+        assertThat(repository.dao).isSameAs(dao)
     }
 }

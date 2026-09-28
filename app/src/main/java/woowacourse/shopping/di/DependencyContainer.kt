@@ -55,4 +55,11 @@ class DependencyContainer {
                 property.setter.call(instance, resolve(dependencyType))
             }
     }
+
+    fun <T : Any> register(
+        type: KClass<T>,
+        instance: T,
+    ) {
+        instances[type] = instance
+    }
 }
