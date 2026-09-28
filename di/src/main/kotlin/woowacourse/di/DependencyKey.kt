@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import kotlin.reflect.KClass
 
-data class DependencyKey(
+internal data class DependencyKey(
     val type: KClass<*>,
     val qualifier: KClass<out Annotation>?,
 )

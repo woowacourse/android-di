@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import woowacourse.di.KirbyInject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCart
-import woowacourse.shopping.di.KirbyInject
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(

@@ -1,6 +1,7 @@
 package woowacourse.shopping.di
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import woowacourse.di.KirbyDIContainer
 
 val LocalDIContainer =
     staticCompositionLocalOf<KirbyDIContainer> {

@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import woowacourse.di.KirbyDIContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -9,7 +10,6 @@ import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.KirbyDIContainer
 
 class ShoppingApplication : Application() {
     lateinit var container: KirbyDIContainer

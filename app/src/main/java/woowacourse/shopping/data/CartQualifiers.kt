@@ -1,6 +1,6 @@
 package woowacourse.shopping.data
 
-import woowacourse.shopping.di.KirbyQualifier
+import woowacourse.di.KirbyQualifier
 
 @KirbyQualifier
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)

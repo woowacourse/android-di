@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
