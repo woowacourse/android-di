@@ -124,7 +124,7 @@ class DiManager {
             modelClass.getDeclaredField(it.name).apply {
                 val dependancyKClass =
                     it.returnType.classifier as? KClass<*>
-                        ?: throw IllegalArgumentException("프로퍼티 타입을 찾울 수 없어요: $it")
+                        ?: throw IllegalArgumentException("프로퍼티 타입을 찾을 수 없어요: $it")
                 val qualifier =
                     it.annotations
                         .firstOrNull { annotation ->
