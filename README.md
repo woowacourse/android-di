@@ -22,7 +22,7 @@
 ### 4. CartRepository의 DAO 의존성 주입
 
 - [x] `CartRepository`가 `CartProductDao`를 생성자로 전달받도록 변경한다.
-- [ ] 컨테이너가 `CartRepository`에 필요한 DAO까지 재귀적으로 해결하도록 구성한다.
+- [x] 컨테이너가 `CartRepository`에 필요한 DAO까지 재귀적으로 해결하도록 구성한다.
 - [x] 컨테이너가 직접 생성할 수 없는 의존성의 생성 경계를 정하고 등록한다.
 - [x] `CartRepository`에 DAO가 정상적으로 주입되는지 테스트한다.
 
