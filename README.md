@@ -106,10 +106,26 @@ CartViewModel
 문자열보다 이름 오류를 컴파일 단계에서 발견하기 쉽다.
 대신 런타임 Retention과 Kotlin 리플렉션의 탐색 위치를 맞춰야 한다.
 
+- 얻는 것
+  - 오타가 나면 컴파일 에러가 난다. (`@RoomCart` vs `"roomCart"`)
+  - IDE에서 사용처 찾기와 이름 바꾸기가 된다.
+  - `@KirbyQualifier` 메타 어노테이션으로 이름표 전용 어노테이션만 받도록 강제할 수 있다.
+- 치르는 비용
+  - 이름표마다 어노테이션 클래스를 하나씩 선언해야 한다.
+  - `@Retention(RUNTIME)`과 `@Target(PROPERTY, VALUE_PARAMETER)`를 빠뜨리면 리플렉션에서 이름표가 보이지 않는다.
+  - 필드에는 `@property:`로 위치를 명시해야 한다.
+
 **`:di`는 순수 JVM 모듈로 만든다.**
 
 DI 코어에는 Android나 쇼핑 앱 타입이 필요하지 않다.
 Android 생명주기와 화면 연결은 `:app`이 담당한다.
+
+- 얻는 것
+  - 에뮬레이터나 Robolectric 없이 JVM 단위 테스트로 빠르게 검증할 수 있다.
+  - 코어가 Android와 쇼핑 앱에 우연히 의존하는 것을 빌드가 막아준다. 안드로이드 모듈이면 `import android.*`가 그냥 컴파일된다.
+- 치르는 비용
+  - `Context`, `ViewModel`, `Lifecycle`을 코어에서 쓸 수 없다.
+  - Factory, CompositionLocal처럼 Android와 연결하는 코드는 반드시 `:app`에 있어야 한다.
 
 **등록된 바인딩을 조용히 덮어쓰지 않는다.**
 
