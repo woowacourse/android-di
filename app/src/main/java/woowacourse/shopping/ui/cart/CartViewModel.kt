@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.util.annotations.InMemoryRepo
 import woowacourse.shopping.util.annotations.RoomRepo
 
 data class CartUiState(

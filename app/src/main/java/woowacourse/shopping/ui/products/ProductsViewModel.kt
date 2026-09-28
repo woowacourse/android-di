@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.util.annotations.InjectField
+import com.example.di.annotations.InjectField
 import woowacourse.shopping.util.annotations.RoomRepo
 
 data class ProductsUiState(

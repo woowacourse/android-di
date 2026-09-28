@@ -1,8 +1,6 @@
 package woowacourse.shopping.util.annotations
 
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Qualifier
+import com.example.di.annotations.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)

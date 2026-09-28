@@ -3,8 +3,8 @@ package woowacourse.shopping
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.util.annotations.InjectField
-import woowacourse.shopping.util.annotations.Qualifier
+import com.example.di.annotations.InjectField
+import com.example.di.annotations.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation

@@ -14,7 +14,7 @@ import woowacourse.shopping.data.repository_impl.DefaultCartRepository
 import woowacourse.shopping.data.repository_impl.FakeCartRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.products.ProductsViewModel
-import woowacourse.shopping.util.annotations.InjectField
+import com.example.di.annotations.InjectField
 import woowacourse.shopping.util.annotations.InMemoryRepo
 import woowacourse.shopping.util.annotations.RoomRepo
 import java.util.UUID

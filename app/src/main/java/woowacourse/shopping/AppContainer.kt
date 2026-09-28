@@ -10,10 +10,9 @@ import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository_impl.DefaultCartRepository
 import woowacourse.shopping.data.repository_impl.FakeCartRepository
-import woowacourse.shopping.util.annotations.InMemoryRepo
-import woowacourse.shopping.util.annotations.Qualifier
-import woowacourse.shopping.util.annotations.RoomRepo
 import kotlin.reflect.KClass
+import woowacourse.shopping.util.annotations.InMemoryRepo
+import woowacourse.shopping.util.annotations.RoomRepo
 
 class MyApplication : Application() {
     lateinit var appContainer: AppContainer
