@@ -51,6 +51,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":di"))
+
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
@@ -65,8 +67,6 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.kotlin.reflect)
-
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
+    testImplementation(libs.kotlin.reflect)
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)

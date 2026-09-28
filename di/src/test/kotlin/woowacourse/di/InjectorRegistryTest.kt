@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

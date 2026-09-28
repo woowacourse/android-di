@@ -61,7 +61,7 @@ JDK 21 환경에서 다음 명령으로 검증했다.
 
 ## 3단계 기능 구현 목록
 
-- [ ] DI 코어를 순수 JVM `:di` 모듈로 분리
+- [x] DI 코어를 순수 JVM `:di` 모듈로 분리
   - Injector와 Inject를 `woowacourse.di` 패키지로 옮긴다.
   - 코어 테스트는 `:di`에서, ViewModel·Room 연동 테스트는 `:app`에서 실행한다.
   - `:app -> :di` 방향으로만 의존하고 코어에 Android 및 쇼핑 도메인 의존성을 두지 않는다.
