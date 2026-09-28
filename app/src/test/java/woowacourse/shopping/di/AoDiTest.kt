@@ -61,7 +61,7 @@ class AoDiTest {
                 }
             }
 
-        AoDi.register(CartRepository::class, fakeRepository)
+        AoDi.register(CartRepository::class, fakeRepository, RoomCart::class)
         AoDi.inject(viewModel)
 
         assertThat(viewModel.cartRepository).isSameAs(fakeRepository)
@@ -148,6 +148,7 @@ class AoDiTest {
 
     class CartRepositoryFieldViewModel : ViewModel() {
         @FieldInject
+        @RoomCart
         lateinit var cartRepository: CartRepository
     }
 

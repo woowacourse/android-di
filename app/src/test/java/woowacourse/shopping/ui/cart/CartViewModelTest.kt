@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.di.AoDi
+import woowacourse.shopping.di.RoomCart
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
@@ -33,7 +34,7 @@ class CartViewModelTest {
         runTest {
             val product = CartProduct(id = 42L, name = "우테코 과자", price = 10_000, imageUrl = "", createdAt = 0L)
             val repository = RecordingCartRepository(mutableListOf(product))
-            AoDi.register(CartRepository::class, repository)
+            AoDi.register(CartRepository::class, repository, RoomCart::class)
             val viewModel = CartViewModel().also(AoDi::inject)
 
             viewModel.deleteCartProduct(product.id)

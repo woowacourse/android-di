@@ -24,20 +24,25 @@ object AoDi : ViewModelProvider.Factory {
         return vm
     }
 
-    fun <T : Any> instantiate(type: KClass<T>): T = container.instantiate(type)
+    fun <T : Any> instantiate(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T = container.instantiate(type, qualifier)
 
     fun <T : Any> register(
         type: KClass<T>,
         instance: T,
+        qualifier: KClass<out Annotation>? = null,
     ) {
-        container.register(type, instance)
+        container.register(type, instance, qualifier)
     }
 
     fun registerInterfaceRule(
         type: KClass<*>,
         implType: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
     ) {
-        container.registerInterfaceRule(type, implType)
+        container.registerInterfaceRule(type, implType, qualifier)
     }
 
     fun inject(target: Any) = container.inject(target)
