@@ -3,6 +3,8 @@ package woowacourse.shopping.di
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.FakeCartRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -41,8 +43,9 @@ class InjectorTest {
 
     @Test
     fun `두 ViewModel의 필드에 동일한 Repository를 주입한다`() {
-        val products = ViewModelFactory.create(ProductsViewModel::class.java)
-        val cart = ViewModelFactory.create(CartViewModel::class.java)
+        injector.registerSingleton(CartRepository::class) { FakeCartRepository() }
+        val products = injector.create(ProductsViewModel::class)
+        val cart = injector.create(CartViewModel::class)
 
         assertThat(products.cartRepository).isSameAs(cart.cartRepository)
         products.getAllProducts()

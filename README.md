@@ -22,7 +22,7 @@
 - [x] 장바구니 도메인 모델과 엔티티 매퍼
   - `CartProduct`에 실제 상품 식별자와 담은 시각, 화면에 필요한 상품 정보를 담는다.
   - `CartProductEntity.toDomain()`을 추가하고 ID와 담은 시각 보존을 테스트한다.
-- [ ] Room 기반 장바구니 저장·조회·삭제와 재귀 주입 연결
+- [x] Room 기반 장바구니 저장·조회·삭제와 재귀 주입 연결
   - CartRepository 인터페이스와 CartProductDao를 주입받는 DefaultCartRepository를 만든다.
   - 애플리케이션에서 Room Database와 DAO 생성 방법을 등록한다.
   - ViewModel은 Repository의 suspend 함수를 viewModelScope 안에서 호출한다.
