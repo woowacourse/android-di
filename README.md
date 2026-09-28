@@ -43,6 +43,7 @@
 
 ### 기능 요구사항
 ---
-- [ ] Qualifier로 Room과 InMemory중 지정한 구현체 주입
-- [ ] 같은 타입의 후보가 둘 이상인데 Qualifier가 없다면 예외가 발생한다
+- [x] Qualifier로 Room과 InMemory중 지정한 구현체 주입
+- [x] 같은 타입의 후보가 둘 이상인데 Qualifier가 없다면 예외가 발생한다
+- [x] Qualifier 선택과 모호한 요청에 대한 테스트 작성
 - [ ] di 모듈 분리

@@ -14,12 +14,14 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.util.annotations.InjectField
+import woowacourse.shopping.util.annotations.RoomRepo
 
 data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
 class ProductsViewModel(
+    @RoomRepo
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     @InjectField

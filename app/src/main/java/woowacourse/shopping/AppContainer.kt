@@ -9,6 +9,10 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository_impl.DefaultCartRepository
+import woowacourse.shopping.data.repository_impl.FakeCartRepository
+import woowacourse.shopping.util.annotations.InMemoryRepo
+import woowacourse.shopping.util.annotations.Qualifier
+import woowacourse.shopping.util.annotations.RoomRepo
 import kotlin.reflect.KClass
 
 class MyApplication : Application() {
@@ -26,7 +30,16 @@ class AppContainer(context: Context) {
         .build()
     val cartProductDao: CartProductDao = database.cartProductDao()
 
-    val bindings: Map<KClass<*>, KClass<*>> = mapOf(CartRepository::class to DefaultCartRepository::class)
+    val bindings: Map<Pair<KClass<*>, KClass<*>>, KClass<*>> = mapOf(
+        Pair(
+            CartRepository::class,
+            RoomRepo::class
+        ) to DefaultCartRepository::class,
+        Pair(
+            CartRepository::class,
+            InMemoryRepo::class
+        ) to FakeCartRepository::class,
+    )
 
     val productRepository: ProductRepository = ProductRepository()
 }

@@ -4,17 +4,20 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import woowacourse.shopping.util.annotations.InjectField
+import woowacourse.shopping.util.annotations.Qualifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object SamDi {
     fun resolve(
         modelClass: KClass<*>,
-        context: Context
-    ): Any {
+        context: Context,
+        annotation: Annotation? = null,
+        ): Any {
         val app = context.applicationContext as MyApplication
         val container = app.appContainer // AppContainer 객체 들고오기
 
@@ -25,14 +28,28 @@ object SamDi {
             return property.call(container)!!
         }
 
-        val implType = container.bindings[modelClass] ?: modelClass
-        val constructor = implType.primaryConstructor!! // 생성자 확인
-        val types = constructor.parameters.map { it.type.classifier as KClass<*> }
-
-        val inst =
-            types.map { type ->
-                resolve(type, context)
+        lateinit var implType: KClass<*>
+        if(annotation != null) {
+            implType = container.bindings[Pair(modelClass, annotation.annotationClass)]!!
+        } else {
+            val candidates = container.bindings.filterKeys { (type, _) -> type == modelClass }
+            when (candidates.size) {
+                0 -> implType = modelClass
+                1 -> implType = candidates.values.single()
+                else -> throw IllegalArgumentException(
+                    "$modelClass 에 대해 여러 후보지가 있습니다. qualifier를 명확히 하세요",
+                )
             }
+        }
+
+        val constructor = implType.primaryConstructor ?: throw IllegalArgumentException("요청 타입: $modelClass 가 없음") // 생성자 확인
+        val inst = constructor.parameters.map { parameter ->
+            val type = parameter.type.classifier as KClass<*>
+            val qualifier = parameter.annotations.find { annotation ->
+                annotation.annotationClass.hasAnnotation<Qualifier>()
+            }
+            resolve(type, context, qualifier)
+        }
 
         return constructor.call(*inst.toTypedArray())
     }
