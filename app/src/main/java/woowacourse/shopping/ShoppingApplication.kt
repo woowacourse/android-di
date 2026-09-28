@@ -5,6 +5,9 @@ import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCart
+import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.KirbyDIContainer
 
@@ -21,7 +24,8 @@ class ShoppingApplication : Application() {
         container =
             KirbyDIContainer().apply {
                 registerInstance(CartProductDao::class, database.cartProductDao())
-                registerBinding(CartRepository::class, DefaultCartRepository::class)
+                registerBinding(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
+                registerBinding(CartRepository::class, InMemoryCartRepository::class, InMemoryCart::class)
             }
     }
 }
