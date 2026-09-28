@@ -37,7 +37,13 @@ class ShoppingInjectionTest {
                 products.cartRepository.addCartProduct(Product("과자", 10_000, ""))
                 val saved = cart.cartRepository.getAllCartProducts().single()
                 assertThat(saved.name).isEqualTo("과자")
-                assertThat(database.cartProductDao().getAll().single().id).isEqualTo(saved.id)
+                assertThat(
+                    database
+                        .cartProductDao()
+                        .getAll()
+                        .single()
+                        .id,
+                ).isEqualTo(saved.id)
             } finally {
                 database.close()
             }

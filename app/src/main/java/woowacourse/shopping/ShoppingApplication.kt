@@ -12,11 +12,12 @@ class ShoppingApplication : Application() {
     val injector: Injector by lazy {
         Injector().apply {
             registerSingleton(ShoppingDatabase::class) {
-                Room.databaseBuilder(
-                    this@ShoppingApplication,
-                    ShoppingDatabase::class.java,
-                    "shopping.db",
-                ).build()
+                Room
+                    .databaseBuilder(
+                        this@ShoppingApplication,
+                        ShoppingDatabase::class.java,
+                        "shopping.db",
+                    ).build()
             }
             registerSingleton(CartProductDao::class) {
                 create(ShoppingDatabase::class).cartProductDao()

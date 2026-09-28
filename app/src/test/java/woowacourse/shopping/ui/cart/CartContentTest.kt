@@ -108,5 +108,4 @@ class CartContentTest {
             assertThat(state.value.cartProducts).containsExactly(first)
         }
     }
-
 }

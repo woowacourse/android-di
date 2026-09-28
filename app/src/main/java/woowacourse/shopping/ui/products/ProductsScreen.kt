@@ -92,9 +92,10 @@ fun ProductsContent(
     ) { innerPadding ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             items(uiState.products) { product ->
                 ProductItem(
@@ -124,9 +125,10 @@ fun ProductItem(
             model = product.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
         )
         Text(
             text = product.name,

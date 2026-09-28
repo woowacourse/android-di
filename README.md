@@ -31,7 +31,7 @@
 - [x] 장바구니의 담은 시각 표시와 항목 식별
   - DateFormatter로 담은 시각을 표시하고 LazyColumn의 key로 상품 ID를 사용한다.
   - 사전 제공 화면 테스트와 Preview를 새 타입에 맞추고 날짜·삭제 동작을 검증한다.
-- [ ] 기존 코드 스타일 오류 정리 및 전체 검증
+- [x] 기존 코드 스타일 오류 정리 및 전체 검증
   - 프로젝트의 ktlint 규칙을 적용한다.
   - 사전 제공 테스트와 추가 테스트, 디버그 APK 빌드 및 lint 검사를 실행한다.
 
@@ -43,3 +43,18 @@
 얻도록 등록한다. Database, DAO, CartRepository는 애플리케이션의 컨테이너 안에서 공유하고,
 ViewModel은 ViewModelProvider가 관리한다. DateFormatter의 화면 스코프 주입은 기존 다음
 단계 과제로 남겨 두고 현재 화면에서 생성한 인스턴스를 파라미터로 전달한다.
+
+
+### 검증 결과
+
+JDK 21 환경에서 다음 명령으로 검증했다.
+
+```shell
+./gradlew :app:testDebugUnitTest ktlintCheck :app:assembleDebug :app:lintDebug
+```
+
+- 사전 제공 테스트를 포함한 전체 테스트 39개 통과
+- ktlint 검사 및 디버그 APK 빌드 성공
+- Android lint 오류 0개, 기존 빌드 도구·의존성의 새 버전 알림 12개
+- Room 재연결 후 데이터 유지, 중복 상품의 중간 항목 및 연속 삭제 검증
+- 애노테이션 필드 주입, 재귀 생성, 싱글톤 공유, 순환 의존성 오류 검증
