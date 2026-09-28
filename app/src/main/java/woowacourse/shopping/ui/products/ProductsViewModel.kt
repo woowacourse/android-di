@@ -25,7 +25,7 @@ class ProductsViewModel(
 ) : ViewModel() {
     @InjectProperty
     @LocalMemoryCart
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
 
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()

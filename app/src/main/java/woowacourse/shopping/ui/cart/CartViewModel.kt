@@ -22,7 +22,7 @@ data class CartUiState(
 class CartViewModel : ViewModel() {
     @InjectProperty
     @LocalMemoryCart
-    lateinit var cartRepository: CartRepository
+    private lateinit var cartRepository: CartRepository
 
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
     val uiState: StateFlow<CartUiState> get() = _uiState.asStateFlow()
