@@ -13,15 +13,17 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.util.annotations.InjectField
 
 data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
 class ProductsViewModel(
-    private val productRepository: ProductRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
+    @InjectField
+    lateinit var productRepository: ProductRepository
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 

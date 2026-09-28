@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
-import woowacourse.shopping.model.Product
 
 data class CartUiState(
     val cartProducts: List<CartProduct> = emptyList(),
