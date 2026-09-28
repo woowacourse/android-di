@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -99,7 +99,10 @@ fun CartContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) {
-            itemsIndexed(uiState.cartProducts) { _, cartProduct ->
+            items(
+                items = uiState.cartProducts,
+                key = { it.id },
+            ) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
@@ -124,8 +127,10 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
-        Text(text = "", style = MaterialTheme.typography.labelSmall)
+        Text(
+            text = dateFormatter.formatDate(cartProduct.createdAt),
+            style = MaterialTheme.typography.labelSmall,
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,

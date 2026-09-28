@@ -28,7 +28,7 @@
   - ViewModel은 Repository의 suspend 함수를 viewModelScope 안에서 호출한다.
   - UI는 CartProduct를 사용하고 리스트 인덱스 대신 Long ID로 삭제한다.
   - 실제 Room 저장·재조회, 중간 항목 삭제, ViewModel 비동기 동작 및 DI 연결을 테스트한다.
-- [ ] 장바구니의 담은 시각 표시와 항목 식별
+- [x] 장바구니의 담은 시각 표시와 항목 식별
   - DateFormatter로 담은 시각을 표시하고 LazyColumn의 key로 상품 ID를 사용한다.
   - 사전 제공 화면 테스트와 Preview를 새 타입에 맞추고 날짜·삭제 동작을 검증한다.
 - [ ] 기존 코드 스타일 오류 정리 및 전체 검증
