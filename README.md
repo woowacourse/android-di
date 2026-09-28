@@ -78,7 +78,7 @@ JDK 21 환경에서 다음 명령으로 검증했다.
   - `@RoomCart`와 `@InMemoryCart`를 정의하고 두 구현체를 앱에서 등록한다.
   - 두 ViewModel에 기본 저장소로 `@RoomCart`를 명시하고 메모리 구현체 선택 방법을 문서화한다.
   - 실제 앱 컨테이너의 두 구현체 선택, 데이터 분리, 모호한 요청의 실패를 검증한다.
-- [ ] 모듈 독립성과 전체 동작 검증
+- [x] 모듈 독립성과 전체 동작 검증
   - DI 모듈의 테스트와 의존성 목록으로 Android·앱 의존성이 없는지 확인한다.
   - 앱 전체 테스트, ktlint, 디버그 APK 빌드와 Android lint 검사를 실행한다.
 
@@ -130,3 +130,22 @@ lateinit var cartRepository: CartRepository
 `injector.get<CartRepository>()`는 두 구현체 중 임의의 하나를 선택하지 않고 후보를 포함한
 오류를 낸다. InMemoryCartRepository는 컨테이너 안에서 공유되지만 새 컨테이너를 만들거나
 프로세스를 다시 시작하면 내용이 사라진다. Room 구현체는 기존처럼 영구 저장한다.
+
+
+### 3단계 검증 결과
+
+JDK 21 환경에서 검증했다.
+
+```shell
+./gradlew :di:test :app:testDebugUnitTest ktlintCheck :app:assembleDebug :app:lintDebug
+./gradlew :di:dependencies --configuration runtimeClasspath
+```
+
+- `:di` 테스트 35개, `:app` 테스트 33개: 총 68개 통과, 실패·누락 없음
+- ktlint 통과, 디버그 APK 빌드 성공
+- Android lint 오류 0개, 빌드 도구·의존성 새 버전 알림 13개
+- `:di` 런타임 의존성은 Kotlin 표준 라이브러리·리플렉션과 JetBrains annotations뿐이며,
+  Android·AndroidX·`:app` 의존성 없음
+- 코어 소스에도 Android·쇼핑 앱 import 없음
+- 생성자·필드 Qualifier 선택, 누락 시 명확한 오류, Qualifier별 싱글톤·순환 의존성 검증
+- 실제 앱에서 Room·메모리 저장소 선택 및 데이터 분리, 메모리 저장소의 ID 삭제·동시 저장 검증
