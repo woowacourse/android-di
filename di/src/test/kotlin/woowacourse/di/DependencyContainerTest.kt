@@ -34,6 +34,18 @@ class DependencyContainerTest {
     }
 
     @Test
+    fun `구현체가 하나여도 Qualifier가 없으면 오류가 발생한다`() {
+        val container =
+            DependencyContainer(
+                bindings = mapOf(DependencyKey(TestRepository::class, RoomTest::class) to RoomTestRepository::class),
+            )
+
+        val exception = assertFailsWith<IllegalStateException> { container.inject(UnqualifiedTarget()) }
+
+        assertContains(exception.message.orEmpty(), RoomTest::class.simpleName.orEmpty())
+    }
+
+    @Test
     fun `애노테이션이 붙은 필드에만 의존성을 재귀적으로 주입하고 재사용한다`() {
         val container =
             DependencyContainer(

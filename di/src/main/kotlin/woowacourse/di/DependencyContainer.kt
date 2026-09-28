@@ -84,7 +84,11 @@ class DependencyContainer(
                     "Qualifier를 지정해 주세요: ${qualifiers.joinToString()}",
             )
         }
-        return candidates.singleOrNull() ?: requestedKey
+        val qualifier = candidates.singleOrNull()?.qualifier
+        if (qualifier != null) {
+            error("${requestedKey.type.qualifiedName} 타입에 Qualifier를 지정해 주세요: ${qualifier.simpleName}")
+        }
+        return requestedKey
     }
 
     private fun List<Annotation>.findQualifier(): KClass<out Annotation>? {
