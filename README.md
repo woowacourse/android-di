@@ -70,7 +70,7 @@ JDK 21 환경에서 다음 명령으로 검증했다.
   - 생성자 파라미터와 `@Inject` 필드의 Qualifier를 해석한다.
   - 같은 타입이 둘 이상 등록되어 있는데 Qualifier가 없으면 후보를 포함한 오류를 낸다.
   - Qualifier별 싱글톤, 미등록 Qualifier, 중복 등록, 복수 Qualifier 및 순환 의존성을 테스트한다.
-- [ ] 의존성 등록 및 조회 DSL 제공
+- [x] 의존성 등록 및 조회 DSL 제공
   - `injector { singleton<T> { ... } }`와 `get<T>()`를 제공한다.
   - DSL에서도 Qualifier 선택과 모호한 의존성 오류가 동일하게 동작하는지 테스트한다.
 - [ ] Room·In-Memory 장바구니 구현체 선택 및 앱 적용
