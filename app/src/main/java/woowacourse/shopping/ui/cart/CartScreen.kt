@@ -36,7 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.SamDi
+import woowacourse.shopping.ViewModelFactory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
@@ -47,7 +47,7 @@ fun CartScreen(
     modifier: Modifier = Modifier,
     viewModel: CartViewModel =
         viewModel(
-            factory = SamDi.viewModelFactory(context = LocalContext.current),
+            factory = ViewModelFactory.viewModelFactory(context = LocalContext.current),
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -177,16 +177,17 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(
-                        CartProduct(
-                            id = 1L,
-                            Product(
-                                name = "우테코 과자",
-                                price = 10_000,
-                                imageUrl = ""
-                            )
-                        )
-                    ),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                Product(
+                                    name = "우테코 과자",
+                                    price = 10_000,
+                                    imageUrl = "",
+                                ),
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},

@@ -1,8 +1,12 @@
 package com.example.di
 
+import com.example.di.annotations.InjectField
 import com.example.di.annotations.Qualifier
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 class SamDi(
@@ -46,5 +50,19 @@ class SamDi(
         }
 
         return constructor.call(*dependencies.toTypedArray())
+    }
+
+    fun injectFields(
+        instance: Any,
+    ) {
+        instance::class.memberProperties
+            .filter { it.findAnnotation<InjectField>() != null }
+            .filterIsInstance<KMutableProperty1<*, *>>()
+            .forEach { property ->
+                val type = property.returnType.classifier as KClass<*>
+
+                val value = this.resolve(type)
+                property.setter.call(instance, value)
+            }
     }
 }

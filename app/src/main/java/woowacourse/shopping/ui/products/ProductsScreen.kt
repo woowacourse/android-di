@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.SamDi
+import woowacourse.shopping.ViewModelFactory
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -44,7 +44,7 @@ fun ProductsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProductsViewModel =
         viewModel(
-            factory = SamDi.viewModelFactory(LocalContext.current),
+            factory = ViewModelFactory.viewModelFactory(LocalContext.current),
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

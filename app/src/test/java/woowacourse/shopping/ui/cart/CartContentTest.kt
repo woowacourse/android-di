@@ -25,7 +25,7 @@ class CartContentTest {
     fun `장바구니에 담긴 상품의 이름이 화면에 보인다`() {
         composeRule.setContent {
             CartContent(
-                uiState = CartUiState(cartProducts = listOf(CartProduct(id = 0,product))),
+                uiState = CartUiState(cartProducts = listOf(CartProduct(id = 0, product))),
                 dateFormatter = DateFormatter(LocalContext.current),
                 onDelete = {},
                 onNavigateUp = {},

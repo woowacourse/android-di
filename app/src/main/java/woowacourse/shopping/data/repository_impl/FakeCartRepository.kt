@@ -4,7 +4,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
-class FakeCartRepository: CartRepository {
+class FakeCartRepository : CartRepository {
     private val cartProducts: MutableList<CartProduct> = mutableListOf()
 
     override suspend fun addCartProduct(product: Product) {
