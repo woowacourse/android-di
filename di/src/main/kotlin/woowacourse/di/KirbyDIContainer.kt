@@ -43,7 +43,7 @@ class KirbyDIContainer {
     private fun resolveDependency(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
-        path: MutableSet<DependencyKey>,
+        creatingKeys: MutableSet<DependencyKey>,
     ): Any {
         val key = registry.selectKey(type, qualifier)
         registry.existingInstance(key)?.let {
@@ -52,7 +52,7 @@ class KirbyDIContainer {
         }
 
         val target = (registry.registrationFor(key) as? Registration.Binding)?.implementation ?: type
-        return instantiate(key, target, path).also {
+        return instantiate(key, target, creatingKeys).also {
             registry.cacheGenerated(key, type, it)
         }
     }
@@ -60,9 +60,10 @@ class KirbyDIContainer {
     private fun instantiate(
         key: DependencyKey,
         target: KClass<*>,
-        path: MutableSet<DependencyKey>,
+        creatingKeys: MutableSet<DependencyKey>,
     ): Any {
-        require(path.add(key)) { "순환 의존성이 발견되었습니다: $key" }
+        require(key !in creatingKeys) { "순환 의존성이 발견되었습니다: $key" }
+        creatingKeys += key
         try {
             val constructor =
                 target.primaryConstructor
@@ -72,19 +73,19 @@ class KirbyDIContainer {
                     val parameterType =
                         parameter.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("의존성 타입을 확인할 수 없습니다: $parameter")
-                    resolveDependency(parameterType, qualifierOf(parameter.annotations), path)
+                    resolveDependency(parameterType, qualifierOf(parameter.annotations), creatingKeys)
                 }
             val instance = constructor.call(*arguments.toTypedArray())
-            injectFields(instance, path)
+            injectFields(instance, creatingKeys)
             return instance
         } finally {
-            path.remove(key)
+            creatingKeys -= key
         }
     }
 
     private fun injectFields(
         target: Any,
-        path: MutableSet<DependencyKey>,
+        creatingKeys: MutableSet<DependencyKey>,
     ) {
         target::class
             .memberProperties
@@ -95,7 +96,7 @@ class KirbyDIContainer {
                 val dependencyType =
                     property.returnType.classifier as? KClass<*>
                         ?: throw IllegalArgumentException("의존성 타입을 확인할 수 없습니다: $property")
-                property.setter.call(target, resolveDependency(dependencyType, qualifierOf(property.annotations), path))
+                property.setter.call(target, resolveDependency(dependencyType, qualifierOf(property.annotations), creatingKeys))
             }
     }
 
