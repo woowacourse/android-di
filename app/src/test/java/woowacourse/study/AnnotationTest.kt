@@ -10,7 +10,10 @@ class AnnotationTest {
     @Target(AnnotationTarget.FIELD)
     annotation class FieldOnly
 
-    class Pizza(@PropertyOnly val topping: String, @FieldOnly val size: String)
+    class Pizza(
+        @PropertyOnly val topping: String,
+        @FieldOnly val size: String,
+    )
 
     @Target(AnnotationTarget.PROPERTY)
     @Retention(AnnotationRetention.SOURCE)
@@ -24,7 +27,11 @@ class AnnotationTest {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class RuntimeOnly
 
-    class Ham(@SourceOnly val source: String, @BinaryOnly val binary: String, @RuntimeOnly val runtime: String)
+    class Ham(
+        @SourceOnly val source: String,
+        @BinaryOnly val binary: String,
+        @RuntimeOnly val runtime: String,
+    )
 
     @Test
     fun `property 어노테이션은 코틀린 프로퍼티에서 찾을 수 있다`() {

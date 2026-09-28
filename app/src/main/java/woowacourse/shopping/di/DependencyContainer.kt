@@ -1,7 +1,10 @@
 package woowacourse.shopping.di
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.cast
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class DependencyContainer {
@@ -35,5 +38,21 @@ class DependencyContainer {
             }
 
         return constructor.call(*dependencies.toTypedArray())
+    }
+
+    fun inject(instance: Any) {
+        instance::class
+            .declaredMemberProperties
+            .filterIsInstance<KMutableProperty<*>>()
+            .filter { it.findAnnotation<MyInject>() != null }
+            .forEach { property ->
+                val dependencyType =
+                    requireNotNull(
+                        property.returnType.classifier as? KClass<*>,
+                    ) {
+                        "${property.name}의 타입을 확인할 수 없습니다."
+                    }
+                property.setter.call(instance, resolve(dependencyType))
+            }
     }
 }
