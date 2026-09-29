@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.cart
 
-import android.R.attr.name
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.DatePickerDefaults.dateFormatter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
 import woowacourse.shopping.model.CartProduct
+import woowacourse.shopping.ui.ViewModelFactory
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
@@ -45,7 +44,7 @@ fun CartScreen(
     onNavigateUp: () -> Unit,
     dateFormatter: DateFormatter,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(),
+    viewModel: CartViewModel = viewModel(factory = ViewModelFactory),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

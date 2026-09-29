@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartScreen
 import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.products.ProductsScreen

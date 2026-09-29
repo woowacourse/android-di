@@ -20,11 +20,10 @@ class ShoppingApplication : Application() {
                 .databaseBuilder<ShoppingDatabase>(this, "shopping-database")
                 .setDriver(AndroidSQLiteDriver())
                 .build()
-        val cartProductDao = db.cartProductDao()
 
         DIContainer.bindInstance(
             type = CartProductDao::class,
-            instance = cartProductDao,
+            instance = db.cartProductDao(),
         )
         DIContainer.bind(
             type = CartRepository::class,
