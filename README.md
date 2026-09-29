@@ -85,8 +85,8 @@ Annotation을 붙여서 필요한 요소에만 의존성을 주입하는 방식�
 또한 현재 DIContainer가 @Inject를 포함한 어노테이션을 런타임 reflection으로 해석하는 구조이기 때문에 Qualifier 역시 어노테이션으로 표현하면 기존 주입 방식과 일관된 형태로 처리할 수 있다.
 
 ### `:di` 모듈을 순수 JVM 모듈로 구성한 이유
-Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI 모듈에서 직접 사용할 수 있어 구현은 편리하지만, DI 모듈을 Android 프레임워크 외의 환경에서 재사용하기 어려워집니다.
-따라서 DI 모듈의 책임을 특정 Android 프레임워크와 관계없이 객체의 등록, 생성, 탐색, 주입을 관리하는 것으로 한정하기 위해 순수 JVM 모듈로 구성하였습니다.
+Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI 모듈에서 직접 사용할 수 있어 구현은 편리하지만, DI 모듈을 Android 프레임워크 외의 환경에서 재사용하기 어려워진다.
+따라서 DI 모듈의 책임을 특정 Android 프레임워크와 관계없이 객체의 등록, 생성, 탐색, 주입을 관리하는 것으로 한정하기 위해 순수 JVM 모듈로 구성하였다.
 
-순수 JVM 모듈에서는 Android 타입을 직접 알 수 없으므로, Context나 Room에서 생성하는 DAO처럼 DIContainer가 직접 생성하기 어려운 객체는 `:app`에서 컨테이너에 등록해야 합니다.
-또한 화면 스코프처럼 Android 생명주기와 관련된 기능도 DI 모듈이 Android 생명주기를 알 수 없으므로 `:app`에서 처리해야 합니다. 
+순수 JVM 모듈에서는 Android 타입을 직접 알 수 없으므로, Context나 Room에서 생성하는 DAO처럼 DIContainer가 직접 생성하기 어려운 객체는 `:app`에서 컨테이너에 등록해야 한다.
+또한 화면 스코프처럼 Android 생명주기와 관련된 기능도 DI 모듈이 Android 생명주기를 알 수 없으므로 `:app`에서 처리해야 한다. 
