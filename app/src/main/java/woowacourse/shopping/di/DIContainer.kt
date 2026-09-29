@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DIContainer.injectFields
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.collections.forEach
@@ -63,6 +62,11 @@ object DIContainer {
                 }
             val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
             val dependencies = findDependencies(constructor)
+            if (dependencies.isEmpty()) {
+                val instance = constructor.call()
+                injectFields(instance)
+                return instance
+            }
             val instance = constructor.call(*dependencies.toTypedArray())
             instances[implementationClass] = instance
             if (modelClass != implementationClass) instances[modelClass] = instance
@@ -72,7 +76,7 @@ object DIContainer {
         }
     }
 
-    fun <T : Any> injectFields(instance: T) {
+    private fun <T : Any> injectFields(instance: T) {
         instance::class
             .memberProperties
             .filter { property ->
@@ -115,9 +119,5 @@ object DIContainer {
 }
 
 object ViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel = modelClass.kotlin.primaryConstructor!!.call()
-        injectFields(viewModel)
-        return viewModel
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = DIContainer.createInstance(modelClass.kotlin)
 }
