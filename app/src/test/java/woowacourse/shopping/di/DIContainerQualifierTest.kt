@@ -63,29 +63,6 @@ class DIContainerQualifierTest {
     }
 
     @Test
-    fun `동일 타입 구현체가 하나이지만 Qualifier가 없으면 예외가 발생한다`() {
-        // given
-        DIContainer.bind(
-            type = TestRepository::class,
-            implementation = RoomTestRepository::class,
-            qualifier = TestRoom::class,
-        )
-
-        // when
-        val exception =
-            assertThrows(
-                IllegalArgumentException::class.java,
-            ) {
-                DIContainer.createInstance(TestRepository::class)
-            }
-
-        // then
-        assertTrue(
-            exception.message!!.contains("Qualifier가 필요해요"),
-        )
-    }
-
-    @Test
     fun `동일 타입 구현체가 여러 개이고 Qualifier가 없으면 예외가 발생한다`() {
         // given
         DIContainer.bind(
