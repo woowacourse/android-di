@@ -101,6 +101,17 @@ object DIContainer {
         modelClass: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): KClass<out T> {
+        if (qualifier == null) {
+            val candidates =
+                bindings
+                    .filterKeys { key -> key.type == modelClass }
+                    .values
+
+            if (candidates.size > 1) {
+                throw IllegalArgumentException("구현체가 여러 개 등록되어 있어 Qualifier가 필요해요: $modelClass")
+            }
+        }
+
         val key = DependencyKey(modelClass, qualifier)
 
         return bindings[key] as? KClass<out T>

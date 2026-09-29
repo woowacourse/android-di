@@ -18,7 +18,7 @@ class CartContentTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val product = CartProduct(id = 1L, name = "우테코 과자", price = 10_000, imageUrl = "")
+    private val product = CartProduct(id = 1L, name = "우테코 과자", price = 10_000, imageUrl = "", createdAt = System.currentTimeMillis())
 
     @Test
     fun `장바구니에 담긴 상품의 이름이 화면에 보인다`() {

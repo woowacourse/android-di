@@ -4,43 +4,44 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import woowacourse.shopping.di.annotation.Inject
 
 class DIContainerTest {
     @Test
     fun `Inject 애노테이션이 붙은 필드에 의존성을 주입한다`() {
         // given
-        val target = TestTarget()
+        val target = TestTarget::class
 
         // when
-        DIContainer.injectFields(target)
+        val instance = DIContainer.createInstance(target)
 
         // then
-        assertTrue(target.isDependencyInitialized())
+        assertTrue(instance.isDependencyInitialized())
     }
 
     @Test
     fun `Inject 애노테이션이 붙은 여러 필드에 의존성을 주입한다`() {
         // given
-        val target = MultipleDependencyTarget()
+        val target = MultipleDependencyTarget::class
 
         // when
-        DIContainer.injectFields(target)
+        val instance = DIContainer.createInstance(target)
 
         // then
-        assertTrue(target.isFirstDependencyInitialized())
-        assertTrue(target.isSecondDependencyInitialized())
+        assertTrue(instance.isFirstDependencyInitialized())
+        assertTrue(instance.isSecondDependencyInitialized())
     }
 
     @Test
     fun `Inject 애노테이션이 없는 필드는 주입하지 않는다`() {
         // given
-        val target = NonInjectedTarget()
+        val target = NonInjectedTarget::class
 
         // when
-        DIContainer.injectFields(target)
+        val instance = DIContainer.createInstance(target)
 
         // then
-        assertFalse(target.isDependencyInitialized())
+        assertFalse(instance.isDependencyInitialized())
     }
 
     @Test
