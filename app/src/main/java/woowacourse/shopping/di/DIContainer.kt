@@ -1,25 +1,17 @@
 package woowacourse.shopping.di
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
-import androidx.sqlite.driver.AndroidSQLiteDriver
-import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.collections.forEach
-import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    private val instances = mutableMapOf<KClass<*>, Any>()
-    private val creating = mutableSetOf<KClass<*>>()
+    private val instances = mutableMapOf<DependencyKey, Any>()
+    private val creating = mutableSetOf<DependencyKey>()
     private val bindings = mutableMapOf<DependencyKey, KClass<*>>()
 
     fun <T : Any> bind(
@@ -30,28 +22,26 @@ object DIContainer {
         bindings[DependencyKey(type, qualifier)] = implementation
     }
 
-    fun initialize(context: Context) {
-        val db =
-            Room
-                .databaseBuilder<ShoppingDatabase>(context, "shopping-database")
-                .setDriver(AndroidSQLiteDriver())
-                .build()
-        ShoppingDatabase::class.declaredFunctions.forEach { function ->
-            instances[(function.returnType.classifier as? KClass<*>)!!] = function.call(db) as Any
-        }
+    fun <T : Any> bindInstance(
+        type: KClass<T>,
+        instance: T,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        instances[DependencyKey(type, qualifier)] = instance
     }
 
     fun <T : Any> createInstance(
         modelClass: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T {
-        if (instances[modelClass] != null) return instances[modelClass] as T
+        val key = DependencyKey(modelClass, qualifier)
+        if (instances[key] != null) return instances[key] as T
 
-        if (modelClass in creating) {
+        if (key in creating) {
             throw IllegalStateException("순환 의존성이 발생했어요: $modelClass")
         }
 
-        creating += modelClass
+        creating += key
 
         try {
             val implementationClass =
@@ -62,17 +52,12 @@ object DIContainer {
                 }
             val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
             val dependencies = findDependencies(constructor)
-            if (dependencies.isEmpty()) {
-                val instance = constructor.call()
-                injectFields(instance)
-                return instance
-            }
             val instance = constructor.call(*dependencies.toTypedArray())
-            instances[implementationClass] = instance
-            if (modelClass != implementationClass) instances[modelClass] = instance
+            instances[DependencyKey(modelClass, qualifier)] = instance
+            if (modelClass != implementationClass) instances[DependencyKey(implementationClass, qualifier)] = instance
             return instance
         } finally {
-            creating -= modelClass
+            creating -= key
         }
     }
 
@@ -82,7 +67,7 @@ object DIContainer {
         bindings.clear()
     }
 
-    private fun <T : Any> injectFields(instance: T) {
+    fun <T : Any> injectFields(instance: T) {
         instance::class
             .memberProperties
             .filter { property ->
@@ -135,8 +120,4 @@ object DIContainer {
         types.map { type ->
             createInstance(type)
         }
-}
-
-object ViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = DIContainer.createInstance(modelClass.kotlin)
 }
