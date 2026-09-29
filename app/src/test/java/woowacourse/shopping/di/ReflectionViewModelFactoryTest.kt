@@ -3,6 +3,8 @@ package woowacourse.shopping.di
 import androidx.lifecycle.ViewModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import woowacourse.di.DependencyContainer
+import woowacourse.di.MyInject
 
 class ReflectionViewModelFactoryTest {
     class TestRepository

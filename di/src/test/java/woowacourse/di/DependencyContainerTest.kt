@@ -1,6 +1,6 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class DependencyContainerTest {
@@ -35,7 +35,7 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(repository).isInstanceOf(TestRepository::class.java)
+        Assertions.assertThat(repository).isInstanceOf(TestRepository::class.java)
     }
 
     @Test
@@ -45,7 +45,7 @@ class DependencyContainerTest {
         val repo1 = container.resolve(TestRepository::class)
         val repo2 = container.resolve(TestRepository::class)
 
-        assertThat(repo1).isSameAs(repo2)
+        Assertions.assertThat(repo1).isSameAs(repo2)
     }
 
     @Test
@@ -55,7 +55,7 @@ class DependencyContainerTest {
         val service = container.resolve(TestService::class)
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(service.repository).isSameAs(repository)
+        Assertions.assertThat(service.repository).isSameAs(repository)
     }
 
     @Test
@@ -67,7 +67,7 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(service.testRepository).isSameAs(repository)
+        Assertions.assertThat(service.testRepository).isSameAs(repository)
     }
 
     @Test
@@ -79,8 +79,8 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        assertThat(service.testRepository).isNull()
-        assertThat(service.testAnnotationRepository).isSameAs(repository)
+        Assertions.assertThat(service.testRepository).isNull()
+        Assertions.assertThat(service.testAnnotationRepository).isSameAs(repository)
     }
 
     @Test
@@ -92,7 +92,7 @@ class DependencyContainerTest {
 
         val resolvedDao = container.resolve(TestDao::class)
 
-        assertThat(resolvedDao).isSameAs(dao)
+        Assertions.assertThat(resolvedDao).isSameAs(dao)
     }
 
     @Test
@@ -103,6 +103,6 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestDaoRepository::class)
 
-        assertThat(repository.dao).isSameAs(dao)
+        Assertions.assertThat(repository.dao).isSameAs(dao)
     }
 }

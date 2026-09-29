@@ -1,8 +1,8 @@
-package woowacourse.shopping.di
+package woowacourse.di
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.cast
+import kotlin.reflect.cast
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor

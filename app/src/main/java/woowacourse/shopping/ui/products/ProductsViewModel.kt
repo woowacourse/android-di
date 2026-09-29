@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import woowacourse.di.MyInject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
-import woowacourse.shopping.di.MyInject
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(

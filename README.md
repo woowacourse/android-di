@@ -4,11 +4,11 @@
 
 ### 1. DI 코어를 순수 JVM 모듈로 분리
 
-- [ ] `:di` Kotlin/JVM 모듈을 추가하고 `:app`이 `:di`를 의존하도록 구성한다.
-- [ ] `DependencyContainer`, `MyInject`와 관련 단위 테스트를 `:di`로 이동한다.
-- [ ] Android의 `ViewModelProvider`를 사용하는 `ReflectionViewModelFactory`와 앱 의존성 구성은 `:app`에 유지한다.
-- [ ] `:di`의 `build.gradle.kts`에 Android 및 쇼핑 앱 의존성이 없음을 확인한다.
-- [ ] 모듈 이동 후 기존 컨테이너 테스트와 앱 테스트가 통과하는지 확인한다.
+- [x] `:di` Kotlin/JVM 모듈을 추가하고 `:app`이 `:di`를 의존하도록 구성한다.
+- [x] `DependencyContainer`, `MyInject`와 관련 단위 테스트를 `:di`로 이동한다.
+- [x] Android의 `ViewModelProvider`를 사용하는 `ReflectionViewModelFactory`와 앱 의존성 구성은 `:app`에 유지한다.
+- [x] `:di`의 `build.gradle.kts`에 Android 및 쇼핑 앱 의존성이 없음을 확인한다.
+- [x] 모듈 이동 후 기존 컨테이너 테스트와 앱 테스트가 통과하는지 확인한다.
 
 ### 2. Qualifier를 포함한 의존성 등록 및 조회
 

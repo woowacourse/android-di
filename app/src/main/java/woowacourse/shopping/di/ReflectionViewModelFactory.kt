@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
