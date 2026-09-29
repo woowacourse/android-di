@@ -3,13 +3,12 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
-import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.DIContainer.createInstance
 import woowacourse.shopping.di.DIContainer.injectFields
+import woowacourse.shopping.di.annotation.Inject
+import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.collections.forEach
 import kotlin.jvm.kotlin
 import kotlin.reflect.KClass
@@ -22,6 +21,15 @@ import kotlin.reflect.full.primaryConstructor
 object DIContainer {
     private val instances = mutableMapOf<KClass<*>, Any>()
     private val creating = mutableSetOf<KClass<*>>()
+    private val bindings = mutableMapOf<DependencyKey, KClass<*>>()
+
+    fun <T : Any> bind(
+        type: KClass<T>,
+        implementation: KClass<out T>,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        bindings[DependencyKey(type, qualifier)] = implementation
+    }
 
     fun initialize(context: Context) {
         val db =
@@ -34,7 +42,10 @@ object DIContainer {
         }
     }
 
-    fun <T : Any> createInstance(modelClass: KClass<T>): T {
+    fun <T : Any> createInstance(
+        modelClass: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
         if (instances[modelClass] != null) return instances[modelClass] as T
 
         if (modelClass in creating) {
@@ -46,7 +57,7 @@ object DIContainer {
         try {
             val implementationClass =
                 if (modelClass.java.isInterface) {
-                    findImplementation(modelClass)
+                    findImplementation(modelClass, qualifier)
                 } else {
                     modelClass
                 }
@@ -69,17 +80,27 @@ object DIContainer {
                     property is KMutableProperty1<*, *>
             }.forEach { property ->
                 val mutableProperty = property as KMutableProperty1<*, *>
-                val dependency = createInstance(property.returnType.classifier as KClass<*>)
+                val dependencyType = property.returnType.classifier as KClass<*>
+                val qualifier =
+                    property.annotations
+                        .firstOrNull { annotation ->
+                            annotation.annotationClass.annotations.any {
+                                it.annotationClass == Qualifier::class
+                            }
+                        }?.annotationClass
+                val dependency = createInstance(dependencyType, qualifier)
                 mutableProperty.setter.call(instance, dependency)
             }
     }
 
-    fun <T : Any> findImplementation(modelClass: KClass<T>): KClass<out T> {
-        if (modelClass == CartRepository::class) {
-            return CartRepositoryModule.provideCartRepository() as KClass<out T>
-        }
+    fun <T : Any> findImplementation(
+        modelClass: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): KClass<out T> {
+        val key = DependencyKey(modelClass, qualifier)
 
-        throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass")
+        return bindings[key] as? KClass<out T>
+            ?: throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass, qualifier = $qualifier")
     }
 
     private fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
@@ -100,7 +121,3 @@ object ViewModelFactory : ViewModelProvider.Factory {
         return viewModel
     }
 }
-
-@Target(AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Inject
