@@ -8,11 +8,15 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class DependencyContainer {
-    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
 
-    fun <T : Any> resolve(type: KClass<T>): T {
+    fun <T : Any> resolve(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val key = DependencyKey(type, qualifier)
         val instance =
-            instances.getOrPut(type) {
+            instances.getOrPut(key) {
                 create(type)
             }
 
@@ -59,7 +63,14 @@ class DependencyContainer {
     fun <T : Any> register(
         type: KClass<T>,
         instance: T,
+        qualifier: KClass<out Annotation>? = null,
     ) {
-        instances[type] = instance
+        val key = DependencyKey(type, qualifier)
+        instances[key] = instance
     }
 }
+
+private data class DependencyKey(
+    val type: KClass<*>,
+    val qualifier: KClass<out Annotation>?,
+)

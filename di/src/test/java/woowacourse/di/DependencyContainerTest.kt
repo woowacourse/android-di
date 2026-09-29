@@ -1,6 +1,6 @@
 package woowacourse.di
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DependencyContainerTest {
@@ -29,13 +29,29 @@ class DependencyContainerTest {
         val dao: TestDao,
     )
 
+    interface QualifiedTestRepository
+
+    class RoomTestRepository : QualifiedTestRepository
+
+    class InMemoryTestRepository : QualifiedTestRepository
+
+    @Qualifier
+    @Target(AnnotationTarget.PROPERTY)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class RoomCart
+
+    @Qualifier
+    @Target(AnnotationTarget.PROPERTY)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class InMemoryCart
+
     @Test
     fun `요청한 타입의 인스턴스를 생성한다`() {
         val container = DependencyContainer()
 
         val repository = container.resolve(TestRepository::class)
 
-        Assertions.assertThat(repository).isInstanceOf(TestRepository::class.java)
+        assertThat(repository).isInstanceOf(TestRepository::class.java)
     }
 
     @Test
@@ -45,7 +61,7 @@ class DependencyContainerTest {
         val repo1 = container.resolve(TestRepository::class)
         val repo2 = container.resolve(TestRepository::class)
 
-        Assertions.assertThat(repo1).isSameAs(repo2)
+        assertThat(repo1).isSameAs(repo2)
     }
 
     @Test
@@ -55,7 +71,7 @@ class DependencyContainerTest {
         val service = container.resolve(TestService::class)
         val repository = container.resolve(TestRepository::class)
 
-        Assertions.assertThat(service.repository).isSameAs(repository)
+        assertThat(service.repository).isSameAs(repository)
     }
 
     @Test
@@ -67,7 +83,7 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        Assertions.assertThat(service.testRepository).isSameAs(repository)
+        assertThat(service.testRepository).isSameAs(repository)
     }
 
     @Test
@@ -79,8 +95,8 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestRepository::class)
 
-        Assertions.assertThat(service.testRepository).isNull()
-        Assertions.assertThat(service.testAnnotationRepository).isSameAs(repository)
+        assertThat(service.testRepository).isNull()
+        assertThat(service.testAnnotationRepository).isSameAs(repository)
     }
 
     @Test
@@ -92,7 +108,7 @@ class DependencyContainerTest {
 
         val resolvedDao = container.resolve(TestDao::class)
 
-        Assertions.assertThat(resolvedDao).isSameAs(dao)
+        assertThat(resolvedDao).isSameAs(dao)
     }
 
     @Test
@@ -103,6 +119,39 @@ class DependencyContainerTest {
 
         val repository = container.resolve(TestDaoRepository::class)
 
-        Assertions.assertThat(repository.dao).isSameAs(dao)
+        assertThat(repository.dao).isSameAs(dao)
+    }
+
+    @Test
+    fun `같은 타입의 구현체를 qualifier로 구분해서 조회한다`() {
+        val container = DependencyContainer()
+        val roomTestRepository = RoomTestRepository()
+        val inMemoryTestRepository = InMemoryTestRepository()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = roomTestRepository,
+            qualifier = RoomCart::class,
+        )
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = inMemoryTestRepository,
+            qualifier = InMemoryCart::class,
+        )
+
+        val resolvedRoomTestRepository =
+            container.resolve(
+                type = QualifiedTestRepository::class,
+                qualifier = RoomCart::class,
+            )
+
+        val resolvedInMemoryTestRepository =
+            container.resolve(
+                type = QualifiedTestRepository::class,
+                qualifier = InMemoryCart::class,
+            )
+
+        assertThat(resolvedInMemoryTestRepository).isSameAs(inMemoryTestRepository)
+        assertThat(resolvedRoomTestRepository).isSameAs(roomTestRepository)
     }
 }
