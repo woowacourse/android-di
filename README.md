@@ -1,124 +1,95 @@
 # android-di
 
-# 0.5단계 - 생성자 주입 - 수동
+# 2단계 - Annotation
+
+## 과제 진행 요구 사항
+- [x] 기능을 구현하기 전 README.md에 구현할 기능 목록을 정리해 추가한다.
+- [x] Git의 커밋 단위는 앞 단계에서 README.md에 정리한 기능 목록 단위로 추가한다.
+  - AngularJS Git Commit Message Conventions을 참고해 커밋 메시지를 작성한다.
 
 ## 기능 요구 사항
+### 필드 주입
+- [x] ViewModel 내 필드 주입을 구현한다.
 
-의도적으로 실패하는 테스트(MainActivityTest)를 수동 주입으로 통과시킨다. DI 컨테이너를 만들지 않는다. 컴포저블이 viewModel()을 호출하는 자리에 ViewModelProvider.Factory를 직접 넘겨, 그 화면이 필요로 하는 Repository를 손으로 만들어 넣어주면 된다.
+### Annotation
+- [x] Annotation을 붙여서 필요한 요소에만 의존성을 주입한다.
+- [x] 내가 만든 의존성 라이브러리가 제대로 작동하는지 테스트 코드를 작성한다.
+  
+### Recursive DI
+- [x] CartRepository가 다음과 같이 DAO 객체를 참조하도록 변경한다.
+    - [x] CartProduct 도메인 모델을 만든다.
+    - [x] 장바구니 상태를 List<CartProduct>로 변경한다.
+    - [x] data/mapper에 CartProductMapper를 만든다.
+- [x] 장바구니 화면에 담은 시각을 표시한다. 날짜 포맷팅은 DateFormatter가 담당한다.
 
-```text
-viewModel: ProductsViewModel = viewModel(factory = /* 여기서 직접 만들어 넣는다 */)
-```
-
-이렇게 만들어 두고 다음 문제점을 확인한다. 1단계는 여기서 출발한다.
-
-- 화면이 늘어날 때마다 팩토리를 하나씩 새로 쓴다.
-- Repository 객체를 교체하기 위해 또다른 객체를 만들어 바꿔줘야 한다. 즉, ViewModel에 직접적인 변경사항이 발생한다. 
-
-0.5단계는 1단계의 출발점이다. OT에서는 수동 DI 구현을 먼저 PR로 리뷰받는다. 진행 순서와 오늘의 리뷰 기준은 OT 문서를 따른다.
-
-## 구현한 목록
-
-### 1. viewModel을 수동으로 주입하여 테스트를 통과하도록 구현함
-`MainActivityTest.kt` 코드는 MainActivity의 생명주기를 진행시키고 테스트가 잘 생성되는지를 검증하는 코드입니다.
-
-`.setup()`은 onCreate -> onStart -> onResume의 단계를 진행시킵니다.
-
-`.get()`은 Activity의 인스턴스를 반환하는 것입니다.
-
-결과적으로 isNotNull()을 통해 MainActivity가 잘 생성되었는지 확인합니다.
-
-테스트가 실패한 이유는 MainActivity안의 컴포저블 함수를 생성하는 과정에서 필요한 ViewModel의 의존성을 주입받지 못했기 때문입니다.
-
-그래서 ViewModelProvider.Factory를 사용해 컴포저블 함수의 ViewModel()이 필요한 의존성을 전달하도한 목록 구현하였습니다.
-
-이렇게 만든 ViewModel을 Screen컴포저블 함수에 주입함으로써 `MainActivityTest.kt`가 통과할 수 있었습니다.
-
-# 1단계 - 생성자 주입 - 자동
-
-## 구현한 목록
-
-### 1. 의존성을 관리하는 DiContainer 구현
-DiContainer의 핵심 아이디어는 다음과 같습니다.
-- 만들고자 한 객체의 파라미터를 탐색하여 만들 수 있다.
-- 이미 생성한 객체를 재사용하자.
-객체를 재사용하기 위해 `objectsMap`이라는 Map을 구현하였습니다. Map으로 구현한 이유는 클래스 타입에 따라 객체를 저장하고, 객체를 탐색할 기준을 클래스 타입으로 잡기 위해 Key로 지정하였습니다.
-
-파라미터를 탐색하기 위해서 `searchObject()` 함수를 구현하였습니다. 이 함수의 의도는 입력받은 파라미터인 Class<T>가 objectsMap의 Key로 존재하느냐를 기준으로 잡고, 존재한다면 이미 존재하는 객체를 불러와서 사용합니다. 반면 `objectsMap`에 존재하지 않는다면, `createObject()` 함수를 통해 객체를 생성하여 `objectsMap`에 저장합니다.
-
-객체를 생성하기 위해 `createObject()` 함수를 구현하였습니다. 이 함수의 의도는 입력받은 타입에 따라 객체를 생성하는 것입니다. 만들고자 한 타입의 객체가 파라미터를 요구하지 않는다면 객체를 바로 생성합니다. 반면 요구하는 파라미터가 존재한다면 `searchObject()` 함수를 사용해 파라미터 타입을 다시 탐색하고 객체를 생성합니다.
-
-### 2. 한 가지 자동 주입 로직으로 ViewModel에 의존성 주입 구현
-`viewModel(factory = ...)`에 `DiContainer.DiViewModelFactory()`라는 한 가지 로직을 넣어줌으로써 개발자가 직접 ViewModel에 필요한 파라미터를 주입하지 않아도 되도록 구현하였습니다.
-
-이는 `DiViewModelFactory()`의 `create()`함수가 `createObject()` 함수를 호출함으로써 객체를 자동으로 탐색하고 생성할 수 있도록 구현하였습니다.
-
-## DiContainer 실행 흐름
-```text
-ProductsViewModel 요청
-        ↓
-DiViewModelFactory
-        ↓
-createObject(ProductsViewModel)
-        ↓
-생성자 분석
-        ↓
-ProductRepository 필요
-        ↓
-searchObject(ProductRepository)
-        ↓
-    ┌───────────────┐
-    │ 이미 존재함? │
-    └───────┬───────┘
-        Yes │ No
-         ↓  │  ↓
-       반환 │ 생성
-            │  ↓
-            └→ Map 저장
-                ↓
-ProductRepository 반환
-        ↓
-ProductsViewModel 생성
-```
-
-## 사용하는 방법
-
-의존성 주입을 받고자 하는 ViewModel의 생성자를 다음과 같이 주입한다.
-
-```kotlin
-@Composable
-fun ProductScreen(
-    viewModel: ProductsViewModel = viewModel(factory = DiContainer.DiViewModelFactory())
-)
-```
-
-이를 통해 ViewModel마다 직접 Repository를 생성하고 주입해줘야하는 불편함을 해결할 수 있다.
-
-## 기능 요구 사항
-다음 문제점을 해결한다.
-
-- [x] ViewModel에서 참조하는 Repository가 정상적으로 주입되지 않는다.
-- [x] Repository를 참조하는 다른 객체가 생기면 주입 코드를 매번 만들어줘야 한다.
-  - [x] ViewModel에 수동으로 주입되고 있는 의존성들을 자동으로 주입되도록 바꿔본다.
-  - [x] 특정 ViewModel에서만이 아닌, 범용적으로 활용될 수 있는 자동 주입 로직을 작성한다. (ProductsViewModel, CartViewModel 모두 하나의 로직만 참조한다)
-  - [x] 100개의 ViewModel이 생긴다고 가정했을 때, 자동 주입 로직 100개가 생기는 것이 아니다. 하나의 자동 주입 로직을 재사용할 수 있어야 한다.
-- [x] 0.5단계처럼 화면 진입 지점마다 CartRepository를 직접 만들면, 상품 목록 화면과 장바구니 화면이 서로 다른 인스턴스를 갖게 된다. CartRepository는 담은 상품을 메모리에만 들고 있으므로, 상품을 장바구니에 담고 장바구니 화면으로 이동하면 목록이 비어 있다. 앱을 실행해 직접 확인해 보자.
-  - [x] 여러 번 인스턴스화할 필요 없는 객체는 최초 한 번만 인스턴스화한다. (이 단계에서는 너무 깊게 생각하지 말고 싱글 오브젝트로 구현해도 된다.)
-
-## 선택 요구 사항
-- [x] TDD로 DI 구현
-- [ ] Robolectric으로 기능 테스트 (다음 자료 「Robolectric」을 먼저 읽는다. 이 문서 힌트의 MainActivityTest 가 같은 러너를 쓴다)
-- [ ] ViewModel 테스트
-- [ ] 모든 도메인 로직, Repository 단위 테스트
+### 선택 요구 사항
+- [x] LazyColumn의 items에 key를 지정한다. 지정 전후에 어떤 차이가 생기는지 관찰한다.
+- [x] UI 계층에서 CartProductEntity를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구 사항
-- 사전에 주어진 테스트 코드가 모두 성공해야 한다.
-- Annotation은 이 단계에서 활용하지 않는다.
+- [x] 사전에 주어진 테스트 코드가 모두 성공해야 한다.
+- [x] 필드 주입 대상은 애노테이션으로 명시된 필드만이어야 한다. 모든 필드를 훑어 주입하지 않는다.
 
 ## 리뷰 체크리스트
-- [x] 앱을 실행해 상품 목록과 장바구니가 정상 동작한다.
-- [x] ProductsViewModel과 CartViewModel이 같은 자동 주입 로직을 사용한다.
-- [x] ViewModel을 하나 더 추가해도 주입 로직을 새로 작성하지 않는다.
-- [x] CartRepository 인스턴스가 장바구니 진입마다 새로 생성되지 않는다.
+- [x] 장바구니 목록에 상품명과 담은 시각이 함께 표시된다.
+- [x] 애노테이션이 붙은 필드만 주입되고, 붙지 않은 필드는 주입되지 않는다.
+- [x] CartRepository가 CartProductDao를 주입받는다. 즉 의존성이 재귀적으로 해결된다.
+- [x] CartProduct 도메인 모델과 toDomain() 매퍼가 추가되어 있다.
+- [x] ViewModel이 CartRepository의 suspend 함수를 viewModelScope 안에서 호출한다.
+- [x] 목록 중간 항목을 삭제해도 의도한 상품이 지워진다.
+- [x] 필드 주입과 재귀 주입에 대한 테스트가 있다.
 - [x] 사전 제공 테스트가 모두 통과한다.
-- [x] Annotation을 사용하지 않았다.
+
+---
+
+# 3단계 - Qualifier
+
+## Qualifier의 표현 방식
+Qualifier의 역할은 동일한 타입으로 등록된 여러 의존성을 구분하기 위한 식별자입니다.
+
+Qualifier를 표현하는 방식으로는 두 가지의 후보가 존재했습니다.
+1. 애노테이션
+2. 마커 인터페이스
+
+저는 이 Qualifier를 애노테이션으로 표현하였습니다. 인터페이스 방식은 다음과 같이 마커를 붙여 구현할 수 있습니다.
+```kotlin
+interface InMemory
+
+class InMemoryCartRepository : CartRepository, InMemory
+```
+
+하지만 사용하는 곳에서는 InMemory가 들어가있음을 알 수 없습니다. 반대로 InMemory를 받는 Repository의 타입으로 선언한다면, CartRepository를 알 수 없게 됩니다. 반면, 애노테이션의 장점은 interface에서 못했던 CartRepository를 유지하면서 InMemory로 받는다는 정보까지 전달할 수 있습니다. 즉, 애노테이션과 다르게 interface는 필드만 보고 선택하기 어렵습니다.
+
+또한 인터페이스의 경우 구현에 따라 다양한 구현체를 계속 생성해야 하지만 애노테이션의 경우는 그런 상황이 발생하지 않는다는 이점이 있습니다.
+
+이러한 장점을 보고 애노테이션을 통해 Qualifier를 표현하였습니다.
+
+## di 모듈 형태 선택
+
+순수 JVM 모듈 형태를 선택하였습니다. 현재 제가 구현한 DI 모듈에는 android 코드가 존재하지 않고, 순수 Kotlin으로 동작하도록 구현하였기 때문입니다.
+
+## 기능 요구 사항
+
+### Qualifier
+- [x] 상황에 따라 개발자가 Room DB 의존성을 주입받을지, In-Memory 의존성을 주입받을지 선택할 수 있다.
+- [x] 내가 만든 DI 라이브러리가 Qualifier를 제대로 해석하는지 테스트를 작성한다. Qualifier가 없을 때 예외가 나는 것까지 검증한다.
+
+### 모듈 분리
+- [x] 내가 만든 DI 라이브러리를 모듈로 분리한다.
+
+## 선택 요구 사항
+- [ ] DSL을 활용한다.
+- [ ] 내가 만든 DI 라이브러리를 배포하고 적용한다.
+
+## 프로그래밍 요구 사항
+- [x] 같은 타입의 구현체가 둘 등록되어 있고 Qualifier가 없으면 명확한 오류를 낸다. 임의로 하나를 고르지 않는다.
+- [x] 분리한 DI 모듈은 쇼핑 앱의 도메인 타입(CartRepository, Product 등)을 알지 못해야 한다.
+- [x] Qualifier를 무엇으로 표현했는지(애노테이션 / 문자열 키)와 :di 모듈을 안드로이드 모듈·순수 JVM 모듈 중 무엇으로 만들었는지, 그 선택의 근거를 페어와 정해 README.md에 남긴다. 모듈 형태의 선택은 4단계의 화면 스코프 구현에 영향을 준다.
+
+## 리뷰 체크리스트
+- [x] Room DB 구현체와 In-Memory 구현체를 개발자가 선택해서 주입받을 수 있다.
+- [x] Qualifier 없이 모호한 상황이 되면 명확한 예외 메시지가 나온다.
+- [x] DI 라이브러리가 별도 모듈로 분리되어 있다.
+- [x] :di 모듈이 앱의 도메인 타입에 의존하지 않는다.
+- [x] Qualifier 동작에 대한 테스트가 있다.
+- [x] Qualifier 표현 방식과 :di 모듈 형태(안드로이드 / 순수 JVM)의 선택 근거가 README.md에 있다.
