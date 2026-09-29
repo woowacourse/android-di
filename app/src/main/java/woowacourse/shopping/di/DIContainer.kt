@@ -76,6 +76,12 @@ object DIContainer {
         }
     }
 
+    fun clear() {
+        instances.clear()
+        creating.clear()
+        bindings.clear()
+    }
+
     private fun <T : Any> injectFields(instance: T) {
         instance::class
             .memberProperties
@@ -97,7 +103,7 @@ object DIContainer {
             }
     }
 
-    fun <T : Any> findImplementation(
+    private fun <T : Any> findImplementation(
         modelClass: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): KClass<out T> {
@@ -107,15 +113,17 @@ object DIContainer {
                     .filterKeys { key -> key.type == modelClass }
                     .values
 
-            if (candidates.size > 1) {
-                throw IllegalArgumentException("구현체가 여러 개 등록되어 있어 Qualifier가 필요해요: $modelClass")
+            if (candidates.isNotEmpty()) {
+                throw IllegalArgumentException("Qualifier가 필요해요: $modelClass")
             }
+
+            throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass, qualifier = $qualifier")
         }
 
         val key = DependencyKey(modelClass, qualifier)
 
         return bindings[key] as? KClass<out T>
-            ?: throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass, qualifier = $qualifier")
+            ?: throw IllegalArgumentException("등록되지 않은 Qualifier예요: type = $modelClass, qualifier = $qualifier")
     }
 
     private fun <T : Any> findDependencies(constructor: KFunction<T>): List<Any> {
