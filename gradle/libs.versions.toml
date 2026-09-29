@@ -17,6 +17,7 @@ ktlint = "14.2.0"
 robolectric = "4.16.1"
 room = "2.8.5"
 truth = "1.4.5"
+jetbrains-kotlin-jvm = "2.4.10"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
@@ -52,3 +53,4 @@ android-application = { id = "com.android.application", version.ref = "android-g
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains-kotlin-jvm" }

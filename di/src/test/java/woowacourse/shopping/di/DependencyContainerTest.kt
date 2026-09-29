@@ -2,15 +2,16 @@
 
 package woowacourse.shopping.di
 
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertSame
-import org.junit.Test
+import woowacourse.di.DependencyContainer
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 class DependencyContainerTest {
     class Child
 
     class Parent(
-        val child: Child
+        val child: Child,
     )
 
     @Test
