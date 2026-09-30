@@ -35,8 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import woowacourse.shopping.DiFactory
 import woowacourse.shopping.R
+import woowacourse.shopping.ViewModelFactory
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
@@ -46,7 +47,7 @@ fun CartScreen(
     modifier: Modifier = Modifier,
     viewModel: CartViewModel =
         viewModel(
-            factory = DiFactory.viewModelFactory(),
+            factory = ViewModelFactory.viewModelFactory(context = LocalContext.current),
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -79,7 +80,7 @@ fun CartScreen(
 fun CartContent(
     uiState: CartUiState,
     dateFormatter: DateFormatter,
-    onDelete: (Int) -> Unit,
+    onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -109,7 +110,7 @@ fun CartContent(
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index) },
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
@@ -118,7 +119,7 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
+    cartProduct: CartProduct,
     dateFormatter: DateFormatter,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -134,13 +135,14 @@ fun CartProductItem(
         Text(text = "", style = MaterialTheme.typography.labelSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = cartProduct.name,
+                text = cartProduct.product.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+            Text(dateFormatter.formatDate(cartProduct.createdAt))
             IconButton(onClick = onDelete) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
@@ -149,7 +151,7 @@ fun CartProductItem(
             }
         }
         AsyncImage(
-            model = cartProduct.imageUrl,
+            model = cartProduct.product.imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier =
@@ -160,7 +162,7 @@ fun CartProductItem(
         )
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = stringResource(R.string.product_price, cartProduct.price),
+                text = stringResource(R.string.product_price, cartProduct.product.price),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.align(Alignment.CenterEnd),
             )
@@ -175,7 +177,17 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                Product(
+                                    name = "우테코 과자",
+                                    price = 10_000,
+                                    imageUrl = "",
+                                ),
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},

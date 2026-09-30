@@ -2,6 +2,7 @@ package woowacourse.shopping.ui.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.di.annotations.InjectField
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,15 +14,18 @@ import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.util.annotations.RoomRepo
 
 data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
 class ProductsViewModel(
-    private val productRepository: ProductRepository,
+    @RoomRepo
     private val cartRepository: CartRepository,
 ) : ViewModel() {
+    @InjectField
+    lateinit var productRepository: ProductRepository
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 
@@ -33,7 +37,9 @@ class ProductsViewModel(
     }
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        viewModelScope.launch { _onProductAdded.emit(Unit) }
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.emit(Unit)
+        }
     }
 }

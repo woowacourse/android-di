@@ -11,13 +11,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
+import woowacourse.shopping.util.annotations.RoomRepo
 
 data class CartUiState(
-    val cartProducts: List<Product> = emptyList(),
+    val cartProducts: List<CartProduct> = emptyList(),
 )
 
 class CartViewModel(
+    @RoomRepo
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
@@ -27,12 +29,16 @@ class CartViewModel(
     val onCartProductDeleted: SharedFlow<Unit> get() = _onCartProductDeleted.asSharedFlow()
 
     fun getAllCartProducts() {
-        _uiState.update { it.copy(cartProducts = cartRepository.getAllCartProducts()) }
+        viewModelScope.launch {
+            _uiState.update { it.copy(cartProducts = cartRepository.getAllCartProducts()) }
+        }
     }
 
-    fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        getAllCartProducts()
-        viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            getAllCartProducts()
+            viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
+        }
     }
 }
