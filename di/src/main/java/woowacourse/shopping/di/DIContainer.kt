@@ -61,12 +61,6 @@ object DIContainer {
         }
     }
 
-    fun clear() {
-        instances.clear()
-        creating.clear()
-        bindings.clear()
-    }
-
     fun <T : Any> injectFields(instance: T) {
         instance::class
             .memberProperties
@@ -86,6 +80,12 @@ object DIContainer {
                 val dependency = createInstance(dependencyType, qualifier)
                 mutableProperty.setter.call(instance, dependency)
             }
+    }
+
+    internal fun clear() {
+        instances.clear()
+        creating.clear()
+        bindings.clear()
     }
 
     private fun <T : Any> findImplementation(

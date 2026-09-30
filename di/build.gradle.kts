@@ -7,4 +7,6 @@ plugins {
 
 dependencies {
     implementation(kotlin("reflect"))
+    testImplementation(libs.junit)
+    testImplementation(kotlin("test"))
 }
