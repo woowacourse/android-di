@@ -24,4 +24,5 @@ kotlin {
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.kotlin.reflect)
+    testImplementation(libs.androidx.test.ext.junit)
 }
