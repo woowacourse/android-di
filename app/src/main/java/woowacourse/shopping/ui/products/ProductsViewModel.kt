@@ -12,16 +12,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.RoomCart
+import woowacourse.shopping.di.DependencyContainer
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
-class ProductsViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class ProductsViewModel : ViewModel() {
+    @field:DependencyContainer.Inject
+    lateinit var productRepository: ProductRepository
+
+    @field:DependencyContainer.Inject
+    @field:RoomCart
+    lateinit var cartRepository: CartRepository
+
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 
@@ -33,7 +39,9 @@ class ProductsViewModel(
     }
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        viewModelScope.launch { _onProductAdded.emit(Unit) }
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.emit(Unit)
+        }
     }
 }

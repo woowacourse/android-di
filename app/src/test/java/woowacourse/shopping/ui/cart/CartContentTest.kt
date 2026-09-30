@@ -11,14 +11,21 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 
 @RunWith(RobolectricTestRunner::class)
 class CartContentTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val product = Product(name = "우테코 과자", price = 10_000, imageUrl = "")
+    private val product =
+        CartProduct(
+            id = 1L,
+            name = "우테코 과자",
+            price = 10_000,
+            imageUrl = "",
+            createdAt = 0L,
+        )
 
     @Test
     fun `장바구니에 담긴 상품의 이름이 화면에 보인다`() {
@@ -35,8 +42,8 @@ class CartContentTest {
     }
 
     @Test
-    fun `삭제 버튼을 누르면 그 상품의 위치가 전달된다`() {
-        var deleted: Int? = null
+    fun `삭제 버튼을 누르면 그 상품의 id가 전달된다`() {
+        var deleted: Long? = null
 
         composeRule.setContent {
             CartContent(
@@ -48,6 +55,6 @@ class CartContentTest {
         }
         composeRule.onNodeWithContentDescription("삭제").performClick()
 
-        assertThat(deleted).isEqualTo(0)
+        assertThat(deleted).isEqualTo(product.id)
     }
 }
