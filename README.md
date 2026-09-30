@@ -41,8 +41,8 @@
 
 ### 6. Room 및 In-Memory 장바구니 구현체 구성
 
-- [ ] 앱 모듈에 `RoomCart`, `InMemoryCart` Qualifier 애노테이션을 정의한다.
-- [ ] 메모리에 장바구니 상품을 보관하는 `InMemoryCartRepository`를 테스트 주도로 구현한다.
+- [x] 앱 모듈에 `RoomCart`, `InMemoryCart` Qualifier 애노테이션을 정의한다.
+- [x] 메모리에 장바구니 상품을 보관하는 `InMemoryCartRepository`를 테스트 주도로 구현한다.
 - [ ] 앱 시작 시 Room 구현체와 In-Memory 구현체를 각각의 Qualifier로 등록한다.
 - [ ] 앱의 등록 코드만 `CartRepository`, `CartProductDao` 등 쇼핑 도메인 타입을 아는지 확인한다.
 
