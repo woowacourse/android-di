@@ -3,17 +3,24 @@ package woowacourse.shopping.di
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
 
 class DIContainerTest {
+    @Before
+    fun setUp() {
+        DIContainer.clear()
+    }
+
     @Test
     fun `Inject 애노테이션이 붙은 필드에 의존성을 주입한다`() {
         // given
         val target = TestTarget::class
 
         // when
-        val instance = DIContainer.createInstance(target)
+        val instance = DIContainer.createInstance(DependencyKey(target))
+        DIContainer.injectFields(instance)
 
         // then
         assertTrue(instance.isDependencyInitialized())
@@ -25,7 +32,8 @@ class DIContainerTest {
         val target = MultipleDependencyTarget::class
 
         // when
-        val instance = DIContainer.createInstance(target)
+        val instance = DIContainer.createInstance(DependencyKey(target))
+        DIContainer.injectFields(instance)
 
         // then
         assertTrue(instance.isFirstDependencyInitialized())
@@ -38,7 +46,8 @@ class DIContainerTest {
         val target = NonInjectedTarget::class
 
         // when
-        val instance = DIContainer.createInstance(target)
+        val instance = DIContainer.createInstance(DependencyKey(target))
+        DIContainer.injectFields(instance)
 
         // then
         assertFalse(instance.isDependencyInitialized())
@@ -49,7 +58,7 @@ class DIContainerTest {
         assertThrows(
             IllegalStateException::class.java,
         ) {
-            DIContainer.createInstance(A::class)
+            DIContainer.createInstance(DependencyKey(A::class))
         }
     }
 

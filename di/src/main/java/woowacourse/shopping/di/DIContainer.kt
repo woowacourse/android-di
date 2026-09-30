@@ -10,9 +10,9 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
-    private val instances = mutableMapOf<DependencyKey, Any>()
-    private val creating = mutableSetOf<DependencyKey>()
-    private val bindings = mutableMapOf<DependencyKey, KClass<*>>()
+    private val instances = mutableMapOf<DependencyKey<*>, Any>()
+    private val creating = mutableSetOf<DependencyKey<*>>()
+    private val bindings = mutableMapOf<DependencyKey<*>, KClass<*>>()
 
     fun <T : Any> bind(
         type: KClass<T>,
@@ -30,12 +30,11 @@ object DIContainer {
         instances[DependencyKey(type, qualifier)] = instance
     }
 
-    fun <T : Any> createInstance(
-        modelClass: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
-    ): T {
-        val key = DependencyKey(modelClass, qualifier)
+    fun <T : Any> createInstance(key: DependencyKey<T>): T {
         if (instances[key] != null) return instances[key] as T
+
+        val modelClass = key.type
+        val qualifier = key.qualifier
 
         if (key in creating) {
             throw IllegalStateException("순환 의존성이 발생했어요: $modelClass")
@@ -46,14 +45,14 @@ object DIContainer {
         try {
             val implementationClass =
                 if (modelClass.java.isInterface) {
-                    findImplementation(modelClass, qualifier)
+                    findImplementation(key)
                 } else {
                     modelClass
                 }
             val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
             val dependencies = findDependencies(constructor)
             val instance = constructor.call(*dependencies.toTypedArray())
-            instances[DependencyKey(modelClass, qualifier)] = instance
+            instances[key] = instance
             if (modelClass != implementationClass) instances[DependencyKey(implementationClass, qualifier)] = instance
             return instance
         } finally {
@@ -77,7 +76,8 @@ object DIContainer {
                                 it.annotationClass == Qualifier::class
                             }
                         }?.annotationClass
-                val dependency = createInstance(dependencyType, qualifier)
+                val dependencyKey = DependencyKey(dependencyType, qualifier)
+                val dependency = createInstance(dependencyKey)
                 mutableProperty.setter.call(instance, dependency)
             }
     }
@@ -88,10 +88,10 @@ object DIContainer {
         bindings.clear()
     }
 
-    private fun <T : Any> findImplementation(
-        modelClass: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
-    ): KClass<out T> {
+    private fun <T : Any> findImplementation(key: DependencyKey<T>): KClass<out T> {
+        val qualifier = key.qualifier
+        val modelClass = key.type
+
         if (qualifier == null) {
             val candidates =
                 bindings
@@ -102,8 +102,6 @@ object DIContainer {
                 throw IllegalArgumentException("같은 타입의 구현체가 둘 이상이므로 Qualifier가 필요해요: $modelClass")
             }
         }
-
-        val key = DependencyKey(modelClass, qualifier)
 
         return bindings[key] as? KClass<out T>
             ?: throw IllegalArgumentException("등록되지 않은 Qualifier예요: type = $modelClass, qualifier = $qualifier")
@@ -116,6 +114,6 @@ object DIContainer {
 
     private fun getInstances(types: List<KClass<*>>): List<Any> =
         types.map { type ->
-            createInstance(type)
+            createInstance(DependencyKey(type, null))
         }
 }
