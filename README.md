@@ -43,24 +43,24 @@
 
 - [x] 앱 모듈에 `RoomCart`, `InMemoryCart` Qualifier 애노테이션을 정의한다.
 - [x] 메모리에 장바구니 상품을 보관하는 `InMemoryCartRepository`를 테스트 주도로 구현한다.
-- [ ] 앱 시작 시 Room 구현체와 In-Memory 구현체를 각각의 Qualifier로 등록한다.
-- [ ] 앱의 등록 코드만 `CartRepository`, `CartProductDao` 등 쇼핑 도메인 타입을 아는지 확인한다.
+- [x] 앱 시작 시 Room 구현체와 In-Memory 구현체를 각각의 Qualifier로 등록한다.
+- [x] 앱의 등록 코드만 `CartRepository`, `CartProductDao` 등 쇼핑 도메인 타입을 아는지 확인한다.
 
 ### 7. 장바구니 화면에서 구현체 선택
 
-- [ ] `CartViewModel`이 `RoomCart`를 지정했을 때 Room 구현체를 주입받는 테스트를 작성한다.
-- [ ] 주입받는 필드에 `RoomCart` Qualifier를 지정한다.
-- [ ] Qualifier를 `InMemoryCart`로 바꾸면 컨테이너나 ViewModel Factory 수정 없이 In-Memory 구현체가 주입되는지 테스트한다.
-- [ ] 실제 앱에서 선택한 저장소를 사용해 장바구니 추가, 조회, 삭제가 동작하는지 확인한다.
+- [x] `CartViewModel`이 `RoomCart`를 지정했을 때 Room 구현체를 주입받는 테스트를 작성한다.
+- [x] 주입받는 필드에 `RoomCart` Qualifier를 지정한다.
+- [x] Qualifier를 `InMemoryCart`로 바꾸면 컨테이너나 ViewModel Factory 수정 없이 In-Memory 구현체가 주입되는지 테스트한다.
+- [x] 실제 앱에서 선택한 저장소를 사용해 장바구니 추가, 조회, 삭제가 동작하는지 확인한다.
 
 ### 8. 최종 검증
 
-- [ ] `:di` 모듈 단위 테스트를 실행한다.
-- [ ] 사전에 제공된 테스트를 포함한 `:app` 전체 테스트를 실행한다.
-- [ ] ktlint 검사를 실행한다.
-- [ ] 같은 타입의 두 구현체를 Qualifier로 구분해 선택할 수 있는지 확인한다.
-- [ ] Qualifier 없는 모호한 요청이 구현체를 임의 선택하지 않고 명확한 예외를 내는지 확인한다.
-- [ ] `:di`의 소스와 Gradle 의존성에 Android 및 쇼핑 앱 도메인 타입이 없는지 확인한다.
+- [x] `:di` 모듈 단위 테스트를 실행한다.
+- [x] 사전에 제공된 테스트를 포함한 `:app` 전체 테스트를 실행한다.
+- [x] ktlint 검사를 실행한다.
+- [x] 같은 타입의 두 구현체를 Qualifier로 구분해 선택할 수 있는지 확인한다.
+- [x] Qualifier 없는 모호한 요청이 구현체를 임의 선택하지 않고 명확한 예외를 내는지 확인한다.
+- [x] `:di`의 소스와 Gradle 의존성에 Android 및 쇼핑 앱 도메인 타입이 없는지 확인한다.
 
 ## 2단계 기능 목록
 
