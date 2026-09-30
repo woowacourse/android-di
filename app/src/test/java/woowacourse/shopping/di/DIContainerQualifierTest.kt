@@ -63,6 +63,24 @@ class DIContainerQualifierTest {
     }
 
     @Test
+    fun `동일 타입 구현체가 하나일 때는 Qualifier가 없어도 객체가 생성된다`() {
+        // given
+        DIContainer.bind(
+            type = TestRepository::class,
+            implementation = RoomTestRepository::class,
+        )
+
+        // when
+        val repository =
+            DIContainer.createInstance(
+                TestRepository::class,
+            )
+
+        // then
+        assertTrue(repository is RoomTestRepository)
+    }
+
+    @Test
     fun `동일 타입 구현체가 여러 개이고 Qualifier가 없으면 예외가 발생한다`() {
         // given
         DIContainer.bind(

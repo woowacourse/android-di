@@ -101,8 +101,6 @@ object DIContainer {
             if (candidates.size > 1) {
                 throw IllegalArgumentException("같은 타입의 구현체가 둘 이상이므로 Qualifier가 필요해요: $modelClass")
             }
-
-            throw IllegalArgumentException("구현체를 찾을 수 없어요: $modelClass, qualifier = $qualifier")
         }
 
         val key = DependencyKey(modelClass, qualifier)
