@@ -1,6 +1,7 @@
 package woowacourse.di
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class DependencyContainerTest {
@@ -153,5 +154,40 @@ class DependencyContainerTest {
 
         assertThat(resolvedInMemoryTestRepository).isSameAs(inMemoryTestRepository)
         assertThat(resolvedRoomTestRepository).isSameAs(roomTestRepository)
+    }
+
+    @Test
+    fun `같은 타입의 의존성이 둘 이상이고 qualifier가 없으면 명확한 예외를 던진다`() {
+        val container = DependencyContainer()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = RoomTestRepository(),
+            qualifier = RoomCart::class,
+        )
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = InMemoryTestRepository(),
+            qualifier = InMemoryCart::class,
+        )
+        assertThatThrownBy {
+            container.resolve(QualifiedTestRepository::class)
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `등록된 구현체가 하나면 qualifier 없이 조회할 수 있다`() {
+        val container = DependencyContainer()
+        val repository = RoomTestRepository()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = repository,
+            qualifier = RoomCart::class,
+        )
+
+        val resolvedRepository = container.resolve(QualifiedTestRepository::class)
+
+        assertThat(resolvedRepository).isSameAs(repository)
     }
 }

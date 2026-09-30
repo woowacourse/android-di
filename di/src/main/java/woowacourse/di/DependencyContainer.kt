@@ -14,13 +14,39 @@ class DependencyContainer {
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T {
-        val key = DependencyKey(type, qualifier)
         val instance =
-            instances.getOrPut(key) {
-                create(type)
+            if (qualifier == null) {
+                resolveWithoutQualifier(type)
+            } else {
+                val key = DependencyKey(type, qualifier)
+                instances.getOrPut(key) {
+                    create(type)
+                }
             }
 
         return type.cast(instance)
+    }
+
+    private fun resolveWithoutQualifier(type: KClass<*>): Any {
+        val candidates = instances.filterKeys { it.type == type }
+
+        return when (candidates.size) {
+            0 -> {
+                val key = DependencyKey(type, null)
+                instances.getOrPut(key) {
+                    create(type)
+                }
+            }
+            1 -> candidates.values.single()
+            else -> {
+                val qualifiers =
+                    candidates.keys
+                        .map { key ->
+                            key.qualifier?.qualifiedName ?: "Qualifier 없음"
+                        }.joinToString()
+                throw IllegalStateException("${type.qualifiedName}에 여러 의존성이 등록되어 있습니다. 등록된 Qualifier : $qualifiers")
+            }
+        }
     }
 
     private fun create(type: KClass<*>): Any {
