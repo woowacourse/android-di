@@ -190,4 +190,80 @@ class DependencyContainerTest {
 
         assertThat(resolvedRepository).isSameAs(repository)
     }
+
+    class QualifiedInjectionService {
+        @MyInject
+        @RoomCart
+        lateinit var repository: QualifiedTestRepository
+    }
+
+    class UnqualifiedInjectionService {
+        @MyInject
+        lateinit var repository: QualifiedTestRepository
+    }
+
+    @Test
+    fun `qualifier가 붙은 필드에 지정한 구현체를 주입한다`() {
+        val container = DependencyContainer()
+        val roomTestRepository = RoomTestRepository()
+        val inMemoryTestRepository = InMemoryTestRepository()
+        val service = QualifiedInjectionService()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = roomTestRepository,
+            qualifier = RoomCart::class,
+        )
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = inMemoryTestRepository,
+            qualifier = InMemoryCart::class,
+        )
+
+        container.inject(service)
+
+        assertThat(service.repository).isSameAs(roomTestRepository)
+    }
+
+    @Test
+    fun `qualifier가 없는 필드의 후보가 여러 개면 예외를 던진다`() {
+        val container = DependencyContainer()
+        val service = UnqualifiedInjectionService()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = RoomTestRepository(),
+            qualifier = RoomCart::class,
+        )
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = InMemoryTestRepository(),
+            qualifier = InMemoryCart::class,
+        )
+
+        assertThatThrownBy {
+            container.inject(service)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining(QualifiedTestRepository::class.qualifiedName)
+            .hasMessageContaining(RoomCart::class.qualifiedName)
+            .hasMessageContaining(InMemoryCart::class.qualifiedName)
+    }
+
+    @Test
+    fun `qualifier가 없는 필드의 후보가 하나면 해당 구현체를 주입한다`() {
+        val container = DependencyContainer()
+        val repository = RoomTestRepository()
+        val service = UnqualifiedInjectionService()
+
+        container.register(
+            type = QualifiedTestRepository::class,
+            instance = repository,
+            qualifier = RoomCart::class,
+        )
+
+        container.inject(service)
+
+        assertThat(service.repository).isSameAs(repository)
+    }
 }

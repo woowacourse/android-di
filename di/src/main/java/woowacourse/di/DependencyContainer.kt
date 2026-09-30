@@ -82,7 +82,12 @@ class DependencyContainer {
                     ) {
                         "${property.name}의 타입을 확인할 수 없습니다."
                     }
-                property.setter.call(instance, resolve(dependencyType))
+                val qualifier =
+                    property.annotations
+                        .find { annotation ->
+                            annotation.annotationClass.findAnnotation<Qualifier>() != null
+                        }?.annotationClass
+                property.setter.call(instance, resolve(dependencyType, qualifier))
             }
     }
 
