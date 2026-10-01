@@ -2,6 +2,7 @@
     <string name="app_name">Shopping</string>
 
     <string name="product_price">%,d원</string>
+    <string name="delivery_fee">배송비 %,d원</string>
 
     <string name="cart_title">장바구니</string>
     <string name="delete_cart_product">삭제</string>

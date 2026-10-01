@@ -3,36 +3,49 @@ package woowacourse.shopping.ui.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import smile.di.Inject
+import woowacourse.shopping.RoomDB
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
+import woowacourse.shopping.model.DeliveryFee
 
 data class CartUiState(
-    val cartProducts: List<Product> = emptyList(),
+    val cartProducts: List<CartProduct> = emptyList(),
+    val deliveryFee: Int = 0,
 )
 
 class CartViewModel(
-    private val cartRepository: CartRepository,
+    @RoomDB private val cartRepository: CartRepository,
 ) : ViewModel() {
-    private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
-    val uiState: StateFlow<CartUiState> get() = _uiState.asStateFlow()
+    @Inject
+    private lateinit var deliveryFee: DeliveryFee
+
+    val uiState: StateFlow<CartUiState> by lazy {
+        cartRepository
+            .getAllCartProducts()
+            .map {
+                CartUiState(cartProducts = it, deliveryFee = deliveryFee.amount)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = CartUiState(deliveryFee = deliveryFee.amount),
+            )
+    }
 
     private val _onCartProductDeleted: MutableSharedFlow<Unit> = MutableSharedFlow()
     val onCartProductDeleted: SharedFlow<Unit> get() = _onCartProductDeleted.asSharedFlow()
 
-    fun getAllCartProducts() {
-        _uiState.update { it.copy(cartProducts = cartRepository.getAllCartProducts()) }
-    }
-
-    fun deleteCartProduct(id: Int) {
-        cartRepository.deleteCartProduct(id)
-        getAllCartProducts()
-        viewModelScope.launch { _onCartProductDeleted.emit(Unit) }
+    fun deleteCartProduct(id: Long) {
+        viewModelScope.launch {
+            cartRepository.deleteCartProduct(id)
+            _onCartProductDeleted.emit(Unit)
+        }
     }
 }
