@@ -21,6 +21,9 @@ data class CartUiState(
 
 class CartViewModel : ViewModel() {
     @field:DependencyContainer.Inject
+    lateinit var dateFormatter: DateFormatter
+
+    @field:DependencyContainer.Inject
     @field:RoomCart
     lateinit var cartRepository: CartRepository
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())

@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -50,8 +49,7 @@ fun CartScreen(
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
 
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
+    val dateFormatter = viewModel.dateFormatter
 
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()

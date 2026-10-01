@@ -104,13 +104,23 @@ object DependencyContainer : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val scope = createScope()
+        val viewModel = create(modelClass, scope)
+        viewModel.addCloseable(scope)
+        return viewModel
+    }
+
+    fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        scope: DependencyScope,
+    ): T {
         val viewModel =
             modelClass.kotlin
                 .primaryConstructor
                 ?.call()
                 ?: throw IllegalArgumentException()
 
-        injectFields(viewModel)
+        injectFields(viewModel, scope)
 
         return modelClass.cast(viewModel)!!
     }

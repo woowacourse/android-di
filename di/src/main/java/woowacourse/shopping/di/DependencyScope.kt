@@ -1,8 +1,10 @@
 package woowacourse.shopping.di
 
+import java.lang.AutoCloseable
+
 class DependencyScope internal constructor(
     private val parent: DependencyScope? = null,
-) {
+) : AutoCloseable {
     private val dependencies = mutableMapOf<Any, Any>()
 
     internal fun find(key: Any): Any? = dependencies[key] ?: parent?.find(key)
@@ -19,4 +21,6 @@ class DependencyScope internal constructor(
     fun clear() {
         dependencies.clear()
     }
+
+    override fun close() = clear()
 }

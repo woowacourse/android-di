@@ -37,7 +37,7 @@ class DependencyScopeTest {
         screenScope.put("formatter", screenFormatter)
         screenScope.put("screenOnly", screenOnlyFormatter)
 
-        screenScope.clear()
+        screenScope.close()
 
         assertSame(applicationFormatter, screenScope.find("formatter"))
         assertNull(screenScope.find("screenOnly"))
