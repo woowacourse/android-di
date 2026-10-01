@@ -1,13 +1,15 @@
 package woowacourse.shopping.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import woowacourse.shopping.di.ViewModelFactory
 import woowacourse.shopping.ui.cart.CartScreen
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.products.ProductsScreen
 
 object ShoppingRoute {
@@ -28,8 +30,16 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
             )
         }
         composable(ShoppingRoute.CART) {
+            val context = LocalContext.current
+
+            val dateFormatter =
+                remember {
+                    DateFormatter(context)
+                }
+
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },
+                dateFormatter = dateFormatter,
                 viewModel = viewModel(factory = ViewModelFactory),
             )
         }
