@@ -36,7 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.model.Product
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 import woowacourse.shopping.ui.viewmodel.ViewModelFactory
 
@@ -76,7 +76,7 @@ fun CartScreen(
 fun CartContent(
     uiState: CartUiState,
     dateFormatter: DateFormatter,
-    onDelete: (Int) -> Unit,
+    onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,7 +103,7 @@ fun CartContent(
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
-                    onDelete = { onDelete(index) },
+                    onDelete = { onDelete(cartProduct.id) },
                 )
             }
         }
@@ -112,7 +112,7 @@ fun CartContent(
 
 @Composable
 fun CartProductItem(
-    cartProduct: Product,
+    cartProduct: CartProduct,
     dateFormatter: DateFormatter,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -124,8 +124,7 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        // TODO: Step2 - dateFormatter를 활용하여 상품이 담긴 날짜와 시간을 출력하도록 변경
-        Text(text = "", style = MaterialTheme.typography.labelSmall)
+        Text(text = dateFormatter.formatDate(cartProduct.createdAt), style = MaterialTheme.typography.labelSmall)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,
@@ -169,7 +168,7 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(Product(name = "우테코 과자", price = 10_000, imageUrl = "")),
+                    cartProducts = listOf(CartProduct(id = 0L, createdAt = 0L, name = "우테코 과자", price = 10_000, imageUrl = "")),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
