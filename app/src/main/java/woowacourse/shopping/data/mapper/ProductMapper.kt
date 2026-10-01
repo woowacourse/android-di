@@ -17,5 +17,5 @@ fun CartProductEntity.toDomain(): CartProduct =
         name = name,
         price = price,
         imageUrl = imageUrl,
-        createdAt = createdAt
+        createdAt = createdAt,
     )

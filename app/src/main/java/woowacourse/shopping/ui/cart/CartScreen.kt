@@ -109,7 +109,7 @@ fun CartContent(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            items(uiState.cartProducts, key = {it.id }) { cartProduct ->
+            items(uiState.cartProducts, key = { it.id }) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
                     dateFormatter = dateFormatter,
@@ -181,15 +181,16 @@ private fun CartContentPreview() {
         CartContent(
             uiState =
                 CartUiState(
-                    cartProducts = listOf(
-                        CartProduct(
-                            id = 1L,
-                            name = "우테코 과자",
-                            price = 10_000,
-                            imageUrl = "",
-                            createdAt = 10L,
-                        )
-                    ),
+                    cartProducts =
+                        listOf(
+                            CartProduct(
+                                id = 1L,
+                                name = "우테코 과자",
+                                price = 10_000,
+                                imageUrl = "",
+                                createdAt = 10L,
+                            ),
+                        ),
                 ),
             dateFormatter = DateFormatter(LocalContext.current),
             onDelete = {},
