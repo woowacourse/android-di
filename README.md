@@ -31,20 +31,20 @@ ViewModel이 필요로 하는 객체를 자동으로 생성하고, 여러 화면
 
 ## 기능 목록
 
-- [ ] ViewModel을 생성한 뒤 애노테이션이 붙은 필드에만 의존성을 주입한다.
-- [ ] 필드 주입과 재귀적인 의존성 주입을 테스트한다.
-- [ ] `CartRepository`가 `CartProductDao`를 주입받아 장바구니 데이터를 저장하고 조회하고 삭제한다.
-- [ ] `CartProduct` 도메인 모델과 엔티티를 도메인 모델로 변환하는 `toDomain()` 매퍼를 추가한다.
-- [ ] ViewModel에서 Repository의 `suspend` 함수를 `viewModelScope` 안에서 호출한다.
-- [ ] 장바구니 항목을 인덱스 대신 식별자로 삭제한다.
-- [ ] 장바구니 화면에 상품명과 `DateFormatter`로 변환한 담은 시각을 표시한다.
+- [x] ViewModel을 생성한 뒤 애노테이션이 붙은 필드에만 의존성을 주입한다.
+- [x] 필드 주입과 재귀적인 의존성 주입을 테스트한다.
+- [x] `CartRepository`가 `CartProductDao`를 주입받아 장바구니 데이터를 저장하고 조회하고 삭제한다.
+- [x] `CartProduct` 도메인 모델과 엔티티를 도메인 모델로 변환하는 `toDomain()` 매퍼를 추가한다.
+- [x] ViewModel에서 Repository의 `suspend` 함수를 `viewModelScope` 안에서 호출한다.
+- [x] 장바구니 항목을 인덱스 대신 식별자로 삭제한다.
+- [x] 장바구니 화면에 상품명과 `DateFormatter`로 변환한 담은 시각을 표시한다.
 
 ## 선택 요구 사항
 
-- [ ] 장바구니 목록의 `LazyColumn` 항목에 `key`를 지정하고 차이를 확인한다.
-- [ ] UI 계층에서 `CartProductEntity`를 직접 참조하지 않는다.
+- [x] 장바구니 목록의 `LazyColumn` 항목에 `key`를 지정하고 차이를 확인한다.
+- [x] UI 계층에서 `CartProductEntity`를 직접 참조하지 않는다.
 
 ## 프로그래밍 요구 사항
 
-- [ ] 사전에 제공된 테스트가 모두 통과한다.
-- [ ] 애노테이션이 붙지 않은 필드에는 의존성을 주입하지 않는다.
+- [x] 사전에 제공된 테스트가 모두 통과한다.
+- [x] 애노테이션이 붙지 않은 필드에는 의존성을 주입하지 않는다.
