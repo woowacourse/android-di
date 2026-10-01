@@ -2,11 +2,23 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.data.DefaultCartRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object HunnitFactory : ViewModelProvider.Factory {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val implementations: Map<KClass<*>, KClass<*>> =
+        mapOf(CartRepository::class to DefaultCartRepository::class)
+
+    fun <T : Any> register(
+        targetClass: KClass<T>,
+        instance: T,
+    ) {
+        instances[targetClass] = instance
+    }
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
 
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
@@ -30,6 +42,6 @@ object HunnitFactory : ViewModelProvider.Factory {
 
     fun getInstance(kClass: KClass<*>): Any =
         instances.getOrPut(kClass) {
-            createInstance(kClass)
+            createInstance(implementations[kClass] ?: kClass)
         }
 }
