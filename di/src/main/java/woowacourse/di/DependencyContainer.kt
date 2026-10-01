@@ -19,9 +19,10 @@ class DependencyContainer {
                 resolveWithoutQualifier(type)
             } else {
                 val key = DependencyKey(type, qualifier)
-                instances.getOrPut(key) {
-                    create(type)
-                }
+                instances[key]
+                    ?: throw IllegalStateException(
+                        "${type.qualifiedName}에 ${qualifier.qualifiedName} Qualifier로 등록된 의존성이 없습니다.",
+                    )
             }
 
         return type.cast(instance)
