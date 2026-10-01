@@ -9,6 +9,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object HunnitFactory : ViewModelProvider.Factory {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val resolvingPath = mutableListOf<KClass<*>>()
     private val implementations: Map<KClass<*>, KClass<*>> =
         mapOf(CartRepository::class to DefaultCartRepository::class)
 
@@ -22,22 +23,30 @@ object HunnitFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
 
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
-        val constructor =
-            targetClass.primaryConstructor
-                ?: throw IllegalArgumentException("$targetClass : 주 생성자를 찾을 수 없습니다.")
+        check(targetClass !in resolvingPath) {
+            "의존성: ${(resolvingPath + targetClass).joinToString(" - ") { it.simpleName ?: it.toString() }}"
+        }
+        resolvingPath.add(targetClass)
+        try {
+            val constructor =
+                targetClass.primaryConstructor
+                    ?: throw IllegalArgumentException("$targetClass : 주 생성자를 찾을 수 없습니다.")
 
-        val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
+            val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
 
-        val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
+            val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
 
-        targetClass.java.declaredFields
-            .filter { it.isAnnotationPresent(Inject::class.java) }
-            .forEach { field ->
-                field.isAccessible = true
-                field.set(instance, getInstance(field.type.kotlin))
-            }
+            targetClass.java.declaredFields
+                .filter { it.isAnnotationPresent(Inject::class.java) }
+                .forEach { field ->
+                    field.isAccessible = true
+                    field.set(instance, getInstance(field.type.kotlin))
+                }
 
-        return instance
+            return instance
+        } finally {
+            resolvingPath.removeAt(resolvingPath.lastIndex)
+        }
     }
 
     fun getInstance(kClass: KClass<*>): Any =
