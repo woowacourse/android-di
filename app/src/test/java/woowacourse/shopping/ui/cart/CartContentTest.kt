@@ -53,4 +53,21 @@ class CartContentTest {
 
         assertThat(deleted).isEqualTo(product.id)
     }
+
+    @Test
+    fun `장바구니에 담은 시각이 화면에 보인다`() {
+        lateinit var formattedDate: String
+        composeRule.setContent {
+            val dateFormatter = DateFormatter(LocalContext.current)
+            formattedDate = dateFormatter.formatDate(product.createdAt)
+            CartContent(
+                uiState = CartUiState(cartProducts = listOf(product)),
+                dateFormatter = dateFormatter,
+                onDelete = {},
+                onNavigateUp = {},
+            )
+        }
+
+        composeRule.onNodeWithText(formattedDate).assertIsDisplayed()
+    }
 }
