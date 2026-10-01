@@ -2,55 +2,27 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.di.Container
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 object HunnitFactory : ViewModelProvider.Factory {
-    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val resolvingPath = mutableListOf<KClass<*>>()
-    private val implementations: Map<KClass<*>, KClass<*>> =
-        mapOf(CartRepository::class to DefaultCartRepository::class)
+    private val container = Container()
 
     fun <T : Any> register(
-        targetClass: KClass<T>,
+        type: KClass<T>,
         instance: T,
-    ) {
-        instances[targetClass] = instance
-    }
+        qualifier: KClass<out Annotation>? = null,
+    ) = container.register(type, instance, qualifier)
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
+    fun <T : Any> bind(
+        type: KClass<T>,
+        implementation: KClass<out T>,
+        qualifier: KClass<out Annotation>? = null,
+    ) = container.bind(type, implementation, qualifier)
 
-    fun <T : Any> createInstance(targetClass: KClass<T>): T {
-        check(targetClass !in resolvingPath) {
-            "의존성: ${(resolvingPath + targetClass).joinToString(" - ") { it.simpleName ?: it.toString() }}"
-        }
-        resolvingPath.add(targetClass)
-        try {
-            val constructor =
-                targetClass.primaryConstructor
-                    ?: throw IllegalArgumentException("$targetClass : 주 생성자를 찾을 수 없습니다.")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = container.create(modelClass.kotlin)
 
-            val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
+    fun <T : Any> createInstance(type: KClass<T>): T = container.create(type)
 
-            val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
-
-            targetClass.java.declaredFields
-                .filter { it.isAnnotationPresent(Inject::class.java) }
-                .forEach { field ->
-                    field.isAccessible = true
-                    field.set(instance, getInstance(field.type.kotlin))
-                }
-
-            return instance
-        } finally {
-            resolvingPath.removeAt(resolvingPath.lastIndex)
-        }
-    }
-
-    fun getInstance(kClass: KClass<*>): Any =
-        instances.getOrPut(kClass) {
-            createInstance(implementations[kClass] ?: kClass)
-        }
+    fun getInstance(type: KClass<*>): Any = container.resolve(type)
 }
