@@ -51,6 +51,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":smile-di"))
+
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))

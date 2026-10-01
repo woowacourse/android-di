@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package smile.di
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.RUNTIME)

@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import smile.di.Inject
 import woowacourse.shopping.RoomDB
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.di.Inject
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.DeliveryFee
 

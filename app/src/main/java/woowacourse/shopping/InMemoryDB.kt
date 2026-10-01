@@ -1,6 +1,6 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.di.Qualifier
+import smile.di.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)

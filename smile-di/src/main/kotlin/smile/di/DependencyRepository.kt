@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package smile.di
 
 interface DependencyRepository {
     fun get(key: DependencyKey): Any?

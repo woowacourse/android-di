@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.di.SmileDi
+import smile.di.SmileDi
 
 class DiApplication : Application() {
     lateinit var smileDi: SmileDi

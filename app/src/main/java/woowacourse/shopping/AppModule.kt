@@ -2,12 +2,12 @@ package woowacourse.shopping
 
 import android.content.Context
 import androidx.room.Room
+import smile.di.Provides
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
-import woowacourse.shopping.di.Provides
 import woowacourse.shopping.model.DeliveryFee
 
 class AppModule(

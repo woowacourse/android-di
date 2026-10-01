@@ -1,4 +1,4 @@
-package woowacourse.shopping.di
+package smile.di
 
 import kotlin.reflect.KClass
 

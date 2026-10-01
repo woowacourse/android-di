@@ -1,7 +1,7 @@
 package woowacourse.shopping
 
-import woowacourse.shopping.di.DependencyKey
-import woowacourse.shopping.di.DependencyRepository
+import smile.di.DependencyKey
+import smile.di.DependencyRepository
 
 class AppContainer : DependencyRepository {
     private val instances = mutableMapOf<DependencyKey, Any>()
