@@ -1,10 +1,7 @@
 package woowacourse.shopping.ui.products
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,18 +10,24 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import woowacourse.di.MyInject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.RoomCart
 import woowacourse.shopping.model.Product
 
 data class ProductsUiState(
     val products: List<Product> = emptyList(),
 )
 
-class ProductsViewModel(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-) : ViewModel() {
+class ProductsViewModel : ViewModel() {
+    @MyInject
+    @RoomCart
+    lateinit var productRepository: ProductRepository
+
+    @MyInject
+    @RoomCart
+    lateinit var cartRepository: CartRepository
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 
@@ -36,7 +39,9 @@ class ProductsViewModel(
     }
 
     fun addCartProduct(product: Product) {
-        cartRepository.addCartProduct(product)
-        viewModelScope.launch { _onProductAdded.emit(Unit) }
+        viewModelScope.launch {
+            cartRepository.addCartProduct(product)
+            _onProductAdded.emit(Unit)
+        }
     }
 }

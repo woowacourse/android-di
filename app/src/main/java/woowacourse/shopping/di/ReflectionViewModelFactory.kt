@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.DependencyContainer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -28,7 +29,7 @@ class ReflectionViewModelFactory(
 
         val viewModel =
             constructor.call(*dependencies.toTypedArray())
-
+        container.inject(viewModel)
         return modelClass.cast(viewModel)
     }
 }
