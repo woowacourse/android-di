@@ -17,6 +17,16 @@ class DiContainerTest {
     }
 
     @Test
+    fun `같은 타입을 직접 여러 번 요청하면 생성한 객체를 재사용한다`() {
+        val container = DiContainer()
+
+        val first = container.instantiate(Consumer::class)
+        val second = container.instantiate(Consumer::class)
+
+        assertSame(first, second)
+    }
+
+    @Test
     fun `인터페이스 규칙과 등록된 객체를 함께 사용한다`() {
         val container = DiContainer()
         val dependency = Dependency()
@@ -83,6 +93,20 @@ class DiContainerTest {
 
         assertContains(exception.message.orEmpty(), "구현체에 대한 구분자가 없습니다.")
         assertContains(exception.message.orEmpty(), Repository::class.qualifiedName.orEmpty())
+    }
+
+    @Test
+    fun `등록되지 않은 Qualifier를 요청하면 요청 정보를 담은 오류를 낸다`() {
+        val container = DiContainer()
+
+        val exception =
+            assertFailsWith<IllegalArgumentException> {
+                container.instantiate(Repository::class, TestRoom::class)
+            }
+
+        assertContains(exception.message.orEmpty(), "등록되지 않은 Qualifier입니다.")
+        assertContains(exception.message.orEmpty(), Repository::class.qualifiedName.orEmpty())
+        assertContains(exception.message.orEmpty(), TestRoom::class.qualifiedName.orEmpty())
     }
 
     class Dependency

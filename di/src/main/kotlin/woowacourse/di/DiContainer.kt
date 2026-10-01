@@ -28,14 +28,12 @@ class DiContainer {
             constructor.parameters.map { parameter ->
                 val dependencyType = parameter.type.classifier as KClass<*>
                 val dependencyQualifier = qualifierOf(parameter.annotations, parameter.name.orEmpty())
-                val dependencyKey = resolveKey(dependencyType, dependencyQualifier)
-
-                store.getOrPut(dependencyKey) {
-                    instantiate(dependencyType, dependencyKey.qualifier)
-                }
+                instantiate(dependencyType, dependencyQualifier)
             }
 
-        return type.cast(constructor.call(*dependencies.toTypedArray()))
+        val instance = type.cast(constructor.call(*dependencies.toTypedArray()))
+        store[key] = instance
+        return instance
     }
 
     fun <T : Any> register(
@@ -46,9 +44,9 @@ class DiContainer {
         store[DiKey(type, qualifier)] = instance
     }
 
-    fun registerInterfaceRule(
-        type: KClass<*>,
-        implementationType: KClass<*>,
+    fun <T : Any, I : T> registerInterfaceRule(
+        type: KClass<T>,
+        implementationType: KClass<I>,
         qualifier: KClass<out Annotation>? = null,
     ) {
         interfaceRules[DiKey(type, qualifier)] = implementationType
@@ -68,11 +66,7 @@ class DiContainer {
                 mutableProperty.returnType.classifier as? KClass<*>
                     ?: error("주입 대상의 타입을 확인할 수 없습니다: ${property.name}")
             val dependencyQualifier = qualifierOf(property.annotations, property.name)
-            val dependencyKey = resolveKey(dependencyType, dependencyQualifier)
-            val dependency =
-                store.getOrPut(dependencyKey) {
-                    instantiate(dependencyType, dependencyKey.qualifier)
-                }
+            val dependency = instantiate(dependencyType, dependencyQualifier)
 
             mutableProperty.isAccessible = true
             mutableProperty.setter.call(target, dependency)
@@ -84,8 +78,14 @@ class DiContainer {
         qualifier: KClass<out Annotation>?,
     ): DiKey {
         val requestedKey = DiKey(type, qualifier)
-        if (qualifier != null || store.containsKey(requestedKey) || interfaceRules.containsKey(requestedKey)) {
+        if (store.containsKey(requestedKey) || interfaceRules.containsKey(requestedKey)) {
             return requestedKey
+        }
+
+        require(qualifier == null) {
+            "등록되지 않은 Qualifier입니다. " +
+                "요청 타입: ${type.qualifiedName}, " +
+                "Qualifier: ${qualifier?.qualifiedName}"
         }
 
         val candidates =

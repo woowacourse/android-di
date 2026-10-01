@@ -37,9 +37,9 @@ object AoDi : ViewModelProvider.Factory {
         container.register(type, instance, qualifier)
     }
 
-    fun registerInterfaceRule(
-        type: KClass<*>,
-        implType: KClass<*>,
+    fun <T : Any, I : T> registerInterfaceRule(
+        type: KClass<T>,
+        implType: KClass<I>,
         qualifier: KClass<out Annotation>? = null,
     ) {
         container.registerInterfaceRule(type, implType, qualifier)
