@@ -1,8 +1,15 @@
 package woowacourse.shopping
 
 import android.app.Application
-import woowacourse.shopping.data.AppContainer
+import woowacourse.shopping.di.SmileDi
 
 class DiApplication : Application() {
-    val appContainer = AppContainer()
+    lateinit var smileDi: SmileDi
+        private set
+
+    override fun onCreate() {
+        super.onCreate()
+
+        smileDi = SmileDi(AppModule(this), AppContainer())
+    }
 }
