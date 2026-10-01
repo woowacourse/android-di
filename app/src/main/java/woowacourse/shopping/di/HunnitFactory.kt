@@ -7,7 +7,6 @@ import kotlin.reflect.full.primaryConstructor
 
 object HunnitFactory : ViewModelProvider.Factory {
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
 
     fun <T : Any> createInstance(targetClass: KClass<T>): T {
@@ -18,6 +17,13 @@ object HunnitFactory : ViewModelProvider.Factory {
         val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
 
         val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
+
+        targetClass.java.declaredFields
+            .filter { it.isAnnotationPresent(Inject::class.java) }
+            .forEach { field ->
+                field.isAccessible = true
+                field.set(instance, getInstance(field.type.kotlin))
+            }
 
         return instance
     }
