@@ -51,7 +51,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.github.nadajinny:android-di:3.0.0")
+    implementation(project(":di"))
 
     implementation(libs.androidx.core.ktx)
 
