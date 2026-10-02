@@ -1,8 +1,13 @@
 package woowacourse.shopping.ui.cart
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -39,6 +44,35 @@ class CartContentTest {
         }
 
         composeRule.onNodeWithText(product.name).assertIsDisplayed()
+    }
+
+    @Test
+    fun `중간 상품을 삭제하면 선택한 상품을 제외한 상품들이 남는다`() {
+        val products =
+            listOf(
+                product.copy(id = 1L, name = "첫 번째 상품"),
+                product.copy(id = 2L, name = "두 번째 상품"),
+                product.copy(id = 3L, name = "세 번째 상품"),
+            )
+
+        composeRule.setContent {
+            var cartProducts by remember { mutableStateOf(products) }
+
+            CartContent(
+                uiState = CartUiState(cartProducts = cartProducts),
+                dateFormatter = DateFormatter(LocalContext.current),
+                onDelete = { id ->
+                    cartProducts = cartProducts.filterNot { cartProduct -> cartProduct.id == id }
+                },
+                onNavigateUp = {},
+            )
+        }
+
+        composeRule.onAllNodesWithContentDescription("삭제")[1].performClick()
+
+        composeRule.onNodeWithText("첫 번째 상품").assertIsDisplayed()
+        composeRule.onNodeWithText("두 번째 상품").assertDoesNotExist()
+        composeRule.onNodeWithText("세 번째 상품").assertIsDisplayed()
     }
 
     @Test
