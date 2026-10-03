@@ -6,6 +6,22 @@ import org.junit.Test
 
 class DependencyContainerTest {
     @Test
+    fun `부모와 조상 클래스의 private 주입 필드까지 주입한다`() {
+        val container =
+            dependencyContainer(
+                DependencyBinding(Catalog::class, CatalogImpl::class, Local::class),
+            )
+        val target = ChildViewModel()
+
+        container.inject(target)
+
+        val expected = container.getInstance(Catalog::class, Local::class)
+        assertThat(target.catalog).isSameAs(expected)
+        assertThat(target.baseCatalog()).isSameAs(expected)
+        assertThat(target.unmarked).isNull()
+    }
+
+    @Test
     fun `주입 표시된 필드에만 주입하고 같은 키의 인스턴스를 재사용한다`() {
         val container =
             dependencyContainer(
@@ -122,6 +138,22 @@ class CatalogTarget {
     lateinit var second: Catalog
 
     var unmarked: Catalog? = null
+}
+
+open class BaseViewModel {
+    @field:CustomFieldInjection
+    @field:Local
+    private lateinit var catalog: Catalog
+
+    var unmarked: Catalog? = null
+
+    fun baseCatalog(): Catalog = catalog
+}
+
+class ChildViewModel : BaseViewModel() {
+    @field:CustomFieldInjection
+    @field:Local
+    lateinit var catalog: Catalog
 }
 
 class AppConfig

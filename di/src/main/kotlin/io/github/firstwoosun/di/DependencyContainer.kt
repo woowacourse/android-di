@@ -27,7 +27,9 @@ class DependencyContainer(
     }
 
     fun inject(target: Any) {
-        target::class.java.declaredFields
+        generateSequence(target::class.java) { it.superclass }
+            .takeWhile { it != Any::class.java }
+            .flatMap { it.declaredFields.asSequence() }
             .filter { it.isAnnotationPresent(CustomFieldInjection::class.java) }
             .forEach { field ->
                 val qualifier = field.annotations.asIterable().qualifierOrNull()
