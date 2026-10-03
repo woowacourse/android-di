@@ -6,6 +6,7 @@ import io.github.firstwoosun.di.DependencyBinding
 import io.github.firstwoosun.di.DependencyContainer
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
+import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.di.DataContainer
@@ -38,6 +39,11 @@ class ShoppingApplication : Application() {
                             type = CartRepository::class,
                             implementation = DefaultCartRepository::class,
                             qualifier = RoomBacked::class,
+                        ),
+                        DependencyBinding(
+                            type = CartRepository::class,
+                            implementation = InMemoryCartRepository::class,
+                            qualifier = InMemory::class
                         ),
                         DependencyBinding(
                             type = ProductRepository::class,
