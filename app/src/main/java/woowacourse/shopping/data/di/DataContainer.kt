@@ -29,7 +29,5 @@ class DataContainer(
                 )
             return DataContainer(providers)
         }
-
-        fun testInstanceCreate(vararg providers: Pair<KClass<*>, () -> Any>) = DataContainer(providers.toMap())
     }
 }

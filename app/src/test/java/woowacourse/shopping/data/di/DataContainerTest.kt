@@ -9,7 +9,7 @@ import woowacourse.shopping.data.ShoppingDatabase
 class DataContainerTest {
     @Test
     fun `등록되지 않은 타입은 null을 반환한다`() {
-        val container = DataContainer.testInstanceCreate()
+        val container = DataContainer(emptyMap())
         assertThat(container.getInstanceOrNull(ShoppingDatabase::class)).isNull()
     }
 
@@ -20,11 +20,13 @@ class DataContainerTest {
         var providerCallCount = 0
 
         val container =
-            DataContainer.testInstanceCreate(
-                CartProductDao::class to {
-                    providerCallCount++
-                    dao
-                },
+            DataContainer(
+                mapOf(
+                    CartProductDao::class to {
+                        providerCallCount++
+                        dao
+                    },
+                ),
             )
 
         // when: 등록된 Dao 객체 생성을 요청하면
