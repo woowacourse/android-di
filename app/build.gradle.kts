@@ -65,7 +65,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.kotlin.reflect)
+    implementation(project(":di"))
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -79,6 +79,7 @@ dependencies {
 
     testImplementation(libs.assertj.core)
     testImplementation(libs.truth)
+    testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(platform(libs.androidx.compose.bom))

@@ -27,12 +27,13 @@ fun ShoppingNavHost(
         composable(ShoppingRoute.PRODUCTS) {
             ProductsScreen(
                 onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
-                viewModel = viewModel(factory = viewModelFactory)
+                viewModel = viewModel(factory = viewModelFactory),
             )
         }
         composable(ShoppingRoute.CART) {
-            CartScreen(onNavigateUp = { navController.navigateUp() },
-                viewModel = viewModel(factory = viewModelFactory)
+            CartScreen(
+                onNavigateUp = { navController.navigateUp() },
+                viewModel = viewModel(factory = viewModelFactory),
             )
         }
     }
