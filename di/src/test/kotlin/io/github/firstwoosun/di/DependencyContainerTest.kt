@@ -92,6 +92,54 @@ class DependencyContainerTest {
     }
 
     @Test
+    fun `qualifier 없는 정확한 키가 있으면 qualified 후보와 함께 등록되어도 주입한다`() {
+        val container =
+            dependencyContainer(
+                DependencyBinding(Catalog::class, CatalogImpl::class),
+                DependencyBinding(Catalog::class, RemoteCatalog::class, Remote::class),
+            )
+        val target = UnqualifiedCatalogTarget()
+
+        container.inject(target)
+
+        assertThat(target.catalog).isInstanceOf(CatalogImpl::class.java)
+        assertThat(target.catalog).isSameAs(container.getInstance(Catalog::class))
+        assertThat(container.getInstance(Catalog::class, Remote::class))
+            .isInstanceOf(RemoteCatalog::class.java)
+            .isNotSameAs(target.catalog)
+    }
+
+    @Test
+    fun `qualified 후보가 하나여도 qualifier 없는 요청에 대신 사용하지 않는다`() {
+        val container =
+            dependencyContainer(
+                DependencyBinding(Catalog::class, CatalogImpl::class, Local::class),
+            )
+
+        assertThatThrownBy { container.getInstance(Catalog::class) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("Qualifier가 지정되지 않음")
+            .hasMessageContaining(Catalog::class.toString())
+            .hasMessageContaining(Local::class.toString())
+    }
+
+    @Test
+    fun `요청한 qualifier의 키가 없으면 다른 후보를 대신 사용하지 않는다`() {
+        val container =
+            dependencyContainer(
+                DependencyBinding(Catalog::class, CatalogImpl::class),
+                DependencyBinding(Catalog::class, RemoteCatalog::class, Remote::class),
+            )
+
+        assertThatThrownBy { container.getInstance(Catalog::class, Local::class) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("등록되지 않은 의존성 타입")
+            .hasMessageContaining(Catalog::class.toString())
+            .hasMessageContaining(Local::class.toString())
+            .hasMessageContaining(Remote::class.toString())
+    }
+
+    @Test
     fun `qualifier 없는 주입 지점의 여러 후보를 거부한다`() {
         val container =
             dependencyContainer(
@@ -102,6 +150,9 @@ class DependencyContainerTest {
         assertThatThrownBy { container.inject(UnqualifiedCatalogTarget()) }
             .isInstanceOf(IllegalStateException::class.java)
             .hasMessageContaining("모호한 의존성 타입")
+            .hasMessageContaining(Catalog::class.toString())
+            .hasMessageContaining(Local::class.toString())
+            .hasMessageContaining(Remote::class.toString())
     }
 
     private fun dependencyContainer(

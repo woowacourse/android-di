@@ -96,18 +96,20 @@ class DependencyContainer(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
     ): DependencyBinding {
+        bindingsByKey[DependencyKey(type, qualifier)]?.let { return it }
+
         val candidates = bindings.filter { it.type == type }
+        val candidateQualifiers = candidates.map { it.qualifier }
 
         if (qualifier == null && candidates.size > 1) {
-            error("모호한 의존성 타입, Qualifier를 지정")
+            error("모호한 의존성 타입: $type, 후보 qualifier: $candidateQualifiers, Qualifier를 지정")
         }
 
-        return bindingsByKey[DependencyKey(type, qualifier)]
-            ?: if (qualifier == null && candidates.any { it.qualifier != null }) {
-                error("Qualifier가 지정되지 않음")
-            } else {
-                error("등록되지 않은 의존성 타입: $type, qualifier: $qualifier")
-            }
+        if (qualifier == null && candidates.any { it.qualifier != null }) {
+            error("Qualifier가 지정되지 않음: $type, 후보 qualifier: $candidateQualifiers")
+        }
+
+        error("등록되지 않은 의존성 타입: $type, qualifier: $qualifier, 후보 qualifier: $candidateQualifiers")
     }
 
     private fun Iterable<Annotation>.qualifierOrNull(): KClass<out Annotation>? {
