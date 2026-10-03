@@ -1,55 +1,101 @@
 package woowacourse.shopping
 
-import org.assertj.core.api.Assertions.assertThat
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.google.common.truth.Truth.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import woowacourse.shopping.data.CartRepository
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import woowacourse.di.DependencyContainer
+import woowacourse.di.Inject
 import woowacourse.shopping.di.AutoViewModelFactory
-import woowacourse.shopping.di.DependencyContainer
+import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
-import woowacourse.shopping.ui.cart.CartViewModel
-import woowacourse.shopping.ui.products.ProductsViewModel
 
+@RunWith(RobolectricTestRunner::class)
 class AutoViewModelFactoryTest {
     @Test
-    fun `ProductViewModel을 자동으로 생성한다`() {
-        val viewModel =
-            AutoViewModelFactory.create(ProductsViewModel::class.java)
+    fun `ViewModelProvider가 생성자 의존성을 주입한다`() {
+        val repository = FakeCartRepository()
+        val container =
+            DependencyContainer().apply {
+                registerInstance(FakeCartRepository::class, repository)
+            }
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val provider = ViewModelProvider(activity, AutoViewModelFactory(container))
 
-        assertThat(viewModel).isInstanceOf(ProductsViewModel::class.java)
+        val viewModel = provider[CartRepositoryTestViewModel::class.java]
+
+        assertThat(viewModel.repository).isSameInstanceAs(repository)
     }
 
     @Test
-    fun `CartViewModel을 자동으로 생성한다`() {
-        val viewModel =
-            AutoViewModelFactory.create(CartViewModel::class.java)
+    fun `ViewModelProvider는 의존성이 없으면 생성에 실패한다`() {
+        val container = DependencyContainer()
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val provider = ViewModelProvider(activity, AutoViewModelFactory(container))
 
-        assertThat(viewModel).isInstanceOf(CartViewModel::class.java)
+        assertThatThrownBy { provider[MissingDependencyTestViewModel::class.java] }
+            .isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
-    fun `두 ViewModel이 같은 CartRepository를 공유한다`() {
-        val productsViewModel =
-            AutoViewModelFactory.create(ProductsViewModel::class.java)
-        val cartViewModel =
-            AutoViewModelFactory.create(CartViewModel::class.java)
+    fun `필드에 Inject가 붙은 경우에만 의존성을 주입한다`() {
+        val repository = FakeCartRepository()
+        val container =
+            DependencyContainer().apply {
+                registerInstance(FakeCartRepository::class, repository)
+            }
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val provider = ViewModelProvider(activity, AutoViewModelFactory(container))
 
-        val product =
-            Product(
-                name = "우테코 과자",
-                price = 10_000,
-                imageUrl = "",
-            )
+        val viewModel = provider[FieldInjectionTestViewModel::class.java]
 
-        productsViewModel.addCartProduct(product)
-        cartViewModel.getAllCartProducts()
-
-        assertThat(cartViewModel.uiState.value.cartProducts)
-            .containsExactly(product)
-
-        assertThat(
-            DependencyContainer.get(CartRepository::class),
-        ).isSameAs(
-            DependencyContainer.get(CartRepository::class),
-        )
+        assertThat(viewModel.repository).isSameInstanceAs(repository)
+        assertThat(viewModel.unannotatedRepository).isNull()
     }
+
+    @Test
+    fun `Inject 필드 의존성이 없으면 생성에 실패한다`() {
+        val container = DependencyContainer()
+        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val provider = ViewModelProvider(activity, AutoViewModelFactory(container))
+
+        assertThatThrownBy { provider[MissingFieldInjectionTestViewModel::class.java] }
+            .isInstanceOf(IllegalStateException::class.java)
+    }
+}
+
+class CartRepositoryTestViewModel(
+    val repository: FakeCartRepository,
+) : ViewModel()
+
+class MissingDependencyTestViewModel(
+    val repository: MissingFactoryDependency,
+) : ViewModel()
+
+class FieldInjectionTestViewModel : ViewModel() {
+    @field:Inject
+    lateinit var repository: FakeCartRepository
+
+    var unannotatedRepository: FakeCartRepository? = null
+}
+
+class MissingFieldInjectionTestViewModel : ViewModel() {
+    @field:Inject
+    lateinit var repository: MissingFactoryDependency
+}
+
+interface MissingFactoryDependency
+
+class FakeCartRepository : CartRepository {
+    override suspend fun addCartProduct(product: Product) = Unit
+
+    override suspend fun getAllCartProducts(): List<CartProduct> = emptyList()
+
+    override suspend fun deleteCartProduct(id: Long) = Unit
 }
