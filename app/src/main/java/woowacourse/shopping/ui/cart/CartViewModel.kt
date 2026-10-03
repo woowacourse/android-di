@@ -32,16 +32,20 @@ class CartViewModel : ViewModel() {
 
     fun getAllCartProducts() {
         viewModelScope.launch {
-            val cartProducts = cartRepository.getAllCartProducts()
-            _uiState.update { it.copy(cartProducts = cartProducts) }
+            refreshCartProducts()
         }
     }
 
     fun deleteCartProduct(id: Long) {
         viewModelScope.launch {
             cartRepository.deleteCartProduct(id)
-            getAllCartProducts()
+            refreshCartProducts()
             _onCartProductDeleted.emit(Unit)
         }
+    }
+
+    private suspend fun refreshCartProducts() {
+        val cartProducts = cartRepository.getAllCartProducts()
+        _uiState.update { it.copy(cartProducts = cartProducts) }
     }
 }
