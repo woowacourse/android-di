@@ -2,28 +2,27 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import woowacourse.di.Container
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 object HunnitFactory : ViewModelProvider.Factory {
-    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val container = Container()
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = createInstance(modelClass.kotlin)
+    fun <T : Any> register(
+        type: KClass<T>,
+        instance: T,
+        qualifier: KClass<out Annotation>? = null,
+    ) = container.register(type, instance, qualifier)
 
-    fun <T : Any> createInstance(targetClass: KClass<T>): T {
-        val constructor =
-            targetClass.primaryConstructor
-                ?: throw IllegalArgumentException("$targetClass : 주 생성자를 찾을 수 없습니다.")
+    fun <T : Any> bind(
+        type: KClass<T>,
+        implementation: KClass<out T>,
+        qualifier: KClass<out Annotation>? = null,
+    ) = container.bind(type, implementation, qualifier)
 
-        val parameterTypes = constructor.parameters.map { it.type.classifier as KClass<*> }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = container.create(modelClass.kotlin)
 
-        val instance = constructor.call(*parameterTypes.map { getInstance(it) }.toTypedArray())
+    fun <T : Any> createInstance(type: KClass<T>): T = container.create(type)
 
-        return instance
-    }
-
-    fun getInstance(kClass: KClass<*>): Any =
-        instances.getOrPut(kClass) {
-            createInstance(kClass)
-        }
+    fun getInstance(type: KClass<*>): Any = container.resolve(type)
 }
