@@ -11,7 +11,7 @@ internal data class DependencyKey(
 object DependencyContainer {
     private val applicationInstances = mutableMapOf<DependencyKey, Any>()
     private val scopes = mutableMapOf<String, DependencyScope>()
-    val applicationScope = DependencyScope("application", applicationInstances)
+    private val applicationScope = DependencyScope("application", applicationInstances)
 
     fun openScope(
         id: String,
@@ -171,8 +171,11 @@ class DependencyScope internal constructor(
         if (isClosed) return
         instances.clear()
         isClosed = true
-        onClose()
-        onRemoved()
+        try {
+            onClose()
+        } finally {
+            onRemoved()
+        }
     }
 
     internal fun checkOpen() {

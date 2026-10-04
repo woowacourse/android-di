@@ -34,6 +34,27 @@ class ViewModelScopeTest {
     }
 
     @Test
+    fun `CartRepository는 앱 스코프 인스턴스를 다른 생명주기에서도 공유한다`() {
+        val applicationRepository =
+            DependencyContainer.getInstance(
+                CartRepository::class,
+                Room::class,
+            )
+        val viewModelScope = DependencyContainer.openScope("cart-repository-test")
+
+        val scopedRepository =
+            DependencyContainer.getInstance(
+                CartRepository::class,
+                Room::class,
+                viewModelScope,
+            )
+
+        assertSame(applicationRepository, scopedRepository)
+
+        viewModelScope.close()
+    }
+
+    @Test
     fun `ViewModel마다 별도 스코프를 사용하고 ViewModelStore가 비워지면 스코프가 종료된다`() {
         DependencyContainer.register(CartProductDao::class, FakeCartProductDao())
         DependencyContainer.register(CartRepository::class, Room::class, FakeRepository())
@@ -76,5 +97,12 @@ class ViewModelScopeTest {
         store.clear()
 
         assertTrue(scope.isClosed)
+
+        val nextStore = ViewModelStore()
+        val next = ViewModelProvider(nextStore, AutoViewModelFactory())[CartScreenScopeViewModel::class.java]
+
+        assertNotSame(first.dateFormatter, next.dateFormatter)
+
+        nextStore.clear()
     }
 }
