@@ -4,14 +4,30 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer {
-    private data class DependencyKey(
+    internal data class DependencyKey(
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>?,
     )
 
-    private val instances = mutableMapOf<DependencyKey, Any>()
+    private val applicationInstances = mutableMapOf<DependencyKey, Any>()
+    private val scopes = mutableMapOf<String, DependencyScope>()
+    val applicationScope = DependencyScope("application", applicationInstances)
 
-    fun create(type: KClass<*>): Any {
+    fun openScope(
+        id: String,
+        onClose: () -> Unit = {},
+    ): DependencyScope =
+        scopes.getOrPut(id) {
+            DependencyScope(id, mutableMapOf(), onClose) {
+                scopes.remove(id)
+            }
+        }
+
+    fun create(
+        type: KClass<*>,
+        scope: DependencyScope = applicationScope,
+    ): Any {
+        scope.checkOpen()
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
@@ -34,23 +50,26 @@ object DependencyContainer {
                 getInstance(
                     type = dependencyClass,
                     qualifier = qualifier,
+                    scope = scope,
                 )
             }
         val instance = constructor.call(*args.toTypedArray())
-        injectFields(instance)
+        injectFields(instance, scope)
         return instance
     }
 
     fun getInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
+        scope: DependencyScope = applicationScope,
     ): Any {
+        scope.checkOpen()
         val key = DependencyKey(type, qualifier)
 
-        instances[key]?.let { return it }
+        scope.find(key)?.let { return it }
 
         val qualifiedInstances =
-            instances.keys.filter { dependencyKey ->
+            allRegisteredKeys(scope).filter { dependencyKey ->
                 dependencyKey.type == type && dependencyKey.qualifier != null
             }
 
@@ -69,12 +88,15 @@ object DependencyContainer {
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
-        return instances.getOrPut(key) {
-            create(type)
+        return scope.instances.getOrPut(key) {
+            create(type, scope)
         }
     }
 
-    fun injectFields(instance: Any) {
+    fun injectFields(
+        instance: Any,
+        scope: DependencyScope = applicationScope,
+    ) {
         val fields = instance.javaClass.declaredFields
         fields.forEach { field ->
             if (!field.isAnnotationPresent(Inject::class.java)) return@forEach
@@ -90,6 +112,7 @@ object DependencyContainer {
                 getInstance(
                     type = field.type.kotlin,
                     qualifier = qualifier,
+                    scope = scope,
                 )
 
             field.isAccessible = true
@@ -108,9 +131,14 @@ object DependencyContainer {
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
         instance: Any,
+        scope: DependencyScope = applicationScope,
     ) {
-        instances[DependencyKey(type, qualifier)] = instance
+        scope.checkOpen()
+        scope.instances[DependencyKey(type, qualifier)] = instance
     }
+
+    private fun allRegisteredKeys(scope: DependencyScope): Set<DependencyKey> =
+        scope.instances.keys + applicationInstances.keys
 
     private fun findQualifier(annotations: Iterable<Annotation>): KClass<out Annotation>? {
         val qualifiers =
@@ -125,4 +153,29 @@ object DependencyContainer {
 
         return qualifiers.firstOrNull()?.annotationClass
     }
+}
+
+class DependencyScope internal constructor(
+    val id: String,
+    internal val instances: MutableMap<DependencyContainer.DependencyKey, Any>,
+    private val onClose: () -> Unit = {},
+    private val onRemoved: () -> Unit = {},
+) {
+    var isClosed: Boolean = false
+        private set
+
+    fun close() {
+        if (isClosed) return
+        instances.clear()
+        isClosed = true
+        onClose()
+        onRemoved()
+    }
+
+    internal fun checkOpen() {
+        check(!isClosed) { "'$id' 스코프가 이미 종료되었습니다." }
+    }
+
+    internal fun find(key: DependencyContainer.DependencyKey): Any? =
+        instances[key] ?: DependencyContainer.applicationScope.instances[key]
 }
