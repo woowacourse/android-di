@@ -3,12 +3,12 @@ package woowacourse.di
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
-object DependencyContainer {
-    internal data class DependencyKey(
-        val type: KClass<*>,
-        val qualifier: KClass<out Annotation>?,
-    )
+internal data class DependencyKey(
+    val type: KClass<*>,
+    val qualifier: KClass<out Annotation>?,
+)
 
+object DependencyContainer {
     private val applicationInstances = mutableMapOf<DependencyKey, Any>()
     private val scopes = mutableMapOf<String, DependencyScope>()
     val applicationScope = DependencyScope("application", applicationInstances)
@@ -18,7 +18,12 @@ object DependencyContainer {
         onClose: () -> Unit = {},
     ): DependencyScope =
         scopes.getOrPut(id) {
-            DependencyScope(id, mutableMapOf(), onClose) {
+            DependencyScope(
+                id = id,
+                instances = mutableMapOf(),
+                parent = applicationScope,
+                onClose = onClose,
+            ) {
                 scopes.remove(id)
             }
         }
@@ -69,7 +74,7 @@ object DependencyContainer {
         scope.find(key)?.let { return it }
 
         val qualifiedInstances =
-            allRegisteredKeys(scope).filter { dependencyKey ->
+            scope.registeredKeys().filter { dependencyKey ->
                 dependencyKey.type == type && dependencyKey.qualifier != null
             }
 
@@ -137,9 +142,6 @@ object DependencyContainer {
         scope.instances[DependencyKey(type, qualifier)] = instance
     }
 
-    private fun allRegisteredKeys(scope: DependencyScope): Set<DependencyKey> =
-        scope.instances.keys + applicationInstances.keys
-
     private fun findQualifier(annotations: Iterable<Annotation>): KClass<out Annotation>? {
         val qualifiers =
             annotations.filter { annotation ->
@@ -157,7 +159,8 @@ object DependencyContainer {
 
 class DependencyScope internal constructor(
     val id: String,
-    internal val instances: MutableMap<DependencyContainer.DependencyKey, Any>,
+    internal val instances: MutableMap<DependencyKey, Any>,
+    private val parent: DependencyScope? = null,
     private val onClose: () -> Unit = {},
     private val onRemoved: () -> Unit = {},
 ) {
@@ -176,6 +179,7 @@ class DependencyScope internal constructor(
         check(!isClosed) { "'$id' 스코프가 이미 종료되었습니다." }
     }
 
-    internal fun find(key: DependencyContainer.DependencyKey): Any? =
-        instances[key] ?: DependencyContainer.applicationScope.instances[key]
+    internal fun find(key: DependencyKey): Any? = instances[key] ?: parent?.find(key)
+
+    internal fun registeredKeys(): Set<DependencyKey> = instances.keys + parent?.registeredKeys().orEmpty()
 }

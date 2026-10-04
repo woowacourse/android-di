@@ -2,12 +2,12 @@
 
 package woowacourse.shopping.di
 
+import woowacourse.di.DependencyContainer
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
-import woowacourse.di.DependencyContainer
 
 class DependencyScopeTest {
     class ScopedDependency

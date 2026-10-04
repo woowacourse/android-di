@@ -1,6 +1,5 @@
 package woowacourse.shopping.ui.products
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.di.ScopedViewModel
 import woowacourse.shopping.di.qualifier.Room
 import woowacourse.shopping.model.Product
 
@@ -23,7 +23,7 @@ class ProductsViewModel(
     private val productRepository: ProductRepository,
     @param:Room
     private val cartRepository: CartRepository,
-) : ViewModel() {
+) : ScopedViewModel() {
     private val _uiState: MutableStateFlow<ProductsUiState> = MutableStateFlow(ProductsUiState())
     val uiState: StateFlow<ProductsUiState> get() = _uiState.asStateFlow()
 
