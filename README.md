@@ -36,3 +36,19 @@
 DI 관련 파일을 DependencyContainer로 변경하고 별도의 모듈로 분리했음
 DependencyContainer는 도메인 객체와 Android Room에 대한 의존성을 갖지 않기 때문에 따로 분리함
 Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 조립하는 `ShoppingApplication`은 앱에 남겼음
+
+## 4단계 구현 목록
+
+- [ ] 바인딩에 스코프 종류 추가
+- [ ] 스코프별 인스턴스 캐시 분리
+- [ ] 스코프 종료 시 캐시와 부모·자식 참조 제거
+- [ ] CartRepository 앱 스코프 적용
+- [ ] ProductRepository ViewModel 스코프 적용
+- [ ] ViewModel clear 시 스코프 종료
+- [ ] DateFormatter 화면 스코프 등록
+- [ ] NavBackStackEntry에 화면 스코프 연결
+- [ ] CartScreen에 DateFormatter 전달
+- [ ] 스코프 생성·재사용·종료 테스트
+- [ ] 실제 내비게이션 진입·이탈 테스트
+- [ ] DI / 서비스 로케이터와 DIP / IoC 설명
+- [ ] KSP 전환 시 재설계 지점 설명
