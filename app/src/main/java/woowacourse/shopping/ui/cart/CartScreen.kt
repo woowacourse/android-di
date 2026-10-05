@@ -50,9 +50,6 @@ fun CartScreen(
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
 
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
-
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()
     }
