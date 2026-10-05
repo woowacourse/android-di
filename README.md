@@ -42,10 +42,10 @@ Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 
 - [x] 바인딩에 스코프 종류 추가
 - [x] 스코프별 인스턴스 캐시 분리
 - [x] 스코프 종료 시 캐시와 부모, 자식 참조 제거
-- [ ] CartRepository 앱 스코프 적용
-- [ ] ProductRepository ViewModel 스코프 적용
+- [x] CartRepository 앱 스코프 적용
+- [x] ProductRepository ViewModel 스코프 적용
 - [ ] ViewModel clear 시 스코프 종료
-- [ ] DateFormatter 화면 스코프 등록
+- [x] DateFormatter 화면 스코프 등록
 - [ ] NavBackStackEntry에 화면 스코프 연결
 - [ ] CartScreen에 DateFormatter 전달
 - [ ] 스코프 생성·재사용·종료 테스트
