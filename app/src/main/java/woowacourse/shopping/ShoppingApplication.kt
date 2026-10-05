@@ -14,13 +14,13 @@ import woowacourse.shopping.data.di.DataContainer
 import woowacourse.shopping.data.di.InMemory
 import woowacourse.shopping.data.di.RoomBacked
 import woowacourse.shopping.ui.cart.DateFormatter
-import woowacourse.shopping.ui.di.CommonViewModelFactory
+import woowacourse.shopping.ui.di.ViewModelScopedViewModelFactory
 
 class ShoppingApplication : Application() {
     private lateinit var dataContainer: DataContainer
     lateinit var dependencyContainer: DependencyContainer
         private set
-    lateinit var viewModelFactory: CommonViewModelFactory
+    lateinit var viewModelFactory: ViewModelScopedViewModelFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -66,6 +66,6 @@ class ShoppingApplication : Application() {
                         )
                     ),
             )
-        viewModelFactory = CommonViewModelFactory(dependencyContainer)
+        viewModelFactory = ViewModelScopedViewModelFactory(dependencyContainer)
     }
 }

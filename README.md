@@ -46,7 +46,7 @@ Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 
 - [x] ProductRepository ViewModel 스코프 적용
 - [ ] ViewModel clear 시 스코프 종료
 - [x] DateFormatter 화면 스코프 등록
-- [ ] NavBackStackEntry에 화면 스코프 연결
+- [x] NavBackStackEntry에 화면 스코프 연결
 - [ ] CartScreen에 DateFormatter 전달
 - [ ] 스코프 생성·재사용·종료 테스트
 - [ ] 실제 내비게이션 진입·이탈 테스트

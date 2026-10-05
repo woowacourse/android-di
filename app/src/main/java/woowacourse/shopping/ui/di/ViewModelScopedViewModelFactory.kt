@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import io.github.firstwoosun.di.DependencyContainer
 import io.github.firstwoosun.di.ScopeKind
 
-class CommonViewModelFactory(
+class ViewModelScopedViewModelFactory(
     private val dependencyContainer: DependencyContainer,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T =

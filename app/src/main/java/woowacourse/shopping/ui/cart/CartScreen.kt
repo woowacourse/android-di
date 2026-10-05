@@ -42,6 +42,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 @Composable
 fun CartScreen(
     onNavigateUp: () -> Unit,
+    dateFormatter: DateFormatter,
     modifier: Modifier = Modifier,
     viewModel: CartViewModel = viewModel(),
 ) {
