@@ -166,7 +166,7 @@ JDK 21 환경에서 검증했다.
   - DateFormatter는 화면 스코프에서 재사용하며 CartScreen의 파라미터로 전달한다.
   - 화면 회전 시 유지, 백스택 제거 시 종료, 재진입 시 새 인스턴스 생성을 검증한다.
   - 반복 진입·이탈과 각 스코프의 참조 해제를 검증한다.
-- [ ] 설계 설명과 전체 검증
+- [x] 설계 설명과 전체 검증
   - DI·서비스 로케이터, DIP·IoC의 구분을 실제 코드 지점으로 설명한다.
   - KSP 전환 시 필요한 등록·생성·검증 설계와 reflection 비용의 차이를 기록한다.
   - 전체 테스트, ktlint, 디버그 빌드 및 lint를 실행한다.
@@ -178,3 +178,151 @@ JDK 21 환경에서 검증했다.
 소유 스코프에서 수행해 앱 객체가 화면·ViewModel 객체를 붙잡는 것을 막는다.
 화면 스코프의 종료는 composition의 onDispose가 아니라 목적지에 속한 ViewModel의
 정리 시점에 연결한다. 구성 변경은 스코프를 유지하고 백스택 제거는 스코프를 닫는다.
+
+### 스코프의 소유권과 종료
+
+| 의존성 | 소유자 | 생성·재사용 | 종료 |
+| --- | --- | --- | --- |
+| CartRepository, Room, DAO, application Context | ShoppingApplication의 루트 Injector | 처음 요청할 때 생성하고 앱 전체에서 공유 | 프로세스 종료. 명시적인 `root.close()`는 전체 캐시를 비우고 Room을 닫음 |
+| ProductRepository | 개별 ViewModel의 Injector | 같은 ViewModel에서 재사용, 다른 ViewModel과 분리 | ViewModelStore가 ViewModel을 정리할 때 |
+| DateFormatter | NavBackStackEntry의 ScreenScopeViewModel | 같은 목적지에서 재사용, 구성 변경에도 유지 | 해당 목적지가 백스택에서 제거되어 ViewModelStore가 정리될 때 |
+
+`ProductRepository`의 `object`를 `class`로 바꿨다. Kotlin 싱글톤 자체가 프로세스에 남으면
+컨테이너 캐시를 비워도 ViewModel 단위의 생성·소멸을 구현할 수 없기 때문이다.
+앱 컨테이너는 `ShoppingApplication.injector`가 소유한다. Android의 실제 프로세스 종료는
+`Application.onTerminate()` 호출을 보장하지 않으므로 그 콜백에 의존하지 않는다.
+테스트 등 명시적 컨테이너 종료에는 `close()`를 사용한다.
+
+코어의 `Registry.definitions`는 생성 방법을, 각 `Injector.instances`는 그 스코프가 소유한
+객체를 저장한다. `create()`는 등록된 수명의 소유자를 찾고 **소유자의 컨테이너에서**
+재귀 생성한다. 화면에서 앱 싱글톤을 요청해도 앱 객체의 의존성은 루트에서 해결하므로,
+앱 객체가 화면 객체를 붙잡으려 하면 활성 스코프가 없다는 오류가 발생한다.
+등록하지 않은 일반 클래스는 요청마다 생성하며 캐시하지 않는다. ViewModel도 여기 해당한다.
+
+`Injector.close()`는 닫힘을 먼저 표시한 뒤 부모의 자식 목록에서 자신을 제거하고,
+자식 목록·인스턴스 캐시·부모 참조를 비운다. 자식을 닫은 뒤 자신이 소유한 객체의
+`onClose` 콜백을 생성 역순으로 실행한다. 한 콜백이 실패해도 나머지 정리를 진행한다.
+종료는 멱등적이며 닫힌 스코프의 조회와 새 자식 생성은 오류다. 등록 함수는 앱 수명의
+정보만 캡처해야 한다. `shoppingInjector()`도 등록 전에 application Context를 추출해서
+Activity를 생성 함수에 보관하지 않는다.
+
+`ViewModelFactory.createViewModel()`은 ViewModel마다 새 스코프를 열고 `addCloseable()`로
+연결한다. 생성 도중 예외가 나면 그 스코프를 즉시 닫는다.
+`rememberScreenScope()`는 목적지의 ViewModelStore에 `ScreenScopeViewModel`을 보관하고,
+이 소유자의 closeable로 화면 스코프를 연결한다. 화면이 composition에서 잠시 사라지는
+시점이나 Activity의 `ON_DESTROY`만으로 닫지 않는다. 구성 변경과 최종 종료의 구분은
+AndroidX ViewModelStore의 정리 시점에 맡긴다.
+[ViewModel의 유지·closeable 계약](https://developer.android.com/reference/androidx/lifecycle/ViewModel.html)을 사용한 방식이다.
+프로세스가 종료된 뒤에는 같은 인스턴스를 복원하지 않는다.
+
+현재 ViewModel 스코프와 화면 스코프는 앱 루트의 형제다. ViewModel에는 화면 전용 포매터가
+필요하지 않기 때문이다. 코어는 부모·자식 스코프도 지원하지만, 현재 앱에 불필요한 연결은
+만들지 않았다. 필요하면 화면의 자식으로 다른 스코프를 열어 부모 의존성을 재사용할 수 있다.
+
+스코프 종류는 `ShoppingScopes`처럼 앱에서 정의한다. 코어의 분기를 늘리지 않고 추가할 수 있다.
+
+```kotlin
+val checkout = ScopeType("checkout-session")
+val container = injector {
+    scoped<CheckoutSession>(checkout, onClose = { it.close() }) { CheckoutSession() }
+}
+val session = container.openScope("order-42", checkout)
+val dependency = session.get<CheckoutSession>()
+session.close()
+container.close()
+```
+
+### 내가 만든 것은 DI인가 서비스 로케이터인가
+
+**컨테이너는 조회 API를 제공하고, 앱의 소비자에게 연결하는 방식은 DI다.** 도구의 이름보다
+누가 의존성을 찾아오는지로 구분했다.
+
+- `Injector.construct()`는 생성자 인자를 해결해서 전달하고, `injectFields()`는 `@Inject`
+  필드를 채운다. `DefaultCartRepository(dao)`는 DAO를 외부에서 받는 생성자 DI다.
+- `ProductsViewModel`과 `CartViewModel`은 컨테이너를 조회하지 않고 필드 주입을 받는다.
+  다만 생성자 시그니처에는 의존성이 드러나지 않고, 주입 전 `lateinit` 접근이 가능하다.
+  따라서 DI이지만 생성자 주입보다 의존성 계약과 초기화 안전성이 약하다.
+- `CartScreen(dateFormatter, ...)`와 `CartContent(dateFormatter, ...)`는 포매터를 인자로
+  받으므로 의존성이 함수 시그니처에 드러난다. Preview와 화면 테스트도 직접 전달할 수 있다.
+- `ShoppingNavHost`의 `scope.get()`과 `ViewModelFactory`의 `createViewModel()`은 조회하는
+  지점이다. 여기서는 객체를 조립하는 연동 계층의 책임으로 제한했다. 같은 `get()`을
+  ViewModel의 업무 함수나 UI 하위 컴포넌트 내부에서 직접 호출하면 그 소비자는 서비스
+  로케이터에 의존하게 된다. 이 API를 쓴다는 이유만으로 모든 사용 방식이 DI가 되지는 않는다.
+
+**DIP**는 소스 코드의 의존 방향에 관한 원칙이다. ViewModel이 `CartRepository`라는 추상화에
+의존하고 앱의 조립 코드가 Room·In-Memory 구현체를 선택하는 것이 해당 사례다. DI는 객체를
+전달하는 방법이라 구체 클래스인 ProductRepository를 주입한다고 해서 DIP까지 자동으로
+만족하는 것은 아니다. 또한 `:app -> :di` 모듈 방향만으로 앱 전체의 DIP 준수가 증명되지 않는다.
+
+**IoC**는 생성·호출·수명 관리의 제어를 외부에 맡기는 더 넓은 개념이다. 소비자가 직접
+객체를 생성하지 않고 Injector가 생성하는 것, ViewModelProvider가 ViewModel을 보관하고
+정리하는 것이 각각 사례다. DI는 이러한 제어 역전을 구현하는 한 방법이며 DIP와 동의어가 아니다.
+
+### KSP로 바꾼다면 다시 설계할 부분
+
+현재는 `primaryConstructor`, 파라미터와 필드 애노테이션, `constructor.call()`과 `field.set()`으로
+실행 중에 그래프를 해석한다. `resolveKey()`의 Qualifier 누락·모호성, `ownerOf()`의 수명,
+`resolve()`의 순환 의존성 판정도 실제 요청까지 미룬다.
+
+[KSP](https://kotlinlang.org/docs/ksp-overview.html)는 소스의 심볼을 읽고 코드를 생성한다.
+일반적인 런타임 등록 람다를 실행해서 모든 의존성을 알아내는 도구로 취급할 수는 없다.
+컴파일 시점 검증으로 바꾸려면 다음 계약을 먼저 정해야 한다.
+
+1. 주입 생성자·필드, 인터페이스 바인딩, Qualifier, 제공 함수의 인자, 스코프 및 허용된
+   부모 관계를 정적으로 선언한다. 현재 자유로운 `singleton { ... }` 람다 안의 `get()`은
+   명시적인 provider 인자로 바꾸거나 런타임 전용 경계로 남긴다. Room·Context는 생성 방법을
+   provider로 선언하되 실제 Context 값과 화면 ID는 실행 중 전달한다.
+2. `ProductsViewModel_Factory` 같은 생성 코드와 멤버 주입 코드를 만든다. 생성자 호출과
+   프로퍼티 대입을 직접 생성하고 누락 바인딩, 중복 Qualifier, 순환 관계, 부적절한 수명을
+   빌드 중 오류로 보고한다. 단, 이 검증은 정적으로 선언된 그래프에 한정된다.
+3. 현재 reflection으로 허용하는 private 필드 주입을 그대로 생성 코드에서 할 수는 없다.
+   생성자 주입을 우선하거나 생성 코드가 접근 가능한 멤버만 주입하도록 계약을 바꾼다.
+   제네릭·nullable·기본 인자 지원 범위도 생성 규칙과 오류 메시지로 명시한다.
+4. 순수 JVM 런타임 코어와 애노테이션, KSP processor를 분리한다. 앱의 타입을 참조하는
+   생성 코드는 앱에서 컴파일하고 `:di -> :app` 의존성은 만들지 않는다. 프로세서의 증분
+   처리·오류 진단·생성 결과 테스트를 추가한다. 스코프 캐시와 `close()` 및 Android 생명주기
+   연동은 여전히 런타임 책임으로 유지한다.
+
+현재 코드의 비용을 네 관점에서 비교하면 다음과 같다. 성능 차이는 측정하지 않았으므로
+구체적인 실행 시간이나 APK 절감 수치는 주장하지 않는다.
+
+| 비용 | 현재 reflection 구현 | 코드 생성으로 전환할 때 |
+| --- | --- | --- |
+| 실행 시간 | 최초 생성 및 캐시 없는 객체 생성마다 메타데이터 탐색·동적 호출을 수행 | 직접 호출로 해당 탐색을 줄임. 스코프 조회·수명 관리는 여전히 필요 |
+| 배포 크기·유지 정보 | kotlin-reflect와 주입에 필요한 런타임 메타데이터에 의존 | DI의 reflection 의존성을 제거할 여지가 있으나 생성 코드 크기가 추가됨 |
+| 오류 발견·추적 | 잘못된 바인딩·접근·순환을 해당 경로 실행 시 발견 | 선언된 그래프의 오류를 컴파일 진단으로 이동. 동적 입력과 실행 중 실패는 남음 |
+| 캡슐화·도구와의 결합 | 접근 제한을 우회하고 reflection 대상의 최적화·이름 보존을 고려해야 함 | 접근 가능한 코드 계약이 필요하고 대신 프로세서·빌드 및 생성 코드 관리 비용이 생김 |
+
+이번 단계는 외부에서 임의의 스코프와 생성 함수를 등록하는 런타임 컨테이너를 검증하는
+범위라 reflection 구조를 유지한다. KSP로 옮기려면 reflection 호출만 교체할 것이 아니라
+등록 언어와 검증 가능한 그래프의 경계부터 바꾸어야 한다.
+
+### 수명 검증 방법
+
+- `di/ScopeTest`: 캐시·자식 참조 제거, 종료 콜백, 부모 수명, 100회 생성·종료,
+  사용자 정의 스코프, 종료 실패 중 나머지 정리, 닫힌 스코프의 사용 거부를 확인한다.
+- `app/ViewModelScopeTest`: 같은 ViewModel의 상품 저장소 재사용, 서로 다른 ViewModel의
+  분리, 앱 장바구니 공유, 20회 ViewModelStore 정리와 생성 실패 시 의존성 해제를 확인한다.
+- `app/ScreenScopeLifecycleTest`: 실제 ShoppingNavHost에서 장바구니 진입·이탈 5회,
+  재진입 시 새 포매터, Activity 재생성 시 동일 포매터·ViewModel 유지, 최종 Activity 종료 시
+  화면·ViewModel 스코프 닫힘과 앱 스코프 유지를 확인한다.
+
+여기서 소멸은 **컨테이너가 인스턴스를 더 이상 보관하지 않으며 정리 콜백을 실행했다**는
+뜻이다. 테스트가 비교를 위해 보관한 지역 변수까지 무효화하거나 GC가 특정 시점에 실행된다고
+가정하지 않는다. 캐시 개수 검사는 코어 테스트에만 보이는 internal 속성으로 제한했고,
+앱 연동은 공개된 종료 상태와 실제 ViewModel 정리로 검증한다.
+
+
+### 4단계 전체 검증 결과
+
+JDK 21 환경에서 다음을 실행했다.
+
+```shell
+./gradlew :di:test :app:testDebugUnitTest ktlintCheck :app:assembleDebug :app:lintDebug
+```
+
+- 코어 45개, 앱 38개: 총 83개 테스트 통과, 실패·오류·누락 없음
+- ktlint 검사 및 디버그 APK 빌드 성공
+- Android lint 오류 0개, 기존 빌드 도구·의존성 버전 안내 경고 13개
+- 기존 Qualifier·필드 주입·재귀 주입·순환 의존성·장바구니 CRUD 테스트 통과
+- Robolectric에서 화면 반복 진입·이탈과 Activity 재생성·최종 종료 검증
