@@ -1,5 +1,6 @@
 package woowacourse.shopping.data.di
 
+import android.content.Context
 import io.github.firstwoosun.di.InstanceProvider
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.ShoppingDatabase
@@ -21,13 +22,20 @@ class DataContainer(
     }
 
     companion object {
-        fun create(database: ShoppingDatabase): DataContainer {
-            val providers =
-                mapOf<KClass<*>, () -> Any>(
-                    ShoppingDatabase::class to { database },
-                    CartProductDao::class to { database.cartProductDao() },
-                )
-            return DataContainer(providers)
+        fun create(
+            database: ShoppingDatabase,
+            context: Context,
+        ): DataContainer {
+            val applicationContext = context.applicationContext
+
+            return DataContainer(
+                providers =
+                    mapOf<KClass<*>, () -> Any>(
+                        ShoppingDatabase::class to { database },
+                        CartProductDao::class to { database.cartProductDao() },
+                        Context::class to { applicationContext },
+                    ),
+            )
         }
     }
 }
