@@ -48,7 +48,7 @@ Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 
 - [x] DateFormatter 화면 스코프 등록
 - [x] NavBackStackEntry에 화면 스코프 연결
 - [x] CartScreen에 DateFormatter 전달
-- [x] 스코프 생성·재사용·종료 테스트
-- [ ] 실제 내비게이션 진입·이탈 테스트
+- [x] 스코프 생성, 재사용, 종료 테스트
+- [x] 실제 내비게이션 진입, 이탈 테스트
 - [ ] DI / 서비스 로케이터와 DIP / IoC 설명
 - [ ] KSP 전환 시 재설계 지점 설명
