@@ -131,8 +131,7 @@ class ViewModelScopeLifecycleTest {
             .isSameInstanceAs(firstCartRepository)
     }
 
-    private fun newOwner(): TestViewModelOwner =
-        TestViewModelOwner().also(owners::add)
+    private fun newOwner(): TestViewModelOwner = TestViewModelOwner().also(owners::add)
 
     private class TestViewModelOwner : ViewModelStoreOwner {
         override val viewModelStore = ViewModelStore()
@@ -142,9 +141,7 @@ class ViewModelScopeLifecycleTest {
      * 실제 Factory가 생성한 스코프를 관찰하는 테스트 전용 코드.
      * 프로덕션에 조회 API를 추가하지 않기 위해 reflection을 사용한다.
      */
-    private fun childScopes(
-        scope: DependencyScope,
-    ): List<DependencyScope> {
+    private fun childScopes(scope: DependencyScope): List<DependencyScope> {
         val field =
             DependencyScope::class.java
                 .getDeclaredField("children")

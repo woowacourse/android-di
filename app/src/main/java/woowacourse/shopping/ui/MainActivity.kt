@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             ShoppingTheme {
                 ShoppingNavHost(
                     viewModelScopedViewModelFactory = app.viewModelFactory,
-                    dependencyContainer = app.dependencyContainer
+                    dependencyContainer = app.dependencyContainer,
                 )
             }
         }

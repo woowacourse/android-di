@@ -33,10 +33,11 @@ fun ShoppingNavHost(
         composable(ShoppingRoute.PRODUCTS) { backStackEntry ->
             ProductsScreen(
                 onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
-                viewModel = viewModel(
-                    viewModelStoreOwner = backStackEntry,
-                    factory = viewModelScopedViewModelFactory
-                ),
+                viewModel =
+                    viewModel(
+                        viewModelStoreOwner = backStackEntry,
+                        factory = viewModelScopedViewModelFactory,
+                    ),
             )
         }
         composable(ShoppingRoute.CART) { backStackEntry ->
@@ -59,10 +60,11 @@ fun ShoppingNavHost(
 
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },
-                viewModel = viewModel(
-                    viewModelStoreOwner = backStackEntry,
-                    factory = viewModelScopedViewModelFactory,
-                ),
+                viewModel =
+                    viewModel(
+                        viewModelStoreOwner = backStackEntry,
+                        factory = viewModelScopedViewModelFactory,
+                    ),
                 dateFormatter = dateFormatter,
             )
         }

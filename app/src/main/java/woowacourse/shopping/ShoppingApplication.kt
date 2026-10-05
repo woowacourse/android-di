@@ -32,10 +32,11 @@ class ShoppingApplication : Application() {
                     "shopping_db",
                 ).build()
 
-        dataContainer = DataContainer.create(
-            database = database,
-            context = applicationContext
-        )
+        dataContainer =
+            DataContainer.create(
+                database = database,
+                context = applicationContext,
+            )
         dependencyContainer =
             DependencyContainer(
                 instanceProvider = dataContainer,
@@ -45,13 +46,13 @@ class ShoppingApplication : Application() {
                             type = CartRepository::class,
                             implementation = DefaultCartRepository::class,
                             qualifier = RoomBacked::class,
-                            scopeKind = ScopeKind.Application
+                            scopeKind = ScopeKind.Application,
                         ),
                         DependencyBinding(
                             type = CartRepository::class,
                             implementation = InMemoryCartRepository::class,
                             qualifier = InMemory::class,
-                            scopeKind = ScopeKind.Application
+                            scopeKind = ScopeKind.Application,
                         ),
                         DependencyBinding(
                             type = ProductRepository::class,
@@ -62,8 +63,8 @@ class ShoppingApplication : Application() {
                         DependencyBinding(
                             type = DateFormatter::class,
                             implementation = DateFormatter::class,
-                            scopeKind = ScopeKind.Screen
-                        )
+                            scopeKind = ScopeKind.Screen,
+                        ),
                     ),
             )
         viewModelFactory = ViewModelScopedViewModelFactory(dependencyContainer)

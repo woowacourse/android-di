@@ -29,11 +29,12 @@ class DataContainer(
             val applicationContext = context.applicationContext
 
             return DataContainer(
-                providers = mapOf<KClass<*>, () -> Any>(
-                    ShoppingDatabase::class to { database },
-                    CartProductDao::class to { database.cartProductDao() },
-                    Context::class to { applicationContext },
-                )
+                providers =
+                    mapOf<KClass<*>, () -> Any>(
+                        ShoppingDatabase::class to { database },
+                        CartProductDao::class to { database.cartProductDao() },
+                        Context::class to { applicationContext },
+                    ),
             )
         }
     }

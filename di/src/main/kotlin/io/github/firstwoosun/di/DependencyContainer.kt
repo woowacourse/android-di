@@ -7,7 +7,7 @@ import kotlin.reflect.full.primaryConstructor
 class DependencyContainer(
     private val instanceProvider: InstanceProvider,
     bindings: List<DependencyBinding>,
-): AutoCloseable {
+) : AutoCloseable {
     private val bindingsByKey =
         bindings.associateBy { DependencyKey(it.type, it.qualifier) }
 
@@ -38,11 +38,12 @@ class DependencyContainer(
             .filter { it.isAnnotationPresent(CustomFieldInjection::class.java) }
             .forEach { field ->
                 val qualifier = field.annotations.asIterable().qualifierOrNull()
-                val dependency = getInstance(
-                    type = field.type.kotlin,
-                    qualifier = qualifier,
-                    scope = scope,
-                )
+                val dependency =
+                    getInstance(
+                        type = field.type.kotlin,
+                        qualifier = qualifier,
+                        scope = scope,
+                    )
 
                 field.isAccessible = true
                 field.set(target, dependency)
@@ -52,7 +53,7 @@ class DependencyContainer(
     fun getInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
-        scope: DependencyScope = applicationScope
+        scope: DependencyScope = applicationScope,
     ): Any {
         scope.checkOpen()
 

@@ -3,7 +3,7 @@ package io.github.firstwoosun.di
 class DependencyScope(
     val kind: ScopeKind,
     private var parent: DependencyScope? = null,
-): AutoCloseable {
+) : AutoCloseable {
     private val instances = mutableMapOf<DependencyKey, Any>()
     private val resolving = mutableSetOf<DependencyKey>()
     private val children = mutableListOf<DependencyScope>()
@@ -29,7 +29,9 @@ class DependencyScope(
     fun findOwner(kind: ScopeKind): DependencyScope {
         checkOpen()
 
-        if(kind == this.kind) {return this}
+        if (kind == this.kind) {
+            return this
+        }
 
         return parent?.findOwner(kind)
             ?: error("접근할 수 없는 스코프입니다: $kind")
@@ -46,7 +48,7 @@ class DependencyScope(
         check(resolving.add(key)) { "순환 의존성 발생: $key" }
 
         return try {
-            create(). also {
+            create().also {
                 checkOpen()
                 instances[key] = it
             }
@@ -64,7 +66,7 @@ class DependencyScope(
 
         isClosed = true
 
-        children.toList().forEach{ it.close() }
+        children.toList().forEach { it.close() }
         children.clear()
 
         instances.clear()

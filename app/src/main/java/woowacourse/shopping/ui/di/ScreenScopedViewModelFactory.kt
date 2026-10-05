@@ -8,13 +8,13 @@ import io.github.firstwoosun.di.ScopeKind
 
 class ScreenScopedViewModelFactory(
     private val dependencyContainer: DependencyContainer,
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ScreenScopedViewModel::class.java)
 
         val scope =
             dependencyContainer.applicationScope.openChild(
-                ScopeKind.Screen
+                ScopeKind.Screen,
             )
 
         return try {

@@ -9,20 +9,17 @@ import io.github.firstwoosun.di.ScopeKind
 class ViewModelScopedViewModelFactory(
     private val dependencyContainer: DependencyContainer,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        createScopedViewModel(modelClass)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = createScopedViewModel(modelClass)
 
     override fun <T : ViewModel> create(
         modelClass: Class<T>,
-        extras: CreationExtras
+        extras: CreationExtras,
     ): T = createScopedViewModel(modelClass)
 
-    private fun <T: ViewModel> createScopedViewModel(
-        modelClass: Class<T>,
-    ): T {
+    private fun <T : ViewModel> createScopedViewModel(modelClass: Class<T>): T {
         val scope =
             dependencyContainer.applicationScope.openChild(
-                ScopeKind.ViewModel
+                ScopeKind.ViewModel,
             )
 
         return try {

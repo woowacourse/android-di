@@ -5,7 +5,7 @@ import io.github.firstwoosun.di.DependencyScope
 
 class ScreenScopedViewModel(
     val scope: DependencyScope,
-): ViewModel() {
+) : ViewModel() {
     init {
         addCloseable(scope)
     }

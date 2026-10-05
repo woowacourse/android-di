@@ -6,29 +6,32 @@ import org.junit.Test
 
 class DependencyScopeTest {
     class AppDependency
+
     class VmDependency
+
     class ScreenDependency
 
     private fun container() =
         DependencyContainer(
             instanceProvider = InstanceProvider { null },
-            bindings = listOf(
-                DependencyBinding(
-                    AppDependency::class,
-                    AppDependency::class,
-                    scopeKind = ScopeKind.Application,
+            bindings =
+                listOf(
+                    DependencyBinding(
+                        AppDependency::class,
+                        AppDependency::class,
+                        scopeKind = ScopeKind.Application,
+                    ),
+                    DependencyBinding(
+                        VmDependency::class,
+                        VmDependency::class,
+                        scopeKind = ScopeKind.ViewModel,
+                    ),
+                    DependencyBinding(
+                        ScreenDependency::class,
+                        ScreenDependency::class,
+                        scopeKind = ScopeKind.Screen,
+                    ),
                 ),
-                DependencyBinding(
-                    VmDependency::class,
-                    VmDependency::class,
-                    scopeKind = ScopeKind.ViewModel,
-                ),
-                DependencyBinding(
-                    ScreenDependency::class,
-                    ScreenDependency::class,
-                    scopeKind = ScopeKind.Screen,
-                ),
-            ),
         )
 
     @Test
