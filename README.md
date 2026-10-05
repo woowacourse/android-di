@@ -161,7 +161,7 @@ JDK 21 환경에서 검증했다.
   - CartRepository와 Room은 앱 컨테이너에서 공유한다.
   - ProductRepository를 일반 클래스로 바꾸고 ViewModel마다 별도 스코프에서 생성한다.
   - ViewModel의 closeable에 스코프를 연결하고 생성 실패 시에도 닫는다.
-- [ ] 내비게이션 목적지의 화면 스코프와 DateFormatter 주입
+- [x] 내비게이션 목적지의 화면 스코프와 DateFormatter 주입
   - NavBackStackEntry의 ViewModelStore에 화면 스코프 소유자를 둔다.
   - DateFormatter는 화면 스코프에서 재사용하며 CartScreen의 파라미터로 전달한다.
   - 화면 회전 시 유지, 백스택 제거 시 종료, 재진입 시 새 인스턴스 생성을 검증한다.

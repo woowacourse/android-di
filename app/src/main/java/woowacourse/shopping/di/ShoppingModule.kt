@@ -13,13 +13,17 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
-fun shoppingInjector(context: Context): Injector =
-    injector {
+fun shoppingInjector(context: Context): Injector {
+    val applicationContext = context.applicationContext
+    return injector {
+        singleton<Context> { applicationContext }
+        scoped<DateFormatter>(ShoppingScopes.Screen)
         singleton<ShoppingDatabase>(onClose = { it.close() }) {
             Room
                 .databaseBuilder(
-                    context.applicationContext,
+                    get<Context>(),
                     ShoppingDatabase::class.java,
                     "shopping.db",
                 ).build()
@@ -29,3 +33,4 @@ fun shoppingInjector(context: Context): Injector =
         singleton<CartRepository>(RoomCart::class) { get<DefaultCartRepository>() }
         singleton<CartRepository>(InMemoryCart::class) { get<InMemoryCartRepository>() }
     }
+}
