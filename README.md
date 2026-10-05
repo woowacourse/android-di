@@ -40,8 +40,8 @@ Room 데이터 베이스와 Dao를 제공하는 `DataContainer`와 DI 객체를 
 ## 4단계 구현 목록
 
 - [x] 바인딩에 스코프 종류 추가
-- [ ] 스코프별 인스턴스 캐시 분리
-- [ ] 스코프 종료 시 캐시와 부모·자식 참조 제거
+- [x] 스코프별 인스턴스 캐시 분리
+- [x] 스코프 종료 시 캐시와 부모, 자식 참조 제거
 - [ ] CartRepository 앱 스코프 적용
 - [ ] ProductRepository ViewModel 스코프 적용
 - [ ] ViewModel clear 시 스코프 종료

@@ -7,13 +7,13 @@ import kotlin.reflect.full.primaryConstructor
 class DependencyContainer(
     private val instanceProvider: InstanceProvider,
     bindings: List<DependencyBinding>,
-) {
+): AutoCloseable {
     private val bindingsByKey =
         bindings.associateBy { DependencyKey(it.type, it.qualifier) }
 
     private val bindings = bindings.toList()
-    private val instanceStore = mutableMapOf<DependencyKey, Any>()
-    private val resolving = mutableSetOf<DependencyKey>()
+
+    val applicationScope = DependencyScope(ScopeKind.Application)
 
     init {
         require(bindingsByKey.size == bindings.size) {
@@ -26,14 +26,23 @@ class DependencyContainer(
         }
     }
 
-    fun inject(target: Any) {
+    fun inject(
+        target: Any,
+        scope: DependencyScope = applicationScope,
+    ) {
+        scope.checkOpen()
+
         generateSequence(target::class.java) { it.superclass }
             .takeWhile { it != Any::class.java }
             .flatMap { it.declaredFields.asSequence() }
             .filter { it.isAnnotationPresent(CustomFieldInjection::class.java) }
             .forEach { field ->
                 val qualifier = field.annotations.asIterable().qualifierOrNull()
-                val dependency = getInstance(field.type.kotlin, qualifier)
+                val dependency = getInstance(
+                    type = field.type.kotlin,
+                    qualifier = qualifier,
+                    scope = scope,
+                )
 
                 field.isAccessible = true
                 field.set(target, dependency)
@@ -43,25 +52,27 @@ class DependencyContainer(
     fun getInstance(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
+        scope: DependencyScope = applicationScope
     ): Any {
+        scope.checkOpen()
+
         val binding = findBinding(type, qualifier)
         val key = DependencyKey(binding.type, binding.qualifier)
-        instanceStore[key]?.let { return it }
 
-        check(resolving.add(key)) {
-            "순환 의존성 발생: $key"
-        }
+        val owner = scope.findOwner(binding.scopeKind)
 
-        return try {
-            createInstance(binding.implementation).also {
-                instanceStore[key] = it
-            }
-        } finally {
-            resolving.remove(key)
+        return owner.getOrCreate(key) {
+            createInstance(
+                type = binding.implementation,
+                scope = owner,
+            )
         }
     }
 
-    private fun createInstance(type: KClass<*>): Any {
+    private fun createInstance(
+        type: KClass<*>,
+        scope: DependencyScope,
+    ): Any {
         require(!type.java.isInterface && !Modifier.isAbstract(type.java.modifiers)) {
             "인터페이스와 추상 클래스는 인스턴스로 생성할 수 없음"
         }
@@ -75,8 +86,14 @@ class DependencyContainer(
                 val dependencyType =
                     parameter.type.classifier as? KClass<*>
                         ?: error("생성자 파라미터 타입을 확인할 수 없음: $type ${parameter.name}")
+
                 val qualifier = parameter.annotations.qualifierOrNull()
-                resolveDependency(dependencyType, qualifier)
+
+                resolveDependency(
+                    dependencyType,
+                    qualifier,
+                    scope,
+                )
             }
 
         return constructor.callBy(arguments)
@@ -85,11 +102,16 @@ class DependencyContainer(
     private fun resolveDependency(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
+        scope: DependencyScope,
     ): Any {
         if (qualifier == null) {
             instanceProvider.getInstanceOrNull(type)?.let { return it }
         }
-        return getInstance(type, qualifier)
+        return getInstance(
+            type,
+            qualifier,
+            scope,
+        )
     }
 
     private fun findBinding(
@@ -125,5 +147,9 @@ class DependencyContainer(
         }
 
         return qualifiers.singleOrNull()
+    }
+
+    override fun close() {
+        applicationScope.close()
     }
 }
