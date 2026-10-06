@@ -42,7 +42,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel = viewModel(factory = AppDI.viewModelFactory),
+    viewModel: ProductsViewModel = viewModel(factory = AppDI.viewModelFactory()),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
