@@ -7,15 +7,15 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class DIContainer {
-    private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
-    private val bindings: MutableMap<DependencyKey, KClass<*>> = mutableMapOf()
+    private val definitions: MutableMap<DependencyKey, DependencyDefinition> = mutableMapOf()
+    private val instanceStore: InstanceStore = InstanceStore()
 
     fun <T : Any, I : T> bind(
         type: KClass<T>,
         implementation: KClass<I>,
         qualifier: KClass<out Annotation>? = null,
     ) {
-        bindings[DependencyKey(type, qualifier)] = implementation
+        definitions[DependencyKey(type, qualifier)] = DependencyDefinition.Binding(implementation)
     }
 
     fun <T : Any> register(
@@ -23,7 +23,7 @@ class DIContainer {
         instance: T,
         qualifier: KClass<out Annotation>? = null,
     ) {
-        instances[DependencyKey(type, qualifier)] = instance
+        definitions[DependencyKey(type, qualifier)] = DependencyDefinition.Instance(instance)
     }
 
     fun <T : Any> get(
@@ -43,8 +43,11 @@ class DIContainer {
     ): Any {
         val key = resolveKey(requestedKey)
         if (cacheResult) {
-            instances[key]?.let { instance -> return instance }
+            instanceStore[key]?.let { instance -> return instance }
         }
+
+        val definition = definitions[key]
+        if (definition is DependencyDefinition.Instance) return definition.value
 
         val cycleStart = resolving.indexOf(key)
         require(cycleStart == -1) {
@@ -54,7 +57,12 @@ class DIContainer {
 
         resolving.add(key)
         try {
-            val implementationType = bindings[key] ?: key.type
+            val implementationType =
+                when (definition) {
+                    is DependencyDefinition.Binding -> definition.implementationType
+                    is DependencyDefinition.Instance -> error("등록된 인스턴스는 객체 생성 과정에 진입하지 않습니다.")
+                    null -> key.type
+                }
             val constructor =
                 requireNotNull(implementationType.primaryConstructor) {
                     "${implementationType.simpleName}의 주 생성자를 찾을 수 없습니다."
@@ -72,8 +80,8 @@ class DIContainer {
             val instance = constructor.call(*dependencies.toTypedArray())
             injectFields(instance, resolving)
             if (cacheResult) {
-                instances[key] = instance
-                instances[DependencyKey(implementationType, key.qualifier)] = instance
+                instanceStore[key] = instance
+                instanceStore[DependencyKey(implementationType, key.qualifier)] = instance
             }
             return instance
         } finally {
@@ -96,14 +104,14 @@ class DIContainer {
 
     private fun resolveKey(requestedKey: DependencyKey): DependencyKey {
         if (requestedKey.qualifier != null) {
-            require(requestedKey in bindings || requestedKey in instances) {
+            require(requestedKey in definitions) {
                 "${requestedKey.displayName} 의존성이 등록되지 않았습니다."
             }
             return requestedKey
         }
 
         val candidates =
-            (bindings.keys + instances.keys)
+            definitions.keys
                 .filter { key -> key.type == requestedKey.type }
                 .distinct()
         require(candidates.size <= 1) {
@@ -120,13 +128,5 @@ class DIContainer {
                 .filter { annotationType -> annotationType.findAnnotation<Qualifier>() != null }
         require(qualifiers.size <= 1) { "Qualifier는 하나만 지정할 수 있습니다: $qualifiers" }
         return qualifiers.singleOrNull()
-    }
-
-    private data class DependencyKey(
-        val type: KClass<*>,
-        val qualifier: KClass<out Annotation>?,
-    ) {
-        val displayName: String
-            get() = listOfNotNull(qualifier?.simpleName, type.simpleName).joinToString(" ")
     }
 }

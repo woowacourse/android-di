@@ -32,6 +32,16 @@ class DIContainerTest {
     }
 
     @Test
+    fun `등록된 인스턴스는 create로 요청해도 재사용한다`() {
+        val registered = Service()
+        container.register(Service::class, registered)
+
+        val created = container.create(Service::class)
+
+        assertThat(created).isSameInstanceAs(registered)
+    }
+
+    @Test
     fun `Inject 애노테이션이 붙은 필드에만 의존성을 주입한다`() {
         val target = container.create(FieldInjectionTarget::class)
 
