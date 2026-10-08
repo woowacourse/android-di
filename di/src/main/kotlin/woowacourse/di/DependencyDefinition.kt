@@ -5,6 +5,7 @@ import kotlin.reflect.KClass
 internal sealed interface DependencyDefinition {
     data class Binding(
         val implementationType: KClass<*>,
+        val scopeType: ScopeType,
     ) : DependencyDefinition
 
     data class Instance(

@@ -11,4 +11,8 @@ internal class InstanceStore {
     ) {
         instances[key] = instance
     }
+
+    fun clear() {
+        instances.clear()
+    }
 }

@@ -8,14 +8,18 @@ import kotlin.reflect.full.primaryConstructor
 
 class DIContainer {
     private val definitions: MutableMap<DependencyKey, DependencyDefinition> = mutableMapOf()
-    private val instanceStore: InstanceStore = InstanceStore()
+    private val singletonScopeKey: ScopeKey = ScopeKey(ScopeType.Singleton, ScopeType.Singleton.name)
+    private val instanceStores: MutableMap<ScopeKey, InstanceStore> =
+        mutableMapOf(singletonScopeKey to InstanceStore())
+    private val singletonScope: Map<ScopeType, ScopeKey> = mapOf(ScopeType.Singleton to singletonScopeKey)
 
     fun <T : Any, I : T> bind(
         type: KClass<T>,
         implementation: KClass<I>,
         qualifier: KClass<out Annotation>? = null,
+        scopeType: ScopeType = ScopeType.Singleton,
     ) {
-        definitions[DependencyKey(type, qualifier)] = DependencyDefinition.Binding(implementation)
+        definitions[DependencyKey(type, qualifier)] = DependencyDefinition.Binding(implementation, scopeType)
     }
 
     fun <T : Any> register(
@@ -29,25 +33,83 @@ class DIContainer {
     fun <T : Any> get(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
-    ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf()))
+    ): T = get(type, qualifier, singletonScope)
 
     fun <T : Any> create(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
-    ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf(), cacheResult = false))
+    ): T = create(type, qualifier, singletonScope)
+
+    fun openScope(
+        type: ScopeType,
+        id: String,
+    ): ScopedContainer = openScope(type, id, singletonScope)
+
+    fun closeScope(
+        type: ScopeType,
+        id: String,
+    ) {
+        closeScope(ScopeKey(type, id))
+    }
+
+    internal fun <T : Any> get(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>?,
+        activeScopes: Map<ScopeType, ScopeKey>,
+    ): T = type.cast(resolve(DependencyKey(type, qualifier), mutableListOf(), activeScopes))
+
+    internal fun <T : Any> create(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>?,
+        activeScopes: Map<ScopeType, ScopeKey>,
+    ): T =
+        type.cast(
+            resolve(
+                requestedKey = DependencyKey(type, qualifier),
+                resolving = mutableListOf(),
+                activeScopes = activeScopes,
+                cacheResult = false,
+            ),
+        )
+
+    internal fun openScope(
+        type: ScopeType,
+        id: String,
+        parentScopes: Map<ScopeType, ScopeKey>,
+    ): ScopedContainer {
+        require(type != ScopeType.Singleton) { "싱글톤 스코프는 새로 열 수 없습니다." }
+        require(id.isNotBlank()) { "스코프 식별자는 비어 있을 수 없습니다." }
+
+        val scopeKey = ScopeKey(type, id)
+        instanceStores.getOrPut(scopeKey, ::InstanceStore)
+        return ScopedContainer(
+            container = this,
+            activeScopes = parentScopes + (type to scopeKey),
+            ownedScope = scopeKey,
+        )
+    }
+
+    internal fun closeScope(scopeKey: ScopeKey) {
+        require(scopeKey.type != ScopeType.Singleton) { "싱글톤 스코프는 닫을 수 없습니다." }
+        instanceStores.remove(scopeKey)?.clear()
+    }
 
     private fun resolve(
         requestedKey: DependencyKey,
         resolving: MutableList<DependencyKey>,
+        activeScopes: Map<ScopeType, ScopeKey>,
         cacheResult: Boolean = true,
     ): Any {
         val key = resolveKey(requestedKey)
+        val definition = definitions[key]
+        if (definition is DependencyDefinition.Instance) return definition.value
+
+        val binding = definition as? DependencyDefinition.Binding
+        val scopeType = binding?.scopeType ?: ScopeType.Singleton
+        val instanceStore = findInstanceStore(scopeType, activeScopes)
         if (cacheResult) {
             instanceStore[key]?.let { instance -> return instance }
         }
-
-        val definition = definitions[key]
-        if (definition is DependencyDefinition.Instance) return definition.value
 
         val cycleStart = resolving.indexOf(key)
         require(cycleStart == -1) {
@@ -57,12 +119,7 @@ class DIContainer {
 
         resolving.add(key)
         try {
-            val implementationType =
-                when (definition) {
-                    is DependencyDefinition.Binding -> definition.implementationType
-                    is DependencyDefinition.Instance -> error("등록된 인스턴스는 객체 생성 과정에 진입하지 않습니다.")
-                    null -> key.type
-                }
+            val implementationType = binding?.implementationType ?: key.type
             val constructor =
                 requireNotNull(implementationType.primaryConstructor) {
                     "${implementationType.simpleName}의 주 생성자를 찾을 수 없습니다."
@@ -74,11 +131,11 @@ class DIContainer {
                             "${parameter.name}의 타입을 확인할 수 없습니다."
                         }
                     val qualifier = findQualifier(parameter.annotations)
-                    resolve(DependencyKey(dependencyType, qualifier), resolving)
+                    resolve(DependencyKey(dependencyType, qualifier), resolving, activeScopes)
                 }
 
             val instance = constructor.call(*dependencies.toTypedArray())
-            injectFields(instance, resolving)
+            injectFields(instance, resolving, activeScopes)
             if (cacheResult) {
                 instanceStore[key] = instance
                 instanceStore[DependencyKey(implementationType, key.qualifier)] = instance
@@ -92,14 +149,28 @@ class DIContainer {
     private fun injectFields(
         instance: Any,
         resolving: MutableList<DependencyKey>,
+        activeScopes: Map<ScopeType, ScopeKey>,
     ) {
         instance.javaClass.declaredFields
             .filter { field -> field.isAnnotationPresent(Inject::class.java) }
             .forEach { field ->
                 field.isAccessible = true
                 val qualifier = findQualifier(field.annotations.toList())
-                field.set(instance, resolve(DependencyKey(field.type.kotlin, qualifier), resolving))
+                field.set(instance, resolve(DependencyKey(field.type.kotlin, qualifier), resolving, activeScopes))
             }
+    }
+
+    private fun findInstanceStore(
+        scopeType: ScopeType,
+        activeScopes: Map<ScopeType, ScopeKey>,
+    ): InstanceStore {
+        val scopeKey =
+            requireNotNull(activeScopes[scopeType]) {
+                "${scopeType.name} 스코프가 열려 있지 않습니다."
+            }
+        return requireNotNull(instanceStores[scopeKey]) {
+            "${scopeType.name} 스코프가 이미 닫혔습니다: ${scopeKey.id}"
+        }
     }
 
     private fun resolveKey(requestedKey: DependencyKey): DependencyKey {

@@ -42,6 +42,53 @@ class DIContainerTest {
     }
 
     @Test
+    fun `같은 스코프에서는 같은 인스턴스를 재사용한다`() {
+        container.bind(Service::class, Service::class, scopeType = TestScope)
+        val scope = container.openScope(TestScope, "first")
+
+        val first = scope.get(Service::class)
+        val second = scope.get(Service::class)
+
+        assertThat(second).isSameInstanceAs(first)
+    }
+
+    @Test
+    fun `서로 다른 스코프에서는 서로 다른 인스턴스를 생성한다`() {
+        container.bind(Service::class, Service::class, scopeType = TestScope)
+        val firstScope = container.openScope(TestScope, "first")
+        val secondScope = container.openScope(TestScope, "second")
+
+        val first = firstScope.get(Service::class)
+        val second = secondScope.get(Service::class)
+
+        assertThat(second).isNotSameInstanceAs(first)
+    }
+
+    @Test
+    fun `스코프를 닫고 다시 열면 새로운 인스턴스를 생성한다`() {
+        container.bind(Service::class, Service::class, scopeType = TestScope)
+        val firstScope = container.openScope(TestScope, "scope")
+        val first = firstScope.get(Service::class)
+
+        firstScope.close()
+        val reopenedScope = container.openScope(TestScope, "scope")
+        val reopened = reopenedScope.get(Service::class)
+
+        assertThat(reopened).isNotSameInstanceAs(first)
+    }
+
+    @Test
+    fun `닫힌 스코프에서는 의존성을 조회할 수 없다`() {
+        container.bind(Service::class, Service::class, scopeType = TestScope)
+        val scope = container.openScope(TestScope, "scope")
+        scope.close()
+
+        val exception = assertThrows(IllegalArgumentException::class.java) { scope.get(Service::class) }
+
+        assertThat(exception).hasMessageThat().contains("스코프가 이미 닫혔습니다")
+    }
+
+    @Test
     fun `Inject 애노테이션이 붙은 필드에만 의존성을 주입한다`() {
         val target = container.create(FieldInjectionTarget::class)
 
@@ -146,4 +193,8 @@ class DIContainerTest {
     @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Red
+
+    companion object {
+        val TestScope: ScopeType = ScopeType("test")
+    }
 }
