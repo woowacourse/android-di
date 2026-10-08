@@ -2,10 +2,10 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import woowacourse.di.DIContainer
+import woowacourse.di.DIResolver
 
 class DIViewModelFactory(
-    private val container: DIContainer,
+    private val resolver: DIResolver,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = container.create(modelClass.kotlin)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = resolver.create(modelClass.kotlin)
 }

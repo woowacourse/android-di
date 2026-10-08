@@ -28,9 +28,16 @@ object AppContainer {
         val container =
             diContainer {
                 register<CartProductDao>(database.cartProductDao())
-                bind<CartRepository, DefaultCartRepository>(RoomCart::class)
-                bind<CartRepository, InMemoryCartRepository>(InMemoryCart::class)
+                bind<CartRepository, DefaultCartRepository>(
+                    qualifier = RoomCart::class,
+                    scopeType = AppScope,
+                )
+                bind<CartRepository, InMemoryCartRepository>(
+                    qualifier = InMemoryCart::class,
+                    scopeType = AppScope,
+                )
             }
-        viewModelFactory = DIViewModelFactory(container)
+        val appScopedContainer = container.openScope(AppScope, context.packageName)
+        viewModelFactory = DIViewModelFactory(appScopedContainer)
     }
 }

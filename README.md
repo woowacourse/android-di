@@ -132,9 +132,9 @@ dependencies {
 
 ### 앱 스코프
 
-- [ ] `CartRepository`를 앱 스코프의 의존성으로 등록한다.
-- [ ] 앱이 살아 있는 동안 동일한 `CartRepository` 인스턴스를 사용한다.
-- [ ] 서로 다른 화면과 `ViewModel`에서도 동일한 `CartRepository` 인스턴스를 사용하는지 검증한다.
+- [x] `CartRepository`를 앱 스코프의 의존성으로 등록한다.
+- [x] 앱이 살아 있는 동안 동일한 `CartRepository` 인스턴스를 사용한다.
+- [x] 서로 다른 화면과 `ViewModel`에서도 동일한 `CartRepository` 인스턴스를 사용하는지 검증한다.
 
 ### ViewModel 스코프
 
@@ -160,7 +160,7 @@ dependencies {
 - [x] 서로 다른 스코프에서 서로 다른 인스턴스가 반환되는지 테스트한다.
 - [x] 스코프를 닫은 뒤 다시 열면 새로운 인스턴스가 생성되는지 테스트한다.
 - [x] 스코프가 닫힐 때 저장된 인스턴스 참조가 제거되는지 테스트한다.
-- [ ] 앱 스코프의 `CartRepository`가 앱 생명주기 동안 유지되는지 테스트한다.
+- [x] 앱 스코프의 `CartRepository`가 앱 생명주기 동안 유지되는지 테스트한다.
 - [ ] ViewModel 스코프의 `ProductRepository`가 `ViewModel`과 함께 소멸하는지 테스트한다.
 - [ ] 장바구니 화면 진입과 이탈에 따라 `DateFormatter`가 생성되고 소멸하는지 테스트한다.
 - [ ] 화면을 반복해서 진입하고 이탈해도 화면 스코프와 인스턴스가 누적되지 않는지 테스트한다.

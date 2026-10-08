@@ -6,7 +6,7 @@ import kotlin.reflect.full.cast
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-class DIContainer {
+class DIContainer : DIResolver {
     private val definitions: MutableMap<DependencyKey, DependencyDefinition> = mutableMapOf()
     private val singletonScopeKey: ScopeKey = ScopeKey(ScopeType.Singleton, ScopeType.Singleton.name)
     private val instanceStores: MutableMap<ScopeKey, InstanceStore> =
@@ -30,14 +30,14 @@ class DIContainer {
         definitions[DependencyKey(type, qualifier)] = DependencyDefinition.Instance(instance)
     }
 
-    fun <T : Any> get(
+    override fun <T : Any> get(
         type: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ): T = get(type, qualifier, singletonScope)
 
-    fun <T : Any> create(
+    override fun <T : Any> create(
         type: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ): T = create(type, qualifier, singletonScope)
 
     fun openScope(

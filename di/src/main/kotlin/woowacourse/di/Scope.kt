@@ -23,15 +23,16 @@ class ScopedContainer internal constructor(
     private val container: DIContainer,
     private val activeScopes: Map<ScopeType, ScopeKey>,
     private val ownedScope: ScopeKey,
-) : AutoCloseable {
-    fun <T : Any> get(
+) : DIResolver,
+    AutoCloseable {
+    override fun <T : Any> get(
         type: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ): T = container.get(type, qualifier, activeScopes)
 
-    fun <T : Any> create(
+    override fun <T : Any> create(
         type: KClass<T>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
     ): T = container.create(type, qualifier, activeScopes)
 
     fun openScope(
