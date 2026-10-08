@@ -15,21 +15,37 @@ class DiContainer {
     fun openScope(scopeId: String): Scope = scopes.getOrPut(scopeId) { Scope() }
 
     fun closeScope(scopeId: String) {
-        scopes.remove(scopeId)
+        // 호출자가 Scope 핸들을 보관해도 종료된 보관함이 객체 참조를 붙잡지 않도록 비운다.
+        scopes.remove(scopeId)?.store?.clear()
     }
 
     // 외부에는 스코프의 식별 가능한 핸들만 반환하고, 객체 보관 Map은 노출하지 않는다.
-    // 현재 단위에서는 보관함의 수명만 관리하며 생성과 주입 연결은 다음 단위에서 수행한다.
     class Scope internal constructor() {
-        private val store = mutableMapOf<DiKey, Any>()
+        internal val store = mutableMapOf<DiKey, Any>()
     }
 
     fun <T : Any> instantiate(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
+        scopeId: String? = null,
     ): T {
-        val key = resolveKey(type, qualifier)
-        store[key]?.let { return type.cast(it) }
+        // 스코프를 생략한 기존 호출은 원래 보관함을 사용한다. 명시한 스코프는 먼저 열어야 한다.
+        val targetStore =
+            if (scopeId == null) {
+                store
+            } else {
+                requireNotNull(scopes[scopeId]) { "열리지 않은 스코프입니다: $scopeId" }.store
+            }
+        return instantiateInStore(type, qualifier, targetStore)
+    }
+
+    private fun <T : Any> instantiateInStore(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>?,
+        targetStore: MutableMap<DiKey, Any>,
+    ): T {
+        val key = resolveKey(type, qualifier, targetStore)
+        targetStore[key]?.let { return type.cast(it) }
 
         val implementationType = interfaceRules[key] ?: type
         val constructor =
@@ -41,11 +57,12 @@ class DiContainer {
             constructor.parameters.map { parameter ->
                 val dependencyType = parameter.type.classifier as KClass<*>
                 val dependencyQualifier = qualifierOf(parameter.annotations, parameter.name.orEmpty())
-                instantiate(dependencyType, dependencyQualifier)
+                // 현재는 생성자 의존성도 같은 보관함을 사용한다. 의존성별 수명 선택은 별도 정책이 필요하다.
+                instantiateInStore(dependencyType, dependencyQualifier, targetStore)
             }
 
         val instance = type.cast(constructor.call(*dependencies.toTypedArray()))
-        store[key] = instance
+        targetStore[key] = instance
         return instance
     }
 
@@ -89,9 +106,10 @@ class DiContainer {
     private fun resolveKey(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
+        targetStore: Map<DiKey, Any>,
     ): DiKey {
         val requestedKey = DiKey(type, qualifier)
-        if (store.containsKey(requestedKey) || interfaceRules.containsKey(requestedKey)) {
+        if (targetStore.containsKey(requestedKey) || interfaceRules.containsKey(requestedKey)) {
             return requestedKey
         }
 
@@ -102,7 +120,7 @@ class DiContainer {
         }
 
         val candidates =
-            (store.keys + interfaceRules.keys)
+            (targetStore.keys + interfaceRules.keys)
                 .filter { key -> key.type == type }
                 .distinct()
 
@@ -134,7 +152,7 @@ class DiContainer {
         return qualifiers.singleOrNull()
     }
 
-    private data class DiKey(
+    internal data class DiKey(
         // 코어는 앱 애노테이션의 의미를 해석하지 않고 타입과 함께 식별자로만 사용한다.
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>?,

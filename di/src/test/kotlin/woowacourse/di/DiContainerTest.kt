@@ -6,8 +6,98 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DiContainerTest {
+    @Test
+    fun `닫힌 스코프의 핸들을 보관해도 내부 객체 참조는 남지 않는다`() {
+        val container = DiContainer()
+        val scope = container.openScope("screen-A")
+        container.instantiate(Consumer::class, scopeId = "screen-A")
+        assertTrue(scope.store.isNotEmpty())
+
+        container.closeScope("screen-A")
+
+        assertTrue(scope.store.isEmpty())
+    }
+
+    @Test
+    fun `같은 스코프에서는 객체와 생성자 의존성을 재사용한다`() {
+        val container = DiContainer()
+        container.openScope("screen-A")
+
+        val first = container.instantiate(Consumer::class, scopeId = "screen-A")
+        val second = container.instantiate(Consumer::class, scopeId = "screen-A")
+        val dependency = container.instantiate(Dependency::class, scopeId = "screen-A")
+
+        assertSame(first, second)
+        assertSame(first.dependency, dependency)
+    }
+
+    @Test
+    fun `서로 다른 스코프에서는 객체와 생성자 의존성을 분리한다`() {
+        val container = DiContainer()
+        container.openScope("screen-A")
+        container.openScope("screen-B")
+
+        val first = container.instantiate(Consumer::class, scopeId = "screen-A")
+        val second = container.instantiate(Consumer::class, scopeId = "screen-B")
+        val original = container.instantiate(Consumer::class)
+
+        assertNotSame(first, second)
+        assertNotSame(first.dependency, second.dependency)
+        assertNotSame(first, original)
+        assertNotSame(first.dependency, original.dependency)
+    }
+
+    @Test
+    fun `스코프를 닫고 다시 열면 새 객체를 생성하고 다른 스코프는 유지한다`() {
+        val container = DiContainer()
+        container.openScope("screen-A")
+        container.openScope("screen-B")
+        val first = container.instantiate(Consumer::class, scopeId = "screen-A")
+        val other = container.instantiate(Consumer::class, scopeId = "screen-B")
+
+        container.closeScope("screen-A")
+        container.openScope("screen-A")
+        val reopened = container.instantiate(Consumer::class, scopeId = "screen-A")
+
+        assertNotSame(first, reopened)
+        assertNotSame(first.dependency, reopened.dependency)
+        assertSame(other, container.instantiate(Consumer::class, scopeId = "screen-B"))
+    }
+
+    @Test
+    fun `열리지 않았거나 닫힌 스코프에서는 객체를 생성할 수 없다`() {
+        val container = DiContainer()
+
+        assertFailsWith<IllegalArgumentException> {
+            container.instantiate(Consumer::class, scopeId = "screen-A")
+        }
+        container.openScope("screen-A")
+        container.closeScope("screen-A")
+        assertFailsWith<IllegalArgumentException> {
+            container.instantiate(Consumer::class, scopeId = "screen-A")
+        }
+    }
+
+    @Test
+    fun `스코프에서도 Qualifier에 따른 구현체를 분리하고 재사용한다`() {
+        val container = DiContainer()
+        container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
+        container.registerInterfaceRule(Repository::class, InMemoryRepository::class, TestMemory::class)
+        container.openScope("screen-A")
+
+        val consumer = container.instantiate(QualifiedConstructorConsumer::class, scopeId = "screen-A")
+
+        assertIs<DefaultRepository>(consumer.roomRepository)
+        assertIs<InMemoryRepository>(consumer.memoryRepository)
+        assertSame(
+            consumer.roomRepository,
+            container.instantiate(Repository::class, TestRoom::class, scopeId = "screen-A"),
+        )
+    }
+
     @Test
     fun `같은 식별자의 스코프를 다시 열면 기존 보관함을 유지한다`() {
         val container = DiContainer()
