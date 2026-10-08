@@ -10,6 +10,7 @@ import kotlin.reflect.jvm.isAccessible
 class DiContainer {
     private val store = mutableMapOf<DiKey, Any>()
     private val interfaceRules = mutableMapOf<DiKey, KClass<*>>()
+    private val scopeRules = mutableMapOf<DiKey, ScopeType>()
     private val scopes = mutableMapOf<String, Scope>()
 
     fun openScope(scopeId: String): Scope = scopes.getOrPut(scopeId) { Scope() }
@@ -28,13 +29,26 @@ class DiContainer {
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scopeId: String? = null,
-    ): T = instantiateInScope(type, qualifier, scopeId)
+    ): T =
+        instantiateInScope(
+            type = type,
+            qualifier = qualifier,
+            scopeContext = ScopeContext(defaultScopeId = scopeId, scopeIds = emptyMap()),
+        )
+
+    fun <T : Any> instantiate(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+        scopeContext: ScopeContext,
+    ): T = instantiateInScope(type, qualifier, scopeContext)
 
     private fun <T : Any> instantiateInScope(
         type: KClass<T>,
         qualifier: KClass<out Annotation>?,
-        scopeId: String?,
+        scopeContext: ScopeContext,
     ): T {
+        val requestedKey = DiKey(type, qualifier)
+        val scopeId = selectScopeId(requestedKey, scopeContext)
         val targetStore = selectStore(scopeId)
         val key = resolveKey(type, qualifier, targetStore)
         targetStore[key]?.let { return type.cast(it) }
@@ -49,13 +63,24 @@ class DiContainer {
             constructor.parameters.map { parameter ->
                 val dependencyType = parameter.type.classifier as KClass<*>
                 val dependencyQualifier = qualifierOf(parameter.annotations, parameter.name.orEmpty())
-                // 현재는 생성자 의존성도 같은 스코프 식별자를 사용한다. 의존성별 수명 선택은 별도 정책이 필요하다.
-                instantiateInScope(dependencyType, dependencyQualifier, scopeId)
+                instantiateInScope(dependencyType, dependencyQualifier, scopeContext)
             }
 
         val instance = type.cast(constructor.call(*dependencies.toTypedArray()))
         targetStore[key] = instance
         return instance
+    }
+
+    private fun selectScopeId(
+        key: DiKey,
+        scopeContext: ScopeContext,
+    ): String? {
+        val scopeType = scopeRules[key] ?: scopeRules[DiKey(key.type, null)]
+        return scopeType?.let {
+            requireNotNull(scopeContext.scopeIds[it]) {
+                "현재 생성 문맥에 스코프 ID가 없습니다: ${it.name}"
+            }
+        } ?: scopeContext.defaultScopeId
     }
 
     private fun selectStore(scopeId: String?): MutableMap<DiKey, Any> =
@@ -79,6 +104,14 @@ class DiContainer {
         qualifier: KClass<out Annotation>? = null,
     ) {
         interfaceRules[DiKey(type, qualifier)] = implementationType
+    }
+
+    fun <T : Any> registerScopeRule(
+        type: KClass<T>,
+        scopeType: ScopeType,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        scopeRules[DiKey(type, qualifier)] = scopeType
     }
 
     fun inject(target: Any) {

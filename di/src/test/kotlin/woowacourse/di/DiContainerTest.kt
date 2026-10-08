@@ -10,6 +10,42 @@ import kotlin.test.assertTrue
 
 class DiContainerTest {
     @Test
+    fun `의존성의 스코프 종류와 현재 문맥으로 실제 보관함을 선택한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        val viewModelScope = ScopeType("view-model")
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.openScope("vm-B")
+        container.registerScopeRule(Dependency::class, viewModelScope)
+        container.registerScopeRule(SharedDependency::class, appScope)
+
+        val first = container.instantiate(MixedScopeConsumer::class, scopeContext = scopeContext("vm-A"))
+        val second = container.instantiate(MixedScopeConsumer::class, scopeContext = scopeContext("vm-B"))
+
+        assertNotSame(first.dependency, second.dependency)
+        assertSame(first.sharedDependency, second.sharedDependency)
+    }
+
+    @Test
+    fun `스코프 규칙에 필요한 실제 ID가 현재 문맥에 없으면 오류를 낸다`() {
+        val container = DiContainer()
+        val viewModelScope = ScopeType("view-model")
+        container.openScope("vm-A")
+        container.registerScopeRule(Dependency::class, viewModelScope)
+
+        val exception =
+            assertFailsWith<IllegalArgumentException> {
+                container.instantiate(
+                    Consumer::class,
+                    scopeContext = ScopeContext(defaultScopeId = "vm-A", scopeIds = emptyMap()),
+                )
+            }
+
+        assertContains(exception.message.orEmpty(), "현재 생성 문맥에 스코프 ID가 없습니다: view-model")
+    }
+
+    @Test
     fun `닫힌 스코프의 핸들을 보관해도 내부 객체 참조는 남지 않는다`() {
         val container = DiContainer()
         val scope = container.openScope("screen-A")
@@ -250,6 +286,13 @@ class DiContainerTest {
         val dependency: Dependency,
     )
 
+    class SharedDependency
+
+    class MixedScopeConsumer(
+        val dependency: Dependency,
+        val sharedDependency: SharedDependency,
+    )
+
     interface Repository {
         val dependency: Dependency
     }
@@ -295,4 +338,14 @@ class DiContainerTest {
     @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class TestMemory
+
+    private fun scopeContext(viewModelScopeId: String): ScopeContext =
+        ScopeContext(
+            defaultScopeId = viewModelScopeId,
+            scopeIds =
+                mapOf(
+                    ScopeType("app") to "app",
+                    ScopeType("view-model") to viewModelScopeId,
+                ),
+        )
 }
