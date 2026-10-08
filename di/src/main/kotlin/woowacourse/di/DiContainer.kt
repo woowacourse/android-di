@@ -28,22 +28,14 @@ class DiContainer {
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scopeId: String? = null,
-    ): T {
-        // 스코프를 생략한 기존 호출은 원래 보관함을 사용한다. 명시한 스코프는 먼저 열어야 한다.
-        val targetStore =
-            if (scopeId == null) {
-                store
-            } else {
-                requireNotNull(scopes[scopeId]) { "열리지 않은 스코프입니다: $scopeId" }.store
-            }
-        return instantiateInStore(type, qualifier, targetStore)
-    }
+    ): T = instantiateInScope(type, qualifier, scopeId)
 
-    private fun <T : Any> instantiateInStore(
+    private fun <T : Any> instantiateInScope(
         type: KClass<T>,
         qualifier: KClass<out Annotation>?,
-        targetStore: MutableMap<DiKey, Any>,
+        scopeId: String?,
     ): T {
+        val targetStore = selectStore(scopeId)
         val key = resolveKey(type, qualifier, targetStore)
         targetStore[key]?.let { return type.cast(it) }
 
@@ -57,14 +49,21 @@ class DiContainer {
             constructor.parameters.map { parameter ->
                 val dependencyType = parameter.type.classifier as KClass<*>
                 val dependencyQualifier = qualifierOf(parameter.annotations, parameter.name.orEmpty())
-                // 현재는 생성자 의존성도 같은 보관함을 사용한다. 의존성별 수명 선택은 별도 정책이 필요하다.
-                instantiateInStore(dependencyType, dependencyQualifier, targetStore)
+                // 현재는 생성자 의존성도 같은 스코프 식별자를 사용한다. 의존성별 수명 선택은 별도 정책이 필요하다.
+                instantiateInScope(dependencyType, dependencyQualifier, scopeId)
             }
 
         val instance = type.cast(constructor.call(*dependencies.toTypedArray()))
         targetStore[key] = instance
         return instance
     }
+
+    private fun selectStore(scopeId: String?): MutableMap<DiKey, Any> =
+        if (scopeId == null) {
+            store
+        } else {
+            requireNotNull(scopes[scopeId]) { "열리지 않은 스코프입니다: $scopeId" }.store
+        }
 
     fun <T : Any> register(
         type: KClass<T>,
