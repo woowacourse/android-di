@@ -35,7 +35,7 @@ class ScopedContainer internal constructor(
         qualifier: KClass<out Annotation>?,
     ): T = container.create(type, qualifier, activeScopes)
 
-    fun openScope(
+    override fun openScope(
         type: ScopeType,
         id: String,
     ): ScopedContainer = container.openScope(type, id, activeScopes)

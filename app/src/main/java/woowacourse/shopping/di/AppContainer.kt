@@ -10,6 +10,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.ShoppingDatabase
 
@@ -36,6 +37,7 @@ object AppContainer {
                     qualifier = InMemoryCart::class,
                     scopeType = AppScope,
                 )
+                bind<ProductRepository, ProductRepository>(scopeType = ViewModelScope)
             }
         val appScopedContainer = container.openScope(AppScope, context.packageName)
         viewModelFactory = DIViewModelFactory(appScopedContainer)

@@ -12,4 +12,9 @@ interface DIResolver {
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T
+
+    fun openScope(
+        type: ScopeType,
+        id: String,
+    ): ScopedContainer
 }

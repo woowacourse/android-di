@@ -138,11 +138,11 @@ dependencies {
 
 ### ViewModel 스코프
 
-- [ ] `ProductRepository`를 ViewModel 스코프의 의존성으로 등록한다.
-- [ ] `ViewModel`을 생성할 때 해당 `ViewModel`이 사용할 스코프를 생성한다.
-- [ ] 같은 `ViewModel` 생명주기 안에서는 동일한 `ProductRepository` 인스턴스를 사용한다.
-- [ ] `ViewModel`이 소멸하면 ViewModel 스코프와 저장된 인스턴스를 정리한다.
-- [ ] 새로운 `ViewModel`을 생성하면 새로운 `ProductRepository` 인스턴스를 사용하는지 검증한다.
+- [x] `ProductRepository`를 ViewModel 스코프의 의존성으로 등록한다.
+- [x] `ViewModel`을 생성할 때 해당 `ViewModel`이 사용할 스코프를 생성한다.
+- [x] 같은 `ViewModel` 생명주기 안에서는 동일한 `ProductRepository` 인스턴스를 사용한다.
+- [x] `ViewModel`이 소멸하면 ViewModel 스코프와 저장된 인스턴스를 정리한다.
+- [x] 새로운 `ViewModel`을 생성하면 새로운 `ProductRepository` 인스턴스를 사용하는지 검증한다.
 
 ### 화면 스코프
 
@@ -161,7 +161,7 @@ dependencies {
 - [x] 스코프를 닫은 뒤 다시 열면 새로운 인스턴스가 생성되는지 테스트한다.
 - [x] 스코프가 닫힐 때 저장된 인스턴스 참조가 제거되는지 테스트한다.
 - [x] 앱 스코프의 `CartRepository`가 앱 생명주기 동안 유지되는지 테스트한다.
-- [ ] ViewModel 스코프의 `ProductRepository`가 `ViewModel`과 함께 소멸하는지 테스트한다.
+- [x] ViewModel 스코프의 `ProductRepository`가 `ViewModel`과 함께 소멸하는지 테스트한다.
 - [ ] 장바구니 화면 진입과 이탈에 따라 `DateFormatter`가 생성되고 소멸하는지 테스트한다.
 - [ ] 화면을 반복해서 진입하고 이탈해도 화면 스코프와 인스턴스가 누적되지 않는지 테스트한다.
 

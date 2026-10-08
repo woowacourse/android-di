@@ -40,7 +40,7 @@ class DIContainer : DIResolver {
         qualifier: KClass<out Annotation>?,
     ): T = create(type, qualifier, singletonScope)
 
-    fun openScope(
+    override fun openScope(
         type: ScopeType,
         id: String,
     ): ScopedContainer = openScope(type, id, singletonScope)
