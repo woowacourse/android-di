@@ -4,9 +4,54 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
+import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 class DiContainerTest {
+    @Test
+    fun `같은 식별자의 스코프를 다시 열면 기존 보관함을 유지한다`() {
+        val container = DiContainer()
+
+        val first = container.openScope("screen-A")
+        val second = container.openScope("screen-A")
+
+        assertSame(first, second)
+    }
+
+    @Test
+    fun `서로 다른 식별자의 스코프는 별도 보관함을 갖는다`() {
+        val container = DiContainer()
+
+        val first = container.openScope("screen-A")
+        val second = container.openScope("screen-B")
+
+        assertNotSame(first, second)
+    }
+
+    @Test
+    fun `닫은 스코프를 다시 열면 새 보관함을 생성하고 다른 스코프는 유지한다`() {
+        val container = DiContainer()
+        val first = container.openScope("screen-A")
+        val other = container.openScope("screen-B")
+
+        container.closeScope("screen-A")
+
+        assertNotSame(first, container.openScope("screen-A"))
+        assertSame(other, container.openScope("screen-B"))
+    }
+
+    @Test
+    fun `스코프를 반복해서 닫아도 다른 보관함은 유지한다`() {
+        val container = DiContainer()
+        container.openScope("screen-A")
+        val other = container.openScope("screen-B")
+
+        container.closeScope("screen-A")
+        container.closeScope("screen-A")
+
+        assertSame(other, container.openScope("screen-B"))
+    }
+
     @Test
     fun `생성자 의존성을 재귀적으로 생성한다`() {
         val container = DiContainer()

@@ -10,6 +10,19 @@ import kotlin.reflect.jvm.isAccessible
 class DiContainer {
     private val store = mutableMapOf<DiKey, Any>()
     private val interfaceRules = mutableMapOf<DiKey, KClass<*>>()
+    private val scopes = mutableMapOf<String, Scope>()
+
+    fun openScope(scopeId: String): Scope = scopes.getOrPut(scopeId) { Scope() }
+
+    fun closeScope(scopeId: String) {
+        scopes.remove(scopeId)
+    }
+
+    // 외부에는 스코프의 식별 가능한 핸들만 반환하고, 객체 보관 Map은 노출하지 않는다.
+    // 현재 단위에서는 보관함의 수명만 관리하며 생성과 주입 연결은 다음 단위에서 수행한다.
+    class Scope internal constructor() {
+        private val store = mutableMapOf<DiKey, Any>()
+    }
 
     fun <T : Any> instantiate(
         type: KClass<T>,
