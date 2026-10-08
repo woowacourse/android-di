@@ -2,7 +2,7 @@ package com.cksckckcks.di
 
 import kotlin.reflect.KClass
 
-open class DiContainer {
+class DiContainer {
     private val instances = mutableMapOf<BindingKey, Any>()
     private val factories = mutableMapOf<BindingKey, () -> Any>()
 

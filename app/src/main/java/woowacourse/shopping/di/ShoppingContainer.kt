@@ -13,7 +13,9 @@ import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingContainer(
     context: Context,
-) : DiContainer() {
+) {
+    val diContainer = DiContainer()
+
     private val database =
         Room
             .databaseBuilder(
@@ -23,16 +25,16 @@ class ShoppingContainer(
             ).build()
 
     init {
-        register(CartProductDao::class) {
+        diContainer.register(CartProductDao::class) {
             database.cartProductDao()
         }
 
-        register(CartRepository::class, LocalMemoryCart::class) {
-            val dao = getInstance(CartProductDao::class) as CartProductDao
+        diContainer.register(CartRepository::class, LocalMemoryCart::class) {
+            val dao = diContainer.getInstance(CartProductDao::class) as CartProductDao
             DefaultCartRepository(dao)
         }
 
-        register(CartRepository::class, InMemoryCart::class) {
+        diContainer.register(CartRepository::class, InMemoryCart::class) {
             InMemoryCartRepository()
         }
     }

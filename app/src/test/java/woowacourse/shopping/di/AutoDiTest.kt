@@ -19,7 +19,7 @@ import woowacourse.shopping.model.Product
 class AutoDiTest {
     @Test
     fun `애노테이션이 붙은 필드만 주입한다`() {
-        val container = ShoppingContainer(RuntimeEnvironment.getApplication())
+        val container = ShoppingContainer(RuntimeEnvironment.getApplication()).diContainer
 
         val target = AutoDi(container).createInstance(InjectionTarget::class)
 
@@ -30,7 +30,7 @@ class AutoDiTest {
     @Test
     fun `CartRepository의 DAO 의존성을 재귀적으로 해결한다`() {
         runBlocking {
-            val container = ShoppingContainer(RuntimeEnvironment.getApplication())
+            val container = ShoppingContainer(RuntimeEnvironment.getApplication()).diContainer
             val target = AutoDi(container).createInstance(RecursiveTarget::class)
             val dao = container.getInstance(CartProductDao::class) as CartProductDao
             val countBefore = dao.getAll().size
@@ -44,7 +44,7 @@ class AutoDiTest {
 
     @Test
     fun `Qualifier에 따라 서로 다른 CartRepository를 주입한다`() {
-        val container = ShoppingContainer(RuntimeEnvironment.getApplication())
+        val container = ShoppingContainer(RuntimeEnvironment.getApplication()).diContainer
         val autoDi = AutoDi(container)
 
         val localTarget = autoDi.createInstance(InjectionTarget::class)
