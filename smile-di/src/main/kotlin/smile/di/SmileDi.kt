@@ -16,6 +16,7 @@ import kotlin.reflect.jvm.javaField
 class SmileDi(
     private val module: Any,
     private val repository: DependencyRepository,
+    private val parent: SmileDi? = null,
 ) {
     private val providers: Map<DependencyKey, KFunction<*>> =
         module::class
@@ -31,11 +32,21 @@ class SmileDi(
 
     private val creating = mutableSetOf<DependencyKey>()
 
-    fun <T : Any> resolveDependencies(kClass: KClass<T>): T = kClass.cast(resolve(DependencyKey(kClass)))
+    fun <T : Any> resolveDependencies(kClass: KClass<T>): T =
+        kClass.cast(resolve(DependencyKey(kClass)))
 
-    fun <T : Any> createDependency(kClass: KClass<T>): T = kClass.cast(create(DependencyKey(kClass)))
+    fun <T : Any> createDependency(kClass: KClass<T>): T =
+        kClass.cast(create(DependencyKey(kClass)))
 
-    private fun resolve(key: DependencyKey): Any = repository.get(key) ?: create(key).also { repository.save(key, it) }
+    private fun resolve(key: DependencyKey): Any {
+        return repository.get(key)
+            ?: if (parent != null && key !in providers) {
+                parent.resolve(key)
+            } else {
+                create(key).also { repository.save(key, it) }
+            }
+    }
+
 
     private fun create(key: DependencyKey): Any {
         check(creating.add(key)) { "[에러] 순환참조가 발생했습니다." }
@@ -53,6 +64,11 @@ class SmileDi(
             creating.remove(key)
         }
     }
+
+    fun createChild(
+        module: Any,
+        repository: DependencyRepository
+    ): SmileDi = SmileDi(module, repository, parent = this)
 
     private fun findProvider(key: DependencyKey): KFunction<*>? {
         providers[key]?.let { return it }
@@ -88,9 +104,11 @@ class SmileDi(
             }.toTypedArray()
 }
 
-private fun KType.toKClass(): KClass<*> = this.classifier as? KClass<*> ?: error("[에러] classifier가 KTypeParameter인 경우는 처리할 수 없습니다")
+private fun KType.toKClass(): KClass<*> =
+    this.classifier as? KClass<*> ?: error("[에러] classifier가 KTypeParameter인 경우는 처리할 수 없습니다")
 
-private fun KAnnotatedElement.toDependencyKey(type: KType): DependencyKey = DependencyKey(type.toKClass(), findQualifier())
+private fun KAnnotatedElement.toDependencyKey(type: KType): DependencyKey =
+    DependencyKey(type.toKClass(), findQualifier())
 
 private fun KAnnotatedElement.findQualifier(): KClass<out Annotation>? {
     val qualifiers =
@@ -101,4 +119,5 @@ private fun KAnnotatedElement.findQualifier(): KClass<out Annotation>? {
     return qualifiers.firstOrNull()
 }
 
-private fun DependencyKey.displayName(): String = listOfNotNull(qualifier?.let { "@${it.simpleName}" }, kClass.simpleName).joinToString(" ")
+private fun DependencyKey.displayName(): String =
+    listOfNotNull(qualifier?.let { "@${it.simpleName}" }, kClass.simpleName).joinToString(" ")
