@@ -28,6 +28,44 @@ class DiContainerTest {
     }
 
     @Test
+    fun `Qualifier가 있는 정확한 스코프 규칙을 타입 공통 규칙보다 우선한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        val viewModelScope = ScopeType("view-model")
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.openScope("vm-B")
+        container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
+        container.registerScopeRule(Repository::class, viewModelScope)
+        container.registerScopeRule(Repository::class, appScope, TestRoom::class)
+
+        val first =
+            container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-A"))
+        val second =
+            container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-B"))
+
+        assertSame(first, second)
+    }
+
+    @Test
+    fun `정확한 Qualifier 스코프 규칙이 없으면 타입 공통 규칙을 사용한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.openScope("vm-B")
+        container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
+        container.registerScopeRule(Repository::class, appScope)
+
+        val first =
+            container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-A"))
+        val second =
+            container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-B"))
+
+        assertSame(first, second)
+    }
+
+    @Test
     fun `스코프 규칙에 필요한 실제 ID가 현재 문맥에 없으면 오류를 낸다`() {
         val container = DiContainer()
         val viewModelScope = ScopeType("view-model")
