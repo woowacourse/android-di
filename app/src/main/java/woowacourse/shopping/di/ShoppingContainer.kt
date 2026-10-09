@@ -9,11 +9,15 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.LocalMemoryCart
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingContainer(
     context: Context,
-) : DiContainer() {
+) {
+    val diContainer = DiContainer()
+
     private val database =
         Room
             .databaseBuilder(
@@ -23,16 +27,25 @@ class ShoppingContainer(
             ).build()
 
     init {
-        register(CartProductDao::class) {
+        val applicationContext = context.applicationContext
+        diContainer.register(DateFormatter::class, scope = ShoppingScopes.screen) {
+            DateFormatter(applicationContext)
+        }
+
+        diContainer.register(ProductRepository::class, scope = ShoppingScopes.viewModel) {
+            ProductRepository()
+        }
+
+        diContainer.register(CartProductDao::class, scope = diContainer.applicationScope.type) {
             database.cartProductDao()
         }
 
-        register(CartRepository::class, LocalMemoryCart::class) {
-            val dao = getInstance(CartProductDao::class) as CartProductDao
+        diContainer.register(CartRepository::class, LocalMemoryCart::class, scope = diContainer.applicationScope.type) {
+            val dao = diContainer.getInstance(CartProductDao::class) as CartProductDao
             DefaultCartRepository(dao)
         }
 
-        register(CartRepository::class, InMemoryCart::class) {
+        diContainer.register(CartRepository::class, InMemoryCart::class, scope = diContainer.applicationScope.type) {
             InMemoryCartRepository()
         }
     }
