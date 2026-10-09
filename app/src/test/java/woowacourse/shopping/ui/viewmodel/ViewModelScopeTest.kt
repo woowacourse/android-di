@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.cksckckcks.di.DiContainer
+import com.cksckckcks.di.InjectProperty
 import com.cksckckcks.di.ScopedContainer
 import com.google.common.truth.Truth.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -137,6 +138,30 @@ class ViewModelScopeTest {
         }
     }
 
+    @Test
+    fun `필드 주입 실패 시 생성한 스코프만 닫고 기존 ViewModel은 유지한다`() {
+        val store = ViewModelStore()
+        try {
+            val provider = provider(store)
+            val healthy = provider[ProductsViewModel::class]
+            val healthyScope = container.scopes().values.single() as ScopedContainer
+            val repository = healthy.readPrivateField("productRepository")
+
+            assertThatThrownBy { provider[FailingFieldViewModel::class] }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessageContaining("MissingDependency")
+
+            assertThat(container.scopes().values.toList()).containsExactly(healthyScope)
+            assertThat(provider[ProductsViewModel::class]).isSameInstanceAs(healthy)
+            assertThat(healthyScope.getInstance(ProductRepository::class)).isSameInstanceAs(repository)
+            healthy.getAllProducts()
+            assertThat(healthy.uiState.value.products).hasSize(3)
+        } finally {
+            store.clear()
+        }
+        assertThat(container.scopes()).isEmpty()
+    }
+
     private fun provider(store: ViewModelStore): ViewModelProvider {
         val extras = MutableCreationExtras().apply { this[APPLICATION_KEY] = application }
         return ViewModelProvider.create(store, ViewModelFactory, extras)
@@ -145,6 +170,15 @@ class ViewModelScopeTest {
     private fun DiContainer.scopes(): Map<*, *> = readPrivateField("scopes") as Map<*, *>
 
     private fun Any.readPrivateField(name: String): Any? = javaClass.getDeclaredField(name).apply { isAccessible = true }.get(this)
+
+    interface MissingDependency
+
+    class FailingFieldViewModel(
+        val repository: ProductRepository,
+    ) : ViewModel() {
+        @InjectProperty
+        lateinit var missing: MissingDependency
+    }
 
     class FailingViewModel(
         val repository: ProductRepository,
