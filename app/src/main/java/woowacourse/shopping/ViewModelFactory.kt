@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
-inline fun <reified VM : ViewModel> viewModelFactory(): ViewModelProvider.Factory =
+inline fun <reified VM : ViewModel> viewModelFactory(
+    noinline scopeModule: () -> Any = { Any() }
+): ViewModelProvider.Factory =
     viewModelFactory {
         initializer<VM> {
             val smileDi = (this[APPLICATION_KEY] as DiApplication).smileDi
-            smileDi.createDependency(VM::class)
+            val viewModelDi = smileDi.createChild(scopeModule(), ScopeContainer())
+            viewModelDi.createDependency(VM::class)
         }
     }
