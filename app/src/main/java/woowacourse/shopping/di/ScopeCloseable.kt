@@ -1,7 +1,5 @@
 package woowacourse.shopping.di
 
-import androidx.lifecycle.ViewModel
-
 internal class ScopeCloseable(
     private val scopeId: String,
     private val closeScope: (String) -> Unit,
@@ -10,7 +8,3 @@ internal class ScopeCloseable(
         closeScope(scopeId)
     }
 }
-
-internal class ScreenScopeOwnerViewModel(
-    closeable: ScopeCloseable,
-) : ViewModel(closeable)

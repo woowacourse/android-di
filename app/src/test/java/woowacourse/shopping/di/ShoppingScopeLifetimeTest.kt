@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -13,10 +15,33 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
+import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 class ShoppingScopeLifetimeTest {
+    @Test
+    fun `백스택 엔트리의 ViewModelStore가 정리되면 화면 의존성 참조를 제거한다`() {
+        RuntimeEnvironment.getApplication()
+        val scopeId = "screen-test:${UUID.randomUUID()}"
+        val firstStore = ViewModelStore()
+        val firstProvider = ViewModelProvider.create(firstStore, AoDi.factoryFor(scopeId))
+        val firstScope = firstProvider[CartScreenScopeViewModel::class]
+
+        assertThat(firstProvider[CartScreenScopeViewModel::class]).isSameAs(firstScope)
+
+        firstStore.clear()
+
+        val reopenedStore = ViewModelStore()
+        val reopenedScope =
+            ViewModelProvider
+                .create(reopenedStore, AoDi.factoryFor(scopeId))[CartScreenScopeViewModel::class]
+
+        assertThat(reopenedScope.dateFormatter).isNotSameAs(firstScope.dateFormatter)
+        reopenedStore.clear()
+    }
+
     @Test
     fun `같은 스코프에서는 수명별 의존성을 재사용한다`() {
         val graph = ShoppingScopeGraph()

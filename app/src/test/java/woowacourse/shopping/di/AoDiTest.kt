@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import woowacourse.di.FieldInject
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
-import java.util.UUID
 
 class AoDiTest {
     @Test
@@ -39,32 +37,6 @@ class AoDiTest {
 
         firstStore.clear()
         secondStore.clear()
-    }
-
-    @Test
-    fun `백스택 엔트리의 ViewModelStore가 정리되면 화면 스코프를 닫는다`() {
-        val scopeId = "screen-test:${UUID.randomUUID()}"
-        AoDi.registerScopeRule(ScreenScopedDependency::class, ShoppingScopes.screen)
-        val firstStore = ViewModelStore()
-        ViewModelProvider
-            .create(firstStore, AoDi.screenScopeOwnerFactory(scopeId))[ScreenScopeOwnerViewModel::class]
-        val first = AoDi.instantiateInScreen(ScreenScopedDependency::class, scopeId)
-
-        assertThat(AoDi.instantiateInScreen(ScreenScopedDependency::class, scopeId)).isSameAs(first)
-
-        firstStore.clear()
-
-        assertThatThrownBy {
-            AoDi.instantiateInScreen(ScreenScopedDependency::class, scopeId)
-        }.hasMessageContaining("열리지 않은 스코프입니다: $scopeId")
-
-        val reopenedStore = ViewModelStore()
-        ViewModelProvider
-            .create(reopenedStore, AoDi.screenScopeOwnerFactory(scopeId))[ScreenScopeOwnerViewModel::class]
-        val reopened = AoDi.instantiateInScreen(ScreenScopedDependency::class, scopeId)
-
-        assertThat(reopened).isNotSameAs(first)
-        reopenedStore.clear()
     }
 
     @Test
@@ -184,8 +156,6 @@ class AoDiTest {
     class AppScopedDependency
 
     class ViewModelScopedDependency
-
-    class ScreenScopedDependency
 
     class ScopedViewModel(
         val appDependency: AppScopedDependency,

@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -33,38 +32,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.di.AoDi
-import woowacourse.shopping.di.ScreenScopeOwnerViewModel
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
 fun CartScreen(
-    backStackEntry: NavBackStackEntry,
+    viewModel: CartViewModel,
+    dateFormatter: DateFormatter,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(factory = AoDi),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
-    val screenScopeOwnerFactory =
-        remember(backStackEntry.id) {
-            AoDi.screenScopeOwnerFactory(backStackEntry.id)
-        }
-    viewModel<ScreenScopeOwnerViewModel>(
-        viewModelStoreOwner = backStackEntry,
-        factory = screenScopeOwnerFactory,
-    )
-    val dateFormatter =
-        remember(backStackEntry.id) {
-            AoDi.instantiateInScreen(DateFormatter::class, backStackEntry.id)
-        }
-
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()
     }
