@@ -29,28 +29,22 @@ class DiContainer {
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scopeId: String? = null,
-    ): T =
-        instantiateInScope(
-            type = type,
-            qualifier = qualifier,
-            scopeContext = ScopeContext(defaultScopeId = scopeId, scopeIds = emptyMap()),
-        )
+    ): T = instantiateUsing(type, qualifier) { scopeId }
 
     fun <T : Any> instantiate(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scopeContext: ScopeContext,
-    ): T = instantiateInScope(type, qualifier, scopeContext)
+    ): T = instantiateUsing(type, qualifier) { key -> selectScopeId(key, scopeContext) }
 
-    private fun <T : Any> instantiateInScope(
+    private fun <T : Any> instantiateUsing(
         type: KClass<T>,
         qualifier: KClass<out Annotation>?,
-        scopeContext: ScopeContext,
+        scopeIdFor: (DiKey) -> String?,
     ): T {
-        val requestedKey = DiKey(type, qualifier)
-        val scopeId = selectScopeId(requestedKey, scopeContext)
+        val key = resolveKey(type, qualifier)
+        val scopeId = scopeIdFor(key)
         val targetStore = selectStore(scopeId)
-        val key = resolveKey(type, qualifier, targetStore)
         targetStore[key]?.let { return type.cast(it) }
 
         val implementationType = interfaceRules[key] ?: type
@@ -63,7 +57,7 @@ class DiContainer {
             constructor.parameters.map { parameter ->
                 val dependencyType = parameter.type.classifier as KClass<*>
                 val dependencyQualifier = qualifierOf(parameter.annotations, parameter.name.orEmpty())
-                instantiateInScope(dependencyType, dependencyQualifier, scopeContext)
+                instantiateUsing(dependencyType, dependencyQualifier, scopeIdFor)
             }
 
         val instance = type.cast(constructor.call(*dependencies.toTypedArray()))
@@ -74,13 +68,16 @@ class DiContainer {
     private fun selectScopeId(
         key: DiKey,
         scopeContext: ScopeContext,
-    ): String? {
-        val scopeType = scopeRules[key] ?: scopeRules[DiKey(key.type, null)]
-        return scopeType?.let {
-            requireNotNull(scopeContext.scopeIds[it]) {
-                "현재 생성 문맥에 스코프 ID가 없습니다: ${it.name}"
+    ): String {
+        val scopeType =
+            requireNotNull(scopeRules[key] ?: scopeRules[DiKey(key.type, null)]) {
+                "스코프 규칙이 없습니다. " +
+                    "요청 타입: ${key.type.qualifiedName}, " +
+                    "Qualifier: ${key.qualifier?.qualifiedName}"
             }
-        } ?: scopeContext.defaultScopeId
+        return requireNotNull(scopeContext.scopeIds[scopeType]) {
+            "현재 생성 문맥에 스코프 ID가 없습니다: ${scopeType.name}"
+        }
     }
 
     private fun selectStore(scopeId: String?): MutableMap<DiKey, Any> =
@@ -96,6 +93,17 @@ class DiContainer {
         qualifier: KClass<out Annotation>? = null,
     ) {
         store[DiKey(type, qualifier)] = instance
+    }
+
+    fun <T : Any> register(
+        type: KClass<T>,
+        instance: T,
+        qualifier: KClass<out Annotation>? = null,
+        scopeContext: ScopeContext,
+    ) {
+        val key = DiKey(type, qualifier)
+        val scopeId = selectScopeId(key, scopeContext)
+        selectStore(scopeId)[key] = instance
     }
 
     fun <T : Any, I : T> registerInterfaceRule(
@@ -114,7 +122,17 @@ class DiContainer {
         scopeRules[DiKey(type, qualifier)] = scopeType
     }
 
-    fun inject(target: Any) {
+    fun inject(target: Any) = injectUsing(target) { type, qualifier -> instantiate(type, qualifier) }
+
+    fun inject(
+        target: Any,
+        scopeContext: ScopeContext,
+    ) = injectUsing(target) { type, qualifier -> instantiate(type, qualifier, scopeContext) }
+
+    private fun injectUsing(
+        target: Any,
+        dependencyFor: (KClass<*>, KClass<out Annotation>?) -> Any,
+    ) {
         val annotatedProperties =
             target::class
                 .declaredMemberProperties
@@ -128,7 +146,7 @@ class DiContainer {
                 mutableProperty.returnType.classifier as? KClass<*>
                     ?: error("주입 대상의 타입을 확인할 수 없습니다: ${property.name}")
             val dependencyQualifier = qualifierOf(property.annotations, property.name)
-            val dependency = instantiate(dependencyType, dependencyQualifier)
+            val dependency = dependencyFor(dependencyType, dependencyQualifier)
 
             mutableProperty.isAccessible = true
             mutableProperty.setter.call(target, dependency)
@@ -138,10 +156,10 @@ class DiContainer {
     private fun resolveKey(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
-        targetStore: Map<DiKey, Any>,
     ): DiKey {
         val requestedKey = DiKey(type, qualifier)
-        if (targetStore.containsKey(requestedKey) || interfaceRules.containsKey(requestedKey)) {
+        val registeredKeys = store.keys + scopes.values.flatMap { scope -> scope.store.keys }
+        if (requestedKey in registeredKeys || interfaceRules.containsKey(requestedKey)) {
             return requestedKey
         }
 
@@ -152,7 +170,7 @@ class DiContainer {
         }
 
         val candidates =
-            (targetStore.keys + interfaceRules.keys)
+            (registeredKeys + interfaceRules.keys)
                 .filter { key -> key.type == type }
                 .distinct()
 

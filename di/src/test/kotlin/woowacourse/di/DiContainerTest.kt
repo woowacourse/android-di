@@ -17,6 +17,7 @@ class DiContainerTest {
         container.openScope("app")
         container.openScope("vm-A")
         container.openScope("vm-B")
+        container.registerScopeRule(MixedScopeConsumer::class, viewModelScope)
         container.registerScopeRule(Dependency::class, viewModelScope)
         container.registerScopeRule(SharedDependency::class, appScope)
 
@@ -38,6 +39,7 @@ class DiContainerTest {
         container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
         container.registerScopeRule(Repository::class, viewModelScope)
         container.registerScopeRule(Repository::class, appScope, TestRoom::class)
+        container.registerScopeRule(Dependency::class, appScope)
 
         val first =
             container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-A"))
@@ -56,6 +58,7 @@ class DiContainerTest {
         container.openScope("vm-B")
         container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
         container.registerScopeRule(Repository::class, appScope)
+        container.registerScopeRule(Dependency::class, appScope)
 
         val first =
             container.instantiate(Repository::class, TestRoom::class, scopeContext = scopeContext("vm-A"))
@@ -70,17 +73,83 @@ class DiContainerTest {
         val container = DiContainer()
         val viewModelScope = ScopeType("view-model")
         container.openScope("vm-A")
+        container.registerScopeRule(Consumer::class, viewModelScope)
         container.registerScopeRule(Dependency::class, viewModelScope)
 
         val exception =
             assertFailsWith<IllegalArgumentException> {
                 container.instantiate(
                     Consumer::class,
-                    scopeContext = ScopeContext(defaultScopeId = "vm-A", scopeIds = emptyMap()),
+                    scopeContext = ScopeContext(scopeIds = emptyMap()),
                 )
             }
 
         assertContains(exception.message.orEmpty(), "현재 생성 문맥에 스코프 ID가 없습니다: view-model")
+    }
+
+    @Test
+    fun `scoped 요청에 스코프 규칙이 없으면 오류를 낸다`() {
+        val container = DiContainer()
+        container.openScope("vm-A")
+
+        val exception =
+            assertFailsWith<IllegalArgumentException> {
+                container.instantiate(Dependency::class, scopeContext = scopeContext("vm-A"))
+            }
+
+        assertContains(exception.message.orEmpty(), "스코프 규칙이 없습니다.")
+        assertContains(exception.message.orEmpty(), Dependency::class.qualifiedName.orEmpty())
+    }
+
+    @Test
+    fun `Qualifier를 해석한 뒤 해당 규칙의 스코프를 선택한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.openScope("vm-B")
+        container.registerInterfaceRule(Repository::class, DefaultRepository::class, TestRoom::class)
+        container.registerScopeRule(Repository::class, appScope, TestRoom::class)
+        container.registerScopeRule(Dependency::class, appScope)
+
+        val first = container.instantiate(Repository::class, scopeContext = scopeContext("vm-A"))
+        val second = container.instantiate(Repository::class, scopeContext = scopeContext("vm-B"))
+
+        assertSame(first, second)
+    }
+
+    @Test
+    fun `외부 객체를 스코프 규칙에 따른 보관함에 등록한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        val dependency = Dependency()
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.openScope("vm-B")
+        container.registerScopeRule(Dependency::class, appScope)
+
+        container.register(Dependency::class, dependency, scopeContext = scopeContext("vm-A"))
+
+        assertSame(
+            dependency,
+            container.instantiate(Dependency::class, scopeContext = scopeContext("vm-B")),
+        )
+    }
+
+    @Test
+    fun `필드 주입도 전달받은 문맥으로 스코프 보관함을 선택한다`() {
+        val container = DiContainer()
+        val appScope = ScopeType("app")
+        val dependency = Dependency()
+        val target = FieldInjectedTarget()
+        container.openScope("app")
+        container.openScope("vm-A")
+        container.registerScopeRule(Dependency::class, appScope)
+        container.register(Dependency::class, dependency, scopeContext = scopeContext("vm-A"))
+
+        container.inject(target, scopeContext("vm-A"))
+
+        assertSame(dependency, target.dependency)
     }
 
     @Test
@@ -379,7 +448,6 @@ class DiContainerTest {
 
     private fun scopeContext(viewModelScopeId: String): ScopeContext =
         ScopeContext(
-            defaultScopeId = viewModelScopeId,
             scopeIds =
                 mapOf(
                     ScopeType("app") to "app",
