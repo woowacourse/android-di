@@ -96,5 +96,12 @@
     - [x] 화면 재진입 시 새로운 인스턴스 생성
     - [x] 구성 변경 시 기존 인스턴스 유지
 - [x] 스코프별 생성과 소멸 테스트 작성
-- [ ] DI와 서비스 로케이터에 대한 판단 README 작성
-- [ ] KSP 전환 시 재설계할 지점 README 작성
+
+### DI와 서비스 로케이터에 대한 판단
+
+내가 만든 것은 DI를 지원하는 런타임 컨테이너다. 직접 조회하는 API도 제공하므로 서비스 로케이터로 사용할 수 있지만, 현재 앱의 ViewModel과 화면에는 외부에서 의존성을 전달하는 DI 방식으로 사용하고 있다.
+DI인지 판단할 때는 의존성을 사용하는 객체가 직접 찾는지, 외부에서 전달받는지를 기준으로 삼았다. ProductsViewModel은 ProductRepository를 생성자로 받고, AutoDi.createInstance()가 생성자 파라미터와 Qualifier를 해석해 constructor.call()로 전달한다. CartScreen도 DateFormatter를 함수 파라미터로 받으며, ShoppingNavHost가 CartScreenScopeFactory에서 준비한 객체를 전달한다. 두 사용처 모두 필요한 의존성이 시그니처에 드러나고, 내부에서 컨테이너를 조회하지 않는다.
+다만 모든 주입이 같은 명시성을 갖는 것은 아니다. ViewModel의 CartRepository 필드는 AutoDi.injectProperties()가 setter.call()로 주입한다. 외부에서 값을 넣으므로 필드 DI지만, 생성자만 봐서는 필요한 의존성을 알 수 없다. 또한 주입 전에 접근하면 초기화 오류가 발생한다. 따라서 DI라는 판단과 의존성이 시그니처에 드러난다는 판단은 구분해야 한다.
+getInstance()를 직접 호출하는 ShoppingContainer의 DAO 조회와 CartScreenScopeFactory의 포맷터 조회는 객체를 조립하기 위한 코드다. 여기서 조회한 의존성을 사용 객체에 전달하므로, 조회 API가 있다는 이유만으로 앱의 사용 방식을 서비스 로케이터라고 판단하지 않았다. 반대로 ViewModel이나 CartScreen 내부에서 필요한 객체를 getInstance()로 꺼낸다면, 의존성을 스스로 찾고 시그니처에서 숨기는 서비스 로케이터 방식이 된다.
+이 판단은 DIP와도 별개다. DI가 의존성을 전달하는 방법이라면, DIP는 상위 정책과 하위 구현이 추상화에 의존하도록 하는 설계 원칙이다. ViewModel은 CartRepository 인터페이스에 의존하고, DefaultCartRepository와 InMemoryCartRepository의 선택은 ShoppingContainer가 담당한다. 이 관계는 추상화에 의존하는 방향이다. 반면 ProductsViewModel이 생성자로 받는 ProductRepository는 구체 클래스이므로, 생성자 DI를 적용했다는 사실만으로 DIP까지 만족한다고 할 수 없다.
+IoC는 제어의 주체에 대한 이야기다. 현재 Android의 ViewModelProvider가 필요한 시점에 ViewModelFactory.create()를 호출하고, AutoDi가 의존성을 준비해 ViewModel의 생성자를 호출한다. ViewModel이 제거될 때는 addCloseable()에 등록한 스코프가 닫힌다. 업무 로직이 자신의 생성과 종료 시점을 결정하지 않고 외부의 생성·생명주기 관리에 맡긴다는 점에서 IoC를 볼 수 있다. 그 과정에서 의존성을 전달하는 방법이 DI다. 컨테이너 없이 직접 객체를 생성해 생성자에 전달하는 수동 DI도 가능하므로, DI·DIP·IoC를 같은 의미로 보거나 컨테이너를 사용했다는 이유로 셋을 모두 만족한다고 판단하지 않는다.
