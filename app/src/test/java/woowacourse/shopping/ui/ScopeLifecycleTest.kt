@@ -140,6 +140,5 @@ class ScopeLifecycleTest {
         currentViewModel<ScreenScopeViewModel>().scope.resolveDependencies(DateFormatter::class)
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T> Any.field(name: String): T =
-        javaClass.getDeclaredField(name).apply { isAccessible = true }.get(this) as T
+    private fun <T> Any.field(name: String): T = javaClass.getDeclaredField(name).apply { isAccessible = true }.get(this) as T
 }

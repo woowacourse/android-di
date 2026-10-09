@@ -14,18 +14,21 @@ class ScreenScopeViewModel(
 ) : ViewModel()
 
 @Composable
-fun rememberScreenScope(moduleFactory: (Application) -> Any): SmileDi {
-    return (viewModel(
-        factory = viewModelFactory {
-            initializer {
-                val app = this[APPLICATION_KEY] as DiApplication
-                ScreenScopeViewModel(
-                    scope = app.smileDi.createChild(
-                        moduleFactory(app),
-                        repository = ScopeContainer()
-                    )
-                )
-            }
-        }
-    ) as ScreenScopeViewModel).scope
-}
+fun rememberScreenScope(moduleFactory: (Application) -> Any): SmileDi =
+    (
+        viewModel(
+            factory =
+                viewModelFactory {
+                    initializer {
+                        val app = this[APPLICATION_KEY] as DiApplication
+                        ScreenScopeViewModel(
+                            scope =
+                                app.smileDi.createChild(
+                                    moduleFactory(app),
+                                    repository = ScopeContainer(),
+                                ),
+                        )
+                    }
+                },
+        ) as ScreenScopeViewModel
+    ).scope
