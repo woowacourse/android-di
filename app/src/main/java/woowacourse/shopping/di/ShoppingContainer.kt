@@ -25,16 +25,16 @@ class ShoppingContainer(
             ).build()
 
     init {
-        diContainer.register(CartProductDao::class) {
+        diContainer.register(CartProductDao::class, scope = diContainer.applicationScope.type) {
             database.cartProductDao()
         }
 
-        diContainer.register(CartRepository::class, LocalMemoryCart::class) {
+        diContainer.register(CartRepository::class, LocalMemoryCart::class, scope = diContainer.applicationScope.type) {
             val dao = diContainer.getInstance(CartProductDao::class) as CartProductDao
             DefaultCartRepository(dao)
         }
 
-        diContainer.register(CartRepository::class, InMemoryCart::class) {
+        diContainer.register(CartRepository::class, InMemoryCart::class, scope = diContainer.applicationScope.type) {
             InMemoryCartRepository()
         }
     }

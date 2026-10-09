@@ -90,7 +90,7 @@
     - [x] 스코프 종료 시 인스턴스 참조 제거
     - [x] 새로운 스코프를 추가할 수 있는 구조로 구현
 - [x] 자동 주입에 스코프 적용
-- [ ] CartRepository를 앱 스코프로 관리
+- [x] CartRepository를 앱 스코프로 관리
 - [ ] ProductRepository를 ViewModel 스코프로 관리
 - [ ] DateFormatter를 화면 스코프로 주입
     - [ ] 화면 재진입 시 새로운 인스턴스 생성
