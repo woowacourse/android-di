@@ -9,6 +9,7 @@ import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.LocalMemoryCart
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 class ShoppingContainer(
@@ -25,6 +26,10 @@ class ShoppingContainer(
             ).build()
 
     init {
+        diContainer.register(ProductRepository::class, scope = ShoppingScopes.viewModel) {
+            ProductRepository()
+        }
+
         diContainer.register(CartProductDao::class, scope = diContainer.applicationScope.type) {
             database.cartProductDao()
         }
