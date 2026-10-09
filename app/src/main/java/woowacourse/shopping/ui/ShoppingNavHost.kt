@@ -22,8 +22,11 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         composable(ShoppingRoute.PRODUCTS) {
             ProductsScreen(onNavigateToCart = { navController.navigate(ShoppingRoute.CART) })
         }
-        composable(ShoppingRoute.CART) {
-            CartScreen(onNavigateUp = { navController.navigateUp() })
+        composable(ShoppingRoute.CART) { backStackEntry ->
+            CartScreen(
+                backStackEntry = backStackEntry,
+                onNavigateUp = { navController.navigateUp() },
+            )
         }
     }
 }

@@ -34,14 +34,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
 import woowacourse.shopping.di.AoDi
+import woowacourse.shopping.di.ScreenScopeOwnerViewModel
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
 fun CartScreen(
+    backStackEntry: NavBackStackEntry,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CartViewModel = viewModel(factory = AoDi),
@@ -49,9 +52,18 @@ fun CartScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
-
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
+    val screenScopeOwnerFactory =
+        remember(backStackEntry.id) {
+            AoDi.screenScopeOwnerFactory(backStackEntry.id)
+        }
+    viewModel<ScreenScopeOwnerViewModel>(
+        viewModelStoreOwner = backStackEntry,
+        factory = screenScopeOwnerFactory,
+    )
+    val dateFormatter =
+        remember(backStackEntry.id) {
+            AoDi.instantiateInScreen(DateFormatter::class, backStackEntry.id)
+        }
 
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()
