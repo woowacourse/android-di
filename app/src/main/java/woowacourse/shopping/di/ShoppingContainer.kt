@@ -11,6 +11,7 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.LocalMemoryCart
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingContainer(
     context: Context,
@@ -26,6 +27,11 @@ class ShoppingContainer(
             ).build()
 
     init {
+        val applicationContext = context.applicationContext
+        diContainer.register(DateFormatter::class, scope = ShoppingScopes.screen) {
+            DateFormatter(applicationContext)
+        }
+
         diContainer.register(ProductRepository::class, scope = ShoppingScopes.viewModel) {
             ProductRepository()
         }

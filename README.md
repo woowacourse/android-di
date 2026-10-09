@@ -92,9 +92,9 @@
 - [x] 자동 주입에 스코프 적용
 - [x] CartRepository를 앱 스코프로 관리
 - [x] ProductRepository를 ViewModel 스코프로 관리
-- [ ] DateFormatter를 화면 스코프로 주입
-    - [ ] 화면 재진입 시 새로운 인스턴스 생성
-    - [ ] 구성 변경 시 기존 인스턴스 유지
+- [x] DateFormatter를 화면 스코프로 주입
+    - [x] 화면 재진입 시 새로운 인스턴스 생성
+    - [x] 구성 변경 시 기존 인스턴스 유지
 - [ ] 스코프별 생성과 소멸 테스트 작성
 - [ ] DI와 서비스 로케이터에 대한 판단 README 작성
 - [ ] KSP 전환 시 재설계할 지점 README 작성
