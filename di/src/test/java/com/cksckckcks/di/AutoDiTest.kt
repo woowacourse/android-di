@@ -10,7 +10,7 @@ class AutoDiTest {
     @Test
     fun `생성자와 필드의 Qualifier로 구현체를 선택한다`() {
         val container = createContainer()
-        val autoDi = AutoDi(container)
+        val autoDi = AutoDi(container.applicationScope)
 
         val constructorTarget = autoDi.createInstance(ConstructorTarget::class)
         val propertyTarget = autoDi.createInstance(PropertyTarget::class)
@@ -36,7 +36,7 @@ class AutoDiTest {
     fun `Qualifier 없이 생성자에 주입하면 모호성 오류를 낸다`() {
         val error =
             assertFailsWith<IllegalArgumentException> {
-                AutoDi(createContainer()).createInstance(UnqualifiedTarget::class)
+                AutoDi(createContainer().applicationScope).createInstance(UnqualifiedTarget::class)
             }
 
         assertContains(error.message.orEmpty(), "Storage")
@@ -47,7 +47,7 @@ class AutoDiTest {
     fun `한 주입 지점에 Qualifier가 둘이면 오류를 낸다`() {
         val error =
             assertFailsWith<IllegalArgumentException> {
-                AutoDi(createContainer()).createInstance(MultipleQualifiersTarget::class)
+                AutoDi(createContainer().applicationScope).createInstance(MultipleQualifiersTarget::class)
             }
 
         assertContains(error.message.orEmpty(), "Qualifier는 하나만")
@@ -57,7 +57,7 @@ class AutoDiTest {
     fun `생성자 직접 순환 의존성을 경로를 포함한 오류로 알린다`() {
         val error =
             assertFailsWith<IllegalArgumentException> {
-                AutoDi(DiContainer()).createInstance(DirectCycleA::class)
+                AutoDi(DiContainer().applicationScope).createInstance(DirectCycleA::class)
             }
 
         assertContains(error.message.orEmpty(), "DirectCycleA → DirectCycleB → DirectCycleA")
@@ -67,7 +67,7 @@ class AutoDiTest {
     fun `생성자 간접 순환 의존성을 경로를 포함한 오류로 알린다`() {
         val error =
             assertFailsWith<IllegalArgumentException> {
-                AutoDi(DiContainer()).createInstance(IndirectCycleA::class)
+                AutoDi(DiContainer().applicationScope).createInstance(IndirectCycleA::class)
             }
 
         assertContains(error.message.orEmpty(), "IndirectCycleA → IndirectCycleB → IndirectCycleC → IndirectCycleA")
@@ -77,7 +77,7 @@ class AutoDiTest {
     fun `필드 주입 순환 의존성을 경로를 포함한 오류로 알린다`() {
         val error =
             assertFailsWith<IllegalArgumentException> {
-                AutoDi(DiContainer()).createInstance(FieldCycleA::class)
+                AutoDi(DiContainer().applicationScope).createInstance(FieldCycleA::class)
             }
 
         assertContains(error.message.orEmpty(), "FieldCycleA → FieldCycleB → FieldCycleA")
@@ -85,7 +85,7 @@ class AutoDiTest {
 
     @Test
     fun `서로 다른 의존성이 같은 객체를 공유해도 순환으로 판단하지 않는다`() {
-        val instance = AutoDi(DiContainer()).createInstance(SharedDependencyRoot::class)
+        val instance = AutoDi(DiContainer().applicationScope).createInstance(SharedDependencyRoot::class)
 
         assertSame(instance.left.shared, instance.right.shared)
     }

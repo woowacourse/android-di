@@ -7,7 +7,7 @@ class DiContainer(
 ) {
     private val bindings = mutableMapOf<BindingKey, Binding>()
     private val scopes = mutableMapOf<ScopeKey, ScopedContainer>()
-    private val defaultScope = ScopedContainer(this, defaultScopeType, "default")
+    val applicationScope = ScopedContainer(this, defaultScopeType, "default")
 
     fun <T : Any> register(
         type: KClass<T>,
@@ -21,14 +21,14 @@ class DiContainer(
     fun getInstance(
         targetClass: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
-    ): Any? = defaultScope.getInstance(targetClass, qualifier)
+    ): Any? = applicationScope.getInstance(targetClass, qualifier)
 
     fun saveInstance(
         key: KClass<*>,
         value: Any,
         qualifier: KClass<out Annotation>? = null,
     ) {
-        defaultScope.saveInstance(key, value, qualifier)
+        applicationScope.saveInstance(key, value, qualifier)
     }
 
     fun openScope(
@@ -57,7 +57,7 @@ class DiContainer(
                 BindingKey(targetClass, qualifier)
             } else {
                 val candidates =
-                    (bindings.keys + scope.keysFor(targetClass) + defaultScope.keysFor(targetClass))
+                    (bindings.keys + scope.keysFor(targetClass) + applicationScope.keysFor(targetClass))
                         .filter { it.type == targetClass }
                         .distinct()
                 if (candidates.size > 1) {
@@ -72,7 +72,7 @@ class DiContainer(
         val binding = bindings[key]
         val owner = binding?.let { findScope(it.scope, scope) } ?: scope
         owner.getStoredInstance(key)?.let { return it }
-        if (binding == null) return defaultScope.getStoredInstance(key)
+        if (binding == null) return applicationScope.getStoredInstance(key)
         val instance = binding.factory()
         owner.store(key, instance)
         return instance
@@ -91,7 +91,7 @@ class DiContainer(
         type: ScopeType,
         scope: ScopedContainer,
     ): ScopedContainer {
-        if (type == defaultScopeType) return defaultScope
+        if (type == defaultScopeType) return applicationScope
         require(type == scope.type) { "${type.name} 스코프가 필요합니다." }
         return scope
     }

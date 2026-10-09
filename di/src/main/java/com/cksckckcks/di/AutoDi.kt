@@ -8,7 +8,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class AutoDi(
-    private val container: DiContainer,
+    private val scope: ScopedContainer,
 ) {
     fun <T : Any> createInstance(targetClass: KClass<T>): T = createInstance(targetClass, mutableListOf())
 
@@ -90,7 +90,7 @@ class AutoDi(
         path: MutableList<BindingKey>,
         qualifier: KClass<out Annotation>? = null,
     ): Any {
-        container.getInstance(targetClass, qualifier)?.let {
+        scope.getInstance(targetClass, qualifier)?.let {
             return it
         }
 
@@ -99,7 +99,7 @@ class AutoDi(
         }
 
         val instance = createInstance(targetClass, path, qualifier)
-        container.saveInstance(targetClass, instance, qualifier)
+        scope.saveInstance(targetClass, instance, qualifier)
 
         return instance
     }
