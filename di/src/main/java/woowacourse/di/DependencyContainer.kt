@@ -9,23 +9,40 @@ import kotlin.reflect.full.primaryConstructor
 
 class DependencyContainer {
     private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
-    private val scopedFactories: MutableMap<ScopeType, MutableMap<KClass<*>, () -> Any>> = mutableMapOf()
+    private val scopedFactories: MutableMap<ScopeType, MutableMap<DependencyKey, (Scope) -> Any>> = mutableMapOf()
     private val scopes: MutableMap<ScopeKey, Scope> = mutableMapOf()
 
     fun <T : Any> bind(
         type: KClass<T>,
         scopeType: ScopeType,
+        qualifier: KClass<out Annotation>? = null,
         factory: () -> T,
     ) {
-        scopedFactories.getOrPut(scopeType) { mutableMapOf() }[type] = factory
+        scopedFactories.getOrPut(scopeType) { mutableMapOf() }[DependencyKey(type, qualifier)] = {
+            factory()
+        }
+    }
+
+    fun <T : Any> bind(
+        type: KClass<T>,
+        scopeType: ScopeType,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        scopedFactories.getOrPut(scopeType) { mutableMapOf() }[DependencyKey(type, qualifier)] = { scope ->
+            scope.create(type)
+        }
     }
 
     fun openScope(
         scopeType: ScopeType,
         ownerId: String,
+        parent: Scope? = null,
     ): Scope =
         scopes.getOrPut(ScopeKey(scopeType, ownerId)) {
-            Scope(scopedFactories.getOrPut(scopeType) { mutableMapOf() })
+            Scope(
+                factories = scopedFactories.getOrPut(scopeType) { mutableMapOf() },
+                parent = parent,
+            )
         }
 
     fun <T : Any> resolve(
@@ -123,9 +140,4 @@ class DependencyContainer {
 private data class ScopeKey(
     val type: ScopeType,
     val ownerId: String,
-)
-
-private data class DependencyKey(
-    val type: KClass<*>,
-    val qualifier: KClass<out Annotation>?,
 )
