@@ -12,15 +12,14 @@ import kotlin.reflect.full.primaryConstructor
 class SamDi(
     private val providers: Map<KClass<*>, () -> Any>,
     private val bindings: Map<Pair<KClass<*>, KClass<*>>, KClass<*>>,
+    private val scopes: Map<KClass<*>, String> = emptyMap(),
+    private val rootScope: Scope? = null,
 ) {
     fun resolve(
         modelClass: KClass<*>,
         annotation: Annotation? = null,
+        scope: Scope? = rootScope,
     ): Any {
-        providers[modelClass]?.let { provider ->
-            return provider()
-        }
-
         val implType =
             if (annotation != null) {
                 bindings[modelClass to annotation.annotationClass]
@@ -38,22 +37,32 @@ class SamDi(
                 }
             }
 
-        val constructor =
-            implType.primaryConstructor
-                ?: throw IllegalArgumentException("요청 타입: $modelClass 가 없음")
+        check(scope?.isClosed != true) { "종료된 스코프입니다" }
+        val scopeKind = scopes[implType] ?: scopes[modelClass]
+        val owner = scopeKind?.let { kind ->
+            requireNotNull(scope) { "필요한 스코프가 없습니다: $kind" }.owner(kind)
+        }
+        val create = { create(implType, owner ?: scope) }
+        return owner?.getOrCreate(modelClass to annotation?.annotationClass, create) ?: create()
+    }
+
+    private fun create(implType: KClass<*>, scope: Scope?): Any {
+        providers[implType]?.let { return it() }
+        val constructor = implType.primaryConstructor
+            ?: throw IllegalArgumentException("요청 타입: $implType 가 없음")
         val dependencies = constructor.parameters.map { parameter ->
             val type = parameter.type.classifier as KClass<*>
-            val qualifier = parameter.annotations.find { parameterAnnotation ->
-                parameterAnnotation.annotationClass.hasAnnotation<Qualifier>()
+            val qualifier = parameter.annotations.find {
+                it.annotationClass.hasAnnotation<Qualifier>()
             }
-            resolve(type, qualifier)
+            resolve(type, qualifier, scope)
         }
-
         return constructor.call(*dependencies.toTypedArray())
     }
 
     fun injectFields(
         instance: Any,
+        scope: Scope? = rootScope,
     ) {
         instance::class.memberProperties
             .filter { it.findAnnotation<InjectField>() != null }
@@ -61,7 +70,10 @@ class SamDi(
             .forEach { property ->
                 val type = property.returnType.classifier as KClass<*>
 
-                val value = this.resolve(type)
+                val qualifier = property.annotations.find {
+                    it.annotationClass.hasAnnotation<Qualifier>()
+                }
+                val value = resolve(type, qualifier, scope)
                 property.setter.call(instance, value)
             }
     }
