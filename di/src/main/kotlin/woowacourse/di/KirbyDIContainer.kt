@@ -9,6 +9,7 @@ import kotlin.reflect.jvm.isAccessible
 
 class KirbyDIContainer {
     private val registry = DependencyRegistry()
+    private val instanceStore = InstanceStore()
 
     fun <T : Any> registerInstance(
         type: KClass<T>,
@@ -46,14 +47,15 @@ class KirbyDIContainer {
         creatingKeys: MutableSet<DependencyKey>,
     ): Any {
         val key = registry.selectKey(type, qualifier)
-        registry.existingInstance(key)?.let {
+        (registry.registeredInstance(key) ?: instanceStore.get(key))?.let {
             registry.markResolved(type)
             return it
         }
 
         val target = (registry.registrationFor(key) as? Registration.Binding)?.implementation ?: type
         return instantiate(key, target, creatingKeys).also {
-            registry.cacheGenerated(key, type, it)
+            instanceStore.put(key, it)
+            registry.markResolved(type)
         }
     }
 

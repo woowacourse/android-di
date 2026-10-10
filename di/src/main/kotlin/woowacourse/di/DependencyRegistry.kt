@@ -16,7 +16,6 @@ internal sealed interface Registration {
 
 internal class DependencyRegistry {
     private val registrations = mutableMapOf<DependencyKey, Registration>()
-    private val generatedInstances = mutableMapOf<DependencyKey, Any>()
     private val resolvedTypes = mutableSetOf<KClass<*>>()
 
     fun <T : Any> registerInstance(
@@ -68,16 +67,7 @@ internal class DependencyRegistry {
 
     fun registrationFor(key: DependencyKey): Registration? = registrations[key]
 
-    fun existingInstance(key: DependencyKey): Any? = (registrations[key] as? Registration.Instance)?.value ?: generatedInstances[key]
-
-    fun cacheGenerated(
-        key: DependencyKey,
-        type: KClass<*>,
-        instance: Any,
-    ) {
-        generatedInstances[key] = instance
-        markResolved(type)
-    }
+    fun registeredInstance(key: DependencyKey): Any? = (registrations[key] as? Registration.Instance)?.value
 
     fun markResolved(type: KClass<*>) {
         resolvedTypes += type
