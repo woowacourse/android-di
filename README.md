@@ -146,13 +146,13 @@ dependencies {
 
 ### 화면 스코프
 
-- [ ] `DateFormatter`를 화면 스코프의 의존성으로 등록한다.
-- [ ] `DateFormatter`를 화면에서 직접 생성하지 않고 컨테이너로부터 주입받는다.
-- [ ] `NavBackStackEntry`를 장바구니 화면 스코프의 소유자로 사용한다.
-- [ ] 장바구니 화면 안에서는 동일한 `DateFormatter` 인스턴스를 재사용한다.
-- [ ] 장바구니 화면이 백스택에서 제거되면 화면 스코프와 저장된 인스턴스를 정리한다.
-- [ ] 장바구니 화면에 다시 진입하면 새로운 `DateFormatter` 인스턴스를 생성한다.
-- [ ] Android 생명주기 처리는 `:app` 연동 계층에 두고 `:di` 모듈은 Android API에 의존하지 않도록 한다.
+- [x] `DateFormatter`를 화면 스코프의 의존성으로 등록한다.
+- [x] `DateFormatter`를 화면에서 직접 생성하지 않고 컨테이너로부터 주입받는다.
+- [x] `NavBackStackEntry`를 장바구니 화면 스코프의 소유자로 사용한다.
+- [x] 장바구니 화면 안에서는 동일한 `DateFormatter` 인스턴스를 재사용한다.
+- [x] 장바구니 화면이 백스택에서 제거되면 화면 스코프와 저장된 인스턴스를 정리한다.
+- [x] 장바구니 화면에 다시 진입하면 새로운 `DateFormatter` 인스턴스를 생성한다.
+- [x] Android 생명주기 처리는 `:app` 연동 계층에 두고 `:di` 모듈은 Android API에 의존하지 않도록 한다.
 
 ### 스코프 테스트
 
@@ -167,8 +167,8 @@ dependencies {
 
 ### 선택 기능 목록
 
-- [ ] 화면 회전 등의 구성 변경에도 화면 스코프와 `DateFormatter`를 유지한다.
-- [ ] `NavBackStackEntry`에 귀속된 `ViewModel`을 화면 스코프 소유자로 사용하고 `onCleared()`를 실제 화면 소멸 신호로 사용한다.
+- [x] 화면 회전 등의 구성 변경에도 화면 스코프와 `DateFormatter`를 유지한다.
+- [x] `NavBackStackEntry`에 귀속된 `ViewModel`을 화면 스코프 소유자로 사용하고 `onCleared()`를 실제 화면 소멸 신호로 사용한다.
 - [x] 스코프 종류를 값 또는 객체로 추상화하여 컨테이너 내부에 스코프별 `when` 분기가 생기지 않도록 한다.
 - [x] 새로운 스코프 종류를 DI 코어 수정 없이 외부에서 등록할 수 있도록 한다.
 
