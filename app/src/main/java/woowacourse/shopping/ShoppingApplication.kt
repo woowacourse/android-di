@@ -11,6 +11,12 @@ import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.annotation.InMemoryCart
 import woowacourse.shopping.data.annotation.RoomCart
 import woowacourse.shopping.di.DIContainer
+import woowacourse.shopping.di.ScopeKey
+import woowacourse.shopping.di.ScopeType
+
+object AppScope : ScopeType
+
+val appScopeKey = ScopeKey(AppScope, "app")
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -21,9 +27,12 @@ class ShoppingApplication : Application() {
                 .setDriver(AndroidSQLiteDriver())
                 .build()
 
+        DIContainer.openScope(appScopeKey)
+
         DIContainer.bindInstance(
             type = CartProductDao::class,
             instance = db.cartProductDao(),
+            scopeKey = appScopeKey,
         )
         DIContainer.bind(
             type = CartRepository::class,

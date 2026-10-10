@@ -99,7 +99,7 @@ Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI
 ### 기능 목록
 
 - [ ] 스코프에 따라 의존성을 생성할 수 있도록 구현한다.
-  - [ ] CartRepository를 앱 스코프로 관리한다.
+  - [x] CartRepository를 앱 스코프로 관리한다.
   - [ ] ProductRepository를 ViewModel 스코프로 관리한다. 
   - [ ] DateFormtter를 화면 스코프로 관리한다. 
   - [ ] Android 생명주기와 di 모듈의 책임을 분리한다. 

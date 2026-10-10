@@ -2,14 +2,25 @@ package woowacourse.shopping.di
 
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Qualifier
 
 class DIContainerQualifierTest {
+    private object TestScope : ScopeType
+
+    private val scopeKey = ScopeKey(TestScope, "test")
+
     @Before
     fun setUp() {
         DIContainer.clear()
+        DIContainer.openScope(scopeKey)
+    }
+
+    @After
+    fun tearDown() {
+        DIContainer.closeScope(scopeKey)
     }
 
     @Test
@@ -30,6 +41,7 @@ class DIContainerQualifierTest {
         val repository =
             DIContainer.createInstance(
                 DependencyKey(TestRepository::class, TestRoom::class),
+                scopeKey,
             )
 
         // then
@@ -54,6 +66,7 @@ class DIContainerQualifierTest {
         val repository =
             DIContainer.createInstance(
                 DependencyKey(TestRepository::class, TestInMemory::class),
+                scopeKey,
             )
 
         // then
@@ -72,6 +85,7 @@ class DIContainerQualifierTest {
         val repository =
             DIContainer.createInstance(
                 DependencyKey(TestRepository::class),
+                scopeKey,
             )
 
         // then
@@ -97,7 +111,7 @@ class DIContainerQualifierTest {
             assertThrows(
                 IllegalArgumentException::class.java,
             ) {
-                DIContainer.createInstance(DependencyKey(TestRepository::class))
+                DIContainer.createInstance(DependencyKey(TestRepository::class), scopeKey)
             }
 
         // then
@@ -122,6 +136,7 @@ class DIContainerQualifierTest {
             ) {
                 DIContainer.createInstance(
                     DependencyKey(TestRepository::class, TestInMemory::class),
+                    scopeKey,
                 )
             }
 
