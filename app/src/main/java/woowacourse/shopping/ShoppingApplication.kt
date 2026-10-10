@@ -2,6 +2,7 @@ package woowacourse.shopping
 
 import android.app.Application
 import androidx.room.Room
+import woowacourse.di.DependencyLifetime
 import woowacourse.di.KirbyDIContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
@@ -31,6 +32,7 @@ class ShoppingApplication : Application() {
                     from = CartRepository::class,
                     to = DefaultCartRepository::class,
                     qualifier = RoomCart::class,
+                    lifetime = DependencyLifetime.CONTAINER,
                 )
                 registerBinding(
                     from = CartRepository::class,
