@@ -3,6 +3,7 @@ package woowacourse.shopping.di
 import android.content.Context
 import androidx.room.Room
 import woowacourse.di.DependencyContainer
+import woowacourse.di.ScopeType
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
@@ -10,6 +11,8 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 object AppDI {
+    internal val appScopeType = ScopeType("app")
+
     private lateinit var database: ShoppingDatabase
 
     lateinit var viewModelFactory: ReflectionViewModelFactory
@@ -24,29 +27,42 @@ object AppDI {
                     "shopping.db",
                 ).build()
 
-        val container = DependencyContainer()
         val dao = database.cartProductDao()
+        val container = createContainer(dao)
+        viewModelFactory = ReflectionViewModelFactory(container)
+    }
 
-        container.register(
+    internal fun createContainer(dao: CartProductDao): DependencyContainer {
+        val container = DependencyContainer()
+
+        container.bind(
             type = CartProductDao::class,
-            instance = dao,
-        )
+            scopeType = appScopeType,
+        ) { dao }
 
-        val roomRepository = container.resolve(DefaultCartRepository::class)
-        val inMemoryRepository = InMemoryCartRepository()
+        container.bind(
+            type = CartRepository::class,
+            scopeType = appScopeType,
+            qualifier = RoomCart::class,
+        ) { DefaultCartRepository(dao) }
 
+        container.bind(
+            type = CartRepository::class,
+            scopeType = appScopeType,
+            qualifier = InMemoryCart::class,
+        ) { InMemoryCartRepository() }
+
+        val appScope = container.openScope(appScopeType, "application")
         container.register(
             type = CartRepository::class,
-            instance = roomRepository,
+            instance = appScope.resolve(CartRepository::class, RoomCart::class),
             qualifier = RoomCart::class,
         )
-
         container.register(
             type = CartRepository::class,
-            instance = inMemoryRepository,
+            instance = appScope.resolve(CartRepository::class, InMemoryCart::class),
             qualifier = InMemoryCart::class,
         )
-
-        viewModelFactory = ReflectionViewModelFactory(container)
+        return container
     }
 }

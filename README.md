@@ -26,9 +26,9 @@
 
 ### 4. CartRepository의 앱 스코프 적용
 
-- [ ] 서로 다른 ViewModel에 같은 Qualifier의 `CartRepository`가 공유되는 테스트를 작성한다.
-- [ ] `AppDI`에서 Room과 In-Memory 구현체를 앱 스코프로 등록한다.
-- [ ] Database와 DAO의 생성 및 등록을 앱 구성 계층에서 관리한다.
+- [x] 서로 다른 ViewModel에 같은 Qualifier의 `CartRepository`가 공유되는 테스트를 작성한다.
+- [x] `AppDI`에서 Room과 In-Memory 구현체를 앱 스코프로 등록한다.
+- [x] Database와 DAO의 생성 및 등록을 앱 구성 계층에서 관리한다.
 
 ### 5. ProductRepository의 ViewModel 스코프 적용
 
