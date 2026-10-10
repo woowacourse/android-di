@@ -11,10 +11,11 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val diManager = (application as ShoppingApplication).diManager
+        val applicationKey = (application as ShoppingApplication).applicationKey
         val viewModelFactory =
             DiViewModelFactory(
                 diManager = diManager,
-                parentKey = (application as ShoppingApplication).applicationKey,
+                parentKey = applicationKey,
             )
 
         super.onCreate(savedInstanceState)
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
             ShoppingTheme {
                 ShoppingNavHost(
                     viewModelFactory = viewModelFactory,
+                    diManager = diManager,
+                    applicationKey = applicationKey,
                 )
             }
         }

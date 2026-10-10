@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.harodi.DiManager
 import com.harodi.ScopeKey
@@ -13,6 +14,7 @@ import woowacourse.shopping.data.repositoryImpl.InMemoryCart
 import woowacourse.shopping.data.repositoryImpl.InMemoryCartRepository
 import woowacourse.shopping.data.repositoryImpl.ProductRepository
 import woowacourse.shopping.di.Scope
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     val diManager = DiManager()
@@ -54,6 +56,16 @@ class ShoppingApplication : Application() {
             qualifier = null,
             scopeKind = Scope.VIEW_MODEL,
         )
+        diManager.addScopePolicy(
+            classType = DateFormatter::class.java,
+            qualifier = null,
+            scopeKind = Scope.SCREEN,
+        )
+        diManager.addScopePolicy(
+            classType = Context::class.java,
+            qualifier = null,
+            scopeKind = Scope.APPLICATION,
+        )
 
         diManager.addScope(
             scopeKey = applicationKey,
@@ -66,6 +78,12 @@ class ShoppingApplication : Application() {
             classType = CartProductDao::class.java,
             qualifier = null,
             value = cartProductDao,
+        )
+        diManager.addScope(
+            scopeKey = applicationKey,
+            classType = Context::class.java,
+            qualifier = null,
+            value = applicationContext,
         )
 
         diManager.addProvider(

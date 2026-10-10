@@ -131,17 +131,15 @@ class DiManager {
     // 객체를 탐색한다.
     // 지금은 생성까지 하고 있따. 역할을 분리할 필요가 있따.
     internal fun searchInstance(
-        classType: Class<*>,
-        qualifier: KClass<out Annotation>?,
+        dependencyKey: DependencyKey,
         scopeKey: ScopeKey,
     ): Any {
-        val dependencyKey = DependencyKey(classType, qualifier)
         val scopeInstance = searchScope(scopeKey, dependencyKey)
         if (scopeInstance != null) {
             return scopeInstance
         } else {
-            val instance = resolve(classType, scopeKey, qualifier)
-            addScope(scopeKey, classType, qualifier, instance)
+            val instance = createInstance(dependencyKey, scopeKey)
+            addScope(scopeKey, dependencyKey.classType, dependencyKey.qualifier, instance)
             return instance
         }
     }
@@ -169,9 +167,10 @@ class DiManager {
                                     it is Qualifier
                                 }
                             }?.annotationClass
+                    val dependencyKey = DependencyKey(type.java, qualifier)
                     val targetScopeKind = searchScopePolicy(type.java, qualifier)
                     val ownerScopeKey = findOwnerScopeKey(targetScopeKind, scopeKey)!!
-                    searchInstance(type.java, qualifier, ownerScopeKey)
+                    searchInstance(dependencyKey, ownerScopeKey)
                 }
             return constructor.call(*typesConstructors.toTypedArray())
         }
@@ -205,9 +204,10 @@ class DiManager {
                             }
                         }?.annotationClass
                 isAccessible = true
+                val dependencyKey = DependencyKey(dependancyKClass.java, qualifier)
                 val targetScopeKind = searchScopePolicy(dependancyKClass.java, qualifier)
                 val ownerScopeKey = findOwnerScopeKey(targetScopeKind, scopeKey)!!
-                set(instance, searchInstance(dependancyKClass.java, qualifier, ownerScopeKey))
+                set(instance, searchInstance(dependencyKey, ownerScopeKey))
             }
         }
     }
@@ -232,7 +232,7 @@ class DiManager {
         qualifier: KClass<out Annotation>? = null,
     ): T {
         val dependencyKey = DependencyKey(modelClass, qualifier)
-        val instance = createInstance(dependencyKey, scopeKey)
+        val instance = searchInstance(dependencyKey, scopeKey)
 
         val lateinitProperties = searchLateinitProperty(modelClass)
         if (lateinitProperties != null) {
