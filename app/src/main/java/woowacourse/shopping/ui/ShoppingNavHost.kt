@@ -35,7 +35,10 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
                     viewModelStoreOwner = entry,
                     factory = ViewModelFactory.viewModelFactory(LocalContext.current),
                 )
-            val dateFormatter = container.di.resolve(DateFormatter::class, scope = cartViewModel.screenScope) as DateFormatter
+            val dateFormatter = container.di.resolve(
+                DateFormatter::class,
+                scope = cartViewModel.screenScope
+            ) as DateFormatter
             CartScreen(
                 dateFormatter = dateFormatter,
                 viewModel = cartViewModel,

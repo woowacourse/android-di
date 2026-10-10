@@ -12,7 +12,8 @@ object ViewModelFactory {
                 val app = context.applicationContext as MyApplication
                 val scope = Scope("viewModel", app.appContainer.appScope)
                 try {
-                    val viewModel = app.appContainer.di.resolve(modelClass.kotlin, scope = scope) as T
+                    val viewModel =
+                        app.appContainer.di.resolve(modelClass.kotlin, scope = scope) as T
                     app.appContainer.di.injectFields(viewModel, scope)
                     require(viewModel is ScopedViewModel) { "DI로 생성하는 ViewModel은 ScopedViewModel을 상속해야 합니다" }
                     viewModel.attachScope(scope)
