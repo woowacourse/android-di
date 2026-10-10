@@ -8,15 +8,31 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 class Scope internal constructor(
-    private val factories: Map<DependencyKey, (Scope) -> Any>,
-    private val parent: Scope? = null,
-) {
+    private var factories: Map<DependencyKey, (Scope) -> Any>,
+    private var parent: Scope? = null,
+    private var onClose: (() -> Unit)? = null,
+) : AutoCloseable {
     private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
+    private var isClosed: Boolean = false
+
+    internal val instanceCount: Int
+        get() = instances.size
+
+    override fun close() {
+        isClosed = true
+        instances.clear()
+        factories = emptyMap()
+        parent = null
+        val callback = onClose
+        onClose = null
+        callback?.invoke()
+    }
 
     fun <T : Any> resolve(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
     ): T {
+        check(!isClosed) { "닫힌 스코프에서는 의존성을 조회할 수 없습니다." }
         val candidates = findCandidates(type)
         val key =
             if (qualifier != null) {

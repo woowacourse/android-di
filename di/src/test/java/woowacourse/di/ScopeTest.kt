@@ -280,4 +280,90 @@ class ScopeTest {
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining(TestRepository::class.qualifiedName)
     }
+
+    @Test
+    fun `스코프를 닫으면 캐시와 컨테이너의 스코프 참조를 제거한다`() {
+        val container = DependencyContainer()
+        val screen = ScopeType("screen")
+        container.bind(TestRepository::class, screen) { TestRepository() }
+        val scope = container.openScope(screen, "cart-1")
+        scope.resolve(TestRepository::class)
+        assertThat(scope.instanceCount).isEqualTo(1)
+        assertThat(container.activeScopeCount).isEqualTo(1)
+
+        scope.close()
+
+        assertThat(scope.instanceCount).isZero()
+        assertThat(container.activeScopeCount).isZero()
+    }
+
+    @Test
+    fun `닫힌 스코프는 조회할 수 없고 같은 식별자로 다시 열면 새 인스턴스를 생성한다`() {
+        val container = DependencyContainer()
+        val screen = ScopeType("screen")
+        container.bind(TestRepository::class, screen) { TestRepository() }
+        val scope = container.openScope(screen, "cart-1")
+        val repository = scope.resolve(TestRepository::class)
+
+        scope.close()
+        val reopenedScope = container.openScope(screen, "cart-1")
+        val newRepository = reopenedScope.resolve(TestRepository::class)
+
+        assertThat(reopenedScope).isNotSameAs(scope)
+        assertThat(newRepository).isNotSameAs(repository)
+        assertThat(reopenedScope.resolve(TestRepository::class)).isSameAs(newRepository)
+        assertThatThrownBy {
+            scope.resolve(TestRepository::class)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("닫힌 스코프")
+    }
+
+    @Test
+    fun `스코프를 반복해서 닫아도 같은 식별자로 다시 연 스코프는 유지된다`() {
+        val container = DependencyContainer()
+        val screen = ScopeType("screen")
+        container.bind(TestRepository::class, screen) { TestRepository() }
+        val scope = container.openScope(screen, "cart-1")
+        scope.resolve(TestRepository::class)
+
+        scope.close()
+        scope.close()
+
+        assertThat(scope.instanceCount).isZero()
+        assertThat(container.activeScopeCount).isZero()
+
+        val reopenedScope = container.openScope(screen, "cart-1")
+        val repository = reopenedScope.resolve(TestRepository::class)
+
+        scope.close()
+
+        assertThat(container.activeScopeCount).isEqualTo(1)
+        assertThat(container.openScope(screen, "cart-1")).isSameAs(reopenedScope)
+        assertThat(reopenedScope.resolve(TestRepository::class)).isSameAs(repository)
+    }
+
+    @Test
+    fun `자식 스코프를 닫아도 부모와 형제 스코프의 인스턴스는 유지된다`() {
+        val container = DependencyContainer()
+        val app = ScopeType("app")
+        val viewModel = ScopeType("viewModel")
+        container.bind(TestCartRepository::class, app) { TestCartRepository() }
+        container.bind(TestRepository::class, viewModel) { TestRepository() }
+        val appScope = container.openScope(app, "application")
+        val firstScope = container.openScope(viewModel, "vm-1", parent = appScope)
+        val secondScope = container.openScope(viewModel, "vm-2", parent = appScope)
+        val cartRepository = firstScope.resolve(TestCartRepository::class)
+        firstScope.resolve(TestRepository::class)
+        val secondRepository = secondScope.resolve(TestRepository::class)
+
+        firstScope.close()
+
+        assertThat(firstScope.instanceCount).isZero()
+        assertThat(container.activeScopeCount).isEqualTo(2)
+        assertThat(container.openScope(app, "application")).isSameAs(appScope)
+        assertThat(container.openScope(viewModel, "vm-2", parent = appScope)).isSameAs(secondScope)
+        assertThat(appScope.resolve(TestCartRepository::class)).isSameAs(cartRepository)
+        assertThat(secondScope.resolve(TestCartRepository::class)).isSameAs(cartRepository)
+        assertThat(secondScope.resolve(TestRepository::class)).isSameAs(secondRepository)
+    }
 }

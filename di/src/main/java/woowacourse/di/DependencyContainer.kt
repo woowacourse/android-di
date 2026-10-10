@@ -7,10 +7,20 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-class DependencyContainer {
+class DependencyContainer : AutoCloseable {
     private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
     private val scopedFactories: MutableMap<ScopeType, MutableMap<DependencyKey, (Scope) -> Any>> = mutableMapOf()
     private val scopes: MutableMap<ScopeKey, Scope> = mutableMapOf()
+
+    internal val activeScopeCount: Int
+        get() = scopes.size
+
+    override fun close() {
+        scopes.values.toList().forEach { scope -> scope.close() }
+        scopes.clear()
+        scopedFactories.clear()
+        instances.clear()
+    }
 
     fun <T : Any> bind(
         type: KClass<T>,
@@ -37,13 +47,16 @@ class DependencyContainer {
         scopeType: ScopeType,
         ownerId: String,
         parent: Scope? = null,
-    ): Scope =
-        scopes.getOrPut(ScopeKey(scopeType, ownerId)) {
+    ): Scope {
+        val key = ScopeKey(scopeType, ownerId)
+        return scopes.getOrPut(key) {
             Scope(
                 factories = scopedFactories.getOrPut(scopeType) { mutableMapOf() },
                 parent = parent,
+                onClose = { scopes.remove(key) },
             )
         }
+    }
 
     fun <T : Any> resolve(
         type: KClass<T>,
