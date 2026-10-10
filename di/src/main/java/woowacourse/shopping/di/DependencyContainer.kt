@@ -19,16 +19,29 @@ object DependencyContainer : ViewModelProvider.Factory {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Qualifier
 
-    private val dependencies: MutableMap<DependencyKey, Any> =
-        mutableMapOf()
+    private val applicationScope = DependencyScope()
+
+    fun createScope(): DependencyScope = DependencyScope(applicationScope)
+
+    fun <T : Any> get(
+        type: KClass<T>,
+        qualifier: KClass<out Annotation>? = null,
+        scope: DependencyScope = applicationScope,
+    ): T = type.java.cast(resolve(type, qualifier, scope))
 
     private fun resolve(
         type: KClass<*>,
         qualifier: KClass<out Annotation>? = null,
+        scope: DependencyScope = applicationScope,
     ): Any {
-        dependencies[DependencyKey(type, qualifier)]?.let { return it }
+        scope.find(DependencyKey(type, qualifier))?.let { return it }
 
-        val registeredBindings = dependencies.keys.filter { it.type == type }
+        val registeredBindings =
+            scope
+                .keys()
+                .filterIsInstance<DependencyKey>()
+                .filter { it.type == type }
+
         if (registeredBindings.isNotEmpty()) {
             val availableQualifiers =
                 registeredBindings
@@ -60,16 +73,19 @@ object DependencyContainer : ViewModelProvider.Factory {
                             "Unsupported parameter: ${parameter.name}",
                         )
 
-                resolve(dependencyType)
+                resolve(dependencyType, scope = scope)
             }
 
         return constructor.call(*arguments.toTypedArray()).also { instance ->
-            injectFields(instance)
-            dependencies[DependencyKey(type)] = instance
+            injectFields(instance, scope)
+            scope.put(DependencyKey(type), instance)
         }
     }
 
-    private fun injectFields(instance: Any) {
+    private fun injectFields(
+        instance: Any,
+        scope: DependencyScope = applicationScope,
+    ) {
         instance::class.java.declaredFields
             .filter { field ->
                 field.isAnnotationPresent(Inject::class.java)
@@ -80,7 +96,7 @@ object DependencyContainer : ViewModelProvider.Factory {
                             it.annotationClass.java.isAnnotationPresent(Qualifier::class.java)
                         }?.annotationClass
 
-                val dependency = resolve(field.type.kotlin, qualifier)
+                val dependency = resolve(field.type.kotlin, qualifier, scope)
 
                 field.isAccessible = true
                 field.set(instance, dependency)
@@ -88,13 +104,23 @@ object DependencyContainer : ViewModelProvider.Factory {
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val scope = createScope()
+        val viewModel = create(modelClass, scope)
+        viewModel.addCloseable(scope)
+        return viewModel
+    }
+
+    fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        scope: DependencyScope,
+    ): T {
         val viewModel =
             modelClass.kotlin
                 .primaryConstructor
                 ?.call()
                 ?: throw IllegalArgumentException()
 
-        injectFields(viewModel)
+        injectFields(viewModel, scope)
 
         return modelClass.cast(viewModel)!!
     }
@@ -103,14 +129,16 @@ object DependencyContainer : ViewModelProvider.Factory {
         type: KClass<*>,
         qualifier: KClass<out Annotation>,
         dependency: Any,
+        scope: DependencyScope = applicationScope,
     ) {
-        dependencies[DependencyKey(type, qualifier)] = dependency
+        scope.put(DependencyKey(type, qualifier), dependency)
     }
 
     fun register(
         type: KClass<*>,
         dependency: Any,
+        scope: DependencyScope = applicationScope,
     ) {
-        dependencies[DependencyKey(type)] = dependency
+        scope.put(DependencyKey(type), dependency)
     }
 }

@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -51,6 +53,48 @@ class DependencyContainerTest {
         lateinit var injectedRepository: ProductRepository
 
         var notInjectedRepository: ProductRepository? = null
+    }
+
+    class ViewModelScopeTestRepository
+
+    class ScopeTestViewModel : ViewModel() {
+        @field:DependencyContainer.Inject
+        lateinit var repository: ViewModelScopeTestRepository
+
+        @field:DependencyContainer.Inject
+        @field:RoomCart
+        lateinit var cartRepository: CartRepository
+    }
+
+    @Test
+    fun `ViewModel 의존성을 지정한 스코프에 생성하고 부모 앱 의존성을 공유한다`() {
+        val firstScope = DependencyContainer.createScope()
+        val secondScope = DependencyContainer.createScope()
+
+        val firstViewModel =
+            DependencyContainer.create(
+                ScopeTestViewModel::class.java,
+                firstScope,
+            )
+
+        val anotherViewModelInFirstScope =
+            DependencyContainer.create(
+                ScopeTestViewModel::class.java,
+                firstScope,
+            )
+
+        val secondViewModel =
+            DependencyContainer.create(
+                ScopeTestViewModel::class.java,
+                secondScope,
+            )
+
+        assertThat(firstViewModel.repository)
+            .isSameInstanceAs(anotherViewModelInFirstScope.repository)
+        assertThat(firstViewModel.repository)
+            .isNotSameInstanceAs(secondViewModel.repository)
+        assertThat(firstViewModel.cartRepository)
+            .isSameInstanceAs(secondViewModel.cartRepository)
     }
 
     @Test
@@ -150,6 +194,97 @@ class DependencyContainerTest {
         val viewModel = DependencyContainer.create(InMemoryCartTestViewModel::class.java)
 
         assertThat(viewModel.cartRepository).isInstanceOf(InMemoryCartRepository::class.java)
+    }
+
+    @Test
+    fun `ViewModelStore가 유지되는 동안 스코프를 재사용하고 비우면 새 스코프를 만든다`() {
+        val firstStore = ViewModelStore()
+        val firstProvider = ViewModelProvider(firstStore, DependencyContainer)
+        val firstViewModel = firstProvider.get(ScopeTestViewModel::class.java)
+        val reusedViewModel = firstProvider.get(ScopeTestViewModel::class.java)
+
+        assertThat(reusedViewModel).isSameInstanceAs(firstViewModel)
+
+        firstStore.clear()
+
+        val secondStore = ViewModelStore()
+        try {
+            val secondViewModel =
+                ViewModelProvider(secondStore, DependencyContainer)
+                    .get(ScopeTestViewModel::class.java)
+
+            assertThat(secondViewModel.repository)
+                .isNotSameInstanceAs(firstViewModel.repository)
+            assertThat(secondViewModel.cartRepository)
+                .isSameInstanceAs(firstViewModel.cartRepository)
+        } finally {
+            secondStore.clear()
+        }
+    }
+
+    @Test
+    fun `Cart 화면에서 DateFormatter를 재사용하고 재진입하면 새로 생성한다`() {
+        val firstStore = ViewModelStore()
+        val firstViewModel =
+            ViewModelProvider(firstStore, DependencyContainer)
+                .get(CartViewModel::class.java)
+
+        try {
+            val retainedViewModel =
+                ViewModelProvider(firstStore, DependencyContainer)
+                    .get(CartViewModel::class.java)
+
+            assertThat(retainedViewModel.dateFormatter)
+                .isSameInstanceAs(firstViewModel.dateFormatter)
+        } finally {
+            firstStore.clear()
+        }
+
+        val secondStore = ViewModelStore()
+        try {
+            val reenteredViewModel =
+                ViewModelProvider(secondStore, DependencyContainer)
+                    .get(CartViewModel::class.java)
+
+            assertThat(reenteredViewModel.dateFormatter)
+                .isNotSameInstanceAs(firstViewModel.dateFormatter)
+            assertThat(reenteredViewModel.cartRepository)
+                .isSameInstanceAs(firstViewModel.cartRepository)
+        } finally {
+            secondStore.clear()
+        }
+    }
+
+    @Test
+    fun `Products 화면에서 ViewModel이 유지되면 Repository를 재사용하고 재진입하면 새로 생성한다`() {
+        val firstStore = ViewModelStore()
+        val firstViewModel =
+            ViewModelProvider(firstStore, DependencyContainer)
+                .get(ProductsViewModel::class.java)
+        val firstRepository = firstViewModel.productRepository
+
+        try {
+            val retainedViewModel =
+                ViewModelProvider(firstStore, DependencyContainer)
+                    .get(ProductsViewModel::class.java)
+
+            assertThat(retainedViewModel.productRepository)
+                .isSameInstanceAs(firstRepository)
+        } finally {
+            firstStore.clear()
+        }
+
+        val secondStore = ViewModelStore()
+        try {
+            val reenteredViewModel =
+                ViewModelProvider(secondStore, DependencyContainer)
+                    .get(ProductsViewModel::class.java)
+
+            assertThat(reenteredViewModel.productRepository)
+                .isNotSameInstanceAs(firstRepository)
+        } finally {
+            secondStore.clear()
+        }
     }
 
     interface TestRepository
