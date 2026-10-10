@@ -1,6 +1,6 @@
 package woowacourse.shopping
 
-import androidx.lifecycle.ViewModel
+import com.example.di.SamDi
 import com.example.di.annotations.InjectField
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
@@ -9,6 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.repository_impl.DefaultCartRepository
@@ -22,6 +23,55 @@ import java.util.UUID
 @RunWith(RobolectricTestRunner::class)
 class SamDiTest {
     @Test
+    fun `요청 타입의 provider가 있어도 Qualifier에 지정된 구현체를 선택한다`() {
+        val application = RuntimeEnvironment.getApplication() as MyApplication
+        val fallbackRepository = FakeCartRepository()
+        var fallbackProviderCalls = 0
+        val di =
+            SamDi(
+                providers =
+                    mapOf(
+                        CartRepository::class to {
+                            fallbackProviderCalls++
+                            fallbackRepository
+                        },
+                        CartProductDao::class to { application.appContainer.cartProductDao },
+                    ),
+                bindings = application.appContainer.bindings,
+            )
+
+        val roomConsumer = di.resolve(RoomCartRepositoryConsumer::class) as RoomCartRepositoryConsumer
+        val inMemoryConsumer = di.resolve(InMemoryCartRepositoryConsumer::class) as InMemoryCartRepositoryConsumer
+
+        assertThat(roomConsumer.repository).isInstanceOf(DefaultCartRepository::class.java)
+        assertThat(inMemoryConsumer.repository).isInstanceOf(FakeCartRepository::class.java)
+        assertThat(fallbackProviderCalls).isEqualTo(0)
+    }
+
+    @Test
+    fun `Qualifier로 선택한 구현체에 provider가 있으면 그 provider의 객체를 주입한다`() {
+        val application = RuntimeEnvironment.getApplication() as MyApplication
+        val roomRepository = DefaultCartRepository(application.appContainer.cartProductDao)
+        val inMemoryRepository = FakeCartRepository()
+        val di =
+            SamDi(
+                providers =
+                    mapOf(
+                        DefaultCartRepository::class to { roomRepository },
+                        FakeCartRepository::class to { inMemoryRepository },
+                        CartProductDao::class to { application.appContainer.cartProductDao },
+                    ),
+                bindings = application.appContainer.bindings,
+            )
+
+        val roomConsumer = di.resolve(RoomCartRepositoryConsumer::class) as RoomCartRepositoryConsumer
+        val inMemoryConsumer = di.resolve(InMemoryCartRepositoryConsumer::class) as InMemoryCartRepositoryConsumer
+
+        assertThat(roomConsumer.repository).isSameInstanceAs(roomRepository)
+        assertThat(inMemoryConsumer.repository).isSameInstanceAs(inMemoryRepository)
+    }
+
+    @Test
     fun `애노테이션이 붙은 ViewModel 필드만 주입한다`() {
         val application = RuntimeEnvironment.getApplication() as MyApplication
         val factory = ViewModelFactory.viewModelFactory(application)
@@ -30,9 +80,8 @@ class SamDiTest {
         val fieldViewModel = factory.create(FieldInjectionViewModel::class.java)
 
         assertThat(productsViewModel.productRepository)
-            .isSameInstanceAs(application.appContainer.productRepository)
-        assertThat(fieldViewModel.injected)
-            .isSameInstanceAs(application.appContainer.productRepository)
+            .isNotSameInstanceAs(fieldViewModel.injected)
+        assertThat(fieldViewModel.injected).isNotNull()
         assertThat(fieldViewModel.unannotated)
             .isSameInstanceAs(FieldInjectionViewModel.originalRepository)
     }
@@ -105,7 +154,7 @@ class InMemoryCartRepositoryConsumer(
     @InMemoryRepo val repository: CartRepository,
 )
 
-class FieldInjectionViewModel : ViewModel() {
+class FieldInjectionViewModel : ScopedViewModel() {
     companion object {
         val originalRepository = ProductRepository()
     }
