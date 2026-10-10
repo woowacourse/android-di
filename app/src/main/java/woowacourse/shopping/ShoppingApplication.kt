@@ -9,6 +9,7 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.ShoppingDatabase
 
@@ -38,6 +39,11 @@ class ShoppingApplication : Application() {
                     from = CartRepository::class,
                     to = InMemoryCartRepository::class,
                     qualifier = InMemoryCart::class,
+                )
+                registerBinding(
+                    from = ProductRepository::class,
+                    to = ProductRepository::class,
+                    lifetime = DependencyLifetime.EACH_SCOPE,
                 )
             }
     }
