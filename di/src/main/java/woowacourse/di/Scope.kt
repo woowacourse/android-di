@@ -70,7 +70,8 @@ class Scope internal constructor(
             factory(this).also { inject(it) }
         }
 
-    private fun inject(instance: Any) {
+    fun inject(instance: Any) {
+        check(!isClosed) { "닫힌 스코프에서는 의존성을 주입할 수 없습니다." }
         instance::class
             .declaredMemberProperties
             .filterIsInstance<KMutableProperty<*>>()
@@ -91,7 +92,8 @@ class Scope internal constructor(
             }
     }
 
-    internal fun <T : Any> create(type: KClass<T>): T {
+    fun <T : Any> create(type: KClass<T>): T {
+        check(!isClosed) { "닫힌 스코프에서는 객체를 생성할 수 없습니다." }
         val constructor =
             requireNotNull(type.primaryConstructor) {
                 "${type.qualifiedName}의 주 생성자를 찾을 수 없습니다."

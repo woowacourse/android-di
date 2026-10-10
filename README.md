@@ -32,11 +32,11 @@
 
 ### 5. ProductRepository의 ViewModel 스코프 적용
 
-- [ ] 같은 ViewModel에서는 `ProductRepository`를 재사용하고 다른 ViewModel과는 분리하는 테스트를 작성한다.
-- [ ] Factory가 새 ViewModel을 생성할 때 개별 스코프를 함께 생성하도록 한다.
-- [ ] `ProductRepository`를 ViewModel 스코프로 등록하고 불필요한 `@RoomCart`를 제거한다.
-- [ ] ViewModel이 정리될 때 해당 스코프가 닫히도록 연결하고 테스트한다.
-- [ ] 생성이나 주입이 실패해도 새로 만든 스코프가 남지 않도록 한다.
+- [x] 같은 ViewModel에서는 `ProductRepository`를 재사용하고 다른 ViewModel과는 분리하는 테스트를 작성한다.
+- [x] Factory가 새 ViewModel을 생성할 때 개별 스코프를 함께 생성하도록 한다.
+- [x] `ProductRepository`를 ViewModel 스코프로 등록하고 불필요한 `@RoomCart`를 제거한다.
+- [x] ViewModel이 정리될 때 해당 스코프가 닫히도록 연결하고 테스트한다.
+- [x] 생성이나 주입이 실패해도 새로 만든 스코프가 남지 않도록 한다.
 
 ### 6. DateFormatter의 화면 스코프 적용
 

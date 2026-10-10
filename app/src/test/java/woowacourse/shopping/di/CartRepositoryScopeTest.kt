@@ -53,7 +53,7 @@ class CartRepositoryScopeTest {
         assertThat(firstViewModel.inMemoryRepository)
             .isSameAs(appScope.resolve(CartRepository::class, InMemoryCart::class))
         assertThat(appScope.resolve(CartProductDao::class)).isSameAs(dao)
-        val factory = ReflectionViewModelFactory(container)
+        val factory = ReflectionViewModelFactory(container, appScope, viewModel)
         val factoryViewModel = factory.create(TestCartViewModel::class.java)
         assertThat(factoryViewModel.roomRepository).isSameAs(firstViewModel.roomRepository)
         assertThat(factoryViewModel.inMemoryRepository).isSameAs(firstViewModel.inMemoryRepository)

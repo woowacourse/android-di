@@ -8,10 +8,12 @@ import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 
 object AppDI {
     internal val appScopeType = ScopeType("app")
+    internal val viewModelScopeType = ScopeType("viewModel")
 
     private lateinit var database: ShoppingDatabase
 
@@ -29,7 +31,8 @@ object AppDI {
 
         val dao = database.cartProductDao()
         val container = createContainer(dao)
-        viewModelFactory = ReflectionViewModelFactory(container)
+        val appScope = container.openScope(appScopeType, "application")
+        viewModelFactory = ReflectionViewModelFactory(container, appScope, viewModelScopeType)
     }
 
     internal fun createContainer(dao: CartProductDao): DependencyContainer {
@@ -52,17 +55,8 @@ object AppDI {
             qualifier = InMemoryCart::class,
         ) { InMemoryCartRepository() }
 
-        val appScope = container.openScope(appScopeType, "application")
-        container.register(
-            type = CartRepository::class,
-            instance = appScope.resolve(CartRepository::class, RoomCart::class),
-            qualifier = RoomCart::class,
-        )
-        container.register(
-            type = CartRepository::class,
-            instance = appScope.resolve(CartRepository::class, InMemoryCart::class),
-            qualifier = InMemoryCart::class,
-        )
+        container.bind(ProductRepository::class, viewModelScopeType)
+
         return container
     }
 }

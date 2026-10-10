@@ -12,7 +12,7 @@ class DependencyContainer : AutoCloseable {
     private val scopedFactories: MutableMap<ScopeType, MutableMap<DependencyKey, (Scope) -> Any>> = mutableMapOf()
     private val scopes: MutableMap<ScopeKey, Scope> = mutableMapOf()
 
-    internal val activeScopeCount: Int
+    val activeScopeCount: Int
         get() = scopes.size
 
     override fun close() {
