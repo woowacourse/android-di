@@ -1,7 +1,9 @@
 package woowacourse.shopping.ui
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +28,7 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 @RunWith(RobolectricTestRunner::class)
 class ShoppingNavHostTest {
     @get:Rule
-    val composeRule = createComposeRule()
+    val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     private lateinit var navController: NavHostController
 
@@ -80,18 +82,46 @@ class ShoppingNavHostTest {
         }
     }
 
+    @Test
+    fun `장바구니 엔트리는 Activity 재생성 후에도 같은 포맷터를 유지한다`() {
+        val container = showNavHost()
+        navigateToCart()
+        val scope = currentEntryScope()
+        val formatter = container.resolve(DateFormatter::class, scope = scope)
+        val activity = composeRule.activity
+
+        recreateActivity()
+
+        assertThat(composeRule.activity).isNotSameAs(activity)
+        assertThat(currentEntryScope()).isSameAs(scope)
+        assertThat(container.resolve(DateFormatter::class, scope = currentEntryScope())).isSameAs(formatter)
+
+        popEntry()
+
+        assertThatThrownBy { container.resolve(DateFormatter::class, scope = scope) }
+            .hasMessageContaining("종료된 스코프")
+    }
+
     private fun showNavHost(): KirbyDIContainer {
         val container = (RuntimeEnvironment.getApplication() as ShoppingApplication).container
-        composeRule.setContent {
-            CompositionLocalProvider(LocalDIContainer provides container) {
-                navController = rememberNavController()
-                ShoppingTheme {
-                    ShoppingNavHost(navController)
+        val activity = composeRule.activity
+        composeRule.runOnUiThread {
+            activity.setContent {
+                CompositionLocalProvider(LocalDIContainer provides container) {
+                    navController = rememberNavController()
+                    ShoppingTheme {
+                        ShoppingNavHost(navController)
+                    }
                 }
             }
         }
         composeRule.waitForIdle()
         return container
+    }
+
+    private fun recreateActivity() {
+        composeRule.activityRule.scenario.recreate()
+        showNavHost()
     }
 
     private fun navigateToCart() {
