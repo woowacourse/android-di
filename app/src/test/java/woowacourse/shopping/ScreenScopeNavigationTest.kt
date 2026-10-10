@@ -1,0 +1,97 @@
+package woowacourse.shopping
+
+import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.google.common.truth.Truth.assertThat
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import woowacourse.shopping.ui.ShoppingNavHost
+import woowacourse.shopping.ui.ShoppingRoute
+import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.ScreenScopeViewModel
+
+@RunWith(RobolectricTestRunner::class)
+class ScreenScopeNavigationTest {
+    @get:Rule
+    val composeRule = createComposeRule()
+
+    @Test
+    fun `백스택에 남은 화면은 유지하고 제거된 화면만 정리한다`() {
+        lateinit var navController: NavHostController
+        composeRule.setContent {
+            navController = rememberNavController()
+            ShoppingNavHost(navController)
+        }
+        val container = (RuntimeEnvironment.getApplication() as MyApplication).appContainer
+        composeRule.runOnIdle { navController.navigate(ShoppingRoute.CART) }
+        composeRule.waitForIdle()
+        lateinit var first: ScreenScopeViewModel
+        lateinit var formatter: Any
+        composeRule.runOnIdle {
+            first = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
+            formatter = container.di.resolve(DateFormatter::class, scope = first.scope)
+            navController.navigate(ShoppingRoute.CART)
+        }
+        composeRule.waitForIdle()
+        lateinit var second: ScreenScopeViewModel
+        composeRule.runOnIdle {
+            second = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
+            assertThat(second).isNotSameInstanceAs(first)
+            assertThat(container.di.resolve(DateFormatter::class, scope = second.scope)).isNotSameInstanceAs(formatter)
+            assertThat(first.scope.isClosed).isFalse()
+            navController.popBackStack()
+        }
+        composeRule.waitForIdle()
+        composeRule.runOnIdle {
+            assertThat(second.scope.isClosed).isTrue()
+            assertThat(second.scope.instanceCount).isEqualTo(0)
+            assertThat(first.scope.isClosed).isFalse()
+            assertThat(container.di.resolve(DateFormatter::class, scope = first.scope)).isSameInstanceAs(formatter)
+            navController.popBackStack()
+        }
+        composeRule.waitForIdle()
+        composeRule.runOnIdle {
+            assertThat(first.scope.isClosed).isTrue()
+            assertThat(first.scope.instanceCount).isEqualTo(0)
+        }
+    }
+
+    @Test
+    fun `실제 장바구니 진입과 이탈을 반복해도 포맷터와 스코프가 누적되지 않는다`() {
+        lateinit var navController: NavHostController
+        composeRule.setContent {
+            navController = rememberNavController()
+            ShoppingNavHost(navController)
+        }
+        val container = (RuntimeEnvironment.getApplication() as MyApplication).appContainer
+        composeRule.waitForIdle()
+        val appInstanceCount = container.appScope.instanceCount
+        var previous: DateFormatter? = null
+
+        repeat(10) {
+            composeRule.runOnIdle { navController.navigate(ShoppingRoute.CART) }
+            composeRule.waitForIdle()
+            lateinit var holder: ScreenScopeViewModel
+            composeRule.runOnIdle {
+                holder = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
+                val formatter = container.di.resolve(DateFormatter::class, scope = holder.scope) as DateFormatter
+                assertThat(formatter).isNotSameInstanceAs(previous)
+                assertThat(container.di.resolve(DateFormatter::class, scope = holder.scope)).isSameInstanceAs(formatter)
+                assertThat(holder.scope.instanceCount).isEqualTo(1)
+                previous = formatter
+                navController.popBackStack()
+            }
+            composeRule.waitForIdle()
+            composeRule.runOnIdle {
+                assertThat(holder.scope.isClosed).isTrue()
+                assertThat(holder.scope.instanceCount).isEqualTo(0)
+                assertThat(container.appScope.instanceCount).isEqualTo(appInstanceCount)
+            }
+        }
+    }
+}
