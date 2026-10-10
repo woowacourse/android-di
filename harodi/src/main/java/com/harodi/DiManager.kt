@@ -138,8 +138,11 @@ class DiManager {
         if (scopeInstance != null) {
             return scopeInstance
         } else {
-            val instance = createInstance(dependencyKey, scopeKey)
-            addScope(scopeKey, dependencyKey.classType, dependencyKey.qualifier, instance)
+            val instance = resolve(
+                modelClass = dependencyKey.classType,
+                qualifier = dependencyKey.qualifier,
+                scopeKey = scopeKey
+            )
             return instance
         }
     }
@@ -232,13 +235,16 @@ class DiManager {
         qualifier: KClass<out Annotation>? = null,
     ): T {
         val dependencyKey = DependencyKey(modelClass, qualifier)
-        val instance = searchInstance(dependencyKey, scopeKey)
+        if (searchScope(scopeKey, dependencyKey) != null) {
+            return searchScope(scopeKey, dependencyKey) as T
+        }
+        val instance = createInstance(dependencyKey, scopeKey)
 
         val lateinitProperties = searchLateinitProperty(modelClass)
         if (lateinitProperties != null) {
             fieldInject(modelClass, instance as T, lateinitProperties, scopeKey)
         }
-
+        addScope(scopeKey, dependencyKey.classType, dependencyKey.qualifier, instance)
         return instance as T
     }
 }
