@@ -32,10 +32,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.ViewModelFactory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
@@ -43,12 +41,9 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 @Composable
 fun CartScreen(
     dateFormatter: DateFormatter,
+    viewModel: CartViewModel,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel =
-        viewModel(
-            factory = ViewModelFactory.viewModelFactory(context = LocalContext.current),
-        ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -186,7 +181,7 @@ private fun CartContentPreview() {
                             ),
                         ),
                 ),
-            dateFormatter = DateFormatter(LocalContext.current),
+            dateFormatter = DateFormatter(stringResource(R.string.date_format)),
             onDelete = {},
             onNavigateUp = {},
         )

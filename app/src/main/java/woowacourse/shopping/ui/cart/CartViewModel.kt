@@ -1,6 +1,7 @@
 package woowacourse.shopping.ui.cart
 
 import androidx.lifecycle.viewModelScope
+import com.example.di.Scope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,6 +23,21 @@ class CartViewModel(
     @RoomRepo
     private val cartRepository: CartRepository,
 ) : ScopedViewModel() {
+    lateinit var screenScope: Scope
+        private set
+
+    override fun attachScope(scope: Scope) {
+        super.attachScope(scope)
+        screenScope = Scope("screen", scope.owner("app"))
+    }
+
+    override fun onCleared() {
+        if (this::screenScope.isInitialized) {
+            screenScope.close()
+        }
+        super.onCleared()
+    }
+
     private val _uiState: MutableStateFlow<CartUiState> = MutableStateFlow(CartUiState())
     val uiState: StateFlow<CartUiState> get() = _uiState.asStateFlow()
 

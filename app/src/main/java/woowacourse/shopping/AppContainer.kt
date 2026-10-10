@@ -55,7 +55,7 @@ class AppContainer(
             providers =
                 mapOf(
                     CartProductDao::class to { cartProductDao },
-                    DateFormatter::class to { DateFormatter(context.applicationContext) },
+                    DateFormatter::class to { DateFormatter(context.applicationContext.getString(R.string.date_format)) },
                 ),
             bindings = bindings,
             scopes =

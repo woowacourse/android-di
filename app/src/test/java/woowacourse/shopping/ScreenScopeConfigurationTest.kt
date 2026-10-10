@@ -18,8 +18,8 @@ import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.ui.ShoppingNavHost
 import woowacourse.shopping.ui.ShoppingRoute
+import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
-import woowacourse.shopping.ui.cart.ScreenScopeViewModel
 import woowacourse.shopping.util.annotations.RoomRepo
 
 @RunWith(RobolectricTestRunner::class)
@@ -37,14 +37,14 @@ class ScreenScopeConfigurationTest {
             composeRule.waitForIdle()
             composeRule.runOnIdle { activity.navController.navigate(ShoppingRoute.CART) }
             composeRule.waitForIdle()
-            lateinit var first: ScreenScopeViewModel
+            lateinit var first: CartViewModel
             lateinit var formatter: DateFormatter
             lateinit var entryId: String
             composeRule.runOnIdle {
                 val entry = activity.navController.currentBackStackEntry!!
                 entryId = entry.id
-                first = ViewModelProvider(entry)[ScreenScopeViewModel::class.java]
-                formatter = container.di.resolve(DateFormatter::class, scope = first.scope) as DateFormatter
+                first = ViewModelProvider(entry)[CartViewModel::class.java]
+                formatter = container.di.resolve(DateFormatter::class, scope = first.screenScope) as DateFormatter
             }
 
             val configuration = Configuration(activity.resources.configuration)
@@ -63,17 +63,19 @@ class ScreenScopeConfigurationTest {
                 val entry = recreated.navController.currentBackStackEntry!!
                 assertThat(entry.destination.route).isEqualTo(ShoppingRoute.CART)
                 assertThat(entry.id).isEqualTo(entryId)
-                val restored = ViewModelProvider(entry)[ScreenScopeViewModel::class.java]
+                val restored = ViewModelProvider(entry)[CartViewModel::class.java]
                 assertThat(restored).isSameInstanceAs(first)
-                assertThat(first.scope.isClosed).isFalse()
-                assertThat(container.di.resolve(DateFormatter::class, scope = restored.scope)).isSameInstanceAs(formatter)
+                assertThat(first.screenScope.isClosed).isFalse()
+                assertThat(first.diScope.isClosed).isFalse()
+                assertThat(container.di.resolve(DateFormatter::class, scope = restored.screenScope)).isSameInstanceAs(formatter)
                 assertThat(container.di.resolve(CartRepository::class, RoomRepo())).isSameInstanceAs(repository)
                 recreated.navController.popBackStack()
             }
             composeRule.waitForIdle()
             composeRule.runOnIdle {
-                assertThat(first.scope.isClosed).isTrue()
-                assertThat(first.scope.instanceCount).isEqualTo(0)
+                assertThat(first.screenScope.isClosed).isTrue()
+                assertThat(first.screenScope.instanceCount).isEqualTo(0)
+                assertThat(first.diScope.isClosed).isTrue()
             }
         } finally {
             controller.pause().stop().destroy()

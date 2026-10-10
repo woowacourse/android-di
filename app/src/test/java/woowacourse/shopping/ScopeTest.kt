@@ -12,8 +12,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
-import woowacourse.shopping.ui.cart.ScreenScopeViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 import woowacourse.shopping.util.annotations.InMemoryRepo
 import woowacourse.shopping.util.annotations.RoomRepo
@@ -85,15 +85,25 @@ class ScopeTest {
         var previous: Any? = null
         repeat(20) {
             val store = ViewModelStore()
-            val owner = ScreenScopeViewModel(container.appScope)
-            store.put("screen", owner)
-            val formatter = container.di.resolve(DateFormatter::class, scope = owner.scope)
+            val storeOwner =
+                object : ViewModelStoreOwner {
+                    override val viewModelStore = store
+                }
+            val owner =
+                ViewModelProvider(
+                    storeOwner,
+                    ViewModelFactory.viewModelFactory(RuntimeEnvironment.getApplication()),
+                )[CartViewModel::class.java]
+            assertThat(owner.screenScope).isNotSameInstanceAs(owner.diScope)
+            val formatter = container.di.resolve(DateFormatter::class, scope = owner.screenScope)
 
-            assertThat(container.di.resolve(DateFormatter::class, scope = owner.scope)).isSameInstanceAs(formatter)
+            assertThat(container.di.resolve(DateFormatter::class, scope = owner.screenScope)).isSameInstanceAs(formatter)
             assertThat(formatter).isNotSameInstanceAs(previous)
             store.clear()
-            assertThat(owner.scope.isClosed).isTrue()
-            assertThat(owner.scope.instanceCount).isEqualTo(0)
+            assertThat(owner.screenScope.isClosed).isTrue()
+            assertThat(owner.screenScope.instanceCount).isEqualTo(0)
+            assertThat(owner.diScope.isClosed).isTrue()
+            assertThat(owner.diScope.instanceCount).isEqualTo(0)
             previous = formatter
         }
     }

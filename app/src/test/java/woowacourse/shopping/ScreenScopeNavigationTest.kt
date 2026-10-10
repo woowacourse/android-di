@@ -12,8 +12,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import woowacourse.shopping.ui.ShoppingNavHost
 import woowacourse.shopping.ui.ShoppingRoute
+import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
-import woowacourse.shopping.ui.cart.ScreenScopeViewModel
 
 @RunWith(RobolectricTestRunner::class)
 class ScreenScopeNavigationTest {
@@ -30,34 +30,34 @@ class ScreenScopeNavigationTest {
         val container = (RuntimeEnvironment.getApplication() as MyApplication).appContainer
         composeRule.runOnIdle { navController.navigate(ShoppingRoute.CART) }
         composeRule.waitForIdle()
-        lateinit var first: ScreenScopeViewModel
+        lateinit var first: CartViewModel
         lateinit var formatter: Any
         composeRule.runOnIdle {
-            first = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
-            formatter = container.di.resolve(DateFormatter::class, scope = first.scope)
+            first = ViewModelProvider(navController.currentBackStackEntry!!)[CartViewModel::class.java]
+            formatter = container.di.resolve(DateFormatter::class, scope = first.screenScope)
             navController.navigate(ShoppingRoute.CART)
         }
         composeRule.waitForIdle()
-        lateinit var second: ScreenScopeViewModel
+        lateinit var second: CartViewModel
         composeRule.runOnIdle {
-            second = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
+            second = ViewModelProvider(navController.currentBackStackEntry!!)[CartViewModel::class.java]
             assertThat(second).isNotSameInstanceAs(first)
-            assertThat(container.di.resolve(DateFormatter::class, scope = second.scope)).isNotSameInstanceAs(formatter)
-            assertThat(first.scope.isClosed).isFalse()
+            assertThat(container.di.resolve(DateFormatter::class, scope = second.screenScope)).isNotSameInstanceAs(formatter)
+            assertThat(first.screenScope.isClosed).isFalse()
             navController.popBackStack()
         }
         composeRule.waitForIdle()
         composeRule.runOnIdle {
-            assertThat(second.scope.isClosed).isTrue()
-            assertThat(second.scope.instanceCount).isEqualTo(0)
-            assertThat(first.scope.isClosed).isFalse()
-            assertThat(container.di.resolve(DateFormatter::class, scope = first.scope)).isSameInstanceAs(formatter)
+            assertThat(second.screenScope.isClosed).isTrue()
+            assertThat(second.screenScope.instanceCount).isEqualTo(0)
+            assertThat(first.screenScope.isClosed).isFalse()
+            assertThat(container.di.resolve(DateFormatter::class, scope = first.screenScope)).isSameInstanceAs(formatter)
             navController.popBackStack()
         }
         composeRule.waitForIdle()
         composeRule.runOnIdle {
-            assertThat(first.scope.isClosed).isTrue()
-            assertThat(first.scope.instanceCount).isEqualTo(0)
+            assertThat(first.screenScope.isClosed).isTrue()
+            assertThat(first.screenScope.instanceCount).isEqualTo(0)
         }
     }
 
@@ -76,20 +76,22 @@ class ScreenScopeNavigationTest {
         repeat(10) {
             composeRule.runOnIdle { navController.navigate(ShoppingRoute.CART) }
             composeRule.waitForIdle()
-            lateinit var holder: ScreenScopeViewModel
+            lateinit var holder: CartViewModel
             composeRule.runOnIdle {
-                holder = ViewModelProvider(navController.currentBackStackEntry!!)[ScreenScopeViewModel::class.java]
-                val formatter = container.di.resolve(DateFormatter::class, scope = holder.scope) as DateFormatter
+                holder = ViewModelProvider(navController.currentBackStackEntry!!)[CartViewModel::class.java]
+                val formatter = container.di.resolve(DateFormatter::class, scope = holder.screenScope) as DateFormatter
                 assertThat(formatter).isNotSameInstanceAs(previous)
-                assertThat(container.di.resolve(DateFormatter::class, scope = holder.scope)).isSameInstanceAs(formatter)
-                assertThat(holder.scope.instanceCount).isEqualTo(1)
+                assertThat(container.di.resolve(DateFormatter::class, scope = holder.screenScope)).isSameInstanceAs(formatter)
+                assertThat(holder.screenScope.instanceCount).isEqualTo(1)
                 previous = formatter
                 navController.popBackStack()
             }
             composeRule.waitForIdle()
             composeRule.runOnIdle {
-                assertThat(holder.scope.isClosed).isTrue()
-                assertThat(holder.scope.instanceCount).isEqualTo(0)
+                assertThat(holder.screenScope.isClosed).isTrue()
+                assertThat(holder.screenScope.instanceCount).isEqualTo(0)
+                assertThat(holder.diScope.isClosed).isTrue()
+                assertThat(holder.diScope.instanceCount).isEqualTo(0)
                 assertThat(container.appScope.instanceCount).isEqualTo(appInstanceCount)
             }
         }

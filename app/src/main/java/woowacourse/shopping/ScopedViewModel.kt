@@ -8,7 +8,7 @@ open class ScopedViewModel : ViewModel() {
     lateinit var diScope: Scope
         private set
 
-    fun attachScope(scope: Scope) {
+    open fun attachScope(scope: Scope) {
         check(!this::diScope.isInitialized) { "스코프가 이미 연결되어 있습니다" }
         diScope = scope
     }
