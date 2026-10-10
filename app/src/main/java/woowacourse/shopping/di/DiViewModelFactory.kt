@@ -7,5 +7,5 @@ import com.harodi.DiManager
 class DiViewModelFactory(
     private val diManager: DiManager,
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = diManager.fieldInject(modelClass)
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = diManager.resolve(modelClass)
 }

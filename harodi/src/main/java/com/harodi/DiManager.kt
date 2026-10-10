@@ -1,6 +1,7 @@
 package com.harodi
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
@@ -10,6 +11,9 @@ data class DependencyKey(
 )
 
 class DiManager {
+    // 현재는 공통 인스턴스 모음으로 사용된다.
+    // 이를 스코프 단위로 인스턴스를 관리하도록 변경해야 할 것 같다.
+    // 스코프 내에서 인스턴스를 찾고, 내 스코프에 없으면, 부모 스코프의 인스턴스를 탐색한다.
     private val instanceMap: MutableMap<DependencyKey, Any> = mutableMapOf()
 
     // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
@@ -37,7 +41,7 @@ class DiManager {
 
     // 인터페이스를 받았을 때 구현할 구현체의 클래스가 무엇인지 조건을 구분한다.
     // 만약 providerMap에 없으면 modelClass를 반환한다.
-    fun filterModelClass(dependencyKey: DependencyKey): Class<*> {
+    internal fun filterModelClass(dependencyKey: DependencyKey): Class<*> {
         // 1. 타입과 Qualifier가 정확히 일치하는 binding
         val exactProvider = providerMap[dependencyKey]
 
@@ -77,17 +81,24 @@ class DiManager {
     }
 
     // 객체를 탐색한다.
-    fun searchInstance(dependencyKey: DependencyKey): Any {
+    // 지금은 생성까지 하고 있따. 역할을 분리할 필요가 있따.
+    internal fun searchInstance(
+        classType: Class<*>,
+        qualifier: KClass<out Annotation>?,
+    ): Any {
+        val dependencyKey = DependencyKey(classType, qualifier)
         if (hasInstance(dependencyKey)) {
             return instanceMap[dependencyKey] ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
         } else {
-            val instance = createInstance(dependencyKey)
+            val instance = resolve(classType, qualifier)
             instanceMap[dependencyKey] = instance
             return instance
         }
     }
 
-    fun createInstance(dependencyKey: DependencyKey): Any {
+    // 객체를 생성한다.
+    // searchInstance와 createInstance와 서로 주고받는다.
+    internal fun createInstance(dependencyKey: DependencyKey): Any {
         val modelClass = filterModelClass(dependencyKey)
         val constructor =
             modelClass.kotlin.primaryConstructor
@@ -105,21 +116,26 @@ class DiManager {
                                     it is Qualifier
                                 }
                             }?.annotationClass
-                    val dependencyKey = DependencyKey(type.java, qualifier)
-                    searchInstance(dependencyKey)
+                    searchInstance(type.java, qualifier)
                 }
             return constructor.call(*typesConstructors.toTypedArray())
         }
     }
 
-    fun <T : Any> fieldInject(modelClass: Class<T>): T {
-        val instance =
-            modelClass.kotlin.primaryConstructor?.call()
-                ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
+    internal fun <T : Any> searchLateinitProperty(modelClass: Class<T>): List<KProperty1<T, *>>? {
         val lateinitProperties =
             modelClass.kotlin.memberProperties.filter { property ->
                 property.isLateinit && property.annotations.any { it is Inject }
             }
+
+        return lateinitProperties.ifEmpty { null }
+    }
+
+    internal fun <T : Any> fieldInject(
+        modelClass: Class<T>,
+        instance: T,
+        lateinitProperties: List<KProperty1<T, *>>,
+    ) {
         lateinitProperties.forEach {
             modelClass.getDeclaredField(it.name).apply {
                 val dependancyKClass =
@@ -132,12 +148,28 @@ class DiManager {
                                 it is Qualifier
                             }
                         }?.annotationClass
-                val dependencyKey = DependencyKey(dependancyKClass.java, qualifier)
-
                 isAccessible = true
-                set(instance, searchInstance(dependencyKey))
+                set(instance, searchInstance(dependancyKClass.java, qualifier))
             }
         }
-        return instance
+    }
+
+    // 전체 객체 생성 흐름을 가진다.
+    // 생성자를 만들고, 생성자 주입이 필요하다면 생성자 주입을 통한 인스턴스를 생성한다.
+    // 인스턴스에서 필드 주입이 존재한다면, 필드 주입도 받도록 하여 인스턴스를 반환한다.
+    fun <T : Any> resolve(
+        modelClass: Class<T>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val dependencyKey = DependencyKey(modelClass, qualifier)
+
+        val instance = createInstance(dependencyKey)
+
+        val lateinitProperties = searchLateinitProperty(modelClass)
+        if (lateinitProperties != null) {
+            fieldInject(modelClass, instance as T, lateinitProperties)
+        }
+
+        return instance as T
     }
 }
