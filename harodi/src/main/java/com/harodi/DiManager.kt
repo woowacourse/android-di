@@ -138,11 +138,12 @@ class DiManager {
         if (scopeInstance != null) {
             return scopeInstance
         } else {
-            val instance = resolve(
-                modelClass = dependencyKey.classType,
-                qualifier = dependencyKey.qualifier,
-                scopeKey = scopeKey
-            )
+            val instance =
+                resolve(
+                    modelClass = dependencyKey.classType,
+                    qualifier = dependencyKey.qualifier,
+                    scopeKey = scopeKey,
+                )
             return instance
         }
     }
