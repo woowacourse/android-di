@@ -1,5 +1,16 @@
 # android-di
 
+## Step 4 - Lifecycle
+
+### 구현할 기능 목록
+
+- [ ] 의존성을 처음 요청할 때 생성하고, 같은 스코프 안에서 재사용한다.
+- [ ] `CartRepository`를 앱 스코프에서 공유 한다.
+- [ ] `ProductRepository`를 ViewModel 스코프에서 재사용하고, ViewModel 종료 때 정리한다.
+- [ ] `DateFormatter`를 화면 스코프에서 재사용하고, 화면을 나가면 정리한다.
+- [ ] 스코프가 종료되면 보유한 인스턴스 참조를 제거한다.
+- [ ] 새 스코프 종류를 추가해도 컨테이너 내부에 `when` 분기를 늘리지 않는다.
+
 ## Step 3 - Qualifier
 
 ### 구현할 기능 목록
