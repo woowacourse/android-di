@@ -5,12 +5,14 @@ import android.content.Context
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.example.di.SamDi
+import com.example.di.Scope
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.data.repository_impl.DefaultCartRepository
 import woowacourse.shopping.data.repository_impl.FakeCartRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.util.annotations.InMemoryRepo
 import woowacourse.shopping.util.annotations.RoomRepo
 import kotlin.reflect.KClass
@@ -46,15 +48,22 @@ class AppContainer(
             ) to FakeCartRepository::class,
         )
 
-    val productRepository: ProductRepository = ProductRepository()
+    val appScope = Scope("app")
 
     val di =
         SamDi(
             providers =
                 mapOf(
                     CartProductDao::class to { cartProductDao },
-                    ProductRepository::class to { productRepository },
+                    DateFormatter::class to { DateFormatter(context.applicationContext.getString(R.string.date_format)) },
                 ),
             bindings = bindings,
+            scopes =
+                mapOf(
+                    CartRepository::class to "app",
+                    ProductRepository::class to "viewModel",
+                    DateFormatter::class to "screen",
+                ),
+            rootScope = appScope,
         )
 }
