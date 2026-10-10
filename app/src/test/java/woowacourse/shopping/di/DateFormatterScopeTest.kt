@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.composable
@@ -14,11 +15,24 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import woowacourse.di.DependencyContainer
+import woowacourse.di.Scope
 import woowacourse.di.ScopeType
+import woowacourse.shopping.data.CartProductDao
+import woowacourse.shopping.data.CartProductEntity
+import woowacourse.shopping.data.CartRepository
+import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.cart.DateFormatter
 
 @RunWith(RobolectricTestRunner::class)
 class DateFormatterScopeTest {
+    private class FakeCartProductDao : CartProductDao {
+        override suspend fun getAll(): List<CartProductEntity> = emptyList()
+
+        override suspend fun insert(cartProduct: CartProductEntity) = Unit
+
+        override suspend fun delete(id: Long) = Unit
+    }
+
     @Test
     fun `같은 화면 스코프에서 DateFormatter를 재사용하고 다른 화면 스코프와 분리한다`() {
         val container = DependencyContainer()
@@ -175,5 +189,72 @@ class DateFormatterScopeTest {
         assertThat(container.openScope(app, "application")).isSameAs(appScope)
         activityController.pause().stop().destroy()
         assertThat(container.activeScopeCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `화면 진입과 이탈을 반복해도 화면과 ViewModel 스코프가 누적되지 않는다`() {
+        val context = RuntimeEnvironment.getApplication()
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).setup()
+        val activity = activityController.get()
+        val navigator = ComposeNavigator()
+        val navController = NavHostController(context)
+        navController.setLifecycleOwner(activity)
+        navController.setViewModelStore(activity.viewModelStore)
+        navController.navigatorProvider.addNavigator(navigator)
+        navController.graph =
+            navController.createGraph(startDestination = "products") {
+                composable("products") {}
+                composable("cart") {}
+            }
+        val productsEntry = requireNotNull(navController.currentBackStackEntry)
+        navigator.onTransitionComplete(productsEntry)
+        val container = AppDI.createContainer(FakeCartProductDao())
+        var creationCount = 0
+        container.bind(DateFormatter::class, AppDI.screenScopeType) {
+            creationCount++
+            DateFormatter(context)
+        }
+        val appScope = container.openScope(AppDI.appScopeType, "application")
+        val appRepository = appScope.resolve(CartRepository::class, RoomCart::class)
+        val provider = ScreenScopeProvider(container, appScope, AppDI.screenScopeType)
+        val factory = ReflectionViewModelFactory(container, appScope, AppDI.viewModelScopeType)
+        val entryIds = mutableSetOf<String>()
+        var previousFormatter: DateFormatter? = null
+
+        repeat(10) {
+            navController.navigate("cart")
+            val entry = requireNotNull(navController.currentBackStackEntry)
+            navigator.onTransitionComplete(productsEntry)
+            navigator.onTransitionComplete(entry)
+            val screenScope = provider.get(entry)
+            val formatter = screenScope.resolve(DateFormatter::class)
+            val viewModel = ViewModelProvider(entry, factory)[CartViewModel::class.java]
+            val vmScope = requireNotNull(viewModel.getCloseable<Scope>(ReflectionViewModelFactory.SCOPE_KEY))
+            assertThat(entryIds.add(entry.id)).isTrue()
+            assertThat(formatter).isNotSameAs(previousFormatter)
+            assertThat(viewModel.cartRepository).isSameAs(appRepository)
+            assertThat(container.activeScopeCount).isEqualTo(3)
+
+            assertThat(navController.popBackStack()).isTrue()
+            navigator.onTransitionComplete(entry)
+            navigator.onTransitionComplete(productsEntry)
+
+            assertThat(container.activeScopeCount).isEqualTo(1)
+            assertThatThrownBy {
+                screenScope.resolve(DateFormatter::class)
+            }.isInstanceOf(IllegalStateException::class.java)
+                .hasMessageContaining("닫힌 스코프")
+            assertThatThrownBy {
+                vmScope.resolve(CartRepository::class, RoomCart::class)
+            }.isInstanceOf(IllegalStateException::class.java)
+                .hasMessageContaining("닫힌 스코프")
+            assertThat(appScope.resolve(CartRepository::class, RoomCart::class)).isSameAs(appRepository)
+            previousFormatter = formatter
+        }
+
+        assertThat(creationCount).isEqualTo(10)
+        activityController.pause().stop().destroy()
+        container.close()
+        assertThat(container.activeScopeCount).isZero()
     }
 }
