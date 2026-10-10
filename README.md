@@ -90,3 +90,22 @@ Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI
 
 순수 JVM 모듈에서는 Android 타입을 직접 알 수 없으므로, Context나 Room에서 생성하는 DAO처럼 DIContainer가 직접 생성하기 어려운 객체는 `:app`에서 컨테이너에 등록해야 한다.
 또한 화면 스코프처럼 Android 생명주기와 관련된 기능도 DI 모듈이 Android 생명주기를 알 수 없으므로 `:app`에서 처리해야 한다. 
+
+## 4단계
+
+### 목적
+스코프 개념을 도입하여 각 객체를 생명주기에 따라 관리할 수 있도록 한다. 
+
+### 기능 목록
+
+- [ ] 스코프에 따라 의존성을 생성할 수 있도록 구현한다.
+  - [ ] CartRepository를 앱 스코프로 관리한다.
+  - [ ] ProductRepository를 ViewModel 스코프로 관리한다. 
+  - [ ] DateFormtter를 화면 스코프로 관리한다. 
+  - [ ] Android 생명주기와 di 모듈의 책임을 분리한다. 
+  - [ ] 스코프 종료 시 인스턴스 참조를 제거한다.
+  - [ ] 화면 회전 등의 구성 변경에도 화면 스코프가 유지되도록 구현한다.
+  - [ ] 새로운 스코프 종류를 di 모듈을 수정하지 않고도 추가할 수 있도록 한다.
+
+- [ ] Lifecycle 시나리오를 테스트한다. 
+
