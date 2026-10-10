@@ -26,6 +26,10 @@ class KirbyDIContainer {
         lifetime: DependencyLifetime = DependencyLifetime.EACH_SCOPE,
     ) = registry.registerBinding(from, to, qualifier, lifetime)
 
+    /**
+     * 최상위 객체를 매번 새로 생성하며, 주입하는 의존성은 수명 정책과 [scope]에 따라 재사용합니다.
+     * [registerInstance]로 등록한 객체는 새로 생성할 수 없습니다.
+     */
     fun <T : Any> createInstance(
         type: KClass<T>,
         scope: DependencyScope? = null,
@@ -41,6 +45,10 @@ class KirbyDIContainer {
         return (instantiate(key, target, mutableSetOf(), store, isContainerDependency) as T).also { registry.markResolved(type) }
     }
 
+    /**
+     * 등록된 인스턴스 또는 수명 정책에 따라 보관된 객체를 반환하며, 없으면 생성해 저장합니다.
+     * [scope]를 생략하면 컨테이너 저장소를 사용합니다.
+     */
     fun <T : Any> resolve(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
