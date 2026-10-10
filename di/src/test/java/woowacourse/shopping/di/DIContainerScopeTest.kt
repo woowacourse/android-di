@@ -9,6 +9,8 @@ import org.junit.Test
 
 class DIContainerScopeTest {
     private object TestScope : ScopeType
+    private object AppScope : ScopeType
+    private object ViewModelScope : ScopeType
 
     private val firstScopeKey = ScopeKey(TestScope, "first")
     private val secondScopeKey = ScopeKey(TestScope, "second")
@@ -61,5 +63,27 @@ class DIContainerScopeTest {
         assertNotSame(first, second)
     }
 
+    @Test
+    fun `ViewModel 스코프마다 인스턴스를 분리하고 앱 스코프 인스턴스는 공유한다`() {
+        val appKey = ScopeKey(AppScope, "app")
+        val firstViewModelKey = ScopeKey(ViewModelScope, "first")
+        val secondViewModelKey = ScopeKey(ViewModelScope, "second")
+        DIContainer.openScope(appKey)
+        DIContainer.openScope(firstViewModelKey, parentKey = appKey)
+        DIContainer.openScope(secondViewModelKey, parentKey = appKey)
+        DIContainer.bind(AppDependency::class, AppDependency::class, scopeType = AppScope)
+        DIContainer.bind(ViewModelDependency::class, ViewModelDependency::class, scopeType = ViewModelScope)
+
+        val firstAppDependency = DIContainer.createInstance(DependencyKey(AppDependency::class), firstViewModelKey)
+        val secondAppDependency = DIContainer.createInstance(DependencyKey(AppDependency::class), secondViewModelKey)
+        val firstViewModelDependency = DIContainer.createInstance(DependencyKey(ViewModelDependency::class), firstViewModelKey)
+        val secondViewModelDependency = DIContainer.createInstance(DependencyKey(ViewModelDependency::class), secondViewModelKey)
+
+        assertSame(firstAppDependency, secondAppDependency)
+        assertNotSame(firstViewModelDependency, secondViewModelDependency)
+    }
+
     class TestDependency
+    class AppDependency
+    class ViewModelDependency
 }

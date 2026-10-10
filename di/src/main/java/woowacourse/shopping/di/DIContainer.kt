@@ -12,12 +12,14 @@ import kotlin.reflect.full.primaryConstructor
 
 object DIContainer {
     private val scopes = mutableMapOf<ScopeKey, Scope>()
+    private val bindingScopes = mutableMapOf<DependencyKey<*>, ScopeType>()
     private val creating = mutableSetOf<DependencyKey<*>>()
     private val bindings = mutableMapOf<DependencyKey<*>, KClass<*>>()
 
-    fun openScope(key: ScopeKey) {
-        check(key !in scopes) { "이미 열린 스코프입니다: $key" }
-        scopes[key] = Scope(key)
+    fun openScope(key: ScopeKey, parentKey: ScopeKey? = null) {
+        check(key !in scopes)
+        if (parentKey != null) check(parentKey in scopes)
+        scopes[key] = Scope(key, parentKey)
     }
 
     fun closeScope(key: ScopeKey) {
@@ -28,8 +30,14 @@ object DIContainer {
         type: KClass<T>,
         implementation: KClass<out T>,
         qualifier: KClass<out Annotation>? = null,
+        scopeType: ScopeType? = null,
     ) {
-        bindings[DependencyKey(type, qualifier)] = implementation
+        val key = DependencyKey(type, qualifier)
+        bindings[key] = implementation
+        if (scopeType != null) {
+            bindingScopes[key] = scopeType
+            bindingScopes[DependencyKey(implementation, qualifier)] = scopeType
+        }
     }
 
     fun <T : Any> bindInstance(
@@ -38,15 +46,26 @@ object DIContainer {
         qualifier: KClass<out Annotation>? = null,
         scopeKey: ScopeKey,
     ) {
+        val key = DependencyKey(type, qualifier)
         val scope = scopes[scopeKey] ?: error("열리지 않은 스코프입니다: $scopeKey")
-        scope.put(DependencyKey(type, qualifier), instance)
+        scope.put(key, instance)
+        bindingScopes[key] = scopeKey.type
     }
 
     fun <T : Any> createInstance(
         key: DependencyKey<T>,
         scopeKey: ScopeKey,
     ): T {
-        val scope = scopes[scopeKey] ?: error("열리지 않은 스코프입니다: $scopeKey")
+        var ownerKey = scopeKey
+        val requiredType = bindingScopes[key]
+
+        if (requiredType != null) {
+            while (ownerKey.type != requiredType) {
+                ownerKey = scopes[ownerKey]?.parentKey ?: error("$key 의 스코프를 찾을 수 없습니다")
+            }
+        }
+
+        val scope = scopes[ownerKey] ?: error("열리지 않은 스코프입니다: $scopeKey")
 
         scope.get(key)?.let { return it }
 
@@ -67,7 +86,7 @@ object DIContainer {
                     modelClass
                 }
             val constructor = implementationClass.primaryConstructor ?: throw IllegalArgumentException("생성자를 찾을 수 없어요 : $modelClass")
-            val dependencies = findDependencies(constructor, scopeKey)
+            val dependencies = findDependencies(constructor, ownerKey)
             val instance = constructor.call(*dependencies.toTypedArray())
 
             scope.put(key, instance)
@@ -111,6 +130,7 @@ object DIContainer {
         scopes.clear()
         creating.clear()
         bindings.clear()
+        bindingScopes.clear()
     }
 
     private fun <T : Any> findImplementation(key: DependencyKey<T>): KClass<out T> {

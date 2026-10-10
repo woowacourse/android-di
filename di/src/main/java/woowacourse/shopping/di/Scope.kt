@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 class Scope(
     val id: ScopeKey,
+    val parentKey: ScopeKey? = null,
 ) {
     private val instances = mutableMapOf<DependencyKey<*>, Any>()
 
