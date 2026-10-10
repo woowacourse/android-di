@@ -7,6 +7,7 @@ import kotlin.reflect.full.findAnnotation
 internal sealed interface Registration {
     data class Binding(
         val implementation: KClass<*>,
+        val lifetime: DependencyLifetime,
     ) : Registration
 
     data class Instance(
@@ -32,10 +33,11 @@ internal class DependencyRegistry {
         from: KClass<T>,
         to: KClass<out T>,
         qualifier: KClass<out Annotation>?,
+        lifetime: DependencyLifetime,
     ) {
         val key = DependencyKey(from, qualifier)
         checkCanRegister(key)
-        registrations[key] = Registration.Binding(to)
+        registrations[key] = Registration.Binding(to, lifetime)
     }
 
     fun selectKey(

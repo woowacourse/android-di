@@ -11,6 +11,8 @@ class KirbyDIContainer {
     private val registry = DependencyRegistry()
     private val instanceStore = InstanceStore()
 
+    fun createScope(): DependencyScope = DependencyScope(this)
+
     fun <T : Any> registerInstance(
         type: KClass<T>,
         instance: T,
@@ -21,40 +23,75 @@ class KirbyDIContainer {
         from: KClass<T>,
         to: KClass<out T>,
         qualifier: KClass<out Annotation>? = null,
-    ) = registry.registerBinding(from, to, qualifier)
+        lifetime: DependencyLifetime = DependencyLifetime.EACH_SCOPE,
+    ) = registry.registerBinding(from, to, qualifier, lifetime)
 
-    fun <T : Any> createInstance(type: KClass<T>): T {
+    fun <T : Any> createInstance(
+        type: KClass<T>,
+        scope: DependencyScope? = null,
+    ): T {
+        val store = storeFor(scope)
         val key = registry.selectKey(type, null)
         val registration = registry.registrationFor(key)
         require(registration !is Registration.Instance) { "등록된 인스턴스를 새로 생성할 수 없습니다: $key" }
         val target = (registration as? Registration.Binding)?.implementation ?: type
+        val isContainerDependency = (registration as? Registration.Binding)?.lifetime == DependencyLifetime.CONTAINER
 
         @Suppress("UNCHECKED_CAST")
-        return (instantiate(key, target, mutableSetOf()) as T).also { registry.markResolved(type) }
+        return (instantiate(key, target, mutableSetOf(), store, isContainerDependency) as T).also { registry.markResolved(type) }
     }
 
     fun <T : Any> resolve(
         type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
+        scope: DependencyScope? = null,
     ): T {
+        val store = storeFor(scope)
+        val creatingKeys = mutableSetOf<DependencyKey>()
+        val dependency = resolveDependency(type, qualifier, creatingKeys, store)
+
         @Suppress("UNCHECKED_CAST")
-        return resolveDependency(type, qualifier, mutableSetOf()) as T
+        return dependency as T
+    }
+
+    private fun storeFor(scope: DependencyScope?): InstanceStore {
+        if (scope == null) {
+            return instanceStore
+        }
+
+        require(scope.container === this) { "다른 컨테이너의 스코프를 사용할 수 없습니다" }
+        require(!scope.isClosed) { "종료된 스코프를 사용할 수 없습니다" }
+        return scope.instanceStore
     }
 
     private fun resolveDependency(
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
         creatingKeys: MutableSet<DependencyKey>,
+        store: InstanceStore,
+        isContainerDependency: Boolean = false,
     ): Any {
         val key = registry.selectKey(type, qualifier)
-        (registry.registeredInstance(key) ?: instanceStore.get(key))?.let {
+        registry.registeredInstance(key)?.let {
             registry.markResolved(type)
             return it
         }
 
-        val target = (registry.registrationFor(key) as? Registration.Binding)?.implementation ?: type
-        return instantiate(key, target, creatingKeys).also {
-            instanceStore.put(key, it)
+        val binding = registry.registrationFor(key) as? Registration.Binding
+        val lifetime = binding?.lifetime ?: DependencyLifetime.EACH_SCOPE
+        require(!isContainerDependency || lifetime.sharesAcrossScopes) {
+            "컨테이너 공유 의존성은 스코프 의존성을 참조할 수 없습니다: $key"
+        }
+
+        val selectedStore = if (lifetime.sharesAcrossScopes) instanceStore else store
+        selectedStore.get(key)?.let {
+            registry.markResolved(type)
+            return it
+        }
+
+        val target = binding?.implementation ?: type
+        return instantiate(key, target, creatingKeys, store, lifetime.sharesAcrossScopes).also {
+            selectedStore.put(key, it)
             registry.markResolved(type)
         }
     }
@@ -63,6 +100,8 @@ class KirbyDIContainer {
         key: DependencyKey,
         target: KClass<*>,
         creatingKeys: MutableSet<DependencyKey>,
+        store: InstanceStore,
+        isContainerDependency: Boolean,
     ): Any {
         require(key !in creatingKeys) { "순환 의존성이 발견되었습니다: $key" }
         creatingKeys += key
@@ -75,10 +114,10 @@ class KirbyDIContainer {
                     val parameterType =
                         parameter.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("의존성 타입을 확인할 수 없습니다: $parameter")
-                    resolveDependency(parameterType, qualifierOf(parameter.annotations), creatingKeys)
+                    resolveDependency(parameterType, qualifierOf(parameter.annotations), creatingKeys, store, isContainerDependency)
                 }
             val instance = constructor.call(*arguments.toTypedArray())
-            injectFields(instance, creatingKeys)
+            injectFields(instance, creatingKeys, store, isContainerDependency)
             return instance
         } finally {
             creatingKeys -= key
@@ -88,6 +127,8 @@ class KirbyDIContainer {
     private fun injectFields(
         target: Any,
         creatingKeys: MutableSet<DependencyKey>,
+        store: InstanceStore,
+        isContainerDependency: Boolean,
     ) {
         target::class
             .memberProperties
@@ -98,7 +139,15 @@ class KirbyDIContainer {
                 val dependencyType =
                     property.returnType.classifier as? KClass<*>
                         ?: throw IllegalArgumentException("의존성 타입을 확인할 수 없습니다: $property")
-                property.setter.call(target, resolveDependency(dependencyType, qualifierOf(property.annotations), creatingKeys))
+                val dependency =
+                    resolveDependency(
+                        dependencyType,
+                        qualifierOf(property.annotations),
+                        creatingKeys,
+                        store,
+                        isContainerDependency,
+                    )
+                property.setter.call(target, dependency)
             }
     }
 
