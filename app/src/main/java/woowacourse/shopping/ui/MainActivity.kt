@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
         val viewModelFactory =
             DiViewModelFactory(
                 diManager = diManager,
+                parentKey = (application as ShoppingApplication).applicationKey,
             )
 
         super.onCreate(savedInstanceState)
