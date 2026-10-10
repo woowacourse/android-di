@@ -7,7 +7,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import woowacourse.shopping.data.CartRepository
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.repositoryImpl.DefaultCart
+import woowacourse.shopping.data.repositoryImpl.InMemoryCartRepository
+import woowacourse.shopping.data.repositoryImpl.ProductRepository
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -16,25 +18,19 @@ class DiManagerTest {
     @Test
     fun `ViewModel을 받았을 때 해당 ViewModel이 어떤 클래스인지 알 수 있다`() {
         // given
-        val diManager = DiManager()
+        val diManager =
+            DiManager().apply {
+                addInstance(ProductRepository::class.java, null, ProductRepository())
+                addInstance(
+                    CartRepository::class.java,
+                    DefaultCart::class,
+                    InMemoryCartRepository(),
+                )
+            }
 
         // when
-        val productsViewModel =
-            diManager.createInstance(
-                dependencyKey =
-                    DependencyKey(
-                        classType = ProductsViewModel::class.java,
-                        qualifier = null,
-                    ),
-            )
-        val cartViewModel =
-            diManager.createInstance(
-                dependencyKey =
-                    DependencyKey(
-                        classType = CartViewModel::class.java,
-                        qualifier = null,
-                    ),
-            )
+        val productsViewModel = diManager.resolve(ProductsViewModel::class.java)
+        val cartViewModel = diManager.resolve(CartViewModel::class.java)
 
         // then
         assertThat(productsViewModel).isInstanceOf(ProductsViewModel::class.java)
@@ -69,7 +65,7 @@ class DiManagerTest {
         val diManager = DiManager()
 
         // when
-        val viewModel = diManager.fieldInject(FieldInjectionTestViewModel::class.java)
+        val viewModel = diManager.resolve(FieldInjectionTestViewModel::class.java)
 
         // then
         assertThat(viewModel.isInjectedRepositoryInitialized()).isTrue()
@@ -79,14 +75,12 @@ class DiManagerTest {
     @Test
     fun `다른 ViewModel을 만들어도 ViewModel 객체를 생성할 수 있다`() {
         // given
-        val diManager = DiManager()
-        val testDependencyKey =
-            DependencyKey(
-                classType = TestViewModel::class.java,
-                qualifier = null,
-            )
+        val diManager =
+            DiManager().apply {
+                addInstance(ProductRepository::class.java, null, ProductRepository())
+            }
 
         // when
-        assertThat(diManager.createInstance(testDependencyKey)).isInstanceOf(TestViewModel::class.java)
+        assertThat(diManager.resolve(TestViewModel::class.java)).isInstanceOf(TestViewModel::class.java)
     }
 }

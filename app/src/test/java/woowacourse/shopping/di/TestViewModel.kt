@@ -2,7 +2,7 @@ package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
 import com.harodi.Inject
-import woowacourse.shopping.data.ProductRepository
+import woowacourse.shopping.data.repositoryImpl.ProductRepository
 
 class TestViewModel(
     private val productRepository: ProductRepository,

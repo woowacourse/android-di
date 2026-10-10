@@ -12,7 +12,7 @@ class DiManagerQualifierTest {
         val diManager = createDiManagerWithTwoRepositories()
 
         // when
-        val consumer = diManager.fieldInject(InMemoryRepositoryConsumer::class.java)
+        val consumer = diManager.resolve(InMemoryRepositoryConsumer::class.java)
 
         // then
         assertIs<InMemoryTestRepository>(consumer.repository)
@@ -22,12 +22,11 @@ class DiManagerQualifierTest {
     fun `같은 타입의 구현체가 둘 등록되어 있는데 Qualifier가 없으면 예외가 발생한다`() {
         // given
         val diManager = createDiManagerWithTwoRepositories()
-        val dependencyKey = DependencyKey(TestRepository::class.java, null)
 
         // when
         val exception =
             assertFailsWith<IllegalArgumentException> {
-                diManager.searchInstance(dependencyKey)
+                diManager.resolve(TestRepository::class.java)
             }
 
         // then
@@ -44,20 +43,30 @@ class DiManagerQualifierTest {
             qualifier = DefaultTestRepositoryQualifier::class,
             value = DefaultTestRepository::class.java,
         )
-        val dependencyKey =
-            DependencyKey(
-                classType = TestRepository::class.java,
-                qualifier = InMemoryTestRepositoryQualifier::class,
-            )
-
         // when
         val exception =
             assertFailsWith<IllegalArgumentException> {
-                diManager.searchInstance(dependencyKey)
+                diManager.resolve(
+                    modelClass = TestRepository::class.java,
+                    qualifier = InMemoryTestRepositoryQualifier::class,
+                )
             }
 
         // then
         assertContains(exception.message.orEmpty(), "등록된 구현체가 없습니다")
+    }
+
+    @Test
+    fun `생성자 주입으로 생성된 객체도 필드 주입을 받는다`() {
+        // given
+        val diManager = DiManager()
+
+        // when
+        val consumer = diManager.resolve(ConstructorInjectionConsumer::class.java)
+
+        // then
+        assertIs<ConstructorDependency>(consumer.constructorDependency)
+        assertIs<FieldDependency>(consumer.constructorDependency.fieldDependency)
     }
 
     private fun createDiManagerWithTwoRepositories(): DiManager =
@@ -80,6 +89,17 @@ interface TestRepository
 class DefaultTestRepository : TestRepository
 
 class InMemoryTestRepository : TestRepository
+
+internal class ConstructorInjectionConsumer(
+    val constructorDependency: ConstructorDependency,
+)
+
+internal class ConstructorDependency {
+    @Inject
+    lateinit var fieldDependency: FieldDependency
+}
+
+internal class FieldDependency
 
 internal class InMemoryRepositoryConsumer {
     @Inject
