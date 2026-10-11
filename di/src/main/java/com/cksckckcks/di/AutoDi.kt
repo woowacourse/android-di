@@ -8,32 +8,51 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 class AutoDi(
-    private val container: DiContainer,
+    private val scope: ScopedContainer,
 ) {
-    fun <T : Any> createInstance(targetClass: KClass<T>): T {
-        val constructor =
-            targetClass.primaryConstructor
-                ?: throw IllegalArgumentException("${targetClass.simpleName}의 주 생성자가 없습니다.")
+    fun <T : Any> createInstance(targetClass: KClass<T>): T = createInstance(targetClass, mutableListOf())
 
-        val dependencyClasses =
-            constructor.parameters.map { param ->
-                val dependencyClass =
-                    param.type.classifier as? KClass<*>
-                        ?: throw IllegalArgumentException("${param.name}은 클래스가 아닙니다.")
+    private fun <T : Any> createInstance(
+        targetClass: KClass<T>,
+        path: MutableList<BindingKey>,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val key = BindingKey(targetClass, qualifier)
+        val cycleStart = path.indexOf(key)
+        require(cycleStart == -1) {
+            val cycle = (path.drop(cycleStart) + key).joinToString(" → ") { it.displayName() }
+            "순환 의존성이 감지되었습니다: $cycle"
+        }
 
-                getInstance(dependencyClass, findQualifier(param.annotations))
-            }
+        path += key
+        try {
+            val constructor =
+                targetClass.primaryConstructor
+                    ?: throw IllegalArgumentException("${targetClass.simpleName}의 주 생성자가 없습니다.")
 
-        val instance = constructor.call(*dependencyClasses.toTypedArray())
+            val dependencyClasses =
+                constructor.parameters.map { param ->
+                    val dependencyClass =
+                        param.type.classifier as? KClass<*>
+                            ?: throw IllegalArgumentException("${param.name}은 클래스가 아닙니다.")
 
-        injectProperties(targetClass, instance)
+                    getInstance(dependencyClass, path, findQualifier(param.annotations))
+                }
 
-        return instance
+            val instance = constructor.call(*dependencyClasses.toTypedArray())
+
+            injectProperties(targetClass, instance, path)
+
+            return instance
+        } finally {
+            path.removeAt(path.lastIndex)
+        }
     }
 
     private fun injectProperties(
         targetClass: KClass<*>,
         instance: Any,
+        path: MutableList<BindingKey>,
     ) {
         targetClass.memberProperties
             .filter { it.findAnnotation<InjectProperty>() != null }
@@ -49,7 +68,10 @@ class AutoDi(
                         ?: throw IllegalArgumentException("${property.name}은 클래스가 아닙니다.")
 
                 mutableProperty.isAccessible = true
-                mutableProperty.setter.call(instance, getInstance(dependencyClass, findQualifier(property.annotations)))
+                mutableProperty.setter.call(
+                    instance,
+                    getInstance(dependencyClass, path, findQualifier(property.annotations)),
+                )
             }
     }
 
@@ -65,9 +87,10 @@ class AutoDi(
 
     private fun getInstance(
         targetClass: KClass<*>,
+        path: MutableList<BindingKey>,
         qualifier: KClass<out Annotation>? = null,
     ): Any {
-        container.getInstance(targetClass, qualifier)?.let {
+        scope.getInstance(targetClass, qualifier)?.let {
             return it
         }
 
@@ -75,9 +98,13 @@ class AutoDi(
             "${targetClass.simpleName}에 ${qualifier?.simpleName} Qualifier로 등록된 의존성이 없습니다."
         }
 
-        val instance = createInstance(targetClass)
-        container.saveInstance(targetClass, instance)
+        val instance = createInstance(targetClass, path, qualifier)
+        scope.saveInstance(targetClass, instance, qualifier)
 
         return instance
     }
 }
+
+private fun BindingKey.displayName(): String =
+    listOfNotNull(qualifier?.simpleName?.let { "@$it" }, type.simpleName)
+        .joinToString(" ")

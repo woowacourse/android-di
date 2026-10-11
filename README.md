@@ -84,3 +84,38 @@
 
 ### `:di` 모듈을 안드로이드 모듈·순수 JVM 모듈 중 무엇으로 만들었는지에 대한 근거
 - `:di`는 순수 JVM 모듈로 만들었다. Qualifier 해석, 객체 등록·조회, 자동 주입에는 Android API가 필요하지 않기 때문이다.
+
+## 4단계 구현 기능
+- [x] 스코프별로 의존성을 관리하도록 컨테이너 구조 변경
+    - [x] 스코프 종료 시 인스턴스 참조 제거
+    - [x] 새로운 스코프를 추가할 수 있는 구조로 구현
+- [x] 자동 주입에 스코프 적용
+- [x] CartRepository를 앱 스코프로 관리
+- [x] ProductRepository를 ViewModel 스코프로 관리
+- [x] DateFormatter를 화면 스코프로 주입
+    - [x] 화면 재진입 시 새로운 인스턴스 생성
+    - [x] 구성 변경 시 기존 인스턴스 유지
+- [x] 스코프별 생성과 소멸 테스트 작성
+
+### DI와 서비스 로케이터에 대한 판단
+
+내가 만든 것은 DI를 지원하는 런타임 컨테이너다. 직접 조회하는 API도 제공하므로 서비스 로케이터로 사용할 수 있지만, 현재 앱의 ViewModel과 화면에는 외부에서 의존성을 전달하는 DI 방식으로 사용하고 있다.
+DI인지 판단할 때는 의존성을 사용하는 객체가 직접 찾는지, 외부에서 전달받는지를 기준으로 삼았다. ProductsViewModel은 ProductRepository를 생성자로 받고, AutoDi.createInstance()가 생성자 파라미터와 Qualifier를 해석해 constructor.call()로 전달한다. CartScreen도 DateFormatter를 함수 파라미터로 받으며, ShoppingNavHost가 CartScreenScopeFactory에서 준비한 객체를 전달한다. 두 사용처 모두 필요한 의존성이 시그니처에 드러나고, 내부에서 컨테이너를 조회하지 않는다.
+다만 모든 주입이 같은 명시성을 갖는 것은 아니다. ViewModel의 CartRepository 필드는 AutoDi.injectProperties()가 setter.call()로 주입한다. 외부에서 값을 넣으므로 필드 DI지만, 생성자만 봐서는 필요한 의존성을 알 수 없다. 또한 주입 전에 접근하면 초기화 오류가 발생한다. 따라서 DI라는 판단과 의존성이 시그니처에 드러난다는 판단은 구분해야 한다.
+getInstance()를 직접 호출하는 ShoppingContainer의 DAO 조회와 CartScreenScopeFactory의 포맷터 조회는 객체를 조립하기 위한 코드다. 여기서 조회한 의존성을 사용 객체에 전달하므로, 조회 API가 있다는 이유만으로 앱의 사용 방식을 서비스 로케이터라고 판단하지 않았다. 반대로 ViewModel이나 CartScreen 내부에서 필요한 객체를 getInstance()로 꺼낸다면, 의존성을 스스로 찾고 시그니처에서 숨기는 서비스 로케이터 방식이 된다.
+이 판단은 DIP와도 별개다. DI가 의존성을 전달하는 방법이라면, DIP는 상위 정책과 하위 구현이 추상화에 의존하도록 하는 설계 원칙이다. ViewModel은 CartRepository 인터페이스에 의존하고, DefaultCartRepository와 InMemoryCartRepository의 선택은 ShoppingContainer가 담당한다. 이 관계는 추상화에 의존하는 방향이다. 반면 ProductsViewModel이 생성자로 받는 ProductRepository는 구체 클래스이므로, 생성자 DI를 적용했다는 사실만으로 DIP까지 만족한다고 할 수 없다.
+IoC는 제어의 주체에 대한 이야기다. 현재 Android의 ViewModelProvider가 필요한 시점에 ViewModelFactory.create()를 호출하고, AutoDi가 의존성을 준비해 ViewModel의 생성자를 호출한다. ViewModel이 제거될 때는 addCloseable()에 등록한 스코프가 닫힌다. 업무 로직이 자신의 생성과 종료 시점을 결정하지 않고 외부의 생성·생명주기 관리에 맡긴다는 점에서 IoC를 볼 수 있다. 그 과정에서 의존성을 전달하는 방법이 DI다. 컨테이너 없이 직접 객체를 생성해 생성자에 전달하는 수동 DI도 가능하므로, DI·DIP·IoC를 같은 의미로 보거나 컨테이너를 사용했다는 이유로 셋을 모두 만족한다고 판단하지 않는다.
+
+### 컴파일 타임 방식으로 전환할 때의 설계와 비용
+
+현재 AutoDi는 primaryConstructor와 memberProperties로 주입 지점을 찾고, 타입과 Qualifier를 해석해 객체를 생성한다. 생성자와 주입 필드의 유효성, 의존성 누락·중복·순환도 런타임에 판단한다. KSP로 바꾸려면 이 역할을 생성 코드와 빌드 시점의 그래프 검증으로 옮겨야 한다. KSP를 도입하는 것만으로 설정 오류가 자동 검증되는 것은 아니다.
+빌드 시점에는 주입 대상, 생성자 파라미터, Qualifier, 구현체·제공 함수의 연결과 스코프 정책을 알아야 한다. 이를 읽을 수 있도록 ShoppingContainer의 register() 람다를 선언적인 등록 방식으로 바꾸고, private 필드 주입은 생성자 주입으로 옮긴다. 실제 Context, 스코프 ID와 종료 시점은 런타임 정보이므로 ScopedContainer의 캐시와 생명주기 관리는 유지할 수 있다.
+
+「Reflection의 대가」의 네 가지 비용과 연결하면 다음과 같다.
+
+- 코드 축소(R8): 생성 코드의 직접 참조로 사용 관계가 드러나므로, reflection 대상을 보존하는 keep 규칙과 그에 따른 축소·난독화 제한을 줄일 수 있다.
+- 시작 성능: 생성자·프로퍼티·애노테이션 탐색을 빌드 시점으로 옮겨, 시작 시 생성하는 객체의 reflection 비용을 없앨 수 있다. 화면 진입 시 생성하는 객체에도 같은 이점이 있으며, 실제 객체 생성과 캐시 조회 비용은 남는다.
+- 오류 시점: 선언된 그래프의 누락·중복·순환을 프로세서가 검증하면 화면 진입 후의 예외 대신 빌드 실패로 발견할 수 있다. 제공 함수 내부의 실행 오류까지 빌드 시점에 알 수 있는 것은 아니다.
+- KMP: JVM 전용 kotlin-reflect 의존성을 제거하면 공용 코드로 옮길 수 있는 기반이 생긴다. 다만 코어의 AutoCloseable 등 플랫폼 관련 API도 확인하고, Android 생명주기 연동은 플랫폼 계층에 두어야 한다.
+
+대신 코드 생성과 컴파일에 따른 빌드 비용, 프로세서 유지보수와 테스트 부담이 추가된다. 정적으로 검증할 바인딩을 미리 선언해야 하므로 런타임에 임의로 등록·교체하는 유연성도 제한된다. KMP 지원 역시 KSP 전환만으로 완성되는 것이 아니라 공용 코드와 플랫폼 코드의 분리가 함께 필요하다.
