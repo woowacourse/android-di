@@ -56,7 +56,7 @@ fun ShoppingNavHost(
                 dependencyContainer.getInstance(
                     type = DateFormatter::class,
                     scope = screenScopeOwner.scope,
-                ) as DateFormatter
+                )
 
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },

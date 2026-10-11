@@ -50,11 +50,11 @@ class DependencyContainer(
             }
     }
 
-    fun getInstance(
-        type: KClass<*>,
+    fun <T : Any> getInstance(
+        type: KClass<T>,
         qualifier: KClass<out Annotation>? = null,
         scope: DependencyScope = applicationScope,
-    ): Any {
+    ): T {
         scope.checkOpen()
 
         val binding = findBinding(type, qualifier)
@@ -62,12 +62,15 @@ class DependencyContainer(
 
         val owner = scope.findOwner(binding.scopeKind)
 
-        return owner.getOrCreate(key) {
-            createInstance(
-                type = binding.implementation,
-                scope = owner,
-            )
-        }
+        val instance =
+            owner.getOrCreate(key) {
+                createInstance(
+                    type = binding.implementation,
+                    scope = owner,
+                )
+            }
+
+        return type.java.cast(instance)
     }
 
     private fun createInstance(

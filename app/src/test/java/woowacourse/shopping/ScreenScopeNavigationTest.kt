@@ -193,7 +193,7 @@ class ScreenScopeNavigationTest {
                         container.getInstance(
                             type = DateFormatter::class,
                             scope = owner.scope,
-                        ) as DateFormatter
+                        )
 
                     val currentRevision = revision.value
 
