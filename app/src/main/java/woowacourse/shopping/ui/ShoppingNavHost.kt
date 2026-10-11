@@ -1,11 +1,16 @@
 package woowacourse.shopping.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import woowacourse.shopping.di.HunnitFactory
+import woowacourse.shopping.di.ScreenScopeOwner
 import woowacourse.shopping.ui.cart.CartScreen
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.products.ProductsScreen
 
 object ShoppingRoute {
@@ -19,11 +24,32 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         navController = navController,
         startDestination = ShoppingRoute.PRODUCTS,
     ) {
-        composable(ShoppingRoute.PRODUCTS) {
-            ProductsScreen(onNavigateToCart = { navController.navigate(ShoppingRoute.CART) })
+        composable(ShoppingRoute.PRODUCTS) { backStackEntry ->
+            val scopeOwner: ScreenScopeOwner =
+                viewModel(
+                    viewModelStoreOwner = backStackEntry,
+                    factory = HunnitFactory.screenScopeFactory(),
+                )
+            ProductsScreen(
+                onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
+                factory = HunnitFactory.viewModelFactory(scopeOwner.scope),
+            )
         }
-        composable(ShoppingRoute.CART) {
-            CartScreen(onNavigateUp = { navController.navigateUp() })
+        composable(ShoppingRoute.CART) { backStackEntry ->
+            val scopeOwner: ScreenScopeOwner =
+                viewModel(
+                    viewModelStoreOwner = backStackEntry,
+                    factory = HunnitFactory.screenScopeFactory(),
+                )
+            val dateFormatter =
+                remember(scopeOwner.scope) {
+                    scopeOwner.scope.resolve(DateFormatter::class) as DateFormatter
+                }
+            CartScreen(
+                onNavigateUp = { navController.navigateUp() },
+                dateFormatter = dateFormatter,
+                factory = HunnitFactory.viewModelFactory(scopeOwner.scope),
+            )
         }
     }
 }

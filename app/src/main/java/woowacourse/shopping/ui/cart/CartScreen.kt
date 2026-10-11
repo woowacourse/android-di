@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -43,15 +43,14 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 @Composable
 fun CartScreen(
     onNavigateUp: () -> Unit,
+    dateFormatter: DateFormatter,
     modifier: Modifier = Modifier,
-    viewModel: CartViewModel = viewModel(factory = HunnitFactory),
+    factory: ViewModelProvider.Factory = HunnitFactory,
+    viewModel: CartViewModel = viewModel(factory = factory),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
-
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
 
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()
