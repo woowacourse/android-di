@@ -9,9 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import woowacourse.shopping.di.DIContainer
-import woowacourse.shopping.di.DependencyKey
 import woowacourse.shopping.ui.cart.CartScreen
-import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModel
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModelFactory
+import woowacourse.shopping.ui.cart.DIContainerKey
+import woowacourse.shopping.ui.cart.ScreenEntryIdKey
 import woowacourse.shopping.ui.products.ProductsScreen
 
 object ShoppingRoute {
@@ -22,7 +24,7 @@ object ShoppingRoute {
 @Composable
 fun ShoppingNavHost(
     diContainer: DIContainer,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val viewModelFactory = remember(diContainer) { ViewModelFactory(diContainer) }
 
@@ -43,24 +45,16 @@ fun ShoppingNavHost(
                     this[DIContainerKey] = diContainer
                 }
 
-            val screenScopeViewModel =
-                viewModel<ScreenScopeViewModel>(
+            val cartScopeViewModel =
+                viewModel<CartScreenScopeViewModel>(
                     viewModelStoreOwner = backStackEntry,
-                    factory = ScreenScopeViewModelFactory,
+                    factory = CartScreenScopeViewModelFactory,
                     extras = extras,
                 )
 
-            val dateFormatter =
-                remember(diContainer, screenScopeViewModel.scopeKey) {
-                    diContainer.createInstance(
-                        DependencyKey(DateFormatter::class),
-                        screenScopeViewModel.scopeKey,
-                    )
-                }
-
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },
-                dateFormatter = dateFormatter,
+                dateFormatter = cartScopeViewModel.dateFormatter,
                 viewModel = viewModel(factory = viewModelFactory),
             )
         }
