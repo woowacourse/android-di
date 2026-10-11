@@ -157,6 +157,7 @@ class KirbyDIContainerTest {
 
         assertThatThrownBy { container.createInstance(CyclicA::class) }
             .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("순환 의존성이 발견되었습니다")
     }
 
     @Test

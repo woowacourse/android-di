@@ -7,6 +7,7 @@ import kotlin.reflect.full.findAnnotation
 internal sealed interface Registration {
     data class Binding(
         val implementation: KClass<*>,
+        val lifetime: DependencyLifetime,
     ) : Registration
 
     data class Instance(
@@ -16,7 +17,6 @@ internal sealed interface Registration {
 
 internal class DependencyRegistry {
     private val registrations = mutableMapOf<DependencyKey, Registration>()
-    private val generatedInstances = mutableMapOf<DependencyKey, Any>()
     private val resolvedTypes = mutableSetOf<KClass<*>>()
 
     fun <T : Any> registerInstance(
@@ -33,10 +33,11 @@ internal class DependencyRegistry {
         from: KClass<T>,
         to: KClass<out T>,
         qualifier: KClass<out Annotation>?,
+        lifetime: DependencyLifetime,
     ) {
         val key = DependencyKey(from, qualifier)
         checkCanRegister(key)
-        registrations[key] = Registration.Binding(to)
+        registrations[key] = Registration.Binding(to, lifetime)
     }
 
     fun selectKey(
@@ -68,16 +69,7 @@ internal class DependencyRegistry {
 
     fun registrationFor(key: DependencyKey): Registration? = registrations[key]
 
-    fun existingInstance(key: DependencyKey): Any? = (registrations[key] as? Registration.Instance)?.value ?: generatedInstances[key]
-
-    fun cacheGenerated(
-        key: DependencyKey,
-        type: KClass<*>,
-        instance: Any,
-    ) {
-        generatedInstances[key] = instance
-        markResolved(type)
-    }
+    fun registeredInstance(key: DependencyKey): Any? = (registrations[key] as? Registration.Instance)?.value
 
     fun markResolved(type: KClass<*>) {
         resolvedTypes += type
