@@ -1,6 +1,8 @@
 package woowacourse.shopping.di
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import woowacourse.di.FieldInject
@@ -9,6 +11,34 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
 class AoDiTest {
+    @Test
+    fun `앱 의존성은 여러 ViewModel이 공유하고 ViewModel 의존성은 각자 생성한다`() {
+        val appDependency = AppScopedDependency()
+        AoDi.openApplicationScope()
+        AoDi.registerScopeRule(AppScopedDependency::class, ShoppingScopes.application)
+        AoDi.registerScopeRule(ViewModelScopedDependency::class, ShoppingScopes.viewModel)
+        AoDi.register(
+            AppScopedDependency::class,
+            appDependency,
+            scopeContext = ShoppingScopes.applicationContext,
+        )
+        val firstStore = ViewModelStore()
+        val secondStore = ViewModelStore()
+
+        val firstProvider = ViewModelProvider.create(firstStore, AoDi)
+        val first = firstProvider[ScopedViewModel::class]
+        val same = firstProvider[ScopedViewModel::class]
+        val second = ViewModelProvider.create(secondStore, AoDi)[ScopedViewModel::class]
+
+        assertThat(first).isSameAs(same)
+        assertThat(first.appDependency).isSameAs(appDependency)
+        assertThat(second.appDependency).isSameAs(appDependency)
+        assertThat(first.viewModelDependency).isNotSameAs(second.viewModelDependency)
+
+        firstStore.clear()
+        secondStore.clear()
+    }
+
     @Test
     fun `생성자 의존성을 재귀적으로 생성한다`() {
         val root = AoDi.instantiate(Root::class)
@@ -122,6 +152,15 @@ class AoDiTest {
     )
 
     class SharedDependency
+
+    class AppScopedDependency
+
+    class ViewModelScopedDependency
+
+    class ScopedViewModel(
+        val appDependency: AppScopedDependency,
+        val viewModelDependency: ViewModelScopedDependency,
+    ) : ViewModel()
 
     interface RegisteredDependency
 

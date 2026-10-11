@@ -1,15 +1,19 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.di.AoDi
 import woowacourse.shopping.di.InMemoryCart
 import woowacourse.shopping.di.RoomCart
+import woowacourse.shopping.di.ShoppingScopes
+import woowacourse.shopping.ui.cart.DateFormatter
 
 class ShoppingApplication : Application() {
     override fun onCreate() {
@@ -24,9 +28,20 @@ class ShoppingApplication : Application() {
                     "shopping.db",
                 ).build()
 
-        // DAO는 Room이 생성하므로 객체를 등록하고, Repository는 구현 클래스 정보만 연결한다.
-        // 이후 CartRepository 요청 시 AoDi가 DAO를 재사용해 DefaultCartRepository를 만든다.
-        AoDi.register(CartProductDao::class, database.cartProductDao())
+        AoDi.openApplicationScope()
+        AoDi.registerScopeRule(Context::class, ShoppingScopes.application)
+        AoDi.registerScopeRule(CartProductDao::class, ShoppingScopes.application)
+        AoDi.registerScopeRule(CartRepository::class, ShoppingScopes.application)
+        AoDi.registerScopeRule(ProductRepository::class, ShoppingScopes.viewModel)
+        AoDi.registerScopeRule(DateFormatter::class, ShoppingScopes.screen)
+
+        // Room이 만들거나 Android가 제공하는 객체는 앱 스코프에 외부 객체로 등록한다.
+        AoDi.register(Context::class, applicationContext, scopeContext = ShoppingScopes.applicationContext)
+        AoDi.register(
+            CartProductDao::class,
+            database.cartProductDao(),
+            scopeContext = ShoppingScopes.applicationContext,
+        )
         AoDi.registerInterfaceRule(CartRepository::class, DefaultCartRepository::class, RoomCart::class)
         AoDi.registerInterfaceRule(CartRepository::class, InMemoryCartRepository::class, InMemoryCart::class)
     }

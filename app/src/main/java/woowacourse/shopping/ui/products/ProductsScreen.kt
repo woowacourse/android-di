@@ -31,18 +31,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import woowacourse.shopping.R
-import woowacourse.shopping.di.AoDi
 import woowacourse.shopping.model.Product
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
 fun ProductsScreen(
+    viewModel: ProductsViewModel,
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel = viewModel(factory = AoDi),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

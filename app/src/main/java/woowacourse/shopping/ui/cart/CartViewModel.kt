@@ -20,7 +20,7 @@ data class CartUiState(
 )
 
 class CartViewModel : ViewModel() {
-    // 생성자에서 받지 않는 의존성이므로 AoDi.inject()가 끝나기 전에는 사용하면 안 된다.
+    // 생성자에서 받지 않는 의존성이므로 컨테이너의 필드 주입이 끝나기 전에는 사용하면 안 된다.
     // 외부 코드의 직접 접근은 막되, 리플렉션으로 값을 채울 수 있도록 var로 둔다.
     @FieldInject
     @RoomCart
