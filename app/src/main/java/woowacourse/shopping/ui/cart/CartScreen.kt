@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import woowacourse.di.DependencyContainer
 import woowacourse.shopping.R
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.di.AutoViewModelFactory
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
@@ -53,8 +56,24 @@ fun CartScreen(
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
 
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
+    val screenScopeId = remember {
+        DependencyContainer.openChildScope(
+            parentId = ShoppingApplication.APP_SCOPE_ID
+        )
+    }
+
+    DisposableEffect(screenScopeId) {
+        onDispose {
+            DependencyContainer.closeScope(screenScopeId)
+        }
+    }
+
+    val dateFormatter = remember(screenScopeId) {
+        DependencyContainer.getInstance(
+            type = DateFormatter::class,
+            scopeId = screenScopeId,
+        ) as DateFormatter
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getAllCartProducts()
@@ -133,7 +152,10 @@ fun CartProductItem(
                 .padding(top = 20.dp)
                 .padding(20.dp),
     ) {
-        Text(text = dateFormatter.formatDate(cartProduct.createdAt), style = MaterialTheme.typography.labelSmall)
+        Text(
+            text = dateFormatter.formatDate(cartProduct.createdAt),
+            style = MaterialTheme.typography.labelSmall
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = cartProduct.name,

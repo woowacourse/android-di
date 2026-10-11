@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
@@ -25,6 +26,12 @@ class ShoppingApplication : Application() {
         val dao = database.cartProductDao()
 
         DependencyContainer.openScope(APP_SCOPE_ID)
+
+        DependencyContainer.register(
+            APP_SCOPE_ID,
+            Context::class,
+            applicationContext,
+        )
 
         DependencyContainer.register(
             APP_SCOPE_ID,
