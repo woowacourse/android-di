@@ -1,6 +1,7 @@
 package woowacourse.shopping
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import woowacourse.shopping.data.CartProductDao
@@ -14,10 +15,13 @@ import woowacourse.shopping.data.annotation.RoomCart
 import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.di.ScopeKey
 import woowacourse.shopping.di.ScopeType
+import woowacourse.shopping.ui.cart.DateFormatter
 
 object AppScope : ScopeType
 
 object ViewModelScope : ScopeType
+
+object ScreenScope : ScopeType
 
 val appScopeKey = ScopeKey(AppScope, "app")
 
@@ -37,6 +41,11 @@ class ShoppingApplication : Application() {
             instance = db.cartProductDao(),
             scopeKey = appScopeKey,
         )
+        DIContainer.bindInstance(
+            type = Context::class,
+            instance = this,
+            scopeKey = appScopeKey,
+        )
         DIContainer.bind(
             type = CartRepository::class,
             implementation = DefaultCartRepository::class,
@@ -53,6 +62,11 @@ class ShoppingApplication : Application() {
             type = ProductRepository::class,
             implementation = ProductRepository::class,
             scopeType = ViewModelScope,
+        )
+        DIContainer.bind(
+            type = DateFormatter::class,
+            implementation = DateFormatter::class,
+            scopeType = ScreenScope,
         )
     }
 }
