@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import woowacourse.shopping.ScreenScope
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.appScopeKey
 import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.di.DependencyKey
@@ -31,7 +32,11 @@ object CartScreenScopeViewModelFactory : ViewModelProvider.Factory {
         require(modelClass == CartScreenScopeViewModel::class.java)
 
         val entryId = requireNotNull(extras[ScreenEntryIdKey])
-        val diContainer = requireNotNull(extras[DIContainerKey])
+        val application =
+            extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
+                as? ShoppingApplication
+                ?: error("ShoppingApplication을 찾을 수 없습니다")
+        val diContainer = application.diContainer
         val scopeKey = ScopeKey(ScreenScope, entryId)
 
         diContainer.openScope(scopeKey, parentKey = appScopeKey)
