@@ -5,7 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import woowacourse.shopping.di.AppDI
 import woowacourse.shopping.ui.cart.CartScreen
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.shopping.ui.products.ProductsScreen
 
 object ShoppingRoute {
@@ -22,8 +24,12 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         composable(ShoppingRoute.PRODUCTS) {
             ProductsScreen(onNavigateToCart = { navController.navigate(ShoppingRoute.CART) })
         }
-        composable(ShoppingRoute.CART) {
-            CartScreen(onNavigateUp = { navController.navigateUp() })
+        composable(ShoppingRoute.CART) { entry ->
+            val dateFormatter = AppDI.screenScopeProvider.get(entry).resolve(DateFormatter::class)
+            CartScreen(
+                onNavigateUp = { navController.navigateUp() },
+                dateFormatter = dateFormatter,
+            )
         }
     }
 }

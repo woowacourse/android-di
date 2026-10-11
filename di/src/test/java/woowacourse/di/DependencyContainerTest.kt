@@ -266,4 +266,48 @@ class DependencyContainerTest {
 
         assertThat(service.repository).isSameAs(repository)
     }
+
+    @Test
+    fun `컨테이너를 닫으면 모든 스코프와 등록 정보를 정리한다`() {
+        val container = DependencyContainer()
+        val app = ScopeType("app")
+        val viewModel = ScopeType("viewModel")
+        val screen = ScopeType("screen")
+        container.bind(TestRepository::class, app) { TestRepository() }
+        container.bind(TestService::class, viewModel)
+        container.bind(TestRepository::class, screen) { TestRepository() }
+        val appScope = container.openScope(app, "application")
+        val vmScope = container.openScope(viewModel, "vm-1", parent = appScope)
+        val screenScope = container.openScope(screen, "cart-1", parent = appScope)
+        val legacyRepository = container.resolve(TestRepository::class)
+        container.register(QualifiedTestRepository::class, RoomTestRepository(), RoomCart::class)
+        appScope.resolve(TestRepository::class)
+        vmScope.resolve(TestService::class)
+        screenScope.resolve(TestRepository::class)
+        assertThat(container.activeScopeCount).isEqualTo(3)
+
+        container.close()
+
+        assertThat(container.activeScopeCount).isZero()
+        listOf(appScope, vmScope, screenScope).forEach { scope ->
+            assertThat(scope.instanceCount).isZero()
+            assertThatThrownBy {
+                scope.resolve(TestRepository::class)
+            }.isInstanceOf(IllegalStateException::class.java)
+                .hasMessageContaining("닫힌 스코프")
+        }
+        assertThat(container.resolve(TestRepository::class)).isNotSameAs(legacyRepository)
+        assertThatThrownBy {
+            container.resolve(QualifiedTestRepository::class, RoomCart::class)
+        }.isInstanceOf(IllegalStateException::class.java)
+        assertThatThrownBy {
+            container.openScope(app, "application").resolve(TestRepository::class)
+        }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy {
+            container.openScope(viewModel, "vm-1").resolve(TestService::class)
+        }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy {
+            container.openScope(screen, "cart-1").resolve(TestRepository::class)
+        }.isInstanceOf(IllegalArgumentException::class.java)
+    }
 }

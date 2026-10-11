@@ -22,7 +22,6 @@ data class ProductsUiState(
 
 class ProductsViewModel : ViewModel() {
     @MyInject
-    @RoomCart
     lateinit var productRepository: ProductRepository
 
     @MyInject

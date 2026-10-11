@@ -7,8 +7,56 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
-class DependencyContainer {
+class DependencyContainer : AutoCloseable {
     private val instances: MutableMap<DependencyKey, Any> = mutableMapOf()
+    private val scopedFactories: MutableMap<ScopeType, MutableMap<DependencyKey, (Scope) -> Any>> = mutableMapOf()
+    private val scopes: MutableMap<ScopeKey, Scope> = mutableMapOf()
+
+    val activeScopeCount: Int
+        get() = scopes.size
+
+    override fun close() {
+        scopes.values.toList().forEach { scope -> scope.close() }
+        scopes.clear()
+        scopedFactories.clear()
+        instances.clear()
+    }
+
+    fun <T : Any> bind(
+        type: KClass<T>,
+        scopeType: ScopeType,
+        qualifier: KClass<out Annotation>? = null,
+        factory: () -> T,
+    ) {
+        scopedFactories.getOrPut(scopeType) { mutableMapOf() }[DependencyKey(type, qualifier)] = {
+            factory()
+        }
+    }
+
+    fun <T : Any> bind(
+        type: KClass<T>,
+        scopeType: ScopeType,
+        qualifier: KClass<out Annotation>? = null,
+    ) {
+        scopedFactories.getOrPut(scopeType) { mutableMapOf() }[DependencyKey(type, qualifier)] = { scope ->
+            scope.create(type)
+        }
+    }
+
+    fun openScope(
+        scopeType: ScopeType,
+        ownerId: String,
+        parent: Scope? = null,
+    ): Scope {
+        val key = ScopeKey(scopeType, ownerId)
+        return scopes.getOrPut(key) {
+            Scope(
+                factories = scopedFactories.getOrPut(scopeType) { mutableMapOf() },
+                parent = parent,
+                onClose = { scopes.remove(key) },
+            )
+        }
+    }
 
     fun <T : Any> resolve(
         type: KClass<T>,
@@ -102,7 +150,7 @@ class DependencyContainer {
     }
 }
 
-private data class DependencyKey(
-    val type: KClass<*>,
-    val qualifier: KClass<out Annotation>?,
+private data class ScopeKey(
+    val type: ScopeType,
+    val ownerId: String,
 )
