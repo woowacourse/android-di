@@ -6,4 +6,5 @@ data class DependencyBinding(
     val type: KClass<*>,
     val implementation: KClass<*>,
     val qualifier: KClass<out Annotation>? = null,
+    val scopeKind: ScopeKind = ScopeKind.Application,
 )
