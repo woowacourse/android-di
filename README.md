@@ -111,11 +111,13 @@ Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI
 
 ### 내가 만든 컨테이너는 DI인가, 서비스 로케이터인가?
 
-현재 앱은 컨테이너를 **DI 방식으로 사용한다**. `createInstance()` 호출은 객체를 조립하는 `ViewModelFactory`와 `CartScreenScopeViewModelFactory`에 모여 있다. ViewModel은 컨테이너를 직접 조회하지 않고 의존성을 주입받으며, `CartScreen`의 `viewModel`과 `dateFormatter`는 함수 시그니처에 드러난다.
+현재 앱은 컨테이너를 **DI 방식으로 사용한다**. `resolve()` 호출은 객체를 조립하는 `ViewModelFactory`와 `CartScreenScopeViewModelFactory`에 모여 있다. ViewModel은 컨테이너를 직접 조회하지 않고 의존성을 주입받으며, `CartScreen`의 `viewModel`과 `dateFormatter`는 함수 시그니처에 드러난다.
 
-다만 `@Inject` 필드는 생성자 시그니처에 보이지 않고, 팩토리는 `CreationExtras`에서 앱의 컨테이너를 찾는다. 따라서 모든 의존성이 명시적인 생성자 DI인 것은 아니다. 소비자 클래스가 직접 `createInstance()`를 호출한다면 그 사용 방식은 서비스 로케이터에 가까워진다.
+다만 `@Inject` 필드는 생성자 시그니처에 보이지 않고, 팩토리는 `CreationExtras`에서 앱의 컨테이너를 찾는다. 따라서 모든 의존성이 명시적인 생성자 DI인 것은 아니다. 소비자 클래스가 직접 `resolve()`를 호출한다면 그 사용 방식은 서비스 로케이터에 가까워진다.
 
-**DIP**는 어떤 타입에 의존하느냐에 대한 원칙이다. `CartViewModel`은 `CartRepository` 인터페이스에 의존하지만 `ProductsViewModel`은 구체 클래스 `ProductRepository`에 의존하므로 적용 정도가 다르다. **IoC**는 생성과 정리의 주도권에 관한 이야기다. Android가 ViewModel 팩토리를 호출하고, 팩토리와 컨테이너가 객체를 생성하며 ViewModel 종료 시 스코프를 닫는다.
+**DIP**는 어떤 타입에 의존하느냐에 대한 원칙이다. `CartViewModel`은 `CartRepository` 인터페이스에 의존하지만 `ProductsViewModel`은 구체 클래스 `ProductRepository`에 의존하므로 적용 정도가 다르다.
+
+**IoC**는 객체 생성과 정리의 주도권에 관한 이야기다. AndroidX가 ViewModel을 만들 때 팩토리를 호출하고, 팩토리는 컨테이너에 생성과 주입을 맡긴다. 백스택에서 화면이 제거되면 AndroidX가 ViewModel을 정리하고 `addCloseable`을 통해 스코프가 닫힌다. 이 과정에는 제어의 역전이 있지만, 앱이 컨테이너를 설정하고 필요할 때 `resolve()`를 호출하므로 컨테이너 자체는 앱의 흐름을 주도하는 프레임워크보다 라이브러리에 가깝다.
 
 ### Reflection을 KSP 코드 생성으로 바꾼다면
 
