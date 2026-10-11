@@ -23,8 +23,8 @@
 ### 선택 기능 목록
 
 - [ ] TDD로 DI를 구현한다.
-- [ ] Robolectric으로 기능 테스트를 작성한다.
-- [ ] `ViewModel` 테스트를 작성한다.
+- [x] Robolectric으로 기능 테스트를 작성한다.
+- [x] `ViewModel` 테스트를 작성한다.
 - [ ] 도메인 로직과 `Repository` 단위 테스트를 작성한다.
 
 ## 2단계 기능 목록 - Annotation
@@ -184,7 +184,7 @@ dependencies {
 
 ### 과제 제출 준비
 
-- [ ] 기능 목록 단위로 커밋하고 AngularJS Git Commit Message Conventions에 맞춰 커밋 메시지를 작성한다.
+- [x] 기능 목록 단위로 커밋하고 AngularJS Git Commit Message Conventions에 맞춰 커밋 메시지를 작성한다.
 - [ ] PR 본문에 「바퀴를 재발명하는 이유」 글의 링크를 남긴다.
 
 ## 4단계 설계 회고
