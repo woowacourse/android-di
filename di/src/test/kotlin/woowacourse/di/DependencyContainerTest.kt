@@ -99,6 +99,72 @@ class DependencyContainerTest {
             .hasMessageContaining("CircularDependencyA -> CircularDependencyB -> CircularDependencyA")
     }
 
+    @Test
+    fun `등록한 스코프 키에 따라 의존성을 재사용하고 서로 다른 스코프는 분리한다`() {
+        val scopeKey = ScopeKey("request")
+        val container = DependencyContainer()
+        var creations = 0
+        container.registerFactory(ScopedDependency::class, scope = scopeKey) {
+            creations += 1
+            ScopedDependency()
+        }
+        val firstScope = container.openScope(scopeKey, "request-1")
+        val secondScope = container.openScope(scopeKey, "request-2")
+
+        val first = container.getInScope(ScopedDependency::class, firstScope)
+        val reused = container.getInScope(ScopedDependency::class, firstScope)
+        val second = container.getInScope(ScopedDependency::class, secondScope)
+
+        assertThat(reused).isSameAs(first)
+        assertThat(second).isNotSameAs(first)
+        assertThat(creations).isEqualTo(2)
+    }
+
+    @Test
+    fun `스코프를 닫으면 보유 인스턴스를 비우고 다시 사용할 수 없다`() {
+        val scopeKey = ScopeKey("request")
+        val container = DependencyContainer()
+        container.registerFactory(ScopedDependency::class, scope = scopeKey) { ScopedDependency() }
+        val scope = container.openScope(scopeKey, "request-1")
+        container.getInScope(ScopedDependency::class, scope)
+
+        scope.close()
+
+        assertThat(scope.isClosed).isTrue()
+        assertThat(scope.cachedInstanceCount()).isZero()
+        assertThatThrownBy { container.getInScope(ScopedDependency::class, scope) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("종료된 스코프")
+    }
+
+    @Test
+    fun `새로운 종류의 스코프를 추가해도 컨테이너 분기 없이 재귀 의존성을 해석한다`() {
+        val customScope = ScopeKey("customLifetime")
+        val container = DependencyContainer()
+        container.registerFactory(ScopedLeaf::class, scope = customScope) { ScopedLeaf() }
+        container.registerFactory(ScopedParent::class, scope = customScope) { resolver ->
+            ScopedParent(resolver.get(ScopedLeaf::class))
+        }
+        val scope = container.openScope(customScope, "custom-1")
+
+        val first = container.getInScope(ScopedParent::class, scope)
+        val second = container.getInScope(ScopedParent::class, scope)
+
+        assertThat(second).isSameAs(first)
+        assertThat(second.leaf).isSameAs(container.getInScope(ScopedLeaf::class, scope))
+    }
+
+    @Test
+    fun `스코프가 필요한 의존성을 일반 해석하면 필요한 스코프를 안내한다`() {
+        val scopeKey = ScopeKey("request")
+        val container = DependencyContainer()
+        container.registerFactory(ScopedDependency::class, scope = scopeKey) { ScopedDependency() }
+
+        assertThatThrownBy { container.get(ScopedDependency::class) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("request")
+    }
+
     private fun createQualifiedContainer(): DependencyContainer {
         val container = DependencyContainer()
         container.registerInstance(Choice::class, FirstChoice(), FirstChoiceKey::class)
@@ -108,6 +174,14 @@ class DependencyContainerTest {
 }
 
 class RegisteredDependency
+
+class ScopedDependency
+
+class ScopedLeaf
+
+class ScopedParent(
+    val leaf: ScopedLeaf,
+)
 
 class IntermediateDependency(
     val dependency: RegisteredDependency,
