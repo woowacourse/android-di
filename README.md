@@ -1,5 +1,44 @@
 # android-di
 
+## Step 4 - Lifecycle
+
+### 구현할 기능 목록
+
+- [x] 의존성을 처음 요청할 때 생성하고, 같은 스코프 안에서 재사용한다.
+- [x] `CartRepository`를 앱 스코프에서 공유 한다.
+- [x] `ProductRepository`를 ViewModel 스코프에서 재사용하고, ViewModel 종료 때 정리한다.
+- [x] `DateFormatter`를 화면 스코프에서 재사용하고, 화면을 나가면 정리한다.
+- [x] 스코프가 종료되면 보유한 인스턴스 참조를 제거한다.
+- [x] 새 스코프 종류를 추가해도 컨테이너 내부에 `when` 분기를 늘리지 않는다.
+
+### 설계 정리
+
+#### 내가 만든 컨테이너는 DI인가, 서비스 로케이터인가?
+
+이 컨테이너는 **ViewModel에는 생성자 주입을 하고, 화면의 `DateFormatter`는 서비스 로케이터 방식으로 가져오는 혼합 구조**다.
+
+- `AutoViewModelFactory.create()`는 `DependencyContainer.create()`에 ViewModel 타입을 넘기고, 컨테이너가 생성자를 읽어 의존성을 만든다. `ProductsViewModel`과 `CartViewModel`의 생성자에 필요한 타입이 드러나 있으므로 이 경로는 생성자 주입이다.
+- 반면 `CartScreen`은 `DependencyContainer.getInstance(DateFormatter::class, scopeId)`를 직접 호출한다. 화면 함수의 매개변수에는 `DateFormatter`가 없고, 함수 내부에서 전역 컨테이너를 조회하므로 이 경계는 서비스 로케이터다.
+
+따라서 컨테이너 전체를 순수한 DI라고 부르기는 어렵다. 특히 서비스 로케이터 경로에서는 화면이 컨테이너에 직접 의존하고 의존성이 함수 시그니처에 드러나지 않는다.
+
+이 판단은 DIP나 IoC와는 다른 축이다. DIP는 상위 정책과 하위 구현이 추상화에 의존하도록 하는 원칙이다. 예를 들어 `CartViewModel`은 `CartRepository` 인터페이스를 받고, 앱은 `DefaultCartRepository`를 등록한다. IoC는 객체 생성과 흐름의 제어를 외부에 맡기는 개념이다. 컨테이너가 ViewModel 생성 책임을 맡는 것은 IoC에 해당하지만, 화면에서 컨테이너를 직접 조회하는 방식은 의존성을 숨기는 서비스 로케이터다. DIP를 적용했는지, IoC를 적용했는지와 주입 방식을 DI 또는 서비스 로케이터로 분류하는 것은 서로 같은 질문이 아니다.
+
+#### KSP 코드 생성 방식으로 바꾼다면
+
+현재 `DependencyContainer.create()`는 Kotlin Reflection으로 primary constructor, 파라미터 타입과 Qualifier를 런타임에 읽고 호출한다. `getInstance()`는 그 정보로 구현체를 찾거나 생성한다. KSP로 바꾸려면 이 동적 탐색을 빌드 시점에 생성되는 Factory와 의존성 그래프로 옮겨야 한다.
+
+빌드 시점에 알려야 할 정보는 주입 대상 생성자, 각 파라미터 타입과 Qualifier, 바인딩할 구현체, 인스턴스의 스코프다. 지금처럼 `ShoppingApplication`에서 이미 만든 객체를 `register()`하는 API도 코드 생성 방식에 맞게 바꿔야 한다. KSP가 생성할 수 있도록 바인딩과 Provider를 정적으로 선언하고, 생성된 Factory가 런타임 스코프 ID에 해당하는 캐시를 조회하도록 설계할 수 있다. 화면·ViewModel이 실제로 열리고 닫히는 시점과 동적 스코프 ID는 여전히 런타임에 다룬다.
+
+| Reflection의 비용 | KSP 코드 생성으로 얻는 점 |
+| --- | --- |
+| R8이 Reflection 대상 멤버를 지우거나 이름을 바꿀 수 있어 keep 규칙이 필요하고, 축소와 난독화 효과가 줄어든다. | 생성된 직접 호출 코드는 정적 참조가 되므로 Reflection용 keep 규칙을 줄이고 R8이 코드를 분석하기 쉬워진다. |
+| `kotlin-reflect`가 앱에 포함되고 메타데이터와 의존성 그래프를 런타임에 읽어 시작 비용이 든다. | Factory와 그래프를 빌드 때 생성해 런타임 탐색과 메타데이터 처리 비용을 줄인다. |
+| 빠진 의존성이나 잘못된 그래프가 해당 화면에 진입할 때 발견된다. | 생성 단계에서 그래프를 검사해 잘못된 바인딩을 빌드 오류로 앞당길 수 있다. |
+| `kotlin-reflect`는 JVM 전용이라 공용 KMP 코드에서 사용할 수 없다. | Reflection에 기대지 않는 코드를 생성하면 공용 코드와 플랫폼별 구현을 분리하기 쉬워진다. |
+
+대신 KSP에서는 빌드 시점에 알 수 없는 타입을 임의로 요청하는 런타임 유연성이 줄어든다. 바인딩과 주입 대상 선언, 프로세서 설정 및 생성 코드 관리도 필요하다. 이 미션은 DI가 의존성을 탐색하고 스코프에 보관하는 원리를 익히는 것이 목적이므로 Reflection 구조를 유지한다. 배포할 라이브러리라면 시작 비용, R8, 늦은 오류 발견, KMP 제약을 줄이기 위해 KSP 방식을 검토할 것이다.
+
 ## Step 3 - Qualifier
 
 ### 구현할 기능 목록

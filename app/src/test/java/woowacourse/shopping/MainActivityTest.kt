@@ -7,20 +7,21 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import woowacourse.di.DependencyContainer
 import woowacourse.shopping.ui.MainActivity
 
 @RunWith(RobolectricTestRunner::class)
 class MainActivityTest {
     @Test
     fun `Activity 실행 테스트`() {
-        // given
-        val activity =
-            Robolectric
-                .buildActivity(MainActivity::class.java)
-                .setup()
-                .get()
+        val activityController = Robolectric.buildActivity(MainActivity::class.java)
 
-        // then
-        assertThat(activity).isNotNull()
+        try {
+            val activity = activityController.setup().get()
+            assertThat(activity).isNotNull()
+        } finally {
+            activityController.destroy()
+            DependencyContainer.closeScope(ShoppingApplication.APP_SCOPE_ID)
+        }
     }
 }

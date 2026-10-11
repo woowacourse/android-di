@@ -1,17 +1,42 @@
 package woowacourse.di
 
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.fetchAndIncrement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 object DependencyContainer {
-    private data class DependencyKey(
+    internal data class DependencyKey(
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>?,
     )
 
-    private val instances = mutableMapOf<DependencyKey, Any>()
+    @OptIn(ExperimentalAtomicApi::class)
+    private val nextScopeId = AtomicLong(2L)
+    private val scopes = mutableMapOf<Long, DependencyScope>()
 
-    fun create(type: KClass<*>): Any {
+    fun openScope(id: Long, parentId: Long? = null): DependencyScope {
+        check(id !in scopes) { "이미 열린 스코프입니다: $id" }
+
+        val parent = parentId?.let { scopes.getValue(parentId) }
+        return DependencyScope(parent).also { scope ->
+            scopes[id] = scope
+        }
+    }
+
+    @OptIn(ExperimentalAtomicApi::class)
+    fun openChildScope(parentId: Long): Long {
+        val id = nextScopeId.fetchAndIncrement()
+        openScope(id, parentId)
+        return id
+    }
+
+    fun closeScope(id: Long) {
+        scopes.remove(id)?.close()
+    }
+
+    fun create(type: KClass<*>, scopeId: Long): Any {
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
@@ -33,48 +58,47 @@ object DependencyContainer {
 
                 getInstance(
                     type = dependencyClass,
+                    scopeId = scopeId,
                     qualifier = qualifier,
                 )
             }
         val instance = constructor.call(*args.toTypedArray())
-        injectFields(instance)
+        injectFields(instance, scopeId)
         return instance
     }
 
     fun getInstance(
         type: KClass<*>,
+        scopeId: Long,
         qualifier: KClass<out Annotation>? = null,
     ): Any {
+        val scope = scopes.getValue(scopeId)
         val key = DependencyKey(type, qualifier)
 
-        instances[key]?.let { return it }
 
-        val qualifiedInstances =
-            instances.keys.filter { dependencyKey ->
-                dependencyKey.type == type && dependencyKey.qualifier != null
-            }
+        scope.find(key)?.let { return it }
 
-        if (qualifier == null && qualifiedInstances.isNotEmpty()) {
+        if (qualifier == null && scope.hasQualifiedBinding(type)) {
             throw IllegalArgumentException(
-                "${type.simpleName} 타입에는 Qualifier가 필요합니다.",
+                "${type.simpleName} 타입에는 Qualifier가 필요합니다."
             )
         }
 
         if (qualifier != null) {
             throw IllegalArgumentException(
-                "${type.simpleName} 타입에 ${qualifier.simpleName} Qualifier가 등록되지 않았습니다.",
+                "${type.simpleName} 타입에 ${qualifier.simpleName} Qualifier가 등록되지 않았습니다."
             )
         }
 
         val objectInstance = type.objectInstance
         if (objectInstance != null) return objectInstance
 
-        return instances.getOrPut(key) {
-            create(type)
+        return scope.getOrCreate(key) {
+            create(type, scopeId)
         }
     }
 
-    fun injectFields(instance: Any) {
+    fun injectFields(instance: Any, scopeId: Long) {
         val fields = instance.javaClass.declaredFields
         fields.forEach { field ->
             if (!field.isAnnotationPresent(Inject::class.java)) return@forEach
@@ -89,6 +113,7 @@ object DependencyContainer {
             val dependency =
                 getInstance(
                     type = field.type.kotlin,
+                    scopeId = scopeId,
                     qualifier = qualifier,
                 )
 
@@ -98,18 +123,22 @@ object DependencyContainer {
     }
 
     fun register(
+        scopeId: Long,
         type: KClass<*>,
         instance: Any,
     ) {
-        register(type, null, instance)
+        register(scopeId, type, null, instance)
     }
 
     fun register(
+        scopeId: Long,
         type: KClass<*>,
         qualifier: KClass<out Annotation>?,
         instance: Any,
+
     ) {
-        instances[DependencyKey(type, qualifier)] = instance
+        val key = DependencyKey(type, qualifier)
+        scopes.getValue(scopeId).register(key, instance)
     }
 
     private fun findQualifier(annotations: Iterable<Annotation>): KClass<out Annotation>? {

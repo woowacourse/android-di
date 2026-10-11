@@ -12,16 +12,24 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.di.DependencyContainer
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.model.CartProduct
 
 @RunWith(RobolectricTestRunner::class)
 class CartContentTest {
     @get:Rule
     val composeRule = createComposeRule()
+
+    @After
+    fun closeApplicationScope() {
+        DependencyContainer.closeScope(ShoppingApplication.APP_SCOPE_ID)
+    }
 
     private val product1 =
         CartProduct(id = 1L, name = "우테코 과자", price = 10_000, imageUrl = "", createdAt = 12345678L)
