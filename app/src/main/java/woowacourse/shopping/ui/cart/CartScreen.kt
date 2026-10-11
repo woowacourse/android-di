@@ -44,6 +44,22 @@ import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 @Composable
+internal fun rememberScreenScopeId(parentScopeId: Long): Long {
+    val screenScopeId =
+        remember(parentScopeId) {
+            DependencyContainer.openChildScope(parentId = parentScopeId)
+        }
+
+    DisposableEffect(screenScopeId) {
+        onDispose {
+            DependencyContainer.closeScope(screenScopeId)
+        }
+    }
+
+    return screenScopeId
+}
+
+@Composable
 fun CartScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -56,19 +72,10 @@ fun CartScreen(
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
 
-    val screenScopeId = remember {
-        DependencyContainer.openChildScope(
-            parentId = ShoppingApplication.APP_SCOPE_ID
-        )
-    }
+    val screenScopeId = rememberScreenScopeId(ShoppingApplication.APP_SCOPE_ID)
 
-    DisposableEffect(screenScopeId) {
-        onDispose {
-            DependencyContainer.closeScope(screenScopeId)
-        }
-    }
-
-    val dateFormatter = remember(screenScopeId) {
+    val dateFormatter =
+        remember(screenScopeId) {
         DependencyContainer.getInstance(
             type = DateFormatter::class,
             scopeId = screenScopeId,
@@ -154,7 +161,7 @@ fun CartProductItem(
     ) {
         Text(
             text = dateFormatter.formatDate(cartProduct.createdAt),
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelSmall,
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
