@@ -2,10 +2,14 @@
 
 package woowacourse.shopping.di
 
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import junit.framework.TestCase.assertEquals
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import woowacourse.di.DependencyContainer
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.FakeCartProductDao
@@ -16,6 +20,8 @@ import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
 class AutoViewModelFactoryTest {
+    private lateinit var viewModelStore: ViewModelStore
+
     class FakeRepository : CartRepository {
         override suspend fun addCartProduct(product: Product) {}
 
@@ -26,27 +32,42 @@ class AutoViewModelFactoryTest {
 
     @Before
     fun setUp() {
+        DependencyContainer.openScope(ShoppingApplication.APP_SCOPE_ID)
+        viewModelStore = ViewModelStore()
+
         DependencyContainer.register(
+            ShoppingApplication.APP_SCOPE_ID,
             CartProductDao::class,
             FakeCartProductDao(),
         )
         DependencyContainer.register(
+            ShoppingApplication.APP_SCOPE_ID,
             CartRepository::class,
             Room::class,
             FakeRepository(),
         )
     }
 
+    @After
+    fun tearDown() {
+        viewModelStore.clear()
+        DependencyContainer.closeScope(ShoppingApplication.APP_SCOPE_ID)
+    }
+
     @Test
     fun `CartViewModel을 요청하면 CartViewModel이 생성된다`() {
-        val viewModel = AutoViewModelFactory().create(CartViewModel::class.java)
+        val viewModel =
+            ViewModelProvider(viewModelStore, AutoViewModelFactory())
+                .get(CartViewModel::class.java)
 
         assertEquals(viewModel::class.java, CartViewModel::class.java)
     }
 
     @Test
     fun `ProductsViewModel을 요청하면 ProductsViewModel이 생성된다`() {
-        val viewModel = AutoViewModelFactory().create(ProductsViewModel::class.java)
+        val viewModel =
+            ViewModelProvider(viewModelStore, AutoViewModelFactory())
+                .get(ProductsViewModel::class.java)
 
         assertEquals(viewModel::class.java, ProductsViewModel::class.java)
     }
