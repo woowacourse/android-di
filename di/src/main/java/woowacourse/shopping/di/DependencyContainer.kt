@@ -21,7 +21,7 @@ object DependencyContainer : ViewModelProvider.Factory {
 
     private val applicationScope = DependencyScope()
 
-    fun createScope(): DependencyScope = DependencyScope(applicationScope)
+    fun createScope(parent: DependencyScope = applicationScope): DependencyScope = DependencyScope(parent)
 
     fun <T : Any> get(
         type: KClass<T>,

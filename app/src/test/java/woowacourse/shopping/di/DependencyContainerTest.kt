@@ -16,6 +16,7 @@ import woowacourse.shopping.data.InMemoryCartRepository
 import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.RoomCartRepository
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModel
 import woowacourse.shopping.ui.cart.CartViewModel
 import woowacourse.shopping.ui.products.ProductsViewModel
 
@@ -223,16 +224,16 @@ class DependencyContainerTest {
     }
 
     @Test
-    fun `Cart 화면에서 DateFormatter를 재사용하고 재진입하면 새로 생성한다`() {
+    fun `Cart 화면 스코프에서 DateFormatter를 재사용하고 스코프 종료 후 새로 생성한다`() {
         val firstStore = ViewModelStore()
         val firstViewModel =
             ViewModelProvider(firstStore, DependencyContainer)
-                .get(CartViewModel::class.java)
+                .get(CartScreenScopeViewModel::class.java)
 
         try {
             val retainedViewModel =
                 ViewModelProvider(firstStore, DependencyContainer)
-                    .get(CartViewModel::class.java)
+                    .get(CartScreenScopeViewModel::class.java)
 
             assertThat(retainedViewModel.dateFormatter)
                 .isSameInstanceAs(firstViewModel.dateFormatter)
@@ -244,12 +245,10 @@ class DependencyContainerTest {
         try {
             val reenteredViewModel =
                 ViewModelProvider(secondStore, DependencyContainer)
-                    .get(CartViewModel::class.java)
+                    .get(CartScreenScopeViewModel::class.java)
 
             assertThat(reenteredViewModel.dateFormatter)
                 .isNotSameInstanceAs(firstViewModel.dateFormatter)
-            assertThat(reenteredViewModel.cartRepository)
-                .isSameInstanceAs(firstViewModel.cartRepository)
         } finally {
             secondStore.clear()
         }

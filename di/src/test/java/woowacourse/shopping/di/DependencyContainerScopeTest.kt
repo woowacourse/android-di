@@ -31,4 +31,28 @@ class DependencyContainerScopeTest {
         )
         assertSame(applicationDependency, DependencyContainer.get(ScopeDependency::class))
     }
+
+    @Test
+    fun `임의 부모를 가진 스코프를 중첩할 수 있다`() {
+        val destinationScope = DependencyContainer.createScope()
+        val viewModelScope = DependencyContainer.createScope(destinationScope)
+        val destinationDependency = ScopeDependency()
+        DependencyContainer.register(
+            ScopeDependency::class,
+            destinationDependency,
+            scope = destinationScope,
+        )
+
+        assertSame(
+            destinationDependency,
+            DependencyContainer.get(ScopeDependency::class, scope = viewModelScope),
+        )
+
+        viewModelScope.close()
+
+        assertSame(
+            destinationDependency,
+            DependencyContainer.get(ScopeDependency::class, scope = destinationScope),
+        )
+    }
 }
