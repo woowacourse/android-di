@@ -5,24 +5,44 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class Container {
-    private data class Key(
+    internal data class Key(
         val type: KClass<*>,
         val qualifier: KClass<out Annotation>?,
     )
 
     private sealed interface Binding {
+        val scope: ScopeType
+
         data class Instance(
             val value: Any,
-        ) : Binding
+        ) : Binding {
+            override val scope: ScopeType = ScopeType.ROOT
+        }
 
         data class Implementation(
             val type: KClass<*>,
+            override val scope: ScopeType,
         ) : Binding
     }
 
     private val bindings = mutableMapOf<Key, Binding>()
-    private val instances = mutableMapOf<Key, Any>()
-    private val resolvingPath = mutableListOf<KClass<*>>()
+    private val scopes = mutableSetOf<Scope>()
+
+    val rootScope: Scope = Scope(this, ScopeType.ROOT, null)
+
+    init {
+        scopes += rootScope
+    }
+
+    fun openScope(
+        type: ScopeType,
+        parent: Scope = rootScope,
+    ): Scope {
+        require(type != ScopeType.ROOT) { "루트 스코프는 다시 열 수 없습니다." }
+        require(parent.container === this) { "다른 컨테이너의 스코프를 부모로 사용할 수 없습니다." }
+        parent.ensureOpen()
+        return Scope(this, type, parent).also { scopes += it }
+    }
 
     fun <T : Any> register(
         type: KClass<T>,
@@ -31,22 +51,59 @@ class Container {
     ) {
         checkQualifier(qualifier)
         val key = Key(type, qualifier)
+        invalidate(key)
         bindings[key] = Binding.Instance(instance)
-        instances[key] = instance
+        rootScope.cache(key) { instance }
     }
 
     fun <T : Any> bind(
         type: KClass<T>,
         implementation: KClass<out T>,
         qualifier: KClass<out Annotation>? = null,
+        scope: ScopeType = ScopeType.ROOT,
     ) {
         checkQualifier(qualifier)
         val key = Key(type, qualifier)
-        bindings[key] = Binding.Implementation(implementation)
-        instances.remove(key)
+        invalidate(key)
+        bindings[key] = Binding.Implementation(implementation, scope)
     }
 
-    fun <T : Any> create(type: KClass<T>): T {
+    fun <T : Any> create(type: KClass<T>): T = create(rootScope, type)
+
+    fun resolve(
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ): Any = resolve(rootScope, type, qualifier)
+
+    internal fun <T : Any> create(
+        scope: Scope,
+        type: KClass<T>,
+    ): T = create(scope, type, mutableListOf())
+
+    internal fun resolve(
+        scope: Scope,
+        type: KClass<*>,
+        qualifier: KClass<out Annotation>? = null,
+    ): Any = resolve(scope, type, qualifier, mutableListOf())
+
+    internal fun closeScope(scope: Scope) {
+        require(scope.container === this) { "다른 컨테이너의 스코프는 닫을 수 없습니다." }
+        if (scope.isClosed) return
+
+        scopes
+            .filter { it.isDescendantOf(scope) }
+            .sortedByDescending { it.depth() }
+            .forEach { closeScope(it) }
+        scope.markClosed()
+        scopes.remove(scope)
+    }
+
+    private fun <T : Any> create(
+        scope: Scope,
+        type: KClass<T>,
+        resolvingPath: MutableList<KClass<*>>,
+    ): T {
+        scope.ensureOpen()
         check(type !in resolvingPath) {
             "의존성: ${(resolvingPath + type).joinToString(" - ") { it.simpleName ?: it.toString() }}"
         }
@@ -60,7 +117,7 @@ class Container {
                     val parameterType =
                         parameter.type.classifier as? KClass<*>
                             ?: throw IllegalArgumentException("$type: 생성자 매개변수 타입을 확인할 수 없습니다.")
-                    resolve(parameterType, qualifierOf(parameter.annotations))
+                    resolve(scope, parameterType, qualifierOf(parameter.annotations), resolvingPath)
                 }
             val instance = constructor.call(*arguments.toTypedArray())
 
@@ -68,7 +125,7 @@ class Container {
                 .filter { it.isAnnotationPresent(Inject::class.java) }
                 .forEach { field ->
                     field.isAccessible = true
-                    field.set(instance, resolve(field.type.kotlin, qualifierOf(field.annotations.asIterable())))
+                    field.set(instance, resolve(scope, field.type.kotlin, qualifierOf(field.annotations.asIterable()), resolvingPath))
                 }
             return instance
         } finally {
@@ -76,21 +133,30 @@ class Container {
         }
     }
 
-    fun resolve(
+    private fun resolve(
+        scope: Scope,
         type: KClass<*>,
-        qualifier: KClass<out Annotation>? = null,
+        qualifier: KClass<out Annotation>?,
+        resolvingPath: MutableList<KClass<*>>,
     ): Any {
+        scope.ensureOpen()
         checkQualifier(qualifier)
         val key = bindingKey(type, qualifier)
-        return instances.getOrPut(key) {
-            when (val binding = bindings[key]) {
+        val binding = bindings[key]
+        val instanceScopeType = binding?.scope ?: scope.type
+        val instanceScope =
+            scope.find(instanceScopeType)
+                ?: throw IllegalStateException("${type.simpleName}: ${instanceScopeType.name} 스코프가 열려 있지 않습니다.")
+
+        return instanceScope.cache(key) {
+            when (binding) {
                 is Binding.Instance -> binding.value
-                is Binding.Implementation -> create(binding.type)
+                is Binding.Implementation -> create(instanceScope, binding.type, resolvingPath)
                 null -> {
                     if (type.java.isInterface || Modifier.isAbstract(type.java.modifiers)) {
                         throw IllegalArgumentException("$type: 등록된 구현체가 없습니다.")
                     }
-                    create(type)
+                    create(instanceScope, type, resolvingPath)
                 }
             }
         }
@@ -109,6 +175,10 @@ class Container {
         val candidates = bindings.keys.filter { it.type == type }
         require(candidates.size <= 1) { "$type: 구현체가 여러 개입니다. Qualifier를 지정해야 합니다." }
         return candidates.singleOrNull() ?: Key(type, null)
+    }
+
+    private fun invalidate(key: Key) {
+        scopes.forEach { it.remove(key) }
     }
 
     private fun qualifierOf(annotations: Iterable<Annotation>): KClass<out Annotation>? {
