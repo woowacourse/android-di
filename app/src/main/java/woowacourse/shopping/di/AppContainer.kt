@@ -2,6 +2,7 @@ package woowacourse.shopping.di
 
 import android.content.Context
 import androidx.room.Room
+import woowacourse.di.ScopedContainer
 import woowacourse.di.bind
 import woowacourse.di.diContainer
 import woowacourse.di.register
@@ -10,11 +11,15 @@ import woowacourse.shopping.data.CartRepository
 import woowacourse.shopping.data.DefaultCartRepository
 import woowacourse.shopping.data.InMemoryCart
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCart
 import woowacourse.shopping.data.ShoppingDatabase
+import woowacourse.shopping.ui.cart.DateFormatter
 
 object AppContainer {
     lateinit var viewModelFactory: DIViewModelFactory
+        private set
+    internal lateinit var appScopedContainer: ScopedContainer
         private set
 
     fun initialize(context: Context) {
@@ -27,10 +32,20 @@ object AppContainer {
                 ).build()
         val container =
             diContainer {
+                register<Context>(context.applicationContext)
                 register<CartProductDao>(database.cartProductDao())
-                bind<CartRepository, DefaultCartRepository>(RoomCart::class)
-                bind<CartRepository, InMemoryCartRepository>(InMemoryCart::class)
+                bind<CartRepository, DefaultCartRepository>(
+                    qualifier = RoomCart::class,
+                    scopeType = AppScope,
+                )
+                bind<CartRepository, InMemoryCartRepository>(
+                    qualifier = InMemoryCart::class,
+                    scopeType = AppScope,
+                )
+                bind<ProductRepository, ProductRepository>(scopeType = ViewModelScope)
+                bind<DateFormatter, DateFormatter>(scopeType = ScreenScope)
             }
-        viewModelFactory = DIViewModelFactory(container)
+        appScopedContainer = container.openScope(AppScope, context.packageName)
+        viewModelFactory = DIViewModelFactory(appScopedContainer)
     }
 }
