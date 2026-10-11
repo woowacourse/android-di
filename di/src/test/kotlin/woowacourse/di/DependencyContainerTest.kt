@@ -7,6 +7,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class DependencyContainerTest {
@@ -118,6 +119,7 @@ class DependencyContainerTest {
         assertNotNull(secondViewModel.get(ViewModelService::class))
         firstScreen.close()
         assertFailsWith<IllegalStateException> { secondViewModel.get(ScreenService::class) }
+        assertNull(secondViewModel.cached(DependencyKey(ViewModelService::class)))
         assertNotSame(firstScreenService, appScope.openChild(screen).get(ScreenService::class))
         assertNotNull(appScope.get(AppService::class))
     }

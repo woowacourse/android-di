@@ -137,11 +137,12 @@ class DependencyScope internal constructor(
     private val parent: DependencyScope? = null,
 ) : AutoCloseable {
     private val instances = mutableMapOf<DependencyKey, Any>()
+    private val children = mutableSetOf<DependencyScope>()
     private var closed = false
 
     fun openChild(type: ScopeType): DependencyScope {
         checkOpen()
-        return DependencyScope(container, type, this)
+        return DependencyScope(container, type, this).also { children.add(it) }
     }
 
     fun <T : Any> register(
@@ -163,8 +164,12 @@ class DependencyScope internal constructor(
     fun inject(target: Any) = container.inject(target, this)
 
     override fun close() {
-        instances.clear()
+        if (closed) return
         closed = true
+        children.toList().forEach { it.close() }
+        children.clear()
+        instances.clear()
+        parent?.children?.remove(this)
     }
 
     internal fun checkOpen() {
