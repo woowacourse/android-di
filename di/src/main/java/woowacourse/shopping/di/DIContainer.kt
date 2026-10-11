@@ -1,6 +1,5 @@
 package woowacourse.shopping.di
 
-import jdk.internal.org.jline.keymap.KeyMap.key
 import woowacourse.shopping.di.annotation.Inject
 import woowacourse.shopping.di.annotation.Qualifier
 import kotlin.collections.forEach
@@ -89,6 +88,8 @@ object DIContainer {
             val dependencies = findDependencies(constructor, ownerKey)
             val instance = constructor.call(*dependencies.toTypedArray())
 
+            injectFields(instance, ownerKey)
+
             scope.put(key, instance)
             if (modelClass != implementationClass) {
                 val implementationKey = DependencyKey(implementationClass, qualifier) as DependencyKey<T>
@@ -100,7 +101,15 @@ object DIContainer {
         }
     }
 
-    fun <T : Any> injectFields(
+    internal fun clear() {
+        scopes.values.forEach { it.clear() }
+        scopes.clear()
+        creating.clear()
+        bindings.clear()
+        bindingScopes.clear()
+    }
+
+    private fun <T : Any> injectFields(
         instance: T,
         scopeKey: ScopeKey,
     ) {
@@ -108,7 +117,7 @@ object DIContainer {
             .memberProperties
             .filter { property ->
                 property.annotations.any { it.annotationClass == Inject::class } &&
-                    property is KMutableProperty1<*, *>
+                        property is KMutableProperty1<*, *>
             }.forEach { property ->
                 val mutableProperty = property as KMutableProperty1<*, *>
                 val dependencyType = property.returnType.classifier as KClass<*>
@@ -123,14 +132,6 @@ object DIContainer {
                 val dependency = createInstance(dependencyKey, scopeKey)
                 mutableProperty.setter.call(instance, dependency)
             }
-    }
-
-    internal fun clear() {
-        scopes.values.forEach { it.clear() }
-        scopes.clear()
-        creating.clear()
-        bindings.clear()
-        bindingScopes.clear()
     }
 
     private fun <T : Any> findImplementation(key: DependencyKey<T>): KClass<out T> {

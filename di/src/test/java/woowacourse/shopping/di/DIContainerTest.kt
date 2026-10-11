@@ -31,7 +31,6 @@ class DIContainerTest {
 
         // when
         val instance = DIContainer.createInstance(DependencyKey(target), scopeKey)
-        DIContainer.injectFields(instance, scopeKey)
 
         // then
         assertTrue(instance.isDependencyInitialized())
@@ -44,7 +43,6 @@ class DIContainerTest {
 
         // when
         val instance = DIContainer.createInstance(DependencyKey(target), scopeKey)
-        DIContainer.injectFields(instance, scopeKey)
 
         // then
         assertTrue(instance.isFirstDependencyInitialized())
@@ -58,7 +56,6 @@ class DIContainerTest {
 
         // when
         val instance = DIContainer.createInstance(DependencyKey(target), scopeKey)
-        DIContainer.injectFields(instance, scopeKey)
 
         // then
         assertFalse(instance.isDependencyInitialized())
