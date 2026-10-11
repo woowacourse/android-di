@@ -1,6 +1,8 @@
 package com.harodi
 
+import java.util.UUID
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
@@ -9,20 +11,72 @@ data class DependencyKey(
     val qualifier: KClass<out Annotation>?,
 )
 
+// 의존성이 추가되야 할 영역의 종류를 구분하기 위한 인터페이스
+interface ScopeKind
+
+data class ScopeKey(
+    val parentKey: ScopeKey?,
+    val uuid: UUID = UUID.randomUUID(),
+    val scopeKind: ScopeKind,
+)
+
 class DiManager {
-    private val instanceMap: MutableMap<DependencyKey, Any> = mutableMapOf()
+    // 스코프의 관계를 나타내기 위한 Map이다.
+    private val scopeMap: MutableMap<ScopeKey, MutableMap<DependencyKey, Any>> = mutableMapOf()
+
+    // 해당 클래스가 어떤 스코프에 해당하는지 규칙을 관리하는 Map이다.
+    private val scopePolicyMap: MutableMap<DependencyKey, ScopeKind> = mutableMapOf()
 
     // 인터페이스의 경우 어떤 클래스를 구현해야할지 매핑해서 알려준다.
     private val providerMap: MutableMap<DependencyKey, Any> = mutableMapOf()
 
-    fun addInstance(
+    // 의존성 주입을 받아야하는 클래스에 대한 스코프 범위를 정의해주는 역할을 하는 함수다.
+    fun addScopePolicy(
+        classType: Class<*>,
+        qualifier: KClass<out Annotation>?,
+        scopeKind: ScopeKind,
+    ) {
+        val dependencyKey = DependencyKey(classType, qualifier)
+        scopePolicyMap[dependencyKey] = scopeKind
+    }
+
+    fun searchScopePolicy(
+        classType: Class<*>,
+        qualifier: KClass<out Annotation>?,
+    ): ScopeKind {
+        val dependencyKey = DependencyKey(classType, qualifier)
+        return scopePolicyMap[dependencyKey]
+            ?: throw IllegalArgumentException("스코프 범위를 가진 Key를 찾을 수 없습니다: $classType, $qualifier")
+    }
+
+    // 인스턴스를 생성할 때 특정 스코프에 저장하여 관리하기 위한 함수다.
+    fun addScope(
+        scopeKey: ScopeKey,
         classType: Class<*>,
         qualifier: KClass<out Annotation>?,
         value: Any,
     ) {
+        val instanceMap =
+            scopeMap.getOrPut(scopeKey) {
+                mutableMapOf()
+            }
         val dependencyKey = DependencyKey(classType, qualifier)
-        instanceMap[dependencyKey] = value
+        instanceMap.getOrPut(
+            dependencyKey,
+        ) {
+            value
+        }
     }
+
+    // 특정한 스코프 범위가 종료되었을 때 해당 스코프의 인스턴스들을 제거하기 위한 함수다.
+    fun removeScope(scopeKey: ScopeKey) {
+        scopeMap.remove(scopeKey)
+    }
+
+    fun searchScope(
+        scopeKey: ScopeKey,
+        dependencyKey: DependencyKey,
+    ): Any? = scopeMap[scopeKey]?.get(dependencyKey)
 
     fun addProvider(
         classType: Class<*>,
@@ -33,11 +87,9 @@ class DiManager {
         providerMap[dependencyKey] = value
     }
 
-    fun hasInstance(dependencyKey: DependencyKey): Boolean = instanceMap.keys.contains(dependencyKey)
-
     // 인터페이스를 받았을 때 구현할 구현체의 클래스가 무엇인지 조건을 구분한다.
     // 만약 providerMap에 없으면 modelClass를 반환한다.
-    fun filterModelClass(dependencyKey: DependencyKey): Class<*> {
+    internal fun filterModelClass(dependencyKey: DependencyKey): Class<*> {
         // 1. 타입과 Qualifier가 정확히 일치하는 binding
         val exactProvider = providerMap[dependencyKey]
 
@@ -77,17 +129,31 @@ class DiManager {
     }
 
     // 객체를 탐색한다.
-    fun searchInstance(dependencyKey: DependencyKey): Any {
-        if (hasInstance(dependencyKey)) {
-            return instanceMap[dependencyKey] ?: throw IllegalArgumentException("객체를 찾을 수 없습니다.")
+    // 지금은 생성까지 하고 있따. 역할을 분리할 필요가 있따.
+    internal fun searchInstance(
+        dependencyKey: DependencyKey,
+        scopeKey: ScopeKey,
+    ): Any {
+        val scopeInstance = searchScope(scopeKey, dependencyKey)
+        if (scopeInstance != null) {
+            return scopeInstance
         } else {
-            val instance = createInstance(dependencyKey)
-            instanceMap[dependencyKey] = instance
+            val instance =
+                resolve(
+                    modelClass = dependencyKey.classType,
+                    qualifier = dependencyKey.qualifier,
+                    scopeKey = scopeKey,
+                )
             return instance
         }
     }
 
-    fun createInstance(dependencyKey: DependencyKey): Any {
+    // 객체를 생성한다.
+    // searchInstance와 createInstance와 서로 주고받는다.
+    internal fun createInstance(
+        dependencyKey: DependencyKey,
+        scopeKey: ScopeKey,
+    ): Any {
         val modelClass = filterModelClass(dependencyKey)
         val constructor =
             modelClass.kotlin.primaryConstructor
@@ -106,20 +172,29 @@ class DiManager {
                                 }
                             }?.annotationClass
                     val dependencyKey = DependencyKey(type.java, qualifier)
-                    searchInstance(dependencyKey)
+                    val targetScopeKind = searchScopePolicy(type.java, qualifier)
+                    val ownerScopeKey = findOwnerScopeKey(targetScopeKind, scopeKey)!!
+                    searchInstance(dependencyKey, ownerScopeKey)
                 }
             return constructor.call(*typesConstructors.toTypedArray())
         }
     }
 
-    fun <T : Any> fieldInject(modelClass: Class<T>): T {
-        val instance =
-            modelClass.kotlin.primaryConstructor?.call()
-                ?: throw IllegalArgumentException("인스턴스를 생성할 수 없어요. $modelClass")
+    internal fun <T : Any> searchLateinitProperty(modelClass: Class<T>): List<KProperty1<T, *>>? {
         val lateinitProperties =
             modelClass.kotlin.memberProperties.filter { property ->
                 property.isLateinit && property.annotations.any { it is Inject }
             }
+
+        return lateinitProperties.ifEmpty { null }
+    }
+
+    internal fun <T : Any> fieldInject(
+        modelClass: Class<T>,
+        instance: T,
+        lateinitProperties: List<KProperty1<T, *>>,
+        scopeKey: ScopeKey,
+    ) {
         lateinitProperties.forEach {
             modelClass.getDeclaredField(it.name).apply {
                 val dependancyKClass =
@@ -132,12 +207,45 @@ class DiManager {
                                 it is Qualifier
                             }
                         }?.annotationClass
-                val dependencyKey = DependencyKey(dependancyKClass.java, qualifier)
-
                 isAccessible = true
-                set(instance, searchInstance(dependencyKey))
+                val dependencyKey = DependencyKey(dependancyKClass.java, qualifier)
+                val targetScopeKind = searchScopePolicy(dependancyKClass.java, qualifier)
+                val ownerScopeKey = findOwnerScopeKey(targetScopeKind, scopeKey)!!
+                set(instance, searchInstance(dependencyKey, ownerScopeKey))
             }
         }
-        return instance
+    }
+
+    fun findOwnerScopeKey(
+        targetScopeKind: ScopeKind,
+        scopeKey: ScopeKey,
+    ): ScopeKey? {
+        var currentScopeKey = scopeKey
+        while (currentScopeKey.scopeKind != targetScopeKind) {
+            currentScopeKey = currentScopeKey.parentKey ?: return null
+        }
+        return currentScopeKey
+    }
+
+    // 생성할 인스턴스의 타입과 qualifier, scope의 종류를 받는다.
+    // 스코프 객체를 생성한다.
+    // 스코프 객체에 인스턴스를 저장한다.
+    fun <T : Any> resolve(
+        modelClass: Class<T>,
+        scopeKey: ScopeKey,
+        qualifier: KClass<out Annotation>? = null,
+    ): T {
+        val dependencyKey = DependencyKey(modelClass, qualifier)
+        if (searchScope(scopeKey, dependencyKey) != null) {
+            return searchScope(scopeKey, dependencyKey) as T
+        }
+        val instance = createInstance(dependencyKey, scopeKey)
+
+        val lateinitProperties = searchLateinitProperty(modelClass)
+        if (lateinitProperties != null) {
+            fieldInject(modelClass, instance as T, lateinitProperties, scopeKey)
+        }
+        addScope(scopeKey, dependencyKey.classType, dependencyKey.qualifier, instance)
+        return instance as T
     }
 }

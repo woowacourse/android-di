@@ -7,6 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.harodi.DiManager
+import com.harodi.ScopeKey
+import woowacourse.shopping.di.DiScreen
 import woowacourse.shopping.ui.cart.CartScreen
 import woowacourse.shopping.ui.products.ProductsScreen
 
@@ -19,6 +22,8 @@ object ShoppingRoute {
 fun ShoppingNavHost(
     navController: NavHostController = rememberNavController(),
     viewModelFactory: ViewModelProvider.Factory,
+    applicationKey: ScopeKey,
+    diManager: DiManager,
 ) {
     NavHost(
         navController = navController,
@@ -31,10 +36,16 @@ fun ShoppingNavHost(
             )
         }
         composable(ShoppingRoute.CART) {
-            CartScreen(
-                onNavigateUp = { navController.navigateUp() },
-                viewModel = viewModel(factory = viewModelFactory),
-            )
+            DiScreen(
+                diManager = diManager,
+                parentKey = applicationKey,
+            ) { dateFormatter ->
+                CartScreen(
+                    onNavigateUp = { navController.navigateUp() },
+                    viewModel = viewModel(factory = viewModelFactory),
+                    dateFormatter = dateFormatter,
+                )
+            }
         }
     }
 }

@@ -10,9 +10,10 @@ class DiManagerQualifierTest {
     fun `Qualifier가 붙은 필드에는 해당 Qualifier로 등록한 구현체를 주입한다`() {
         // given
         val diManager = createDiManagerWithTwoRepositories()
+        val scopeKey = createScopeKey()
 
         // when
-        val consumer = diManager.fieldInject(InMemoryRepositoryConsumer::class.java)
+        val consumer = diManager.resolve(InMemoryRepositoryConsumer::class.java, scopeKey)
 
         // then
         assertIs<InMemoryTestRepository>(consumer.repository)
@@ -22,12 +23,12 @@ class DiManagerQualifierTest {
     fun `같은 타입의 구현체가 둘 등록되어 있는데 Qualifier가 없으면 예외가 발생한다`() {
         // given
         val diManager = createDiManagerWithTwoRepositories()
-        val dependencyKey = DependencyKey(TestRepository::class.java, null)
+        val scopeKey = createScopeKey()
 
         // when
         val exception =
             assertFailsWith<IllegalArgumentException> {
-                diManager.searchInstance(dependencyKey)
+                diManager.resolve(TestRepository::class.java, scopeKey)
             }
 
         // then
@@ -44,20 +45,46 @@ class DiManagerQualifierTest {
             qualifier = DefaultTestRepositoryQualifier::class,
             value = DefaultTestRepository::class.java,
         )
-        val dependencyKey =
-            DependencyKey(
-                classType = TestRepository::class.java,
-                qualifier = InMemoryTestRepositoryQualifier::class,
-            )
+        val scopeKey = createScopeKey()
 
         // when
         val exception =
             assertFailsWith<IllegalArgumentException> {
-                diManager.searchInstance(dependencyKey)
+                diManager.resolve(
+                    modelClass = TestRepository::class.java,
+                    scopeKey = scopeKey,
+                    qualifier = InMemoryTestRepositoryQualifier::class,
+                )
             }
 
         // then
         assertContains(exception.message.orEmpty(), "등록된 구현체가 없습니다")
+    }
+
+    @Test
+    fun `생성자 주입으로 생성된 객체도 필드 주입을 받는다`() {
+        // given
+        val diManager =
+            DiManager().apply {
+                addScopePolicy(
+                    classType = ConstructorDependency::class.java,
+                    qualifier = null,
+                    scopeKind = QualifierTestScopeKind.APPLICATION,
+                )
+                addScopePolicy(
+                    classType = FieldDependency::class.java,
+                    qualifier = null,
+                    scopeKind = QualifierTestScopeKind.APPLICATION,
+                )
+            }
+        val scopeKey = createScopeKey()
+
+        // when
+        val consumer = diManager.resolve(ConstructorInjectionConsumer::class.java, scopeKey)
+
+        // then
+        assertIs<ConstructorDependency>(consumer.constructorDependency)
+        assertIs<FieldDependency>(consumer.constructorDependency.fieldDependency)
     }
 
     private fun createDiManagerWithTwoRepositories(): DiManager =
@@ -72,7 +99,27 @@ class DiManagerQualifierTest {
                 qualifier = InMemoryTestRepositoryQualifier::class,
                 value = InMemoryTestRepository::class.java,
             )
+            addScopePolicy(
+                classType = TestRepository::class.java,
+                qualifier = DefaultTestRepositoryQualifier::class,
+                scopeKind = QualifierTestScopeKind.APPLICATION,
+            )
+            addScopePolicy(
+                classType = TestRepository::class.java,
+                qualifier = InMemoryTestRepositoryQualifier::class,
+                scopeKind = QualifierTestScopeKind.APPLICATION,
+            )
         }
+
+    private fun createScopeKey(): ScopeKey =
+        ScopeKey(
+            parentKey = null,
+            scopeKind = QualifierTestScopeKind.APPLICATION,
+        )
+}
+
+private enum class QualifierTestScopeKind : ScopeKind {
+    APPLICATION,
 }
 
 interface TestRepository
@@ -80,6 +127,17 @@ interface TestRepository
 class DefaultTestRepository : TestRepository
 
 class InMemoryTestRepository : TestRepository
+
+internal class ConstructorInjectionConsumer(
+    val constructorDependency: ConstructorDependency,
+)
+
+internal class ConstructorDependency {
+    @Inject
+    lateinit var fieldDependency: FieldDependency
+}
+
+internal class FieldDependency
 
 internal class InMemoryRepositoryConsumer {
     @Inject
