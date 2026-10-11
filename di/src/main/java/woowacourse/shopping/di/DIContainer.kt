@@ -51,7 +51,7 @@ class DIContainer {
         bindingScopes[key] = scopeKey.type
     }
 
-    fun <T : Any> createInstance(
+    fun <T : Any> resolve(
         key: DependencyKey<T>,
         scopeKey: ScopeKey,
     ): T {
@@ -121,7 +121,7 @@ class DIContainer {
                             }
                         }?.annotationClass
                 val dependencyKey = DependencyKey(dependencyType, qualifier)
-                val dependency = createInstance(dependencyKey, scopeKey)
+                val dependency = resolve(dependencyKey, scopeKey)
                 mutableProperty.setter.call(instance, dependency)
             }
     }
@@ -151,6 +151,6 @@ class DIContainer {
     ): List<Any> =
         constructor.parameters.map { parameter ->
             val type = parameter.type.classifier as KClass<*>
-            createInstance(DependencyKey(type), scopeKey)
+            resolve(DependencyKey(type), scopeKey)
         }
 }

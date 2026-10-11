@@ -42,7 +42,7 @@ object CartScreenScopeViewModelFactory : ViewModelProvider.Factory {
         diContainer.openScope(scopeKey, parentKey = appScopeKey)
         try {
             val dateFormatter =
-                diContainer.createInstance(
+                diContainer.resolve(
                     DependencyKey(DateFormatter::class),
                     scopeKey,
                 )

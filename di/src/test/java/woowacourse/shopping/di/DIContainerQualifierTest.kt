@@ -39,7 +39,7 @@ class DIContainerQualifierTest {
 
         // when
         val repository =
-            diContainer.createInstance(
+            diContainer.resolve(
                 DependencyKey(TestRepository::class, TestRoom::class),
                 scopeKey,
             )
@@ -64,7 +64,7 @@ class DIContainerQualifierTest {
 
         // when
         val repository =
-            diContainer.createInstance(
+            diContainer.resolve(
                 DependencyKey(TestRepository::class, TestInMemory::class),
                 scopeKey,
             )
@@ -83,7 +83,7 @@ class DIContainerQualifierTest {
 
         // when
         val repository =
-            diContainer.createInstance(
+            diContainer.resolve(
                 DependencyKey(TestRepository::class),
                 scopeKey,
             )
@@ -111,7 +111,7 @@ class DIContainerQualifierTest {
             assertThrows(
                 IllegalArgumentException::class.java,
             ) {
-                diContainer.createInstance(DependencyKey(TestRepository::class), scopeKey)
+                diContainer.resolve(DependencyKey(TestRepository::class), scopeKey)
             }
 
         // then
@@ -134,7 +134,7 @@ class DIContainerQualifierTest {
             assertThrows(
                 IllegalArgumentException::class.java,
             ) {
-                diContainer.createInstance(
+                diContainer.resolve(
                     DependencyKey(TestRepository::class, TestInMemory::class),
                     scopeKey,
                 )

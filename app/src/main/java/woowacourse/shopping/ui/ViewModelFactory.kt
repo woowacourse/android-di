@@ -27,7 +27,7 @@ object ViewModelFactory : ViewModelProvider.Factory {
 
         try {
             val viewModel =
-                diContainer.createInstance(
+                diContainer.resolve(
                     key = DependencyKey(modelClass),
                     scopeKey = scopeKey,
                 )

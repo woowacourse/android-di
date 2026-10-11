@@ -42,8 +42,8 @@ class ScopeLifecycleTest {
         composeRule.runOnIdle {
             val entry = requireNotNull(navController.currentBackStackEntry)
             scopeKey = ScopeKey(ScreenScope, entry.id)
-            formatter = diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
-            assertSame(formatter, diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey))
+            formatter = diContainer.resolve(DependencyKey(DateFormatter::class), scopeKey)
+            assertSame(formatter, diContainer.resolve(DependencyKey(DateFormatter::class), scopeKey))
         }
 
         composeRule.runOnIdle { navController.navigateUp() }
@@ -51,7 +51,7 @@ class ScopeLifecycleTest {
 
         composeRule.runOnIdle {
             assertThrows(IllegalStateException::class.java) {
-                diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
+                diContainer.resolve(DependencyKey(DateFormatter::class), scopeKey)
             }
         }
     }

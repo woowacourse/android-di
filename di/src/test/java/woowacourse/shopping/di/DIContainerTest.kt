@@ -30,7 +30,7 @@ class DIContainerTest {
         val target = TestTarget::class
 
         // when
-        val instance = diContainer.createInstance(DependencyKey(target), scopeKey)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertTrue(instance.isDependencyInitialized())
@@ -42,7 +42,7 @@ class DIContainerTest {
         val target = MultipleDependencyTarget::class
 
         // when
-        val instance = diContainer.createInstance(DependencyKey(target), scopeKey)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertTrue(instance.isFirstDependencyInitialized())
@@ -55,7 +55,7 @@ class DIContainerTest {
         val target = NonInjectedTarget::class
 
         // when
-        val instance = diContainer.createInstance(DependencyKey(target), scopeKey)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertFalse(instance.isDependencyInitialized())
@@ -66,7 +66,7 @@ class DIContainerTest {
         assertThrows(
             IllegalStateException::class.java,
         ) {
-            diContainer.createInstance(DependencyKey(A::class), scopeKey)
+            diContainer.resolve(DependencyKey(A::class), scopeKey)
         }
     }
 
