@@ -1,6 +1,6 @@
 package woowacourse.shopping.ui.cart
 
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -11,6 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import woowacourse.shopping.R
 import woowacourse.shopping.model.CartProduct
 import woowacourse.shopping.model.Product
 
@@ -26,7 +27,7 @@ class CartContentTest {
         composeRule.setContent {
             CartContent(
                 uiState = CartUiState(cartProducts = listOf(CartProduct(id = 0, product))),
-                dateFormatter = DateFormatter(LocalContext.current),
+                dateFormatter = DateFormatter(stringResource(R.string.date_format)),
                 onDelete = {},
                 onNavigateUp = {},
             )
@@ -42,7 +43,7 @@ class CartContentTest {
         composeRule.setContent {
             CartContent(
                 uiState = CartUiState(cartProducts = listOf(CartProduct(id = 0, product))),
-                dateFormatter = DateFormatter(LocalContext.current),
+                dateFormatter = DateFormatter(stringResource(R.string.date_format)),
                 onDelete = { deleted = it },
                 onNavigateUp = {},
             )
