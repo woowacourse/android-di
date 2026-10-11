@@ -90,3 +90,42 @@ Android 모듈로 구성하면 Context, ViewModel, Room 등의 Android API를 DI
 
 순수 JVM 모듈에서는 Android 타입을 직접 알 수 없으므로, Context나 Room에서 생성하는 DAO처럼 DIContainer가 직접 생성하기 어려운 객체는 `:app`에서 컨테이너에 등록해야 한다.
 또한 화면 스코프처럼 Android 생명주기와 관련된 기능도 DI 모듈이 Android 생명주기를 알 수 없으므로 `:app`에서 처리해야 한다. 
+
+## 4단계
+
+### 목적
+스코프 개념을 도입하여 각 객체를 생명주기에 따라 관리할 수 있도록 한다. 
+
+### 기능 목록
+
+- [x] 스코프에 따라 의존성을 생성할 수 있도록 구현한다.
+  - [x] CartRepository를 앱 스코프로 관리한다.
+  - [x] ProductRepository를 ViewModel 스코프로 관리한다. 
+  - [x] DateFormtter를 화면 스코프로 관리한다. 
+  - [x] Android 생명주기와 di 모듈의 책임을 분리한다. 
+  - [x] 스코프 종료 시 인스턴스 참조를 제거한다.
+  - [x] 화면 회전 등의 구성 변경에도 화면 스코프가 유지되도록 구현한다.
+  - [x] 새로운 스코프 종류를 di 모듈을 수정하지 않고도 추가할 수 있도록 한다.
+
+- [x] Lifecycle 시나리오를 테스트한다. 
+
+### 내가 만든 컨테이너는 DI인가, 서비스 로케이터인가?
+
+현재 앱은 컨테이너를 **DI 방식으로 사용한다**. `resolve()` 호출은 객체를 조립하는 `ViewModelFactory`와 `CartScreenScopeViewModelFactory`에 모여 있다. ViewModel은 컨테이너를 직접 조회하지 않고 의존성을 주입받으며, `CartScreen`의 `viewModel`과 `dateFormatter`는 함수 시그니처에 드러난다.
+
+다만 `@Inject` 필드는 생성자 시그니처에 보이지 않고, 팩토리는 `CreationExtras`에서 앱의 컨테이너를 찾는다. 따라서 모든 의존성이 명시적인 생성자 DI인 것은 아니다. 소비자 클래스가 직접 `resolve()`를 호출한다면 그 사용 방식은 서비스 로케이터에 가까워진다.
+
+**DIP**는 어떤 타입에 의존하느냐에 대한 원칙이다. `CartViewModel`은 `CartRepository` 인터페이스에 의존하지만 `ProductsViewModel`은 구체 클래스 `ProductRepository`에 의존하므로 적용 정도가 다르다.
+
+**IoC**는 객체 생성과 정리의 주도권에 관한 이야기다. AndroidX가 ViewModel을 만들 때 팩토리를 호출하고, 팩토리는 컨테이너에 생성과 주입을 맡긴다. 백스택에서 화면이 제거되면 AndroidX가 ViewModel을 정리하고 `addCloseable`을 통해 스코프가 닫힌다. 이 과정에는 제어의 역전이 있지만, 앱이 컨테이너를 설정하고 필요할 때 `resolve()`를 호출하므로 컨테이너 자체는 앱의 흐름을 주도하는 프레임워크보다 라이브러리에 가깝다.
+
+### Reflection을 KSP 코드 생성으로 바꾼다면
+
+현재 `DIContainer.resolve()`는 객체를 처음 요청할 때 바인딩과 스코프를 찾고, reflection으로 생성자와 `@Inject` 필드를 확인해 주입한다. KSP로 바꾸려면 현재의 `bind()` 호출을 빌드 시점에 읽을 수 있는 선언으로 재설계해야 한다. 구현체, Qualifier, 스코프, 생성자 인자와 주입 필드, `Context`나 DAO 같은 외부 객체의 제공 방법을 미리 알아야 생성 코드를 만들고 누락이나 중복, 순환 의존성을 검사할 수 있다. 화면 ID, 스코프의 시작과 종료, 인스턴스 보관은 계속 런타임의 책임이다.
+
+「Reflection의 대가」에서 정리한 네 가지 비용도 달라진다.
+
+- **R8:** 생성 코드가 생성자와 필드를 직접 참조하므로 광범위한 keep 규칙의 필요성이 줄어든다.
+- **성능:** 처음 객체를 요청할 때 수행하던 reflection 작업이 줄어드는 대신 빌드 과정이 늘어난다. 현재 컨테이너가 앱 시작에 그래프 전체를 훑는 것은 아니다.
+- **오류 시점:** 바인딩 누락이나 Qualifier 불일치 등을 빌드 오류로 발견할 수 있다. 이미 닫힌 스코프 접근 같은 오류는 여전히 런타임에 확인해야 한다.
+- **KMP:** 현재 `:di`의 `kotlin-reflect`와 `.java` 사용을 걷어내고 공용 런타임을 설계할 수 있다. Android의 `Context`, Room, Navigation 연동은 플랫폼 코드로 남는다.

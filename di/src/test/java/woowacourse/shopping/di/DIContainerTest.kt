@@ -3,14 +3,25 @@ package woowacourse.shopping.di
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import woowacourse.shopping.di.annotation.Inject
 
 class DIContainerTest {
+    private object TestScope : ScopeType
+
+    private val scopeKey = ScopeKey(TestScope, "test")
+    private val diContainer = DIContainer()
+
     @Before
     fun setUp() {
-        DIContainer.clear()
+        diContainer.openScope(scopeKey)
+    }
+
+    @After
+    fun tearDown() {
+        diContainer.closeScope(scopeKey)
     }
 
     @Test
@@ -19,8 +30,7 @@ class DIContainerTest {
         val target = TestTarget::class
 
         // when
-        val instance = DIContainer.createInstance(DependencyKey(target))
-        DIContainer.injectFields(instance)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertTrue(instance.isDependencyInitialized())
@@ -32,8 +42,7 @@ class DIContainerTest {
         val target = MultipleDependencyTarget::class
 
         // when
-        val instance = DIContainer.createInstance(DependencyKey(target))
-        DIContainer.injectFields(instance)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertTrue(instance.isFirstDependencyInitialized())
@@ -46,8 +55,7 @@ class DIContainerTest {
         val target = NonInjectedTarget::class
 
         // when
-        val instance = DIContainer.createInstance(DependencyKey(target))
-        DIContainer.injectFields(instance)
+        val instance = diContainer.resolve(DependencyKey(target), scopeKey)
 
         // then
         assertFalse(instance.isDependencyInitialized())
@@ -58,7 +66,7 @@ class DIContainerTest {
         assertThrows(
             IllegalStateException::class.java,
         ) {
-            DIContainer.createInstance(DependencyKey(A::class))
+            diContainer.resolve(DependencyKey(A::class), scopeKey)
         }
     }
 

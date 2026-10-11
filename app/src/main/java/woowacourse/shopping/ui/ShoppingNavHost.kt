@@ -1,15 +1,16 @@
 package woowacourse.shopping.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import woowacourse.shopping.ui.cart.CartScreen
-import woowacourse.shopping.ui.cart.DateFormatter
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModel
+import woowacourse.shopping.ui.cart.CartScreenScopeViewModelFactory
+import woowacourse.shopping.ui.cart.ScreenEntryIdKey
 import woowacourse.shopping.ui.products.ProductsScreen
 
 object ShoppingRoute {
@@ -29,17 +30,22 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
                 viewModel = viewModel(factory = ViewModelFactory),
             )
         }
-        composable(ShoppingRoute.CART) {
-            val context = LocalContext.current
-
-            val dateFormatter =
-                remember {
-                    DateFormatter(context)
+        composable(ShoppingRoute.CART) { backStackEntry ->
+            val extras =
+                MutableCreationExtras(backStackEntry.defaultViewModelCreationExtras).apply {
+                    this[ScreenEntryIdKey] = backStackEntry.id
                 }
+
+            val cartScopeViewModel =
+                viewModel<CartScreenScopeViewModel>(
+                    viewModelStoreOwner = backStackEntry,
+                    factory = CartScreenScopeViewModelFactory,
+                    extras = extras,
+                )
 
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },
-                dateFormatter = dateFormatter,
+                dateFormatter = cartScopeViewModel.dateFormatter,
                 viewModel = viewModel(factory = ViewModelFactory),
             )
         }
