@@ -34,23 +34,25 @@ class ScopeLifecycleTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    private lateinit var diContainer: DIContainer
+
     @Before
     fun setUp() {
-        DIContainer.closeScope(appScopeKey)
-        DIContainer.openScope(appScopeKey)
-        DIContainer.bindInstance(Context::class, RuntimeEnvironment.getApplication(), scopeKey = appScopeKey)
-        DIContainer.bindInstance(
+        diContainer = DIContainer()
+        diContainer.openScope(appScopeKey)
+        diContainer.bindInstance(Context::class, RuntimeEnvironment.getApplication(), scopeKey = appScopeKey)
+        diContainer.bindInstance(
             type = CartRepository::class,
             instance = InMemoryCartRepository(),
             qualifier = RoomCart::class,
             scopeKey = appScopeKey,
         )
-        DIContainer.bind(DateFormatter::class, DateFormatter::class, scopeType = ScreenScope)
+        diContainer.bind(DateFormatter::class, DateFormatter::class, scopeType = ScreenScope)
     }
 
     @After
     fun tearDown() {
-        DIContainer.closeScope(appScopeKey)
+        diContainer.closeScope(appScopeKey)
     }
 
     @Test
@@ -59,7 +61,7 @@ class ScopeLifecycleTest {
         lateinit var navController: NavHostController
         composeRule.setContent {
             navController = rememberNavController()
-            ShoppingNavHost(navController)
+            ShoppingNavHost(diContainer = diContainer, navController = navController)
         }
 
         composeRule.runOnIdle { navController.navigate(ShoppingRoute.CART) }
@@ -70,8 +72,8 @@ class ScopeLifecycleTest {
         composeRule.runOnIdle {
             val entry = requireNotNull(navController.currentBackStackEntry)
             scopeKey = ScopeKey(ScreenScope, entry.id)
-            formatter = DIContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
-            assertSame(formatter, DIContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey))
+            formatter = diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
+            assertSame(formatter, diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey))
         }
 
         composeRule.runOnIdle { navController.navigateUp() }
@@ -79,7 +81,7 @@ class ScopeLifecycleTest {
 
         composeRule.runOnIdle {
             assertThrows(IllegalStateException::class.java) {
-                DIContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
+                diContainer.createInstance(DependencyKey(DateFormatter::class), scopeKey)
             }
         }
     }

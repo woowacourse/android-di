@@ -9,23 +9,25 @@ import woowacourse.shopping.di.DependencyKey
 import woowacourse.shopping.di.ScopeKey
 import java.util.UUID
 
-object ViewModelFactory : ViewModelProvider.Factory {
+class ViewModelFactory(
+    private val diContainer: DIContainer,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val scopeKey = ScopeKey(ViewModelScope, UUID.randomUUID().toString())
-        DIContainer.openScope(scopeKey, parentKey = appScopeKey)
+        diContainer.openScope(scopeKey, parentKey = appScopeKey)
 
         try {
             val viewModel =
-                DIContainer.createInstance(
+                diContainer.createInstance(
                     key = DependencyKey(modelClass.kotlin),
                     scopeKey = scopeKey,
                 )
             viewModel.addCloseable {
-                DIContainer.closeScope(scopeKey)
+                diContainer.closeScope(scopeKey)
             }
             return viewModel
         } catch (error: Throwable) {
-            DIContainer.closeScope(scopeKey)
+            diContainer.closeScope(scopeKey)
             throw error
         }
     }

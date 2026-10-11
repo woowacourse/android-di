@@ -26,6 +26,8 @@ object ScreenScope : ScopeType
 val appScopeKey = ScopeKey(AppScope, "app")
 
 class ShoppingApplication : Application() {
+    val diContainer = DIContainer()
+
     override fun onCreate() {
         super.onCreate()
         val db =
@@ -34,36 +36,36 @@ class ShoppingApplication : Application() {
                 .setDriver(AndroidSQLiteDriver())
                 .build()
 
-        DIContainer.openScope(appScopeKey)
+        diContainer.openScope(appScopeKey)
 
-        DIContainer.bindInstance(
+        diContainer.bindInstance(
             type = CartProductDao::class,
             instance = db.cartProductDao(),
             scopeKey = appScopeKey,
         )
-        DIContainer.bindInstance(
+        diContainer.bindInstance(
             type = Context::class,
             instance = this,
             scopeKey = appScopeKey,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = CartRepository::class,
             implementation = DefaultCartRepository::class,
             qualifier = RoomCart::class,
             scopeType = AppScope,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = CartRepository::class,
             implementation = InMemoryCartRepository::class,
             qualifier = InMemoryCart::class,
             scopeType = AppScope,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = ProductRepository::class,
             implementation = ProductRepository::class,
             scopeType = ViewModelScope,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = DateFormatter::class,
             implementation = DateFormatter::class,
             scopeType = ScreenScope,

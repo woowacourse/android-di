@@ -35,7 +35,7 @@ class CartContentTest {
     }
 
     @Test
-    fun `삭제 버튼을 누르면 그 상품의 위치가 전달된다`() {
+    fun `삭제 버튼을 누르면 그 상품의 ID가 전달된다`() {
         var deleted: Long? = null
 
         composeRule.setContent {
@@ -48,6 +48,6 @@ class CartContentTest {
         }
         composeRule.onNodeWithContentDescription("삭제").performClick()
 
-        assertThat(deleted).isEqualTo(0)
+        assertThat(deleted).isEqualTo(product.id)
     }
 }

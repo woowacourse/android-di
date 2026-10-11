@@ -20,7 +20,12 @@ object ShoppingRoute {
 }
 
 @Composable
-fun ShoppingNavHost(navController: NavHostController = rememberNavController()) {
+fun ShoppingNavHost(
+    diContainer: DIContainer,
+    navController: NavHostController = rememberNavController()
+) {
+    val viewModelFactory = remember(diContainer) { ViewModelFactory(diContainer) }
+
     NavHost(
         navController = navController,
         startDestination = ShoppingRoute.PRODUCTS,
@@ -28,23 +33,26 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
         composable(ShoppingRoute.PRODUCTS) {
             ProductsScreen(
                 onNavigateToCart = { navController.navigate(ShoppingRoute.CART) },
-                viewModel = viewModel(factory = ViewModelFactory),
+                viewModel = viewModel(factory = viewModelFactory),
             )
         }
         composable(ShoppingRoute.CART) { backStackEntry ->
             val extras =
                 MutableCreationExtras(backStackEntry.defaultViewModelCreationExtras).apply {
                     this[ScreenEntryIdKey] = backStackEntry.id
+                    this[DIContainerKey] = diContainer
                 }
+
             val screenScopeViewModel =
                 viewModel<ScreenScopeViewModel>(
                     viewModelStoreOwner = backStackEntry,
                     factory = ScreenScopeViewModelFactory,
                     extras = extras,
                 )
+
             val dateFormatter =
-                remember(screenScopeViewModel.scopeKey) {
-                    DIContainer.createInstance(
+                remember(diContainer, screenScopeViewModel.scopeKey) {
+                    diContainer.createInstance(
                         DependencyKey(DateFormatter::class),
                         screenScopeViewModel.scopeKey,
                     )
@@ -53,7 +61,7 @@ fun ShoppingNavHost(navController: NavHostController = rememberNavController()) 
             CartScreen(
                 onNavigateUp = { navController.navigateUp() },
                 dateFormatter = dateFormatter,
-                viewModel = viewModel(factory = ViewModelFactory),
+                viewModel = viewModel(factory = viewModelFactory),
             )
         }
     }

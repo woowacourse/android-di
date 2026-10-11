@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import woowacourse.shopping.ShoppingApplication
 import woowacourse.shopping.ui.theme.ShoppingTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,7 +13,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShoppingTheme {
-                ShoppingNavHost()
+                ShoppingNavHost(
+                    diContainer = (application as ShoppingApplication).diContainer,
+                )
             }
         }
     }

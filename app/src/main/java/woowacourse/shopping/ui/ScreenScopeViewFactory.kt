@@ -8,17 +8,20 @@ import woowacourse.shopping.appScopeKey
 import woowacourse.shopping.di.DIContainer
 import woowacourse.shopping.di.ScopeKey
 import kotlin.jvm.java
+import kotlin.reflect.KClass
 
 object ScreenEntryIdKey : CreationExtras.Key<String>
+object DIContainerKey : CreationExtras.Key<DIContainer>
 
 class ScreenScopeViewModel(
     entryId: String,
+    private val diContainer: DIContainer,
 ) : ViewModel() {
     val scopeKey = ScopeKey(ScreenScope, entryId)
 
     init {
-        DIContainer.openScope(scopeKey, parentKey = appScopeKey)
-        addCloseable { DIContainer.closeScope(scopeKey) }
+        diContainer.openScope(scopeKey, parentKey = appScopeKey)
+        addCloseable { diContainer.closeScope(scopeKey) }
     }
 }
 
@@ -29,6 +32,7 @@ object ScreenScopeViewModelFactory : ViewModelProvider.Factory {
     ): T {
         require(modelClass == ScreenScopeViewModel::class.java)
         val entryId = requireNotNull(extras[ScreenEntryIdKey])
-        return modelClass.cast(ScreenScopeViewModel(entryId))
+        val diContainer = requireNotNull(extras[DIContainerKey])
+        return modelClass.cast(ScreenScopeViewModel(entryId, diContainer))
     }
 }

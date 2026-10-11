@@ -9,7 +9,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object DIContainer {
+class DIContainer {
     private val scopes = mutableMapOf<ScopeKey, Scope>()
     private val bindingScopes = mutableMapOf<DependencyKey<*>, ScopeType>()
     private val creating = mutableSetOf<DependencyKey<*>>()
@@ -99,14 +99,6 @@ object DIContainer {
         } finally {
             creating -= key
         }
-    }
-
-    internal fun clear() {
-        scopes.values.forEach { it.clear() }
-        scopes.clear()
-        creating.clear()
-        bindings.clear()
-        bindingScopes.clear()
     }
 
     private fun <T : Any> injectFields(

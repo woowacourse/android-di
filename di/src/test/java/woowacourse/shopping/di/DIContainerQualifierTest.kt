@@ -11,27 +11,27 @@ class DIContainerQualifierTest {
     private object TestScope : ScopeType
 
     private val scopeKey = ScopeKey(TestScope, "test")
+    private val diContainer = DIContainer()
 
     @Before
     fun setUp() {
-        DIContainer.clear()
-        DIContainer.openScope(scopeKey)
+        diContainer.openScope(scopeKey)
     }
 
     @After
     fun tearDown() {
-        DIContainer.closeScope(scopeKey)
+        diContainer.closeScope(scopeKey)
     }
 
     @Test
     fun `Qualifier를 지정하면 해당 구현체를 생성한다`() {
         // given
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = RoomTestRepository::class,
             qualifier = TestRoom::class,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = InMemoryRepository::class,
             qualifier = TestInMemory::class,
@@ -39,7 +39,7 @@ class DIContainerQualifierTest {
 
         // when
         val repository =
-            DIContainer.createInstance(
+            diContainer.createInstance(
                 DependencyKey(TestRepository::class, TestRoom::class),
                 scopeKey,
             )
@@ -51,12 +51,12 @@ class DIContainerQualifierTest {
     @Test
     fun `다른 Qualifier를 지정하면 다른 구현체를 생성한다`() {
         // given
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = RoomTestRepository::class,
             qualifier = TestRoom::class,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = InMemoryRepository::class,
             qualifier = TestInMemory::class,
@@ -64,7 +64,7 @@ class DIContainerQualifierTest {
 
         // when
         val repository =
-            DIContainer.createInstance(
+            diContainer.createInstance(
                 DependencyKey(TestRepository::class, TestInMemory::class),
                 scopeKey,
             )
@@ -76,14 +76,14 @@ class DIContainerQualifierTest {
     @Test
     fun `동일 타입 구현체가 하나일 때는 Qualifier가 없어도 객체가 생성된다`() {
         // given
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = RoomTestRepository::class,
         )
 
         // when
         val repository =
-            DIContainer.createInstance(
+            diContainer.createInstance(
                 DependencyKey(TestRepository::class),
                 scopeKey,
             )
@@ -95,12 +95,12 @@ class DIContainerQualifierTest {
     @Test
     fun `동일 타입 구현체가 여러 개이고 Qualifier가 없으면 예외가 발생한다`() {
         // given
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = RoomTestRepository::class,
             qualifier = TestRoom::class,
         )
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = InMemoryRepository::class,
             qualifier = TestInMemory::class,
@@ -111,7 +111,7 @@ class DIContainerQualifierTest {
             assertThrows(
                 IllegalArgumentException::class.java,
             ) {
-                DIContainer.createInstance(DependencyKey(TestRepository::class), scopeKey)
+                diContainer.createInstance(DependencyKey(TestRepository::class), scopeKey)
             }
 
         // then
@@ -123,7 +123,7 @@ class DIContainerQualifierTest {
     @Test
     fun `등록되지 않은 Qualifier를 요청하면 예외가 발생한다`() {
         // given
-        DIContainer.bind(
+        diContainer.bind(
             type = TestRepository::class,
             implementation = RoomTestRepository::class,
             qualifier = TestRoom::class,
@@ -134,7 +134,7 @@ class DIContainerQualifierTest {
             assertThrows(
                 IllegalArgumentException::class.java,
             ) {
-                DIContainer.createInstance(
+                diContainer.createInstance(
                     DependencyKey(TestRepository::class, TestInMemory::class),
                     scopeKey,
                 )
