@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -42,9 +43,10 @@ import woowacourse.shopping.ui.theme.ShoppingTheme
 fun ProductsScreen(
     onNavigateToCart: () -> Unit,
     modifier: Modifier = Modifier,
+    factory: ViewModelProvider.Factory = HunnitFactory,
     viewModel: ProductsViewModel =
         viewModel(
-            factory = HunnitFactory,
+            factory = factory,
         ),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
