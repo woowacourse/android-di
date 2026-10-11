@@ -17,6 +17,8 @@ class DependencyScope(
     internal val childCount: Int
         get() = children.size
 
+    fun childScopes(): List<DependencyScope> = children.toList()
+
     fun openChild(kind: ScopeKind): DependencyScope {
         checkOpen()
 

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.google.common.truth.Truth.assertThat
 import io.github.firstwoosun.di.DependencyBinding
 import io.github.firstwoosun.di.DependencyContainer
-import io.github.firstwoosun.di.DependencyScope
 import io.github.firstwoosun.di.InstanceProvider
 import io.github.firstwoosun.di.ScopeKind
 import org.junit.After
@@ -73,7 +72,7 @@ class ViewModelScopeLifecycleTest {
             .isSameInstanceAs(second.productRepository)
 
         // Factory가 다시 호출되어 새 스코프를 만들지 않았는지도 확인
-        assertThat(childScopes(container.applicationScope)).hasSize(1)
+        assertThat(container.applicationScope.childScopes()).hasSize(1)
     }
 
     @Test
@@ -98,7 +97,7 @@ class ViewModelScopeLifecycleTest {
 
         provider[ProductsViewModel::class.java]
 
-        val scope = childScopes(container.applicationScope).single()
+        val scope = container.applicationScope.childScopes().single()
 
         assertThat(scope.kind).isEqualTo(ScopeKind.ViewModel)
         assertThat(scope.isClosed).isFalse()
@@ -107,7 +106,7 @@ class ViewModelScopeLifecycleTest {
         owner.viewModelStore.clear()
 
         assertThat(scope.isClosed).isTrue()
-        assertThat(childScopes(container.applicationScope)).isEmpty()
+        assertThat(container.applicationScope.childScopes()).isEmpty()
         assertThat(container.applicationScope.isClosed).isFalse()
     }
 
@@ -135,20 +134,5 @@ class ViewModelScopeLifecycleTest {
 
     private class TestViewModelOwner : ViewModelStoreOwner {
         override val viewModelStore = ViewModelStore()
-    }
-
-    /**
-     * 실제 Factory가 생성한 스코프를 관찰하는 테스트 전용 코드.
-     * 프로덕션에 조회 API를 추가하지 않기 위해 reflection을 사용한다.
-     */
-    private fun childScopes(scope: DependencyScope): List<DependencyScope> {
-        val field =
-            DependencyScope::class.java
-                .getDeclaredField("children")
-                .apply { isAccessible = true }
-
-        val children = field.get(scope) as Collection<*>
-
-        return children.map { it as DependencyScope }
     }
 }
