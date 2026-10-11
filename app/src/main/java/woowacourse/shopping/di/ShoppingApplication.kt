@@ -1,15 +1,22 @@
 package woowacourse.shopping.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import woowacourse.di.DependencyContainer
 import woowacourse.shopping.data.CartProductDao
 import woowacourse.shopping.data.InMemoryCartRepository
+import woowacourse.shopping.data.ProductRepository
 import woowacourse.shopping.data.RoomCartRepository
 import woowacourse.shopping.data.ShoppingDatabase
 import woowacourse.shopping.domain.repository.CartRepository
+import woowacourse.shopping.ui.cart.DateFormatter
 import woowacourse.di.dependencyContainer as buildDependencyContainer
 
 class ShoppingApplication : Application() {
+    lateinit var dependencyContainer: DependencyContainer
+        private set
+
     lateinit var viewModelFactory: AutoViewModelFactory
         private set
 
@@ -24,8 +31,9 @@ class ShoppingApplication : Application() {
             )
         val database = databaseBuilder.build()
 
-        val dependencyContainer =
+        dependencyContainer =
             buildDependencyContainer {
+                registerInstance(Context::class, applicationContext)
                 registerInstance(ShoppingDatabase::class, database)
                 registerFactory(CartProductDao::class) { container ->
                     container.get(ShoppingDatabase::class).cartProductDao()
@@ -35,6 +43,12 @@ class ShoppingApplication : Application() {
                 }
                 registerFactory(CartRepository::class, InMemoryCart::class) { container ->
                     container.get(InMemoryCartRepository::class)
+                }
+                registerFactory(ProductRepository::class, scope = ShoppingScopes.VIEW_MODEL) {
+                    ProductRepository()
+                }
+                registerFactory(DateFormatter::class, scope = ShoppingScopes.NAVIGATION_DESTINATION) { container ->
+                    DateFormatter(container.get(Context::class))
                 }
             }
 
