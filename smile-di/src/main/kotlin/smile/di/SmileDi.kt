@@ -16,6 +16,7 @@ import kotlin.reflect.jvm.javaField
 class SmileDi(
     private val module: Any,
     private val repository: DependencyRepository,
+    private val parent: SmileDi? = null,
 ) {
     private val providers: Map<DependencyKey, KFunction<*>> =
         module::class
@@ -35,7 +36,13 @@ class SmileDi(
 
     fun <T : Any> createDependency(kClass: KClass<T>): T = kClass.cast(create(DependencyKey(kClass)))
 
-    private fun resolve(key: DependencyKey): Any = repository.get(key) ?: create(key).also { repository.save(key, it) }
+    private fun resolve(key: DependencyKey): Any =
+        repository.get(key)
+            ?: if (parent != null && key !in providers) {
+                parent.resolve(key)
+            } else {
+                create(key).also { repository.save(key, it) }
+            }
 
     private fun create(key: DependencyKey): Any {
         check(creating.add(key)) { "[에러] 순환참조가 발생했습니다." }
@@ -53,6 +60,11 @@ class SmileDi(
             creating.remove(key)
         }
     }
+
+    fun createChild(
+        module: Any,
+        repository: DependencyRepository,
+    ): SmileDi = SmileDi(module, repository, parent = this)
 
     private fun findProvider(key: DependencyKey): KFunction<*>? {
         providers[key]?.let { return it }

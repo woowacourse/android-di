@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -42,6 +41,7 @@ import woowacourse.shopping.viewModelFactory
 
 @Composable
 fun CartScreen(
+    formatDate: (Long) -> String,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CartViewModel = viewModel(factory = viewModelFactory<CartViewModel>()),
@@ -49,9 +49,6 @@ fun CartScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val deletedMessage = stringResource(R.string.cart_deleted)
-
-    // TODO: Step4 - DateFormatter를 화면 스코프의 의존성으로 주입받도록 변경
-    val dateFormatter = remember { DateFormatter(context) }
 
     LaunchedEffect(Unit) {
         viewModel.onCartProductDeleted.collect {
@@ -61,7 +58,7 @@ fun CartScreen(
 
     CartContent(
         uiState = uiState,
-        dateFormatter = dateFormatter,
+        formatDate = formatDate,
         onDelete = viewModel::deleteCartProduct,
         onNavigateUp = onNavigateUp,
         modifier = modifier,
@@ -72,7 +69,7 @@ fun CartScreen(
 @Composable
 fun CartContent(
     uiState: CartUiState,
-    dateFormatter: DateFormatter,
+    formatDate: (Long) -> String,
     onDelete: (Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -112,7 +109,7 @@ fun CartContent(
             items(uiState.cartProducts, key = { it.id }) { cartProduct ->
                 CartProductItem(
                     cartProduct = cartProduct,
-                    dateFormatter = dateFormatter,
+                    formatDate = formatDate,
                     onDelete = { onDelete(cartProduct.id) },
                 )
             }
@@ -123,7 +120,7 @@ fun CartContent(
 @Composable
 fun CartProductItem(
     cartProduct: CartProduct,
-    dateFormatter: DateFormatter,
+    formatDate: (Long) -> String,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -135,7 +132,7 @@ fun CartProductItem(
                 .padding(20.dp),
     ) {
         Text(
-            text = dateFormatter.formatDate(cartProduct.createdAt),
+            text = formatDate(cartProduct.createdAt),
             style = MaterialTheme.typography.labelSmall,
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -192,7 +189,7 @@ private fun CartContentPreview() {
                             ),
                         ),
                 ),
-            dateFormatter = DateFormatter(LocalContext.current),
+            formatDate = { "2026.01.01" },
             onDelete = {},
             onNavigateUp = {},
         )
