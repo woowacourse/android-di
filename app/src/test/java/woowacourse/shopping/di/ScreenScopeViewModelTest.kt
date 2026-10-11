@@ -44,7 +44,7 @@ class ScreenScopeViewModelTest {
     }
 
     @Test
-    fun `화면 스코프는 구성 변경에 유지되고 백스택 종료 시 닫힌다`() {
+    fun `화면 스코프는 같은 ViewModelStore에서 재사용되고 clear 시 닫힌다`() {
         AppDI.initialize(RuntimeEnvironment.getApplication())
         val store = ViewModelStore()
         val factory = ViewModelProvider.NewInstanceFactory()
